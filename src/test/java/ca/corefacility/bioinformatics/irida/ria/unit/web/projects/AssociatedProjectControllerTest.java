@@ -305,15 +305,14 @@ public class AssociatedProjectControllerTest {
 		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteAPI api = new RemoteAPI();
+		rp1.setRemoteAPI(api);
 
 		Project project = new Project();
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(apiService.getRemoteAPIForUrl(projectLink)).thenReturn(api);
-		when(projectRemoteService.read(projectLink, api)).thenReturn(rp1);
+		when(projectRemoteService.read(projectLink)).thenReturn(rp1);
 
-		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId,
-				rp1.getLink(Link.REL_SELF).getHref());
+		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId, projectLink);
 
 		assertEquals("success", addRemoteAssociatedProject.get("result"));
 

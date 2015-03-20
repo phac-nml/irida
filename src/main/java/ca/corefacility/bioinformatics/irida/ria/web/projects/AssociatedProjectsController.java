@@ -308,11 +308,11 @@ public class AssociatedProjectsController {
 	@ResponseBody
 	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId, @RequestParam String projectUrl) {
 		Project project = projectService.read(projectId);
-		RemoteAPI remoteAPI = apiService.getRemoteAPIForUrl(projectUrl);
-		Project readResource = projectRemoteService.read(projectUrl, remoteAPI);
+		Project readResource = projectRemoteService.read(projectUrl);
 
 		Link selfLink = readResource.getLink(Link.REL_SELF);
-		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI, selfLink.getHref());
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, readResource.getRemoteAPI(),
+				selfLink.getHref());
 		remoteRelatedProjectService.create(remoteRelatedProject);
 
 		return ImmutableMap.of("result", "success");
