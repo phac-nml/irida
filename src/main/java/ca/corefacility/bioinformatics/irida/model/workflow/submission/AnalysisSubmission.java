@@ -611,4 +611,34 @@ public class AnalysisSubmission implements IridaThing {
 	public static Builder builder(UUID workflowId) {
 		return new AnalysisSubmission.Builder(workflowId);
 	}
+
+	/**
+	 * Whether or not a remoteAnalysisId exists for this submission.
+	 * 
+	 * @return True if a remoteAnalysisId exists for this submission, false
+	 *         otherwise.
+	 */
+	public boolean existsRemoteAnalysisId() {
+		return remoteAnalysisId != null;
+	}
+
+	/**
+	 * Whether or not a remoteWorkflowId exists for this submission.
+	 * 
+	 * @return True if a remoteWorkflowId exists for this submission, false
+	 *         otherwise.
+	 */
+	public boolean existsRemoteWorkflowId() {
+		return remoteWorkflowId != null;
+	}
+
+	/**
+	 * Whether or not a remoteInputDataId exists for this submission.
+	 * 
+	 * @return True if a remoteInputDataId exists for this submission, false
+	 *         otherwise.
+	 */
+	public boolean existsRemoteInputDataId() {
+		return remoteInputDataId != null;
+	}
 }

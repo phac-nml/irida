@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -67,6 +65,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -121,6 +121,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 	
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+	
+	private WorkflowsClient workflowsClient;
 
 	private Path sequenceFilePath;
 	private Path sequenceFilePath2;
@@ -198,6 +200,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		pairedPaths1.add(sequenceFilePath);
 		pairedPaths2 = Lists.newArrayList();
 		pairedPaths2.add(sequenceFilePath2);
+		
+		workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 	}
 	
 	/**
@@ -1462,12 +1466,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
 		assertEquals(AnalysisCleanedState.NOT_CLEANED, analysisSubmissionCompleted.getAnalysisCleanedState());
 
+		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(analysisSubmissionCompleted.getRemoteWorkflowId());
+		assertFalse("Workflow is already deleted", workflowDetails.isDeleted());
+		
 		// Once analysis is complete, attempt to clean up
 		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
 				.cleanupSubmission(analysisSubmissionCompleted);
 		AnalysisSubmission analysisSubmissionCleaned = analysisSubmissionCleanedFuture.get();
 		assertEquals("Analysis submission not properly cleaned", AnalysisCleanedState.CLEANED,
 				analysisSubmissionCleaned.getAnalysisCleanedState());
+		
+		workflowDetails = workflowsClient.showWorkflow(analysisSubmissionCompleted.getRemoteWorkflowId());
+		assertTrue("Workflow is not deleted", workflowDetails.isDeleted());
 	}
 	
 	/**
@@ -1487,6 +1497,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		analysisSubmitted.setAnalysisState(AnalysisState.ERROR);
 		analysisSubmissionRepository.save(analysisSubmitted);
+		
+		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(analysisSubmitted.getRemoteWorkflowId());
+		assertFalse("Workflow is already deleted", workflowDetails.isDeleted());
 
 		// Once analysis is complete, attempt to clean up
 		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
@@ -1494,6 +1507,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmissionCleaned = analysisSubmissionCleanedFuture.get();
 		assertEquals("Analysis submission not properly cleaned", AnalysisCleanedState.CLEANED,
 				analysisSubmissionCleaned.getAnalysisCleanedState());
+		
+		workflowDetails = workflowsClient.showWorkflow(analysisSubmitted.getRemoteWorkflowId());
+		assertTrue("Workflow is not deleted", workflowDetails.isDeleted());
 	}
 	
 	/**

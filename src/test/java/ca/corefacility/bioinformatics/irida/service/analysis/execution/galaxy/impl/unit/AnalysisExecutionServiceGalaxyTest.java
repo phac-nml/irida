@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.never;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -48,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -99,7 +101,6 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 	private static final UUID WORKFLOW_ID = UUID.randomUUID();
 	private static final String REMOTE_WORKFLOW_ID = "1";
-	private static final String REMOTE_UPLOADED_WORKFLOW_ID = "5";
 	private static final Long INTERNAL_ANALYSIS_ID = 2l;
 	private static final String ANALYSIS_ID = "2";
 	private static final String LIBRARY_ID = "3";
@@ -162,7 +163,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		analysisPrepared.setId(INTERNAL_ANALYSIS_ID);
 		analysisPrepared.setAnalysisState(AnalysisState.PREPARED);
-		analysisPrepared.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisPrepared.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisPrepared.setRemoteAnalysisId(ANALYSIS_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID, ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID,
@@ -171,7 +172,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		analysisSubmitting.setId(INTERNAL_ANALYSIS_ID);
 		analysisSubmitting.setAnalysisState(AnalysisState.SUBMITTING);
-		analysisSubmitting.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisSubmitting.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisSubmitting.setRemoteAnalysisId(ANALYSIS_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
@@ -179,7 +180,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		analysisRunning.setId(INTERNAL_ANALYSIS_ID);
 		analysisRunning.setAnalysisState(AnalysisState.RUNNING);
-		analysisRunning.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisRunning.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisRunning.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisRunning.setRemoteInputDataId(LIBRARY_ID);
 		when(
@@ -188,13 +189,13 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		analysisFinishedRunning.setId(INTERNAL_ANALYSIS_ID);
 		analysisFinishedRunning.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		analysisFinishedRunning.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisFinishedRunning.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisFinishedRunning.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisFinishedRunning.setRemoteInputDataId(LIBRARY_ID);
 
 		analysisCompleting.setId(INTERNAL_ANALYSIS_ID);
 		analysisCompleting.setAnalysisState(AnalysisState.COMPLETING);
-		analysisCompleting.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisCompleting.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisCompleting.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisCompleting.setRemoteInputDataId(LIBRARY_ID);
 		when(
@@ -205,9 +206,8 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		analysisCompleted.setId(INTERNAL_ANALYSIS_ID);
 		analysisCompleted.setAnalysisState(AnalysisState.COMPLETED);
-		analysisCompleted.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisCompleted.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisCompleted.setRemoteAnalysisId(ANALYSIS_ID);
-		analysisCompleted.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
 		analysisCompleted.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 		analysisCompleted.setAnalysis(analysisResults);
 		analysisCompleted.setRemoteInputDataId(LIBRARY_ID);
@@ -218,25 +218,23 @@ public class AnalysisExecutionServiceGalaxyTest {
 		
 		analysisCompletedCleaning.setId(INTERNAL_ANALYSIS_ID);
 		analysisCompletedCleaning.setAnalysisState(AnalysisState.COMPLETED);
-		analysisCompletedCleaning.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisCompletedCleaning.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisCompletedCleaning.setRemoteAnalysisId(ANALYSIS_ID);
-		analysisCompletedCleaning.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
 		analysisCompletedCleaning.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
 		analysisCompletedCleaning.setAnalysis(analysisResults);
 		analysisCompletedCleaning.setRemoteInputDataId(LIBRARY_ID);
 		
 		analysisCompletedCleaned.setId(INTERNAL_ANALYSIS_ID);
 		analysisCompletedCleaned.setAnalysisState(AnalysisState.COMPLETED);
-		analysisCompletedCleaned.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisCompletedCleaned.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisCompletedCleaned.setRemoteAnalysisId(ANALYSIS_ID);
-		analysisCompletedCleaned.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
 		analysisCompletedCleaned.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
 		analysisCompletedCleaned.setAnalysis(analysisResults);
 		analysisCompletedCleaned.setRemoteInputDataId(LIBRARY_ID);
 
 		analysisError.setId(INTERNAL_ANALYSIS_ID);
 		analysisError.setAnalysisState(AnalysisState.ERROR);
-		analysisError.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisError.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisError.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
@@ -244,12 +242,12 @@ public class AnalysisExecutionServiceGalaxyTest {
 		
 		analysisErrorCleaning.setId(INTERNAL_ANALYSIS_ID);
 		analysisErrorCleaning.setAnalysisState(AnalysisState.ERROR);
-		analysisErrorCleaning.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisErrorCleaning.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisErrorCleaning.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
 		
 		analysisErrorCleaned.setId(INTERNAL_ANALYSIS_ID);
 		analysisErrorCleaned.setAnalysisState(AnalysisState.ERROR);
-		analysisErrorCleaned.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisErrorCleaned.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisErrorCleaned.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
 
 		analysisPrepared.setRemoteAnalysisId(ANALYSIS_ID);
@@ -257,6 +255,8 @@ public class AnalysisExecutionServiceGalaxyTest {
 		preparedWorkflow = new PreparedWorkflowGalaxy(ANALYSIS_ID, LIBRARY_ID, workflowInputsGalaxy);
 
 		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile)).thenReturn(REMOTE_WORKFLOW_ID);
+		
+		when(galaxyHistoriesService.deleteHistory(ANALYSIS_ID)).thenReturn(new HistoryDeleteResponse());
 	}
 
 	/**
@@ -581,6 +581,10 @@ public class AnalysisExecutionServiceGalaxyTest {
 		Future<AnalysisSubmission> cleaningSubmissionFuture = workflowManagement.cleanupSubmission(analysisCompleted);
 		AnalysisSubmission cleaningSubmission = cleaningSubmissionFuture.get();
 		assertEquals(AnalysisCleanedState.CLEANED, cleaningSubmission.getAnalysisCleanedState());
+		
+		verify(galaxyHistoriesService).deleteHistory(ANALYSIS_ID);
+		verify(galaxyLibrariesService).deleteLibrary(LIBRARY_ID);
+		verify(galaxyWorkflowService).deleteWorkflow(REMOTE_WORKFLOW_ID);
 	}
 
 	/**
@@ -605,6 +609,10 @@ public class AnalysisExecutionServiceGalaxyTest {
 		Future<AnalysisSubmission> cleaningSubmissionFuture = workflowManagement.cleanupSubmission(analysisError);
 		AnalysisSubmission cleaningSubmission = cleaningSubmissionFuture.get();
 		assertEquals(AnalysisCleanedState.CLEANED, cleaningSubmission.getAnalysisCleanedState());
+		
+		verify(galaxyHistoriesService, never()).deleteHistory(ANALYSIS_ID);
+		verify(galaxyLibrariesService, never()).deleteLibrary(LIBRARY_ID);
+		verify(galaxyWorkflowService).deleteWorkflow(REMOTE_WORKFLOW_ID);
 	}
 
 	/**

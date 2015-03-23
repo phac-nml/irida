@@ -215,14 +215,30 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *            The {@link AnalysisSubmission} to clean.
 	 * @return A {@link Future} with an {@link AnalysisSubmission} object that
 	 *         will be cleaned.
+	 * @throws ExecutionManagerException If there was an error while cleaning up files in the execution manager.
 	 */
 	@Transactional
-	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission) {
+	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(AnalysisCleanedState.CLEANING.equals(analysisSubmission.getAnalysisCleanedState()),
 				"analysisCleanedState not " + AnalysisCleanedState.CLEANING);
+		checkArgument(
+				AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState())
+						|| AnalysisState.ERROR.equals(analysisSubmission.getAnalysisState()), "analysisState must be "
+						+ AnalysisState.COMPLETED + " or " + AnalysisState.ERROR);
 		
-		// TODO do cleanup here
+		// If the submission is in an error state these remote ids aren't guaranteed to exist.
+		if (analysisSubmission.existsRemoteAnalysisId()) {
+			galaxyHistoriesService.deleteHistory(analysisSubmission.getRemoteAnalysisId());
+		}
+		
+		if (analysisSubmission.existsRemoteInputDataId()) {
+			galaxyLibrariesService.deleteLibrary(analysisSubmission.getRemoteInputDataId());
+		}
+		
+		if (analysisSubmission.existsRemoteWorkflowId()) {
+			galaxyWorkflowService.deleteWorkflow(analysisSubmission.getRemoteWorkflowId());
+		}
 
 		AnalysisSubmission cleanedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANED));
