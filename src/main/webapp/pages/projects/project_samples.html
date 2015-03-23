@@ -263,11 +263,9 @@
 					<td>{{entry.sample.organism}}</td>
 					<td>{{entry.sample.collectedBy}}</td>
 					<td>
-						<a class="btn btn-default btn-xs"
-						   data:ng-href="@{'/projects/{{entry.project.id}}'}"
-						   ng-if="entry.sampleType != 'LOCAL'"
-						   href="#">{{entry.project.label}}
-						</a>
+					   <span ng-if="entry.sampleType != 'LOCAL'">
+                            {{entry.project.label}}
+						</span>
 					</td>
 					<td class="createdDate" data-date="{{entry.sample.createdDate}}" tooltip-popup-delay='500'
 					    tooltip-placement="left" tooltip="{{entry.sample.createdDate | date:'medium'}}">
