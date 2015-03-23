@@ -37,6 +37,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private Object executeAnalysesLock = new Object();
 	private Object monitorRunningAnalysesLock = new Object();
 	private Object transferAnalysesResultsLock = new Object();
+	private Object cleanupAnalysesResultsLock = new Object();
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
@@ -209,5 +210,32 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		}
 
 		return returnedSubmission;
+	}
+
+	@Override
+	public Set<Future<AnalysisSubmission>> cleanupAnalysisSubmissions() {
+		synchronized(cleanupAnalysesResultsLock) {
+			logger.trace("Running cleanupAnalysesResultsLock");
+			
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.COMPLETED);
+			analysisSubmissions.addAll(analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.ERROR));
+			
+			Set<Future<AnalysisSubmission>> cleanedSubmissions = Sets.newHashSet();
+			
+			// TODO add condition for cleaning
+			for (AnalysisSubmission submission : analysisSubmissions) {
+				Future<AnalysisSubmission> cleanedSubmissionFuture;
+				try {
+					cleanedSubmissionFuture = analysisExecutionService.cleanupSubmission(submission);
+					cleanedSubmissions.add(cleanedSubmissionFuture);
+				} catch (ExecutionManagerException e) {
+					logger.error("Error cleaning submission " + submission, e);
+				}
+			}
+			
+			return cleanedSubmissions;
+		}
 	}
 }

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -31,6 +31,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -134,7 +135,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
+		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission), 1);
 	}
 
 	/**
@@ -151,7 +152,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId);
 
-		validateFullAnalysis(Sets.newHashSet(analysisSubmission, analysisSubmission2), 2);
+		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission, analysisSubmission2), 2);
 	}
 	
 	/**
@@ -162,7 +163,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccessNoSubmissions() throws Exception {
-		validateFullAnalysis(Sets.newHashSet(), 0);
+		validateFullAnalysisWithCleanup(Sets.newHashSet(), 0);
 	}
 
 	/**
@@ -181,7 +182,11 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		analysisSubmission2.setAnalysisState(AnalysisState.ERROR);
 		analysisSubmissionRepository.save(analysisSubmission2);
 
+		// only one of the analyses should be executed
 		validateFullAnalysis(Sets.newHashSet(analysisSubmission, analysisSubmission2), 1);
+		
+		// the analysis in error state should still be cleaned up
+		validateCleanupAnalysis(Sets.newHashSet(analysisSubmission, analysisSubmission2), 2);
 
 		AnalysisSubmission loadedSubmission2 = analysisSubmissionRepository.findOne(analysisSubmission2.getId());
 		assertEquals(AnalysisState.ERROR, loadedSubmission2.getAnalysisState());
@@ -251,6 +256,60 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	
 	/**
 	 * Tests out failing to complete execution of a workflow due to an error
+	 * with the remote analysis id, then failing to clean up the intermediate
+	 * files.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFullAnalysisRunCleanupFailInvalidRemoteAnalysisId() throws Throwable {
+		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
+				validIridaWorkflowId);
+
+		// PREPARE SUBMISSION
+		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
+		assertEquals(1, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.PREPARED, returnedSubmission.getAnalysisState());
+		}
+
+		// EXECUTE SUBMISSION
+		submissionsFutureSet = analysisExecutionScheduledTask.executeAnalyses();
+		assertEquals(1, submissionsFutureSet.size());
+		// wait until finished
+		AnalysisSubmission returnedSubmission = submissionsFutureSet.iterator().next().get();
+		assertEquals(AnalysisState.RUNNING, returnedSubmission.getAnalysisState());
+
+		// Modify remoteAnalysisId so getting the status fails
+		returnedSubmission.setRemoteAnalysisId("invalid");
+		analysisSubmissionRepository.save(returnedSubmission);
+
+		// CHECK GALAXY STATUS
+		submissionsFutureSet = analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		// Should be in error state
+		assertEquals(1, submissionsFutureSet.size());
+		returnedSubmission = submissionsFutureSet.iterator().next().get();
+		assertEquals(AnalysisState.ERROR, returnedSubmission.getAnalysisState());
+
+		submissionsFutureSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
+
+		// Should be in cleaning_error state
+		assertEquals("invalid number of analyses returned", 1, submissionsFutureSet.size());
+		try {
+			returnedSubmission = submissionsFutureSet.iterator().next().get();
+			fail("No exception thrown");
+		} catch (ExecutionException e) {
+			assertEquals("Invalid cleaned state", AnalysisCleanedState.CLEANING_ERROR, analysisSubmissionRepository
+					.findOne(returnedSubmission.getId()).getAnalysisCleanedState());
+		}
+	}
+	
+	/**
+	 * Tests out failing to complete execution of a workflow due to an error
 	 * with the workflow causing a job to fail.
 	 * 
 	 * @throws Throwable
@@ -299,6 +358,50 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 		SecurityContextHolder.clearContext();
 		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
+	}
+	
+	/**
+	 * Performs a full analysis to completion on the passed submissions and cleans up any intermediate files afterwards.
+	 * 
+	 * @param submissions
+	 *            The submission to attempt to perform and validate a full
+	 *            analysis on.
+	 * @param expectedSubmissionsToProcess
+	 *            The expected number of submissions to pick up and process.
+	 * @throws Exception
+	 *             On any exception.
+	 */
+	private void validateFullAnalysisWithCleanup(Set<AnalysisSubmission> submissions, int expectedSubmissionsToProcess)
+		throws Exception {
+		validateFullAnalysis(submissions, expectedSubmissionsToProcess);
+		validateCleanupAnalysis(submissions, expectedSubmissionsToProcess);
+	}
+	
+	/**
+	 * Validates only the cleanup of submissions.
+	 * 
+	 * @param submissions
+	 *            The submission to attempt to clean.
+	 * @param expectedSubmissionsToProcess
+	 *            The expected number of submissions to pick up and process.
+	 * @throws Exception
+	 *             On any exception.
+	 */
+	private void validateCleanupAnalysis(Set<AnalysisSubmission> submissions, int expectedSubmissionsToProcess)
+		throws Exception {
+		
+		for (AnalysisSubmission submission : submissions) {
+			assertEquals("Submission was already cleaned", AnalysisCleanedState.NOT_CLEANED, submission.getAnalysisCleanedState());
+		}
+		
+		// CLEANUP SUBMISSIONS
+		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
+		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals("Submission was not cleaned", AnalysisCleanedState.CLEANED, returnedSubmission.getAnalysisCleanedState());
+		}
 	}
 
 	/**
@@ -352,6 +455,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 			AnalysisSubmission returnedSubmission = submissionFuture.get();
 			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
 			assertEquals(analysisSubmitter, returnedSubmission.getSubmitter());
+			assertEquals("Submission was cleaned", AnalysisCleanedState.NOT_CLEANED, returnedSubmission.getAnalysisCleanedState());
 		}
 	}
 }
