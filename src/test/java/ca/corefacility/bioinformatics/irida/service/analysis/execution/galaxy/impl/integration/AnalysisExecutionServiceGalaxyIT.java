@@ -1550,9 +1550,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
 				.cleanupSubmission(analysisSubmitted);
-		analysisSubmissionCleanedFuture.get();
+		AnalysisSubmission cleanedSubmission = analysisSubmissionCleanedFuture.get();
 		
-		analysisExecutionService.cleanupSubmission(analysisSubmitted);
+		analysisExecutionService.cleanupSubmission(cleanedSubmission);
 	}
 
 	/**
@@ -1597,7 +1597,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 			assertEquals("The AnalysisState was changed from COMPLETED", AnalysisState.COMPLETED, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
 			assertEquals("The AnalysisCleanedState was not changed to error", AnalysisCleanedState.CLEANING_ERROR,
-					analysisSubmissionService.read(analysisSubmission.getId()));
+					analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState());
 
 			// pull out real exception
 			throw e.getCause();

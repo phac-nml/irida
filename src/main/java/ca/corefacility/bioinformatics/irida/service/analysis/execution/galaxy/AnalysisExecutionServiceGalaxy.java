@@ -33,26 +33,31 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	private final AnalysisSubmissionService analysisSubmissionService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync;
+	private final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync;
 
 	/**
-	 * Builds a new {@link AnalysisExecutionServiceGalaxy} with the
-	 * given information.
+	 * Builds a new {@link AnalysisExecutionServiceGalaxy} with the given
+	 * information.
 	 * 
 	 * @param analysisSubmissionService
 	 *            A service for analysis submissions.
 	 * @param galaxyHistoriesService
 	 *            A service for Galaxy histories.
 	 * @param analysisExecutionServiceGalaxyAsync
-	 *            An {@link AnalysisExecutionServiceGalaxyAsync} for
-	 *            executing the tasks asynchronously.
+	 *            An {@link AnalysisExecutionServiceGalaxyAsync} for executing
+	 *            the tasks asynchronously.
+	 * @param analysisExecutionServiceGalaxyCleanupAsync
+	 *            A service for cleaning up files in Galaxy.
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionService analysisSubmissionService,
 			GalaxyHistoriesService galaxyHistoriesService,
-			AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync) {
+			AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync,
+			AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.analysisExecutionServiceGalaxyAsync = analysisExecutionServiceGalaxyAsync;
+		this.analysisExecutionServiceGalaxyCleanupAsync = analysisExecutionServiceGalaxyCleanupAsync;
 	}
 
 	/**
@@ -133,6 +138,6 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		AnalysisSubmission cleaningAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANING));
 
-		return analysisExecutionServiceGalaxyAsync.cleanupSubmission(cleaningAnalysis);
+		return analysisExecutionServiceGalaxyCleanupAsync.cleanupSubmission(cleaningAnalysis);
 	}
 }

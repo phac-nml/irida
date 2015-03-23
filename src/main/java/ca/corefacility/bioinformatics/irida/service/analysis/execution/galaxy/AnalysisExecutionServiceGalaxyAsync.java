@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -26,8 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Prep
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -50,8 +47,6 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	private final AnalysisService analysisService;
 	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
-	private final GalaxyHistoriesService galaxyHistoriesService;
-	private final GalaxyLibrariesService galaxyLibrariesService;
 	private final IridaWorkflowsService iridaWorkflowsService;
 
 	/**
@@ -64,10 +59,6 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *            A service for analysis results.
 	 * @param galaxyWorkflowService
 	 *            A service for Galaxy workflows.
-	 * @param galaxyHistoriesService
-	 *            A service for Galaxy histories.
-	 * @param galaxyLibrariesService
-	 *            A service for Galaxy libraries.
 	 * @param workspaceService
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
@@ -76,13 +67,10 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	@Autowired
 	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
-			GalaxyHistoriesService galaxyHistoriesService, GalaxyLibrariesService galaxyLibrariesService,
 			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
-		this.galaxyHistoriesService = galaxyHistoriesService;
-		this.galaxyLibrariesService = galaxyLibrariesService;
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
@@ -205,44 +193,5 @@ public class AnalysisExecutionServiceGalaxyAsync {
 				ImmutableMap.of("analysis", savedAnalysis, "analysisState", AnalysisState.COMPLETED));
 
 		return new AsyncResult<>(completedSubmission);
-	}
-
-	/**
-	 * Cleans up any intermediate files from this {@link AnalysisSubmission} in
-	 * the execution manager.
-	 * 
-	 * @param analysisSubmission
-	 *            The {@link AnalysisSubmission} to clean.
-	 * @return A {@link Future} with an {@link AnalysisSubmission} object that
-	 *         will be cleaned.
-	 * @throws ExecutionManagerException If there was an error while cleaning up files in the execution manager.
-	 */
-	@Transactional
-	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission) throws ExecutionManagerException {
-		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkArgument(AnalysisCleanedState.CLEANING.equals(analysisSubmission.getAnalysisCleanedState()),
-				"analysisCleanedState not " + AnalysisCleanedState.CLEANING);
-		checkArgument(
-				AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState())
-						|| AnalysisState.ERROR.equals(analysisSubmission.getAnalysisState()), "analysisState must be "
-						+ AnalysisState.COMPLETED + " or " + AnalysisState.ERROR);
-		
-		// If the submission is in an error state these remote ids aren't guaranteed to exist.
-		if (analysisSubmission.existsRemoteAnalysisId()) {
-			galaxyHistoriesService.deleteHistory(analysisSubmission.getRemoteAnalysisId());
-		}
-		
-		if (analysisSubmission.existsRemoteInputDataId()) {
-			galaxyLibrariesService.deleteLibrary(analysisSubmission.getRemoteInputDataId());
-		}
-		
-		if (analysisSubmission.existsRemoteWorkflowId()) {
-			galaxyWorkflowService.deleteWorkflow(analysisSubmission.getRemoteWorkflowId());
-		}
-
-		AnalysisSubmission cleanedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANED));
-
-		return new AsyncResult<>(cleanedAnalysis);
 	}
 }

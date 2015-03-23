@@ -76,7 +76,7 @@ public class AnalysisExecutionServiceAspect {
 	 * @param exception
 	 *            The exception that was thrown.
 	 */
-	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.cleanupSubmission(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))
+	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))
 	public void toErrorStateOnCleaningException(AnalysisSubmission analysisSubmission, Exception exception) {
 		logger.error("Error occured while cleaning submission: " + analysisSubmission + " changing to cleaned state "
 				+ AnalysisCleanedState.CLEANING_ERROR, exception);
