@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
@@ -505,13 +506,13 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * Deletes a history from Galaxy with the given id.
 	 * @param historyId The id of the history to delete. 
 	 * @return A {@link HistoryDeleteResponse} from Galaxy.
-	 * @throws ExecutionManagerException If there was an error deleting a history.
+	 * @throws DeleteGalaxyObjectFailedException If there was an error deleting a history.
 	 */
-	public HistoryDeleteResponse deleteHistory(final String historyId) throws ExecutionManagerException {
+	public HistoryDeleteResponse deleteHistory(final String historyId) throws DeleteGalaxyObjectFailedException {
 		try {
 			return historiesClient.deleteHistory(historyId);
 		} catch (RuntimeException e) {
-			throw new ExecutionManagerException(e);
+			throw new DeleteGalaxyObjectFailedException("Error while deleting history with id " + historyId, e);
 		}
 	}
 }

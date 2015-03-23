@@ -195,7 +195,7 @@ public class GalaxyWorkflowService {
 						+ response.getClientResponseStatus() + ", content=" + response.getEntity(String.class));
 			}
 		} catch (RuntimeException e) {
-			throw new DeleteGalaxyObjectFailedException(e);
+			throw new DeleteGalaxyObjectFailedException("Error while deleting workflow with id " + workflowId, e);
 		}
 	}
 }

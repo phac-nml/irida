@@ -210,7 +210,7 @@ public class GalaxyLibrariesService {
 						+ response.getEntity(String.class));
 			}
 		} catch (RuntimeException e) {
-			throw new DeleteGalaxyObjectFailedException(e);
+			throw new DeleteGalaxyObjectFailedException("Error while deleting library with id " + libraryId, e);
 		}
 	}
 }
