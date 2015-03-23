@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
@@ -701,7 +702,7 @@ public class GalaxyHistoriesServiceIT {
 	 * Tests deleting a history from Galaxy and failing.
 	 * @throws ExecutionManagerException 
 	 */
-	@Test(expected=ExecutionManagerException.class)
+	@Test(expected=DeleteGalaxyObjectFailedException.class)
 	public void testDeleteHistoryFail() throws ExecutionManagerException {
 		galaxyHistory.deleteHistory("invalid");
 	}
