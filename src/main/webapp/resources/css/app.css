@@ -7648,6 +7648,11 @@ html, body {
   height: 100%;
 }
 
+/* line 5, ../../styles/layouts/_all.scss */
+h1, h2, h3, h4, h5, h6 {
+  word-wrap: break-word;
+}
+
 @-webkit-keyframes move-up-down {
   0% {
     transform: translate3d(0, -65px, 0px);
