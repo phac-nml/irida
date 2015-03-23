@@ -288,6 +288,29 @@ public class AnalysisController {
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
 
+	@RequestMapping(value = "/ajax/status/{submissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, String> getAjaxStatusUpdateForAnalysisSubmission(@PathVariable Long submissionId, Locale locale) {
+		Map<String, String> result = new HashMap<>();
+		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(submissionId);
+		AnalysisState state = analysisSubmission.getAnalysisState();
+		result.put("state", messageSource.getMessage("analysis.state." + state.toString(), null, locale));
+		if (!state.equals(AnalysisState.ERROR)) {
+			float percentComplete = 0;
+			try {
+				percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
+						analysisSubmission.getId());
+				result.put("percentComplete", Float.toString(percentComplete));
+			} catch (ExecutionManagerException e) {
+				logger.error("Error getting the percentage complete", e);
+				result.put("percentageComplete", "");
+			}
+		}
+		else {
+			result.put("percentageComplete", "100");
+		}
+		return result;
+	}
+
 	/**
 	 * Generate the model for the analyses page.
 	 *
