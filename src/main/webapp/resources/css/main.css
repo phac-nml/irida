@@ -45,12 +45,16 @@
 .dataTables_filter input[type='search']:focus {
   background-color: white;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+  -o-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+  -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
 }
 
 /* line 1, ../../styles/components/_magnific-popup.scss */
 .image-link {
   cursor: -webkit-zoom-in;
+  cursor: -moz-zoom-in;
   cursor: zoom-in;
 }
 
@@ -60,6 +64,9 @@
 .mfp-with-zoom.mfp-bg {
   opacity: 0;
   -webkit-backface-visibility: hidden;
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
 }
 
@@ -201,12 +208,8 @@
 .sidebar__item {
   border-top: 1px solid #f3f3f3;
   padding: .3em 0.5em;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
 }
 /* line 73, ../../styles/components/_panels.scss */
 .sidebar__item > div {
@@ -222,9 +225,7 @@
 .sidebar__value {
   color: #232323;
   text-align: right;
-  -webkit-flex-grow: 2;
-      -ms-flex-positive: 2;
-          flex-grow: 2;
+  flex-grow: 2;
 }
 
 /* line 2, ../../styles/pages/_sequenceFile.scss */
@@ -300,4 +301,24 @@ iframe.remote-api-frame {
 /* line 55, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
+}
+
+/* line 57, ../../styles/main.scss */
+.sample-row, .sample-type-selector {
+  border-left: 1rem solid transparent;
+}
+
+/* line 60, ../../styles/main.scss */
+.local-sample {
+  border-color: #133b54;
+}
+
+/* line 63, ../../styles/main.scss */
+.associated-sample {
+  border-color: #43ac6a;
+}
+
+/* line 66, ../../styles/main.scss */
+.remote-sample {
+  border-color: #a3a300;
 }

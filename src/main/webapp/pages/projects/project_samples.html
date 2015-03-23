@@ -105,21 +105,21 @@
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu noclose" role="menu">
-						<li>
+						<li class="sample-type-selector local-sample">
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
 								<span th:text="#{project.samples.display.local(${project.label})}">_Local Samples_</span>
 							</label>
 
 						</li>
-						<li>
+						<li class="sample-type-selector associated-sample">
 							<label> <input id="displayAssociated" type="checkbox"
 							               ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayAssociated"/>
 								<span th:text="#{project.samples.display.associated}">_Associated Samples_</span>
 							</label>
 						</li>
-                        <li>
+                        <li class="sample-type-selector remote-sample">
                             <label> <input id="displayRemote" type="checkbox"
                                            ng-change="displayCtrl.displaySamples()"
                                            ng-model="displayCtrl.displayRemote"/>
@@ -244,7 +244,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': entry.selected}"
+				<tr class="sample-row" ng-class="{'selected': entry.selected, 'local-sample' : entry.sampleType=='LOCAL', 'associated-sample' : entry.sampleType=='ASSOCIATED', 'remote-sample' : entry.sampleType=='REMOTE'}"
 				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
 						<div class="large-checkbox">
