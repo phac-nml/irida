@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -41,8 +42,8 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -87,10 +88,15 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private AnalysisSubmission analysisFinishedRunning;
 	private AnalysisSubmission analysisCompleting;
 	private AnalysisSubmission analysisCompleted;
+	private AnalysisSubmission analysisCompletedCleaning;
+	private AnalysisSubmission analysisCompletedCleaned;
 	private AnalysisSubmission analysisError;
+	private AnalysisSubmission analysisErrorCleaning;
+	private AnalysisSubmission analysisErrorCleaned;
 
 	private static final UUID WORKFLOW_ID = UUID.randomUUID();
 	private static final String REMOTE_WORKFLOW_ID = "1";
+	private static final String REMOTE_UPLOADED_WORKFLOW_ID = "5";
 	private static final Long INTERNAL_ANALYSIS_ID = 2l;
 	private static final String ANALYSIS_ID = "2";
 	private static final String LIBRARY_ID = "3";
@@ -123,7 +129,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisFinishedRunning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
 		analysisCompleting = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
 		analysisCompleted = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisCompletedCleaning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisCompletedCleaned = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
 		analysisError = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisErrorCleaning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisErrorCleaned = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
@@ -180,7 +190,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisFinishedRunning.setRemoteInputDataId(LIBRARY_ID);
 
 		analysisCompleting.setId(INTERNAL_ANALYSIS_ID);
-		analysisCompleting.setAnalysisState(AnalysisState.SUBMITTING);
+		analysisCompleting.setAnalysisState(AnalysisState.COMPLETING);
 		analysisCompleting.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
 		analysisCompleting.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisCompleting.setRemoteInputDataId(LIBRARY_ID);
@@ -191,21 +201,53 @@ public class AnalysisExecutionServiceGalaxyTest {
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
 
 		analysisCompleted.setId(INTERNAL_ANALYSIS_ID);
-		analysisCompleted.setAnalysisState(AnalysisState.SUBMITTING);
+		analysisCompleted.setAnalysisState(AnalysisState.COMPLETED);
 		analysisCompleted.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
 		analysisCompleted.setRemoteAnalysisId(ANALYSIS_ID);
+		analysisCompleted.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisCompleted.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 		analysisCompleted.setAnalysis(analysisResults);
 		analysisCompleted.setRemoteInputDataId(LIBRARY_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
 						ImmutableMap.of("analysis", analysisResults, "analysisState", AnalysisState.COMPLETED)))
 				.thenReturn(analysisCompleted);
+		
+		analysisCompletedCleaning.setId(INTERNAL_ANALYSIS_ID);
+		analysisCompletedCleaning.setAnalysisState(AnalysisState.COMPLETED);
+		analysisCompletedCleaning.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisCompletedCleaning.setRemoteAnalysisId(ANALYSIS_ID);
+		analysisCompletedCleaning.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisCompletedCleaning.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
+		analysisCompletedCleaning.setAnalysis(analysisResults);
+		analysisCompletedCleaning.setRemoteInputDataId(LIBRARY_ID);
+		
+		analysisCompletedCleaned.setId(INTERNAL_ANALYSIS_ID);
+		analysisCompletedCleaned.setAnalysisState(AnalysisState.COMPLETED);
+		analysisCompletedCleaned.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisCompletedCleaned.setRemoteAnalysisId(ANALYSIS_ID);
+		analysisCompletedCleaned.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisCompletedCleaned.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
+		analysisCompletedCleaned.setAnalysis(analysisResults);
+		analysisCompletedCleaned.setRemoteInputDataId(LIBRARY_ID);
 
 		analysisError.setId(INTERNAL_ANALYSIS_ID);
 		analysisError.setAnalysisState(AnalysisState.ERROR);
+		analysisError.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisError.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
 						ImmutableMap.of("analysisState", AnalysisState.ERROR))).thenReturn(analysisError);
+		
+		analysisErrorCleaning.setId(INTERNAL_ANALYSIS_ID);
+		analysisErrorCleaning.setAnalysisState(AnalysisState.ERROR);
+		analysisErrorCleaning.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisErrorCleaning.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
+		
+		analysisErrorCleaned.setId(INTERNAL_ANALYSIS_ID);
+		analysisErrorCleaned.setAnalysisState(AnalysisState.ERROR);
+		analysisErrorCleaned.setRemoteWorkflowId(REMOTE_UPLOADED_WORKFLOW_ID);
+		analysisErrorCleaned.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
 
 		analysisPrepared.setRemoteAnalysisId(ANALYSIS_ID);
 
@@ -511,5 +553,67 @@ public class AnalysisExecutionServiceGalaxyTest {
 		} catch (ExecutionException e) {
 			throw e.getCause();
 		}
+	}
+	
+	/**
+	 * Tests successfully executing the cleanup method on a completed
+	 * submission.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void testCleanupCompletedSubmissionSuccess() throws ExecutionManagerException, InterruptedException,
+			ExecutionException {
+		when(
+				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
+						ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANING))).thenReturn(
+				analysisCompletedCleaning);
+		when(
+				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
+						ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANED))).thenReturn(
+				analysisCompletedCleaned);
+
+		Future<AnalysisSubmission> cleaningSubmissionFuture = workflowManagement.cleanupSubmission(analysisCompleted);
+		AnalysisSubmission cleaningSubmission = cleaningSubmissionFuture.get();
+		assertEquals(AnalysisCleanedState.CLEANED, cleaningSubmission.getAnalysisCleanedState());
+	}
+
+	/**
+	 * Tests successfully executing the cleanup method on a error submission.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void testCleanupErrorSubmissionSuccess() throws ExecutionManagerException, InterruptedException,
+			ExecutionException {
+		when(
+				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
+						ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANING))).thenReturn(
+				analysisErrorCleaning);
+		when(
+				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
+						ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANED))).thenReturn(
+				analysisErrorCleaned);
+
+		Future<AnalysisSubmission> cleaningSubmissionFuture = workflowManagement.cleanupSubmission(analysisError);
+		AnalysisSubmission cleaningSubmission = cleaningSubmissionFuture.get();
+		assertEquals(AnalysisCleanedState.CLEANED, cleaningSubmission.getAnalysisCleanedState());
+	}
+
+	/**
+	 * Tests failure to clean up a running submission.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testCleanupRunningSubmissionFail() throws ExecutionManagerException, InterruptedException,
+			ExecutionException {
+		workflowManagement.cleanupSubmission(analysisRunning);
 	}
 }

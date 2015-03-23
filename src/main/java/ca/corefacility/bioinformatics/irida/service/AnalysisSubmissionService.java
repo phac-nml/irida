@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
@@ -236,20 +235,4 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
 			NoPercentageCompleteException, ExecutionManagerException;
-	
-	/**
-	 * Cleans up any intermediate files for the submission.
-	 * 
-	 * @param id
-	 *            The id of the submission to clean.
-	 * @return The cleaned up {@link AnalysisSubmission}.
-	 * @throws EntityNotFoundException
-	 *             If no such submission exists.
-	 * @throws ExecutionManagerException
-	 *             If there was an issue cleaning up files in the execution
-	 *             manager.
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@Transactional
-	public AnalysisSubmission cleanupSubmission(Long id) throws EntityNotFoundException, ExecutionManagerException;
 }

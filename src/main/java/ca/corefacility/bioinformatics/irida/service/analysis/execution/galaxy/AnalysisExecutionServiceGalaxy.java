@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -112,5 +113,26 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 
 		String analysisId = submittedAnalysis.getRemoteAnalysisId();
 		return galaxyHistoriesService.getStatusForHistory(analysisId);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException {
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkArgument(AnalysisCleanedState.NOT_CLEANED.equals(analysisSubmission.getAnalysisCleanedState()),
+				"cleaned state is not " + AnalysisCleanedState.NOT_CLEANED);
+		checkArgument(
+				AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState())
+						|| AnalysisState.ERROR.equals(analysisSubmission.getAnalysisState()), "analysisState must be "
+						+ AnalysisState.COMPLETED + " or " + AnalysisState.ERROR);
+
+		AnalysisSubmission cleaningAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANING));
+
+		return analysisExecutionServiceGalaxyAsync.cleanupSubmission(cleaningAnalysis);
 	}
 }

@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -193,5 +194,28 @@ public class AnalysisExecutionServiceGalaxyAsync {
 				ImmutableMap.of("analysis", savedAnalysis, "analysisState", AnalysisState.COMPLETED));
 
 		return new AsyncResult<>(completedSubmission);
+	}
+
+	/**
+	 * Cleans up any intermediate files from this {@link AnalysisSubmission} in
+	 * the execution manager.
+	 * 
+	 * @param analysisSubmission
+	 *            The {@link AnalysisSubmission} to clean.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} object that
+	 *         will be cleaned.
+	 */
+	@Transactional
+	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission) {
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkArgument(AnalysisCleanedState.CLEANING.equals(analysisSubmission.getAnalysisCleanedState()),
+				"analysisCleanedState not " + AnalysisCleanedState.CLEANING);
+		
+		// TODO do cleanup here
+
+		AnalysisSubmission cleanedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANED));
+
+		return new AsyncResult<>(cleanedAnalysis);
 	}
 }

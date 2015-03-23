@@ -15,7 +15,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -593,63 +591,6 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetPercentageCompleteFailError() throws EntityNotFoundException, ExecutionManagerException {
 		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(7L);
-	}
-	
-	/**
-	 * Tests cleaning up a submission and failing as the owner (due to not being an admin).
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "aaron", roles = "USER")
-	public void testCleanupSubmissionFailOwner() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.cleanupSubmission(11L);
-	}
-
-	/**
-	 * Tests cleaning up a submission and being denied as a regular (non-owner) user.
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "otheraaron", roles = "USER")
-	public void testCleanupSubmissionDeniedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.cleanupSubmission(11L);
-	}
-
-	/**
-	 * Tests cleaning up a submission and being granted as an admin user.
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
-	 */
-	@Ignore
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testCleanupSubmissionGrantedAdminUser() throws EntityNotFoundException, ExecutionManagerException {
-		AnalysisSubmission cleanedSubmission = analysisSubmissionService.cleanupSubmission(11L);
-		assertEquals("not properly cleaned", AnalysisCleanedState.CLEANED, cleanedSubmission.getAnalysisCleanedState());
-	}
-	
-	/**
-	 * Tests denying cleanup if submission is in state {@link AnalysisCleanedState.NOT_CLEANED}.
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected = IllegalStateException.class)
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testCleanupSubmissionFailNotCleaned() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.cleanupSubmission(10L);
-	}
-	
-	/**
-	 * Tests denying cleanup if submission is in state {@link AnalysisCleanedState.CLEANED}.
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected = IllegalStateException.class)
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testCleanupSubmissionFailCleaned() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.cleanupSubmission(12L);
 	}
 
 	/**

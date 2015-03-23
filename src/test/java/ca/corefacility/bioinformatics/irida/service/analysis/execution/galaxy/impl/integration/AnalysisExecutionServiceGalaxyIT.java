@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
@@ -1431,5 +1432,85 @@ public class AnalysisExecutionServiceGalaxyIT {
 			// pull out real exception
 			throw e.getCause();
 		}
+	}
+	
+	/**
+	 * Tests out cleaning up a completed analysis successfully.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupCompletedAnalysisSuccess() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
+		assertEquals(AnalysisCleanedState.NOT_CLEANED, analysisSubmissionCompleted.getAnalysisCleanedState());
+
+		// Once analysis is complete, attempt to clean up
+		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
+				.cleanupSubmission(analysisSubmissionCompleted);
+		AnalysisSubmission analysisSubmissionCleaned = analysisSubmissionCleanedFuture.get();
+		assertEquals("Analysis submission not properly cleaned", AnalysisCleanedState.CLEANED,
+				analysisSubmissionCleaned.getAnalysisCleanedState());
+	}
+	
+	/**
+	 * Tests out cleaning up an analysis in error successfully.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupErrorAnalysisSuccess() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		analysisSubmitted.setAnalysisState(AnalysisState.ERROR);
+		analysisSubmissionRepository.save(analysisSubmitted);
+
+		// Once analysis is complete, attempt to clean up
+		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
+				.cleanupSubmission(analysisSubmitted);
+		AnalysisSubmission analysisSubmissionCleaned = analysisSubmissionCleanedFuture.get();
+		assertEquals("Analysis submission not properly cleaned", AnalysisCleanedState.CLEANED,
+				analysisSubmissionCleaned.getAnalysisCleanedState());
+	}
+	
+	/**
+	 * Tests out cleaning up a new analysis and failing.
+	 * 
+	 * @throws Exception
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testNewAnalysisError() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+		
+		analysisExecutionService.cleanupSubmission(analysisSubmitted);
 	}
 }
