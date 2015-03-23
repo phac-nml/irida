@@ -470,6 +470,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				+ analysisCleanedState);
 
 		// TODO cleanup code here
+		galaxyHistoriesService.deleteHistory(analysisSubmission.getRemoteAnalysisId());
 
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
 		return analysisSubmissionRepository.save(analysisSubmission);
