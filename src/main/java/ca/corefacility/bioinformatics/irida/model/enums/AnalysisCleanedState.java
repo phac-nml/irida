@@ -21,7 +21,12 @@ public enum AnalysisCleanedState {
 	/**
 	 * Set when an analysis is finished being cleaned.
 	 */
-	CLEANED("CLEANED");
+	CLEANED("CLEANED"),
+	
+	/**
+	 * Indicates that there was an error while cleaning a submission.
+	 */
+	CLEANING_ERROR("CLEANING_ERROR");
 	
 	private static Map<String, AnalysisCleanedState> stateMap = new HashMap<>();
 	private String stateString;

@@ -1554,4 +1554,53 @@ public class AnalysisExecutionServiceGalaxyIT {
 		
 		analysisExecutionService.cleanupSubmission(analysisSubmitted);
 	}
+
+	/**
+	 * Tests out cleaning up a completed analysis and failing due to a Galaxy
+	 * exception.
+	 * @throws Throwable 
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupCompletedAnalysisFailGalaxy() throws Throwable {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
+		assertEquals(AnalysisCleanedState.NOT_CLEANED, analysisSubmissionCompleted.getAnalysisCleanedState());
+		
+		analysisSubmissionCompleted.setRemoteAnalysisId("invalid");
+		analysisSubmissionRepository.save(analysisSubmissionCompleted);
+
+		// Once analysis is complete, attempt to clean up
+		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
+				.cleanupSubmission(analysisSubmissionCompleted);
+		
+		try {
+			analysisSubmissionCleanedFuture.get();
+			fail("No exception thrown");
+		} catch (ExecutionException e) {
+			assertEquals("The AnalysisState was changed from COMPLETED", AnalysisState.COMPLETED, analysisSubmissionService.read(analysisSubmission.getId())
+					.getAnalysisState());
+			assertEquals("The AnalysisCleanedState was not changed to error", AnalysisCleanedState.CLEANING_ERROR,
+					analysisSubmissionService.read(analysisSubmission.getId()));
+
+			// pull out real exception
+			throw e.getCause();
+		}
+	}
 }
