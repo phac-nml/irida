@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Work
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -66,6 +67,8 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock
 	private GalaxyWorkflowService galaxyWorkflowService;
+	@Mock
+	private GalaxyLibrariesService galaxyLibrariesService;
 	@Mock
 	private AnalysisWorkspaceServiceGalaxy analysisWorkspaceService;
 	@Mock
@@ -136,8 +139,8 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisErrorCleaned = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
-				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
-				iridaWorkflowsService);
+				analysisSubmissionService, analysisService, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService,
+				analysisWorkspaceService, iridaWorkflowsService);
 		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService,
 				galaxyHistoriesService, workflowManagementAsync);
 

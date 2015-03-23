@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatform
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -93,6 +94,9 @@ public class AnalysisExecutionServiceTestConfig {
 	private GalaxyHistoriesService galaxyHistoriesService;
 	
 	@Autowired
+	private GalaxyLibrariesService galaxyLibrariesService;
+	
+	@Autowired
 	private GalaxyLibraryBuilder galaxyLibraryBuilder;
 	
 	@Autowired
@@ -109,7 +113,8 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService,
+				analysisWorkspaceService(), iridaWorkflowsService);
 	}
 
 	@Lazy

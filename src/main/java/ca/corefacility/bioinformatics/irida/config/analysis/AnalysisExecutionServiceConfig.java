@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -72,6 +73,9 @@ public class AnalysisExecutionServiceConfig {
 	private GalaxyHistoriesService galaxyHistoriesService;
 	
 	@Autowired
+	private GalaxyLibrariesService galaxyLibrariesService;
+	
+	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	@Autowired
@@ -91,7 +95,8 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService, 
+				analysisWorkspaceService(), iridaWorkflowsService);
 	}
 
 	@Lazy

@@ -26,6 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Prep
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -48,11 +50,13 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	private final AnalysisService analysisService;
 	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
+	private final GalaxyHistoriesService galaxyHistoriesService;
+	private final GalaxyLibrariesService galaxyLibrariesService;
 	private final IridaWorkflowsService iridaWorkflowsService;
 
 	/**
-	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with
-	 * the given information.
+	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with the given
+	 * information.
 	 * 
 	 * @param analysisSubmissionService
 	 *            A service for analysis submissions.
@@ -60,6 +64,10 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *            A service for analysis results.
 	 * @param galaxyWorkflowService
 	 *            A service for Galaxy workflows.
+	 * @param galaxyHistoriesService
+	 *            A service for Galaxy histories.
+	 * @param galaxyLibrariesService
+	 *            A service for Galaxy libraries.
 	 * @param workspaceService
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
@@ -68,10 +76,13 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	@Autowired
 	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
+			GalaxyHistoriesService galaxyHistoriesService, GalaxyLibrariesService galaxyLibrariesService,
 			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
+		this.galaxyHistoriesService = galaxyHistoriesService;
+		this.galaxyLibrariesService = galaxyLibrariesService;
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
