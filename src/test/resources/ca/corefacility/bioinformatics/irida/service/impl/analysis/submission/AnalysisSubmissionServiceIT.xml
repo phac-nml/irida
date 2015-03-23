@@ -60,12 +60,6 @@
 	<analysis_submission id="10" name="my analysis"
 		remote_analysis_id="1" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
 		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1" analysis_cleaned_state="NOT_CLEANED"/>
-	<analysis_submission id="11" name="my analysis"
-		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
-		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1" analysis_cleaned_state="CLEANING"/>
-	<analysis_submission id="12" name="my analysis"
-		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
-		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1" analysis_cleaned_state="CLEANED"/>
     <workflow_named_parameters id="1" created_date="2014-02-06 10:01:02" name="named parameters" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" />
     <workflow_named_parameter_values named_parameters_id="1" named_parameter_name="A really cool parameter" named_parameter_value="A really cool value" />
 </dataset>
