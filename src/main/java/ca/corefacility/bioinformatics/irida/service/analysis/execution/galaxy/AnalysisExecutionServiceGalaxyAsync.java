@@ -50,8 +50,8 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	private final IridaWorkflowsService iridaWorkflowsService;
 
 	/**
-	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with the given
-	 * information.
+	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with
+	 * the given information.
 	 * 
 	 * @param analysisSubmissionService
 	 *            A service for analysis submissions.
