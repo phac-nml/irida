@@ -79,7 +79,8 @@ public class AssociatedProjectsController {
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
-			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService, SampleRemoteService sampleRemoteService) {
+			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService,
+			SampleRemoteService sampleRemoteService) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectService = projectService;
@@ -378,17 +379,30 @@ public class AssociatedProjectsController {
 		return ImmutableMap.of("samples", sampleList);
 	}
 
+	/**
+	 * Get the samples from {@link RemoteRelatedProject}s for a given project
+	 * 
+	 * @param projectId
+	 *            The ID of the current project
+	 * @return A {@code Map<String,Object>} containing a list of remote samples.
+	 */
 	@RequestMapping(value = "/{projectId}/associated/remote/samples")
 	public Map<String, Object> getRemoteAssociatedSamplesForProject(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
+
+		// Get the list of remote related projects
 		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
 				.getRemoteProjectsForProject(project);
 
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		for (RemoteRelatedProject rrp : remoteProjectsForProject) {
+			// read the projects from their APIs
 			Project read = projectRemoteService.read(rrp);
+
+			// list samples for project
 			List<Sample> samplesForProject = sampleRemoteService.getSamplesForProject(read);
 
+			// compile json response map
 			List<Map<String, Object>> collect = samplesForProject
 					.stream()
 					.map((s) -> ProjectSamplesController.getSampleMap(s, read,
