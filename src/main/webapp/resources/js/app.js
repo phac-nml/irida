@@ -12,7 +12,7 @@
         'irida.cart'
     ]);
 
-  function MainGalaxyController() {
+  function UIGalaxyController() {
     var vm = this;
 
     //A page is in Galaxy if it's in an iframe and IRIDA was accessed from Galaxy
@@ -53,6 +53,6 @@
             paginationConfig.maxSize = 8;
             paginationConfig.rotate = false;
         })
-      .controller("MainGalaxyController", [MainGalaxyController])
+      .controller("UIGalaxyController", [UIGalaxyController])
     ;
 })();

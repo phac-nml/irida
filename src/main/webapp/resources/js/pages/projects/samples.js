@@ -557,7 +557,7 @@
         vm.export.open = false;
         $modal.open({
           templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.id,
-          controller : 'GalaxyCartDialogCtrl as gCtrl',
+          controller : 'GalaxyDialogCtrl as gCtrl',
           resolve    : {
             openedByCart: function () {
               return false;

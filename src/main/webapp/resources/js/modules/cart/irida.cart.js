@@ -70,7 +70,7 @@
 
             $modal.open({
               templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + firstProjID,
-              controller : 'GalaxyCartDialogCtrl as gCtrl',
+              controller : 'GalaxyDialogCtrl as gCtrl',
               resolve    : {
                 openedByCart: function () {
                   return true;
@@ -223,7 +223,7 @@
     };
   }
 
-  function GalaxyCartDialogCtrl($modalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
+  function GalaxyDialogCtrl($modalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
     "use strict";
     var vm = this;
     vm.showOauthIframe = false;
@@ -302,7 +302,7 @@
       .module('irida.cart', [])
       .service('CartService', ['$rootScope', '$http', '$q', CartService])
     .controller('CartSliderController', ['CartService', '$modal', CartSliderController])
-    .controller('GalaxyCartDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService','GalaxyExportService', 'openedByCart', 'multiProject', GalaxyCartDialogCtrl])
+    .controller('GalaxyDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService','GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
       .directive('cart', [CartDirective])
     ;
