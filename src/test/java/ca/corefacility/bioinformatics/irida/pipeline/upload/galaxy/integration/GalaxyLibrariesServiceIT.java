@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileTy
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -54,7 +53,6 @@ public class GalaxyLibrariesServiceIT {
 	@Autowired
 	private LocalGalaxy localGalaxy;
 	
-	private GalaxyLibrarySearch galaxyLibrarySearch;
 	private GalaxyLibrariesService galaxyLibrariesService;
 	
 	private Path dataFile;
@@ -86,7 +84,6 @@ public class GalaxyLibrariesServiceIT {
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
-		galaxyLibrarySearch = new GalaxyLibrarySearch(librariesClient, localGalaxy.getGalaxyURL());
 		
 		dataFile = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData1.fastq").toURI());
