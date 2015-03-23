@@ -255,7 +255,7 @@
         samplePromises.push(getAssociatedSamples());
       }
       if(getRemote){
-          samplePromises.push(getAssociatedSamples());
+          samplePromises.push(getRemoteAssociatedSamples());
       }
 
       return $q.all(samplePromises).then(function (response) {
@@ -330,7 +330,7 @@
       });
     }
 
-    function getAssociatedSamples(f) {
+    function getRemoteAssociatedSamples(f) {
         _.extend(svc.filter, f || {});
         return base.customGET('associated/remote/samples').then(function (data) {
             return data.samples;
