@@ -24,4 +24,13 @@ public class DeleteGalaxyObjectFailedException extends ExecutionManagerException
 	public DeleteGalaxyObjectFailedException(Throwable cause) {
 		super(cause);
 	}
+	
+	/**
+	 * Constructs a new DeleteGalaxyObjectFailedException with the given message and cause.
+	 * @param message  The message explaining the error.
+	 * @param cause  The cause of this message.
+	 */
+	public DeleteGalaxyObjectFailedException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }
