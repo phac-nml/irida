@@ -8080,6 +8080,12 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
 }
 
+/* line 98, ../../styles/components/_cart.scss */
+.cart-control-bottom .btn {
+  width: 120px;
+  white-space: normal !important;
+}
+
 /* line 4, ../../styles/components/_forms.scss */
 .input-full {
   width: 100%;
