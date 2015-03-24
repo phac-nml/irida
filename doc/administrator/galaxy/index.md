@@ -37,6 +37,7 @@ The main steps needed to install and integrate Galaxy with IRIDA are as follows.
 * Configure Galaxy
 * Galaxy Tools Installation
 * Link up Galaxy with IRIDA
+* Configure Galaxy Data Cleanup
 
 Environment Variables
 ---------------------
@@ -271,6 +272,13 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 
 ![saved-histories.jpg][]
 
+Configure Galaxy Data Cleanup
+-----------------------------
+
+By default IRIDA will not remove any temporary or intermediate files stored in Galaxy while running an analysis, but this can be controlled by adjusting the parameter `irida.analysis.cleanup.days` in the main IRIDA configuration file `/etc/irida/irida.conf`.  This controls the number of days before IRIDA will remove analysis files from Galaxy.
+
+However, these files will only be marked as `DELETED` in Galaxy, not permanently removed.  To permanently remove intermediate analysis files from Galaxy please follow the instructions in the [Purging Histories and Datasets][] documentation.
+
 [Galaxy]: https://wiki.galaxyproject.org/FrontPage
 [irida-galaxy.jpg]: images/irida-galaxy.jpg
 [Galaxy API]: https://wiki.galaxyproject.org/Learn/API
@@ -298,3 +306,4 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [scripts/galaxy]: scripts/galaxy
 [galaxy-installed-repositories.jpg]: images/galaxy-installed-repositories.jpg
 [history-options-icon]: images/history-options-icon.jpg
+[Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
