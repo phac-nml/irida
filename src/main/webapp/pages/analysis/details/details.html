@@ -19,9 +19,9 @@
 <body>
 <main layout:fragment="main">
 	<div class="row">
-		<div class="col-md-12">
-			<h1><th:block th:text="${analysisSubmission.label}"></th:block> <small ng-bind="stateController.percentage + '%'"></small></h1>
-			<progressbar class="active" value="stateController.percentage"></progressbar>
+		<div class="col-md-12 ng-cloak">
+			<h1><th:block th:text="${analysisSubmission.label}"></th:block> <small ng-hide="stateController.state === 'ERROR'" ng-bind="stateController.percentage + '%'"></small></h1>
+			<progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></progressbar>
 	</div>
 	</div>
 	<div class="row">
