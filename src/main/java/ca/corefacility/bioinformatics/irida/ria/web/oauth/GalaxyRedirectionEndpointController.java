@@ -42,7 +42,6 @@ public class GalaxyRedirectionEndpointController {
 		// Get the OAuth2 authorization code
 		OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 		String code = oar.getCode();
-		logger.debug("Received auth code: " + code);
 		model.addAttribute("auth_code", code);
 		
 		session.removeAttribute("galaxyExportToolCallbackURL");
