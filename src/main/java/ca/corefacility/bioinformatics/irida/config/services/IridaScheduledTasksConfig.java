@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
+import java.time.Duration;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +70,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private static final long CLEANUP_TASK_RATE = 60*60*1000;
 	
 	/**
-	 * Defines the number of days a submission must exist before it is cleaned up.
+	 * Defines the time to clean up in number of days a submission must exist before it is cleaned up.
 	 */
 	@Value("${irida.analysis.cleanup.days}")
 	private Double daysToCleanup;
@@ -139,9 +141,11 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 			logger.info("No irida.analysis.cleanup.days set, defaulting to no cleanup");
 			return CleanupAnalysisSubmissionCondition.NEVER_CLEANUP;
 		} else {
-			logger.info("Setting daysToCleanup to be irida.analysis.cleanup.days=" + daysToCleanup);
-//			return new CleanupAnalysisSubmissionConditionAge(daysToCleanup);
-			return null;
+			logger.info("Setting daysToCleanup to be irida.analysis.cleanup.time=" + daysToCleanup);
+			
+			// Converts fraction of day to a millisecond value
+			long millisToCleanup = Math.round(daysToCleanup * TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
+			return new CleanupAnalysisSubmissionConditionAge(Duration.ofMillis(millisToCleanup));
 		}
 	}
 
