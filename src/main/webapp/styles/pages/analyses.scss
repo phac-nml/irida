@@ -53,10 +53,13 @@ $states: (
 table {
   table-layout: fixed!important;
   margin-bottom: 0!important;
+  table-layout:fixed;
+  width:100%;
 }
 tr {
   color: slategrey;
   .progress {
+    box-shadow: none;
     margin-bottom: 0;
     border-radius: 0;
     background: transparent;
@@ -68,6 +71,10 @@ tr {
     color: $color-grey-darker;
     text-align: left;
     font-size: 1rem;
+  }
+  a.btn {
+    white-space: normal;
+    word-break: break-all;
   }
 }
 td.para-key {

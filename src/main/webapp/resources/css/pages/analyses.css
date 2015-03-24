@@ -1,160 +1,106 @@
-/* line 3, ../../../styles/pages/analyses.scss */
 h1 {
-  margin: 0;
-}
+  margin: 0; }
 
-/* line 19, ../../../styles/pages/analyses.scss */
 .analysis__state {
-  border-left: 1rem solid transparent;
-}
+  border-left: 1rem solid transparent; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--new {
-  border-color: #3092d0;
-}
+  border-color: #3092d0; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--preparing {
-  border-color: #2675a7;
-}
+  border-color: #2675a7; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--prepared {
-  border-color: #1c587e;
-}
+  border-color: #1c587e; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--submitting {
-  border-color: #133b54;
-}
+  border-color: #133b54; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--running {
-  border-color: #133B54;
-}
+  border-color: #133B54; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--finished_running {
-  border-color: #43AC6A;
-}
+  border-color: #43AC6A; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--completing {
-  border-color: #61c185;
-}
+  border-color: #61c185; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--completed {
-  border-color: #66CD00;
-}
+  border-color: #66CD00; }
 
-/* line 24, ../../../styles/pages/analyses.scss */
 .analysis__state--error {
-  border-color: #F08A24;
-}
+  border-color: #F08A24; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--new {
-  border-top: 6px solid #3092d0;
-}
+  border-top: 6px solid #3092d0; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--preparing {
-  border-top: 6px solid #2675a7;
-}
+  border-top: 6px solid #2675a7; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--prepared {
-  border-top: 6px solid #1c587e;
-}
+  border-top: 6px solid #1c587e; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--submitting {
-  border-top: 6px solid #133b54;
-}
+  border-top: 6px solid #133b54; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--running {
-  border-top: 6px solid #133B54;
-}
+  border-top: 6px solid #133B54; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--finished_running {
-  border-top: 6px solid #43AC6A;
-}
+  border-top: 6px solid #43AC6A; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--completing {
-  border-top: 6px solid #61c185;
-}
+  border-top: 6px solid #61c185; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--completed {
-  border-top: 6px solid #66CD00;
-}
+  border-top: 6px solid #66CD00; }
 
-/* line 30, ../../../styles/pages/analyses.scss */
 .analysis__alert--error {
-  border-top: 6px solid #F08A24;
-}
+  border-top: 6px solid #F08A24; }
 
-/* line 35, ../../../styles/pages/analyses.scss */
 .image-preview {
-  text-align: center;
-}
+  text-align: center; }
 
-/* line 39, ../../../styles/pages/analyses.scss */
 .nav-tabs {
-  margin-top: 1rem;
-}
+  margin-top: 1rem; }
 
-/* line 42, ../../../styles/pages/analyses.scss */
 .tab-pane {
   padding: 1rem;
   border: 1px solid #dddddd;
-  border-top: none;
-}
+  border-top: none; }
 
-/* line 47, ../../../styles/pages/analyses.scss */
 .parameters {
   margin-left: 2rem;
   border: 1px solid #dddddd;
   border-top: none;
-  border-radius: 4px;
-}
+  border-radius: 4px; }
 
-/* line 53, ../../../styles/pages/analyses.scss */
 table {
   table-layout: fixed !important;
   margin-bottom: 0 !important;
-}
+  table-layout: fixed;
+  width: 100%; }
 
-/* line 57, ../../../styles/pages/analyses.scss */
 tr {
-  color: slategrey;
-}
-/* line 59, ../../../styles/pages/analyses.scss */
-tr .progress {
-  margin-bottom: 0;
-  border-radius: 0;
-  background: transparent;
-  border: none;
-}
-/* line 65, ../../../styles/pages/analyses.scss */
-tr .progress-bar {
-  height: 2px;
-  border-bottom: 1px solide #f3f3f3;
-  color: #939393;
-  text-align: left;
-  font-size: 1rem;
-}
+  color: slategrey; }
+  tr .progress {
+    box-shadow: none;
+    margin-bottom: 0;
+    border-radius: 0;
+    background: transparent;
+    border: none; }
+  tr .progress-bar {
+    height: 2px;
+    border-bottom: 1px solide #f3f3f3;
+    color: #939393;
+    text-align: left;
+    font-size: 1rem; }
+  tr a.btn {
+    white-space: normal;
+    word-break: break-all; }
 
-/* line 73, ../../../styles/pages/analyses.scss */
 td.para-key {
-  word-wrap: break-word;
-}
+  word-wrap: break-word; }
 
-/* line 76, ../../../styles/pages/analyses.scss */
 td.para-value {
-  text-align: right;
-}
+  text-align: right; }
