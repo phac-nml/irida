@@ -4,7 +4,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -27,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTa
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
@@ -41,6 +45,8 @@ import com.google.common.collect.Lists;
 @Configuration
 @EnableScheduling
 public class IridaScheduledTasksConfig implements SchedulingConfigurer {
+
+	private static final Logger logger = LoggerFactory.getLogger(IridaScheduledTasksConfig.class);
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -60,6 +66,12 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 * Rate in milliseconds of the cleanup task.
 	 */
 	private static final long CLEANUP_TASK_RATE = 60*60*1000;
+	
+	/**
+	 * Defines the number of days a submission must exist before it is cleaned up.
+	 */
+	@Value("${irida.analysis.cleanup.days}")
+	private Integer daysToCleanup;
 	
 	/**
 	 * Cycle through any newly created submissions and prepare them for
@@ -111,7 +123,25 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@DependsOn("analysisSubmissionCleanupService")
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
-		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP);
+		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService,
+				cleanupAnalysisSubmissionCondition());
+	}
+
+	/**
+	 * Builds a condition object defining the conditions under which an analysis
+	 * submission should be cleaned up.
+	 * 
+	 * @return A {@link CleanupAnalysisSubmissionConditionAge}.
+	 */
+	@Bean
+	public CleanupAnalysisSubmissionCondition cleanupAnalysisSubmissionCondition() {
+		if (daysToCleanup == null) {
+			logger.info("No irida.analysis.cleanup.days set, defaulting to no cleanup");
+			return CleanupAnalysisSubmissionCondition.NEVER_CLEANUP;
+		} else {
+			logger.info("Setting daysToCleanup to be irida.analysis.cleanup.days=" + daysToCleanup);
+			return new CleanupAnalysisSubmissionConditionAge(daysToCleanup);
+		}
 	}
 
 	/**
