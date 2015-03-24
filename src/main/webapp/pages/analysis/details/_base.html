@@ -8,6 +8,7 @@
 
   <div layout:fragment="page" ng-app="irida.analysis"
        th:with="isCompleted=${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'COMPLETED')},
+        isError=${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'ERROR')},
         analysis=${analysisSubmission.getAnalysis()}">
     <main class="col-md-9 col-md-push-3" layout:fragment="main">
 
@@ -15,7 +16,7 @@
     <aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
       <div class="sidebar">
         <div class="sidebar__heading" th:classappend="${'analysis__alert--' + #strings.toLowerCase(analysisSubmission.analysisState)}">
-          <h2 th:text="#{analysis.sidebar.details}">__NAME__</h2>
+          <h2 th:text="#{analysis.sidebar.details}">__Analysis_Details__</h2>
         </div>
         <div class="sidebar__body">
           <div class="sidebar__item">
