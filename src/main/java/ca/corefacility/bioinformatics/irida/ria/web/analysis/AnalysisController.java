@@ -295,7 +295,8 @@ public class AnalysisController {
 		Map<String, String> result = new HashMap<>();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(submissionId);
 		AnalysisState state = analysisSubmission.getAnalysisState();
-		result.put("state", messageSource.getMessage("analysis.state." + state.toString(), null, locale));
+		result.put("state", state.toString());
+		result.put("stateLang", messageSource.getMessage("analysis.state." + state.toString(), null, locale));
 		if (!state.equals(AnalysisState.ERROR)) {
 			float percentComplete = 0;
 			try {
@@ -306,8 +307,6 @@ public class AnalysisController {
 				logger.error("Error getting the percentage complete", e);
 				result.put("percentageComplete", "");
 			}
-		} else {
-			result.put("percentageComplete", "100");
 		}
 		return result;
 	}

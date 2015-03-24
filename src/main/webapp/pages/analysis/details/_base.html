@@ -43,7 +43,7 @@
               <i class="fa fa-history"></i>
             </div>
             <div th:text="#{analysis.details.state}">_State_</div>
-            <div class="sidebar__value" ng-bind="stateController.state"></div>
+            <div class="sidebar__value" ng-bind="stateController.stateLang"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
@@ -78,7 +78,7 @@
   </div>
   <th:block layout:fragment="page-scripts">
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-    <script src="/resources/js/app/analysis/analysis.js" th:src="@{/resources/js/app/analysis/analysis.js}"></script>
+    <script src="/resources/js/app/analysis/analysis-min.js" th:src="@{/resources/js/app/analysis/analysis-min.js}"></script>
     <th:block layout:fragment="pageScripts"></th:block>
     <th:block layout:fragment="previewScripts"></th:block>
 

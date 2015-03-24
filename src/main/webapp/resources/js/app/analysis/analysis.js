@@ -1,3 +1,5 @@
+/* global angular, ANALYSIS_PAGE */
+
 (function () {
 
   /**
@@ -56,7 +58,7 @@
             window.location.reload();
           }
           fn(data);
-        })
+        });
       }, 5000);
     }
 
@@ -67,7 +69,7 @@
     svc.getAnalysisState = function (fn) {
       _getState().then(function (data) {
         fn(data);
-        if (parseInt(data.percentComplete) != 100) {
+        if (parseInt(data.percentComplete) !== 100) {
           _poll(fn);
         }
       });
@@ -91,6 +93,7 @@
     function initialize() {
       return AnalysisService.getAnalysisState(function (data) {
         vm.state = data.state;
+        vm.stateLang = data.stateLang;
         vm.percentage = parseFloat(data.percentComplete);
         vm.stateClass = _createClass(vm.state);
       });
@@ -113,4 +116,5 @@
     .service('AnalysisService', ['$http', '$interval', AnalysisService])
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
+  ;
 })();
