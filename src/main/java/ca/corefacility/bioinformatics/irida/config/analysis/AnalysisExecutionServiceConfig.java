@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -20,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
@@ -72,6 +74,9 @@ public class AnalysisExecutionServiceConfig {
 	private GalaxyHistoriesService galaxyHistoriesService;
 	
 	@Autowired
+	private GalaxyLibrariesService galaxyLibrariesService;
+	
+	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	@Autowired
@@ -84,7 +89,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {
 		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
-				analysisExecutionServiceGalaxyAsync());
+				analysisExecutionServiceGalaxyAsync(), analysisExecutionServiceGalaxyCleanupAsync());
 	}
 
 	@Lazy
@@ -92,6 +97,13 @@ public class AnalysisExecutionServiceConfig {
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
 				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+	}
+	
+	@Lazy
+	@Bean
+	public AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync() {
+		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionService,
+				galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 	}
 
 	@Lazy

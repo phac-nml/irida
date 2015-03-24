@@ -88,4 +88,15 @@ public interface AnalysisExecutionService {
 	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
 			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
 			IridaWorkflowAnalysisTypeException;
+
+	/**
+	 * Cleans up any intermediate files in the execution manager for this
+	 * submission.
+	 * 
+	 * @param analysisSubmission
+	 *            The {@link AnalysisSubmission} to clean.
+	 * @return The cleaned-up {@link AnalysisSubmission}.
+	 */
+	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException;
 }
