@@ -44,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.hp.hpl.jena.tdb.store.Hash;
 
 /**
  * Controller for Analysis.
