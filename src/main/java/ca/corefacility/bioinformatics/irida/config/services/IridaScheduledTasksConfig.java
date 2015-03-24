@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
+import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -92,7 +93,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@DependsOn("analysisSubmissionCleanupService")
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
-		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService);
+		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP);
 	}
 
 	/**

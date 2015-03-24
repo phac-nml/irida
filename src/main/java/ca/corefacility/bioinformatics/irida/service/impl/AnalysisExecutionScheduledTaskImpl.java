@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
+import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
 import com.google.common.collect.Sets;
@@ -43,6 +44,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private AnalysisExecutionService analysisExecutionService;
+	private final CleanupAnalysisSubmissionCondition cleanupCondition;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -52,12 +54,16 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 *            A repository for {@link AnalysisSubmission}s.
 	 * @param analysisExecutionServiceGalaxy
 	 *            A service for executing {@link AnalysisSubmission}s.
+	 * @param cleanupCondition
+	 *            The condition defining when an {@link AnalysisSubmission}
+	 *            should be cleaned up.
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionService analysisExecutionServiceGalaxy) {
+			AnalysisExecutionService analysisExecutionServiceGalaxy, CleanupAnalysisSubmissionCondition cleanupCondition) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
+		this.cleanupCondition = cleanupCondition;
 	}
 
 	/**
@@ -212,6 +218,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		return returnedSubmission;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Future<AnalysisSubmission>> cleanupAnalysisSubmissions() {
 		synchronized(cleanupAnalysesResultsLock) {
@@ -224,14 +233,16 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			
 			Set<Future<AnalysisSubmission>> cleanedSubmissions = Sets.newHashSet();
 			
-			// TODO add condition for cleaning
 			for (AnalysisSubmission submission : analysisSubmissions) {
-				Future<AnalysisSubmission> cleanedSubmissionFuture;
-				try {
-					cleanedSubmissionFuture = analysisExecutionService.cleanupSubmission(submission);
-					cleanedSubmissions.add(cleanedSubmissionFuture);
-				} catch (ExecutionManagerException e) {
-					logger.error("Error cleaning submission " + submission, e);
+				if (cleanupCondition.shouldCleanupSubmission(submission)) {
+					logger.trace("Attempting to clean up submission " + submission);
+					
+					try {
+						Future<AnalysisSubmission> cleanedSubmissionFuture = analysisExecutionService.cleanupSubmission(submission);
+						cleanedSubmissions.add(cleanedSubmissionFuture);
+					} catch (ExecutionManagerException e) {
+						logger.error("Error cleaning submission " + submission, e);
+					}
 				}
 			}
 			
