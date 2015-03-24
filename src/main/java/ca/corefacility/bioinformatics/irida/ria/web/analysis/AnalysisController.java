@@ -138,26 +138,18 @@ public class AnalysisController {
 		model.addAttribute("workflowName", workflowName);
 
 		/*
-		 * If the analysis is completed, add preview information
+		 * Preview information
 		 */
 		try {
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 					tree(submission, model);
 				}
-			}if (!submission.getAnalysisState().equals(AnalysisState.ERROR)) {
-				float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
-						submission.getId());
-				model.addAttribute("percentComplete", Float.toString(percentComplete));
 			}
 
 		} catch (IOException e) {
 			logger.error("Couldn't get preview for analysis", e);
-		} catch (NoPercentageCompleteException e) {
-			logger.error("Couldn't get the percent complete", e);
-		} catch (ExecutionManagerException e) {
-			logger.error("Error", e);
-		}
+		} 
 
 		return viewName;
 	}
