@@ -71,7 +71,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 * Defines the number of days a submission must exist before it is cleaned up.
 	 */
 	@Value("${irida.analysis.cleanup.days}")
-	private Integer daysToCleanup;
+	private Double daysToCleanup;
 	
 	/**
 	 * Cycle through any newly created submissions and prepare them for
@@ -140,7 +140,8 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 			return CleanupAnalysisSubmissionCondition.NEVER_CLEANUP;
 		} else {
 			logger.info("Setting daysToCleanup to be irida.analysis.cleanup.days=" + daysToCleanup);
-			return new CleanupAnalysisSubmissionConditionAge(daysToCleanup);
+//			return new CleanupAnalysisSubmissionConditionAge(daysToCleanup);
+			return null;
 		}
 	}
 

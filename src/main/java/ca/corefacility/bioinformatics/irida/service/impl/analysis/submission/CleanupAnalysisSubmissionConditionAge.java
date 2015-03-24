@@ -3,7 +3,8 @@ package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.joda.time.DateTime;
+import java.time.Duration;
+import java.time.Instant;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
@@ -13,20 +14,20 @@ import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCon
  */
 public class CleanupAnalysisSubmissionConditionAge implements CleanupAnalysisSubmissionCondition {
 
-	private final int daysToCleanup;
+	private final Duration durationToCleanup;
 
 	/**
 	 * Constructs a new {@link CleanupAnalysisSubmissionConditionAge} with the
 	 * given time before cleanup.
 	 * 
-	 * @param daysToCleanup
-	 *            The number of days a submission should exist for before
-	 *            cleaning up.
+	 * @param durationToCleanup
+	 *            A {@link Duration} representing the duration before an analysis submission should be cleaned up.
 	 */
-	public CleanupAnalysisSubmissionConditionAge(int daysToCleanup) {
-		checkArgument(daysToCleanup > 0, "daysToCleanup must be positive");
+	public CleanupAnalysisSubmissionConditionAge(Duration durationToCleanup) {
+		checkNotNull(durationToCleanup, "durationToCleanup is null");
+		checkArgument(!durationToCleanup.isZero() && !durationToCleanup.isNegative(), "durationToCleanup must be positive");
 		
-		this.daysToCleanup = daysToCleanup;
+		this.durationToCleanup = durationToCleanup;
 	}
 
 	/**
@@ -37,9 +38,9 @@ public class CleanupAnalysisSubmissionConditionAge implements CleanupAnalysisSub
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getCreatedDate(), "createdDate is null");
 		
-		DateTime createdDate = new DateTime(analysisSubmission.getCreatedDate());
-		DateTime dateForDelete = DateTime.now().minusDays(daysToCleanup);
+		Instant instantForCleanup = Instant.now().minus(durationToCleanup);
+		Instant createdInstant = analysisSubmission.getCreatedDate().toInstant();
 		
-		return dateForDelete.isAfter(createdDate);
+		return instantForCleanup.isAfter(createdInstant);
 	}
 }

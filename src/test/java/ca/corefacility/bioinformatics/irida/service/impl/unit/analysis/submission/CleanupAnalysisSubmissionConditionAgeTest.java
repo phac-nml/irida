@@ -4,6 +4,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +32,7 @@ public class CleanupAnalysisSubmissionConditionAgeTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 
-		cleanupAnalysisSubmissionConditionAge = new CleanupAnalysisSubmissionConditionAge(1);
+		cleanupAnalysisSubmissionConditionAge = new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1));
 	}
 
 	/**
@@ -40,6 +42,18 @@ public class CleanupAnalysisSubmissionConditionAgeTest {
 	@Test
 	public void cleanupSubmissionOneDayOldSuccessClean() {
 		when(analysisSubmission.getCreatedDate()).thenReturn(DateTime.now().minusDays(2).toDate());
+
+		assertTrue("Should have been marked to clean",
+				cleanupAnalysisSubmissionConditionAge.shouldCleanupSubmission(analysisSubmission));
+	}
+	
+	/**
+	 * Tests successfully cleaning up a submission when it is greater then one hour old.
+	 */
+	@Test
+	public void cleanupSubmissionOneHourOldSuccessClean() {
+		cleanupAnalysisSubmissionConditionAge = new CleanupAnalysisSubmissionConditionAge(Duration.ofHours(1));
+		when(analysisSubmission.getCreatedDate()).thenReturn(DateTime.now().minusHours(2).toDate());
 
 		assertTrue("Should have been marked to clean",
 				cleanupAnalysisSubmissionConditionAge.shouldCleanupSubmission(analysisSubmission));
@@ -59,10 +73,10 @@ public class CleanupAnalysisSubmissionConditionAgeTest {
 
 	/**
 	 * Tests building a CleanupAnalysisSubmissionConditionAge with a
-	 * non-positive days to clean.
+	 * non-positive duration to clean.
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void cleanupAnalysisSubmissionConditionAgeFailDaysNotPositive() {
-		new CleanupAnalysisSubmissionConditionAge(0);
+		new CleanupAnalysisSubmissionConditionAge(Duration.ZERO);
 	}
 }
