@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTa
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -226,7 +225,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	@Override
 	public Set<Future<AnalysisSubmission>> cleanupAnalysisSubmissions() {
 		synchronized (cleanupAnalysesResultsLock) {
-			logger.trace("Running cleanupAnalysesResultsLock");
+			logger.trace("Running cleanupAnalysisSubmissions");
 
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
 					AnalysisState.COMPLETED, AnalysisCleanedState.NOT_CLEANED);

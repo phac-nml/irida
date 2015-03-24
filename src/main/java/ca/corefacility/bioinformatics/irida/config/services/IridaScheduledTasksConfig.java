@@ -52,10 +52,20 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private UserService userService;
 	
 	/**
+	 * Rate in milliseconds of the analysis execution tasks.
+	 */
+	private static final long ANALYSIS_EXECUTION_TASK_RATE = 15000;
+	
+	/**
+	 * Rate in milliseconds of the cleanup task.
+	 */
+	private static final long CLEANUP_TASK_RATE = 60*60*1000;
+	
+	/**
 	 * Cycle through any newly created submissions and prepare them for
 	 * execution.
 	 */
-	@Scheduled(initialDelay = 1000, fixedRate = 15000)
+	@Scheduled(initialDelay = 1000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void prepareAnalyses() {
 		analysisExecutionScheduledTask().prepareAnalyses();
 	}
@@ -63,7 +73,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any outstanding submissions and execute them.
 	 */
-	@Scheduled(initialDelay = 2000, fixedRate = 15000)
+	@Scheduled(initialDelay = 2000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void executeAnalyses() {
 		analysisExecutionScheduledTask().executeAnalyses();
 	}
@@ -71,7 +81,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any submissions running in Galaxy and monitor the status.
 	 */
-	@Scheduled(initialDelay = 3000, fixedRate = 15000)
+	@Scheduled(initialDelay = 3000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void monitorRunningAnalyses() {
 		analysisExecutionScheduledTask().monitorRunningAnalyses();
 	}
@@ -79,9 +89,17 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any completed submissions and transfer the results.
 	 */
-	@Scheduled(initialDelay = 4000, fixedRate = 15000)
+	@Scheduled(initialDelay = 4000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void transferAnalysesResults() {
 		analysisExecutionScheduledTask().transferAnalysesResults();
+	}
+	
+	/**
+	 * Cycle through any completed or error submissions and clean up results from the execution manager.
+	 */
+	@Scheduled(initialDelay = 10000, fixedRate = CLEANUP_TASK_RATE)
+	public void cleanupAnalysisSubmissions() {
+		analysisExecutionScheduledTask().cleanupAnalysisSubmissions();
 	}
 
 	/**
