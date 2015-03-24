@@ -33,8 +33,8 @@
 				<tab>
 					<tab-heading id="tab-preview" th:text="#{analysis.tab.input-files}"></tab-heading>
 					<div th:if="${inputFilePairs}">
-						<div th:each="pair : ${inputFilePairs}">
-							hello
+						<div th:each="pair : ${inputFilePairs}" th:with="files=${pair.getFiles()}">
+							<p th:each="file : ${files}" th:text="${file.getLabel()}"></p>
 						</div>
 					</div>
 				</tab>
