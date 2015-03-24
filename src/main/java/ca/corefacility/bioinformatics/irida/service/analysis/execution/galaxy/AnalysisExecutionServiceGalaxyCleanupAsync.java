@@ -88,17 +88,17 @@ public class AnalysisExecutionServiceGalaxyCleanupAsync {
 
 		// If the submission is in an error state these remote ids aren't
 		// guaranteed to exist.
-		if (analysisSubmission.existsRemoteAnalysisId()) {
+		if (analysisSubmission.hasRemoteAnalysisId()) {
 			logger.trace("remoteAnalysisId=" + analysisSubmission.getRemoteAnalysisId() + " exists, cleaning");
 			galaxyHistoriesService.deleteHistory(analysisSubmission.getRemoteAnalysisId());
 		}
 
-		if (analysisSubmission.existsRemoteInputDataId()) {
+		if (analysisSubmission.hasRemoteInputDataId()) {
 			logger.trace("remoteInputDataId=" + analysisSubmission.getRemoteInputDataId() + " exists, cleaning");
 			galaxyLibrariesService.deleteLibrary(analysisSubmission.getRemoteInputDataId());
 		}
 
-		if (analysisSubmission.existsRemoteWorkflowId()) {
+		if (analysisSubmission.hasRemoteWorkflowId()) {
 			logger.trace("remoteWorkflowId=" + analysisSubmission.getRemoteWorkflowId() + " exists, cleaning");
 			galaxyWorkflowService.deleteWorkflow(analysisSubmission.getRemoteWorkflowId());
 		}

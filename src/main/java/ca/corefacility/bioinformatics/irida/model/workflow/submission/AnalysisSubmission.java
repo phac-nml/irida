@@ -618,7 +618,7 @@ public class AnalysisSubmission implements IridaThing {
 	 * @return True if a remoteAnalysisId exists for this submission, false
 	 *         otherwise.
 	 */
-	public boolean existsRemoteAnalysisId() {
+	public boolean hasRemoteAnalysisId() {
 		return remoteAnalysisId != null;
 	}
 
@@ -628,7 +628,7 @@ public class AnalysisSubmission implements IridaThing {
 	 * @return True if a remoteWorkflowId exists for this submission, false
 	 *         otherwise.
 	 */
-	public boolean existsRemoteWorkflowId() {
+	public boolean hasRemoteWorkflowId() {
 		return remoteWorkflowId != null;
 	}
 
@@ -638,7 +638,7 @@ public class AnalysisSubmission implements IridaThing {
 	 * @return True if a remoteInputDataId exists for this submission, false
 	 *         otherwise.
 	 */
-	public boolean existsRemoteInputDataId() {
+	public boolean hasRemoteInputDataId() {
 		return remoteInputDataId != null;
 	}
 }
