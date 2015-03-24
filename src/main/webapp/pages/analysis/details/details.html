@@ -26,6 +26,17 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
+			<tabset>
+				<!--/*
+				Preview Tab
+				*/-->
+				<tab>
+					<tab-heading id="tab-preview" th:text="#{analysis.tab.input-files}"></tab-heading>
+					<div th:if="${referenceFile}">
+						<h3 th:text="${referenceFile.getLabel()}"></h3>
+					</div>
+				</tab>
+				<!--/*
 			<tabset th:if="${isCompleted}">
 				<!--/*
 				Preview Tab
