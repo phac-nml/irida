@@ -44,10 +44,10 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.hp.hpl.jena.tdb.store.Hash;
 
 /**
  * Controller for Analysis.
- *
  */
 @Controller
 @RequestMapping("/analysis")
@@ -272,12 +272,12 @@ public class AnalysisController {
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 *            Id for a {@link AnalysisSubmission}
+	 * 		Id for a {@link AnalysisSubmission}
 	 * @param response
-	 *            {@link HttpServletResponse}
+	 * 		{@link HttpServletResponse}
 	 *
 	 * @throws IOException
-	 *             if we fail to create a zip file.
+	 * 		if we fail to create a zip file.
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)
@@ -288,8 +288,19 @@ public class AnalysisController {
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
 
+	/**
+	 * Get the current status for a given {@link AnalysisSubmission}
+	 *
+	 * @param submissionId
+	 * 		The {@link UUID} id for a given {@link AnalysisSubmission}
+	 * @param locale
+	 * 		The users current {@link Locale}
+	 *
+	 * @return {@link HashMap} containing the status and the percent complete for the {@link AnalysisSubmission}
+	 */
 	@RequestMapping(value = "/ajax/status/{submissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, String> getAjaxStatusUpdateForAnalysisSubmission(@PathVariable Long submissionId, Locale locale) {
+	public @ResponseBody Map<String, String> getAjaxStatusUpdateForAnalysisSubmission(@PathVariable Long submissionId,
+			Locale locale) {
 		Map<String, String> result = new HashMap<>();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(submissionId);
 		AnalysisState state = analysisSubmission.getAnalysisState();
@@ -304,8 +315,7 @@ public class AnalysisController {
 				logger.error("Error getting the percentage complete", e);
 				result.put("percentageComplete", "");
 			}
-		}
-		else {
+		} else {
 			result.put("percentageComplete", "100");
 		}
 		return result;
@@ -362,7 +372,8 @@ public class AnalysisController {
 	 * Get the view name for different analysis types
 	 *
 	 * @param type
-	 *            The {@link AnalysisType}
+	 * 		The {@link AnalysisType}
+	 *
 	 * @return the view name to display
 	 */
 	private String getViewForAnalysisType(AnalysisType type) {
