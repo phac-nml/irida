@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCon
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -137,6 +138,28 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission), 1);
+	}
+	
+	/**
+	 * Tests out successfully executing an analysis submission, from newly
+	 * created to downloading results, and not cleaning it up due to the age.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFullAnalysisRunSuccessNoCleanupAge() throws Exception {
+		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
+				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(1));
+		
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+
+		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
+		validateCleanupAnalysis(Sets.newHashSet(analysisSubmissionRepository.findOne(analysisSubmission.getId())), 0);
+		
+		AnalysisSubmission notCleanedSubmission = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+		assertEquals("State should not be cleaned", AnalysisCleanedState.NOT_CLEANED, notCleanedSubmission.getAnalysisCleanedState());
 	}
 
 	/**
