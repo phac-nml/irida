@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -141,16 +140,17 @@ public class AnalysisController {
 
 		// Input files
 		// - Paired
-//		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		model.addAttribute("inputFilePairs", inputFilePairs);
 
 		// - Singles
 //		Set<SequenceFile> inputFileSingles = submission.getSingleInputFiles();
 
 		// - Reference
-		Optional<ReferenceFile> referenceFileOptional = submission.getReferenceFile();
-		if (referenceFileOptional.isPresent()) {
-			model.addAttribute("referenceFile", referenceFileOptional.get());
-		}
+//		Optional<ReferenceFile> referenceFileOptional = submission.getReferenceFile();
+//		if (referenceFileOptional.isPresent()) {
+//			model.addAttribute("referenceFile", referenceFileOptional.get());
+//		}
 
 		/*
 		 * Preview information

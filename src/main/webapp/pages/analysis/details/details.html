@@ -32,8 +32,10 @@
 				*/-->
 				<tab>
 					<tab-heading id="tab-preview" th:text="#{analysis.tab.input-files}"></tab-heading>
-					<div th:if="${referenceFile}">
-						<h3 th:text="${referenceFile.getLabel()}"></h3>
+					<div th:if="${inputFilePairs}">
+						<div th:each="pair : ${inputFilePairs}">
+							hello
+						</div>
 					</div>
 				</tab>
 				<!--/*
