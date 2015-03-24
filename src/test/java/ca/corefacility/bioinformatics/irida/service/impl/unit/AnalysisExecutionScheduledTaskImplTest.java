@@ -88,7 +88,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		MockitoAnnotations.initMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALLWAYS_CLEANUP);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP);
 
 		analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")

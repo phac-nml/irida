@@ -21,7 +21,7 @@ public interface CleanupAnalysisSubmissionCondition {
 	/**
 	 * Condition which always cleans up analysis submissions.
 	 */
-	public static final CleanupAnalysisSubmissionCondition ALLWAYS_CLEANUP = new CleanupAnalysisSubmissionCondition() {
+	public static final CleanupAnalysisSubmissionCondition ALWAYS_CLEANUP = new CleanupAnalysisSubmissionCondition() {
 		@Override
 		public boolean shouldCleanupSubmission(AnalysisSubmission analysisSubmission) {
 			return true;

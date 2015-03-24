@@ -100,7 +100,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALLWAYS_CLEANUP);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
