@@ -47,7 +47,6 @@ import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for Analysis.
- *
  */
 @Controller
 @RequestMapping("/analysis")
@@ -139,26 +138,18 @@ public class AnalysisController {
 		model.addAttribute("workflowName", workflowName);
 
 		/*
-		 * If the analysis is completed, add preview information
+		 * Preview information
 		 */
 		try {
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 					tree(submission, model);
 				}
-			}if (!submission.getAnalysisState().equals(AnalysisState.ERROR)) {
-				float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
-						submission.getId());
-				model.addAttribute("percentComplete", Float.toString(percentComplete));
 			}
 
 		} catch (IOException e) {
 			logger.error("Couldn't get preview for analysis", e);
-		} catch (NoPercentageCompleteException e) {
-			logger.error("Couldn't get the percent complete", e);
-		} catch (ExecutionManagerException e) {
-			logger.error("Error", e);
-		}
+		} 
 
 		return viewName;
 	}
@@ -272,12 +263,12 @@ public class AnalysisController {
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 *            Id for a {@link AnalysisSubmission}
+	 * 		Id for a {@link AnalysisSubmission}
 	 * @param response
-	 *            {@link HttpServletResponse}
+	 * 		{@link HttpServletResponse}
 	 *
 	 * @throws IOException
-	 *             if we fail to create a zip file.
+	 * 		if we fail to create a zip file.
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)
@@ -286,6 +277,38 @@ public class AnalysisController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+	}
+
+	/**
+	 * Get the current status for a given {@link AnalysisSubmission}
+	 *
+	 * @param submissionId
+	 * 		The {@link UUID} id for a given {@link AnalysisSubmission}
+	 * @param locale
+	 * 		The users current {@link Locale}
+	 *
+	 * @return {@link HashMap} containing the status and the percent complete for the {@link AnalysisSubmission}
+	 */
+	@RequestMapping(value = "/ajax/status/{submissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, String> getAjaxStatusUpdateForAnalysisSubmission(@PathVariable Long submissionId,
+			Locale locale) {
+		Map<String, String> result = new HashMap<>();
+		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(submissionId);
+		AnalysisState state = analysisSubmission.getAnalysisState();
+		result.put("state", state.toString());
+		result.put("stateLang", messageSource.getMessage("analysis.state." + state.toString(), null, locale));
+		if (!state.equals(AnalysisState.ERROR)) {
+			float percentComplete = 0;
+			try {
+				percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
+						analysisSubmission.getId());
+				result.put("percentComplete", Float.toString(percentComplete));
+			} catch (ExecutionManagerException e) {
+				logger.error("Error getting the percentage complete", e);
+				result.put("percentageComplete", "");
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -339,7 +362,8 @@ public class AnalysisController {
 	 * Get the view name for different analysis types
 	 *
 	 * @param type
-	 *            The {@link AnalysisType}
+	 * 		The {@link AnalysisType}
+	 *
 	 * @return the view name to display
 	 */
 	private String getViewForAnalysisType(AnalysisType type) {

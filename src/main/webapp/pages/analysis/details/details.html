@@ -10,7 +10,8 @@
 			color: #d5d5d5;
 		}
 		.progress, .progress-bar {
-			height: 5px;
+			height: 4px;
+			border-radius: 0;
 		}
 	</style>
 </head>
@@ -18,9 +19,9 @@
 <body>
 <main layout:fragment="main">
 	<div class="row">
-		<div class="col-md-12">
-			<h1><th:block th:text="${analysisSubmission.label}"></th:block> <small th:unless="${isError}" th:text="#{generic.percent-complete(${#numbers.formatDecimal(percentComplete, 0, 0)})}"></small></h1>
-			<progressbar th:unless="${isError}" class="active" th:attr="type=${isCompleted} ?  'success' : 'striped'" th:value="${percentComplete}"></progressbar>
+		<div class="col-md-12 ng-cloak">
+			<h1><th:block th:text="${analysisSubmission.label}"></th:block> <small ng-hide="stateController.state === 'ERROR'" ng-bind="stateController.percentage + '%'"></small></h1>
+			<progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></progressbar>
 	</div>
 	</div>
 	<div class="row">
