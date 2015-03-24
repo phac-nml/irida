@@ -373,8 +373,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
-				Arrays.asList(analysisSubmission));
+		when(
+				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
 				.cleanupAnalysisSubmissions();
@@ -393,8 +394,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR)).thenReturn(
-				Arrays.asList(analysisSubmission));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR, AnalysisCleanedState.NOT_CLEANED))
+				.thenReturn(Arrays.asList(analysisSubmission));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
 				.cleanupAnalysisSubmissions();
@@ -414,8 +415,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
-				Arrays.asList(analysisSubmission));
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING, AnalysisCleanedState.NOT_CLEANED))
+				.thenReturn(Arrays.asList(analysisSubmission));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
 				.cleanupAnalysisSubmissions();
@@ -435,8 +436,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
-				Arrays.asList(analysisSubmission));
+		when(
+				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
 				.cleanupAnalysisSubmissions();
@@ -456,8 +458,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING_ERROR);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
-				Arrays.asList(analysisSubmission));
+		when(
+				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
 				.cleanupAnalysisSubmissions();
@@ -477,8 +480,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
-				Arrays.asList(analysisSubmission));
+		when(
+				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmission));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
 				.cleanupAnalysisSubmissions();
@@ -502,8 +506,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
 		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().minusDays(2).toDate());
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
-				Arrays.asList(analysisSubmissionMock));
+		when(
+				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
 				.cleanupAnalysisSubmissions();
@@ -528,8 +533,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
 		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().toDate());
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
-				Arrays.asList(analysisSubmissionMock));
+		when(
+				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
 				.cleanupAnalysisSubmissions();
@@ -558,7 +564,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionMock2.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
 		when(analysisSubmissionMock2.getCreatedDate()).thenReturn(DateTime.now().toDate());
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
+		when(
+				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+						AnalysisCleanedState.NOT_CLEANED)).thenReturn(
 				Arrays.asList(analysisSubmissionMock, analysisSubmissionMock2));
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
