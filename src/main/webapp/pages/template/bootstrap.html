@@ -49,7 +49,27 @@
 				</li>
 				<li>
 					<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
-				<li class="dropdown" dropdown="">
+				<li sec:authorize="!hasAnyRole('ROLE_ADMIN')">
+					<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
+				</li>
+				<li sec:authorize="hasAnyRole('ROLE_ADMIN')" class="dropdown" dropdown="">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
+						<span th:text="#{nav.main.analysis}">Analysis</span>
+						&nbsp;
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-admin-user}">Your Analysis</a>
+						</li>
+						<li>
+							<a th:href="@{/analysis/list/all}" href="/analysis/list/all"
+							   th:text="#{nav.main.analysis-admin-all}">List All Analysis
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" class="dropdown" dropdown="">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.users}">Users</span>
 						&nbsp;
@@ -62,26 +82,9 @@
 							</a>
 						</li>
 						<li role="presentation" class="divider"></li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
+						<li>
 							<a href="#" th:href="@{/users/create}">
 								<span th:text="#{nav.main.add.user}">Create new user</span>
-							</a>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown" dropdown="">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
-						<span th:text="#{nav.main.analysis}">Analysis</span>
-						&nbsp;
-						<span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li>
-							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
-						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
-							<a th:href="@{/analysis/list/all}" href="/analysis/list/all"
-							   th:text="#{nav.main.analysis-admin}">List All Analysis
 							</a>
 						</li>
 					</ul>
