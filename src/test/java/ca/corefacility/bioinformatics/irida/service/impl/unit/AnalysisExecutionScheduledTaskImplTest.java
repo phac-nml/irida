@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -77,7 +78,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		MockitoAnnotations.initMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALLWAYS_CLEANUP);
 
 		analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
@@ -350,5 +351,108 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
 		verify(analysisExecutionService, never()).transferAnalysisResults(analysisSubmission);
+	}
+	
+	/**
+	 * Tests successfully cleaning up analysis submissions with completed status.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testCleanupAnalysisSubmissionsCompletedSuccess() throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
+				Arrays.asList(analysisSubmission));
+
+		analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
+
+		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
+	}
+	
+	/**
+	 * Tests successfully cleaning up analysis submissions with error status.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testCleanupAnalysisSubmissionsErrorSuccess() throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.ERROR);
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR)).thenReturn(
+				Arrays.asList(analysisSubmission));
+
+		analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
+
+		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
+	}
+	
+	/**
+	 * Tests successfully not cleaning up any analysis submissions in the running state.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testCleanupAnalysisSubmissionsRunningNoClean() throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+
+		analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
+
+		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
+	}
+	
+	/**
+	 * Tests successfully not cleaning up an analysis in completed when it's already cleaned.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testCleanupAnalysisSubmissionsCompletedCleanedSuccess() throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
+				Arrays.asList(analysisSubmission));
+
+		analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
+
+		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
+	}
+	
+	
+	/**
+	 * Tests successfully not cleaning up an analysis in completed when it's in a cleaning error.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testCleanupAnalysisSubmissionsCompletedCleanedErrorSuccess() throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING_ERROR);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
+				Arrays.asList(analysisSubmission));
+
+		analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
+
+		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
+	}
+	
+	/**
+	 * Tests successfully not cleaning up an analysis in completed when it's already being cleaned.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testCleanupAnalysisSubmissionsCompletedCleanedCleaningSuccess() throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED)).thenReturn(
+				Arrays.asList(analysisSubmission));
+
+		analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
+
+		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 }

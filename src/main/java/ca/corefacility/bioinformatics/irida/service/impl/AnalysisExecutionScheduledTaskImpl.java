@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
@@ -223,29 +224,30 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 */
 	@Override
 	public Set<Future<AnalysisSubmission>> cleanupAnalysisSubmissions() {
-		synchronized(cleanupAnalysesResultsLock) {
+		synchronized (cleanupAnalysesResultsLock) {
 			logger.trace("Running cleanupAnalysesResultsLock");
-			
+
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
 					.findByAnalysisState(AnalysisState.COMPLETED);
-			analysisSubmissions.addAll(analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.ERROR));
-			
+			analysisSubmissions.addAll(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR));
+
 			Set<Future<AnalysisSubmission>> cleanedSubmissions = Sets.newHashSet();
-			
+
 			for (AnalysisSubmission submission : analysisSubmissions) {
-				if (cleanupCondition.shouldCleanupSubmission(submission)) {
+				if (AnalysisCleanedState.NOT_CLEANED.equals(submission.getAnalysisCleanedState())
+						&& cleanupCondition.shouldCleanupSubmission(submission)) {
 					logger.trace("Attempting to clean up submission " + submission);
-					
+
 					try {
-						Future<AnalysisSubmission> cleanedSubmissionFuture = analysisExecutionService.cleanupSubmission(submission);
+						Future<AnalysisSubmission> cleanedSubmissionFuture = analysisExecutionService
+								.cleanupSubmission(submission);
 						cleanedSubmissions.add(cleanedSubmissionFuture);
 					} catch (ExecutionManagerException e) {
 						logger.error("Error cleaning submission " + submission, e);
 					}
 				}
 			}
-			
+
 			return cleanedSubmissions;
 		}
 	}
