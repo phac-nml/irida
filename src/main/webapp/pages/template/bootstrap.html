@@ -123,13 +123,6 @@
 						</li>
 						<li class="divider"></li>
                         */-->
-
-						<li sec:authorize="!hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
-							<a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">
-								List Users
-							</a>
-						</li>
-						<li class="divider"></li>
 						<li>
 							<a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">
 								Account
