@@ -34,7 +34,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * 
 	 * @param analysisState
 	 *            The {@link AnalysisState} of the analyses to search for.
-	 * @param analysisCleanupState
+	 * @param analysisCleanedState
 	 *            The {@link AnalysisCleanedState} of the analyses to search
 	 *            for.
 	 * @return A {@link List} of {@link AnalysisSubmission} objects with the
