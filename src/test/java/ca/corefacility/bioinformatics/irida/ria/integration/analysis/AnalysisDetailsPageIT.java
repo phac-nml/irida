@@ -74,12 +74,12 @@ public class AnalysisDetailsPageIT {
 		page.displayTreeTools();
 		assertEquals("Should have 2 tools associated with the tree", 2, page.getNumberOfToolsForTree());
 
+		// Ensure the tool parameters can be displayed;
+		assertEquals("First tool should have 1 parameter", 1, page.getNumberOfParametersForTool());
+
 		// Ensure the input files are displayed
 		page.displayInputFilesTab();
 		assertEquals("Should display 1 pair of paired end files", 1, page.getNumberOfPairedEndInputFiles());
-
-		// Ensure the tool parameters can be displayed;
-		assertEquals("First tool should have 1 parameter", 1, page.getNumberOfParametersForTool());
 	}
 
 	private void addOutputFile() throws URISyntaxException, IOException {
