@@ -279,7 +279,7 @@ IRIDA stores and manages both the input files to a workflow as well as the outpu
 
 By default IRIDA will **not** remove any of the data generated and stored in Galaxy.  This provides additional resources beyond the output files and provenance information stored by IRIDA for each analysis.
 
-However, some of the files produced by Galaxy can be quite large and may quickly fill up the storage capacity of the Galaxy server.  IRIDA can be instructed to clean up these data after a period of time by adjusting the parameter `irida.analysis.cleanup.days` in the main IRIDA configuration file `/etc/irida/irida.conf`.  This controls the number of days before IRIDA will remove analysis files from Galaxy.  This can be used to reduce the storage requirements for each analysis at the expense of not having any intermediate analysis files available.  In addition, by removing intermediate files and data structures, the ability to extract more information for display in future versions of IRIDA is lost.
+However, some of the files produced by Galaxy can be quite large and may quickly fill up the storage capacity of the Galaxy server.  IRIDA can be instructed to clean up these data after a period of time by adjusting the parameter `irida.analysis.cleanup.days` in the main IRIDA configuration file `/etc/irida/irida.conf`.  This controls the number of days before IRIDA will remove analysis files from Galaxy.  This can be used to reduce the storage requirements for each analysis at the expense of not having any intermediate analysis files available.
 
 Once the parameter `irida.analysis.cleanup.days` is set, IRIDA will periodically (once every hour) check for any analyses that have expired and clean up the necessary files in Galaxy.  However, these files will only be marked as `DELETED` in Galaxy, not permanently removed.  To permanently remove these files, please add the following to the `$GALAXY_USER` crontab file.
 
@@ -288,7 +288,7 @@ GALAXY_CLEANUP=$GALAXY_ROOT_DIR/scripts/cleanup_datasets
 00 4 * * * $GALAXY_CLEANUP/delete_userless_histories.sh && $GALAXY_CLEANUP/purge_histories.sh $GALAXY_CLEANUP/purge_datasets.sh $GALAXY_CLEANUP/purge_folders.sh $GALAXY_CLEANUP/purge_libraries.sh $GALAXY_CLEANUP/delete_datasets.sh
 ```
 
-This will clean up any `DELETED` files older then 10 days in Galaxy at 4:00 am every day.  Log files will be stored in `$GALAXY_CLEANUP/*.log`.  For more information please see the [Purging Histories and Datasets][] document.
+This will clean up any `DELETED` files older then 10 days in Galaxy at 4:00 am every day.  Log files will be stored in `$GALAXY_CLEANUP/*.log`.  For more information please see the [Purging Histories and Datasets][] document.  **Note: the metadata about each analysis will still be stored and available in Galaxy, but the data file contents will be permanently removed.**
 
 [Galaxy]: https://wiki.galaxyproject.org/FrontPage
 [irida-galaxy.jpg]: images/irida-galaxy.jpg
