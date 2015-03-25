@@ -62,12 +62,12 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
 	 */
-	private static final long ANALYSIS_EXECUTION_TASK_RATE = 15000;
+	private static final long ANALYSIS_EXECUTION_TASK_RATE = 15000; // 15 seconds
 	
 	/**
 	 * Rate in milliseconds of the cleanup task.
 	 */
-	private static final long CLEANUP_TASK_RATE = 60*60*1000;
+	private static final long CLEANUP_TASK_RATE = 60*60*1000; // 1 hour
 	
 	/**
 	 * Defines the time to clean up in number of days a submission must exist before it is cleaned up.
