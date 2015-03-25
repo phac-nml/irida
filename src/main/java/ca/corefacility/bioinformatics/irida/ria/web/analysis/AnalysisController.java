@@ -143,15 +143,6 @@ public class AnalysisController {
 		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
 		model.addAttribute("inputFilePairs", inputFilePairs);
 
-		// - Singles
-//		Set<SequenceFile> inputFileSingles = submission.getSingleInputFiles();
-
-		// - Reference
-//		Optional<ReferenceFile> referenceFileOptional = submission.getReferenceFile();
-//		if (referenceFileOptional.isPresent()) {
-//			model.addAttribute("referenceFile", referenceFileOptional.get());
-//		}
-
 		/*
 		 * Preview information
 		 */

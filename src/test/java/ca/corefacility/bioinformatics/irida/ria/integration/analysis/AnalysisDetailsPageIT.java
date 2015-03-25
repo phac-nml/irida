@@ -67,12 +67,16 @@ public class AnalysisDetailsPageIT {
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver, 4L);
 
 		// Ensure files are displayed
-		page.displayFilesView();
+		page.displayProvenanceView();
 		assertEquals("Should be displaying 1 file", 1, page.getNumberOfFilesDisplayed());
 
 		// Ensure tools are displayed
 		page.displayTreeTools();
 		assertEquals("Should have 2 tools associated with the tree", 2, page.getNumberOfToolsForTree());
+
+		// Ensure the input files are displayed
+		page.displayInputFilesTab();
+		assertEquals("Should display 1 pair of paired end files", 1, page.getNumberOfPairedEndInputFiles());
 
 		// Ensure the tool parameters can be displayed;
 		assertEquals("First tool should have 1 parameter", 1, page.getNumberOfParametersForTool());
