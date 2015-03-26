@@ -14,7 +14,7 @@ Download the JDK package, and download the `rpm` file with the correct architect
 
 Apache Maven
 ------------
-The version of Maven that is distributed with CentOS 6.4 is very old. You must use at least Maven 2, though the latest version (3.X series) is recommended.
+The version of Maven that is distributed with CentOS 6.5 is very old. You must use at least Maven 2, though the latest version (3.X series) is recommended.
 
 ```bash
 MAVEN_HOME=/opt/maven
