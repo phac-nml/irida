@@ -5,30 +5,36 @@
 	<title></title>
 </head>
 <body>
-<div id="pairedEndFormat">
-	<div class="col-md-6">
+
+<th:block th:fragment="sequenceFileTableLayout" th:with="url=@{${#httpServletRequest.requestURI}}">
+	<td class="td_icon" th:switch="${icon}">
+		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:tooltip="#{sf.tooltip.forward}"></i>
+		<i th:case="'reverse'" class="fa fa-fw fa-arrow-left" data:tooltip="#{sf.tooltip.reverse}"></i>
+		<i th:case="'single'" class="fa fa-fw fa-minus" data:tooltip="#{sf.tooltip.single}"></i>
+	</td>
+	<td>
 		<a href="#"
-		   th:href="@{/sequenceFiles/{id}/summary(id=${file.getId()})}"
-		   class="board-name btn btn-default btn-sm"
+		   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.id + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
+		   class="btn btn-default btn-sm"
 		   th:text="${file.getLabel()}"></a>
-	</div>
-	<div class="col-md-2">
-		<div class="board_detail">
-			<div class="board_detail--value" th:text="${file.getFileSize()}"></div>
-			<div class="small text-muted board_detail--desc"
+	</td>
+	<td>
+		<div class="td_info">
+			<div class="td_info--value" th:text="${file.getFileSize()}"></div>
+			<div class="small text-muted td_info--desc"
 			     th:text="#{samples.files.fileSize}">File Size
 			</div>
 		</div>
-	</div>
-	<div class="col-md-3">
-		<span class="pull-right">
-			<div class="board_detail--value"
+	</td>
+	<td>
+		<div class="td_info pull-right">
+			<div class="td_info--value"
 			     th:text="${#dates.format(file.getCreatedDate(), dateFormat)}"></div>
-			<div class="small text-muted board_detail--desc"
+			<div class="small text-muted pull-right td_info--desc"
 			     th:text="#{samples.files.createdDate}">Created Date
 			</div>
-		</span>
-	</div>
-</div>
+		</div>
+	</td>
+</th:block>
 </body>
 </html>

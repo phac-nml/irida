@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -34,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -223,22 +221,8 @@ public class SamplesController extends BaseController {
 		model.addAttribute(MODEL_ATTR_FILES, files);
 
 		// SequenceFilePairs
-		List<SequenceFilePair> pairList = sequenceFilePairService.getSequenceFilePairsForSample(sample);
-		List<Map<String, Object>> pairs = new ArrayList<>();
-		for (SequenceFilePair pair : pairList) {
-			Map<String, Object> map = new HashMap<>();
-
-			// Get the file info
-			Set<SequenceFile> fileSet = pair.getFiles();
-			List<Map<String, Object>> pairedFiles = new ArrayList<>();
-			for (SequenceFile file : fileSet) {
-				pairedFiles.add(sequenceFileUtilities.getFileDataMap(file));
-			}
-			map.put("files", pairedFiles);
-			map.put("createdDate", pair.getCreatedDate());
-			pairs.add(map);
-		}
-		model.addAttribute("pairs", pairs);
+		model.addAttribute("paired_end", sequenceFilePairService.getSequenceFilePairsForSample(sample));
+		model.addAttribute("single_end", sequenceFileService.getUnpairedSequenceFilesForSample(sample));
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));

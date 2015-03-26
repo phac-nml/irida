@@ -71,11 +71,28 @@
 .fade-in.ng-hide-remove-active {
   display: block !important; }
 
-.paired_end {
-  border-left: 1rem solid #133B54; }
+.paired_end .td_radio {
+  border: 2px solid #133B54;
+  vertical-align: middle;
+  text-align: center; }
+.paired_end .td_icon {
+  background-color: #133B54;
+  color: #f3f3f3;
+  vertical-align: middle;
+  text-align: center; }
+
+.paired_end__forward {
+  border: 2px solid #133B54;
+  border-bottom: none; }
+
+.paired_end__reverse {
+  border: 2px solid #133B54;
+  border-top: none; }
 
 .single_end {
-  border-left: 1rem solid #3092d0; }
+  border: 2px solid #3092d0; }
+  .single_end .td_icon {
+    background-color: #3092d0; }
 
 .sidebar-content {
   width: 130px;

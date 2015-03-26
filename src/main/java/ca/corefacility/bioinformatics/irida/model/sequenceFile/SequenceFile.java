@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,7 +48,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 /**
  * A file that may be stored somewhere on the file system and belongs to a
  * particular {@link Sample}.
- * 
+ *
  */
 @Entity
 @Table(name = "sequence_file")
@@ -90,7 +92,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
-	
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@NotAudited
 	@JoinColumn(name = "fastqc_analysis_id")
@@ -104,7 +106,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 
 	/**
 	 * Create a new {@link SequenceFile} with the given file Path
-	 * 
+	 *
 	 * @param sampleFile
 	 *            The Path to a {@link SequenceFile}
 	 */
@@ -183,7 +185,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 
 	/**
 	 * Add one optional property to the map of properties
-	 * 
+	 *
 	 * @param key
 	 *            The key of the property to add
 	 * @param value
@@ -195,7 +197,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 
 	/**
 	 * Get the Map of optional properties
-	 * 
+	 *
 	 * @return A {@code Map<String,String>} of all the optional propertie
 	 */
 	public Map<String, String> getOptionalProperties() {
@@ -204,7 +206,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 
 	/**
 	 * Get an individual optional property
-	 * 
+	 *
 	 * @param key
 	 *            The key of the property to read
 	 * @return A String of the property's value
@@ -214,8 +216,18 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	}
 
 	/**
+	 * Get the size of the file.
+	 *
+	 * @return The String representation of the file size
+	 * @throws IOException
+	 */
+	public String getFileSize() throws IOException {
+		return humanReadableByteCount(Files.size(file), true);
+	}
+
+	/**
 	 * Set the Map of optional properties
-	 * 
+	 *
 	 * @param optionalProperties
 	 *            A {@code Map<String,String>} of all the optional properties for this
 	 *            object
@@ -228,14 +240,14 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
-	
+
 	public AnalysisFastQC getFastQCAnalysis() {
 		return this.fastqcAnalysis;
 	}
-	
+
 	/**
 	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
-	 * 
+	 *
 	 * @param fastqcAnalysis
 	 *            the analysis to set.
 	 * @throws AnalysisAlreadySetException
@@ -248,5 +260,22 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 		} else {
 			throw new AnalysisAlreadySetException("The FastQC Analysis can only be applied to a sequence file one time.");
 		}
+	}
+
+	/**
+	 * From (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java)
+	 *
+	 * @param bytes
+	 * @param si
+	 *
+	 * @return
+	 */
+	public static String humanReadableByteCount(long bytes, boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit)
+			return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }
