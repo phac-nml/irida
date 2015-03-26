@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -30,8 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -58,6 +62,8 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("/projects")
 @Scope("session")
 public class AssociatedProjectsController {
+	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectsController.class);
+	
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_ASSOCIATED_PROJECTS = "associated";
 	public static final String ASSOCIATED_PROJECTS_PAGE = ProjectsController.PROJECTS_DIR + "associated_projects";
@@ -396,19 +402,30 @@ public class AssociatedProjectsController {
 
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		for (RemoteRelatedProject rrp : remoteProjectsForProject) {
-			// read the projects from their APIs
-			Project read = projectRemoteService.read(rrp);
+			try {
+				// read the projects from their APIs
+				Project read = projectRemoteService.read(rrp);
 
-			// list samples for project
-			List<Sample> samplesForProject = sampleRemoteService.getSamplesForProject(read);
+				// list samples for project
+				List<Sample> samplesForProject = sampleRemoteService.getSamplesForProject(read);
 
-			// compile json response map
-			List<Map<String, Object>> collect = samplesForProject
-					.stream()
-					.map((s) -> ProjectSamplesController.getSampleMap(s, read,
-							ProjectSamplesController.SampleType.REMOTE, s.getId())).collect(Collectors.toList());
+				// compile json response map
+				List<Map<String, Object>> collect = samplesForProject
+						.stream()
+						.map((s) -> ProjectSamplesController.getSampleMap(s, read,
+								ProjectSamplesController.SampleType.REMOTE, s.getId())).collect(Collectors.toList());
 
-			sampleList.addAll(collect);
+				sampleList.addAll(collect);
+			} catch (IridaOAuthException ex) {
+				logger.debug("User couldn't read samples for project: " + ex.getMessage());
+			} catch (HttpClientErrorException ex) {
+				if (ex.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+					logger.debug("User couldn't read samples as they don't have access to the project: "
+							+ ex.getMessage());
+				} else {
+					throw ex;
+				}
+			}
 		}
 
 		return ImmutableMap.of("samples", sampleList);
