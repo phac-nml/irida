@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+	<meta charset="UTF-8"/>
+	<title></title>
+</head>
+<body>
+<div id="pairedEndFormat">
+	<div class="col-md-6">
+		<a href="#"
+		   th:href="@{/sequenceFiles/{id}/summary(id=${file.getId()})}"
+		   class="board-name btn btn-default btn-sm"
+		   th:text="${file.getLabel()}"></a>
+	</div>
+	<div class="col-md-2">
+		<div class="board_detail">
+			<div class="board_detail--value" th:text="${file.getFileSize()}"></div>
+			<div class="small text-muted board_detail--desc"
+			     th:text="#{samples.files.fileSize}">File Size
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<span class="pull-right">
+			<div class="board_detail--value"
+			     th:text="${#dates.format(file.getCreatedDate(), dateFormat)}"></div>
+			<div class="small text-muted board_detail--desc"
+			     th:text="#{samples.files.createdDate}">Created Date
+			</div>
+		</span>
+	</div>
+</div>
+</body>
+</html>
