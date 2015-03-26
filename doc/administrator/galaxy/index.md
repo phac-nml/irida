@@ -293,10 +293,9 @@ The following is an example script that can be used to clean up **deleted** file
 
 ### Step 2: Schedule script to run using cron
 
-Once this script is installed, it can be scheduled to run periodically by adding a cron job for the Galaxy user.  To do this, please run `crontab -e` and past the following line:
+Once this script is installed, it can be scheduled to run periodically by adding a cron job for the Galaxy user.  To do this, please run `crontab -e` and past the following line (replacing `$GALAXY_ROOT_DIR` with the proper directory):
 
 ```
-GALAXY_ROOT_DIR=/path/to/galaxy-dist
 0 4 * * * $GALAXY_ROOT_DIR/galaxy_cleanup.sh
 ```
 
