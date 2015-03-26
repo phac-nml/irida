@@ -25,7 +25,7 @@ public class CleanupAnalysisSubmissionConditionAge implements CleanupAnalysisSub
 	 */
 	public CleanupAnalysisSubmissionConditionAge(Duration durationToCleanup) {
 		checkNotNull(durationToCleanup, "durationToCleanup is null");
-		checkArgument(!durationToCleanup.isZero() && !durationToCleanup.isNegative(), "durationToCleanup must be positive");
+		checkArgument(!durationToCleanup.isNegative(), "durationToCleanup must not be negative");
 		
 		this.durationToCleanup = durationToCleanup;
 	}
@@ -41,6 +41,6 @@ public class CleanupAnalysisSubmissionConditionAge implements CleanupAnalysisSub
 		Instant instantForCleanup = Instant.now().minus(durationToCleanup);
 		Instant createdInstant = analysisSubmission.getCreatedDate().toInstant();
 		
-		return instantForCleanup.isAfter(createdInstant);
+		return instantForCleanup.equals(createdInstant) || instantForCleanup.isAfter(createdInstant);
 	}
 }

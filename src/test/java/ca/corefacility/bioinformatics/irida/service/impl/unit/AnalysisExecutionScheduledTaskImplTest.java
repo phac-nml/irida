@@ -517,6 +517,32 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
 	}
+	
+	/**
+	 * Tests successfully cleaning up analysis submissions with completed status
+	 * when cleanup time is zero.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testCleanupAnalysisSubmissionsCompletedCleanupZeroSuccess() throws ExecutionManagerException {
+		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
+				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ZERO));
+
+		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
+		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().toDate());
+
+		when(
+				analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
+						AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
+
+		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask
+				.cleanupAnalysisSubmissions();
+
+		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
+	}
 
 	/**
 	 * Tests successfully not cleaning up analysis submissions with completed

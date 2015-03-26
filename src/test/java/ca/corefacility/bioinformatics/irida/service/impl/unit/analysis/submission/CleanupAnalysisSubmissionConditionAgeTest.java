@@ -70,13 +70,26 @@ public class CleanupAnalysisSubmissionConditionAgeTest {
 		assertFalse("Should have not been marked to clean",
 				cleanupAnalysisSubmissionConditionAge.shouldCleanupSubmission(analysisSubmission));
 	}
+	
+	/**
+	 * Tests successfully cleaning up a submission instantly (cleanup time is 0).
+	 */
+	@Test
+	public void cleanupSubmissionZeroTimeSuccessClean() {
+		cleanupAnalysisSubmissionConditionAge = new CleanupAnalysisSubmissionConditionAge(Duration.ZERO);
+		
+		when(analysisSubmission.getCreatedDate()).thenReturn(DateTime.now().toDate());
+
+		assertTrue("Should have been marked to clean",
+				cleanupAnalysisSubmissionConditionAge.shouldCleanupSubmission(analysisSubmission));
+	}
 
 	/**
 	 * Tests building a CleanupAnalysisSubmissionConditionAge with a
-	 * non-positive duration to clean.
+	 * negative duration to clean.
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void cleanupAnalysisSubmissionConditionAgeFailDaysNotPositive() {
-		new CleanupAnalysisSubmissionConditionAge(Duration.ZERO);
+		new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(-1));
 	}
 }
