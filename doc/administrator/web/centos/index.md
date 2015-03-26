@@ -76,7 +76,7 @@ mv lib/* $TOMCAT_LIB
 popd
 
 wget -O /etc/init.d/tomcat7 {{ site.url }}/administrator/web/centos/etc/init.d/tomcat7
-wget -O $TOMCAT_CONFIG/tomcat7.conf {{ site.url }}/administrator/web/centos/tomcat7/tomcat7.conf
+wget -O $TOMCAT_CONFIG/tomcat7.conf {{ site.url }}/administrator/web/centos/etc/tomcat7/tomcat7.conf
 chkconfig --add tomcat7
 
 echo "CATALINA_HOME=$TOMCAT_HOME" >> /etc/sysconfig/tomcat7
@@ -99,10 +99,10 @@ As with the [Apache Tomcat](#apache-tomcat) section, these instructions are prov
 You can use the apache configuration file that is part of this repository to configure your HTTP server:
 
 ```bash
-wget -O /etc/httpd/conf.d/irida.conf {{ site.url }}/administrator/web/centos/
+wget -O /etc/httpd/conf.d/irida.conf {{ site.url }}/administrator/web/centos/etc/httpd/conf.d/irida.conf
 ```
 
-**Note**: The configuration file included as part of our example configuration is *not* complete! You **must** configure `/etc/httpd/conf.d/ngs-archive.conf` to match your environment.
+**Note**: The configuration file included as part of our example configuration is *not* complete! You **must** configure `/etc/httpd/conf.d/irida.conf` to match your environment.
 
 Starting HTTPD and Tomcat on Startup
 ------------------------------------
