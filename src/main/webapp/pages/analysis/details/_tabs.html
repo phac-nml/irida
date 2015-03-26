@@ -21,6 +21,7 @@
 							<div class="col-md-6">
 								<a href="#" th:href="@{/sequenceFiles/{id}/summary(id=${file.getId()})}" class="board-name btn btn-default btn-sm" th:text="${file.getLabel()}">File Name</a>
 							</div>
+							<div th:text="${file.getFileSize()}"></div>
 						</div>
 					</div>
 				</li>
