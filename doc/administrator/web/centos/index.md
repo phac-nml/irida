@@ -99,7 +99,7 @@ As with the [Apache Tomcat](#apache-tomcat) section, these instructions are prov
 You can use the apache configuration file that is part of this repository to configure your HTTP server:
 
 ```bash
-wget -O /etc/httpd/conf.d/ngs-archive.conf {{ site.url }}/administrator/web/centos/
+wget -O /etc/httpd/conf.d/irida.conf {{ site.url }}/administrator/web/centos/
 ```
 
 **Note**: The configuration file included as part of our example configuration is *not* complete! You **must** configure `/etc/httpd/conf.d/ngs-archive.conf` to match your environment.
