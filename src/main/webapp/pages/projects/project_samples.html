@@ -255,10 +255,11 @@
 						</div>
 					</td>
 					<td class="sample-name">
-						<a class="btn btn-default btn-xs"
+						<a class="btn btn-default btn-xs" ng-if="entry.sampleType!='REMOTE'"
 						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.id}}/details'}"
 						   href="#">{{entry.sample.sampleName}}
 						</a>
+                        <span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
 					</td>
 					<td>{{entry.sample.organism}}</td>
 					<td>{{entry.sample.collectedBy}}</td>
