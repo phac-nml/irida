@@ -8,7 +8,7 @@ This guide starts from a fresh, up-to-date install of CentOS 6.5.
 
 Oracle Java 8
 -------------
-You must download and install Java 8 from Oracle: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+You must download and install Java 8 from Oracle: <http://www.oracle.com/technetwork/java/javase/downloads/index.html>
 
 Download the JDK package, and download the `rpm` file with the correct architecture for your machine. Install the `rpm`.
 
