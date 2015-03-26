@@ -14,12 +14,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
+import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
 import com.google.common.collect.Sets;
@@ -37,11 +39,13 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private Object executeAnalysesLock = new Object();
 	private Object monitorRunningAnalysesLock = new Object();
 	private Object transferAnalysesResultsLock = new Object();
+	private Object cleanupAnalysesResultsLock = new Object();
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private AnalysisExecutionService analysisExecutionService;
+	private final CleanupAnalysisSubmissionCondition cleanupCondition;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -51,12 +55,16 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 *            A repository for {@link AnalysisSubmission}s.
 	 * @param analysisExecutionServiceGalaxy
 	 *            A service for executing {@link AnalysisSubmission}s.
+	 * @param cleanupCondition
+	 *            The condition defining when an {@link AnalysisSubmission}
+	 *            should be cleaned up.
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionService analysisExecutionServiceGalaxy) {
+			AnalysisExecutionService analysisExecutionServiceGalaxy, CleanupAnalysisSubmissionCondition cleanupCondition) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
+		this.cleanupCondition = cleanupCondition;
 	}
 
 	/**
@@ -209,5 +217,39 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		}
 
 		return returnedSubmission;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Future<AnalysisSubmission>> cleanupAnalysisSubmissions() {
+		synchronized (cleanupAnalysesResultsLock) {
+			logger.trace("Running cleanupAnalysisSubmissions");
+
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.COMPLETED, AnalysisCleanedState.NOT_CLEANED);
+			analysisSubmissions.addAll(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR,
+					AnalysisCleanedState.NOT_CLEANED));
+
+			Set<Future<AnalysisSubmission>> cleanedSubmissions = Sets.newHashSet();
+
+			for (AnalysisSubmission submission : analysisSubmissions) {
+				if (AnalysisCleanedState.NOT_CLEANED.equals(submission.getAnalysisCleanedState())
+						&& cleanupCondition.shouldCleanupSubmission(submission)) {
+					logger.trace("Attempting to clean up submission " + submission);
+
+					try {
+						Future<AnalysisSubmission> cleanedSubmissionFuture = analysisExecutionService
+								.cleanupSubmission(submission);
+						cleanedSubmissions.add(cleanedSubmissionFuture);
+					} catch (ExecutionManagerException e) {
+						logger.error("Error cleaning submission " + submission, e);
+					}
+				}
+			}
+
+			return cleanedSubmissions;
+		}
 	}
 }
