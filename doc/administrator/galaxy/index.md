@@ -287,9 +287,29 @@ Once the parameter `irida.analysis.cleanup.days` is set, IRIDA will periodically
 
 The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `$GALAXY_ROOT_DIR/galaxy_cleanup.sh` and make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and modify `$DAYS_TO_KEEP` which defines the number of days since last access a deleted file in Galaxy will continue to exist before being removed from the file system.
 
-{% highlight bash %}
-{% include_relative scripts/galaxy_cleanup.sh %}
-{% endhighlight %}
+```bash
+#!/bin/sh
+
+GALAXY_ROOT_DIR=/path/to/galaxy-dist
+GALAXY_CONFIG=$GALAXY_ROOT_DIR/config/galaxy.ini
+CLEANUP_LOG=$GALAXY_ROOT_DIR/galaxy_cleanup.log
+DAYS_TO_KEEP=0
+
+cd $GALAXY_ROOT_DIR
+
+echo -e "\nBegin cleanup at `date`" >> $CLEANUP_LOG
+echo -e "Begin delete useless histories" >> $CLEANUP_LOG
+python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -1 -r >> $CLEANUP_LOG
+echo -e "\nBegin purge deleted histories" >> $CLEANUP_LOG
+python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -2 -r >> $CLEANUP_LOG
+echo -e "\nBegin purge deleted datasets" >> $CLEANUP_LOG
+python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -3 -r >> $CLEANUP_LOG
+echo -e "\nBegin purge deleted libraries" >> $CLEANUP_LOG
+python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -4 -r >> $CLEANUP_LOG
+echo -e "\nBegin purge deleted library folders" >> $CLEANUP_LOG
+python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -5 -r >> $CLEANUP_LOG
+echo -e "\nEnd cleanup at `date`" >> $CLEANUP_LOG
+```
 
 ### Step 2: Schedule script to run using cron
 
