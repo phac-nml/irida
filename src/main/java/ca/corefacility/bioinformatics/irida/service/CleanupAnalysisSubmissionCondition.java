@@ -6,27 +6,18 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * Defines an interface for a condition on whether or not to clean up an
  * {@link AnalysisSubmission}.
  */
+@FunctionalInterface
 public interface CleanupAnalysisSubmissionCondition {
 
 	/**
 	 * Condition which never cleans up analysis submissions.
 	 */
-	public static final CleanupAnalysisSubmissionCondition NEVER_CLEANUP = new CleanupAnalysisSubmissionCondition() {
-		@Override
-		public boolean shouldCleanupSubmission(AnalysisSubmission analysisSubmission) {
-			return false;
-		}
-	};
+	public static final CleanupAnalysisSubmissionCondition NEVER_CLEANUP = submission -> false;
 	
 	/**
 	 * Condition which always cleans up analysis submissions.
 	 */
-	public static final CleanupAnalysisSubmissionCondition ALWAYS_CLEANUP = new CleanupAnalysisSubmissionCondition() {
-		@Override
-		public boolean shouldCleanupSubmission(AnalysisSubmission analysisSubmission) {
-			return true;
-		}
-	};
+	public static final CleanupAnalysisSubmissionCondition ALWAYS_CLEANUP = submission -> true;
 
 	/**
 	 * Whether or not the passed {@link AnalysisSubmission} should be cleaned
