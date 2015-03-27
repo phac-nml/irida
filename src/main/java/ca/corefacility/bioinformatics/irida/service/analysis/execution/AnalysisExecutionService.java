@@ -96,6 +96,8 @@ public interface AnalysisExecutionService {
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to clean.
 	 * @return The cleaned-up {@link AnalysisSubmission}.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue with the execution manager.
 	 */
 	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException;
