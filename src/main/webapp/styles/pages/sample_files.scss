@@ -10,7 +10,7 @@
 
 .paired_end {
   .td_radio {
-    border: 2px solid $colour-paired-end !important;
+    border: 1px solid $colour-paired-end !important;
     vertical-align: middle;
     text-align: center;
   }
@@ -23,17 +23,17 @@
 }
 
 .paired_end__forward {
-  border: 2px solid $colour-paired-end;
+  border: 1px solid $colour-paired-end;
   border-bottom: none;
 }
 
 .paired_end__reverse {
-  border: 2px solid $colour-paired-end;
+  border: 1px solid $colour-paired-end;
   border-top: none;
 }
 
 .single_end {
-  border: 2px solid $colour-single-end;
+  border: 1px solid $colour-single-end;
   .td_icon {
     background-color: $colour-single-end;
   }

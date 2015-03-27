@@ -215,12 +215,9 @@ public class SamplesController extends BaseController {
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal) {
 		Sample sample = sampleService.read(sampleId);
-		List<Map<String, Object>> files = getFilesForSample(sampleId);
-
 		model.addAttribute("sampleId", sampleId);
-		model.addAttribute(MODEL_ATTR_FILES, files);
 
-		// SequenceFilePairs
+		// SequenceFile
 		model.addAttribute("paired_end", sequenceFilePairService.getSequenceFilePairsForSample(sample));
 		model.addAttribute("single_end", sequenceFileService.getUnpairedSequenceFilesForSample(sample));
 
