@@ -2,26 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="analysis/details/details">
 
+<head>
+	<title th:text="#{analysis.page.title} + ' - '+ ${analysisSubmission.getId()} + ' - ' + ${workflowName}">dsf</title>
+</head>
 <body>
-<div layout:fragment="previewContent" class="panel panel-info">
-	<div class="panel-heading">
-		<b class="panel-title" th:text="#{analysis.details.preview}">_Preview_</b>
-		<a href="#" id="saveBtn" class="btn btn-default btn-xs pull-right" data-toggle="tooltip" data-placement="bottom" th:title="#{form.save.image}">
-			<span class="fa fa-fw fa-save"></span>
-			<span class="sr-only" th:text="#{form.save.image}">Save Image</span>
-		</a>
-	</div>
-	<div class="panel-body">
-		<div id="phyloSVG" class="image-preview"></div>
-	</div>
+<div layout:fragment="previewContent">
+	<a href="#" id="saveBtn" class="btn btn-default pull-right" tooltip-placement="bottom"
+	   th:attr="tooltip=#{form.save.image}" >
+		<span class="fa fa-fw fa-save"></span>
+		<span class="sr-only" th:text="#{form.save.image}">Save Image</span>
+	</a>
+	<div id="phyloSVG" class="image-preview"></div>
 </div>
 
-<th:block layout:fragment="previewScripts">
+<th:block th:if="${preview}" layout:fragment="previewScripts">
 	<script th:src="@{/resources/bower_components/raphael/raphael-min.js}"
 	        src="/resources/bower_components/raphael/raphael-min.js"></script>
 	<script th:src="@{/resources/js/vendor/jsphylosvg-min.js}" src="/resources/js/vendor/jsphylosvg-min.js"></script>
-	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"
-	        src="/resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 	<script th:inline="javascript">
 		/*<![CDATA[*/
@@ -30,7 +27,6 @@
 		var phylo = new Smits.PhyloCanvas({
 			'newick': newick
 		}, 'phyloSVG', 600, 600, 'circular');
-		$('.btn').tooltip();
 
 		(function () {
 			/*[- */
@@ -38,7 +34,7 @@
 			// TODO: find a way to get it to work.  Server option was vetoed.
 			/* -]*/
 			var name = /*[[${analysisSubmission.name + '.svg'}]]*/ 'no_name.svg',
-			    svg = $("svg");
+			    svg  = $("svg");
 
 			svg.attr({
 				version: '1.1',

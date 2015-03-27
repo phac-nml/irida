@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
@@ -42,6 +43,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
@@ -497,6 +499,20 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			return historiesClient.showProvenance(historyId, historyProvenanceId);
 		} catch (RuntimeException e) {
 			throw new ExecutionManagerException(e);
+		}
+	}
+	
+	/**
+	 * Deletes a history from Galaxy with the given id.
+	 * @param historyId The id of the history to delete. 
+	 * @return A {@link HistoryDeleteResponse} from Galaxy.
+	 * @throws DeleteGalaxyObjectFailedException If there was an error deleting a history.
+	 */
+	public HistoryDeleteResponse deleteHistory(final String historyId) throws DeleteGalaxyObjectFailedException {
+		try {
+			return historiesClient.deleteHistory(historyId);
+		} catch (RuntimeException e) {
+			throw new DeleteGalaxyObjectFailedException("Error while deleting history with id " + historyId, e);
 		}
 	}
 }

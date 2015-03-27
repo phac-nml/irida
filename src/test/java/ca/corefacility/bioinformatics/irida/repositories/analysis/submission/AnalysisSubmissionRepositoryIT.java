@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -115,6 +116,7 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission.setSubmitter(submitter1);
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 
 		analysisSubmission2 = AnalysisSubmission.builder(workflowId)
 				.name(analysisName2)
@@ -124,6 +126,7 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission2.setSubmitter(submitter2);
+		analysisSubmission2.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 	}
 
 	/**
@@ -150,7 +153,9 @@ public class AnalysisSubmissionRepositoryIT {
 		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository
 				.findByAnalysisState(AnalysisState.SUBMITTING);
 		assertEquals(2, submittedAnalyses.size());
-		assertEquals(analysisId, submittedAnalyses.get(0).getRemoteAnalysisId());
+		Set<String> analysisIdsSet = Sets.newHashSet(submittedAnalyses.get(0).getRemoteAnalysisId(), submittedAnalyses
+				.get(1).getRemoteAnalysisId());
+		assertEquals("invalid ids of returned submissions", Sets.newHashSet(analysisId, analysisId2), analysisIdsSet);
 	}
 
 	/**
@@ -163,6 +168,47 @@ public class AnalysisSubmissionRepositoryIT {
 		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository
 				.findByAnalysisState(AnalysisState.RUNNING);
 		assertEquals(Collections.EMPTY_LIST, submittedAnalyses);
+	}
+	
+	/**
+	 * Tests getting a single analysis by two states and succeeding
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByAnalysisTwoStateSuccess() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(
+				AnalysisState.SUBMITTING, AnalysisCleanedState.NOT_CLEANED);
+		assertEquals("Invalid size of returned analyses", 1, submittedAnalyses.size());
+		assertEquals("invalid ids of returned submissions", analysisId, submittedAnalyses.get(0).getRemoteAnalysisId());
+	}
+
+	/**
+	 * Tests getting multiple analyses by two states and succeeding
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByAnalysisTwoStateMultiple() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		analysisSubmissionRepository.save(analysisSubmission2);
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(
+				AnalysisState.SUBMITTING, AnalysisCleanedState.NOT_CLEANED);
+		assertEquals("Invalid size of returned analyses", 2, submittedAnalyses.size());
+		Set<String> analysisIdsSet = Sets.newHashSet(submittedAnalyses.get(0).getRemoteAnalysisId(), submittedAnalyses
+				.get(1).getRemoteAnalysisId());
+		assertEquals("invalid ids of returned submissions", Sets.newHashSet(analysisId, analysisId2), analysisIdsSet);
+	}
+
+	/**
+	 * Tests not getting any analyses by two states.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByAnalysisTwoStateNone() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(
+				AnalysisState.SUBMITTING, AnalysisCleanedState.CLEANED);
+		assertEquals("Invalid size of returned analyses", 0, submittedAnalyses.size());
 	}
 
 	/**

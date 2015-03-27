@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
@@ -58,6 +56,7 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
@@ -686,5 +685,27 @@ public class GalaxyHistoriesServiceIT {
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(history.getId());
 		assertEquals("state is invalid", GalaxyWorkflowState.OK, status.getState());
 		assertEquals("proportion complete is invalid", 1.0f, status.getProportionComplete(), DELTA);
+	}
+	
+	/**
+	 * Tests deleting a history from Galaxy successfully.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testDeleteHistorySuccess() throws ExecutionManagerException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		assertNotNull("History contents should not be null", galaxyHistory.showHistoryContents(history.getId()));
+		
+		HistoryDeleteResponse deleteResponse = galaxyHistory.deleteHistory(history.getId());
+		assertTrue("History is not deleted", deleteResponse.getDeleted());
+	}
+	
+	/**
+	 * Tests deleting a history from Galaxy and failing.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected=DeleteGalaxyObjectFailedException.class)
+	public void testDeleteHistoryFail() throws ExecutionManagerException {
+		galaxyHistory.deleteHistory("invalid");
 	}
 }

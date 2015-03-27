@@ -12,6 +12,21 @@
         'irida.cart'
     ]);
 
+  function UIGalaxyController() {
+    var vm = this;
+
+    //A page is in Galaxy if it's in an iframe and IRIDA was accessed from Galaxy
+    vm.inGalaxy = inIframe() && TL.galaxyCallback;
+
+    function inIframe() {
+      try {
+        return window.self !== window.top;
+      } catch (e) {
+        return true;
+      }
+    }
+  }
+
     angular.module('irida', deps)
         // This configures the base url globally for all restangular calls.
         .config(function (RestangularProvider) {
@@ -38,5 +53,6 @@
             paginationConfig.maxSize = 8;
             paginationConfig.rotate = false;
         })
+      .controller("UIGalaxyController", [UIGalaxyController])
     ;
 })();
