@@ -1,43 +1,22 @@
 /*
-Error: File to import not found or unreadable: compass.
-       Load paths:
-         /Users/josh/IRIDA/irida/src/main/webapp/styles
-         Sass::Globbing::Importer
-        on line 1 of /Users/josh/IRIDA/irida/src/main/webapp/styles/main.scss
+Error: Invalid CSS after "// Helpers": expected selector or at-rule, was "@import "helper..."
+        on line 3 of /Users/josh/IRIDA/irida/src/main/webapp/styles/main.scss
 
-1: @import "compass";
+1: @import "compass"
 2: // Helpers
 3: @import "helpers/variables";
 4: // Components
 5: @import "components/buttons";
 6: @import "components/datatables"; // TODO: remove this once datatables are officially gone
+7: @import "components/magnific-popup";
+8: @import "components/noty";
 
 Backtrace:
-/Users/josh/IRIDA/irida/src/main/webapp/styles/main.scss:1
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/import_node.rb:66:in `rescue in import'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/import_node.rb:45:in `import'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/import_node.rb:28:in `imported_file'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/import_node.rb:37:in `css_import?'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:311:in `visit_import'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:36:in `visit'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:79:in `block in with_base'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:115:in `with_frame'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:79:in `with_base'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:158:in `visit'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:52:in `map'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:52:in `visit_children'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:167:in `block in visit_children'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:179:in `with_environment'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:166:in `visit_children'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:36:in `block in visit'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:186:in `visit_root'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:36:in `visit'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:157:in `visit'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:8:in `visit'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/root_node.rb:36:in `css_tree'
-/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/root_node.rb:20:in `render'
+/Users/josh/IRIDA/irida/src/main/webapp/styles/main.scss:3
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/scss/parser.rb:1165:in `expected'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/scss/parser.rb:1101:in `expected'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/scss/parser.rb:43:in `parse'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/engine.rb:393:in `_to_tree'
 /Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/engine.rb:268:in `render'
 /Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/exec/sass_scss.rb:404:in `run'
 /Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/exec/sass_scss.rb:62:in `process_result'
@@ -48,4 +27,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Error: File to import not found or unreadable: compass.\A        Load paths:\A          /Users/josh/IRIDA/irida/src/main/webapp/styles\A          Sass::Globbing::Importer\A         on line 1 of /Users/josh/IRIDA/irida/src/main/webapp/styles/main.scss\A \A 1: @import \"compass\";\A 2: // Helpers\A 3: @import \"helpers/variables\";\A 4: // Components\A 5: @import \"components/buttons\";\A 6: @import \"components/datatables\"; // TODO: remove this once datatables are officially gone"; }
+  content: "Error: Invalid CSS after \"// Helpers\": expected selector or at-rule, was \"@import \"helper...\"\A         on line 3 of /Users/josh/IRIDA/irida/src/main/webapp/styles/main.scss\A \A 1: @import \"compass\"\A 2: // Helpers\A 3: @import \"helpers/variables\";\A 4: // Components\A 5: @import \"components/buttons\";\A 6: @import \"components/datatables\"; // TODO: remove this once datatables are officially gone\A 7: @import \"components/magnific-popup\";\A 8: @import \"components/noty\";"; }
