@@ -452,3 +452,5 @@ INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parame
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-4', 'minimum-mapping-quality');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-5', 'minimum-base-quality');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-6', 'minimum-read-coverage');
+
+INSERT INTO `remote_related_project`(id, created_date, remote_project_uri, project_id, remote_api_id) VALUES ('1','2015-03-27 11:13:39','http://localhost:8080/api/projects/5','4','1'); 
