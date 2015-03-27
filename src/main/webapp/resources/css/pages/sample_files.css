@@ -71,8 +71,13 @@
 .fade-in.ng-hide-remove-active {
   display: block !important; }
 
+.paired_end, .single_end {
+  background-color: #f3f3f3; }
+  .paired_end td, .single_end td {
+    border: none !important; }
+
 .paired_end .td_radio {
-  border: 2px solid #133B54;
+  border: 2px solid #133B54 !important;
   vertical-align: middle;
   text-align: center; }
 .paired_end .td_icon {
