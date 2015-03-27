@@ -112,11 +112,11 @@
 
 
     <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-                   file_path="src/test/resources/files/test_file.fastq" />
+                   file_path="/tmp/sequence-files/2/2/01-1111_S1_L001_R1_001.fastq" />
     <sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile2" />
+                   file_path="/tmp/sequence-files/2/2/02-2222_S1_L001_R2_001.fastq" />
     <sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile3" />
+                   file_path="/tmp/sequence-files/1/2/02-2222_S1_L001_R1_001.fastq" />
 
     <sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
                          sample_id="1" sequencefile_id="1" />

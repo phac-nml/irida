@@ -134,7 +134,7 @@
 												<tr class="paired_end paired_end__forward">
 													<td class="td_radio" rowspan="2">
 														<!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
-														<input type="radio" data-type="paired_end"
+														<input type="radio" data-type="paired_end" th:value="${pair.getId()}"
 														       th:checked="${pairStat.first}" th:name="${sample.id}"/>
 													</td>
 													<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
