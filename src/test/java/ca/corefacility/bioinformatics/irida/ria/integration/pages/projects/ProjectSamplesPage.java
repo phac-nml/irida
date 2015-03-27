@@ -54,6 +54,10 @@ public class ProjectSamplesPage extends AbstractPage {
 		return driver.findElements(By.className("sample-row")).size();
 	}
 
+	public int getNumberOfRemoteSamplesDisplayed() {
+		return driver.findElements(By.cssSelector(".sample-row.remote-sample")).size();
+	}
+
 	public int getGetSelectedPageNumber() {
 		return Integer.parseInt(driver.findElement(By.cssSelector(".pagination li.active")).getText());
 	}
@@ -249,6 +253,12 @@ public class ProjectSamplesPage extends AbstractPage {
 	public void enableAssociatedProjects() throws InterruptedException {
 		driver.findElement(By.id("displayBtn")).click();
 		driver.findElement(By.id("displayAssociated")).click();
+		waitForTime(500);
+	}
+
+	public void enableRemoteProjects() throws InterruptedException {
+		driver.findElement(By.id("displayBtn")).click();
+		driver.findElement(By.id("displayRemote")).click();
 		waitForTime(500);
 	}
 
