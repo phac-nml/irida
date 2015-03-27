@@ -2,23 +2,28 @@ package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 
 public class RemoteServiceImplTest {
 	RemoteServiceImpl<IdentifiableTestEntity> service;
 	RemoteRepository<IdentifiableTestEntity> repository;
+	RemoteAPIRepository apiRepo;
 
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
 		repository = mock(RemoteRepository.class);
-		service = new RemoteServiceImplImpl(repository);
+		apiRepo = mock(RemoteAPIRepository.class);
+		service = new RemoteServiceImplImpl(repository, apiRepo);
 	}
 
 	@Test
@@ -47,10 +52,29 @@ public class RemoteServiceImplTest {
 		verify(repository).getServiceStatus(remoteAPI);
 	}
 
+	@Test
+	public void testReadWithoutApi() {
+		String uri = "http://resource";
+		RemoteAPI remoteAPI = new RemoteAPI();
+
+		when(apiRepo.getRemoteAPIForUrl(uri)).thenReturn(remoteAPI);
+
+		service.read(uri);
+		verify(repository).read(uri, remoteAPI);
+	}
+
+	@Test(expected = EntityNotFoundException.class)
+	public void testReadWithoutApiNotExists() {
+		String uri = "http://resource";
+
+		service.read(uri);
+		when(apiRepo.getRemoteAPIForUrl(uri)).thenReturn(null);
+	}
+
 	private class RemoteServiceImplImpl extends RemoteServiceImpl<IdentifiableTestEntity> {
 
-		public RemoteServiceImplImpl(RemoteRepository<IdentifiableTestEntity> repository) {
-			super(repository);
+		public RemoteServiceImplImpl(RemoteRepository<IdentifiableTestEntity> repository, RemoteAPIRepository apiRepo) {
+			super(repository, apiRepo);
 		}
 
 	}

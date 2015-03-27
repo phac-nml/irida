@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 
@@ -19,14 +20,13 @@ import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteSer
  *
  */
 @Service
-public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<SequenceFile> implements
-		SequenceFileRemoteService {
+public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<SequenceFile> implements SequenceFileRemoteService {
 	public static final String SAMPLE_SEQUENCE_FILES_REL = "sample/sequenceFiles";
 	private final SequenceFileRemoteRepository repository;
 
 	@Autowired
-	public SequenceFileRemoteServiceImpl(SequenceFileRemoteRepository repository) {
-		super(repository);
+	public SequenceFileRemoteServiceImpl(SequenceFileRemoteRepository repository, RemoteAPIRepository apiRepository) {
+		super(repository, apiRepository);
 		this.repository = repository;
 	}
 

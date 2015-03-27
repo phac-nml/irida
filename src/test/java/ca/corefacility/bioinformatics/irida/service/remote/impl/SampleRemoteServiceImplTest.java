@@ -15,6 +15,7 @@ import org.springframework.hateoas.Link;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 
@@ -23,11 +24,13 @@ import com.google.common.collect.Lists;
 public class SampleRemoteServiceImplTest {
 	private SampleRemoteService sampleRemoteService;
 	private SampleRemoteRepository sampleRemoteRepository;
+	private RemoteAPIRepository apiRepo;
 
 	@Before
 	public void setUp() {
 		sampleRemoteRepository = mock(SampleRemoteRepository.class);
-		sampleRemoteService = new SampleRemoteServiceImpl(sampleRemoteRepository);
+		apiRepo = mock(RemoteAPIRepository.class);
+		sampleRemoteService = new SampleRemoteServiceImpl(sampleRemoteRepository, apiRepo);
 	}
 
 	@Test

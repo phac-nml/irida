@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -57,7 +56,6 @@ public class AssociatedProjectControllerTest {
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
 	private SampleService sampleService;
-	private RemoteObjectCache<Project> remoteProjectCache;
 
 	@Before
 	public void setUp() {
@@ -68,9 +66,8 @@ public class AssociatedProjectControllerTest {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		sampleService = mock(SampleService.class);
-		remoteProjectCache = new RemoteObjectCache<>();
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService, projectRemoteService, sampleService, remoteProjectCache);
+				userService, apiService, projectRemoteService, sampleService);
 	}
 
 	@Test
@@ -270,12 +267,12 @@ public class AssociatedProjectControllerTest {
 
 		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.add(new Link("http://somewhere",Link.REL_SELF));	
+		rp1.add(new Link("http://somewhere", Link.REL_SELF));
 
 		String selfRel2 = "http://somewhere-else";
 		Project rp2 = new Project();
 		rp2.setId(4l);
-		rp2.add(new Link("http://somewhere-else",Link.REL_SELF));
+		rp2.add(new Link("http://somewhere-else", Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject(project, api, selfRel2);
 
@@ -301,24 +298,21 @@ public class AssociatedProjectControllerTest {
 	@Test
 	public void testAddRemoteAssociatedProject() {
 		Long projectId = 1l;
-		Long apiId = 2l;
 
 		String projectLink = "http://somewhere/projects/1";
 		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.add(new Link(projectLink,Link.REL_SELF));
+		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteAPI api = new RemoteAPI();
-
-		Integer associatedProjectId = remoteProjectCache.addResource(rp1, api);
+		rp1.setRemoteAPI(api);
 
 		Project project = new Project();
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(apiService.read(apiId)).thenReturn(api);
+		when(projectRemoteService.read(projectLink)).thenReturn(rp1);
 
-		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId,
-				associatedProjectId, apiId);
+		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId, projectLink);
 
 		assertEquals("success", addRemoteAssociatedProject.get("result"));
 
@@ -335,21 +329,18 @@ public class AssociatedProjectControllerTest {
 	public void testRemoveRemoteAssociatedProject() {
 		Long projectId = 1l;
 		Project project = new Project();
-		RemoteAPI api = new RemoteAPI();
 
 		String projectLink = "http://somewhere/projects/1";
 		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.add(new Link(projectLink,Link.REL_SELF));
+		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject();
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(remoteRelatedProjectService.getRemoteRelatedProjectForProjectAndURI(project, projectLink)).thenReturn(rrp);
 
-		Integer associatedProjectId = remoteProjectCache.addResource(rp1, api);
-
-		controller.removeRemoteAssociatedProject(projectId, associatedProjectId);
+		controller.removeRemoteAssociatedProject(projectId, projectLink);
 
 		verify(remoteRelatedProjectService).delete(rrp.getId());
 	}

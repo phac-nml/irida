@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -43,6 +44,8 @@ public class AssociatedProjectsEditPageIT {
 	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectsEditPageIT.class);
 
 	AssociatedProjectEditPage page;
+
+	private static final Long projectId = 1l;
 
 	private WebDriver driver;
 	private static final List<Long> ASSOCIATED_PROJECTS = Lists.newArrayList(2l, 3l, 5l);
@@ -65,6 +68,7 @@ public class AssociatedProjectsEditPageIT {
 
 	@Test
 	public void hasTheCorrectProjectsDisplayed() {
+		page.goTo(projectId);
 		logger.debug("Testing: hasTheCorrectProjectsDisplayed");
 		List<String> projectsDiv = page.getProjects();
 		assertEquals("Has the correct number of projects", 4, projectsDiv.size());
@@ -74,6 +78,7 @@ public class AssociatedProjectsEditPageIT {
 
 	@Test
 	public void hasInitialAssocaitedProjects() {
+		page.goTo(projectId);
 		logger.debug("Testing: hasTheCorrectProjectsDisplayed");
 		List<String> projectsDiv = page.getAssociatedProjects();
 		assertEquals("Has the correct number of associated projects", 3, projectsDiv.size());
@@ -84,6 +89,7 @@ public class AssociatedProjectsEditPageIT {
 
 	@Test
 	public void testAddAssociatedProject() {
+		page.goTo(projectId);
 		logger.debug("Testing: testAddAssociatedProject");
 		page.clickAssociatedButton(4l);
 		page.checkNotyStatus("success");
@@ -92,10 +98,22 @@ public class AssociatedProjectsEditPageIT {
 
 	@Test
 	public void testRemoveAssociatedProject() {
+		page.goTo(projectId);
 		logger.debug("Testing: testAddAssociatedProject");
 		page.clickAssociatedButton(2l);
 		page.checkNotyStatus("success");
 		assertFalse("Project should not be associated", isProjectAssociated(2l));
+	}
+
+	@Test
+	public void testAddRemoteAssociatedProject() {
+		RemoteApiUtilities.addRemoteApi(driver);
+		page.goTo(projectId);
+		page.viewRemoteTab();
+		page.clickAssociatedButton(4l);
+		page.checkNotyStatus("success");
+		assertTrue("Project should be associated", isProjectAssociated(4l));
+
 	}
 
 	private boolean isProjectAssociated(Long projectId) {

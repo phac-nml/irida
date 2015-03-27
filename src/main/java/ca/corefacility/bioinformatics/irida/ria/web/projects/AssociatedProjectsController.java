@@ -43,8 +43,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
-import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -76,13 +74,10 @@ public class AssociatedProjectsController {
 
 	private final Formatter<Date> dateFormatter;
 
-	private RemoteObjectCache<Project> remoteProjectCache;
-
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
-			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService,
-			RemoteObjectCache<Project> remoteProjectCache) {
+			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectService = projectService;
@@ -90,7 +85,6 @@ public class AssociatedProjectsController {
 		this.userService = userService;
 		this.apiService = apiService;
 		this.projectRemoteService = projectRemoteService;
-		this.remoteProjectCache = remoteProjectCache;
 		this.sampleService = sampleService;
 		dateFormatter = new DateFormatter();
 	}
@@ -305,24 +299,19 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            The ID of the owning project
-	 * @param associatedProjectId
-	 *            The Cache ID of the {@link Project}
-	 * @param apiId
-	 *            The ID of the api this project resides on
+	 * @param projectUrl
+	 *            The URL of the remote {@link Project}
 	 * @return a Map representation of the status of adding the associated
 	 *         project.
 	 */
 	@RequestMapping(value = "/{projectId}/associated/remote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId,
-			@RequestParam Integer associatedProjectId, @RequestParam Long apiId) {
+	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId, @RequestParam String projectUrl) {
 		Project project = projectService.read(projectId);
-		RemoteAPI remoteAPI = apiService.read(apiId);
-		CacheObject<Project> cacheObject = remoteProjectCache.readResource(associatedProjectId);
-		Project readResource = cacheObject.getResource();
+		Project readResource = projectRemoteService.read(projectUrl);
 
 		Link selfLink = readResource.getLink(Link.REL_SELF);
-		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI,
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, readResource.getRemoteAPI(),
 				selfLink.getHref());
 		remoteRelatedProjectService.create(remoteRelatedProject);
 
@@ -334,22 +323,19 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            The ID of the project to remove the association from
-	 * @param associatedProjectId
-	 *            The cache identifier for the remote element
+	 * @param projectUrl
+	 *            The url for the remote element
 	 * @return a Map representation of the status of removing the associated
 	 *         project.
 	 */
-	@RequestMapping(value = "/{projectId}/associated/remote/{associatedProjectId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{projectId}/associated/remote/remove", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> removeRemoteAssociatedProject(@PathVariable Long projectId,
-			@PathVariable Integer associatedProjectId) {
+			@RequestParam String projectUrl) {
 		Project project = projectService.read(projectId);
-		CacheObject<Project> cacheObject = remoteProjectCache.readResource(associatedProjectId);
-		Project readResource = cacheObject.getResource();
 
-		Link selfLink = readResource.getLink(Link.REL_SELF);
 		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = remoteRelatedProjectService
-				.getRemoteRelatedProjectForProjectAndURI(project, selfLink.getHref());
+				.getRemoteRelatedProjectForProjectAndURI(project, projectUrl);
 		remoteRelatedProjectService.delete(remoteRelatedProjectForProjectAndURI.getId());
 
 		return ImmutableMap.of("result", "success");
@@ -397,6 +383,8 @@ public class AssociatedProjectsController {
 	 * @param associatedProjects
 	 *            The {@link RemoteRelatedProject}s associated with the current
 	 *            project
+	 * @param api
+	 *            The Remote API to get projects for
 	 * @return
 	 */
 	private List<Map<String, String>> getRemoteAssociatedProjectsMap(List<Project> projects,
@@ -411,14 +399,13 @@ public class AssociatedProjectsController {
 
 		for (Project project : projects) {
 			Map<String, String> pmap = new HashMap<>();
-			Integer remoteId = remoteProjectCache.addResource(project, api);
 
 			pmap.put("id", project.getId().toString());
-			pmap.put("remoteId", remoteId.toString());
+			pmap.put("selfRel", project.getLink(Link.REL_SELF).getHref());
 			pmap.put("name", project.getName());
 			pmap.put("organism", project.getOrganism());
 			pmap.put("createdDate", dateFormatter.print(project.getCreatedDate(), LocaleContextHolder.getLocale()));
-			
+
 			Link selfLink = project.getLink(Link.REL_SELF);
 			if (remoteUrls.containsKey(selfLink.getHref())) {
 				pmap.put("associated", "associated");
@@ -488,15 +475,8 @@ public class AssociatedProjectsController {
 	 *
 	 * @param projectList
 	 *            a List of {@link ProjectUserJoin} for the current user.
-	 * @param draw
-	 *            property sent from {@link ProjectsDataTable} as the table to
-	 *            render information to.
-	 * @param totalElements
-	 *            Total number of elements that could go into the table.
-	 * @param sortColumn
-	 *            Column to sort by.
-	 * @param sortDirection
-	 *            Direction to sort the column
+	 * @param relatedProjectJoins
+	 *            The current related projects
 	 * @return Map containing the information to put into the
 	 *         {@link ProjectsDataTable}
 	 */
@@ -531,7 +511,8 @@ public class AssociatedProjectsController {
 	/**
 	 * Handle entity exists exceptions for creating {@link RelatedProjectJoin}s
 	 * 
-	 * @param ex the exception to handle.
+	 * @param ex
+	 *            the exception to handle.
 	 * @return a {@link ResponseEntity} to render the exception to the client.
 	 */
 	@ExceptionHandler(EntityExistsException.class)

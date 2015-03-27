@@ -8,18 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
-import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
-import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
@@ -32,14 +31,12 @@ public class RemoteProjectsController {
 
 	private final ProjectRemoteService projectRemoteService;
 	private final RemoteRelatedProjectService remoteRelatedProjectService;
-	private RemoteObjectCache<Project> projectCache;
 
 	@Autowired
 	public RemoteProjectsController(ProjectRemoteService projectRemoteService,
-			RemoteRelatedProjectService remoteRelatedProjectService, RemoteObjectCache<Project> projectCache) {
+			RemoteRelatedProjectService remoteRelatedProjectService) {
 		this.projectRemoteService = projectRemoteService;
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
-		this.projectCache = projectCache;
 	}
 
 	/**
@@ -58,31 +55,10 @@ public class RemoteProjectsController {
 		Map<String, Object> map = new HashMap<>();
 		Project project = projectRemoteService.read(remoteRelatedProject);
 
-		Integer cacheId = projectCache.addResource(project, remoteRelatedProject.getRemoteAPI());
-
 		map.put("id", project.getId());
 		map.put("name", project.getName());
-		map.put("remoteId", cacheId);
 
 		return map;
-	}
-
-	/**
-	 * Get the info page about a given {@link Project}
-	 * 
-	 * @param projectCacheId
-	 *            The {@link RemoteObjectCache} id of the project
-	 * @param model
-	 *            Model for the view
-	 * @return the name of the remote project view page
-	 */
-	@RequestMapping("/{projectCacheId}")
-	public String readRemoteProject(@PathVariable Integer projectCacheId, Model model) {
-		CacheObject<Project> readResource = projectCache.readResource(projectCacheId);
-		model.addAttribute("project", readResource.getResource());
-		model.addAttribute("api", readResource.getAPI());
-
-		return REMOTE_PROJECT_VIEW;
 	}
 
 	/**
@@ -94,8 +70,8 @@ public class RemoteProjectsController {
 	 */
 	@ExceptionHandler(IridaOAuthException.class)
 	@ResponseBody
-	public String handleOAuthException(IridaOAuthException ex) {
-		return "invalid_token";
+	public Map<String, Object> handleOAuthException(IridaOAuthException ex) {
+		return ImmutableMap.of("status", "invalid_token");
 	}
 
 	/**
@@ -108,9 +84,9 @@ public class RemoteProjectsController {
 	 */
 	@ExceptionHandler(HttpClientErrorException.class)
 	@ResponseBody
-	public String handleForbiddenResponse(HttpClientErrorException e) {
+	public Map<String, Object> handleForbiddenResponse(HttpClientErrorException e) {
 		if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
-			return "forbidden";
+			return ImmutableMap.of("status", "forbidden");
 		} else {
 			throw e;
 		}
