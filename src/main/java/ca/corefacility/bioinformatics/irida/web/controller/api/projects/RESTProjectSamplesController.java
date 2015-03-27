@@ -178,10 +178,6 @@ public class RESTProjectSamplesController {
 		Project p = projectService.read(projectId);
 		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
 
-		/*
-		 * Using ResourceAdditionalProperties<Sample> so that we can add the
-		 * number of files in the sample to the JSON entity.
-		 */
 		ResourceCollection<Sample> sampleResources = new ResourceCollection<>(relationships.size());
 
 		for (Join<Project, Sample> r : relationships) {
