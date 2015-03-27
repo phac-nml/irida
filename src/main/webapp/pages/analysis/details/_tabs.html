@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title></title>
@@ -14,21 +14,22 @@
 		<tab-heading id="tab-input-files" th:text="#{analysis.tab.input-files}"></tab-heading>
 		<div>
 			<h3 th:text="#{samples.files.paired-end-data}"></h3>
-			<ul th:unless="${#lists.isEmpty(inputFilePairs)}" class="boards" th:each="pair : ${inputFilePairs}" th:with="files=${pair.getFiles()}">
-				<li class="board">
-					<div class="paired_end board_inner">
-						<div class="row board_paired" th:each="file : ${files}">
-							<div class="col-md-6">
-								<a href="#" th:href="@{/sequenceFiles/{id}/summary(id=${file.getId()})}" class="board-name btn btn-default btn-sm" th:text="${file.getLabel()}">File Name</a>
-							</div>
-							<div th:text="${file.getFileSize()}"></div>
-						</div>
-					</div>
-				</li>
-			</ul>
-			<div class="alert alert-info" th:if="${#lists.isEmpty(inputFilePairs)}" th:text="#{analysis.input-files.no-paired-end}">
-				__NO_PAIRED_END_DATA_
-			</div>
+
+			<th:block th:with="hasPaired=${#lists.size(paired_end) > 0}">
+				<table th:if="${hasPaired}" class="table">
+					<th:block th:each="pair : ${paired_end}">
+						<tr class="paired_end paired_end__forward">
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
+						</tr>
+						<tr class="paired_end paired_end__reverse">
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+						</tr>
+					</th:block>
+				</table>
+				<div class="alert alert-info" th:unless="${hasPaired}" th:text="#{analysis.input-files.no-paired-end}">
+					__NO_PAIRED_END_DATA_
+				</div>
+			</th:block>
 		</div>
 	</tab>
 

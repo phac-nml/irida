@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<th:block th:fragment="sequenceFileTableLayout" th:with="url=@{${#httpServletRequest.requestURI}}">
+<th:block th:fragment="sequenceFileTableLayout" th:with="url=@{${#httpServletRequest.requestURI}},dateFormat=#{locale.date.short}">
 	<td class="td_icon" th:switch="${icon}">
 		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:tooltip="#{sf.tooltip.forward}"></i>
 		<i th:case="'reverse'" class="fa fa-fw fa-arrow-left" data:tooltip="#{sf.tooltip.reverse}"></i>
