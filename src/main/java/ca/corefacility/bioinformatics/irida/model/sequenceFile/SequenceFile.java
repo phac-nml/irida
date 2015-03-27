@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
@@ -214,6 +216,16 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	}
 
 	/**
+	 * Get the size of the file.
+	 *
+	 * @return The String representation of the file size
+	 * @throws IOException
+	 */
+	public String getFileSize() throws IOException {
+		return humanReadableByteCount(Files.size(file), true);
+	}
+
+	/**
 	 * Set the Map of optional properties
 	 * 
 	 * @param optionalProperties
@@ -248,5 +260,22 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 		} else {
 			throw new AnalysisAlreadySetException("The FastQC Analysis can only be applied to a sequence file one time.");
 		}
+	}
+
+	/**
+	 * From (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java)
+	 *
+	 * @param bytes
+	 * @param si
+	 *
+	 * @return
+	 */
+	public static String humanReadableByteCount(long bytes, boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit)
+			return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }

@@ -1,12 +1,42 @@
 @import "../helpers/variables";
 @import "../animations/animations";
 
+.paired_end, .single_end {
+  background-color: $color-grey-light;
+  td {
+    border: none !important;
+  }
+}
+
 .paired_end {
-  border-left: 1rem solid $colour-paired-end;
+  .td_radio {
+    border: 1px solid $colour-paired-end !important;
+    vertical-align: middle;
+    text-align: center;
+  }
+  .td_icon {
+    background-color: $colour-paired-end;
+    color: $color-grey-light;
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
+.paired_end__forward {
+  border: 1px solid $colour-paired-end;
+  border-bottom: none;
+}
+
+.paired_end__reverse {
+  border: 1px solid $colour-paired-end;
+  border-top: none;
 }
 
 .single_end {
-  border-left: 1rem solid $colour-single-end;
+  border: 1px solid $colour-single-end;
+  .td_icon {
+    background-color: $colour-single-end;
+  }
 }
 
 .sidebar-content {

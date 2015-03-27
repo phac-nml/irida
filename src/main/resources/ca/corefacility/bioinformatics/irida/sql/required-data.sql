@@ -295,14 +295,17 @@ INSERT INTO `sequence_file` (id, created_date, file_revision_number, modified_da
 
 
 -- sequencefile sample
-INSERT INTO `sequencefile_sample` (id, createdDate, sample_id, sequencefile_id) VALUES (1,'2014-07-30 08:24:34',52,1),(2,'2014-07-30 08:24:34',52,2),(3,'2014-07-30 08:24:35',51,3),(4,'2014-07-30 08:24:35',51,4),(5,'2014-07-30 08:24:35',53,5),(6,'2014-07-30 08:24:35',53,6),(7,'2014-08-06 10:01:03',52,7),(8,'2014-08-06 10:01:03',52,8),(9,'2014-08-06 10:01:03',51,9),(10,'2014-08-06 10:01:04',51,10),(11,'2014-08-06 10:01:04',53,11),(12,'2014-08-06 10:01:04',53,12);
+INSERT INTO `sequencefile_sample` (id, createdDate, sample_id, sequencefile_id) VALUES (1,'2014-07-30 08:24:34',52,1),(2,'2014-07-30 08:24:34',52,2),(3,'2014-07-30 08:24:35',52,3),(4,'2014-07-30 08:24:35',52,4),(5,'2014-07-30 08:24:35',53,5),(6,'2014-07-30 08:24:35',53,6),(7,'2014-08-06 10:01:03',52,7),(8,'2014-08-06 10:01:03',52,8),(9,'2014-08-06 10:01:03',51,9),(10,'2014-08-06 10:01:04',51,10),(11,'2014-08-06 10:01:04',53,11),(12,'2014-08-06 10:01:04',53,12),(13,'2014-07-30 08:24:35',51,3),(14,'2014-07-30 08:24:35',51,4),(15,'2014-07-30 08:24:35',52,6);
 
 -- sequence_file_pair
 INSERT INTO `sequence_file_pair` (id, created_date) VALUES (1, '2014-07-30 08:24:34');
+INSERT INTO `sequence_file_pair` (id, created_date) VALUES (2, '2014-07-30 08:24:34');
 
 -- sequence_file_pair_files
 INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (1, 1);
 INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (1, 2);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (2, 3);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (2, 4);
 
 -- analysis
 INSERT INTO `analysis` (id, createdDate, description, executionManagerAnalysisId) VALUES (1,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(2,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(3,'2014-07-30 08:24:34','Analysis produced by FastQC','internal-fastqc'),(4,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(5,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(6,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(7,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(8,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc'),(9,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc'),(10,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(11,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(12,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc');

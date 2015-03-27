@@ -51,4 +51,13 @@ public interface AnalysisExecutionScheduledTask {
 	 *         stages.
 	 */
 	public Set<Future<AnalysisSubmission>> transferAnalysesResults();
+	
+	/**
+	 * Cycle through any completed or errored {@link AnalysisSubmission}s and
+	 * delete intermediate files in the execution manager.
+	 * 
+	 * @return A {@link Set} of {@link Future} {@link AnalysisSubmission}s for
+	 *         all the analyses that were cleaned.
+	 */
+	public Set<Future<AnalysisSubmission>> cleanupAnalysisSubmissions();
 }

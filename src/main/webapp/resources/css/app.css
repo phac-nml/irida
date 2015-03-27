@@ -5052,34 +5052,6 @@ h1, h2, h3, h4, h5, h6 {
 .fade-in.ng-hide-remove-active {
   display: block !important; }
 
-.boards {
-  list-style: none;
-  padding: 0;
-  background-color: #FFFFFF;
-  border: 1px solid #dfdfdf;
-  border-bottom-color: #939393;
-  border-radius: 4px;
-  margin-bottom: 1rem; }
-
-.board {
-  border-bottom: 1px solid #f3f3f3; }
-
-.board_inner {
-  margin: .5rem;
-  padding: .5rem; }
-
-.board_paired:first-child {
-  padding-bottom: 1rem; }
-
-.board_detail--value {
-  line-height: 1.8rem; }
-
-.board_detail--desc {
-  line-height: 1rem;
-  padding: .2rem 0 0 0;
-  font-size: 1.3rem;
-  color: #939393; }
-
 .breadcrumbs {
   background-color: #133B54; }
 
@@ -5441,6 +5413,17 @@ input {
   font-size: 1.3rem;
   margin: 0;
   padding: 0; }
+
+.td_icon {
+  width: 2rem; }
+
+.td_info--value {
+  line-height: 1.8rem; }
+.td_info--desc {
+  line-height: 1rem;
+  padding: .2rem 0 0 0;
+  font-size: 1.3rem;
+  color: #939393; }
 
 .description {
   color: #939393;

@@ -40,7 +40,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class SampleFilesPageIT {
 	private final String SAMPLE_LABEL = "sample1";
 	private final Long SAMPLE_ID = 1L;
-	private final String FILE_NAME = "test_file.fastq";
+	private final String FILE_NAME = "01-1111_S1_L001_R1_001.fastq";
 	private WebDriver driver;
 	private SampleFilesPage page;
 
