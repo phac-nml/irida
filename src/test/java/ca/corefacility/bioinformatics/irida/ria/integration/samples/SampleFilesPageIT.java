@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -40,13 +40,13 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class SampleFilesPageIT {
 	private final String SAMPLE_LABEL = "sample1";
 	private final Long SAMPLE_ID = 1L;
-	private final String FILE_NAME = "test_file.fastq";
+	private final String FILE_NAME = "01-1111_S1_L001_R1_001.fastq";
 	private WebDriver driver;
 	private SampleFilesPage page;
 
 	@Before
 	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
 		LoginPage.loginAsAdmin(driver);
 		page = new SampleFilesPage(driver);
 	}
