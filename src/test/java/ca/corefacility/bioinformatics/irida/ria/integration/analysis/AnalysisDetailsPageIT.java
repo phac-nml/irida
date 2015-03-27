@@ -76,10 +76,6 @@ public class AnalysisDetailsPageIT {
 
 		// Ensure the tool parameters can be displayed;
 		assertEquals("First tool should have 1 parameter", 1, page.getNumberOfParametersForTool());
-
-		// Ensure the input files are displayed
-		page.displayInputFilesTab();
-		assertEquals("Should display 1 pair of paired end files", 1, page.getNumberOfPairedEndInputFiles());
 	}
 
 	private void addOutputFile() throws URISyntaxException, IOException {
