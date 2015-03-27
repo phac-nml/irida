@@ -920,14 +920,14 @@
 		<liquibase.config.changeLogFile>ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
 
 		<!-- URL to the Galaxy repository to test against by default -->
-		<test.galaxy.repository.url>https://bitbucket.org/galaxy/galaxy-dist</test.galaxy.repository.url>
+		<test.galaxy.repository.url>https://bitbucket.org/apetkau/galaxy-dist</test.galaxy.repository.url>
 
 		<!-- Branch name within the Galaxy repository to test against -->
-		<test.galaxy.branch>stable</test.galaxy.branch>
+		<test.galaxy.branch>latest-database-deadlock-fix</test.galaxy.branch>
 
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch 
 			in the defined repository -->
-		<test.galaxy.revision>28113eeee212db2eef9cf4304abe9c3b2a92abcd</test.galaxy.revision>
+		<test.galaxy.revision>72304042b85dc6494003de63ec32ffd36f0c1d2e</test.galaxy.revision>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
 		<!-- Set to 'local' to use the local version stored in irida-api, or set 
