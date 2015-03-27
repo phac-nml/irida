@@ -49,7 +49,7 @@ public class RESTProjectSamplesController {
 	 * rel used for accessing the list of samples associated with a project.
 	 */
 	public static final String REL_PROJECT_SAMPLES = "project/samples";
-
+		
 	/**
 	 * Reference to {@link ProjectService}.
 	 */
@@ -81,24 +81,22 @@ public class RESTProjectSamplesController {
 	 *         project.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
-	public ModelMap copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
-			HttpServletResponse response) {
-
+	public ModelMap copySampleToProject(final @PathVariable Long projectId,
+			final @RequestBody List<Long> sampleIds, HttpServletResponse response) {
+		
 		ModelMap modelMap = new ModelMap();
-
+		
 		Project p = projectService.read(projectId);
-
-		ResourceCollection<LabelledRelationshipResource<Project, Sample>> labeledProjectSampleResources = new ResourceCollection<>(
-				sampleIds.size());
+		
+		ResourceCollection<LabelledRelationshipResource<Project,Sample>> labeledProjectSampleResources = new ResourceCollection
+				<>(sampleIds.size());
 		for (final long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
 			Join<Project, Sample> r = projectService.addSampleToProject(p, sample);
-			LabelledRelationshipResource<Project, Sample> resource = new LabelledRelationshipResource<Project, Sample>(
-					r.getLabel(), r);
-			// add a labeled relationship resource to the resource collection
-			// that will fill the body of the response.
-			resource.add(linkTo(
-					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
+			LabelledRelationshipResource<Project, Sample> resource = new LabelledRelationshipResource
+					<Project, Sample>(r.getLabel(),r);
+			//add a labeled relationship resource to the resource collection that will fill the body of the response.
+			resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
 					.withSelfRel());
 			resource.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sample.getId()))
@@ -110,12 +108,12 @@ public class RESTProjectSamplesController {
 					.getHref();
 			response.addHeader(HttpHeaders.LOCATION, location);
 		}
-		// add a link to the project that was copied to.
-		labeledProjectSampleResources.add(linkTo(
-				methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+		//add a link to the project that was copied to.
+		labeledProjectSampleResources
+				.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, labeledProjectSampleResources);
 		response.setStatus(HttpStatus.CREATED.value());
-
+		
 		return modelMap;
 	}
 
@@ -134,10 +132,9 @@ public class RESTProjectSamplesController {
 	 *         location information.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
-	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody Sample sample,
-			HttpServletResponse response) {
+	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody Sample sample, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
-
+		
 		// load the project that we're adding to
 		Project p = projectService.read(projectId);
 
@@ -148,23 +145,23 @@ public class RESTProjectSamplesController {
 		Long sampleId = r.getObject().getId();
 		String location = linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
 				.withSelfRel().getHref();
-
+		
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
-		sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
-				.withSelfRel());
+		sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
 		sample.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
 				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 		sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-
+		
 		// add the resource to the model
-		model.addAttribute(RESTGenericController.RESOURCE_NAME, sample);
-
-		// set the response status and add a location header
+		model.addAttribute(RESTGenericController.RESOURCE_NAME,sample);
+		
+		//set the response status and add a location header
 		response.setStatus(HttpStatus.CREATED.value());
 		response.addHeader(HttpHeaders.LOCATION, location);
-
+		
 		return model;
 	}
+	
 
 	/**
 	 * Get the list of {@link Sample} associated with this {@link Project}.
@@ -181,11 +178,15 @@ public class RESTProjectSamplesController {
 		Project p = projectService.read(projectId);
 		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
 
+		/*
+		 * Using ResourceAdditionalProperties<Sample> so that we can add the
+		 * number of files in the sample to the JSON entity.
+		 */
 		ResourceCollection<Sample> sampleResources = new ResourceCollection<>(relationships.size());
 
 		for (Join<Project, Sample> r : relationships) {
 			Sample sample = r.getObject();
-
+			
 			sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
 					.withSelfRel());
 			sample.add(linkTo(
@@ -195,8 +196,8 @@ public class RESTProjectSamplesController {
 			sampleResources.add(sample);
 		}
 
-		sampleResources.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId))
-				.withSelfRel());
+		sampleResources
+				.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sampleResources);
 
@@ -317,9 +318,8 @@ public class RESTProjectSamplesController {
 		RootResource resource = new RootResource();
 		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
 				.withSelfRel());
-		resource.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId)).withRel(
-				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 		resource.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(RESTProjectsController.REL_PROJECT));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
