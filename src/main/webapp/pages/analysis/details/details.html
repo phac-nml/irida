@@ -4,6 +4,8 @@
 
 <head lang="en">
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
+	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
+	      th:href="@{/resources/css/pages/sample_files.css}"/>
 	<style>
 		.tool i {
 			font-size: .75em;
@@ -26,27 +28,11 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
-			<tabset th:if="${isCompleted}">
-				<!--/*
-				Preview Tab
-				*/-->
-				<tab th:if="${preview}">
-					<tab-heading id="tab-preview" th:text="#{analysis.tab.preview}"></tab-heading>
-					<div layout:fragment="previewContent"></div>
-					<div th:unless="${preview}" layout:fragment="noPreview">__NO_PREVIEW__</div>
-				</tab>
-				<!--/*
-				Output Files Tab
-				*/-->
-				<tab th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">
-					<tab-heading id="tab-files" th:text="#{analysis.tab.provenance}"></tab-heading>
-					<accordion>
-						<accordion-group class="file-info" th:each="file : ${files}">
-							<accordion-heading class="filename" th:text="${file.getLabel()}">__FILENAME__</accordion-heading>
-							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
-						</accordion-group>
-					</accordion>
-				</tab>
+			<tabset>
+				<tab th:if="${preview}" th:replace="analysis/details/_tabs :: #preview"></tab>
+				<tab th:replace="analysis/details/_tabs :: #inputFilesTab"></tab>
+				<tab th:if="${isCompleted}" th:replace="analysis/details/_tabs :: #provenanceTab"></tab>
+
 			</tabset>
 			<div th:unless="${isCompleted}">
 				<h2><th:block th:text="#{analysis.details.state}"></th:block> : <th:block th:text="#{'analysis.state.' + ${analysisSubmission.analysisState}}"></th:block></h2>
@@ -58,29 +44,6 @@
 	</div>
 </main>
 
-<!--/*
-	For every tool used to create the analysis, Thymeleaf will load this template, recursively finding
-	all tools and their parameters.
-	Initial tool: AnalysisOutputFile.createByTool
-*/-->
-<div th:fragment="toolsLayout (tools)">
-	<div th:each="tool : ${tools}" style="margin-left: 2rem;" th:with="toolId=${'tool' + analysisSubmission.getId() + #dates.createNow().getTime()}" data:ng-init="${toolId + '=false'}">
-		<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
-			<i data:ng-hide="${toolId}" class="fa fa-fw fa-chevron-right"></i>
-			<i data:ng-show="${toolId}" class="fa fa-fw fa-chevron-down"></i>
-			<span th:text="${tool.getLabel()}"></span>
-		</button>
-		<div data:ng-show="${toolId}" class="parameters">
-			<table class="table">
-				<tr class="parameter" th:each="parameter : ${tool.getExecutionTimeParameters()}">
-					<td class="para-key" th:text="${parameter.key}"></td>
-					<td class="para-value" th:text="${parameter.value}"></td>
-				</tr>
-			</table>
-		</div>
-		<div th:include="analysis/details/details :: toolsLayout (${tool.previousSteps})"></div>
-	</div>
-</div>
 
 </body>
 

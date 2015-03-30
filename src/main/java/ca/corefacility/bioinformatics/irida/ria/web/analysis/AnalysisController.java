@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -136,6 +137,11 @@ public class AnalysisController {
 		String viewName = getViewForAnalysisType(analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
+
+		// Input files
+		// - Paired
+		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		model.addAttribute("paired_end", inputFilePairs);
 
 		/*
 		 * Preview information
