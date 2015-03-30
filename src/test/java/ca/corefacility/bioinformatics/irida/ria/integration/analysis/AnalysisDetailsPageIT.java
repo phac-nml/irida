@@ -4,10 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 import org.junit.After;
 import org.junit.Before;
@@ -61,7 +57,6 @@ public class AnalysisDetailsPageIT {
 	@Test
 	public void testPageSetUp() throws URISyntaxException, IOException {
 		logger.debug("Testing 'Analysis Details Page'");
-		addOutputFile();
 
 		LoginPage.loginAsAdmin(driver);
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver, 4L);
@@ -76,15 +71,10 @@ public class AnalysisDetailsPageIT {
 
 		// Ensure the tool parameters can be displayed;
 		assertEquals("First tool should have 1 parameter", 1, page.getNumberOfParametersForTool());
-	}
 
-	private void addOutputFile() throws URISyntaxException, IOException {
-		String filePath = "/tmp/snp_tree_28329923473842346785384sd2s.tree";
-		logger.debug("Testing 'Analysis Details Page' - adding file [" + filePath + "]");
-		Path sequenceFilePathReal = Paths
-				.get(AnalysisDetailsPageIT.class.getResource("snp_tree.tree").toURI());
-		Files.copy(sequenceFilePathReal, Paths.get(filePath),
-				StandardCopyOption.REPLACE_EXISTING);
-
+		// Ensure the input files are displayed
+		// 2 Files expected since they are a pair.
+		page.displayInputFilesTab();
+		assertEquals("Should display 1 pair of paired end files", 2, page.getNumberOfPairedEndInputFiles());
 	}
 }

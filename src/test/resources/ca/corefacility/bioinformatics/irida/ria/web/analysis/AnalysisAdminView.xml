@@ -25,9 +25,9 @@
                     fileRevisionNumber="1"/>
 
     <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-                   modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq"
+                   modified_date="2013-07-18 14:20:19.0" file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R1_001.fastq"
                    file_revision_number="1" sequencing_run_id="1"/>
-    <sequence_file id="2" created_date="2014-07-30 08:24:34" file_revision_number="1" modified_date="2014-08-06 10:01:03" file_path="/tmp/files2.txt" sequencing_run_id="1" />
+    <sequence_file id="2" created_date="2014-07-30 08:24:34" file_revision_number="1" modified_date="2014-08-06 10:01:03" file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq" sequencing_run_id="1" />
 
     <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="manager@nowhere.com" firstName="Mr." lastName="Manager"
@@ -79,7 +79,7 @@
 
     <tool_execution_prev_steps tool_execution_id="2" tool_execution_prev_id="1" />
 
-    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="/tmp/snp_tree_28329923473842346785384sd2s.tree" tool_execution_id="2" />
+    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="src/test/resources/files/snp_tree.tree" tool_execution_id="2" />
 
     <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="tree" />
 

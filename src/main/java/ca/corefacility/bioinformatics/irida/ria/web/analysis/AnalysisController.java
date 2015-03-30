@@ -141,7 +141,7 @@ public class AnalysisController {
 		// Input files
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
-		model.addAttribute("inputFilePairs", inputFilePairs);
+		model.addAttribute("paired_end", inputFilePairs);
 
 		/*
 		 * Preview information

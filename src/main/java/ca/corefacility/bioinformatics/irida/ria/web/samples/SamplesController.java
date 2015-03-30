@@ -61,7 +61,6 @@ public class SamplesController extends BaseController {
 
 	// Model attributes
 	private static final String MODEL_ATTR_SAMPLE = "sample";
-	private static final String MODEL_ATTR_FILES = "files";
 	public static final String MODEL_ATTR_CAN_MANAGE_SAMPLE = "canManageSample";
 
 	// Page Names
