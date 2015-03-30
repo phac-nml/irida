@@ -32,6 +32,7 @@
 				<tab th:if="${preview}" th:replace="analysis/details/_tabs :: #preview"></tab>
 				<tab th:replace="analysis/details/_tabs :: #inputFilesTab"></tab>
 				<tab th:if="${isCompleted}" th:replace="analysis/details/_tabs :: #provenanceTab"></tab>
+
 			</tabset>
 			<div th:unless="${isCompleted}">
 				<h2><th:block th:text="#{analysis.details.state}"></th:block> : <th:block th:text="#{'analysis.state.' + ${analysisSubmission.analysisState}}"></th:block></h2>
