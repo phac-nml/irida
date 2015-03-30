@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -152,7 +151,7 @@ public class SamplesControllerTest {
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
-		verify(sampleService, times(2)).read(sampleId);
+		verify(sampleService).read(sampleId);
 		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
 		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 	}
@@ -181,7 +180,7 @@ public class SamplesControllerTest {
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
-		verify(sampleService, times(2)).read(sampleId);
+		verify(sampleService).read(sampleId);
 		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
 		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 		verifyZeroInteractions(projectService);
@@ -215,7 +214,7 @@ public class SamplesControllerTest {
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
-		verify(sampleService, times(2)).read(sampleId);
+		verify(sampleService).read(sampleId);
 		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
 		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 	}

@@ -30,11 +30,11 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	public String getSequenceFileName() {
-		return driver.findElements(By.className("board-name")).get(0).getText();
+		return driver.findElements(By.className("file-name")).get(0).getText();
 	}
 
 	public int getSequenceFileCount() {
-		return driver.findElements(By.className("board")).size();
+		return driver.findElements(By.cssSelector("tr")).size();
 	}
 	
 	public void deleteFirstFile(){

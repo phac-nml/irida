@@ -19,11 +19,17 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id = "tab-preview")
 	private WebElement tabPreview;
 
-	@FindBy(id = "tab-files")
-	private WebElement tabFiles;
+	@FindBy(id = "tab-provenance")
+	private WebElement tabProvenance;
+
+	@FindBy(id = "tab-input-files")
+	private WebElement tabInputFiles;
 
 	@FindBy(className = "file-info")
 	private List<WebElement> fileInfo;
+
+	@FindBy(className = "paired_end")
+	private List<WebElement> pairedEndElements;
 
 	private WebElement currentFile;
 
@@ -49,8 +55,15 @@ public class AnalysisDetailsPage extends AbstractPage {
 	/**
 	 * Open the tab to display the list of files for this analysis.
 	 */
-	public void displayFilesView() {
-		tabFiles.click();
+	public void displayProvenanceView() {
+		tabProvenance.click();
+	}
+
+	/**
+	 * Open the tab to display the list of input files for the analysis
+	 */
+	public void displayInputFilesTab() {
+		tabInputFiles.click();
 	}
 
 	/**
@@ -102,5 +115,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 				break;
 			}
 		}
+	}
+
+	public int getNumberOfPairedEndInputFiles() {
+		return pairedEndElements.size();
 	}
 }

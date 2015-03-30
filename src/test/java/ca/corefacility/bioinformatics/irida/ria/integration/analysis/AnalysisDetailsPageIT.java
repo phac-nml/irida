@@ -67,7 +67,7 @@ public class AnalysisDetailsPageIT {
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver, 4L);
 
 		// Ensure files are displayed
-		page.displayFilesView();
+		page.displayProvenanceView();
 		assertEquals("Should be displaying 1 file", 1, page.getNumberOfFilesDisplayed());
 
 		// Ensure tools are displayed

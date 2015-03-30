@@ -5,6 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +52,7 @@ public class PipelinesPhylogenomicsPageIT {
 	private PipelinesPhylogenomicsPage page;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException, URISyntaxException {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
 		page = new PipelinesPhylogenomicsPage(driver);
 	}
@@ -64,7 +67,8 @@ public class PipelinesPhylogenomicsPageIT {
 		addSamplesToCart();
 
 		logger.info("Checking Phylogenomics Page Setup.");
-		assertEquals("Should display the correct number of reference files in the select input.", 2, page.getReferenceFileCount());
+		assertEquals("Should display the correct number of reference files in the select input.", 2,
+				page.getReferenceFileCount());
 		assertEquals("Should display the correct number of samples.", 2, page.getNumberOfSamplesDisplayed());
 	}
 
@@ -102,7 +106,8 @@ public class PipelinesPhylogenomicsPageIT {
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
 		assertTrue("User should be told that they can upload files", page.isAddReferenceFileLinksDisplayed());
-		assertEquals("There should be a link to one project to upload a reference file", 1, page.getAddReferenceFileToProjectLinkCount());
+		assertEquals("There should be a link to one project to upload a reference file", 1,
+				page.getAddReferenceFileToProjectLinkCount());
 	}
 
 	@Test
@@ -111,7 +116,8 @@ public class PipelinesPhylogenomicsPageIT {
 
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
-		assertTrue("Message should be displayed once the pipeline finished submitting", page.isPipelineSubmittedSuccessMessageShown());
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
 	}
 	
 	@Test
@@ -173,12 +179,14 @@ public class PipelinesPhylogenomicsPageIT {
 		String value = page.getAlternativeAlleleFractionValue();
 		String newValue = "10";
 		page.setAlternativeAlleleFraction(newValue);
-		assertNotEquals("Should not have the same value as the default after being changed", newValue, page.getAlternativeAlleleFractionValue());
+		assertNotEquals("Should not have the same value as the default after being changed", newValue,
+				page.getAlternativeAlleleFractionValue());
 		page.clickSetDefaultAlternativeAlleleFraction();
 		assertEquals("Value should be reset to the default value", value, page.getAlternativeAlleleFractionValue());
 	}
 	
 	@Test
+	
 	public void testModifyAndSaveParameters() {
 		addSamplesToCart();
 		page.clickPipelineParametersBtn();
@@ -189,12 +197,15 @@ public class PipelinesPhylogenomicsPageIT {
 		String newValue = "10";
 		final String savedParametersName = "Saved parameters name.";
 		page.setAlternativeAlleleFraction(newValue);
-		assertNotEquals("Should not have the same value as the default after being changed", newValue, page.getAlternativeAlleleFractionValue());
+		assertNotEquals("Should not have the same value as the default after being changed", newValue,
+				page.getAlternativeAlleleFractionValue());
 		page.clickSaveParameters();
-		assertTrue("Page should have shown name for parameters field with selected parameters name.", page.isNameForParametersVisible());
+		assertTrue("Page should have shown name for parameters field with selected parameters name.",
+				page.isNameForParametersVisible());
 		page.setNameForSavedParameters(savedParametersName);
 		page.clickUseParametersButton();
-		assertEquals("Selected parameter set should be the saved one.", savedParametersName, page.getSelectedParameterSet());
+		assertEquals("Selected parameter set should be the saved one.", savedParametersName,
+				page.getSelectedParameterSet());
 	}
 
 	private void addSamplesToCart() {

@@ -39,7 +39,7 @@
 				Output Files Tab
 				*/-->
 				<tab th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">
-					<tab-heading id="tab-files" th:text="#{analysis.tab.provenance}"></tab-heading>
+					<tab-heading id="tab-provenance" th:text="#{analysis.tab.provenance}"></tab-heading>
 					<accordion>
 						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename" th:text="${file.getLabel()}">__FILENAME__</accordion-heading>

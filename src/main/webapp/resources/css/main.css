@@ -45,16 +45,12 @@
 .dataTables_filter input[type='search']:focus {
   background-color: white;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-  -o-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-  -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
 }
 
 /* line 1, ../../styles/components/_magnific-popup.scss */
 .image-link {
   cursor: -webkit-zoom-in;
-  cursor: -moz-zoom-in;
   cursor: zoom-in;
 }
 
@@ -64,9 +60,6 @@
 .mfp-with-zoom.mfp-bg {
   opacity: 0;
   -webkit-backface-visibility: hidden;
-  -webkit-transition: all 0.3s ease-out;
-  -moz-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
 }
 
@@ -208,8 +201,12 @@
 .sidebar__item {
   border-top: 1px solid #f3f3f3;
   padding: .3em 0.5em;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 /* line 73, ../../styles/components/_panels.scss */
 .sidebar__item > div {
@@ -226,7 +223,9 @@
 .sidebar__value {
   color: #232323;
   text-align: right;
-  flex-grow: 2;
+  -webkit-flex-grow: 2;
+      -ms-flex-positive: 2;
+          flex-grow: 2;
 }
 
 /* line 2, ../../styles/pages/_sequenceFile.scss */
@@ -255,41 +254,41 @@ iframe.remote-api-frame {
   height: 450px;
 }
 
-/* line 17, ../../styles/main.scss */
+/* line 16, ../../styles/main.scss */
 .login__links a {
   margin-top: 10px;
   display: block;
 }
 
-/* line 23, ../../styles/main.scss */
+/* line 22, ../../styles/main.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 26, ../../styles/main.scss */
+/* line 25, ../../styles/main.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 31, ../../styles/main.scss */
+/* line 30, ../../styles/main.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 36, ../../styles/main.scss */
+/* line 35, ../../styles/main.scss */
 #table-filter {
   padding: 0;
 }
-/* line 38, ../../styles/main.scss */
+/* line 37, ../../styles/main.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 41, ../../styles/main.scss */
+/* line 40, ../../styles/main.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 46, ../../styles/main.scss */
+/* line 45, ../../styles/main.scss */
 .selected__counts {
   color: white !important;
   border-radius: 4px;
@@ -299,7 +298,7 @@ iframe.remote-api-frame {
   border-top: 1px solid rgba(0, 0, 0, 0.4);
 }
 
-/* line 55, ../../styles/main.scss */
+/* line 54, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
