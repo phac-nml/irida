@@ -25,12 +25,13 @@ Currently, there are two pipelines integrated into IRIDA:
 IRIDA provides support for developing and integrating additional pipelines from Galaxy.  This process can be divided into two stages: **Galaxy Workflow Development** and **IRIDA Integration**.  The necessary steps, in brief, are:
 
 1. Galaxy Workflow Development
-    1. Develop a Galaxy Workflow.
-    2. Upload dependency tools to a [Galaxy Toolshed][Galaxy Toolsheds] and write instructions on how to install the tools.
+    1. Develop a Galaxy Workflow
+    2. Upload dependency tools to a Galaxy Toolshed
+    3. Export Workflow
 2. IRIDA Integration
-    1. Develop a data model to store results of a workflow in the IRIDA database.
-    2. Export the Galaxy workflow to a file and write an IRIDA workflow description file for this workflow.
-    3. Update messages and other files in order to integrate the pipeline into the IRIDA UI.
+    1. Pipeline Data Model
+    2. IRIDA Workflow Description
+    3. Additional IRIDA Updates
 
 Galaxy Workflow Development
 ---------------------------
@@ -73,14 +74,92 @@ In addition, each output dataset should be marked as a **workflow output** by se
 
 If the workflow being developed includes custom tools that do not already exist in Galaxy these tools should be uploaded to a [Galaxy ToolShed][Galaxy Toolsheds] to allow for distribution of this workflow.
 
+### 3. Export Workflow
+
+Once the workflow is written in Galaxy, it can be exported to a file by going to the **Workflow** menu at the top, finding your particular workflow and selecting **Download or Export**.  This will save the workflow as a __*.ga__ file, which is a JSON-formatted file defining the tools, tool versions, and structure of the workflow.
+
+![export-workflow][]
+
 IRIDA Integration
 -----------------
 
 ### 1. Pipeline Data Model
 
-### 2. Write an IRIDA workflow description file
+In order to properly integrate the workflow with IRIDA there are a few additions to the IRIDA code that are needed.  In particular a new analysis type will need to be defined in IRIDA to store and display the workflow results.  This will require two steps as follows.
 
-### 3. Additional IRIDA updates
+#### A. Add a new Analysis Type
+
+The [AnalysisType][] enum defines the different types of analyses/pipelines available in IRIDA.  You will need to add a new constant here for your particular analysis type.
+
+#### B. Add a new Analysis Class
+
+The [Analysis][] class is the root class for all analyses.  In IRIDA, this class will be used to store the ouput files once an analysis is complete.  For each analysis type, a new class extending Analysis must be created, for example the SNVPhyl phylogenomics pipeline has an [AnalysisPhylogenomicsPipeline][] class.
+
+### 2. IRIDA Workflow Definition
+
+In order to integrate the Galaxy workflow with IRIDA, two files must be defined: (a) a **Workflow Structure** and (b) a **Workflow Description** file.  Both these files should be placed in a directory structure defining the name and version of the workflow.  For example, for the SNVPhyl pipeline, version **0.1** the directory structure should look like:
+
+```
+SNVPhyl
+└── 0.1
+    ├── irida_workflow_structure.ga
+    └── irida_workflow.xml
+```
+
+#### A. Workflow Structure
+
+This is the __*.ga__ that that was exported from Galaxy in a previous step.  This file must be named **irida_workflow_structure.ga**.
+
+#### B. Workflow Description
+
+This is an **XML** file which is used to link up a Galaxy workflow with IRIDA.  It defines the particular **Analysis Type** a workflow belongs to as well as any dependency tools needed to be installed in an instance of Galaxy.  For a very simple workflow, this file would look like:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>49507566-e10c-41b2-ab6f-0fb5383be997</id>
+	<name>MyPipeline</name>
+	<version>0.1</version>
+	<analysisType>analysistype</analysisType>
+	<inputs>
+		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+		<reference>reference</reference>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="my_parameter" defaultValue="1">
+			<toolParameter
+				toolId="my_tool"
+				parameterName="my_parameter" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="tree" fileName="phylogeneticTree.tre" />
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>my_tool</name>
+			<owner>irida</owner>
+			<url>https://irida.corefacility.ca/galaxy-shed</url>
+			<revision>de3e46eaf5ba</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>
+```
+
+A few things to note:
+
+  1. `<analysisType>` defines what type of analysis this workflow belongs to.  This string should match the string defined for the custom [AnalysisType][] above.
+  2. `<sequenceReadsPaired>` defines the name of the input dataset in Galaxy for the paired-end sequence reads chosen previously.  In this case it is *sequence_reads_paired*.
+  3. `<reference>` defines the name of the input dataset in Galaxy for the reference file.  In this case it is *reference*.
+  4. `<toolParameter>` defines how to map parameters a user selects in IRIDA to those in Galaxy (defined in the **irida_workflow_structure.ga** file).
+  5. `<output>` defines, for an output file, a data model name in IRIDA and maps it to the name of the file in Galaxy that was chosen previously.  In this case it is *phylogeneticTree.tre*.
+  6. `<toolRepositories>` defines the different Galaxy ToolSheds from which the dependency tools come from, as well as a revision number for the tool.
+
+This file must be named **irida_workflow.xml**.
+
+### 3. Additional IRIDA Updates
 
 A few other smaller steps need to be taken before the workflow is properly integrated into IRIDA.  These include the following.
 
@@ -117,3 +196,7 @@ pipeline.parameters.assemblyannotation.annotation-similarity-e-value-cutoff=The 
 [reference-input-editor]: images/reference-input-editor.png
 [sequence-reads-input-editor]: images/sequence-reads-input-editor.png
 [output-editor]: images/output-editor.png
+[export-workflow]: images/export-workflow.png
+[AnalysisType]: ../../apidocs/ca/corefacility/bioinformatics/irida/model/enums/AnalysisType.html
+[Analysis]: ../../apidocs/ca/corefacility/bioinformatics/irida/model/workflow/analysis/Analysis.html
+[AnalysisPhylogenomicsPipeline]: ../../apidocs/ca/corefacility/bioinformatics/irida/model/workflow/analysis/AnalysisPhylogenomicsPipeline.html
