@@ -32,6 +32,7 @@ IRIDA provides support for developing and integrating additional pipelines from 
     1. Pipeline Data Model
     2. IRIDA Workflow Description
     3. Additional IRIDA Updates
+    4. Run IRIDA
 
 Galaxy Workflow Development
 ---------------------------
@@ -89,20 +90,47 @@ IRIDA Integration
 
 In order to properly integrate the workflow with IRIDA there are a few additions to the IRIDA code that are needed.  In particular a new analysis type will need to be defined in IRIDA to store and display the workflow results.  This will require two steps as follows.
 
-#### A. Add a new Analysis Type
+#### A. Add a new Analysis Class
 
-The [AnalysisType][] enum defines the different types of analyses/pipelines available in IRIDA.  You will need to add a new constant here for your particular analysis type.
+The [Analysis][] class is the root class for all analyses.  In IRIDA, this class will be used to store the ouput files once an analysis is complete.  For each analysis type, a new class extending [Analysis][] must be created.  For example:
 
-#### B. Add a new Analysis Class
+```java
+public class AnalysisMyPipeline extends Analysis {
+	
+	/**
+	 * Builds a new {@link AnalysisMyPipeline} with the given
+	 * information.
+	 * 
+	 * @param executionManagerAnalysisId
+	 *            The execution manager id for this analysis.
+	 * @param analysisOutputFilesMap
+	 *            A {@link Map} of output files for this analysis.
+	 */
+	public AnalysisMyPipeline(final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+		super(executionManagerAnalysisId, analysisOutputFilesMap);
+	}
+}
 
-The [Analysis][] class is the root class for all analyses.  In IRIDA, this class will be used to store the ouput files once an analysis is complete.  For each analysis type, a new class extending Analysis must be created, for example the SNVPhyl phylogenomics pipeline has an [AnalysisPhylogenomicsPipeline][] class.
+```
+
+#### B. Add a new Analysis Type
+
+The [AnalysisType][] enum defines the different types of analyses/pipelines available in IRIDA.  You will need to add a new constant here for your particular analysis type.  For example:
+
+```java
+@XmlEnumValue("mypipeline")
+MY_PIPELINE("mypipeline", AnalysisMyPipeline.class)
+```
+
+This links the constant `AnalysisType.MY_PIPELINE` to the string `mypipeline` and the class `AnalysisMyPipeline`.
 
 ### 2. IRIDA Workflow Definition
 
-In order to integrate the Galaxy workflow with IRIDA, two files must be defined: (a) a **Workflow Structure** and (b) a **Workflow Description** file.  Both these files should be placed in a directory structure defining the name and version of the workflow.  For example, for the SNVPhyl pipeline version **0.1**, the directory structure should look like:
+In order to integrate the Galaxy workflow with IRIDA, two files must be defined: (a) a **Workflow Structure** and (b) a **Workflow Description** file.  Both these files should be placed in a directory structure defining the name and version of the workflow.  For example, for the  pipeline version **0.1**, the directory structure should look like:
 
 ```
-SNVPhyl
+MyPipeline
 └── 0.1
     ├── irida_workflow_structure.ga
     └── irida_workflow.xml
@@ -123,7 +151,7 @@ This is an **XML** file which is used to link up a Galaxy workflow with IRIDA.  
 	<id>49507566-e10c-41b2-ab6f-0fb5383be997</id>
 	<name>MyPipeline</name>
 	<version>0.1</version>
-	<analysisType>analysistype</analysisType>
+	<analysisType>mypipeline</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
 		<reference>reference</reference>
@@ -152,7 +180,8 @@ This is an **XML** file which is used to link up a Galaxy workflow with IRIDA.  
 
 A few things to note:
 
-  1. `<analysisType>` defines what type of analysis this workflow belongs to.  This string should match the string defined for the custom [AnalysisType][] above.
+  1. `<id>` defines a unique id for the workflow.  This must be a UUID.  A quick way to generate a random UUID on linux is the command `uuid -v 4`.
+  2. `<analysisType>` defines what type of analysis this workflow belongs to.  This string should match the string defined for the custom [AnalysisType][] above.
   2. `<sequenceReadsPaired>` defines the name of the input dataset in Galaxy for the paired-end sequence reads chosen previously.  In this case it is *sequence_reads_paired*.
   3. `<reference>` defines the name of the input dataset in Galaxy for the reference file.  In this case it is *reference*.
   4. `<toolParameter>` defines how to map parameters a user selects in IRIDA to those in Galaxy (defined in the **irida_workflow_structure.ga** file).
@@ -161,31 +190,65 @@ A few things to note:
 
 For more information, please see the [IRIDA Workflow Description][] documentation.  This file must be named **irida_workflow.xml**.
 
+#### C. Move Workflow Definition
+
+In order for IRIDA to automatically load up the workflow definition files, the entire directory structure for `MyPipeline` should be moved to `src/main/resources/ca/corefacility/bioinformatics/irida/model/enums/workflows/MyPipeline`.  So, this should look like:
+
+```
+src/main/resources/ca/corefacility/bioinformatics/irida/model/enums/workflows/MyPipeline
+└── 0.1
+    ├── irida_workflow_structure.ga
+    └── irida_workflow.xml
+```
+
 ### 3. Additional IRIDA Updates
 
 A few other smaller steps need to be taken before the workflow is properly integrated into IRIDA.  These include the following.
 
 #### A. Adding a default workflow entry
 
-The file `src/main/resources/ca/corefacility/bioinformatics/irida/config/workflows.properties` defines the default workflows associated with a particular analysis pipeline.  This is in the format of `irida.workflow.default.[workflow type]=[workflow_id]`.  Please fill in the **[workflow_type]** and **[workflow_id]** entries for your specific workflow and add this line to the `workflows.properties` file.  For example:
+The file `src/main/resources/ca/corefacility/bioinformatics/irida/config/workflows.properties` defines the default workflows associated with a particular analysis pipeline type.  This is in the format of **irida.workflow.default.[analysis_type]=[analysis_id]**.  Please fill in the **[analysis_type]** and **[analysis_id]** entries for your specific workflow and add this line to the `workflows.properties` file.  For example:
 
 ```
-irida.workflow.default.phylogenomics=ccca532d-b0be-4f2c-bd6d-9886aa722571
+irida.workflow.default.mypipeline=49507566-e10c-41b2-ab6f-0fb5383be997
 ```
+
+In this case, the **[analysis_type]** is *mypipeline*, which comes from the `<analysisType>` XML tag from the workflow description file.  The **[analysis_id]** is *49507566-e10c-41b2-ab6f-0fb5383be997*, which comes from the `<id>` XML tag from the workflow description file.
 
 #### B. Adding messages for the UI
 
 Some messages need to be defined in order to display the pipeline in the UI.  These are stored in the file `src/main/resources/i18n/messages_en.properties` and include messages for the title and description displayed in the UI as well as error messages for each parameter.  This should look similar to:
 
 ```
-workflow.assembly-annotation.title=Assembly and Annotation Pipeline
-workflow.assembly-annotation.description=Generate an assembled and annotated genome from the reads within a sample.
+workflow.mypipeline.title=My Pipeline
+workflow.mypipeline.description=Run my custom pipeline.
 
-pipeline.parameters.assemblyannotation.assembly-kmers=Comma-separated k-mer values to use for assembly with SPAdes
-pipeline.parameters.assemblyannotation.assembly-contig-min-length=Minimum contig length to keep from an assembly
-pipeline.parameters.assemblyannotation.assembly-contig-min-coverage=Minimum contig coverage to keep from an assembly
-pipeline.parameters.assemblyannotation.annotation-similarity-e-value-cutoff=The e-value cutoff for annotation with Prokka
+pipeline.title.MyPipeline=Pipelines - My Pipeline
+pipeline.h1.MyPipeline=My Pipeline
+
+pipeline.parameters.modal-title.mypipeline=My Pipeline Parameters
+pipeline.parameters.mypipeline.my_parameter=My Parameter Description.
 ```
+
+### 4. Run IRIDA
+
+Once you've made all the above modifications, you can attempt to load up the pipeline in IRIDA with the command:
+
+```
+mvn clean jetty:run
+```
+
+This should launch an instance of IRIDA on <http://localhost:8080>. If you log in with **admin** and **password1** you should be able to navigate to the pipelines page, which should now display:
+
+![my-pipeline-irida][]
+
+If you select some samples and attempt to run this pipeline you should see:
+
+![my-pipeline-launch][]
+
+If you attempt to modify the parameters of this pipeline you should see:
+
+![my-pipeline-parameters][]
 
 [Galaxy]: http://galaxyproject.org/
 [Galaxy Toolsheds]: https://wiki.galaxyproject.org/ToolShed
@@ -204,3 +267,6 @@ pipeline.parameters.assemblyannotation.annotation-similarity-e-value-cutoff=The 
 [AnalysisPhylogenomicsPipeline]: ../../apidocs/ca/corefacility/bioinformatics/irida/model/workflow/analysis/AnalysisPhylogenomicsPipeline.html
 [IRIDA Workflow Description]: workflow-description/
 [Galaxy Tool Development]: galaxy/
+[my-pipeline-irida]: images/my-pipeline-irida.png
+[my-pipeline-launch]: images/my-pipeline-launch.png
+[my-pipeline-parameters]: images/my-pipeline-parameters.png
