@@ -72,7 +72,9 @@ In addition, each output dataset should be marked as a **workflow output** by se
 
 ### 2. Upload dependency tools to a Galaxy Toolshed
 
-If the workflow being developed includes custom tools that do not already exist in Galaxy these tools should be uploaded to a [Galaxy ToolShed][Galaxy Toolsheds] to allow for distribution of this workflow.
+If the workflow being developed includes custom tools that do not already exist in Galaxy these tools should be uploaded to a [Galaxy ToolShed][Galaxy Toolsheds] to allow for distribution of this workflow.  This should be done before building and exporting the final workflow __*.ga__ file, since the ids of each tool in the Galaxy workflow include the name of the toolshed.  For example, the id for Prokka, which is used for annotation of genomes, is `toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0`, which includes the name of the toolshed where Prokka can be found <https://toolshed.g2.bx.psu.edu/>.
+
+More information on developing a tool for Galaxy can be found in the [Galaxy Tool Development][] documentation.
 
 ### 3. Export Workflow
 
@@ -97,7 +99,7 @@ The [Analysis][] class is the root class for all analyses.  In IRIDA, this class
 
 ### 2. IRIDA Workflow Definition
 
-In order to integrate the Galaxy workflow with IRIDA, two files must be defined: (a) a **Workflow Structure** and (b) a **Workflow Description** file.  Both these files should be placed in a directory structure defining the name and version of the workflow.  For example, for the SNVPhyl pipeline, version **0.1** the directory structure should look like:
+In order to integrate the Galaxy workflow with IRIDA, two files must be defined: (a) a **Workflow Structure** and (b) a **Workflow Description** file.  Both these files should be placed in a directory structure defining the name and version of the workflow.  For example, for the SNVPhyl pipeline version **0.1**, the directory structure should look like:
 
 ```
 SNVPhyl
@@ -157,7 +159,7 @@ A few things to note:
   5. `<output>` defines, for an output file, a data model name in IRIDA and maps it to the name of the file in Galaxy that was chosen previously.  In this case it is *phylogeneticTree.tre*.
   6. `<toolRepositories>` defines the different Galaxy ToolSheds from which the dependency tools come from, as well as a revision number for the tool.
 
-This file must be named **irida_workflow.xml**.
+For more information, please see the [IRIDA Workflow Description][] documentation.  This file must be named **irida_workflow.xml**.
 
 ### 3. Additional IRIDA Updates
 
@@ -200,3 +202,5 @@ pipeline.parameters.assemblyannotation.annotation-similarity-e-value-cutoff=The 
 [AnalysisType]: ../../apidocs/ca/corefacility/bioinformatics/irida/model/enums/AnalysisType.html
 [Analysis]: ../../apidocs/ca/corefacility/bioinformatics/irida/model/workflow/analysis/Analysis.html
 [AnalysisPhylogenomicsPipeline]: ../../apidocs/ca/corefacility/bioinformatics/irida/model/workflow/analysis/AnalysisPhylogenomicsPipeline.html
+[IRIDA Workflow Description]: workflow-description/
+[Galaxy Tool Development]: galaxy/
