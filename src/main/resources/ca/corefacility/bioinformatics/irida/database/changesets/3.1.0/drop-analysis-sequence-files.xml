@@ -40,8 +40,9 @@
 
 		<sql>
 			update sequence_file sf set fastqc_analysis_id = (select
-			analysis_id from analysis_sequence_file asf where asf.inputFiles_id =
-			sf.id);
+			analysis_id from analysis_sequence_file asf, analysis an where an.id
+			= asf.analysis_id and asf.inputFiles_id = sf.id and
+			an.executionManagerAnalysisId = 'internal-fastqc');
 		</sql>
 
 		<dropTable tableName="analysis_sequence_file" />
