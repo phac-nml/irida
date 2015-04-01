@@ -742,7 +742,7 @@
 				<version>${maven.jetty.plugin.version}</version>
 				<configuration>
 					<scanIntervalSeconds>1</scanIntervalSeconds>
-					<stopPort>${jetty.port.stop}</stopPort>
+					<stopPort>9966</stopPort>
 					<stopKey>STOP</stopKey>
 				</configuration>
 				<executions>
