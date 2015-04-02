@@ -555,7 +555,6 @@
 						<configuration>
 							<portNames>
 								<portName>jetty.port</portName>
-								<portName>jetty.port.stop</portName>
 							</portNames>
 						</configuration>
 					</execution>
@@ -742,7 +741,7 @@
 				<version>${maven.jetty.plugin.version}</version>
 				<configuration>
 					<scanIntervalSeconds>1</scanIntervalSeconds>
-					<stopPort>${jetty.port.stop}</stopPort>
+					<stopPort>9966</stopPort>
 					<stopKey>STOP</stopKey>
 				</configuration>
 				<executions>
@@ -766,10 +765,6 @@
 								<systemProperty>
 									<name>jetty.port</name>
 									<value>${jetty.port}</value>
-								</systemProperty>
-								<systemProperty>
-									<name>jetty.port.stop</name>
-									<value>${jetty.port.stop}</value>
 								</systemProperty>
 								<systemProperty>
 									<name>server.base.url</name>
