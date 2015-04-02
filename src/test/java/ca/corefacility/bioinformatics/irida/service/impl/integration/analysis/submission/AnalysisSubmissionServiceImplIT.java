@@ -90,7 +90,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetStateForAnalysisSubmissionSuccess() {
-		AnalysisState state = analysisSubmissionService.getStateForAnalysisSubmission(1l);
+		AnalysisState state = analysisSubmissionService.getStateForAnalysisSubmission(1L);
 		assertEquals(AnalysisState.SUBMITTING, state);
 	}
 
@@ -100,7 +100,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = EntityNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetStateForAnalysisSubmissionFail() {
-		analysisSubmissionService.getStateForAnalysisSubmission(20l);
+		analysisSubmissionService.getStateForAnalysisSubmission(20L);
 	}
 
 	@Test

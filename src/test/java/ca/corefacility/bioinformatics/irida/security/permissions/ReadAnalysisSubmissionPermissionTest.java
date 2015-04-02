@@ -84,10 +84,10 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
 
-		assertTrue("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(analysisSubmissionRepository).findOne(1l);
+		verify(analysisSubmissionRepository).findOne(1L);
 	}
 
 	/**
@@ -138,10 +138,10 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
 
-		assertFalse("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1l));
+		assertFalse("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(analysisSubmissionRepository).findOne(1l);
+		verify(analysisSubmissionRepository).findOne(1L);
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1", roles);
 
-		assertTrue("permission was not granted to admin.", readAnalysisSubmissionPermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted to admin.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);

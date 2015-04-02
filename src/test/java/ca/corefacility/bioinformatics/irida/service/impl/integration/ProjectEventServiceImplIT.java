@@ -65,8 +65,8 @@ public class ProjectEventServiceImplIT {
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testAddProjectUser() {
-		Project project = projectService.read(1l);
-		User user = userService.read(2l);
+		Project project = projectService.read(1L);
+		User user = userService.read(2L);
 
 		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER);
 
@@ -84,8 +84,8 @@ public class ProjectEventServiceImplIT {
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testUpdateProjectUser() throws ProjectWithoutOwnerException {
-		Project project = projectService.read(1l);
-		User user = userService.read(1l);
+		Project project = projectService.read(1L);
+		User user = userService.read(1L);
 
 		projectService.updateUserProjectRole(project, user, ProjectRole.PROJECT_USER);
 
@@ -103,8 +103,8 @@ public class ProjectEventServiceImplIT {
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testRemoveUser() throws ProjectWithoutOwnerException {
-		Project project = projectService.read(1l);
-		User user = userService.read(1l);
+		Project project = projectService.read(1L);
+		User user = userService.read(1L);
 
 		projectService.removeUserFromProject(project, user);
 
@@ -122,9 +122,9 @@ public class ProjectEventServiceImplIT {
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testAddProjectSample() {
-		Project project = projectService.read(1l);
+		Project project = projectService.read(1L);
 
-		Sample sample = sampleService.read(2l);
+		Sample sample = sampleService.read(2L);
 
 		projectService.addSampleToProject(project, sample);
 
@@ -142,9 +142,9 @@ public class ProjectEventServiceImplIT {
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testErrorThrownNoEvent() {
-		Project project = projectService.read(1l);
+		Project project = projectService.read(1L);
 
-		Sample sample = sampleService.read(1l);
+		Sample sample = sampleService.read(1L);
 
 		try {
 			projectService.addSampleToProject(project, sample);
@@ -161,16 +161,16 @@ public class ProjectEventServiceImplIT {
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testGetEventsForProject() {
-		Project project1 = projectService.read(1l);
-		Project project3 = projectService.read(3l);
+		Project project1 = projectService.read(1L);
+		Project project3 = projectService.read(3L);
 
 		Page<ProjectEvent> eventsForProject1 = projectEventService
 				.getEventsForProject(project1, new PageRequest(0, 10));
 		Page<ProjectEvent> eventsForProject2 = projectEventService
 				.getEventsForProject(project3, new PageRequest(0, 10));
 
-		assertEquals(0l, eventsForProject1.getTotalElements());
-		assertEquals(1l, eventsForProject2.getTotalElements());
+		assertEquals(0L, eventsForProject1.getTotalElements());
+		assertEquals(1L, eventsForProject2.getTotalElements());
 
 		ProjectEvent event2 = eventsForProject2.iterator().next();
 
@@ -180,17 +180,17 @@ public class ProjectEventServiceImplIT {
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testGetEventsForUser() {
-		User user1 = userService.read(1l);
-		User user2 = userService.read(2l);
-		User user3 = userService.read(3l);
+		User user1 = userService.read(1L);
+		User user2 = userService.read(2L);
+		User user3 = userService.read(3L);
 
 		Page<ProjectEvent> events1 = projectEventService.getEventsForUser(user1, new PageRequest(0, 10));
 		Page<ProjectEvent> events2 = projectEventService.getEventsForUser(user2, new PageRequest(0, 10));
 		Page<ProjectEvent> events3 = projectEventService.getEventsForUser(user3, new PageRequest(0, 10));
 
-		assertEquals(1l, events1.getTotalElements());
-		assertEquals(0l, events2.getTotalElements());
-		assertEquals(1l, events3.getTotalElements());
+		assertEquals(1L, events1.getTotalElements());
+		assertEquals(0L, events2.getTotalElements());
+		assertEquals(1L, events3.getTotalElements());
 
 		ProjectEvent event1 = events1.iterator().next();
 		ProjectEvent event3 = events3.iterator().next();

@@ -102,7 +102,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 	private static final UUID WORKFLOW_ID = UUID.randomUUID();
 	private static final String REMOTE_WORKFLOW_ID = "1";
-	private static final Long INTERNAL_ANALYSIS_ID = 2l;
+	private static final Long INTERNAL_ANALYSIS_ID = 2L;
 	private static final String ANALYSIS_ID = "2";
 	private static final String LIBRARY_ID = "3";
 	private AnalysisExecutionServiceGalaxy workflowManagement;

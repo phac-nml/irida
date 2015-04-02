@@ -40,7 +40,7 @@ public class ClientDetailsPageIT {
 	private WebDriver driver;
 	private ClientDetailsPage page;
 
-	Long id = 1l;
+	Long id = 1L;
 	String clientId = "testClient";
 
 	@Before

@@ -207,13 +207,13 @@ public class UserServiceImplIT {
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testUpdatePasswordWithoutLoginDetails() {
 		SecurityContextHolder.clearContext();
-		userService.changePassword(1l, "any password");
+		userService.changePassword(1L, "any password");
 	}
 
 	@Test
 	public void testUpdatePasswordWithCompleteLoginDetails() {
 		String updatedPassword = "NewPassword1";
-		User updated = userService.changePassword(1l, updatedPassword);
+		User updated = userService.changePassword(1L, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
 		assertTrue("Password is encoded correctly.", passwordEncoder.matches(updatedPassword, updated.getPassword()));
 	}
@@ -223,7 +223,7 @@ public class UserServiceImplIT {
 		((User) SecurityContextHolder.getContext().getAuthentication().getDetails()).setCredentialsNonExpired(false);
 		SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
 		String updatedPassword = "NewPassword1";
-		User updated = userService.changePassword(1l, updatedPassword);
+		User updated = userService.changePassword(1L, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
 		assertTrue("User should not have expired credentials anymore.", updated.isCredentialsNonExpired());
 		assertTrue("Password is encoded correctly.", passwordEncoder.matches(updatedPassword, updated.getPassword()));
@@ -233,7 +233,7 @@ public class UserServiceImplIT {
 	public void testUpdatePasswordWithAnonymousUser() {
 		SecurityContextHolder.getContext().setAuthentication(
 				new AnonymousAuthenticationToken("key", "anonymouse", ImmutableList.of(Role.ROLE_SEQUENCER)));
-		userService.changePassword(1l, "NewPassword1");
+		userService.changePassword(1L, "NewPassword1");
 	}
 
 	@Test(expected = EntityExistsException.class)
@@ -307,7 +307,7 @@ public class UserServiceImplIT {
 		properties.put("password", password);
 
 		try {
-			asUser().userService.update(2l, properties);
+			asUser().userService.update(2L, properties);
 			fail();
 		} catch (ConstraintViolationException e) {
 			Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
@@ -323,7 +323,7 @@ public class UserServiceImplIT {
 	@Test(expected = ConstraintViolationException.class)
 	public void testUpdatePasswordBadPassword() {
 		String password = "arguablynotagoodpassword";
-		asUser().userService.changePassword(1l, password);
+		asUser().userService.changePassword(1L, password);
 	}
 
 	@Test(expected = ConstraintViolationException.class)
