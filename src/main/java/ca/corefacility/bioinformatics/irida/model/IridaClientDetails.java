@@ -78,6 +78,11 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@Column(name = "scope", nullable = false)
 	@CollectionTable(name = "client_details_scope", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> scope;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Column(name = "auto_approvable_scope")
+	@CollectionTable(name = "client_details_auto_approvable_scope", joinColumns = @JoinColumn(name = "client_details_id"))
+	private Set<String> autoApprovableScopes;
 
 	@Size(min = 1, message = "{client.details.grant.notempty}")
 	@NotNull
@@ -363,8 +368,18 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 		return createdDate;
 	}
 
+	//should getAutoApprovableScopes always be used instead of this?
 	@Override
 	public boolean isAutoApprove(String scope) {
-		return false;
+		return autoApprovableScopes.contains(scope);
+	}
+	
+	//necessary for viewing
+	public Set<String> getAutoApprovableScopes() {
+		return autoApprovableScopes;
+	}
+
+	public void setAutoApprovableScopes(Set<String> autoApprovableScopes) {
+		this.autoApprovableScopes = autoApprovableScopes;
 	}
 }
