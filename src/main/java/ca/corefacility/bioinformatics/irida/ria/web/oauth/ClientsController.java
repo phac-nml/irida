@@ -101,11 +101,13 @@ public class ClientsController extends BaseController {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
 		String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
-		String scopes = StringUtils.collectionToDelimitedString(client.getScope(), ",");
+		String scopes = StringUtils.collectionToDelimitedString(client.getScope(), ", ");
+		String autoApproveScopes = StringUtils.collectionToDelimitedString(client.getAutoApprovableScopes(), ", ");
 		model.addAttribute("client", client);
 
 		model.addAttribute("grants", grants);
 		model.addAttribute("scopes", scopes);
+		model.addAttribute("autoApproveScopes", autoApproveScopes);
 		return CLIENT_DETAILS_PAGE;
 	}
 
@@ -123,7 +125,7 @@ public class ClientsController extends BaseController {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
 		model.addAttribute("client", client);
-		// in practise our clients only have 1 grant type. adding it to model to
+		// in practice our clients only have 1 grant type, adding it to model to
 		// make it easier
 		if (!client.getAuthorizedGrantTypes().isEmpty()) {
 			model.addAttribute("selectedGrant", client.getAuthorizedGrantTypes().iterator().next());
@@ -252,19 +254,29 @@ public class ClientsController extends BaseController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String postCreateClient(@ModelAttribute IridaClientDetails client,
 			@RequestParam(required = false, defaultValue = "") String scope_read,
-			@RequestParam(required = false, defaultValue = "") String scope_write, Model model, Locale locale) {
+			@RequestParam(required = false, defaultValue = "") String scope_write,
+			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
+			@RequestParam(required = false, defaultValue = "") String scope_auto_write,Model model, Locale locale) {
 		client.setClientSecret(generateClientSecret());
 
+		Set<String> autoScopes = new HashSet<>();
 		Set<String> scopes = new HashSet<>();
 		if (scope_write.equals("write")) {
 			scopes.add("write");
+			if(scope_auto_write.equals("write")) {
+				autoScopes.add("write");
+			}
 		}
 
 		if (scope_read.equals("read")) {
 			scopes.add("read");
+			if(scope_auto_read.equals("read")) {
+				autoScopes.add("read");
+			}
 		}
 
 		client.setScope(scopes);
+		client.setAutoApprovableScopes(autoScopes);
 
 		String responsePage = null;
 		try {
