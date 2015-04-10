@@ -44,6 +44,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -52,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -64,7 +66,7 @@ import com.google.common.collect.Sets;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class AnalysisSubmission implements IridaThing {
+public class AnalysisSubmission extends IridaResourceSupport implements IridaThing, Comparable<AnalysisSubmission>{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -208,6 +210,7 @@ public class AnalysisSubmission implements IridaThing {
 	 * 
 	 * @return An analysis id for this workflow.
 	 */
+	@JsonIgnore
 	public String getRemoteAnalysisId() {
 		return remoteAnalysisId;
 	}
@@ -329,10 +332,12 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * @return the analysis
 	 */
+	@JsonIgnore
 	public Analysis getAnalysis() {
 		return analysis;
 	}
 
+	@JsonIgnore
 	public User getSubmitter() {
 		return submitter;
 	}
@@ -588,5 +593,10 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public static Builder builder(UUID workflowId) {
 		return new AnalysisSubmission.Builder(workflowId);
+	}
+
+	@Override
+	public int compareTo(AnalysisSubmission o) {
+		return modifiedDate.compareTo(o.modifiedDate);
 	}
 }
