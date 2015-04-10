@@ -368,13 +368,11 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 		return createdDate;
 	}
 
-	//should getAutoApprovableScopes always be used instead of this?
 	@Override
 	public boolean isAutoApprove(String scope) {
 		return autoApprovableScopes.contains(scope);
 	}
 	
-	//necessary for viewing
 	public Set<String> getAutoApprovableScopes() {
 		return autoApprovableScopes;
 	}
