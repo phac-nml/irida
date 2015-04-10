@@ -169,6 +169,8 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String authorizedGrantTypes,
 			@RequestParam(required = false, defaultValue = "") String scope_read,
 			@RequestParam(required = false, defaultValue = "") String scope_write,
+			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
+			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
 			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
 		Map<String, Object> updates = new HashMap<>();
 		IridaClientDetails readClient = clientDetailsService.read(clientId);
@@ -181,14 +183,22 @@ public class ClientsController extends BaseController {
 		}
 
 		Set<String> scopes = new HashSet<>();
+		Set<String> autoScopes = new HashSet<>();
 		if (scope_write.equals("write")) {
 			scopes.add("write");
+			if(scope_auto_write.equals("write")) {
+				autoScopes.add("write");
+			}
 		}
 		if (scope_read.equals("read")) {
 			scopes.add("read");
+			if(scope_auto_read.equals("read")) {
+				autoScopes.add("read");
+			}
 		}
 		
 		updates.put("scope", scopes);
+		updates.put("autoApprovableScopes", autoScopes);
 		
 		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();

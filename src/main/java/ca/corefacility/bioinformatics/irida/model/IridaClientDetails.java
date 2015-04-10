@@ -370,7 +370,11 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 
 	@Override
 	public boolean isAutoApprove(String scope) {
-		return autoApprovableScopes.contains(scope);
+		boolean approved = false;
+		if(autoApprovableScopes != null) {
+			approved = autoApprovableScopes.contains(scope);
+		}
+		return approved;
 	}
 	
 	public Set<String> getAutoApprovableScopes() {

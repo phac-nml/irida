@@ -8,6 +8,11 @@
 	      href="/resources/bower_components/select2/select2.css"/>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
 	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
+    <style>
+        .sub-cb {
+        margin-left: 20px;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main">
@@ -70,7 +75,7 @@
 
 						</div>
 
-						<div class="form-group">
+						<div class="form-group" ng-app="">
 							<label class="control-label" th:text="#{client.scopes}">_Scopes_</label>
 
 							<div id="scope-error" th:if="${#maps.containsKey(errors, 'scope')}"
@@ -80,17 +85,33 @@
 								<div class="checkbox">
 
 									<label for="scope_read">
-										<input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
+										<input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read" ng-model="readSwitch"/>
 										<span th:text="#{client.scope.read}">Read</span> </label>
 								</div>
 							</div>
+                            <div class="col-md-12" ng-show="readSwitch">
+                                <div class="checkbox sub-cb">
+                                    <label for="scope_auto_read">
+                                        <input type="checkbox" id="scope_auto_read" name="scope_auto_read" value="read"/>
+                                        <span th:text="#{client.scope.autoApprove}">Auto-approve read access</span>
+                                    </label>
+                                </div>
+                            </div>
 							<div class="col-md-12">
 								<div class="checkbox">
 									<label for="scope_write">
-										<input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write"/>
+										<input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write" ng-model="writeSwitch"/>
 										<span th:text="#{client.scope.write}">Write</span> </label>
 								</div>
 							</div>
+                            <div class="col-md-12" ng-show="writeSwitch">
+                                <div class="checkbox sub-cb">
+                                    <label for="scope_auto_write">
+                                        <input type="checkbox" id="scope_auto_write" name="scope_auto_write" value="write"/>
+                                        <span th:text="#{client.scope.autoApprove}">Auto-approve write access</span>
+                                    </label>
+                                </div>
+                            </div>
 						</div>
 
 					</div>

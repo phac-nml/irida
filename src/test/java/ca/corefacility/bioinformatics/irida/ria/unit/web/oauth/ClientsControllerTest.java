@@ -122,12 +122,10 @@ public class ClientsControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String scope_read = "read";
 		String scope_write = "";
-		String scope_auto_read = "";
-		String scope_auto_write = "";
 
 		when(clientDetailsService.create(client)).thenReturn(client);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, scope_auto_read, scope_auto_write, model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		verify(clientDetailsService).create(client);
@@ -141,15 +139,13 @@ public class ClientsControllerTest {
 		Locale locale = LocaleContextHolder.getLocale();
 		String scope_read = "read";
 		String scope_write = "";
-		String scope_auto_read = "";
-		String scope_auto_write = "";
 
 		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
 				+ IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME);
 
 		when(clientDetailsService.create(client)).thenThrow(ex);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, scope_auto_read, scope_auto_write, model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
 
 		assertEquals(ClientsController.ADD_CLIENT_PAGE, postCreateClient);
 		assertTrue(model.containsAttribute("errors"));
@@ -190,7 +186,7 @@ public class ClientsControllerTest {
 		when(clientDetailsService.read(id)).thenReturn(client);
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "","","", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		@SuppressWarnings("rawtypes")
@@ -217,7 +213,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenThrow(ex);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "","","", model, locale);
 		assertEquals(ClientsController.EDIT_CLIENT_PAGE, postCreateClient);
 	}
 
@@ -232,7 +228,7 @@ public class ClientsControllerTest {
 		when(clientDetailsService.read(id)).thenReturn(client);
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "true", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "","","", "true", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		@SuppressWarnings("rawtypes")
