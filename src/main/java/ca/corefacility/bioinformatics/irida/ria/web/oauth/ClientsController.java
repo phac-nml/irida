@@ -125,17 +125,22 @@ public class ClientsController extends BaseController {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
 		model.addAttribute("client", client);
-		// in practice our clients only have 1 grant type, adding it to model to
+		// in practise our clients only have 1 grant type, adding it to model to
 		// make it easier
 		if (!client.getAuthorizedGrantTypes().isEmpty()) {
 			model.addAttribute("selectedGrant", client.getAuthorizedGrantTypes().iterator().next());
 		}
+		
 		Set<String> scopes = client.getScope();
-
 		for (String scope : scopes) {
 			model.addAttribute("given_scope_" + scope, true);
 		}
 
+		Set<String> autoScopes = client.getAutoApprovableScopes();
+		for (String autoScope : autoScopes) {
+			model.addAttribute("given_scope_auto_" + autoScope,true);
+		}
+		
 		getAddClientPage(model);
 
 		return EDIT_CLIENT_PAGE;
@@ -154,8 +159,12 @@ public class ClientsController extends BaseController {
 	 *            whether to allow read scope
 	 * @param scope_write
 	 *            whether to allow write scope
+	 * @param scope_auto_read
+	 *            whether to allow automatic authorization for the read scope
+	 * @param scope_auto_write
+	 *            whether to allow automatic authorization for the write scope
 	 * @param new_secret
-	 *            Wether to generate a new client secret
+	 *            whether to generate a new client secret
 	 * @param model
 	 *            Model for the view
 	 * @param locale
@@ -254,6 +263,10 @@ public class ClientsController extends BaseController {
 	 * @param scope_write
 	 *            if the client should be allowed to write to the server (value
 	 *            should be "write").
+	 * @param scope_auto_read
+	 *            whether to allow automatic authorization for the read scope
+	 * @param scope_auto_write
+	 *            whether to allow automatic authorization for the write scope
 	 * @param model
 	 *            Model for the view
 	 * @param locale

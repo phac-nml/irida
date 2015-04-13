@@ -92,7 +92,7 @@
                             <div class="col-md-12" ng-show="readSwitch">
                                 <div class="checkbox sub-cb">
                                     <label for="scope_auto_read">
-                                        <input type="checkbox" id="scope_auto_read" name="scope_auto_read" value="read"/>
+                                        <input type="checkbox" id="scope_auto_read" name="scope_auto_read" th:checked="${given_scope_auto_read}" value="read"/>
                                         <span th:text="#{client.scope.autoApprove}">Auto-approve read access</span>
                                     </label>
                                 </div>
@@ -107,7 +107,7 @@
                             <div class="col-md-12" ng-show="writeSwitch">
                                 <div class="checkbox sub-cb">
                                     <label for="scope_auto_write">
-                                        <input type="checkbox" id="scope_auto_write" name="scope_auto_write" value="write"/>
+                                        <input type="checkbox" id="scope_auto_write" name="scope_auto_write" th:checked="${given_scope_auto_write}" value="write"/>
                                         <span th:text="#{client.scope.autoApprove}">Auto-approve write access</span>
                                     </label>
                                 </div>
