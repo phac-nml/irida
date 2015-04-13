@@ -77,7 +77,7 @@ public class OAuthTokenRestTemplateIT {
 
 	@Test
 	public void testOAuthRequest() throws URISyntaxException {
-		RemoteAPI remoteAPI = apiService.read(1l);
+		RemoteAPI remoteAPI = apiService.read(1L);
 		URI serviceURI = new URI(remoteAPI.getServiceURI());
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
@@ -96,7 +96,7 @@ public class OAuthTokenRestTemplateIT {
 
 	@Test(expected = IridaOAuthException.class)
 	public void testRequestWithExpiredToken() throws URISyntaxException {
-		RemoteAPI remoteAPI = apiService.read(2l);
+		RemoteAPI remoteAPI = apiService.read(2L);
 		URI serviceURI = new URI(remoteAPI.getServiceURI());
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
@@ -105,7 +105,7 @@ public class OAuthTokenRestTemplateIT {
 
 	@Test(expected = IridaOAuthException.class)
 	public void testRequestWithNoToken() throws URISyntaxException {
-		RemoteAPI remoteAPI = apiService.read(3l);
+		RemoteAPI remoteAPI = apiService.read(3L);
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 		URI serviceURI = new URI(remoteAPI.getServiceURI());
 
@@ -114,7 +114,7 @@ public class OAuthTokenRestTemplateIT {
 
 	@Test(expected = IridaOAuthException.class)
 	public void testRequestWithBadToken() throws URISyntaxException {
-		RemoteAPI remoteAPI = apiService.read(1l);
+		RemoteAPI remoteAPI = apiService.read(1L);
 		URI serviceURI = new URI(remoteAPI.getServiceURI());
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 

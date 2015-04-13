@@ -62,7 +62,7 @@ public class PasswordResetControllerTest {
 
 	@Test
 	public void testGetResetPage() {
-		User user = new User(1l, "tom", null, null, null, null, null);
+		User user = new User(1L, "tom", null, null, null, null, null);
 		PasswordReset passwordReset = new PasswordReset(user);
 		String resetId = passwordReset.getId();
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -82,7 +82,7 @@ public class PasswordResetControllerTest {
 	public void testSubmitPasswordReset() {
 		String username = "tom";
 		String email = "tom@somewhere.com";
-		User user = new User(1l, username, email, null, null, null, null);
+		User user = new User(1L, username, email, null, null, null, null);
 		PasswordReset passwordReset = new PasswordReset(user);
 		String resetId = passwordReset.getId();
 		String password = "Password1";
@@ -105,7 +105,7 @@ public class PasswordResetControllerTest {
 
 	@Test
 	public void testSubmitPasswordNoMatch() {
-		User user = new User(1l, "tom", null, null, null, null, null);
+		User user = new User(1L, "tom", null, null, null, null, null);
 		PasswordReset passwordReset = new PasswordReset(user);
 		String resetId = passwordReset.getId();
 		String password = "Password1";

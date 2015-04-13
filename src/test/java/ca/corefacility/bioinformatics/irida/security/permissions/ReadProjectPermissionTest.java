@@ -58,15 +58,15 @@ public class ReadProjectPermissionTest {
 		projectUsers.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(projectRepository.findOne(1l)).thenReturn(p);
+		when(projectRepository.findOne(1L)).thenReturn(p);
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", readProjectPermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted.", readProjectPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(projectRepository).findOne(1l);
+		verify(projectRepository).findOne(1L);
 		verify(pujRepository).getUsersForProject(p);
 	}
 
@@ -80,15 +80,15 @@ public class ReadProjectPermissionTest {
 		projectUsers.add(new ProjectUserJoin(p, new User(),ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(projectRepository.findOne(1l)).thenReturn(p);
+		when(projectRepository.findOne(1L)).thenReturn(p);
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertFalse("permission was granted.", readProjectPermission.isAllowed(auth, 1l));
+		assertFalse("permission was granted.", readProjectPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(projectRepository).findOne(1l);
+		verify(projectRepository).findOne(1L);
 		verify(pujRepository).getUsersForProject(p);
 	}
 
@@ -99,7 +99,7 @@ public class ReadProjectPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1l));
+		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);
@@ -112,7 +112,7 @@ public class ReadProjectPermissionTest {
 		Collection<GrantedAuthority> roles = ImmutableList.of((GrantedAuthority) Role.ROLE_ADMIN);
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1l));
+		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through permission granted for administrators.
 		verifyZeroInteractions(userRepository);

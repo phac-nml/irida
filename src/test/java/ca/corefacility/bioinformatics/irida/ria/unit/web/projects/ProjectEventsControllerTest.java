@@ -47,7 +47,7 @@ public class ProjectEventsControllerTest {
 
 	@Test
 	public void testGetRecentEventsForProject() {
-		Long projectId = 1l;
+		Long projectId = 1L;
 		Project project = new Project();
 		ExtendedModelMap model = new ExtendedModelMap();
 		ProjectEvent event = new UserRoleSetProjectEvent();
@@ -97,7 +97,7 @@ public class ProjectEventsControllerTest {
 
 	@Test
 	public void testUnknownEvent() {
-		Long projectId = 1l;
+		Long projectId = 1L;
 		Project project = new Project();
 		ExtendedModelMap model = new ExtendedModelMap();
 		ProjectEvent event = new ProjectEvent() {

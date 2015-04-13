@@ -87,9 +87,9 @@ public class RemoteAPIControllerTest {
 		Principal principal = () -> USER_NAME;
 
 		RemoteAPI api1 = new RemoteAPI("api name", "http://somewhere", "an api", "client1", "secret1");
-		api1.setId(1l);
+		api1.setId(1L);
 		RemoteAPI api2 = new RemoteAPI("api name 2", "http://nowhere", "another api", "client2", "secret2");
-		api2.setId(2l);
+		api2.setId(2L);
 
 		Page<RemoteAPI> apiPage = new PageImpl<>(Lists.newArrayList(api1, api2));
 
@@ -113,7 +113,7 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testRemoveRemoteAPI() {
-		Long id = 1l;
+		Long id = 1L;
 
 		String removeClient = remoteAPIController.removeClient(id);
 
@@ -135,7 +135,7 @@ public class RemoteAPIControllerTest {
 	@Test
 	public void testPostCreateRemoteAPI() {
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		client.setId(1l);
+		client.setId(1L);
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(remoteAPIService.create(client)).thenReturn(client);
@@ -149,7 +149,7 @@ public class RemoteAPIControllerTest {
 	@Test
 	public void testPostCreateRemoteAPIError() {
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		client.setId(1l);
+		client.setId(1L);
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = LocaleContextHolder.getLocale();
 
@@ -171,7 +171,7 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testCheckApiStatusActive() {
-		Long apiId = 1l;
+		Long apiId = 1L;
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		when(remoteAPIService.read(apiId)).thenReturn(client);
 		when(projectRemoteService.getServiceStatus(client)).thenReturn(true);
@@ -185,7 +185,7 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testCheckApiStatusInactive() {
-		Long apiId = 1l;
+		Long apiId = 1L;
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 
 		when(remoteAPIService.read(apiId)).thenReturn(client);
@@ -201,7 +201,7 @@ public class RemoteAPIControllerTest {
 
 	@Test(expected = IridaOAuthException.class)
 	public void testConnectToAPI() {
-		Long apiId = 1l;
+		Long apiId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		when(remoteAPIService.read(apiId)).thenReturn(client);
@@ -211,7 +211,7 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testConnectToAPIActiveToken() {
-		Long apiId = 1l;
+		Long apiId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		when(remoteAPIService.read(apiId)).thenReturn(client);
@@ -222,7 +222,7 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testRead() {
-		Long apiId = 1l;
+		Long apiId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		RemoteAPIToken remoteAPIToken = new RemoteAPIToken("xyz", client, new Date());
@@ -239,7 +239,7 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testReadNoToken() {
-		Long apiId = 1l;
+		Long apiId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		when(remoteAPIService.read(apiId)).thenReturn(client);
