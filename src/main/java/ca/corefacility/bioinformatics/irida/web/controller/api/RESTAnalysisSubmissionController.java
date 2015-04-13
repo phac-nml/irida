@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.api;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -40,7 +42,28 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		}
 
 		Analysis analysis = read.getAnalysis();
+		for (String name : analysis.getAnalysisOutputFileNames()) {
+			analysis.add(linkTo(
+					methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(identifier, name)).withRel(
+					name));
+		}
 		model.addAttribute(RESOURCE_NAME, analysis);
+
+		return model;
+	}
+
+	@RequestMapping("/{submissionId}/analysis/file/{fileId}")
+	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable String fileId) {
+		ModelMap model = new ModelMap();
+		AnalysisSubmission read = analysisSubmissionService.read(submissionId);
+
+		if (read.getAnalysisState() != AnalysisState.COMPLETED) {
+			throw new EntityNotFoundException("Analysis is not completed");
+		}
+
+		AnalysisOutputFile analysisOutputFile = read.getAnalysis().getAnalysisOutputFile(fileId);
+
+		model.addAttribute(RESOURCE_NAME, analysisOutputFile);
 
 		return model;
 	}
