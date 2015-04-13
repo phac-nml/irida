@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -14,9 +13,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +26,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -48,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 
@@ -358,65 +353,4 @@ public class SampleSequenceFilesControllerTest {
 				mmf1, resource1, mmf2, resource2, response);
 	}
 
-	@Test
-	public void testAddExistingSequenceFileToSample() throws IOException {
-		Project p = TestDataFactory.constructProject();
-		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf = TestDataFactory.constructSequenceFile();
-		Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
-		MockHttpServletResponse response = new MockHttpServletResponse();
-
-		when(projectService.read(p.getId())).thenReturn(p);
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
-		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
-		when(sampleService.addSequenceFileToSample(s, sf)).thenReturn(r);
-
-		Map<String, String> requestBody = ImmutableMap.of(RESTSampleSequenceFilesController.SEQUENCE_FILE_ID_KEY, sf
-				.getId().toString());
-
-		ModelMap modelMap = controller.addExistingSequenceFileToSample(p.getId(), s.getId(), requestBody,response);
-
-		verify(projectService).read(p.getId());
-		verify(sampleService).getSampleForProject(p, s.getId());
-		verify(sequenceFileService).read(sf.getId());
-		verify(sampleService).addSequenceFileToSample(s, sf);
-		
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertNotNull("Object should not be null",o);
-		assertTrue("Object should be an instance of LabelledRelationshipResource",o instanceof LabelledRelationshipResource);
-		@SuppressWarnings("unchecked")
-		LabelledRelationshipResource<Sample,SequenceFile> lrr = (LabelledRelationshipResource<Sample,SequenceFile>) o;
-		String seqFileLoc = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles/" + sf.getId();
-		List<String> locations = response.getHeaders(HttpHeaders.LOCATION);
-		assertNotNull(locations);
-		assertFalse(locations.isEmpty());
-		assertEquals(1, locations.size());
-		// the sequence file location is still the same, but we've added a new
-		// relationship
-		assertEquals("Sequence file location must be correct",seqFileLoc,locations.iterator().next());
-		Link self = lrr.getLink(Link.REL_SELF);
-		Link sampleSequenceFiles = lrr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		Link sample = lrr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
-		assertNotNull("Self link should not be null",self);
-		assertEquals("Self reference should be correct",seqFileLoc, self.getHref());
-		assertNotNull("Sequence file location should not be null",sampleSequenceFiles);
-		assertEquals("Sequence file location should be correct",sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
-		assertNotNull("Sample location should not be null",sample);
-		assertEquals("Sample location should be correct",sampleLocation, sample.getHref());
-		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
-	}
-
-	@Test
-	public void testAddExistingSequenceFileToSampleBadRequest() {
-		Map<String, String> requestBody = new HashMap<>();
-		try {
-			controller.addExistingSequenceFileToSample(1L, 1L, requestBody,new MockHttpServletResponse());
-			fail();
-		} catch (InvalidPropertyException e) {
-
-		} catch (Exception e) {
-			fail();
-		}
-	}
 }
