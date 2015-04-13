@@ -85,7 +85,7 @@
 								<div class="checkbox">
 
 									<label for="scope_read">
-										<input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read" ng-model="readSwitch"/>
+										<input type="checkbox" id="scope_read" name="scope_read" th:attr="ng-init='readSwitch=\''+${given_scope_read}+'\''" ng-checked="readSwitch" value="read" ng-model="readSwitch"/>
 										<span th:text="#{client.scope.read}">Read</span> </label>
 								</div>
 							</div>
@@ -100,7 +100,7 @@
 							<div class="col-md-12">
 								<div class="checkbox">
 									<label for="scope_write">
-										<input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write" ng-model="writeSwitch"/>
+										<input type="checkbox" id="scope_write" name="scope_write" th:attr="ng-init='writeSwitch=\''+${given_scope_write}+'\''" ng-checked="writeSwitch" value="write" ng-model="writeSwitch"/>
 										<span th:text="#{client.scope.write}">Write</span> </label>
 								</div>
 							</div>
