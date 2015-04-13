@@ -219,7 +219,7 @@ public class ClientsController extends BaseController {
 			clientDetailsService.update(clientId, updates);
 			response = "redirect:/clients/" + clientId;
 		} catch (RuntimeException e) {
-			handleCreateUpdateException(e, model, locale, scope_write, scope_read, readClient.getClientId(),
+			handleCreateUpdateException(e, model, locale, scope_write, scope_read, scope_auto_write, scope_auto_read, readClient.getClientId(),
 					accessTokenValiditySeconds);
 			response = getEditPage(clientId, model);
 		}
@@ -306,7 +306,7 @@ public class ClientsController extends BaseController {
 			IridaClientDetails create = clientDetailsService.create(client);
 			responsePage = "redirect:/clients/" + create.getId();
 		} catch (RuntimeException ex) {
-			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, client.getClientId(),
+			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, scope_auto_read, scope_auto_write, client.getClientId(),
 					client.getAccessTokenValiditySeconds());
 			responsePage = getAddClientPage(model);
 		}
@@ -456,6 +456,10 @@ public class ClientsController extends BaseController {
 	 *            The value entered for scope_write
 	 * @param scope_read
 	 *            The value entered for scope_read
+	 * @param scope_auto_write
+	 *            The value entered for scope_auto_write
+	 * @param scope_auto_read
+	 *            The value entered for scope_auto_read
 	 * @param clientId
 	 *            The entered client ID
 	 * @param accesstokenValidity
@@ -463,7 +467,7 @@ public class ClientsController extends BaseController {
 	 * @return The number of errors that were found
 	 */
 	private int handleCreateUpdateException(RuntimeException caughtException, Model model, Locale locale,
-			String scope_write, String scope_read, String clientId, Integer accesstokenValidity) {
+			String scope_write, String scope_read, String scope_auto_write, String scope_auto_read, String clientId, Integer accesstokenValidity) {
 		Map<String, Object> errors = new HashMap<>();
 
 		try {
@@ -486,9 +490,14 @@ public class ClientsController extends BaseController {
 			if (scope_write.equals("write")) {
 				model.addAttribute("given_scope_write", scope_write);
 			}
-
 			if (scope_read.equals("read")) {
 				model.addAttribute("given_scope_read", scope_read);
+			}
+			if (scope_auto_write.equals("write")) {
+				model.addAttribute("given_scope_auto_write", scope_auto_write);
+			}
+			if (scope_auto_read.equals("read")) {
+				model.addAttribute("given_scope_auto_read", scope_auto_read);
 			}
 		}
 
