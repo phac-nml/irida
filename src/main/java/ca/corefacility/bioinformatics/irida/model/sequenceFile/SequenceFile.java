@@ -88,8 +88,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	private SequencingRun sequencingRun;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
-	private SampleSequenceFileJoin samples;
-	
+	private SampleSequenceFileJoin sample;
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@NotAudited
 	@JoinColumn(name = "fastqc_analysis_id")
@@ -226,8 +226,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	 * Set the Map of optional properties
 	 * 
 	 * @param optionalProperties
-	 *            A {@code Map<String,String>} of all the optional properties for this
-	 *            object
+	 *            A {@code Map<String,String>} of all the optional properties
+	 *            for this object
 	 */
 	public void setOptionalProperties(Map<String, String> optionalProperties) {
 		this.optionalProperties = optionalProperties;
@@ -237,11 +237,11 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
-	
+
 	public AnalysisFastQC getFastQCAnalysis() {
 		return this.fastqcAnalysis;
 	}
-	
+
 	/**
 	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
 	 * 
@@ -255,15 +255,20 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 		if (this.fastqcAnalysis == null) {
 			this.fastqcAnalysis = fastqcAnalysis;
 		} else {
-			throw new AnalysisAlreadySetException("The FastQC Analysis can only be applied to a sequence file one time.");
+			throw new AnalysisAlreadySetException(
+					"The FastQC Analysis can only be applied to a sequence file one time.");
 		}
 	}
 
 	/**
-	 * From (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java)
+	 * From
+	 * (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
+	 * into-human-readable-format-in-java)
 	 *
-	 * @param bytes The {@link Long} size of the file in bytes.
-	 * @param si {@link Boolean} true to use si units
+	 * @param bytes
+	 *            The {@link Long} size of the file in bytes.
+	 * @param si
+	 *            {@link Boolean} true to use si units
 	 *
 	 * @return A human readable {@link String} representation of the file size.
 	 */
