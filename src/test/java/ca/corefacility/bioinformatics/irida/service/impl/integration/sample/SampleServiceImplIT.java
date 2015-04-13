@@ -12,6 +12,7 @@ import javax.validation.ConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -296,7 +298,7 @@ public class SampleServiceImplIT {
 		double coverage = sampleService.estimateCoverageForSample(s, 500);
 		assertEquals(2.0, coverage, deltaFloatEquality);
 	}
-	
+
 	/**
 	 * Tests esimating coverage with a reference file.
 	 * 
@@ -307,7 +309,7 @@ public class SampleServiceImplIT {
 	public void testEstimateCoverageForSampleReferenceFile() throws SequenceFileAnalysisException {
 		Long sampleID = 1L;
 		Sample s = sampleService.read(sampleID);
-		
+
 		ReferenceFile referenceFile = new ReferenceFile();
 		referenceFile.setFileLength(500L);
 
@@ -387,6 +389,18 @@ public class SampleServiceImplIT {
 		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", MIN_DATE, MAX_DATE);
 		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
 		assertEquals(2, page.getSize());
+	}
+
+	/**
+	 * Testing to ensure sequence file cannot have 2 samples
+	 */
+	@Test(expected = DataIntegrityViolationException.class)
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testSequenceFileUniqueSample() {
+		Sample sample = sampleService.read(2L);
+		SequenceFile file = sequenceFileService.read(1L);
+
+		sampleService.addSequenceFileToSample(sample, file);
 	}
 
 	private void assertSampleNotFound(Long id) {
