@@ -161,6 +161,7 @@ public class ClientsControllerTest {
 		IridaClientDetails client = new IridaClientDetails();
 		client.setAuthorizedGrantTypes(ImmutableSet.of("password"));
 		client.setScope(ImmutableSet.of("read"));
+		client.setAutoApprovableScopes(ImmutableSet.of(""));
 		Long id = 1l;
 		client.setId(id);
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -205,6 +206,7 @@ public class ClientsControllerTest {
 		IridaClientDetails client = new IridaClientDetails();
 		Long id = 1l;
 		client.setId(id);
+		client.setAutoApprovableScopes(ImmutableSet.of(""));
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(clientDetailsService.read(id)).thenReturn(client);
