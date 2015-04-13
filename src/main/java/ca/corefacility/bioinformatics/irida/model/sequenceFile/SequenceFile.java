@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -22,7 +21,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -48,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 /**
  * A file that may be stored somewhere on the file system and belongs to a
  * particular {@link Sample}.
- * 
  */
 @Entity
 @Table(name = "sequence_file")
@@ -90,8 +87,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@JoinColumn(name = "sequencing_run_id")
 	private SequencingRun sequencingRun;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
-	private List<SampleSequenceFileJoin> samples;
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
+	private SampleSequenceFileJoin samples;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@NotAudited
