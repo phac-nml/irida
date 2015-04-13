@@ -59,6 +59,13 @@ img.logo {
     float: left;
 }
 
+img.inline {
+	max-width: 100%;
+	margin-left: 0px;
+	vertical-align: middle;
+	box-shadow: none
+}
+
 /**
  * Figures
  */
