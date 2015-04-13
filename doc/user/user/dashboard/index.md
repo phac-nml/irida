@@ -79,3 +79,17 @@ Once you've finished working with IRIDA, we strongly recommend that you log out,
 You can log out of IRIDA by clicking on the <img src="images/logout-icon.png" alt="logout icon" class="inline"> in the top, right-hand corner of the page:
 
 ![The logout button in the dashboard.](images/logout.png)
+
+Recent Activities
+-----------------
+
+The recent activities panel appears in the middle of the dashboard:
+
+![Recent activities section.](images/recent-activities.png)
+
+The recent activities section will show you things like:
+
+* Users being added or removed from project access,
+* Samples being added to projects.
+
+All activities in the recent activities section will link to the project or user account that has been modified by the activity.
