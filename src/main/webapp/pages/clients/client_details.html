@@ -59,6 +59,14 @@
                     <div th:text="#{client.scopes}">_ID_</div>
                     <div class="sidebar__value" id="client-scopes" th:text="${scopes}">_Scopes_</div>
                   </div>
+                  
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-transfer"></i>
+                    </div>
+                    <div th:text="#{client.autoScopes}">_ID_</div>
+                    <div class="sidebar__value" id="client-auto-approvable-scopes" th:text="${autoApproveScopes}">_Auto-Approvable Scopes_</div>
+                  </div>
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">

@@ -78,6 +78,11 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@Column(name = "scope", nullable = false)
 	@CollectionTable(name = "client_details_scope", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> scope;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Column(name = "auto_approvable_scope")
+	@CollectionTable(name = "client_details_auto_approvable_scope", joinColumns = @JoinColumn(name = "client_details_id"))
+	private Set<String> autoApprovableScopes;
 
 	@Size(min = 1, message = "{client.details.grant.notempty}")
 	@NotNull
@@ -365,6 +370,18 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 
 	@Override
 	public boolean isAutoApprove(String scope) {
-		return false;
+		boolean approved = false;
+		if(autoApprovableScopes != null) {
+			approved = autoApprovableScopes.contains(scope);
+		}
+		return approved;
+	}
+	
+	public Set<String> getAutoApprovableScopes() {
+		return autoApprovableScopes;
+	}
+
+	public void setAutoApprovableScopes(Set<String> autoApprovableScopes) {
+		this.autoApprovableScopes = autoApprovableScopes;
 	}
 }
