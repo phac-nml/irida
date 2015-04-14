@@ -193,7 +193,7 @@ public class SampleSequenceFilesControllerTest {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = new SequenceFile();
-		sf.setId(5l);
+		sf.setId(5L);
 
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
@@ -254,7 +254,7 @@ public class SampleSequenceFilesControllerTest {
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf1 = TestDataFactory.constructSequenceFile();
 		SequenceFile sf2 = TestDataFactory.constructSequenceFile();
-		sf1.setId(3245l);
+		sf1.setId(3245L);
 		Join<Sample, SequenceFile> r1 = new SampleSequenceFileJoin(s, sf1);
 		Join<Sample, SequenceFile> r2 = new SampleSequenceFileJoin(s, sf2);
 		List<Join<Sample, SequenceFile>> relationships = Lists.newArrayList();
@@ -335,8 +335,8 @@ public class SampleSequenceFilesControllerTest {
 		relationships.add(r2);
 		SequenceFileResource resource1 = new SequenceFileResource();
 		SequenceFileResource resource2 = new SequenceFileResource();
-		resource1.setMiseqRunId(1l);
-		resource2.setMiseqRunId(2l);
+		resource1.setMiseqRunId(1L);
+		resource2.setMiseqRunId(2L);
 		Path f1 = Files.createTempFile(null, null);
 		Path f2 = Files.createTempFile(null, null);
 		MockMultipartFile mmf1 = new MockMultipartFile("filename1", "filename1", "blurgh1", 

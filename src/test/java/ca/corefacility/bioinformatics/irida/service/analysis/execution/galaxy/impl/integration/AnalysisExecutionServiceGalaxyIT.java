@@ -1384,7 +1384,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
-		analysisExecuted.setId(555l);
+		analysisExecuted.setId(555L);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);

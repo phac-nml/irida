@@ -128,10 +128,10 @@ public class SamplesControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
-		Long sampleId = 1l;
+		Long sampleId = 1L;
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
-		file.setId(2l);
+		file.setId(2L);
 		User user = new User();
 		Project project = new Project();
 
@@ -161,10 +161,10 @@ public class SamplesControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
-		Long sampleId = 1l;
+		Long sampleId = 1L;
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
-		file.setId(2l);
+		file.setId(2L);
 		User user = new User();
 		user.setSystemRole(Role.ROLE_ADMIN);
 
@@ -191,10 +191,10 @@ public class SamplesControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
-		Long sampleId = 1l;
+		Long sampleId = 1L;
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
-		file.setId(2l);
+		file.setId(2L);
 		User user = new User();
 		Project project = new Project();
 
@@ -221,8 +221,8 @@ public class SamplesControllerTest {
 
 	@Test
 	public void testRemoveFileFromSample() {
-		Long sampleId = 1l;
-		Long fileId = 2l;
+		Long sampleId = 1L;
+		Long fileId = 2L;
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
 

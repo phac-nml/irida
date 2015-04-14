@@ -35,6 +35,12 @@ ul, ol, dl, figure,
     margin-bottom: $spacing-unit / 2;
 }
 
+.page-content {
+    h1, h2, h3, h4, h5, h6 {
+        border-bottom: 1px solid;
+    }
+}
+
 
 
 /**
@@ -51,6 +57,13 @@ img.logo {
     margin-left: 0px;
     box-shadow: none;
     float: left;
+}
+
+img.inline {
+	max-width: 100%;
+	margin-left: 0px;
+	vertical-align: middle;
+	box-shadow: none
 }
 
 /**

@@ -73,9 +73,9 @@ public class SampleServiceImplTest {
 	@Test
 	public void testGetSampleForProject() {
 		Project p = new Project();
-		p.setId(1111l);
+		p.setId(1111L);
 		Sample s = new Sample();
-		s.setId(2222l);
+		s.setId(2222L);
 
 		ProjectSampleJoin join = new ProjectSampleJoin(p, s);
 		List<Join<Project, Sample>> joins = new ArrayList<>();
@@ -90,9 +90,9 @@ public class SampleServiceImplTest {
 	@Test
 	public void testRemoveSequenceFileFromSample() {
 		Sample s = new Sample();
-		s.setId(1111l);
+		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
-		sf.setId(2222l);
+		sf.setId(2222L);
 
 		sampleService.removeSequenceFileFromSample(s, sf);
 
@@ -110,8 +110,8 @@ public class SampleServiceImplTest {
 
 		final int SIZE = 3;
 
-		Sample s = s(1l);
-		Project project = p(1l);
+		Sample s = s(1L);
+		Project project = p(1L);
 
 		Sample[] toMerge = new Sample[SIZE];
 		SequenceFile[] toMerge_sf = new SequenceFile[SIZE];
@@ -153,14 +153,14 @@ public class SampleServiceImplTest {
 	@Test
 	public void testRejectSampleMergeDifferentProjects() {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 		Sample s2 = new Sample();
-		s2.setId(2l);
+		s2.setId(2L);
 		Project p1 = new Project();
-		p1.setId(1l);
+		p1.setId(1L);
 		p1.setName("project 1");
 		Project p2 = new Project();
-		p2.setId(2l);
+		p2.setId(2L);
 		p2.setName("project 2");
 
 		List<Join<Project, Sample>> p1_s1 = new ArrayList<>();
@@ -193,7 +193,7 @@ public class SampleServiceImplTest {
 	@Test
 	public void testGetCoverageForSampleSuccessZero() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(new ArrayList<Join<Sample, SequenceFile>>());
 
@@ -211,20 +211,20 @@ public class SampleServiceImplTest {
 	@Test
 	public void testGetCoverageForSampleSuccess() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
 		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
-				.totalBases(1000l).build();
+				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
 
-		double coverage = sampleService.estimateCoverageForSample(s1, 500l);
+		double coverage = sampleService.estimateCoverageForSample(s1, 500L);
 		assertEquals(2.0, coverage, deltaFloatEquality);
 	}
 
@@ -235,7 +235,7 @@ public class SampleServiceImplTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetCoverageForSampleInvalidReferenceLength() throws SequenceFileAnalysisException {
-		sampleService.estimateCoverageForSample(new Sample(), 0l);
+		sampleService.estimateCoverageForSample(new Sample(), 0L);
 	}
 
 	/**
@@ -247,7 +247,7 @@ public class SampleServiceImplTest {
 	@Test
 	public void testGetTotalBasesForSampleSuccessZero() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(new ArrayList<Join<Sample, SequenceFile>>());
 
@@ -265,10 +265,10 @@ public class SampleServiceImplTest {
 	@Test
 	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
@@ -292,22 +292,22 @@ public class SampleServiceImplTest {
 	@Test
 	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 		SequenceFile sf2 = new SequenceFile();
-		sf1.setId(3333l);
+		sf1.setId(3333L);
 
 		SampleSequenceFileJoin join1 = new SampleSequenceFileJoin(s1, sf1);
 		SampleSequenceFileJoin join2 = new SampleSequenceFileJoin(s1, sf2);
 
 		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
-				.totalBases(1000l).build();
+				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
 		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id2")
-				.totalBases(1000l).build();
+				.totalBases(1000L).build();
 		sf2.setFastQCAnalysis(analysisFastQC2);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
@@ -325,10 +325,10 @@ public class SampleServiceImplTest {
 	@Test(expected = SequenceFileAnalysisException.class)
 	public void testGetTotalBasesForSampleFailNoFastQC() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
@@ -346,10 +346,10 @@ public class SampleServiceImplTest {
 	@Test(expected = SequenceFileAnalysisException.class)
 	public void testGetTotalBasesForSampleFailMultipleFastQC() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 

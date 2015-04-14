@@ -56,9 +56,9 @@ public class SnapshotServiceImplIT {
 	@Test
 	@WithMockUser(username = "user", roles = "USER")
 	public void testTakeSnapshot() {
-		Project project = projectService.read(1l);
-		Iterable<Sample> samples = sampleService.readMultiple(Lists.newArrayList(2l, 3l));
-		SequenceFile file = sequenceFileService.read(4l);
+		Project project = projectService.read(1L);
+		Iterable<Sample> samples = sampleService.readMultiple(Lists.newArrayList(2L, 3L));
+		SequenceFile file = sequenceFileService.read(4L);
 
 		Snapshot snapshot = snapshotService.takeSnapshot(Lists.newArrayList(project), Lists.newArrayList(samples),
 				Lists.newArrayList(file));
