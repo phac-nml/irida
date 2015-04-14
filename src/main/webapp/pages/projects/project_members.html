@@ -37,7 +37,7 @@
                     <th>[[#{project.table.collaborator.role}]]</th>
                     <th>[[#{project.table.collaborator.email}]]</th>
                     <th>[[#{project.table.collaborator.since}]]</th>
-                    <th th:if="${isAdmin} or ${isOwner}"></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -269,7 +269,8 @@ $(document).ready(function () {
                     return buttons;
                 },
                 "class": "btns",
-                "width": "17%"
+                "width": "17%",
+                "visible": /*[[${isAdmin} or ${isOwner}]]*/ false
             }
         ],
         "drawCallback": function (settings, data) {
