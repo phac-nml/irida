@@ -220,10 +220,9 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	 * Get the size of the file.
 	 *
 	 * @return The String representation of the file size
-	 * @throws IOException
 	 */
 	public String getFileSize() {
-		String size = "0 KB";
+		String size = "N/A";
 		try {
 			size = humanReadableByteCount(Files.size(file), true);
 		} catch (IOException e) {
