@@ -296,7 +296,7 @@ public class SampleServiceImplIT {
 		double coverage = sampleService.estimateCoverageForSample(s, 500);
 		assertEquals(2.0, coverage, deltaFloatEquality);
 	}
-	
+
 	/**
 	 * Tests esimating coverage with a reference file.
 	 * 
@@ -307,7 +307,7 @@ public class SampleServiceImplIT {
 	public void testEstimateCoverageForSampleReferenceFile() throws SequenceFileAnalysisException {
 		Long sampleID = 1L;
 		Sample s = sampleService.read(sampleID);
-		
+
 		ReferenceFile referenceFile = new ReferenceFile();
 		referenceFile.setFileLength(500L);
 

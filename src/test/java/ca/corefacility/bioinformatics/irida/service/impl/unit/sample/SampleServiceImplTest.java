@@ -88,28 +88,6 @@ public class SampleServiceImplTest {
 	}
 
 	@Test
-	public void testAddExistingSequenceFileToSample() {
-		Sample s = new Sample();
-		s.setId(1111L);
-		SequenceFile sf = new SequenceFile();
-		sf.setId(2222L);
-
-		Project p = new Project();
-		p.setId(3333L);
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s, sf);
-
-		when(sampleRepository.exists(s.getId())).thenReturn(Boolean.TRUE);
-		when(ssfRepository.save(join)).thenReturn(join);
-
-		Join<Sample, SequenceFile> addSequenceFileToSample = sampleService.addSequenceFileToSample(s, sf);
-		verify(ssfRepository).save(join);
-
-		assertNotNull(addSequenceFileToSample);
-		assertEquals(addSequenceFileToSample.getSubject(), s);
-		assertEquals(addSequenceFileToSample.getObject(), sf);
-	}
-
-	@Test
 	public void testRemoveSequenceFileFromSample() {
 		Sample s = new Sample();
 		s.setId(1111L);
