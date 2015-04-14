@@ -228,6 +228,7 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	 * @return The String representation of the file size
 	 * @throws IOException
 	 */
+	@JsonIgnore
 	public String getFileSize() throws IOException {
 		return humanReadableByteCount(Files.size(file), true);
 	}
