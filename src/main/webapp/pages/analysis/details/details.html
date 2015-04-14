@@ -29,7 +29,7 @@
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
 			<tabset>
-				<th:block th:if="${isCompleted and preview}">
+				<th:block th:if="${isCompleted} and ${preview}">
 					<tab th:replace="analysis/details/_tabs :: #preview"></tab>
 				</th:block>
 				<tab th:replace="analysis/details/_tabs :: #inputFilesTab"></tab>
