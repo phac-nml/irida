@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaScheduledTasksC
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;
+import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 
 import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
 import com.google.common.collect.ImmutableMap;
@@ -101,6 +102,7 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		views.add(new FastaView());
 		views.add(new FastqView());
 		views.add(new GenbankView());
+		views.add(new NewickFileView());
 		return views;
 	}
 
