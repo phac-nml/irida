@@ -12,8 +12,8 @@
 <body>
 
   <div layout:fragment="page" ng-app="irida.analysis"
-       th:with="isCompleted=${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'COMPLETED')},
-        isError=${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'ERROR')},
+       th:with="isCompleted=${#strings.equalsIgnoreCase(analysisSubmission.getAnalysisState().toString(), 'COMPLETED')},
+        isError=${#strings.equalsIgnoreCase(analysisSubmission.getAnalysisState().toString(), 'ERROR')},
         analysis=${analysisSubmission.getAnalysis()}" ng-controller="StateController as stateController">
     <main class="col-md-9 col-md-push-3" layout:fragment="main">
 
