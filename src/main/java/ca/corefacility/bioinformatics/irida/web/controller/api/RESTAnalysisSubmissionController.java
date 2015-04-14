@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import com.google.common.collect.ImmutableMap;
 
 @Controller
-@RequestMapping(value = "/api/analysisSubmission")
+@RequestMapping(value = "/api/analysisSubmissions")
 public class RESTAnalysisSubmissionController extends RESTGenericController<AnalysisSubmission> {
 	private AnalysisSubmissionService analysisSubmissionService;
 	public static final String ANALYSIS_LINK = "analysis";
