@@ -201,6 +201,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	 * 
 	 * @return The ReferenceFile.
 	 */
+	@JsonIgnore
 	public Optional<ReferenceFile> getReferenceFile() {
 		return (referenceFile != null) ? Optional.of(referenceFile) : Optional.empty();
 	}
@@ -220,6 +221,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	 * 
 	 * @return The set of single-end input sequence files.
 	 */
+	@JsonIgnore
 	public Set<SequenceFile> getSingleInputFiles() {
 		return inputFilesSingle;
 	}
@@ -229,6 +231,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	 * 
 	 * @return The set of paired-end input sequence files.
 	 */
+	@JsonIgnore
 	public Set<SequenceFilePair> getPairedInputFiles() {
 		return inputFilesPaired;
 	}
@@ -432,6 +435,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	 * 
 	 * @return The {@link IridaWorkflowNamedParameters} for this submission.
 	 */
+	@JsonIgnore
 	public final IridaWorkflowNamedParameters getNamedParameters() {
 		return namedParameters;
 	}
