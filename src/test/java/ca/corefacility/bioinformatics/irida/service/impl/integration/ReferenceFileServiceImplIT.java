@@ -67,13 +67,13 @@ public class ReferenceFileServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user", roles = "USER")
 	public void testReadNotAllowed() {
-		referenceFileService.read(1l);
+		referenceFileService.read(1L);
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testRead() {
-		ReferenceFile read = referenceFileService.read(1l);
+		ReferenceFile read = referenceFileService.read(1L);
 		assertNotNull(read);
 	}
 	

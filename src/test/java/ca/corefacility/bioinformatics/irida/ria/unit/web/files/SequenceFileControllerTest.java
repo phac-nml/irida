@@ -32,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
  *
  */
 public class SequenceFileControllerTest {
-	public static final Long FILE_ID = 1l;
+	public static final Long FILE_ID = 1L;
 	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileControllerTest.class);
 	private SequenceFileController controller;

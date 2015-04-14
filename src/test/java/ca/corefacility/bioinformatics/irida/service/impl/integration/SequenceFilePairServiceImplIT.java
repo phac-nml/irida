@@ -57,8 +57,8 @@ public class SequenceFilePairServiceImplIT {
 	@Test(expected = DataIntegrityViolationException.class)
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testAddSequenceFileWithExistingPair() {
-		SequenceFile file1 = sequenceFileService.read(1l);
-		SequenceFile file3 = sequenceFileService.read(3l);
+		SequenceFile file1 = sequenceFileService.read(1L);
+		SequenceFile file3 = sequenceFileService.read(3L);
 
 		sequenceFilePairService.createSequenceFilePair(file1, file3);
 
@@ -67,8 +67,8 @@ public class SequenceFilePairServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testAddSequenceFilePairAsSequencer() {
-		SequenceFile file1 = sequenceFileService.read(1l);
-		SequenceFile file2 = sequenceFileService.read(2l);
+		SequenceFile file1 = sequenceFileService.read(1L);
+		SequenceFile file2 = sequenceFileService.read(2L);
 
 		SequenceFilePair createSequenceFilePair = sequenceFilePairService.createSequenceFilePair(file1, file2);
 		assertTrue(createSequenceFilePair.getFiles().contains(file1));
@@ -78,8 +78,8 @@ public class SequenceFilePairServiceImplIT {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetSequenceFilePair() {
-		SequenceFile file3 = sequenceFileService.read(3l);
-		SequenceFile file4 = sequenceFileService.read(4l);
+		SequenceFile file3 = sequenceFileService.read(3L);
+		SequenceFile file4 = sequenceFileService.read(4L);
 
 		SequenceFile pairForSequenceFile = sequenceFilePairService.getPairedFileForSequenceFile(file3);
 		assertEquals(file4, pairForSequenceFile);
@@ -90,7 +90,7 @@ public class SequenceFilePairServiceImplIT {
 	public void testGetSequenceFilePairForSample() {
 		Sample s = sampleService.read(2L);
 
-		Set<Long> fileIds = Sets.newHashSet(3l, 4l);
+		Set<Long> fileIds = Sets.newHashSet(3L, 4L);
 
 		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService.getSequenceFilePairsForSample(s);
 		assertEquals(1, sequenceFilePairsForSample.size());

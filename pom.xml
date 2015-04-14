@@ -631,7 +631,16 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<compilerId>javac-with-errorprone</compilerId>
+					<forceJavacCompilerUse>true</forceJavacCompilerUse>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.plexus</groupId>
+						<artifactId>plexus-compiler-javac-errorprone</artifactId>
+						<version>${errorprone.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -900,6 +909,7 @@
 		<maven.exec.plugin.version>1.3.2</maven.exec.plugin.version>
 		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
+		<errorprone.version>2.5</errorprone.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

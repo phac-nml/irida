@@ -56,7 +56,7 @@ public class ClientsControllerTest {
 
 	@Test
 	public void testRead() {
-		Long clientId = 1l;
+		Long clientId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		IridaClientDetails iridaClientDetails = new IridaClientDetails();
 		iridaClientDetails.setId(clientId);
@@ -82,9 +82,9 @@ public class ClientsControllerTest {
 		String direction = "asc";
 		String searchValue = "";
 		IridaClientDetails client1 = new IridaClientDetails();
-		client1.setId(1l);
+		client1.setId(1L);
 		IridaClientDetails client2 = new IridaClientDetails();
-		client2.setId(2l);
+		client2.setId(2L);
 		Page<IridaClientDetails> clientPage = new PageImpl<>(Lists.newArrayList(client1, client2));
 
 		when(
@@ -118,7 +118,7 @@ public class ClientsControllerTest {
 	@Test
 	public void testPostCreateClient() {
 		IridaClientDetails client = new IridaClientDetails();
-		client.setId(1l);
+		client.setId(1L);
 		ExtendedModelMap model = new ExtendedModelMap();
 		String scope_read = "read";
 		String scope_write = "";
@@ -134,7 +134,7 @@ public class ClientsControllerTest {
 	@Test
 	public void testPostCreateClientError() {
 		IridaClientDetails client = new IridaClientDetails();
-		client.setId(1l);
+		client.setId(1L);
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = LocaleContextHolder.getLocale();
 		String scope_read = "read";
@@ -162,7 +162,7 @@ public class ClientsControllerTest {
 		client.setAuthorizedGrantTypes(ImmutableSet.of("password"));
 		client.setScope(ImmutableSet.of("read"));
 		client.setAutoApprovableScopes(ImmutableSet.of(""));
-		Long id = 1l;
+		Long id = 1L;
 		client.setId(id);
 		ExtendedModelMap model = new ExtendedModelMap();
 
@@ -179,7 +179,7 @@ public class ClientsControllerTest {
 	@SuppressWarnings("unchecked")
 	public void testSubmitEditClient() {
 		IridaClientDetails client = new IridaClientDetails();
-		Long id = 1l;
+		Long id = 1L;
 		client.setId(id);
 		ExtendedModelMap model = new ExtendedModelMap();
 		String scope_read = "read";
@@ -204,7 +204,7 @@ public class ClientsControllerTest {
 	@SuppressWarnings("unchecked")
 	public void testSubmitEditClientError() {
 		IridaClientDetails client = new IridaClientDetails();
-		Long id = 1l;
+		Long id = 1L;
 		client.setId(id);
 		client.setAutoApprovableScopes(ImmutableSet.of(""));
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -223,7 +223,7 @@ public class ClientsControllerTest {
 	@SuppressWarnings("unchecked")
 	public void testSubmitEditWithClientSecretUpdate() {
 		IridaClientDetails client = new IridaClientDetails();
-		Long id = 1l;
+		Long id = 1L;
 		client.setId(id);
 		ExtendedModelMap model = new ExtendedModelMap();
 
@@ -243,7 +243,7 @@ public class ClientsControllerTest {
 
 	@Test
 	public void testRemoveClient() {
-		Long id = 1l;
+		Long id = 1L;
 
 		String removeClient = controller.removeClient(id);
 

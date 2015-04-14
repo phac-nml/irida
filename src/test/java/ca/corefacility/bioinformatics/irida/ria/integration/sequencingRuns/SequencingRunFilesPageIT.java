@@ -44,7 +44,7 @@ public class SequencingRunFilesPageIT {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		LoginPage.loginAsAdmin(driver);
 		page = new SequencingRunFilesPage(driver);
-		page.getFilesPage(1l);
+		page.getFilesPage(1L);
 	}
 
 	@After
