@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -22,7 +21,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -48,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 /**
  * A file that may be stored somewhere on the file system and belongs to a
  * particular {@link Sample}.
- * 
  */
 @Entity
 @Table(name = "sequence_file")
@@ -90,9 +87,9 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@JoinColumn(name = "sequencing_run_id")
 	private SequencingRun sequencingRun;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
-	private List<SampleSequenceFileJoin> samples;
-	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
+	private SampleSequenceFileJoin sample;
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@NotAudited
 	@JoinColumn(name = "fastqc_analysis_id")
@@ -229,8 +226,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	 * Set the Map of optional properties
 	 * 
 	 * @param optionalProperties
-	 *            A {@code Map<String,String>} of all the optional properties for this
-	 *            object
+	 *            A {@code Map<String,String>} of all the optional properties
+	 *            for this object
 	 */
 	public void setOptionalProperties(Map<String, String> optionalProperties) {
 		this.optionalProperties = optionalProperties;
@@ -240,11 +237,11 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
-	
+
 	public AnalysisFastQC getFastQCAnalysis() {
 		return this.fastqcAnalysis;
 	}
-	
+
 	/**
 	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
 	 * 
@@ -258,15 +255,20 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 		if (this.fastqcAnalysis == null) {
 			this.fastqcAnalysis = fastqcAnalysis;
 		} else {
-			throw new AnalysisAlreadySetException("The FastQC Analysis can only be applied to a sequence file one time.");
+			throw new AnalysisAlreadySetException(
+					"The FastQC Analysis can only be applied to a sequence file one time.");
 		}
 	}
 
 	/**
-	 * From (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java)
+	 * From
+	 * (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
+	 * into-human-readable-format-in-java)
 	 *
-	 * @param bytes The {@link Long} size of the file in bytes.
-	 * @param si {@link Boolean} true to use si units
+	 * @param bytes
+	 *            The {@link Long} size of the file in bytes.
+	 * @param si
+	 *            {@link Boolean} true to use si units
 	 *
 	 * @return A human readable {@link String} representation of the file size.
 	 */

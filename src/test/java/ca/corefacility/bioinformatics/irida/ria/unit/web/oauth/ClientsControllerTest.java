@@ -125,7 +125,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.create(client)).thenReturn(client);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		verify(clientDetailsService).create(client);
@@ -145,7 +145,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.create(client)).thenThrow(ex);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
 
 		assertEquals(ClientsController.ADD_CLIENT_PAGE, postCreateClient);
 		assertTrue(model.containsAttribute("errors"));
@@ -161,6 +161,7 @@ public class ClientsControllerTest {
 		IridaClientDetails client = new IridaClientDetails();
 		client.setAuthorizedGrantTypes(ImmutableSet.of("password"));
 		client.setScope(ImmutableSet.of("read"));
+		client.setAutoApprovableScopes(ImmutableSet.of(""));
 		Long id = 1L;
 		client.setId(id);
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -186,7 +187,7 @@ public class ClientsControllerTest {
 		when(clientDetailsService.read(id)).thenReturn(client);
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "","","", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		@SuppressWarnings("rawtypes")
@@ -205,6 +206,7 @@ public class ClientsControllerTest {
 		IridaClientDetails client = new IridaClientDetails();
 		Long id = 1L;
 		client.setId(id);
+		client.setAutoApprovableScopes(ImmutableSet.of(""));
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(clientDetailsService.read(id)).thenReturn(client);
@@ -213,7 +215,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenThrow(ex);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "","","", model, locale);
 		assertEquals(ClientsController.EDIT_CLIENT_PAGE, postCreateClient);
 	}
 
@@ -228,7 +230,7 @@ public class ClientsControllerTest {
 		when(clientDetailsService.read(id)).thenReturn(client);
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "true", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "","","", "true", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		@SuppressWarnings("rawtypes")
