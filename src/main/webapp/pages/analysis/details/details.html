@@ -3,28 +3,44 @@
       layout:decorator="analysis/details/_base">
 
 <head lang="en">
-	<meta charset="UTF-8"/>
-	<title th:text="#{analysis.details.title(${analysisSubmission.label})}">_Analysis_</title>
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
+	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
+	      th:href="@{/resources/css/pages/sample_files.css}"/>
+	<style>
+		.tool i {
+			font-size: .75em;
+			color: #d5d5d5;
+		}
+		.progress, .progress-bar {
+			height: 4px;
+			border-radius: 0;
+		}
+	</style>
 </head>
 
 <body>
 <main layout:fragment="main">
 	<div class="row">
-		<div class="col-md-12">
-			<h1 style="margin-top: 0" role="heading">
-				<span th:text="${analysisSubmission.name}">__TITLE__</span>
-			</h1>
-		</div>
+		<div class="col-md-12 ng-cloak">
+			<h1><th:block th:text="${analysisSubmission.label}"></th:block> <small ng-hide="stateController.state === 'ERROR'" ng-bind="stateController.percentage + '%'"></small></h1>
+			<progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></progressbar>
+	</div>
 	</div>
 	<div class="row">
-		<div class="col-md-12">
-			<div th:if="${preview}" layout:fragment="previewContent">
-			</div>
-			<div th:unless="${preview}" layout:fragment="noPreview">__NO_PREVIEW__</div>
+		<div class="col-md-12 ng-cloak">
+			<tabset>
+				<th:block th:if="${isCompleted} and ${preview}">
+					<tab th:replace="analysis/details/_tabs :: #preview"></tab>
+				</th:block>
+				<tab th:replace="analysis/details/_tabs :: #inputFilesTab"></tab>
+				<th:block th:if="${isCompleted}"><tab th:replace="analysis/details/_tabs :: #provenanceTab"></tab></th:block>
+
+			</tabset>
 		</div>
 	</div>
 </main>
+
+
 </body>
 
 </html>

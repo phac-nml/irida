@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -129,10 +128,10 @@ public class SamplesControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
-		Long sampleId = 1l;
+		Long sampleId = 1L;
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
-		file.setId(2l);
+		file.setId(2L);
 		User user = new User();
 		Project project = new Project();
 
@@ -152,7 +151,7 @@ public class SamplesControllerTest {
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
-		verify(sampleService, times(2)).read(sampleId);
+		verify(sampleService).read(sampleId);
 		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
 		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 	}
@@ -162,10 +161,10 @@ public class SamplesControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
-		Long sampleId = 1l;
+		Long sampleId = 1L;
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
-		file.setId(2l);
+		file.setId(2L);
 		User user = new User();
 		user.setSystemRole(Role.ROLE_ADMIN);
 
@@ -181,7 +180,7 @@ public class SamplesControllerTest {
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
-		verify(sampleService, times(2)).read(sampleId);
+		verify(sampleService).read(sampleId);
 		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
 		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 		verifyZeroInteractions(projectService);
@@ -192,10 +191,10 @@ public class SamplesControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
-		Long sampleId = 1l;
+		Long sampleId = 1L;
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
-		file.setId(2l);
+		file.setId(2L);
 		User user = new User();
 		Project project = new Project();
 
@@ -215,15 +214,15 @@ public class SamplesControllerTest {
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
-		verify(sampleService, times(2)).read(sampleId);
+		verify(sampleService).read(sampleId);
 		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
 		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 	}
 
 	@Test
 	public void testRemoveFileFromSample() {
-		Long sampleId = 1l;
-		Long fileId = 2l;
+		Long sampleId = 1L;
+		Long fileId = 2L;
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
 

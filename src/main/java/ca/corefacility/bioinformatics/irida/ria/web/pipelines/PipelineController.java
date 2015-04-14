@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
-import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -201,7 +199,6 @@ public class PipelineController extends BaseController {
 			List<Map<String, Object>> referenceFileList = new ArrayList<>();
 			List<Map<String, Object>> projectList = new ArrayList<>();
 			List<Map<String, Object>> addRefList = new ArrayList<>();
-			SequenceFileWebUtilities sequenceFileWebUtilities = new SequenceFileWebUtilities();
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
 			for (Project project : cartMap.keySet()) {
 				// Check to see if it requires a reference file.
@@ -233,35 +230,19 @@ public class PipelineController extends BaseController {
 					Map<String, Object> sampleMap = new HashMap<>();
 					sampleMap.put("name", sample.getLabel());
 					sampleMap.put("id", sample.getId().toString());
-					List<Map<String, Object>> fileList = new ArrayList<>();
+					Map<String, List<? extends Object>> files = new HashMap<>();
 
 					// Paired end reads
 					if (description.acceptsPairedSequenceFiles()) {
-						List<SequenceFilePair> sequenceFilePairs = sequenceFilePairService
-								.getSequenceFilePairsForSample(sample);
-						for (SequenceFilePair pair : sequenceFilePairs) {
-							List<Map<String, Object>> fileMap = pair.getFiles().stream()
-									.map(sequenceFileWebUtilities::getFileDataMap).collect(Collectors.toList());
-							fileList.add(ImmutableMap.of(
-									"id", pair.getId(),
-									"type", "paired_end",
-									"files", fileMap,
-									"createdDate", pair.getCreatedDate()
-							));
-						}
+						files.put("paired_end", sequenceFilePairService.getSequenceFilePairsForSample(sample));
 					}
 
 					// Singe end reads
 					if (description.acceptsSingleSequenceFiles()) {
-						List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
-						for (Join<Sample, SequenceFile> join : sfJoin) {
-							Map<String, Object> fileMap = sequenceFileWebUtilities.getFileDataMap(join.getObject());
-							fileMap.put("type", "single_end");
-							fileList.add(fileMap);
-						}
+						files.put("single_end", sequenceFileService.getUnpairedSequenceFilesForSample(sample));
 					}
 
-					sampleMap.put("files", fileList);
+					sampleMap.put("files", files);
 					sampleList.add(sampleMap);
 				}
 

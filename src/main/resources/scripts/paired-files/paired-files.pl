@@ -30,8 +30,8 @@ my $dbh =
   or die "Cannot connect to database: $DBI::errstr";
 
 #get the sequence files joined with sequencing_run
-my $sql = "SELECT r.id, f.id, f.filePath
-FROM sequencing_run r INNER JOIN sequence_file f ON r.id=f.sequencingRun_id";
+my $sql = "SELECT r.id, f.id, f.file_path
+FROM sequencing_run r INNER JOIN sequence_file f ON r.id=f.sequencing_run_id";
 my $sth = $dbh->prepare($sql);
 my $rv  = $sth->execute();
 
@@ -80,7 +80,7 @@ for my $runId ( keys %runs ) {
 
 #update the sequencing runs to reflect the paired end runs
 my $runPairsQuery =
-'UPDATE sequencing_run m SET m.layout_type="PAIRED_END" WHERE m.id IN (SELECT DISTINCT f.sequencingRun_id FROM sequence_file f INNER JOIN sequence_file_pair_files p ON f.id=p.files_id);';
+'UPDATE sequencing_run m SET m.layout_type="PAIRED_END" WHERE m.id IN (SELECT DISTINCT f.sequencing_run_id FROM sequence_file f INNER JOIN sequence_file_pair_files p ON f.id=p.files_id);';
 
 $sth = $dbh->prepare($runPairsQuery);
 print "Updated paired runs: " . $sth->execute() . "\n";

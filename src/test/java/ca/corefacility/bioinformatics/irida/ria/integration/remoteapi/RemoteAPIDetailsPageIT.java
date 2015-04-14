@@ -42,7 +42,7 @@ public class RemoteAPIDetailsPageIT {
 	private WebDriver driver;
 	private RemoteAPIDetailsPage page;
 
-	Long id = 1l;
+	Long id = 1L;
 	String apiName = "a client";
 	String apiClient = "client";
 

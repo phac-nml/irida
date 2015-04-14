@@ -175,8 +175,8 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
-		User u = userService.read(4l);
-		Project p = projectService.read(4l);
+		User u = userService.read(4L);
+		Project p = projectService.read(4L);
 
 		projectService.removeUserFromProject(p, u);
 
@@ -187,8 +187,8 @@ public class ProjectServiceImplIT {
 	@Test(expected = ProjectWithoutOwnerException.class)
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveUserFromProjectAbandoned() throws ProjectWithoutOwnerException {
-		User u = userService.read(3l);
-		Project p = projectService.read(2l);
+		User u = userService.read(3L);
+		Project p = projectService.read(2L);
 
 		projectService.removeUserFromProject(p, u);
 	}
@@ -196,23 +196,23 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetProjectsForUser() {
-		User u = userService.read(3l);
+		User u = userService.read(3L);
 
 		Collection<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
 		assertEquals("User should have 2 projects.", 2, projects.size());
-		assertEquals("User should be on project 2.", Long.valueOf(2l), projects.iterator().next().getSubject().getId());
+		assertEquals("User should be on project 2.", Long.valueOf(2L), projects.iterator().next().getSubject().getId());
 	}
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetProjectsManagedBy() {
-		User u = userService.read(3l);
+		User u = userService.read(3L);
 
 		Collection<ProjectUserJoin> projects = projectService.getProjectsForUserWithRole(u, ProjectRole.PROJECT_OWNER);
 
 		assertEquals("User should have one project.", 1, projects.size());
-		assertEquals("User should be on project 2.", Long.valueOf(2l), projects.iterator().next().getSubject().getId());
+		assertEquals("User should be on project 2.", Long.valueOf(2L), projects.iterator().next().getSubject().getId());
 	}
 
 	@Test
@@ -327,15 +327,15 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testUserHasProjectRole() {
-		User user = userService.read(3l);
-		Project project = projectService.read(2l);
+		User user = userService.read(3L);
+		Project project = projectService.read(2L);
 		assertTrue(projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER));
 	}
 
 	@Test
 	@WithMockUser(username = "user1", password = "password1", roles = "USER")
 	public void testSearchProjectsForUser() {
-		User user = userService.read(3l);
+		User user = userService.read(3L);
 		// test searches
 
 		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.searchProjectUsers(
@@ -362,7 +362,7 @@ public class ProjectServiceImplIT {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
 
-		Project excludeProject = projectService.read(2l);
+		Project excludeProject = projectService.read(2L);
 		Page<ProjectUserJoin> search = projectService.searchProjectUsers(
 				ProjectUserJoinSpecification.excludeProject(excludeProject), 0, 10, Direction.DESC);
 		assertFalse(search.getContent().contains(excludeProject));
@@ -388,7 +388,7 @@ public class ProjectServiceImplIT {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
 
-		Project excludeProject = projectService.read(5l);
+		Project excludeProject = projectService.read(5L);
 		Page<Project> search = projectService.search(ProjectSpecification.excludeProject(excludeProject), 0, 10,
 				Direction.DESC);
 		assertFalse(search.getContent().contains(excludeProject));
@@ -397,8 +397,8 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")
 	public void testAddRelatedProject() {
-		Project p6 = projectService.read(6l);
-		Project p7 = projectService.read(7l);
+		Project p6 = projectService.read(6L);
+		Project p7 = projectService.read(7L);
 
 		RelatedProjectJoin rp = projectService.addRelatedProject(p6, p7);
 		assertNotNull(rp);
@@ -409,8 +409,8 @@ public class ProjectServiceImplIT {
 	@Test(expected = EntityExistsException.class)
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")
 	public void testAddExistingRelatedProject() {
-		Project p6 = projectService.read(6l);
-		Project p8 = projectService.read(8l);
+		Project p6 = projectService.read(6L);
+		Project p8 = projectService.read(8L);
 
 		projectService.addRelatedProject(p6, p8);
 	}
@@ -418,7 +418,7 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")
 	public void testGetRelatedProjects() {
-		Project p6 = projectService.read(6l);
+		Project p6 = projectService.read(6L);
 		List<RelatedProjectJoin> relatedProjects = projectService.getRelatedProjects(p6);
 		assertFalse(relatedProjects.isEmpty());
 
@@ -431,7 +431,7 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")
 	public void testGetProjectsRelatedTo() {
-		Project p8 = projectService.read(8l);
+		Project p8 = projectService.read(8L);
 		List<RelatedProjectJoin> relatedProjects = projectService.getReverseRelatedProjects(p8);
 		assertFalse(relatedProjects.isEmpty());
 
@@ -444,8 +444,8 @@ public class ProjectServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")
 	public void testAddRelatedProjectNotAllowed() {
-		Project p6 = projectService.read(6l);
-		Project p3 = projectService.read(3l);
+		Project p6 = projectService.read(6L);
+		Project p3 = projectService.read(3L);
 
 		projectService.addRelatedProject(p6, p3);
 	}
@@ -453,7 +453,7 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testGetProjectForSample() {
-		Sample sample = sampleService.read(1l);
+		Sample sample = sampleService.read(1L);
 		List<Join<Project, Sample>> projectsForSample = projectService.getProjectsForSample(sample);
 		assertFalse(projectsForSample.isEmpty());
 		for (Join<Project, Sample> join : projectsForSample) {

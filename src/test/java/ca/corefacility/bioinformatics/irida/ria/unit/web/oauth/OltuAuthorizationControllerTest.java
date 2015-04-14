@@ -56,7 +56,7 @@ public class OltuAuthorizationControllerTest {
 	@Test
 	public void testAuthenticate() throws OAuthSystemException, UnsupportedEncodingException {
 		RemoteAPI remoteAPI = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		remoteAPI.setId(1l);
+		remoteAPI.setId(1L);
 		String redirect = "http://base";
 
 		String authenticate = controller.authenticate(remoteAPI, redirect);
@@ -72,7 +72,7 @@ public class OltuAuthorizationControllerTest {
 	@Test
 	public void testGetTokenFromAuthCode() throws IOException, OAuthSystemException, OAuthProblemException,
 			URISyntaxException {
-		Long apiId = 1l;
+		Long apiId = 1L;
 		RemoteAPI remoteAPI = new RemoteAPI("name", "http://remoteLocation", "a description", "id", "secret");
 		remoteAPI.setId(apiId);
 
@@ -88,7 +88,7 @@ public class OltuAuthorizationControllerTest {
 		String tokenString = "abc123";
 		OAuthJSONAccessTokenResponse oauthResponse = mock(OAuthJSONAccessTokenResponse.class);
 		when(oauthResponse.getAccessToken()).thenReturn(tokenString);
-		when(oauthResponse.getExpiresIn()).thenReturn(1l);
+		when(oauthResponse.getExpiresIn()).thenReturn(1L);
 
 		when(oauthClient.accessToken(any(OAuthClientRequest.class))).thenReturn(oauthResponse);
 

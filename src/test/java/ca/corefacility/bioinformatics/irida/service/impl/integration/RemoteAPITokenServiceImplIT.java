@@ -71,7 +71,7 @@ public class RemoteAPITokenServiceImplIT {
 
 	@Test
 	public void testGetToken() {
-		RemoteAPI api = apiService.read(1l);
+		RemoteAPI api = apiService.read(1L);
 		RemoteAPIToken token = tokenService.getToken(api);
 		assertNotNull(token);
 		assertEquals("123456789", token.getTokenString());
@@ -79,13 +79,13 @@ public class RemoteAPITokenServiceImplIT {
 
 	@Test(expected=EntityNotFoundException.class)
 	public void testGetTokenNotExists() {
-		RemoteAPI api = apiService.read(2l);
+		RemoteAPI api = apiService.read(2L);
 		tokenService.getToken(api);
 	}
 	
 	@Test
 	public void testAddToken(){
-		RemoteAPI api = apiService.read(2l);
+		RemoteAPI api = apiService.read(2L);
 		RemoteAPIToken token = new RemoteAPIToken("111111111", api, new Date());
 		tokenService.create(token);
 		
@@ -99,7 +99,7 @@ public class RemoteAPITokenServiceImplIT {
 	public void testDeleteToken(){
 		RemoteAPI api = null;
 		try{
-			api = apiService.read(1l);
+			api = apiService.read(1L);
 			tokenService.delete(api);
 		}catch(EntityNotFoundException ex){
 			fail("Token should be able to be deleted");
@@ -110,7 +110,7 @@ public class RemoteAPITokenServiceImplIT {
 	
 	@Test
 	public void addTokenExisting(){
-		RemoteAPI api = apiService.read(1l);
+		RemoteAPI api = apiService.read(1L);
 		RemoteAPIToken originalToken = tokenService.getToken(api);
 		
 		RemoteAPIToken token = new RemoteAPIToken("111111111", api, new Date());

@@ -1,0 +1,31 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en">
+<head lang="en">
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
+</head>
+<body vocab="http://schema.org/" typeof="WebPage" ng-app="GalaxyRedirect" ng-controller="authCodeController">
+
+<th:block layout:fragment="pageScripts">
+	<script th:src="@{/resources/bower_components/angular/angular.min.js}"
+	        src="/resources/bower_components/angular/angular.min.js"></script>
+	<script th:inline="javascript">
+		angular.module('GalaxyRedirect', [])
+			.controller('authCodeController', ['$window', authCodeController]);
+
+		function authCodeController($window) {
+
+			getParentScope().$emit('galaxyAuthCode', /*[[${auth_code}]]*/ '');
+
+			function getParentScope() {
+				return $window.parent.angular.element($window.frameElement).scope();
+			}
+		}
+	</script>
+</th:block>
+
+</body>
+</html>

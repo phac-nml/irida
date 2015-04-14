@@ -74,7 +74,7 @@ public class ProjectMembersPageIT {
 
 	@Test
 	public void testRemoveUser() {
-		membersPage.clickRemoveUserButton(2l);
+		membersPage.clickRemoveUserButton(2L);
 		membersPage.clickModialPopupButton();
 		List<String> userNames = membersPage.getProjectMembersNames();
 		assertEquals(1, userNames.size());
@@ -82,10 +82,10 @@ public class ProjectMembersPageIT {
 
 	@Test
 	public void testEditRole() {
-		Long userid = 2l;
+		Long userid = 2L;
 		membersPage.clickEditButton(userid);
 		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed(userid));
-		membersPage.setRoleForUser(2l, ProjectRole.PROJECT_OWNER.toString());
+		membersPage.setRoleForUser(2L, ProjectRole.PROJECT_OWNER.toString());
 		assertTrue(membersPage.notySuccessDisplayed());
 		assertTrue("Role span display should be visible", membersPage.roleSpanDisplayed(userid));
 	}
@@ -94,7 +94,7 @@ public class ProjectMembersPageIT {
 	public void testAddUserToProject() {
 		String username = "third guy";
 		membersPage.clickAddMember();
-		membersPage.addUserToProject(3l, ProjectRole.PROJECT_USER);
+		membersPage.addUserToProject(3L, ProjectRole.PROJECT_USER);
 		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
 
 		List<String> projectMembersNames = membersPage.getProjectMembersNames();
@@ -107,8 +107,8 @@ public class ProjectMembersPageIT {
 
 		String username = "third guy";
 		membersPage.clickAddMember();
-		membersPage.addUserToProject(3l, ProjectRole.PROJECT_USER);
-		detailsPage.goTo(1l);
+		membersPage.addUserToProject(3L, ProjectRole.PROJECT_USER);
+		detailsPage.goTo(1L);
 
 		List<WebElement> events = detailsPage.getEvents();
 		assertEquals(2, events.size());

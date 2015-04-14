@@ -141,6 +141,11 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	@Enumerated(EnumType.STRING)
 	@Column(name="analysis_state")
 	private AnalysisState analysisState;
+	
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name="analysis_cleaned_state")
+	private AnalysisCleanedState analysisCleanedState;
 
 	// Analysis entity for this analysis submission. Cascading everything except
 	// removals
@@ -162,6 +167,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
 		this.analysisState = AnalysisState.NEW;
+		this.analysisCleanedState = AnalysisCleanedState.NOT_CLEANED;
 	}
 	
 	/**
@@ -380,7 +386,22 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public String toString() {
 		String userName = (submitter == null) ? "null" : submitter.getUsername();
 		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + userName + ", workflowId="
-				+ workflowId + ", analysisState=" + analysisState + "]";
+				+ workflowId + ", analysisState=" + analysisState + ", analysisCleanedState=" + analysisCleanedState + "]";
+	}
+	
+	/**
+	 * @return The {@link AnalysisCleanedState}.
+	 */
+	public AnalysisCleanedState getAnalysisCleanedState() {
+		return analysisCleanedState;
+	}
+
+	/**
+	 * Sets the {@link AnalysisCleanedState}.
+	 * @param analysisCleanedState The {@link AnalysisCleanedState}.
+	 */
+	public void setAnalysisCleanedState(AnalysisCleanedState analysisCleanedState) {
+		this.analysisCleanedState = analysisCleanedState;
 	}
 
 	/**
@@ -599,8 +620,33 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		return new AnalysisSubmission.Builder(workflowId);
 	}
 
-	@Override
-	public int compareTo(AnalysisSubmission o) {
-		return modifiedDate.compareTo(o.modifiedDate);
+	/**
+	 * Whether or not a remoteAnalysisId exists for this submission.
+	 * 
+	 * @return True if a remoteAnalysisId exists for this submission, false
+	 *         otherwise.
+	 */
+	public boolean hasRemoteAnalysisId() {
+		return remoteAnalysisId != null;
+	}
+
+	/**
+	 * Whether or not a remoteWorkflowId exists for this submission.
+	 * 
+	 * @return True if a remoteWorkflowId exists for this submission, false
+	 *         otherwise.
+	 */
+	public boolean hasRemoteWorkflowId() {
+		return remoteWorkflowId != null;
+	}
+
+	/**
+	 * Whether or not a remoteInputDataId exists for this submission.
+	 * 
+	 * @return True if a remoteInputDataId exists for this submission, false
+	 *         otherwise.
+	 */
+	public boolean hasRemoteInputDataId() {
+		return remoteInputDataId != null;
 	}
 }

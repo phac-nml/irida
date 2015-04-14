@@ -48,8 +48,8 @@ public class SequencingRunSequenceFilesControllerTest {
 	
 	@Test
 	public void addSequenceFileToMiseqRunTest() throws IOException {
-		Long seqId =1l;
-		Long sequencingrunId =2l;
+		Long seqId =1L;
+		Long sequencingrunId =2L;
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		SequenceFile file = TestDataFactory.constructSequenceFile();
 		MiseqRun run = new MiseqRun();
@@ -76,8 +76,8 @@ public class SequencingRunSequenceFilesControllerTest {
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void addSequenceFileToMiseqRunTestNotMiseqInstance() throws IOException {
-		Long seqId =1l;
-		Long sequencingrunId =2l;
+		Long seqId =1L;
+		Long sequencingrunId =2L;
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		SequenceFile file = TestDataFactory.constructSequenceFile();
 		SequencingRun run = new SequencingRunEntity();

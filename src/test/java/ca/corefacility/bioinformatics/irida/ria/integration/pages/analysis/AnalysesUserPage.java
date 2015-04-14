@@ -44,6 +44,9 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(className = "download-analysis-btn")
 	private List<WebElement> downloadAnalysisBtn;
 
+	@FindBy(className = "progress-bar")
+	private List<WebElement> progressBars;
+
 	public AnalysesUserPage(WebDriver driver) {
 		super(driver);
 	}
@@ -101,6 +104,14 @@ public class AnalysesUserPage extends AbstractPage {
 		filterDateLate.sendKeys(date);
 		filterDateLate.sendKeys(Keys.ENTER);
 		waitForTime(100);
+	}
+
+	public int getNumberOfProgressBars() {
+		return progressBars.size();
+	}
+
+	public String getPercentComplete(int row) {
+		return progressBars.get(row).getAttribute("aria-valuetext");
 	}
 
 	public int getNumberOfAnalyses() {

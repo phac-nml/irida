@@ -215,10 +215,11 @@
 
 /* line 78, ../../styles/components/_panels.scss */
 .sidebar__icon {
+  width: 2.6rem;
   color: #939393;
 }
 
-/* line 82, ../../styles/components/_panels.scss */
+/* line 83, ../../styles/components/_panels.scss */
 .sidebar__value {
   color: #232323;
   text-align: right;
@@ -253,41 +254,41 @@ iframe.remote-api-frame {
   height: 450px;
 }
 
-/* line 17, ../../styles/main.scss */
+/* line 16, ../../styles/main.scss */
 .login__links a {
   margin-top: 10px;
   display: block;
 }
 
-/* line 23, ../../styles/main.scss */
+/* line 22, ../../styles/main.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 26, ../../styles/main.scss */
+/* line 25, ../../styles/main.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 31, ../../styles/main.scss */
+/* line 30, ../../styles/main.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 36, ../../styles/main.scss */
+/* line 35, ../../styles/main.scss */
 #table-filter {
   padding: 0;
 }
-/* line 38, ../../styles/main.scss */
+/* line 37, ../../styles/main.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 41, ../../styles/main.scss */
+/* line 40, ../../styles/main.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 46, ../../styles/main.scss */
+/* line 45, ../../styles/main.scss */
 .selected__counts {
   color: white !important;
   border-radius: 4px;
@@ -297,7 +298,7 @@ iframe.remote-api-frame {
   border-top: 1px solid rgba(0, 0, 0, 0.4);
 }
 
-/* line 55, ../../styles/main.scss */
+/* line 54, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }

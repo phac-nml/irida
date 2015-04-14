@@ -75,13 +75,13 @@ public class AssociatedProjectControllerTest {
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
-		Long projectId = 1l;
+		Long projectId = 1L;
 		User u = new User();
 		u.setSystemRole(Role.ROLE_ADMIN);
 		Project p = new Project("my project");
 		p.setId(projectId);
 		Project o = new Project("other project");
-		o.setId(2l);
+		o.setId(2L);
 		List<RelatedProjectJoin> relatedProjects = Lists.newArrayList(new RelatedProjectJoin(p, o));
 
 		RemoteAPI remoteAPI = new RemoteAPI();
@@ -109,7 +109,7 @@ public class AssociatedProjectControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetPotentialAssociatedProjectsAsAdmin() {
-		Long projectId = 1l;
+		Long projectId = 1L;
 		Principal principal = () -> USER_NAME;
 		int page = 1;
 		int count = 10;
@@ -125,9 +125,9 @@ public class AssociatedProjectControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 		// (specification, page, count, sortDirection, sortedBy);
 		Project p2 = new Project("p2");
-		p2.setId(2l);
+		p2.setId(2L);
 		Project p3 = new Project("p3");
-		p3.setId(3l);
+		p3.setId(3L);
 
 		List<RelatedProjectJoin> relatedJoins = Lists.newArrayList(new RelatedProjectJoin(p1, p2));
 		when(projectService.getRelatedProjects(p1)).thenReturn(relatedJoins);
@@ -160,7 +160,7 @@ public class AssociatedProjectControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetPotentialAssociatedProjectsAsUser() {
-		Long projectId = 1l;
+		Long projectId = 1L;
 		Principal principal = () -> USER_NAME;
 		int page = 1;
 		int count = 10;
@@ -175,9 +175,9 @@ public class AssociatedProjectControllerTest {
 		user.setSystemRole(Role.ROLE_USER);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 		Project p2 = new Project("p2");
-		p2.setId(2l);
+		p2.setId(2L);
 		Project p3 = new Project("p3");
-		p3.setId(3l);
+		p3.setId(3L);
 
 		List<RelatedProjectJoin> relatedJoins = Lists.newArrayList(new RelatedProjectJoin(p1, p2));
 		when(projectService.getRelatedProjects(p1)).thenReturn(relatedJoins);
@@ -211,8 +211,8 @@ public class AssociatedProjectControllerTest {
 
 	@Test
 	public void testAddAssociatedProject() {
-		Long projectId = 1l;
-		Long associatedProjectId = 2l;
+		Long projectId = 1L;
+		Long associatedProjectId = 2L;
 		Project p1 = new Project();
 		Project p2 = new Project();
 
@@ -227,8 +227,8 @@ public class AssociatedProjectControllerTest {
 
 	@Test
 	public void testRemoveAssociatedProject() {
-		Long projectId = 1l;
-		Long associatedProjectId = 2l;
+		Long projectId = 1L;
+		Long associatedProjectId = 2L;
 		Project p1 = new Project();
 		Project p2 = new Project();
 
@@ -242,7 +242,7 @@ public class AssociatedProjectControllerTest {
 
 	@Test
 	public void testEditAssociatedProjectsForProject() {
-		Long projectId = 1l;
+		Long projectId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
 
@@ -257,8 +257,8 @@ public class AssociatedProjectControllerTest {
 
 	@Test
 	public void testGetPotentialRemoteAssociatedProjectsForApi() {
-		Long projectId = 1l;
-		Long apiId = 2l;
+		Long projectId = 1L;
+		Long apiId = 2L;
 		Project project = new Project();
 		RemoteAPI api = new RemoteAPI();
 
@@ -266,12 +266,12 @@ public class AssociatedProjectControllerTest {
 		when(apiService.read(apiId)).thenReturn(api);
 
 		Project rp1 = new Project();
-		rp1.setId(3l);
+		rp1.setId(3L);
 		rp1.add(new Link("http://somewhere", Link.REL_SELF));
 
 		String selfRel2 = "http://somewhere-else";
 		Project rp2 = new Project();
-		rp2.setId(4l);
+		rp2.setId(4L);
 		rp2.add(new Link("http://somewhere-else", Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject(project, api, selfRel2);
@@ -297,11 +297,11 @@ public class AssociatedProjectControllerTest {
 
 	@Test
 	public void testAddRemoteAssociatedProject() {
-		Long projectId = 1l;
+		Long projectId = 1L;
 
 		String projectLink = "http://somewhere/projects/1";
 		Project rp1 = new Project();
-		rp1.setId(3l);
+		rp1.setId(3L);
 		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteAPI api = new RemoteAPI();
@@ -327,12 +327,12 @@ public class AssociatedProjectControllerTest {
 
 	@Test
 	public void testRemoveRemoteAssociatedProject() {
-		Long projectId = 1l;
+		Long projectId = 1L;
 		Project project = new Project();
 
 		String projectLink = "http://somewhere/projects/1";
 		Project rp1 = new Project();
-		rp1.setId(3l);
+		rp1.setId(3L);
 		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject();
@@ -348,7 +348,7 @@ public class AssociatedProjectControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSamplesForAssociatedProject() {
-		Long projectId = 1l;
+		Long projectId = 1L;
 		Project project = new Project();
 
 		Project allowedProject = new Project("allowed");
