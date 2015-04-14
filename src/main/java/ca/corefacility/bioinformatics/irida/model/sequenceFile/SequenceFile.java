@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,7 +21,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -34,8 +34,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -94,8 +94,8 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	@JoinColumn(name = "sequencing_run_id")
 	private SequencingRun sequencingRun;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
-	private List<SampleSequenceFileJoin> samples;
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
+	private SampleSequenceFileJoin sample;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@NotAudited
@@ -223,6 +223,16 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	}
 
 	/**
+	 * Get the size of the file.
+	 *
+	 * @return The String representation of the file size
+	 * @throws IOException
+	 */
+	public String getFileSize() throws IOException {
+		return humanReadableByteCount(Files.size(file), true);
+	}
+
+	/**
 	 * Set the Map of optional properties
 	 * 
 	 * @param optionalProperties
@@ -264,5 +274,26 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 			throw new AnalysisAlreadySetException(
 					"The FastQC Analysis can only be applied to a sequence file one time.");
 		}
+	}
+
+	/**
+	 * From
+	 * (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
+	 * into-human-readable-format-in-java)
+	 *
+	 * @param bytes
+	 *            The {@link Long} size of the file in bytes.
+	 * @param si
+	 *            {@link Boolean} true to use si units
+	 *
+	 * @return A human readable {@link String} representation of the file size.
+	 */
+	public static String humanReadableByteCount(long bytes, boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit)
+			return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }

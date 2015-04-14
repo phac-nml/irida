@@ -27,9 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -45,21 +48,18 @@ import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for Analysis.
- *
  */
 @Controller
 @RequestMapping("/analysis")
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
-
 	// PAGES
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
-	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
-
+	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 
 	/*
 	 * SERVICES
@@ -132,32 +132,30 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
 		}
 
-		String viewName = PREVIEW_UNAVAILABLE;
-
+		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
-		logger.trace("Workflow type is " + analysisType);
+		String viewName = getViewForAnalysisType(analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
 
+		// Input files
+		// - Paired
+		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		model.addAttribute("paired_end", inputFilePairs);
+
 		/*
-		 * If the analysis is completed, add preview information
+		 * Preview information
 		 */
 		try {
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
-
-					model = tree(submission, model);
+					tree(submission, model);
 				}
-
-				model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
-
-				viewName = getViewForAnalysisType(analysisType);
 			}
 
 		} catch (IOException e) {
 			logger.error("Couldn't get preview for analysis", e);
-		}
+		} 
 
 		return viewName;
 	}
@@ -178,9 +176,7 @@ public class AnalysisController {
 	 * @throws IOException
 	 *             If the tree file couldn't be read
 	 */
-	private Model tree(AnalysisSubmission submission, Model model) throws IOException {
-		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
-
+	private void tree(AnalysisSubmission submission, Model model) throws IOException {
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
 		List<String> lines = Files.readAllLines(file.getFile());
@@ -189,14 +185,7 @@ public class AnalysisController {
 
 		// inform the view to display the tree preview
 		model.addAttribute("preview", "tree");
-
-		return model;
-
 	}
-
-	// ************************************************************************************************
-	// AJAX
-	// ************************************************************************************************
 
 	/**
 	 * Get a list of analyses either for a user or an administrator
@@ -251,6 +240,12 @@ public class AnalysisController {
 					map.put("duration", String.valueOf(Math.abs(duration)));
 				}
 
+				if (!sub.getAnalysisState().equals(AnalysisState.ERROR)) {
+					float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
+							sub.getId());
+					map.put("percentComplete", Float.toString(percentComplete));
+				}
+
 				analysesMap.add(map);
 			}
 			response.put("analyses", analysesMap);
@@ -258,20 +253,28 @@ public class AnalysisController {
 			logger.error("Error finding workflow, ", e);
 			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			response.put("error", ImmutableMap.of("url", "errors/not_found"));
+		} catch (NoPercentageCompleteException e) {
+			logger.error("Error getting percent complete.", e);
+		} catch (ExecutionManagerException e) {
+			logger.error("ExecutionManagerException error", e);
 		}
 		return response;
 	}
+
+	// ************************************************************************************************
+	// AJAX
+	// ************************************************************************************************
 
 	/**
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 *            Id for a {@link AnalysisSubmission}
+	 * 		Id for a {@link AnalysisSubmission}
 	 * @param response
-	 *            {@link HttpServletResponse}
+	 * 		{@link HttpServletResponse}
 	 *
 	 * @throws IOException
-	 *             if we fail to create a zip file.
+	 * 		if we fail to create a zip file.
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)
@@ -280,6 +283,38 @@ public class AnalysisController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+	}
+
+	/**
+	 * Get the current status for a given {@link AnalysisSubmission}
+	 *
+	 * @param submissionId
+	 * 		The {@link UUID} id for a given {@link AnalysisSubmission}
+	 * @param locale
+	 * 		The users current {@link Locale}
+	 *
+	 * @return {@link HashMap} containing the status and the percent complete for the {@link AnalysisSubmission}
+	 */
+	@RequestMapping(value = "/ajax/status/{submissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, String> getAjaxStatusUpdateForAnalysisSubmission(@PathVariable Long submissionId,
+			Locale locale) {
+		Map<String, String> result = new HashMap<>();
+		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(submissionId);
+		AnalysisState state = analysisSubmission.getAnalysisState();
+		result.put("state", state.toString());
+		result.put("stateLang", messageSource.getMessage("analysis.state." + state.toString(), null, locale));
+		if (!state.equals(AnalysisState.ERROR)) {
+			float percentComplete = 0;
+			try {
+				percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
+						analysisSubmission.getId());
+				result.put("percentComplete", Float.toString(percentComplete));
+			} catch (ExecutionManagerException e) {
+				logger.error("Error getting the percentage complete", e);
+				result.put("percentageComplete", "");
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -307,7 +342,7 @@ public class AnalysisController {
 	 * @param locale
 	 * 		{@link Locale} for the current user.
 	 *
-	 * @return {@link List} containting the workflows names and ids.
+	 * @return {@link List} containing the workflows names and ids.
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	private List<Map<String, String>> getAnalysisWorkflowTypes(Locale locale) throws IridaWorkflowNotFoundException {
@@ -331,9 +366,10 @@ public class AnalysisController {
 
 	/**
 	 * Get the view name for different analysis types
-	 * 
+	 *
 	 * @param type
-	 *            The {@link AnalysisType}
+	 * 		The {@link AnalysisType}
+	 *
 	 * @return the view name to display
 	 */
 	private String getViewForAnalysisType(AnalysisType type) {

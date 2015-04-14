@@ -65,15 +65,15 @@ public class ReadSamplePermissionTest {
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.findOne(1l)).thenReturn(s);
+		when(sampleRepository.findOne(1L)).thenReturn(s);
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(sampleRepository).findOne(1l);
+		verify(sampleRepository).findOne(1L);
 		verify(psjRepository).getProjectForSample(s);
 		verify(pujRepository).getUsersForProject(p);
 	}
@@ -92,7 +92,7 @@ public class ReadSamplePermissionTest {
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.findOne(1l)).thenReturn(s);
+		when(sampleRepository.findOne(1L)).thenReturn(s);
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -120,15 +120,15 @@ public class ReadSamplePermissionTest {
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.findOne(1l)).thenReturn(s);
+		when(sampleRepository.findOne(1L)).thenReturn(s);
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertFalse("permission was granted.", readSamplePermission.isAllowed(auth, 1l));
+		assertFalse("permission was granted.", readSamplePermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(sampleRepository).findOne(1l);
+		verify(sampleRepository).findOne(1L);
 		verify(psjRepository).getProjectForSample(s);
 		verify(pujRepository).getUsersForProject(p);
 	}
@@ -140,7 +140,7 @@ public class ReadSamplePermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertTrue("permission was not granted to admin.", readSamplePermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted to admin.", readSamplePermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);

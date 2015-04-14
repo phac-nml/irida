@@ -14,8 +14,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -26,6 +24,8 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import com.google.common.collect.Lists;
 
 /**
  */
@@ -51,10 +51,11 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetAnalysisDetalisTree() throws IOException, IridaWorkflowNotFoundException {
-		Long submissionId = 1l;
+	public void testGetAnalysisDetailsTree() throws IOException, IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
+
 
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
@@ -67,7 +68,7 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY+"tree", detailsPage);
+		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
 
 		assertEquals("Tree preview should be set", "tree", model.get("preview"));
 
@@ -75,8 +76,8 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetAnalysisDetalisNotCompleted() throws IOException, IridaWorkflowNotFoundException {
-		Long submissionId = 1l;
+	public void testGetAnalysisDetailsNotCompleted() throws IOException, IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
 
@@ -91,7 +92,7 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
-		assertEquals("should be details page", AnalysisController.PREVIEW_UNAVAILABLE, detailsPage);
+		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
 
 		assertFalse("No preview should be available", model.containsAttribute("preview"));
 

@@ -10,28 +10,6 @@
 	<link rel="stylesheet" href="/resources/bower_components/ng-table/dist/ng-table.min.css"
 	      th:href="@{/resources/bower_components/ng-table/dist/ng-table.min.css}"/>
 	<script>window.dependencies = ['irida.analysis.user'];</script>
-	<style>
-		.animate-hide {
-			transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
-			position: relative;
-			display: block;
-			opacity: 1;
-			top: 0;
-		}
-
-		.animate-hide.ng-hide {
-			top: 30px;
-			opacity: 0;
-		}
-
-		.animate-hide.ng-hide-add {
-			display: none;
-		}
-
-		.animate-hide.ng-hide-remove-active {
-			display: block !important;
-		}
-	</style>
 </head>
 <body>
 <div layout:fragment="page">
@@ -111,16 +89,18 @@
 				_ANALYSIS_PAGE_</h1>
 
 			<div class="ng-cloak" ng-controller="analysisController as ctrl">
-				<div ng-show="ctrl.loading" class="alert alert-info animate-hide">
+				<div ng-show="ctrl.loading" class="alert alert-info fade-in">
 					<b><i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;
 						<span th:text="#{analysis.loading}">_CHECKING_SERVER_</span>
 					</b>
 				</div>
 				<div ng-hide="ctrl.loading">
-					<table ng-show="ctrl.showAnalyses" class="table" ng-table="ctrl.tableParams">
+					<table ng-show="ctrl.showAnalyses" class="table fade-in" ng-table="ctrl.tableParams">
 						<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)"
 						    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
-							<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
+							<td class="analysis-percent" data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}
+								<progressbar ng-if="analysis.analysisState !== 'ERROR'" value="analysis.percentComplete">{{ analysis.percentComplete | number:0 }}%</progressbar>
+							</td>
 							<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
                               <a class="btn btn-default btn-xs" th:href="@{/analysis/{{analysis.id}}}" href="#">
 							    {{analysis.label}}
@@ -133,7 +113,7 @@
                                 {{analysis.submitter}}
                             </td>
 							<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">
-								{{analysis.createdDate | date:'short'}}
+								<span tooltip="{{ analysis.createdDate | date:'medium' }}">{{analysis.createdDate | date:'mediumDate'}}</span>
 							</td>
 							<td data:title="'\'' + #{analysis.duration} + '\''" sortable="'duration'">
 								{{ ctrl.convertTime(analysis.duration) }}
@@ -147,7 +127,7 @@
 							</td>
 						</tr>
 					</table>
-					<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak animate-hide">
+					<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak fade-in">
 						<strong><i class="fa fa-exclamation-circle fa-2x"></i>&nbsp;
 							<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span>
 						</strong>

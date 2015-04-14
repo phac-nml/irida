@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
@@ -25,6 +26,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Handles operating with workflows in Galaxy.
@@ -174,6 +176,26 @@ public class GalaxyWorkflowService {
 			return workflowsClient.runWorkflow(inputs.getInputsObject());
 		} catch (RuntimeException e) {
 			throw new WorkflowException(e);
+		}
+	}
+
+	/**
+	 * Deletes a workflow with the given id.
+	 * 
+	 * @param workflowId
+	 *            The id of the workflow to delete.
+	 * @throws DeleteGalaxyObjectFailedException
+	 *             If there was an error while deleting the workflow.
+	 */
+	public void deleteWorkflow(String workflowId) throws DeleteGalaxyObjectFailedException {
+		try {
+			ClientResponse response = workflowsClient.deleteWorkflowRequest(workflowId);
+			if (!ClientResponse.Status.OK.equals(response.getClientResponseStatus())) {
+				throw new DeleteGalaxyObjectFailedException("Could not workflow with id " + workflowId + ", status="
+						+ response.getClientResponseStatus() + ", content=" + response.getEntity(String.class));
+			}
+		} catch (RuntimeException e) {
+			throw new DeleteGalaxyObjectFailedException("Error while deleting workflow with id " + workflowId, e);
 		}
 	}
 }

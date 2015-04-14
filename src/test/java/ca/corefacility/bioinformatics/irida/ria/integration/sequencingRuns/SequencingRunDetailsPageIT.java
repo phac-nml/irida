@@ -43,7 +43,7 @@ public class SequencingRunDetailsPageIT {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		LoginPage.loginAsAdmin(driver);
 		page = new SequencingRunDetailsPage(driver);
-		page.getDetailsPage(1l);
+		page.getDetailsPage(1L);
 	}
 
 	@After

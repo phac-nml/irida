@@ -62,7 +62,7 @@ public class CartControllerIT {
 
 	@Before
 	public void setUp() {
-		controller.addProject(1l);
+		controller.addProject(1L);
 	}
 
 	@After
@@ -73,9 +73,9 @@ public class CartControllerIT {
 	@Test
 	@WithMockUser(username = "mrtest", roles = "ADMIN")
 	public void testAddProjectSample() {
-		Long projectId = 2l;
+		Long projectId = 2L;
 		Project project = projectService.read(projectId);
-		Set<Long> sampleIds = Sets.newHashSet(4l);
+		Set<Long> sampleIds = Sets.newHashSet(4L);
 		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, sampleIds);
 		assertTrue((boolean) addProjectSample.get("success"));
 
@@ -88,7 +88,7 @@ public class CartControllerIT {
 	@Test
 	@WithMockUser(username = "mrtest", roles = "ADMIN")
 	public void testAddProject() {
-		Long projectId = 2l;
+		Long projectId = 2L;
 		Project project = projectService.read(projectId);
 		Map<String, Object> addProjectSample = controller.addProject(projectId);
 		assertTrue((boolean) addProjectSample.get("success"));

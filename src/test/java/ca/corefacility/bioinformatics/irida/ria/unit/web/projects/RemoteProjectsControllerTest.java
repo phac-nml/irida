@@ -31,10 +31,10 @@ public class RemoteProjectsControllerTest {
 
 	@Test
 	public void testReadRemoteRelatedProject() {
-		Long remoteProjectId = 1l;
+		Long remoteProjectId = 1L;
 		RemoteRelatedProject rrp = new RemoteRelatedProject();
 		Project rp = new Project();
-		rp.setId(2l);
+		rp.setId(2L);
 		rp.setName("project name");
 		rrp.setRemoteAPI(new RemoteAPI());
 

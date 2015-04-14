@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
@@ -717,5 +718,36 @@ public class GalaxyWorkflowsIT {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		runSingleFileWorkflow(dataFile1, INVALID_FILE_TYPE, workflowId, workflowInputLabel);
+	}
+	
+	/**
+	 * Tests deleting a workflow and succeeding.
+	 * 
+	 * @throws WorkflowUploadException
+	 * @throws IOException
+	 * @throws WorkflowException
+	 * @throws DeleteGalaxyObjectFailedException
+	 */
+	@Test
+	public void testDeleteWorkflowSuccess() throws WorkflowUploadException, IOException, WorkflowException,
+			DeleteGalaxyObjectFailedException {
+		String workflowId = galaxyWorkflowService.uploadGalaxyWorkflow(workflowPath);
+		WorkflowDetails details = galaxyWorkflowService.getWorkflowDetails(workflowId);
+		assertFalse(details.isDeleted());
+
+		galaxyWorkflowService.deleteWorkflow(workflowId);
+
+		details = galaxyWorkflowService.getWorkflowDetails(workflowId);
+		assertTrue(details.isDeleted());
+	}
+
+	/**
+	 * Tests deleting a workflow with an invalid id and failing.
+	 * 
+	 * @throws DeleteGalaxyObjectFailedException
+	 */
+	@Test(expected = DeleteGalaxyObjectFailedException.class)
+	public void testDeleteWorkflowFail() throws DeleteGalaxyObjectFailedException {
+		galaxyWorkflowService.deleteWorkflow("invalid");
 	}
 }

@@ -56,12 +56,12 @@ public class UserDetailsPageIT {
 	public void testGetUserId() {
 		usersPage.getCurrentUser();
 		String currentUserId = usersPage.getUserId();
-		assertEquals(String.valueOf(1l), currentUserId);
+		assertEquals(String.valueOf(1L), currentUserId);
 	}
 
 	@Test
 	public void testGetOtherUserId() {
-		Long id = 2l;
+		Long id = 2L;
 		usersPage.getOtherUser(id);
 		String otherUserId = usersPage.getUserId();
 		assertEquals(String.valueOf(id), otherUserId);
@@ -69,13 +69,13 @@ public class UserDetailsPageIT {
 
 	@Test
 	public void testGetEditUserButton() {
-		assertTrue("Should see button for user 1", usersPage.canGetEditLink(1l));
-		assertFalse("Should not see button for user 2", usersPage.canGetEditLink(2l));
+		assertTrue("Should see button for user 1", usersPage.canGetEditLink(1L));
+		assertFalse("Should not see button for user 2", usersPage.canGetEditLink(2L));
 	}
 
 	@Test
 	public void testGetUserProjects() {
-		usersPage.getOtherUser(1l);
+		usersPage.getOtherUser(1L);
 		List<String> userProjectIds = usersPage.getUserProjectIds();
 		assertTrue(userProjectIds.contains("1"));
 		assertTrue(userProjectIds.contains("2"));
@@ -83,7 +83,7 @@ public class UserDetailsPageIT {
 
 	@Test
 	public void testResetUserPassword() {
-		usersPage.getOtherUser(1l);
+		usersPage.getOtherUser(1L);
 		usersPage.sendPasswordReset();
 		assertTrue(usersPage.checkSuccessNotification());
 	}
