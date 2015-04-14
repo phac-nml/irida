@@ -30,10 +30,9 @@ public class CreateClientPage extends AbstractPage {
 
 		WebElement submit = driver.findElement(By.id("create-client-submit"));
 
-		if (scope_read) {
-			driver.findElement(By.id("scope_read")).click();
-		}
+		//The read scope has been selected by default:
 		if (scope_write) {
+			driver.findElement(By.id("scope_read")).click();
 			driver.findElement(By.id("scope_write")).click();
 		}
 
