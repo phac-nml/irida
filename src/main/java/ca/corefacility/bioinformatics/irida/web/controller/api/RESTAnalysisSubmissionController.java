@@ -30,12 +30,19 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * REST controller to manage sharing of {@link AnalysisSubmission},
+ * {@link Analysis}, and {@link AnalysisOutputFile} classes.
+ */
 @Controller
 @RequestMapping(value = "/api/analysisSubmissions")
 public class RESTAnalysisSubmissionController extends RESTGenericController<AnalysisSubmission> {
 	private AnalysisSubmissionService analysisSubmissionService;
-	public static final String ANALYSIS_LINK = "analysis";
 
+	// rel for reading the analysis for a submission
+	public static final String ANALYSIS_REL = "analysis";
+
+	// available analysis types to filter for
 	public static Map<String, Class<? extends Analysis>> ANALYSIS_TYPES = ImmutableMap.of("phylogenomics",
 			AnalysisPhylogenomicsPipeline.class, "assembly", AnalysisAssemblyAnnotation.class);
 
@@ -95,6 +102,13 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		return listAllResources;
 	}
 
+	/**
+	 * Get the {@link Analysis} for an {@link AnalysisSubmission}.
+	 * 
+	 * @param identifier
+	 *            {@link AnalysisSubmission} identifier to read
+	 * @return ModelMap containing the {@link Analysis}
+	 */
 	@RequestMapping("/{identifier}/analysis")
 	public ModelMap getAnalysisForSubmission(@PathVariable Long identifier) {
 		ModelMap model = new ModelMap();
@@ -120,6 +134,16 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		return model;
 	}
 
+	/**
+	 * Get an analysis output file for a given submission
+	 * 
+	 * @param submissionId
+	 *            The {@link AnalysisSubmission} id
+	 * @param fileType
+	 *            The {@link AnalysisOutputFile} type as defined in the
+	 *            {@link Analysis} subclass
+	 * @return {@link ModelMap} containing the {@link AnalysisOutputFile}
+	 */
 	@RequestMapping("/{submissionId}/analysis/file/{fileType}")
 	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable String fileType) {
 		ModelMap model = new ModelMap();
@@ -139,13 +163,16 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		return model;
 	}
 
+	/**
+	 * {@inheritDoc} add analysis rel if available
+	 */
 	@Override
 	protected Collection<Link> constructCustomResourceLinks(AnalysisSubmission resource) {
 		Collection<Link> links = new HashSet<>();
 		if (resource.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 			links.add(linkTo(
 					methodOn(RESTAnalysisSubmissionController.class).getAnalysisForSubmission(resource.getId()))
-					.withRel(ANALYSIS_LINK));
+					.withRel(ANALYSIS_REL));
 		}
 
 		return links;
