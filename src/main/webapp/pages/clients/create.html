@@ -65,7 +65,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group" ng-app="">
+                        <div class="form-group">
                             <label class="control-label" th:text="#{client.scopes}">_Scopes_</label>
 
                             <div id="scope-error" th:if="${#maps.containsKey(errors, 'scope')}"
@@ -74,12 +74,12 @@
                             <div class="col-md-12">
                                 <div class="checkbox">
                                     <label for="scope_read">
-                                        <input type="checkbox" id="scope_read" name="scope_read" th:attr="ng-init='readSwitch=\''+${given_scope_read}+'\''" ng-checked="readSwitch" value="read" ng-model="readSwitch"/>
+                                        <input type="checkbox" id="scope_read" name="scope_read" checked="checked" value="read"/>
                                         <span th:text="#{client.scope.read}">Read</span>
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-md-12" ng-show="readSwitch">
+                            <div class="col-md-12" id="scope_auto_read_div">
                                 <div class="checkbox sub-cb">
                                     <label for="scope_auto_read">
                                         <input type="checkbox" id="scope_auto_read" name="scope_auto_read" value="read"/>
@@ -90,13 +90,13 @@
                             <div class="col-md-12">
                                 <div class="checkbox">
                                     <label for="scope_write">
-                                        <input type="checkbox" id="scope_write" name="scope_write" th:attr="ng-init='writeSwitch=\''+${given_scope_write}+'\''" ng-checked="writeSwitch" value="write" ng-model="writeSwitch"/>
+                                        <input type="checkbox" id="scope_write" name="scope_write" value="write"/>
                                         <span th:text="#{client.scope.write}">Write</span>
                                     </label>
                                 </div>
                             </div>
                         </div>
-                            <div class="col-md-12" ng-show="writeSwitch">
+                            <div class="col-md-12" id="scope_auto_write_div" hidden="hidden">
                                 <div class="checkbox sub-cb">
                                     <label for="scope_auto_write">
                                         <input type="checkbox" id="scope_auto_write" name="scope_auto_write" value="write"/>
@@ -125,6 +125,20 @@
         $(document).ready(function () {
             $("#tokenValidity").select2().select2("val", [[${given_tokenValidity}]]);
             $("#authorizedGrantTypes").select2();
+			$("#scope_read").change(function() {
+				handleChecked(this,"#scope_auto_read_div");
+			});
+			$("#scope_write").change(function() {
+				handleChecked(this,"#scope_auto_write_div");
+			});
+			handleChecked = function(item, itemToShow) {
+				if(item.checked) {
+					$(itemToShow).show();
+					}
+			    else {
+			    	$(itemToShow).hide();
+			    }
+			}
         });
 
     </script>

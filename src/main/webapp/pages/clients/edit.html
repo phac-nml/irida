@@ -89,7 +89,7 @@
 										<span th:text="#{client.scope.read}">Read</span> </label>
 								</div>
 							</div>
-                            <div class="col-md-12" id="scope_auto_read_div" th:if="${given_scope_read}">
+                            <div class="col-md-12" id="scope_auto_read_div" th:hidden="${given_scope_read == null}">
                                 <div class="checkbox sub-cb">
                                     <label for="scope_auto_read">
                                         <input type="checkbox" id="scope_auto_read" name="scope_auto_read" th:checked="${given_scope_auto_read}" value="read"/>
@@ -104,7 +104,7 @@
 										<span th:text="#{client.scope.write}">Write</span> </label>
 								</div>
 							</div>
-                            <div class="col-md-12" id="scope_auto_write_div" th:if="${given_scope_write}">
+                            <div class="col-md-12" id="scope_auto_write_div" th:hidden="${given_scope_write == null}">
                                 <div class="checkbox sub-cb">
                                     <label for="scope_auto_write">
                                         <input type="checkbox" id="scope_auto_write" name="scope_auto_write" th:checked="${given_scope_auto_write}" value="write"/>
@@ -135,10 +135,10 @@
 			$("#tokenValidity").select2().select2("val", [[${given_tokenValidity}]]);
 			$("#authorizedGrantTypes").select2();
 			$("#scope_read").change(function() {
-				handleChecked(this,"#scope_auto_read_div")
+				handleChecked(this,"#scope_auto_read_div");
 			});
 			$("#scope_write").change(function() {
-				handleChecked(this,"#scope_auto_write_div")
+				handleChecked(this,"#scope_auto_write_div");
 			});
 			handleChecked = function(item, itemToShow) {
 				if(item.checked) {
