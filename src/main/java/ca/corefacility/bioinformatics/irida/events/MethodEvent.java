@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.events;
 
+import java.util.Arrays;
+
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 
 /**
@@ -48,6 +50,7 @@ public class MethodEvent {
 
 	@Override
 	public String toString() {
-		return "MethodEvent[ args= " + args + ", returnValue= " + returnValue + ", eventClass= " + eventClass + " ]";
+		return "MethodEvent[ args= " + Arrays.toString(args) + ", returnValue= " + returnValue + ", eventClass= "
+				+ eventClass + " ]";
 	}
 }

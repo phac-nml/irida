@@ -194,7 +194,7 @@ public class UserTest {
 		User u2 = new User();
 		User u3 = new User();
 
-		DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
+		DateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 
 		u2.setModifiedDate(sf.parse("2011-01-01"));
 		u1.setModifiedDate(sf.parse("2012-01-01"));

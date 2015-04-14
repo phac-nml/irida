@@ -94,21 +94,21 @@ public class GroupServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testReadGroupAsAdmin() {
 		Group g = groupService.read(1L);
-		assertEquals("Loaded the wrong group", Long.valueOf(1l), g.getId());
+		assertEquals("Loaded the wrong group", Long.valueOf(1L), g.getId());
 	}
 
 	@Test
 	@WithMockUser(username = "manager", roles = "MANAGER")
 	public void testReadGroupAsManager() {
 		Group g = groupService.read(1L);
-		assertEquals("Loaded the wrong group", Long.valueOf(1l), g.getId());
+		assertEquals("Loaded the wrong group", Long.valueOf(1L), g.getId());
 	}
 
 	@Test
 	@WithMockUser(username = "user", roles = "USER")
 	public void testReadGroupAsUser() {
 		Group g = groupService.read(1L);
-		assertEquals("Loaded the wrong group", Long.valueOf(1l), g.getId());
+		assertEquals("Loaded the wrong group", Long.valueOf(1L), g.getId());
 	}
 
 	@Test

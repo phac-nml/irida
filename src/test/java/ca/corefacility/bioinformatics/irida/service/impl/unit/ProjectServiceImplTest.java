@@ -405,7 +405,7 @@ public class ProjectServiceImplTest {
 		ReferenceFile f = new ReferenceFile(createTempFile);
 
 		when(referenceFileRepository.save(f)).thenReturn(f);
-		when(sequenceFileUtilities.countSequenceFileLengthInBases(createTempFile)).thenReturn(1000l);
+		when(sequenceFileUtilities.countSequenceFileLengthInBases(createTempFile)).thenReturn(1000L);
 
 		projectService.addReferenceFileToProject(p, f);
 

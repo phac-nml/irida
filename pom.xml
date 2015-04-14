@@ -555,7 +555,6 @@
 						<configuration>
 							<portNames>
 								<portName>jetty.port</portName>
-								<portName>jetty.port.stop</portName>
 							</portNames>
 						</configuration>
 					</execution>
@@ -632,7 +631,16 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<compilerId>javac-with-errorprone</compilerId>
+					<forceJavacCompilerUse>true</forceJavacCompilerUse>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.plexus</groupId>
+						<artifactId>plexus-compiler-javac-errorprone</artifactId>
+						<version>${errorprone.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -742,7 +750,7 @@
 				<version>${maven.jetty.plugin.version}</version>
 				<configuration>
 					<scanIntervalSeconds>1</scanIntervalSeconds>
-					<stopPort>${jetty.port.stop}</stopPort>
+					<stopPort>9966</stopPort>
 					<stopKey>STOP</stopKey>
 				</configuration>
 				<executions>
@@ -766,10 +774,6 @@
 								<systemProperty>
 									<name>jetty.port</name>
 									<value>${jetty.port}</value>
-								</systemProperty>
-								<systemProperty>
-									<name>jetty.port.stop</name>
-									<value>${jetty.port.stop}</value>
 								</systemProperty>
 								<systemProperty>
 									<name>server.base.url</name>
@@ -905,6 +909,7 @@
 		<maven.exec.plugin.version>1.3.2</maven.exec.plugin.version>
 		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
+		<errorprone.version>2.5</errorprone.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

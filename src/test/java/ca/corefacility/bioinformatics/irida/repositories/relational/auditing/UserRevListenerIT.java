@@ -48,7 +48,7 @@ public class UserRevListenerIT {
 	@WithMockOAuth2Client(clientId = "testClient", username = "fbristow", password = "Password1")
 	public void testModifyWithOAuth2() {
 
-		Project read = projectRepository.findOne(1l);
+		Project read = projectRepository.findOne(1L);
 		read.setName("A new name");
 		projectRepository.save(read);
 
@@ -61,7 +61,7 @@ public class UserRevListenerIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "Password1")
 	public void testModifyWithUsernamePassword() {
-		Project read = projectRepository.findOne(1l);
+		Project read = projectRepository.findOne(1L);
 		read.setName("A new name");
 		projectRepository.save(read);
 

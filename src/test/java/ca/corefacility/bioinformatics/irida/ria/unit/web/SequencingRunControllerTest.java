@@ -63,7 +63,7 @@ public class SequencingRunControllerTest {
 
 	@Test
 	public void testGetDetailsPage() throws IOException {
-		Long runId = 1l;
+		Long runId = 1L;
 		SequencingRun sequencingRunEntity = new SequencingRunEntity();
 		ExtendedModelMap model = new ExtendedModelMap();
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
@@ -79,10 +79,10 @@ public class SequencingRunControllerTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testGetFilesPage() throws IOException {
-		Long runId = 1l;
+		Long runId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		SequencingRun sequencingRunEntity = new SequencingRunEntity();
-		Map<String, Object> fileMap = ImmutableMap.of("id", 5l);
+		Map<String, Object> fileMap = ImmutableMap.of("id", 5L);
 		Set<SequenceFile> files = ImmutableSet.of(new SequenceFile());
 
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
