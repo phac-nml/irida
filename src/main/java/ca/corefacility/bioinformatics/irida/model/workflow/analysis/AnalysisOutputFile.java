@@ -18,7 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -149,6 +149,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		throw new UnsupportedOperationException("AnalysisOutputFile is immutable.");
 	}
 
+	@JsonIgnore
 	public final ToolExecution getCreatedByTool() {
 		return createdByTool;
 	}
