@@ -120,8 +120,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		return model;
 	}
 
-	@RequestMapping("/{submissionId}/analysis/file/{fileId}")
-	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable String fileId) {
+	@RequestMapping("/{submissionId}/analysis/file/{fileType}")
+	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable String fileType) {
 		ModelMap model = new ModelMap();
 		AnalysisSubmission read = analysisSubmissionService.read(submissionId);
 
@@ -129,7 +129,10 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			throw new EntityNotFoundException("Analysis is not completed");
 		}
 
-		AnalysisOutputFile analysisOutputFile = read.getAnalysis().getAnalysisOutputFile(fileId);
+		AnalysisOutputFile analysisOutputFile = read.getAnalysis().getAnalysisOutputFile(fileType);
+		analysisOutputFile.add(linkTo(
+				methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(submissionId, fileType))
+				.withSelfRel());
 
 		model.addAttribute(RESOURCE_NAME, analysisOutputFile);
 
