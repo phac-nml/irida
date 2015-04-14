@@ -46,6 +46,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -66,27 +67,28 @@ import com.google.common.collect.Sets;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class AnalysisSubmission extends IridaResourceSupport implements IridaThing, Comparable<AnalysisSubmission>{
+public class AnalysisSubmission extends IridaResourceSupport implements IridaThing, Comparable<AnalysisSubmission> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="id")
+	@Column(name = "id")
 	private Long id;
 
 	@NotNull
 	@Size(min = 3)
-	@Column(name="name")
+	@Column(name = "name")
 	private String name;
-	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, optional=false)
-	@JoinColumn(name="submitter", nullable=false)
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, optional = false)
+	@JoinColumn(name = "submitter", nullable = false)
 	private User submitter;
-	
+
 	/**
-	 * Defines the id of an installed workflow in IRIDA for performing this analysis.
+	 * Defines the id of an installed workflow in IRIDA for performing this
+	 * analysis.
 	 */
 	@NotNull
-	@Column(name="workflow_id")
+	@Column(name = "workflow_id")
 	@Type(type = "uuid-char")
 	private UUID workflowId;
 
@@ -94,9 +96,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	 * Defines the remote id for the location where an analysis was run. With
 	 * Galaxy this represents the History id.
 	 */
-	@Column(name="remote_analysis_id")
+	@Column(name = "remote_analysis_id")
 	private String remoteAnalysisId;
-	
+
 	/**
 	 * Defines the remote id for a location where input data can be uploaded to
 	 * for an analysis.
@@ -108,53 +110,53 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	 * Defines the remote id of the workflow being executed. With Galaxy this
 	 * represents the Workflow id.
 	 */
-	@Column(name="remote_workflow_id")
+	@Column(name = "remote_workflow_id")
 	private String remoteWorkflowId;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
 	private Set<SequenceFile> inputFilesSingle;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_pair_id", nullable = false))
 	private Set<SequenceFilePair> inputFilesPaired;
-	
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "name", nullable = false)
 	@Column(name = "value", nullable = false)
 	@CollectionTable(name = "analysis_submission_parameters", joinColumns = @JoinColumn(name = "id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"id", "name" }, name = "UK_ANALYSIS_SUBMISSION_PARAMETER_NAME"))
-	private Map<String,String> inputParameters;
+	private Map<String, String> inputParameters;
 
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_date", nullable = false)
+	@Column(name = "created_date", nullable = false)
 	private final Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="modified_date")
+	@Column(name = "modified_date")
 	private Date modifiedDate;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(name="analysis_state")
+	@Column(name = "analysis_state")
 	private AnalysisState analysisState;
-	
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(name="analysis_cleaned_state")
+	@Column(name = "analysis_cleaned_state")
 	private AnalysisCleanedState analysisCleanedState;
 
 	// Analysis entity for this analysis submission. Cascading everything except
 	// removals
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
-	@JoinColumn(name="analysis_id")
+	@JoinColumn(name = "analysis_id")
 	@NotAudited
 	private Analysis analysis;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "reference_file_id")
 	private ReferenceFile referenceFile;
@@ -169,7 +171,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		this.analysisState = AnalysisState.NEW;
 		this.analysisCleanedState = AnalysisCleanedState.NOT_CLEANED;
 	}
-	
+
 	/**
 	 * Builds a new {@link AnalysisSubmission} with the given {@link Builder}.
 	 * 
@@ -231,7 +233,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public Set<SequenceFile> getSingleInputFiles() {
 		return inputFilesSingle;
 	}
-	
+
 	/**
 	 * Gets the set of paired-end input sequence files.
 	 * 
@@ -350,7 +352,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public User getSubmitter() {
 		return submitter;
 	}
-	
+
 	/**
 	 * Sets the {@link User} who is submitting this analysis.
 	 * 
@@ -386,9 +388,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public String toString() {
 		String userName = (submitter == null) ? "null" : submitter.getUsername();
 		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + userName + ", workflowId="
-				+ workflowId + ", analysisState=" + analysisState + ", analysisCleanedState=" + analysisCleanedState + "]";
+				+ workflowId + ", analysisState=" + analysisState + ", analysisCleanedState=" + analysisCleanedState
+				+ "]";
 	}
-	
+
 	/**
 	 * @return The {@link AnalysisCleanedState}.
 	 */
@@ -398,7 +401,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 
 	/**
 	 * Sets the {@link AnalysisCleanedState}.
-	 * @param analysisCleanedState The {@link AnalysisCleanedState}.
+	 * 
+	 * @param analysisCleanedState
+	 *            The {@link AnalysisCleanedState}.
 	 */
 	public void setAnalysisCleanedState(AnalysisCleanedState analysisCleanedState) {
 		this.analysisCleanedState = analysisCleanedState;
@@ -437,7 +442,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public void setWorkflowId(UUID workflowId) {
 		this.workflowId = workflowId;
 	}
-	
+
 	/**
 	 * Gets the input parameters for this submission.
 	 * 
@@ -450,7 +455,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 			return inputParameters;
 		}
 	}
-	
+
 	/**
 	 * Get the named parameters object used to build this submission.
 	 * 
@@ -471,9 +476,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		private Set<SequenceFilePair> inputFilesPaired;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
-		private Map<String,String> inputParameters;
+		private Map<String, String> inputParameters;
 		private IridaWorkflowNamedParameters namedParameters;
-		
+
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
 		 * 
@@ -496,7 +501,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		 */
 		public Builder name(String name) {
 			checkNotNull(name, "name is null");
-			
+
 			this.name = name;
 			return this;
 		}
@@ -511,7 +516,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		public Builder inputFilesSingle(Set<SequenceFile> inputFilesSingle) {
 			checkNotNull(inputFilesSingle, "inputFilesSingle is null");
 			checkArgument(!inputFilesSingle.isEmpty(), "inputFilesSingle is empty");
-			
+
 			this.inputFilesSingle = inputFilesSingle;
 			return this;
 		}
@@ -526,7 +531,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		public Builder inputFilesPaired(Set<SequenceFilePair> inputFilesPaired) {
 			checkNotNull(inputFilesPaired, "inputFilesPaired is null");
 			checkArgument(!inputFilesPaired.isEmpty(), "inputFilesPaired is empty");
-			
+
 			this.inputFilesPaired = inputFilesPaired;
 			return this;
 		}
@@ -540,7 +545,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		 */
 		public Builder referenceFile(ReferenceFile referenceFile) {
 			checkNotNull(referenceFile, "referenceFile is null");
-			
+
 			this.referenceFile = referenceFile;
 			return this;
 		}
@@ -555,16 +560,16 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		public Builder inputParameters(Map<String, String> inputParameters) {
 			checkNotNull(inputParameters, "inputParameters is null");
 			checkArgument(!inputParameters.isEmpty(), "inputParameters is empty");
-			
+
 			if (namedParameters != null) {
 				throw new UnsupportedOperationException("You cannot change named parameters once set.");
 			}
-			
+
 			this.inputParameters.clear();
 			this.inputParameters.putAll(inputParameters);
 			return this;
 		}
-		
+
 		/**
 		 * Adds an individual input parameter.
 		 * 
@@ -607,7 +612,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 			return new AnalysisSubmission(this);
 		}
 	}
-	
+
 	/**
 	 * Gets a {@link Builder}.
 	 * 
@@ -648,5 +653,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	 */
 	public boolean hasRemoteInputDataId() {
 		return remoteInputDataId != null;
+	}
+
+	@Override
+	public int compareTo(AnalysisSubmission o) {
+		return modifiedDate.compareTo(o.modifiedDate);
 	}
 }
