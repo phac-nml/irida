@@ -201,8 +201,8 @@ public class CartControllerTest {
 	}
 
 	private void testData() {
-		projectId = 1l;
-		sampleIds = Sets.newHashSet(2l, 3l);
+		projectId = 1L;
+		sampleIds = Sets.newHashSet(2L, 3L);
 
 		project = new Project("project");
 		project.setId(projectId);

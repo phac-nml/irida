@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="oauth-auto-approvable-scopes.xml" author="joelt">
+		<!-- Allowed auto-approvable scopes for a client -->
+		<createTable tableName="client_details_auto_approvable_scope">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints referencedTableName="client_details"
+					referencedColumnNames="id" primaryKey="true" nullable="false"
+					foreignKeyName="FK_CLIENT_DETAILS_AUTO_APPROVABLE_SCOPE" />
+			</column>
+			<column name="auto_approvable_scope" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+		<createTable tableName="client_details_auto_approvable_scope_AUD">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_DETAILS_AUTO_APPROVABLE_SCOPE_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="auto_approvable_scope" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

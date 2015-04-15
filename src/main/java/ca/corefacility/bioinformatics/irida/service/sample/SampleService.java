@@ -30,18 +30,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Sample read(Long id) throws EntityNotFoundException;
 
 	/**
-	 * Add a {@link SequenceFile} to a {@link Sample}.
-	 * 
-	 * @param sample
-	 *            the {@link Sample} that the {@link SequenceFile} belongs to.
-	 * @param sampleFile
-	 *            the {@link SequenceFile} that we're adding.
-	 * @return the relationship created between the two entities.
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
-	public Join<Sample, SequenceFile> addSequenceFileToSample(Sample sample, SequenceFile sampleFile);
-
-	/**
 	 * Get a specific instance of a {@link Sample} that belongs to a
 	 * {@link Project}. If the {@link Sample} is not associated to the
 	 * {@link Project} (i.e., no relationship is shared between the
