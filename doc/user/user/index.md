@@ -203,7 +203,7 @@ Please use the links below to navigate to the section that you want to see:
 
 * [Logging in](login/)
 * [Dashboard overview](dashboard/)
-* Managing projects
+* [Managing projects](project/)
 * Managing samples
 * Launching pipelines
 * Viewing pipeline results
