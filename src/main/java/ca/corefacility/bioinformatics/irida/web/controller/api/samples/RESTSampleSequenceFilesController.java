@@ -304,7 +304,7 @@ public class RESTSampleSequenceFilesController {
 		// get the sequencing run
 		SequencingRun sequencingRun = null;
 		Long runId = fileResource1.getMiseqRunId();
-		if (runId != fileResource2.getMiseqRunId()) {
+		if (!runId.equals(fileResource2.getMiseqRunId())) {
 			throw new IllegalArgumentException("Cannot upload a pair of files from different sequencing runs");
 		}
 		if (runId != null) {
