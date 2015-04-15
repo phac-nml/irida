@@ -120,6 +120,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 		Analysis analysis = read.getAnalysis();
 
+		analysis.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisForSubmission(identifier))
+				.withSelfRel());
+
 		/*
 		 * Add links to the available files
 		 */
