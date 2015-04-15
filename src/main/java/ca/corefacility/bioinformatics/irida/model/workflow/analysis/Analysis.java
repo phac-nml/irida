@@ -221,6 +221,11 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		throw new UnsupportedOperationException("Analysis types cannot be modified.");
 	}
 
+	/**
+	 * Return the names of available output files from this analysis
+	 * 
+	 * @return Set of names
+	 */
 	@JsonIgnore
 	public Set<String> getAnalysisOutputFileNames() {
 		return analysisOutputFilesMap.keySet();

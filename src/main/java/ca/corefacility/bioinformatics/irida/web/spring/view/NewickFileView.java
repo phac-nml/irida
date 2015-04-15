@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 import com.google.common.net.HttpHeaders;
 
 /**
- * Write out FASTQ formatted sequence files to the client.
+ * Write out Newick formatted tree files to the client.
  *
  */
 public class NewickFileView extends AbstractView {
