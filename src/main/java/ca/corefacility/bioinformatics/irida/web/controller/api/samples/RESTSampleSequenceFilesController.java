@@ -45,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
+import com.google.common.base.Objects;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -303,10 +304,13 @@ public class RESTSampleSequenceFilesController {
 		sf2.setFile(target2);
 		// get the sequencing run
 		SequencingRun sequencingRun = null;
-		Long runId = fileResource1.getMiseqRunId();
-		if (!runId.equals(fileResource2.getMiseqRunId())) {
+		
+		if (!Objects.equal(fileResource1.getMiseqRunId(), fileResource2.getMiseqRunId())) {
 			throw new IllegalArgumentException("Cannot upload a pair of files from different sequencing runs");
 		}
+
+		Long runId = fileResource1.getMiseqRunId();
+		
 		if (runId != null) {
 			sequencingRun = miseqRunService.read(runId);
 			sf1.setSequencingRun(sequencingRun);
