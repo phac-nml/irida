@@ -928,11 +928,11 @@
 		<test.galaxy.repository.url>https://bitbucket.org/apetkau/galaxy-dist</test.galaxy.repository.url>
 
 		<!-- Branch name within the Galaxy repository to test against -->
-		<test.galaxy.branch>latest-database-deadlock-fix</test.galaxy.branch>
+		<test.galaxy.branch>release_15.03_database_fix</test.galaxy.branch>
 
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch 
 			in the defined repository -->
-		<test.galaxy.revision>72304042b85dc6494003de63ec32ffd36f0c1d2e</test.galaxy.revision>
+		<test.galaxy.revision>b065a7a422d72c5436ba62bfc6d831a9df82a79f</test.galaxy.revision>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
 		<!-- Set to 'local' to use the local version stored in irida-api, or set 
