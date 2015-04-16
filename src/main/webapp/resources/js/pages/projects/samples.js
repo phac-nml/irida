@@ -567,8 +567,16 @@
       galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: TL.BASE_URL + 'projects/' + project.id + '/templates/samples/galaxy',
-          controller : 'GalaxyCtrl as gCtrl'
+          templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.id,
+          controller : 'GalaxyDialogCtrl as gCtrl',
+          resolve    : {
+            openedByCart: function () {
+              return false;
+            },
+            multiProject: function () {
+              return (data.length > 1)
+            }
+          }
         });
       }
     };
@@ -777,37 +785,6 @@
     });
   }
 
-  function GalaxyCtrl($timeout, $modalInstance, SamplesService) {
-    "use strict";
-    var vm = this;
-
-    vm.upload = function () {
-      vm.uploading = true;
-      SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
-        vm.uploading = false;
-        if (data.result === 'success') {
-          vm.close();
-          // TODO: Create a progress bar to monitor the status of the upload.
-        }
-        else {
-          vm.errors = data.errors;
-        }
-      });
-    };
-
-    vm.setName = function (name) {
-      vm.name = name;
-    };
-
-    vm.setEmail = function (email) {
-      vm.email = email;
-    };
-
-    vm.close = function () {
-      $modalInstance.close();
-    };
-  }
-
   function CartController(cart, storage) {
     "use strict";
     var vm = this;
@@ -850,7 +827,6 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
-    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
   ;

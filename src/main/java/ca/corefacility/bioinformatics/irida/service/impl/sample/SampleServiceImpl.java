@@ -41,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
-	
+
 	/**
 	 * Reference to {@link SampleRepository} for managing {@link Sample}.
 	 */
@@ -77,18 +77,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.ssfRepository = ssfRepository;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
-		// call the relationship repository to create the relationship between
-		// the two entities.
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, sampleFile);
-		return ssfRepository.save(join);
 	}
 
 	/**
@@ -228,7 +216,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return getTotalBasesForSample(sample) / (double) referenceFileLength;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -248,6 +236,17 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		sortProperties = verifySortProperties(sortProperties);
 
 		return psjRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	private SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
+		// call the relationship repository to create the relationship between
+		// the two entities.
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, sampleFile);
+		return ssfRepository.save(join);
 	}
 
 	/**

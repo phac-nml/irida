@@ -90,3 +90,5 @@ The default administrator username and password are:
 * **Password**: password1
 
 You will be required to change the password the first time you log-in with these credentials.
+
+Once you've logged in for the first time, you will probably want to create some user accounts. User account creation is outlined in our [Administrative User Guide]({{ site.url }}/user/administrator).

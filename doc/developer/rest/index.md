@@ -3,6 +3,10 @@ layout: "default"
 toc_levels: 1..3
 ---
 
+REST API
+========
+{:.no_toc}
+
 This document describes the REST API for IRIDA.
 
 * This comment becomes the toc
@@ -124,15 +128,23 @@ User
 ----
 
 ### Description
+{:.no_toc}
+
 This resource contains user information. User objects are used for authentication and authorization.
 
 ### Methods
+{:.no_toc}
+
 `GET`, `POST`, `PATCH`, `DELETE`.
 
 ### Media Types
+{:.no_toc}
+
 `application/xml`, `application/json`.
 
 ### Properties
+{:.no_toc}
+
 * **username**: A unique name that identifies the user. Must be at least 3 characters long.
 * **email**: An e-mail address where the user can receive mail. E-mail addresses *can* be validated using [RFC2822](https://tools.ietf.org/html/rfc2822), but our implementation uses [Hibernate e-mail validator](https://docs.jboss.org/hibernate/validator/4.2/api/org/hibernate/validator/constraints/impl/EmailValidator.html).
 * **password**: A string of characters that the user can use to authenticate themselves. Passwords must contain at least one upper-case letter, at least one lower-case letter, at least one number, and must be at least 6 characters long. **Note**: the password field is *never* sent back to the client, so is not part of the JSON/XML response.
@@ -144,30 +156,46 @@ Project
 -------
 
 ### Description
+{:.no_toc}
+
 This resource contains information about a project. A project contains metadata about a project (like the project name, a brief description), a collection of samples, and any other project-related files.
 
 ### Methods
+{:.no_toc}
+
 `GET`, `POST`, `PATCH`, `DELETE`.
 
 ### Media Types
+{:.no_toc}
+
 `application/xml`, `application/json`.
 
 ### Properties
+{:.no_toc}
+
 * **name**: The name of the project.
 
 Sample
 ------
 
 ### Description
+{:.no_toc}
+
 This resource contains information about a sample. A sample corresponds to a single strain. A sample contains metadata about the strain (like the sample name, a brief description) and a collection of files. In general, a sample will contain a pair of files (forward and reverse) for a paired-end run, and may also contain more files if top-up runs are executed for the strain.
 
 ### Methods
+{:.no_toc}
+
 `GET`, `POST`, `PATCH`, `DELETE`.
 
 ### Media Types
+{:.no_toc}
+
 `application/xml`, `application/json`.
 
 ### Properties
+{:.no_toc}
+
 * **sampleName**: The name of the sample.
 
 Bookmarks
@@ -177,12 +205,18 @@ User collection
 ---------------
 
 ### URI
+{:.no_toc}
+
 https://api.irida.ca/users
 
 ### Description
+{:.no_toc}
+
 `GET` this URI to get the first page of user accounts. By default, the first page contains 20 users and is sorted by account creation date. `POST` this URI to create a new user account. The body of the `POST` request should include a JSON or XML representation of the required properties of a user object (as above).
 
 ### Links
+{:.no_toc}
+
 As a collection of resources, this resource contains links to other pages (i.e., `first`, `previous`, `next`, `last`, and `self`) and a link to **all** resources of this type (`collection/all`).
 
 Each resource in the collection has a link to itself (`self`) and a link to a list of the projects that the user has permissions to view (`user/projects`).
@@ -191,10 +225,16 @@ Project collection
 ------------------
 
 ### URI
+{:.no_toc}
+
 https://api.irida.ca/projects
 
 ### Description
+{:.no_toc}
+
 `GET` this URI to get the first page of projects. The first page contains 20 projects by default and is sorted by project creation date. `POST` this URI to create a new project. The body of the `POST` request should include a JSON or XML representation of the required properties of a project object (as above).
 
 ### Links
+{:.no_toc}
+
 As a collection of resources, this resource contains links to other pages (i.e., `first`, `previous`, `next`, `last`, and `self`) and a link to **all** resources of this type (`collection/all`).

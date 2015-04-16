@@ -125,9 +125,9 @@ public class ProjectSamplesControllerTest {
 
 	@Test
 	public void testCopySampleToProjectRemove() {
-		Long projectId = 1l;
-		List<Long> sampleIds = ImmutableList.of(2l, 3l);
-		Long newProjectId = 4l;
+		Long projectId = 1L;
+		List<Long> sampleIds = ImmutableList.of(2L, 3L);
+		Long newProjectId = 4L;
 		boolean removeFromOriginal = true;
 		Project oldProject = new Project("oldProject");
 		Project newProject = new Project("newProject");
@@ -136,8 +136,8 @@ public class ProjectSamplesControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2l)).thenReturn(s2);
-		when(sampleService.read(3l)).thenReturn(s3);
+		when(sampleService.read(2L)).thenReturn(s2);
+		when(sampleService.read(3L)).thenReturn(s3);
 
 		Map<String, Object> result = controller.copySampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, Locale.US);
@@ -159,9 +159,9 @@ public class ProjectSamplesControllerTest {
 
 	@Test
 	public void testCopySampleToProject() {
-		Long projectId = 1l;
-		List<Long> sampleIds = ImmutableList.of(2l, 3l);
-		Long newProjectId = 4l;
+		Long projectId = 1L;
+		List<Long> sampleIds = ImmutableList.of(2L, 3L);
+		Long newProjectId = 4L;
 		boolean removeFromOriginal = false;
 		Project oldProject = new Project("oldProject");
 		Project newProject = new Project("newProject");
@@ -170,8 +170,8 @@ public class ProjectSamplesControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2l)).thenReturn(s2);
-		when(sampleService.read(3l)).thenReturn(s3);
+		when(sampleService.read(2L)).thenReturn(s2);
+		when(sampleService.read(3L)).thenReturn(s3);
 
 		controller.copySampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, Locale.US);
@@ -188,9 +188,9 @@ public class ProjectSamplesControllerTest {
 
 	@Test
 	public void testCopySampleToProjectSampleExists() {
-		Long projectId = 1l;
-		List<Long> sampleIds = ImmutableList.of(2l, 3l);
-		Long newProjectId = 4l;
+		Long projectId = 1L;
+		List<Long> sampleIds = ImmutableList.of(2L, 3L);
+		Long newProjectId = 4L;
 		boolean removeFromOriginal = false;
 		Project oldProject = new Project("oldProject");
 		Project newProject = new Project("newProject");
@@ -199,8 +199,8 @@ public class ProjectSamplesControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2l)).thenReturn(s2);
-		when(sampleService.read(3l)).thenReturn(s3);
+		when(sampleService.read(2L)).thenReturn(s2);
+		when(sampleService.read(3L)).thenReturn(s3);
 		when(projectService.addSampleToProject(newProject, s3)).thenThrow(
 				new EntityExistsException("that sample exists in the project"));
 
@@ -288,7 +288,7 @@ public class ProjectSamplesControllerTest {
 				term, pagesize, page, principal);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
-		assertEquals(2l, projectsAvailableToCopySamples.get("total"));
+		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
 		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
 
 		verify(userService).getUserByUsername(USER_NAME);
@@ -318,7 +318,7 @@ public class ProjectSamplesControllerTest {
 				.getProjectsAvailableToCopySamples(term, pagesize, page, principal);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
-		assertEquals(2l, projectsAvailableToCopySamples.get("total"));
+		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
 		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
 
 		verify(userService).getUserByUsername(USER_NAME);

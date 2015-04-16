@@ -101,8 +101,8 @@ public class SequencingRunServiceImplIT {
 	}
 
 	private void testAddSequenceFileToMiseqRun() throws IOException {
-		SequenceFile sf = sequenceFileService.read(1l);
-		SequencingRun miseqRun = miseqRunService.read(1l);
+		SequenceFile sf = sequenceFileService.read(1L);
+		SequencingRun miseqRun = miseqRunService.read(1L);
 		// we can't actually know a file name in the XML file that we use to
 		// populate the database for these tests, so the files don't exist
 		// anywhere. Create a new temp file and update that in the database
@@ -111,10 +111,10 @@ public class SequencingRunServiceImplIT {
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 		sf.setFile(sequenceFile);
-		sequenceFileService.update(1l, ImmutableMap.of("file", sequenceFile));
+		sequenceFileService.update(1L, ImmutableMap.of("file", sequenceFile));
 		miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
-		SequencingRun saved = miseqRunService.read(1l);
-		SequenceFile savedFile = sequenceFileService.read(1l);
+		SequencingRun saved = miseqRunService.read(1L);
+		SequenceFile savedFile = sequenceFileService.read(1L);
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
 
@@ -125,11 +125,11 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testGetMiseqRunForSequenceFile() {
-		SequenceFile sf = sequenceFileService.read(2l);
+		SequenceFile sf = sequenceFileService.read(2L);
 
 		try {
 			SequencingRun j = miseqRunService.getSequencingRunForSequenceFile(sf);
-			assertEquals("Join had wrong miseq run.", Long.valueOf(2l), j.getId());
+			assertEquals("Join had wrong miseq run.", Long.valueOf(2L), j.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Test failed for unknown reason.");

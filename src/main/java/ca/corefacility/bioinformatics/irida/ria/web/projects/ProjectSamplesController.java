@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +20,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -61,6 +65,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -130,11 +135,14 @@ public class ProjectSamplesController {
 	 * 		The user reading the project
 	 * @param projectId
 	 * 		The ID of the project
+	 * @param httpSession
+	 *      The user's session
 	 *
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping("/projects/{projectId}")
-	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
+	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId,
+		HttpSession httpSession) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
@@ -142,9 +150,10 @@ public class ProjectSamplesController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
+		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME) != null);
 		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
-		model.addAttribute("galaxyConfigured", galaxyUploadService.isConfigured());
-		model.addAttribute("galaxyConnected", galaxyUploadService.isConnected());
+		model.addAttribute("galaxyConfigured", haveGalaxyCallbackURL);
+		model.addAttribute("galaxyConnected", haveGalaxyCallbackURL);
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
 		return PROJECT_SAMPLES_PAGE;
@@ -165,25 +174,6 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Special method to add Galaxy specific details to the modal template
-	 *
-	 * @param model
-	 * 		{@link Model}
-	 * @param principal
-	 * 		Current User
-	 * @param projectId
-	 * 		Id for the current {@link Project}
-	 *
-	 * @return Location of the modal template
-	 */
-	@RequestMapping("/projects/{projectId}/templates/samples/galaxy")
-	public String getGalaxyModal(Model model, Principal principal, @PathVariable Long projectId) {
-		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
-		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
-		return PROJECT_TEMPLATE_DIR + "galaxy.tmpl";
-	}
-
-	/**
 	 * Get a list of all samples within the project
 	 *
 	 * @param projectId
@@ -198,7 +188,28 @@ public class ProjectSamplesController {
 		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
 		List<Map<String,Object>> samples = new ArrayList<>(joinList.size());
 		for (Join<Project, Sample> join : joinList) {
-			samples.add(getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join.getObject().getId()));
+			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join.getObject().getId());
+
+			//Galaxy Export Functionality:
+			List<Join<Sample,SequenceFile>> sampleSeqFiles = sequenceFileService.getSequenceFilesForSample(join.getObject());			
+			List<Map<String,Object>> sequences = new ArrayList<>();
+			Map<String,Object> embedded = new HashMap<>(1);
+			for(Join<Sample,SequenceFile> sampleSeqJoin : sampleSeqFiles) {
+				
+				Map<String,Object> seqFileMap = new HashMap<>(1);
+				Map<String,Object> links = new HashMap<>(1);
+				Map<String,Object> self = new HashMap<>(1);
+				seqFileMap.put("_links", links);
+				links.put("self", self);
+				String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
+						.getSequenceFileForSample(projectId, sampleSeqJoin.getSubject().getId(),sampleSeqJoin.getObject().getId())).withSelfRel().getHref();
+				self.put("href", seqFileLoc);
+				sequences.add(seqFileMap);
+			}
+			embedded.put("sample_files", sequences);
+			sampleMap.put("embedded", embedded);
+			
+			samples.add(sampleMap);
 		}
 		result.put("samples", samples);
 		return result;

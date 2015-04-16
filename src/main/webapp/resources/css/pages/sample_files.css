@@ -1,100 +1,103 @@
 @-webkit-keyframes move-up-down {
   0% {
-    transform: translate3d(0, -65px, 0px);
-    animation-timing-function: ease-in;
-  }
+    -webkit-transform: translate3d(0, -65px, 0px);
+            transform: translate3d(0, -65px, 0px);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in; }
   50% {
-    transform: translate3d(0, 0, 0px);
-    animation-timing-function: ease-out;
-  }
+    -webkit-transform: translate3d(0, 0, 0px);
+            transform: translate3d(0, 0, 0px);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out; }
   100% {
-    transform: translate3d(0, -65px, 0px);
-  }
-}
-@-moz-keyframes move-up-down {
-  0% {
-    transform: translate3d(0, -65px, 0px);
-    animation-timing-function: ease-in;
-  }
-  50% {
-    transform: translate3d(0, 0, 0px);
-    animation-timing-function: ease-out;
-  }
-  100% {
-    transform: translate3d(0, -65px, 0px);
-  }
-}
+    -webkit-transform: translate3d(0, -65px, 0px);
+            transform: translate3d(0, -65px, 0px); } }
 @keyframes move-up-down {
   0% {
-    transform: translate3d(0, -65px, 0px);
-    animation-timing-function: ease-in;
-  }
+    -webkit-transform: translate3d(0, -65px, 0px);
+            transform: translate3d(0, -65px, 0px);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in; }
   50% {
-    transform: translate3d(0, 0, 0px);
-    animation-timing-function: ease-out;
-  }
+    -webkit-transform: translate3d(0, 0, 0px);
+            transform: translate3d(0, 0, 0px);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out; }
   100% {
-    transform: translate3d(0, -65px, 0px);
-  }
-}
+    -webkit-transform: translate3d(0, -65px, 0px);
+            transform: translate3d(0, -65px, 0px); } }
 @-webkit-keyframes glow {
   from {
-    background-color: #3092d0;
-  }
+    background-color: #3092d0; }
   50% {
-    background-color: #83bee3;
-  }
+    background-color: #83bee3; }
   to {
-    background-color: #3092d0;
-  }
-}
-@-moz-keyframes glow {
-  from {
-    background-color: #3092d0;
-  }
-  50% {
-    background-color: #83bee3;
-  }
-  to {
-    background-color: #3092d0;
-  }
-}
+    background-color: #3092d0; } }
 @-webkit-keyframes glow {
   from {
-    background-color: #3092d0;
-  }
+    background-color: #3092d0; }
   50% {
-    background-color: #83bee3;
-  }
+    background-color: #83bee3; }
   to {
-    background-color: #3092d0;
-  }
-}
-/* line 63, ../../../styles/animations/_animations.scss */
+    background-color: #3092d0; } }
 .glow {
   -webkit-animation: glow .5s .2s 1;
-  -moz-animation: glow .5s .2s 1;
-  animation: glow .5s .2s 1;
-}
+  animation: glow .5s .2s 1; }
 
-/* line 4, ../../../styles/pages/sample_files.scss */
-.paired_end {
-  border-left: 1rem solid #133B54;
-}
+/*
+  Subtle fade in effect that move the element up 20px and fades it into view
+*/
+.fade-in {
+  -webkit-transition: 250ms cubic-bezier(0.25, 0.25, 0.75, 0.75) all;
+          transition: 250ms cubic-bezier(0.25, 0.25, 0.75, 0.75) all;
+  position: relative;
+  display: block;
+  opacity: 1;
+  top: 0; }
 
-/* line 8, ../../../styles/pages/sample_files.scss */
+.fade-in.ng-hide {
+  top: 20px;
+  opacity: 0; }
+
+.fade-in.ng-hide-add {
+  display: none; }
+
+.fade-in.ng-hide-remove-active {
+  display: block !important; }
+
+.paired_end, .single_end {
+  background-color: #f3f3f3; }
+  .paired_end td, .single_end td {
+    border: none !important; }
+
+.paired_end .td_radio {
+  border: 1px solid #133B54 !important;
+  vertical-align: middle;
+  text-align: center; }
+.paired_end .td_icon {
+  background-color: #133B54;
+  color: #f3f3f3;
+  vertical-align: middle;
+  text-align: center; }
+
+.paired_end__forward {
+  border: 1px solid #133B54;
+  border-bottom: none; }
+
+.paired_end__reverse {
+  border: 1px solid #133B54;
+  border-top: none; }
+
 .single_end {
-  border-left: 1rem solid #3092d0;
-}
+  border: 1px solid #3092d0; }
+  .single_end .td_icon {
+    background-color: #3092d0; }
 
-/* line 12, ../../../styles/pages/sample_files.scss */
 .sidebar-content {
   width: 130px;
   white-space: normal;
-  margin: 1rem auto 0 auto;
-}
+  margin: 1rem auto 0 auto; }
 
-/* line 18, ../../../styles/pages/sample_files.scss */
 .alert-icon-motion {
-  animation: move-up-down 2s infinite;
-}
+  -webkit-animation: move-up-down 2s infinite;
+          animation: move-up-down 2s infinite; }

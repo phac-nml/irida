@@ -45,10 +45,10 @@ public class AssociatedProjectsEditPageIT {
 
 	AssociatedProjectEditPage page;
 
-	private static final Long projectId = 1l;
+	private static final Long projectId = 1L;
 
 	private WebDriver driver;
-	private static final List<Long> ASSOCIATED_PROJECTS = Lists.newArrayList(2l, 3l, 5l);
+	private static final List<Long> ASSOCIATED_PROJECTS = Lists.newArrayList(2L, 3L, 5L);
 
 	@Before
 	public void setUp() {
@@ -91,18 +91,18 @@ public class AssociatedProjectsEditPageIT {
 	public void testAddAssociatedProject() {
 		page.goTo(projectId);
 		logger.debug("Testing: testAddAssociatedProject");
-		page.clickAssociatedButton(4l);
+		page.clickAssociatedButton(4L);
 		page.checkNotyStatus("success");
-		assertTrue("Project should be associated", isProjectAssociated(4l));
+		assertTrue("Project should be associated", isProjectAssociated(4L));
 	}
 
 	@Test
 	public void testRemoveAssociatedProject() {
 		page.goTo(projectId);
 		logger.debug("Testing: testAddAssociatedProject");
-		page.clickAssociatedButton(2l);
+		page.clickAssociatedButton(2L);
 		page.checkNotyStatus("success");
-		assertFalse("Project should not be associated", isProjectAssociated(2l));
+		assertFalse("Project should not be associated", isProjectAssociated(2L));
 	}
 
 	@Test
@@ -110,9 +110,9 @@ public class AssociatedProjectsEditPageIT {
 		RemoteApiUtilities.addRemoteApi(driver);
 		page.goTo(projectId);
 		page.viewRemoteTab();
-		page.clickAssociatedButton(4l);
+		page.clickAssociatedButton(4L);
 		page.checkNotyStatus("success");
-		assertTrue("Project should be associated", isProjectAssociated(4l));
+		assertTrue("Project should be associated", isProjectAssociated(4L));
 
 	}
 

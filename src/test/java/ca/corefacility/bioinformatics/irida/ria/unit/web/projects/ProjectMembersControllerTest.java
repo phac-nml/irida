@@ -64,8 +64,8 @@ public class ProjectMembersControllerTest {
 
 	@Test
 	public void testAddProjectMember() {
-		Long projectId = 1l;
-		Long userId = 2l;
+		Long projectId = 1L;
+		Long userId = 2L;
 		Project project = new Project();
 		User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
@@ -83,8 +83,8 @@ public class ProjectMembersControllerTest {
 	@Test
 	public void testGetUsersAvailableForProject() {
 		String term = "tom";
-		Long projectId = 1l;
-		Long userId = 2l;
+		Long projectId = 1L;
+		Long userId = 2L;
 		Project project = new Project();
 		project.setId(projectId);
 		List<User> users = Lists.newArrayList(new User(userId, "tom", null, null, "Tom", "Matthews", null));
@@ -103,8 +103,8 @@ public class ProjectMembersControllerTest {
 
 	@Test
 	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException, ProjectSelfEditException {
-		Long projectId = 1l;
-		Long userId = 2l;
+		Long projectId = 1L;
+		Long userId = 2L;
 		User user = new User(userId, "tom", null, null, null, null, null);
 		Project project = new Project("test");
 		project.setId(projectId);
@@ -122,8 +122,8 @@ public class ProjectMembersControllerTest {
 
 	@Test
 	public void testUdateUserRole() throws ProjectWithoutOwnerException, ProjectSelfEditException {
-		Long projectId = 1l;
-		Long userId = 2l;
+		Long projectId = 1L;
+		Long userId = 2L;
 		Project project = new Project();
 		User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
@@ -142,8 +142,8 @@ public class ProjectMembersControllerTest {
 
 	@Test(expected = ProjectSelfEditException.class)
 	public void testUdateUserSelfRole() throws ProjectWithoutOwnerException, ProjectSelfEditException {
-		Long projectId = 1l;
-		Long userId = 2l;
+		Long projectId = 1L;
+		Long userId = 2L;
 		Project project = new Project();
 		User user = new User(userId, USER_NAME, null, null, "Tom", "Matthews", null);
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;

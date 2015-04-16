@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+	<meta charset="UTF-8"/>
+	<title></title>
+</head>
+<body>
+	<tab id="preview">
+		<tab-heading id="tab-preview" th:text="#{analysis.tab.preview}"></tab-heading>
+		<div layout:fragment="previewContent"></div>
+	</tab>
+
+	<tab id="inputFilesTab">
+		<tab-heading id="tab-input-files" th:text="#{analysis.tab.input-files}"></tab-heading>
+		<div>
+			<h3 th:text="#{samples.files.paired-end-data}"></h3>
+
+			<th:block th:with="hasPaired=${#lists.size(paired_end) > 0}">
+				<table th:if="${hasPaired}" class="table">
+					<th:block th:each="pair : ${paired_end}">
+						<tr class="paired_end paired_end__forward">
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
+						</tr>
+						<tr class="paired_end paired_end__reverse">
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+						</tr>
+					</th:block>
+				</table>
+				<div class="alert alert-info" th:unless="${hasPaired}" th:text="#{analysis.input-files.no-paired-end}">
+					__NO_PAIRED_END_DATA_
+				</div>
+			</th:block>
+		</div>
+	</tab>
+
+	<tab id="provenanceTab" th:with="files=${analysis.getAnalysisOutputFiles()}">
+		<tab-heading id="tab-provenance" th:text="#{analysis.tab.provenance}"></tab-heading>
+		<accordion>
+			<accordion-group class="file-info" th:each="file : ${files}">
+				<accordion-heading class="filename" th:text="${file.getLabel()}">__FILENAME__</accordion-heading>
+				<div th:include="analysis/details/_tabs :: toolsLayout (${file.getCreatedByTool()})"></div>
+			</accordion-group>
+		</accordion>
+	</tab>
+
+
+	<!--/*
+		For every tool used to create the analysis, Thymeleaf will load this template, recursively finding
+		all tools and their parameters.
+		Initial tool: AnalysisOutputFile.createByTool
+	*/-->
+	<div th:fragment="toolsLayout (tools)">
+		<div th:each="tool : ${tools}" style="margin-left: 2rem;" th:with="toolId=${'tool' + analysisSubmission.getId() + #dates.createNow().getTime()}" data:ng-init="${toolId + '=false'}">
+			<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
+				<i data:ng-hide="${toolId}" class="fa fa-fw fa-chevron-right"></i>
+				<i data:ng-show="${toolId}" class="fa fa-fw fa-chevron-down"></i>
+				<span th:text="${tool.getLabel()}"></span>
+			</button>
+			<div data:ng-show="${toolId}" class="parameters">
+				<table class="table">
+					<tr class="parameter" th:each="parameter : ${tool.getExecutionTimeParameters()}">
+						<td class="para-key" th:text="${parameter.key}"></td>
+						<td class="para-value" th:text="${parameter.value}"></td>
+					</tr>
+				</table>
+			</div>
+			<div th:include="analysis/details/_tabs :: toolsLayout (${tool.previousSteps})"></div>
+		</div>
+	</div>
+</body>
+</html>

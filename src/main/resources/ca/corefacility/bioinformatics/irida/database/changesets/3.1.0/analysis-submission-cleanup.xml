@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="analysis-submission-cleanup" author="aaron">
+		<addColumn tableName="analysis_submission">
+			<column name="analysis_cleaned_state" type="VARCHAR(255)"
+				defaultValue="NOT_CLEANED">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<addColumn tableName="analysis_submission_AUD">
+			<column name="analysis_cleaned_state" type="VARCHAR(255)"
+				defaultValue="NOT_CLEANED" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

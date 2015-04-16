@@ -540,7 +540,7 @@ public class ProjectSamplesPageIT {
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
-		page.removeProjectFromCart(1l);
+		page.removeProjectFromCart(1L);
 
 		assertEquals("cart should have been emptied", 0, page.getCartCount());
 		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
@@ -561,7 +561,7 @@ public class ProjectSamplesPageIT {
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
-		page.removeFirstSampleFromProjectInCart(1l);
+		page.removeFirstSampleFromProjectInCart(1L);
 
 		assertEquals("cart should have 2 samples", 2, page.getCartCount());
 		assertEquals("cart should have 2 samples", 1, page.getCartProjectCount());
@@ -588,9 +588,9 @@ public class ProjectSamplesPageIT {
 
 		// associate a project from that api
 		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver);
-		apEditPage.goTo(2l);
+		apEditPage.goTo(2L);
 		apEditPage.viewRemoteTab();
-		apEditPage.clickAssociatedButton(6l);
+		apEditPage.clickAssociatedButton(6L);
 		apEditPage.checkNotyStatus("success");
 
 		// go to project

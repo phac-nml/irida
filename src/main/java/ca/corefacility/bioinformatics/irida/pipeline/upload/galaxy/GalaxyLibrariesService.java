@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
@@ -30,6 +31,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * A service class for dealing with Galaxy libraries.
@@ -189,5 +191,26 @@ public class GalaxyLibrariesService {
 		}
 
 		return datasetLibraryIdsMap;
+	}
+
+	/**
+	 * Deletes the Galaxy library with the given id.
+	 * 
+	 * @param libraryId
+	 *            The id of the library to delete.
+	 * @throws DeleteGalaxyObjectFailedException
+	 *             If there was a failure to delete the library.
+	 */
+	public void deleteLibrary(String libraryId) throws DeleteGalaxyObjectFailedException {
+		try {
+			ClientResponse response = librariesClient.deleteLibraryRequest(libraryId);
+			if (!ClientResponse.Status.OK.equals(response.getClientResponseStatus())) {
+				throw new DeleteGalaxyObjectFailedException("Could not delete library with id " + libraryId
+						+ ", status=" + response.getClientResponseStatus() + ", content="
+						+ response.getEntity(String.class));
+			}
+		} catch (RuntimeException e) {
+			throw new DeleteGalaxyObjectFailedException("Error while deleting library with id " + libraryId, e);
+		}
 	}
 }

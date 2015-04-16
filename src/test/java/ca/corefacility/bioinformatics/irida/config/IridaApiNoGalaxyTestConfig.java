@@ -30,6 +30,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryExport;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
@@ -186,6 +187,11 @@ public class IridaApiNoGalaxyTestConfig {
 		public ClientResponse uploadServerDirectoryRequest(String arg0, DirectoryLibraryUpload arg1) {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public ClientResponse deleteLibraryRequest(String libraryId) {
+			throw new UnsupportedOperationException();
+		}
 	}
 	
 	/**
@@ -296,6 +302,16 @@ public class IridaApiNoGalaxyTestConfig {
 
 		@Override
 		public HistoryContentsProvenance showProvenance(String arg0, String arg1) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ClientResponse deleteHistoryRequest(String historyId) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public HistoryDeleteResponse deleteHistory(String historyId) {
 			throw new UnsupportedOperationException();
 		}	
 	}
