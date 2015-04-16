@@ -42,6 +42,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	// rel for reading the analysis for a submission
 	public static final String ANALYSIS_REL = "analysis";
 
+	public static final String SUBMISSIONS_REL = "analysisSubmissions";
+
 	// available analysis types to filter for
 	public static Map<String, Class<? extends Analysis>> ANALYSIS_TYPES = ImmutableMap.of("phylogenomics",
 			AnalysisPhylogenomicsPipeline.class, "assembly", AnalysisAssemblyAnnotation.class);
@@ -82,6 +84,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		}
 
 		resourceCollection.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type)).withSelfRel());
+		resourceCollection.add(linkTo(RESTAnalysisSubmissionController.class).withRel(SUBMISSIONS_REL));
 		model.addAttribute(RESOURCE_NAME, resourceCollection);
 
 		return model;
@@ -96,7 +99,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		ModelMap listAllResources = super.listAllResources();
 		IridaResourceSupport object = (IridaResourceSupport) listAllResources.get(RESOURCE_NAME);
 		for (String type : ANALYSIS_TYPES.keySet()) {
-			object.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type)).withRel(type));
+			object.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type)).withRel(
+					SUBMISSIONS_REL + "/" + type));
 		}
 
 		return listAllResources;

@@ -43,7 +43,7 @@ public class RESTRootController {
     public void initLinks() {
         CONTROLLERS.put("users", RESTUsersController.class);
         CONTROLLERS.put("projects", RESTProjectsController.class);
-        CONTROLLERS.put("analysisSubmissions", RESTAnalysisSubmissionController.class);
+        CONTROLLERS.put(RESTAnalysisSubmissionController.SUBMISSIONS_REL, RESTAnalysisSubmissionController.class);
     }
 
     /**
