@@ -8,6 +8,7 @@ import static org.hamcrest.CoreMatchers.not;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.hateoas.Link;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -18,6 +19,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -42,26 +44,33 @@ public class RESTAnalysisSubmissionControllerIT {
 	public void testReadSubmission() {
 		asAdmin().expect().body("resource.name", equalTo("another analysis")).and()
 				.body("resource.analysisState", equalTo(AnalysisState.COMPLETED.toString()))
-				.body("resource.links.rel", hasItems("self", "analysis")).when().get(ANALYSIS_BASE + "/1");
+				.body("resource.links.rel", hasItems(Link.REL_SELF, RESTAnalysisSubmissionController.ANALYSIS_REL))
+				.when().get(ANALYSIS_BASE + "/1");
 	}
 
 	@Test
 	public void testReadIncompleteSubmission() {
 		asAdmin().expect().body("resource.analysisState", equalTo(AnalysisState.PREPARING.toString()))
-				.body("resource.links.rel", not(hasItems("analysis"))).when().get(ANALYSIS_BASE + "/2");
+				.body("resource.links.rel", not(hasItems(RESTAnalysisSubmissionController.ANALYSIS_REL))).when()
+				.get(ANALYSIS_BASE + "/2");
 	}
 
 	@Test
 	public void testGetAnalysis() {
-		asAdmin().expect().body("resource.executionManagerAnalysisId", equalTo("XYZABC")).and()
-				.body("resource.links.rel", hasItems("self", "tree")).when().get(ANALYSIS_BASE + "/1/analysis");
+		asAdmin()
+				.expect()
+				.body("resource.executionManagerAnalysisId", equalTo("XYZABC"))
+				.and()
+				.body("resource.links.rel",
+						hasItems(Link.REL_SELF, RESTAnalysisSubmissionController.FILE_REL + "/tree")).when()
+				.get(ANALYSIS_BASE + "/1/analysis");
 	}
 
 	@Test
 	public void testGetOutputFile() {
 		asAdmin().expect().body("resource.executionManagerFileId", equalTo("123-456-789")).and()
-				.body("resource.label", equalTo("snp_tree.tree")).body("resource.links.rel", hasItems("self")).when()
-				.get(ANALYSIS_BASE + "/1/analysis/file/tree");
+				.body("resource.label", equalTo("snp_tree.tree")).body("resource.links.rel", hasItems(Link.REL_SELF))
+				.when().get(ANALYSIS_BASE + "/1/analysis/file/tree");
 
 		// get the tree file
 		asAdmin().given().header("Accept", NewickFileView.DEFAULT_CONTENT_TYPE).expect().body(containsString("c6706"))
