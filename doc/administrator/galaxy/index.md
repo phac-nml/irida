@@ -293,7 +293,7 @@ Once the parameter `irida.analysis.cleanup.days` is set, IRIDA will periodically
 
 ### Step 1: Create a Galaxy Cleanup script
 
-The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `$GALAXY_ROOT_DIR/galaxy_cleanup.sh` and make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and modify `$DAYS_TO_KEEP` which defines the number of days since last access a deleted file in Galaxy will continue to exist before being removed from the file system.
+The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `$GALAXY_ROOT_DIR/galaxy_cleanup.sh`, make executable with `chmod u+x $GALAXY_ROOT_DIR/galaxy_cleanup.sh`, and then make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and modify `$DAYS_TO_KEEP` which defines the number of days since last access a deleted file in Galaxy will continue to exist before being removed from the file system.
 
 ```bash
 #!/bin/sh
@@ -324,10 +324,10 @@ echo -e "\nEnd cleanup at `date`" >> $CLEANUP_LOG
 Once this script is installed, it can be scheduled to run periodically by adding a cron job for the Galaxy user.  To do this, please run `crontab -e` and past the following line (replacing `$GALAXY_ROOT_DIR` with the proper directory):
 
 ```
-0 4 * * * $GALAXY_ROOT_DIR/galaxy_cleanup.sh
+0 2 * * * $GALAXY_ROOT_DIR/galaxy_cleanup.sh
 ```
 
-This will clean up any **deleted** files every day at 4:00 am.  Log files will be stored in `$GALAXY_ROOT_DIR/galaxy_cleanup.log`.
+This will clean up any **deleted** files every day at 2:00 am.  Log files will be stored in `$GALAXY_ROOT_DIR/galaxy_cleanup.log`.
 
 For more information please see the [Purging Histories and Datasets][] document.  ***Note: the metadata about each analysis will still be stored and available in Galaxy, but the data file contents will be permanently removed.***
 
