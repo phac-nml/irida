@@ -63,7 +63,7 @@ import com.google.common.collect.ImmutableMap;
 @Scope("session")
 public class AssociatedProjectsController {
 	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectsController.class);
-	
+
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_ASSOCIATED_PROJECTS = "associated";
 	public static final String ASSOCIATED_PROJECTS_PAGE = ProjectsController.PROJECTS_DIR + "associated_projects";
@@ -390,7 +390,9 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            The ID of the current project
-	 * @return A {@code Map<String,Object>} containing a list of remote samples.
+	 * @return A {@code Map<String,Object>} containing a list of remote samples,
+	 *         the number of projects from unauthorized APIs, and the number of
+	 *         projects the user does not have access to.
 	 */
 	@RequestMapping(value = "/{projectId}/associated/remote/samples")
 	public Map<String, Object> getRemoteAssociatedSamplesForProject(@PathVariable Long projectId) {
@@ -400,6 +402,8 @@ public class AssociatedProjectsController {
 		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
 				.getRemoteProjectsForProject(project);
 
+		int oauthExceptionCount = 0;
+		int unauthorizedCount = 0;
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		for (RemoteRelatedProject rrp : remoteProjectsForProject) {
 			try {
@@ -418,17 +422,20 @@ public class AssociatedProjectsController {
 				sampleList.addAll(collect);
 			} catch (IridaOAuthException ex) {
 				logger.debug("User couldn't read samples for project: " + ex.getMessage());
+				oauthExceptionCount++;
 			} catch (HttpClientErrorException ex) {
 				if (ex.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
 					logger.debug("User couldn't read samples as they don't have access to the project: "
 							+ ex.getMessage());
+					unauthorizedCount++;
 				} else {
 					throw ex;
 				}
 			}
 		}
 
-		return ImmutableMap.of("samples", sampleList);
+		return ImmutableMap.of("samples", sampleList, "unauthorized", unauthorizedCount, "notConnected",
+				oauthExceptionCount);
 	}
 
 	/**
