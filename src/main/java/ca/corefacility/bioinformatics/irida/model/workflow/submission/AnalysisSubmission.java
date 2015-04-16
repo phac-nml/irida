@@ -660,7 +660,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public int hashCode() {
 		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, inputFilesSingle,
 				inputFilesPaired, createdDate, modifiedDate, analysisState, analysisCleanedState, analysis,
-				referenceFile, namedParameters);
+				referenceFile, namedParameters, submitter);
 	}
 
 	@Override
