@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -653,6 +654,13 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	 */
 	public boolean hasRemoteInputDataId() {
 		return remoteInputDataId != null;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, inputFilesSingle,
+				inputFilesPaired, createdDate, modifiedDate, analysisState, analysisCleanedState, analysis,
+				referenceFile, namedParameters);
 	}
 
 	@Override
