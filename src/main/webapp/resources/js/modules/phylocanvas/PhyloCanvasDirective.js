@@ -53,6 +53,10 @@
         }]
       };
     })
+  /**
+   * Control for the type of visualization.  This is not required.  Only use if you need to dynamically change
+   * the type of plot.  Need to use a phylocanvasControl below.
+   */
     .directive('phylocanvasControls', function () {
       return {
         require   : '^phylocanvas',
@@ -79,6 +83,11 @@
         }]
       };
     })
+  /**
+   * A control for modifying the type of phylocanvas.
+   * @param shape - corresponds to the different shapes the plots can be.
+   * @param text - text to appear on the button.
+   */
     .directive('phylocanvasControl', function () {
       return {
         require : '^phylocanvasControls',
