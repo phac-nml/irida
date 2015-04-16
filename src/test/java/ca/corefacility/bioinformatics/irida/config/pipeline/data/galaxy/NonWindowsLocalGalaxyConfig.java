@@ -497,8 +497,6 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		}
 		
 		galaxyProperties.setAppProperty("allow_library_path_paste", "true");
-		galaxyProperties.setAppProperty("enable_beta_workflow_modules", "false");
-		galaxyProperties.setAppProperty("force_beta_workflow_scheduled_for_collections", "false");
 
 		int galaxyPort = galaxyProperties.getPort();
 		URL galaxyURL = new URL("http://localhost:" + galaxyPort + "/");
