@@ -12,7 +12,7 @@
  *     <phylocanvas-control shape="hierarchy" text="Hierarchical"></phylocanvas-control>
  *   </phylocanvas-controls>
  *   <div id="phylocanvas"></div>
- * </phylocancas>
+ * </phylocanvas>
  */
 (function(angular, PhyloCanvas) {
   "use strict";
