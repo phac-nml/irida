@@ -36,6 +36,7 @@ As a REST API, clients must specify their preferred output format using the `Acc
         <tr><td>XML</td><td>application/xml</td></tr>
         <tr><td>FASTA</td><td>application/fasta</td></tr>
         <tr><td>FASTQ</td><td>application/fastq</td></tr>
+        <tr><td>Newick</td><td>application/newick</td></tr>
     </tbody>
 </table>
 
@@ -197,6 +198,38 @@ This resource contains information about a sample. A sample corresponds to a sin
 {:.no_toc}
 
 * **sampleName**: The name of the sample.
+
+Analysis
+--------
+
+### Description
+{:.no_toc}
+
+This resource contains information about the submission and results of an analysis run within IRIDA.  It will contain metadata about the analysis status, the workflow run, and the output files produced (if available).
+
+### Methods
+{:.no_toc}
+
+`GET`.
+
+### Navigation
+{:.no_toc}
+
+The `rel`s below will guide navigation to the described resources.
+
+* `analysisSubmissions` - View the list of all available analysis submissions.
+* `analysisSubmissions/phylogenomics` - View the phylogenomics pipeline analysis submissions.
+* `analysisSubmissions/assembly` - View the assembly and annotation analysis submissions.
+* `analysis` - View metadata about the analysis results.
+* `outputFile/{type}` - View metadata about the requested analysis output file.
+
+### Output Files
+{:.no_toc}
+
+Analysis output files can be requested with alternative accept types.
+
+* `application/newick` - Newick formatted tree file.
+* `text/csv` - Comma separated value file.
 
 Bookmarks
 =========
