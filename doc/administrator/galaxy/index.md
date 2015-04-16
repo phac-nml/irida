@@ -270,7 +270,7 @@ In order to link up Galaxy with IRIDA please proceed through the following steps
 
 ### Step 1: Install and configure the IRIDA web interface
 
-Follow the instructions to [install and configure the IRIDA web interface](../web).
+Follow the instructions to [install and configure the IRIDA web interface](../web).  In particular, you will need to modify the parameters **galaxy.execution.url**, **galaxy.execution.email**, and **galaxy.execution.dataStorage** in the file `/etc/irida/irida.conf`.
 
 ### Step 2: Test and monitor workflows
 
