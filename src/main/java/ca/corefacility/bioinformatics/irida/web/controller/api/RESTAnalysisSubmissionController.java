@@ -42,6 +42,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	// rel for reading the analysis for a submission
 	public static final String ANALYSIS_REL = "analysis";
 
+	public static final String FILE_REL = "outputFile";
+
 	public static final String SUBMISSIONS_REL = "analysisSubmissions";
 
 	// available analysis types to filter for
@@ -133,7 +135,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		for (String name : analysis.getAnalysisOutputFileNames()) {
 			analysis.add(linkTo(
 					methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(identifier, name)).withRel(
-					name));
+					FILE_REL + "/" + name));
 		}
 
 		model.addAttribute(RESOURCE_NAME, analysis);
