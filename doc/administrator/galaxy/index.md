@@ -113,7 +113,7 @@ mkdir $GALAXY_BASE_DIR/tool_dependencies # directory for installing dependency b
 cp $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml.sample $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml
 ```
 
-*Note: We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version 15.03.1.  This was in order to fix an issue that was not fixed in the stable branch of Galaxy as of writing this document.*
+*Note: We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version 15.03.1.  This was in order to fix an issue that was not fixed in the stable branch of Galaxy as of writing this document.  The specific issue was reported at <https://trello.com/c/I0n23JEP/2484-database-deadlock-for-large-workflows> with the fix in the main Galaxy code at <https://github.com/galaxyproject/galaxy/pull/52>.*
 
 ### Step 2: Create Galaxy Environment File
 
