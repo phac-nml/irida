@@ -23,34 +23,40 @@
 	<main class="col-md-9 col-md-push-3" layout:fragment="main">
 
 	</main>
-	<aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
-		<div class="sidebar">
+
+	<div class="col-md-3 col-md-pull-9">
+		<aside class="sidebar">
 			<div class="sidebar__heading">
 				<h2 th:text="${sample.getLabel()}">__NAME__</h2>
 			</div>
 			<div class="sidebar__body">
-				<div>
-					<span class="fa fa-fw fa-barcode sidebar__icon"></span> <span th:text="#{samples.details.id}">ID</span>
-					<span id="sb-id" class="sidebar__value" th:text="${sample.getId()}"></span>
+				<div class="sidebar__item">
+					<div class="sidebar__item"><i class="fa fa-fw fa-barcode"></i></div>
+					<div th:text="#{samples.details.id}">ID</div>
+					<div id="sb-id" class="sidebar__value" th:text="${sample.getId()}"></div>
 				</div>
-				<div>
-					<span class="fa fa-fw fa-leaf sidebar__icon"></span> <span th:text="#{samples.details.organism}">Organism</span>
-                        <span class="sidebar__value"><i
-		                        th:text="${sample.getOrganism()} != null ? ${sample.getOrganism()} : #{organism.unknown}"></i></span>
+				<div class="sidebar__item">
+					<div class="sidebar__icon"><i class="fa fa-fw fa-leaf"></i></div>
+					<div th:text="#{samples.details.organism}">Organism</div>
+					<div class="sidebar__value"><i
+						th:text="${sample.getOrganism()} != null ? ${sample.getOrganism()} : #{organism.unknown}"></i>
+					</div>
 				</div>
-				<div>
-					<span class="fa fa-fw fa-calendar-o sidebar__icon"></span> <em th:text="#{samples.details.created}">Created</em>
-                        <span id="sb-created" class="sidebar__value"
-                              th:text="${#calendars.format(sample.getCreatedDate(), 'dd MMM yyyy')}"></span>
+				<div class="sidebar__item">
+					<div class="sidebar__icon"><i class="fa fa-fw fa-calendar-o"></i></div>
+					<div><em th:text="#{samples.details.created}">Created</em></div>
+					<div id="sb-created" class="sidebar__value"
+					     th:text="${#calendars.format(sample.getCreatedDate(), 'dd MMM yyyy')}"></div>
 				</div>
-				<div>
-					<span class="fa fa-fw fa-calendar-o sidebar__icon"></span> <span th:text="#{samples.details.modified}">Modified</span>
-                        <span class="sidebar__value" id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
-                              th:title="${#calendars.format(sample.getModifiedDate(), 'dd MMM yyyy')}"></span>
+				<div class="sidebar__item">
+					<div class="sidebar__icon"><i class="fa fa-fw fa-calendar-o"></i></div>
+					<div th:text="#{samples.details.modified}">Modified</div>
+					<div class="sidebar__value" id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
+					     th:title="${#calendars.format(sample.getModifiedDate(), 'dd MMM yyyy')}"></div>
 				</div>
 			</div>
-		</div>
-	</aside>
+		</aside>
+	</div>
 </div>
 <th:block layout:fragment="page-scripts">
 	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"

@@ -101,11 +101,13 @@ public class ClientsController extends BaseController {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
 		String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
-		String scopes = StringUtils.collectionToDelimitedString(client.getScope(), ",");
+		String scopes = StringUtils.collectionToDelimitedString(client.getScope(), ", ");
+		String autoApproveScopes = StringUtils.collectionToDelimitedString(client.getAutoApprovableScopes(), ", ");
 		model.addAttribute("client", client);
 
 		model.addAttribute("grants", grants);
 		model.addAttribute("scopes", scopes);
+		model.addAttribute("autoApproveScopes", autoApproveScopes);
 		return CLIENT_DETAILS_PAGE;
 	}
 
@@ -123,17 +125,22 @@ public class ClientsController extends BaseController {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
 		model.addAttribute("client", client);
-		// in practise our clients only have 1 grant type. adding it to model to
+		// in practise our clients only have 1 grant type, adding it to model to
 		// make it easier
 		if (!client.getAuthorizedGrantTypes().isEmpty()) {
 			model.addAttribute("selectedGrant", client.getAuthorizedGrantTypes().iterator().next());
 		}
+		
 		Set<String> scopes = client.getScope();
-
 		for (String scope : scopes) {
 			model.addAttribute("given_scope_" + scope, true);
 		}
 
+		Set<String> autoScopes = client.getAutoApprovableScopes();
+		for (String autoScope : autoScopes) {
+			model.addAttribute("given_scope_auto_" + autoScope,true);
+		}
+		
 		getAddClientPage(model);
 
 		return EDIT_CLIENT_PAGE;
@@ -152,8 +159,12 @@ public class ClientsController extends BaseController {
 	 *            whether to allow read scope
 	 * @param scope_write
 	 *            whether to allow write scope
+	 * @param scope_auto_read
+	 *            whether to allow automatic authorization for the read scope
+	 * @param scope_auto_write
+	 *            whether to allow automatic authorization for the write scope
 	 * @param new_secret
-	 *            Wether to generate a new client secret
+	 *            whether to generate a new client secret
 	 * @param model
 	 *            Model for the view
 	 * @param locale
@@ -167,6 +178,8 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String authorizedGrantTypes,
 			@RequestParam(required = false, defaultValue = "") String scope_read,
 			@RequestParam(required = false, defaultValue = "") String scope_write,
+			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
+			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
 			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
 		Map<String, Object> updates = new HashMap<>();
 		IridaClientDetails readClient = clientDetailsService.read(clientId);
@@ -179,14 +192,22 @@ public class ClientsController extends BaseController {
 		}
 
 		Set<String> scopes = new HashSet<>();
+		Set<String> autoScopes = new HashSet<>();
 		if (scope_write.equals("write")) {
 			scopes.add("write");
+			if(scope_auto_write.equals("write")) {
+				autoScopes.add("write");
+			}
 		}
 		if (scope_read.equals("read")) {
 			scopes.add("read");
+			if(scope_auto_read.equals("read")) {
+				autoScopes.add("read");
+			}
 		}
 		
 		updates.put("scope", scopes);
+		updates.put("autoApprovableScopes", autoScopes);
 		
 		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();
@@ -198,7 +219,7 @@ public class ClientsController extends BaseController {
 			clientDetailsService.update(clientId, updates);
 			response = "redirect:/clients/" + clientId;
 		} catch (RuntimeException e) {
-			handleCreateUpdateException(e, model, locale, scope_write, scope_read, readClient.getClientId(),
+			handleCreateUpdateException(e, model, locale, scope_write, scope_read, scope_auto_write, scope_auto_read, readClient.getClientId(),
 					accessTokenValiditySeconds);
 			response = getEditPage(clientId, model);
 		}
@@ -242,6 +263,10 @@ public class ClientsController extends BaseController {
 	 * @param scope_write
 	 *            if the client should be allowed to write to the server (value
 	 *            should be "write").
+	 * @param scope_auto_read
+	 *            whether to allow automatic authorization for the read scope
+	 * @param scope_auto_write
+	 *            whether to allow automatic authorization for the write scope
 	 * @param model
 	 *            Model for the view
 	 * @param locale
@@ -252,26 +277,36 @@ public class ClientsController extends BaseController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String postCreateClient(@ModelAttribute IridaClientDetails client,
 			@RequestParam(required = false, defaultValue = "") String scope_read,
-			@RequestParam(required = false, defaultValue = "") String scope_write, Model model, Locale locale) {
+			@RequestParam(required = false, defaultValue = "") String scope_write,
+			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
+			@RequestParam(required = false, defaultValue = "") String scope_auto_write,Model model, Locale locale) {
 		client.setClientSecret(generateClientSecret());
 
+		Set<String> autoScopes = new HashSet<>();
 		Set<String> scopes = new HashSet<>();
 		if (scope_write.equals("write")) {
 			scopes.add("write");
+			if(scope_auto_write.equals("write")) {
+				autoScopes.add("write");
+			}
 		}
 
 		if (scope_read.equals("read")) {
 			scopes.add("read");
+			if(scope_auto_read.equals("read")) {
+				autoScopes.add("read");
+			}
 		}
 
 		client.setScope(scopes);
+		client.setAutoApprovableScopes(autoScopes);
 
 		String responsePage = null;
 		try {
 			IridaClientDetails create = clientDetailsService.create(client);
 			responsePage = "redirect:/clients/" + create.getId();
 		} catch (RuntimeException ex) {
-			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, client.getClientId(),
+			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, scope_auto_read, scope_auto_write, client.getClientId(),
 					client.getAccessTokenValiditySeconds());
 			responsePage = getAddClientPage(model);
 		}
@@ -421,6 +456,10 @@ public class ClientsController extends BaseController {
 	 *            The value entered for scope_write
 	 * @param scope_read
 	 *            The value entered for scope_read
+	 * @param scope_auto_write
+	 *            The value entered for scope_auto_write
+	 * @param scope_auto_read
+	 *            The value entered for scope_auto_read
 	 * @param clientId
 	 *            The entered client ID
 	 * @param accesstokenValidity
@@ -428,7 +467,7 @@ public class ClientsController extends BaseController {
 	 * @return The number of errors that were found
 	 */
 	private int handleCreateUpdateException(RuntimeException caughtException, Model model, Locale locale,
-			String scope_write, String scope_read, String clientId, Integer accesstokenValidity) {
+			String scope_write, String scope_read, String scope_auto_write, String scope_auto_read, String clientId, Integer accesstokenValidity) {
 		Map<String, Object> errors = new HashMap<>();
 
 		try {
@@ -451,9 +490,14 @@ public class ClientsController extends BaseController {
 			if (scope_write.equals("write")) {
 				model.addAttribute("given_scope_write", scope_write);
 			}
-
 			if (scope_read.equals("read")) {
 				model.addAttribute("given_scope_read", scope_read);
+			}
+			if (scope_auto_write.equals("write")) {
+				model.addAttribute("given_scope_auto_write", scope_auto_write);
+			}
+			if (scope_auto_read.equals("read")) {
+				model.addAttribute("given_scope_auto_read", scope_auto_read);
 			}
 		}
 
