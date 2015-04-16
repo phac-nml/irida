@@ -79,11 +79,11 @@ The installation and setup of Galaxy requires a number of dependency software to
 
 	yum install mercurial nginx pwgen python
 
+*Note: Dependening on the version of CentOS you use, you may encounter errors when attempting to clone the Galaxy bitbucket.org repository with Mercurial `hg clone`.  If this occurs, you will have to manually install [Mercurial][], or manually download the specific revision of Galaxy used.* 
+
 The following dependencies are required for running or building some of the tools.
 
 	yum install db4-devel expat-devel java
-
-**TODO mention updating mercurial**
 
 Galaxy Database Setup
 ---------------------
@@ -359,3 +359,4 @@ For more information please see the [Purging Histories and Datasets][] document.
 [galaxy-installed-repositories.jpg]: images/galaxy-installed-repositories.jpg
 [history-options-icon]: images/history-options-icon.jpg
 [Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
+[Mercurial]: http://mercurial.selenic.com/
