@@ -138,24 +138,26 @@ The main Galaxy configuration file is located in `$GALAXY_ROOT_DIR/config/galaxy
 
 1. Modify the address that Galaxy should listen on for incoming connections to allow for connections external to the Galaxy server.
    * Change `#host = 127.0.0.1` to `host = 0.0.0.0`. (`0.0.0.0` listens on all interfaces and addresses)
-2. Modify the Galaxy database connection string to connect to your specific database.
+2. Modify the port that Galaxy listens on so there are no conflicts with Tomcat.
+    * Change `#port = 8080` to `port = 9090`.
+3. Modify the Galaxy database connection string to connect to your specific database.
    * `database_connection = postgresql://galaxy:password@localhost/galaxy` (use a MySQL connection string if using MySQL or MariaDB)
-3. The below is necessary to allow direct linking of files in Galaxy to the IRIDA file locations.
+4. The below is necessary to allow direct linking of files in Galaxy to the IRIDA file locations.
    * Change `#allow_library_path_paste = False` to `allow_library_path_paste = True`.
-4. Give the `$GALAXY_ADMIN_USER` and `$GALAXY_WORKFLOW_USER` users in Galaxy admin privileges (necessary for running workflows on linked files within Galaxy).
+5. Give the `$GALAXY_ADMIN_USER` and `$GALAXY_WORKFLOW_USER` users in Galaxy admin privileges (necessary for running workflows on linked files within Galaxy).
    * Change `#admin_users = None` to `admin_users = $GALAXY_ADMIN_USER,$GALAXY_WORKFLOW_USER`.
-5. Disable developer settings (from [Galaxy Disable Developer Settings][]).
+6. Disable developer settings (from [Galaxy Disable Developer Settings][]).
    * Change `debug = True` to `debug = False`.
    * Change `use_interactive = True` to `use_interactive = False`.
    * Make sure `filter-with = gzip` is disabled.
-6. Set directory for installing tools in Galaxy.
+7. Set directory for installing tools in Galaxy.
    * Change `#tool_dependency_dir = None` to `tool_dependency_dir = $GALAXY_BASE_DIR/tool_dependencies`
    * Uncomment `#tool_sheds_config_file = config/tool_sheds_conf.xml`.
-7. Set the Galaxy id_secret for encoding database ids.
+8. Set the Galaxy id_secret for encoding database ids.
    * Change `#id_secret = USING THE DEFAULT IS NOT SECURE!` to `id_secret = some secure password`
       * The command `pwgen --secure -N 1 56` may be useful for picking a hard-to-guess key.
       * ***Note: Once this key is set, please do not change it.  This key is used to translate database ids in Galaxy to API ids used by IRIDA to access datasets, histories, and workflows.  IRIDA does store some of these API ids internally for debugging and tracking purposes and changing this value will render any of the API ids stored in IRIDA useless.***
-8. Setup the Galaxy environment file `$GALAXY_ENV`.  This file is read by Galaxy to setup the environment for each tool.
+9. Setup the Galaxy environment file `$GALAXY_ENV`.  This file is read by Galaxy to setup the environment for each tool.
    * Change `#environment_setup_file = None` to `environment_setup_file = $GALAXY_ENV`
 
 ### Step 4: Start up Galaxy
@@ -164,18 +166,18 @@ Verify that Galaxy can start by running:
 
 	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log # Builds Galaxy
 
-This will attempt to build the Galaxy database and start up Galaxy on <http://127.0.0.1:8080>.
+This will attempt to build the Galaxy database and start up Galaxy on <http://127.0.0.1:9090>.
 
 *Note: `run.sh` builds and starts Galaxy, `tee` keeps a copy of the output, and `stdbuf` changes to no buffering to deal with pauses in output when running `tee`.  If `stdbuf` is not installed on your system you can just run `sh run.sh 2>&1 > run.sh.log` and `tail -f run.sh.log`.*
 
 When complete you should see something similar to:
 
 	Starting server in PID 8967.
-	serving on 0.0.0.0:8080 view at http://127.0.0.1:8080
+	serving on 0.0.0.0:9090 view at http://127.0.0.1:9090
 
 Once complete, Galaxy can be killed by pressing `CTRL+C`.
 
-*Note: You may need to give port `8080` access through the firewall.  For CentOS this can be done by adding the line `-A INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT` to the file __/etc/sysconfig/iptables__ and then running `service iptables restart`.*
+*Note: You may need to give port `9090` access through the firewall.  For CentOS this can be done by adding the line `-A INPUT -m state --state NEW -m tcp -p tcp --dport 9090 -j ACCEPT` to the file __/etc/sysconfig/iptables__ and then running `service iptables restart`.*
 
 **Do not proceed if Galaxy does not start.**
 
@@ -222,7 +224,7 @@ Now please modify the file `$GALAXY_ROOT_DIR/config/job_conf.xml` and make any c
 
 ### Step 7: Test out Galaxy
 
-Once these steps are done, you should be able to connect to Galaxy by going to <http://galaxy-server-name:8080>.  If this works, please move on to the next step.  If this does not work, then please check the log file `$GALAXY_ROOT_DIR/main.log` for more details.
+Once these steps are done, you should be able to connect to Galaxy by going to <http://galaxy-server-name:9090>.  If this works, please move on to the next step.  If this does not work, then please check the log file `$GALAXY_ROOT_DIR/main.log` for more details.
 
 Configure Galaxy
 ----------------
