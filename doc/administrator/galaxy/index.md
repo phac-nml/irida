@@ -64,7 +64,7 @@ GALAXY_ADMIN_USER=admin@localhost.localdomain
 GALAXY_WORKFLOW_USER=workflow@localhost.localdomain
 
 # The mercurial commit number for the IRIDA Galaxy instance.  This should remain fixed as we have only tested against this commit number.
-GALAXY_VERSION=097bbb3b7d3246faaa5188a1fc2a79b01630025c
+GALAXY_VERSION=b065a7a422d72c5436ba62bfc6d831a9df82a79f
 ```
 
 Please customize these environment variables to your system and proceed through the rest of the instructions.  Please replace any instance of a variable (such as `$GALAXY_USER`) with the value for your system (such as `galaxy-irida`).  However, **do not** change the `$GALAXY_VERSION` variable; this revision is the version of Galaxy we have tested against.  To see more information about the particular version or other information on Galaxy releases please see [Galaxy News Page][] and [Bitbucket][].
@@ -83,6 +83,8 @@ The following dependencies are required for running or building some of the tool
 
 	yum install db4-devel expat-devel java
 
+**TODO mention updating mercurial**
+
 Galaxy Database Setup
 ---------------------
 
@@ -99,7 +101,7 @@ Please run the following commands to download and build Galaxy.
 
 ```bash
 cd $GALAXY_BASE_DIR
-hg clone https://bitbucket.org/galaxy/galaxy-dist/ $GALAXY_ROOT_DIR
+hg clone https://bitbucket.org/apetkau/galaxy-dist $GALAXY_ROOT_DIR
 cd $GALAXY_ROOT_DIR
 hg update $GALAXY_VERSION # switch to version of Galaxy used by IRIDA
 hg id # verify Galaxy version
@@ -110,6 +112,8 @@ mkdir $GALAXY_BASE_DIR/shed_tools # directory for installing tool shed tools
 mkdir $GALAXY_BASE_DIR/tool_dependencies # directory for installing dependency binaries for tools
 cp $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml.sample $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml
 ```
+
+*Note: We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version 15.03.1.  This was in order to fix an issue that was not fixed in the stable branch of Galaxy as of writing this document.*
 
 ### Step 2: Create Galaxy Environment File
 
@@ -151,14 +155,18 @@ Verify that Galaxy can start by running:
 
 	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log # Builds Galaxy
 
-This will attempt to build the Galaxy database and start up Galaxy on http://127.0.0.1:8080.  Note: `run.sh` builds and starts Galaxy, `tee` keeps a copy of the output, and `stdbuf` changes to no buffering to deal with pauses in output when running `tee`.  If `stdbuf` is not installed on your system you can just run `sh run.sh 2>&1 > run.sh.log` and `tail -f run.sh.log`.
+This will attempt to build the Galaxy database and start up Galaxy on <http://127.0.0.1:8080>.
+
+*Note: `run.sh` builds and starts Galaxy, `tee` keeps a copy of the output, and `stdbuf` changes to no buffering to deal with pauses in output when running `tee`.  If `stdbuf` is not installed on your system you can just run `sh run.sh 2>&1 > run.sh.log` and `tail -f run.sh.log`.*
 
 When complete you should see something similar to:
 
 	Starting server in PID 8967.
-	serving on http://127.0.0.1:8080
+	serving on 0.0.0.0:8080 view at http://127.0.0.1:8080
 
 Once complete, Galaxy can be killed by pressing `CTRL+C`.
+
+*Note: You may need to give port `8080` access through the firewall.  For CentOS this can be done by adding the line `-A INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT` to the file __/etc/sysconfig/iptables__ and then running `service iptables restart`.*
 
 **Do not proceed if Galaxy does not start.**
 
@@ -205,7 +213,7 @@ Now please modify the file `$GALAXY_ROOT_DIR/config/job_conf.xml` and make any c
 
 ### Step 7: Test out Galaxy
 
-Once these steps are done, you should be able to connect to Galaxy by going to http://galaxy-server-name:8080.  If this works, please move on to the next step.  If this does not work, then please check the log file `$GALAXY_ROOT_DIR/main.log` for more details.
+Once these steps are done, you should be able to connect to Galaxy by going to <http://galaxy-server-name:8080>.  If this works, please move on to the next step.  If this does not work, then please check the log file `$GALAXY_ROOT_DIR/main.log` for more details.
 
 Configure Galaxy
 ----------------
