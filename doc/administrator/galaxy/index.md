@@ -79,8 +79,6 @@ The installation and setup of Galaxy requires a number of dependency software to
 
 	yum install mercurial nginx pwgen python
 
-*Note: Dependening on the version of CentOS you use, you may encounter errors when attempting to clone the Galaxy bitbucket.org repository with Mercurial `hg clone`.  If this occurs, you will have to manually install [Mercurial][], or manually download the specific revision of Galaxy used.* 
-
 The following dependencies are required for running or building some of the tools.
 
 	yum install db4-devel expat-devel java
@@ -114,6 +112,17 @@ cp $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml.sample $GALAXY_ROOT_DIR/config/to
 ```
 
 *Note: We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version 15.03.1.  This was in order to fix an issue that was not fixed in the stable branch of Galaxy as of writing this document.  The specific issue was reported at <https://trello.com/c/I0n23JEP/2484-database-deadlock-for-large-workflows> with the fix in the main Galaxy code at <https://github.com/galaxyproject/galaxy/pull/52>.*
+
+*Note: Dependening on the version of CentOS you use, you may encounter errors when attempting to clone the Galaxy bitbucket.org repository with Mercurial `hg clone`.  For Mercurial 1.4, this looks like the following:*
+
+```
+hg clone https://bitbucket.org/apetkau/galaxy-dist
+destination directory: galaxy-dist
+requesting all changes
+abort: HTTP Error 400: Bad Request
+```
+
+*If this occurs, you will have to manually install a newer version of [Mercurial][], or manually download the specific revision of Galaxy used.* 
 
 ### Step 2: Create Galaxy Environment File
 
