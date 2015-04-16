@@ -47,11 +47,11 @@
 				<phylocanvas th:if="${isCompleted} and ${preview}"
 				             shape="circular" config="{}" data:newick="${newick}">
 					<phylocanvas-controls>
-						<phylocanvas-control shape="rectangular" text="Rectangular"></phylocanvas-control>
-						<phylocanvas-control shape="circular" text="Circular"></phylocanvas-control>
-						<phylocanvas-control shape="radial" text="Radial"></phylocanvas-control>
-						<phylocanvas-control shape="diagonal" text="Diagonal"></phylocanvas-control>
-						<phylocanvas-control shape="hierarchy" text="Hierarchical"></phylocanvas-control>
+						<phylocanvas-control shape="rectangular" data:text="#{phylocanvas.shape.rectangular}"></phylocanvas-control>
+						<phylocanvas-control shape="circular" data:text="#{phylocanvas.shape.circular}"></phylocanvas-control>
+						<phylocanvas-control shape="radial" data:text="#{phylocanvas.shape.radial}"></phylocanvas-control>
+						<phylocanvas-control shape="diagonal" data:text="#{phylocanvas.shape.diagonal}"></phylocanvas-control>
+						<phylocanvas-control shape="hierarchy" data:text="#{phylocanvas.shape.hierarchy}"></phylocanvas-control>
 					</phylocanvas-controls>
 					<div id="phylocanvas"></div>
 				</phylocanvas>
