@@ -45,7 +45,7 @@
 			<name>spades</name>
 			<owner>lionelguy</owner>
 			<url>http://toolshed.g2.bx.psu.edu/</url>
-			<revision>89004d4f8dd3</revision>
+			<revision>21734680d921</revision>
 		</repository>
 		<repository>
 			<name>prokka</name>
