@@ -13,5 +13,4 @@ The user guide for IRIDA describes the major concepts of IRIDA, and demonstrates
 * [Dashboard overview](dashboard/)
 * [Managing projects](project/)
 * [Managing samples](samples/)
-* Launching pipelines
-* Viewing pipeline results
+* [Launching pipelines](pipelines/)
