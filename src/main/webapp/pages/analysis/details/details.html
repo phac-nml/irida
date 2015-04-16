@@ -6,6 +6,8 @@
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
 	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
 	      th:href="@{/resources/css/pages/sample_files.css}"/>
+	<link rel="stylesheet" href="/resources/bower_components/PhyloCanvas/src/styles/PhyloCanvas.css"
+	      th:href="@{/resources/bower_components/PhyloCanvas/src/styles/PhyloCanvas.css}"/>
 	<style>
 		.tool i {
 			font-size: .75em;
@@ -28,14 +30,23 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
-			<tabset>
-				<th:block th:if="${isCompleted} and ${preview}">
-					<tab th:replace="analysis/details/_tabs :: #preview"></tab>
-				</th:block>
-				<tab th:replace="analysis/details/_tabs :: #inputFilesTab"></tab>
-				<th:block th:if="${isCompleted}"><tab th:replace="analysis/details/_tabs :: #provenanceTab"></tab></th:block>
 
-			</tabset>
+			<phylocanvas shape="circular">
+				<phylocanvas-controls>
+					<phylocanvas-control shape="rectangular" text="Rectangular"></phylocanvas-control>
+					<phylocanvas-control shape="circular" text="Circular"></phylocanvas-control>
+				</phylocanvas-controls>
+				<!--<div phylocanvas-body="" id="myTest" data:newick="${newick}"></div>-->
+			</phylocanvas>
+
+			<!--<tabset>-->
+				<!--<th:block th:if="${isCompleted} and ${preview}">-->
+					<!--<tab th:replace="analysis/details/_tabs :: #preview"></tab>-->
+				<!--</th:block>-->
+				<!--<tab th:replace="analysis/details/_tabs :: #inputFilesTab"></tab>-->
+				<!--<th:block th:if="${isCompleted}"><tab th:replace="analysis/details/_tabs :: #provenanceTab"></tab></th:block>-->
+
+			<!--</tabset>-->
 		</div>
 	</div>
 </main>
