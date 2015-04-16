@@ -7,7 +7,7 @@
       transition: all 0.5s ease;
     }
   </style>
-  <script>window.dependencies = ['irida.analysis'];</script>
+    <script>window.dependencies = ['irida.analysis'];</script>
 </head>
 <body>
 
@@ -79,6 +79,14 @@
   <th:block layout:fragment="page-scripts">
     <th:block layout:fragment="previewScripts"></th:block>
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+    <script src="/resources/bower_components/angular-ui-router/release/angular-ui-router.min.js"
+            th:src="@{/resources/bower_components/angular-ui-router/release/angular-ui-router.min.js}"></script>
+    <!--<script src="/resources/bower_components/PhyloCanvas/src/scripts/PhyloCanvas.js"-->
+    <!--th:src="@{/resources/bower_components/PhyloCanvas/src/scripts/PhyloCanvas.js}"></script>-->
+    <!-- BOWER install of phylocanvas has a bug in the history it is an older version than the one on rawgit -->
+    <script src="https://cdn.rawgit.com/imperialcollegelondon/PhyloCanvas/master/src/scripts/PhyloCanvas.js"></script>
+    <script src="/resources/js/modules/phylocanvas/PhyloCanvasDirective.js"
+            th:src="@{/resources/js/modules/phylocanvas/PhyloCanvasDirective.js}"></script>
     <script src="/resources/js/app/analysis/analysis-min.js" th:src="@{/resources/js/app/analysis/analysis.js}"></script>
     <th:block layout:fragment="pageScripts"></th:block>
 

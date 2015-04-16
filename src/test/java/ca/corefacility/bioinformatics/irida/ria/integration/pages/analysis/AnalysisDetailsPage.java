@@ -16,13 +16,13 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id = "analysis-download-btn")
 	private WebElement analysisDownloadBtn;
 
-	@FindBy(id = "tab-preview")
+	@FindBy(id = "preview")
 	private WebElement tabPreview;
 
-	@FindBy(id = "tab-provenance")
+	@FindBy(id = "provenance")
 	private WebElement tabProvenance;
 
-	@FindBy(id = "tab-input-files")
+	@FindBy(id = "inputs")
 	private WebElement tabInputFiles;
 
 	@FindBy(className = "file-info")

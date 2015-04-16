@@ -1,6 +1,6 @@
 /* global ANALYSIS_PAGE */
 
-(function (angular, PhyloCanvas) {
+(function (angular) {
 
   /**
    * Controller to download the analysis.
@@ -113,93 +113,71 @@
   }
 
 
-  angular.module('irida.analysis', [])
-    .service('AnalysisService', ['$http', '$interval', AnalysisService])
-    .directive('phylocanvas', function phylocanvas() {
+  angular.module('irida.analysis', ['ui.router', 'phylocanvas'])
+    .config(['$stateProvider', function ($stateProvider) {
+
+      $stateProvider
+        .state("preview", {
+          url        : "/preview",
+          templateUrl: "preview.html"
+        })
+        .state("inputs", {
+          url        : "/inputs",
+          templateUrl: "inputs.html"
+        })
+        .state("provenance", {
+          url        : "/provenance",
+          templateUrl: "provenance.html"
+        })
+      ;
+    }])
+    .directive('subNav', function () {
       return {
         restrict  : 'E',
-        transclude: true,
-        replace   : true,
-        template  : '<div><div ng-transclude></div>{{shape}}</div>',
-        scope     : {
-          shape: "@"
-        },
-        controller: ['$scope', function($scope) {
-          $scope.shape = shape;          
-        }]
-      };
-    })
-    .directive('phylocanvasControls', function () {
-      return {
-        require   : '^phylocanvas',
         replace   : true,
         transclude: true,
-        template  : '<div><div class="btn-group" role="group"><button ng-repeat="control in controls" ng-click="select(control)" class="btn btn-default btn-sm" ng-class="{active: control.selected}">{{control.text}}</button></div><div ng-transclude></div></div>',
-        restrict  : "E",
-        controller: ['$scope', function ($scope) {
-          $scope.controls = [];
-          $scope.shape = 'circular';
-          
-          $scope.select = function(control) {
-            angular.forEach($scope.controls, function (eachControl) {
-              eachControl.selected = angular.equals(control, eachControl);
+        priority  : -1,
+        template  : '<div style="padding-bottom: 10px;"><ul class="nav nav-pills"><li ng-click="select(link)" ng-class="{active: link.selected}" ng-repeat="link in links"><a id="{{link.state}}" ui-sref="{{link.state}}">{{link.text}}</a></li></ul><div ng-transclude></div></div>',
+        controller: ['$scope', '$location', function ($scope, $location) {
+          $scope.links = [];
+
+          $scope.select = function (link) {
+            angular.forEach($scope.links, function (eachLink) {
+              eachLink.selected = angular.equals(link, eachLink);
             });
-            
           };
-          
-          this.addControl = function (control) {
-            if($scope.controls.length === 0) {
-              control.selected = true;
+
+          var path = $location.path();
+          this.addLink = function (link) {
+            if (path === "" && $scope.links.length === 0) {
+              link.selected = true;
+              $location.path("/" + link.state);
             }
-            $scope.controls.push(control);
+            else if (path.indexOf(link.state) > -1) {
+              link.selected = true;
+            }
+            $scope.links.push(link);
           };
         }]
       };
     })
-    .directive('phylocanvasControl', function () {
+    .directive('subNavItem', function () {
       return {
-        require : '^phylocanvasControls',
+        require : '^subNav',
         restrict: 'E',
-        replace: true,
+        replace : true,
         template: '',
         scope   : {
-          shape: "@",
+          state: "@",
           text : "@"
         },
-        link    : function (scope, element, attrs, phylocanvasControlsCtrl) {
-          phylocanvasControlsCtrl.addControl(scope);
+        link    : function (scope, element, attrs, SubNavCtrl) {
+          SubNavCtrl.addLink(scope);
         }
       };
     })
-    .directive('phylocanvasBody', function () {
-      return {
-        require: "^phylocanvas",
-        scope  : {
-          newick: "@",
-          id    : '@'
-        },
-        link   : function (scope, elem) {
-          angular
-            .element(elem)
-            .css({
-              'height': '500px',
-              'width' : '100%'
-            });
-          var phylo = new PhyloCanvas.Tree(scope.id, {});
-          phylo.load(scope.newick);
-
-          scope.$watch(function () {
-            return scope.$parent.shape;
-          }, function (n, o) {
-            console.log(n, o);
-            if (o !== n) {
-              phylo.setTreeType(n);
-            }
-          });
-        }
-      };
-    })
+    .service('AnalysisService', ['$http', '$interval', AnalysisService])
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
   ;
-})(window.angular, window.PhyloCanvas);
+})(window.angular);
