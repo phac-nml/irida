@@ -445,7 +445,7 @@ public class DatabaseSetupGalaxyITService {
 	 * @throws Exception
 	 */
 	public void waitUntilSubmissionComplete(AnalysisSubmission analysisSubmission) throws Exception {
-		final int totalSecondsWait = 1 * 60; // 1 minute
+		final int totalSecondsWait = 2 * 60; // 2 minutes
 		final int pollingTime = 2000; // 2 seconds
 
 		Future<Void> waitForHistory = executor.submit(new Callable<Void>() {

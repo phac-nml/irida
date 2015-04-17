@@ -64,7 +64,7 @@ GALAXY_ADMIN_USER=admin@localhost.localdomain
 GALAXY_WORKFLOW_USER=workflow@localhost.localdomain
 
 # The mercurial commit number for the IRIDA Galaxy instance.  This should remain fixed as we have only tested against this commit number.
-GALAXY_VERSION=097bbb3b7d3246faaa5188a1fc2a79b01630025c
+GALAXY_VERSION=b065a7a422d72c5436ba62bfc6d831a9df82a79f
 ```
 
 Please customize these environment variables to your system and proceed through the rest of the instructions.  Please replace any instance of a variable (such as `$GALAXY_USER`) with the value for your system (such as `galaxy-irida`).  However, **do not** change the `$GALAXY_VERSION` variable; this revision is the version of Galaxy we have tested against.  To see more information about the particular version or other information on Galaxy releases please see [Galaxy News Page][] and [Bitbucket][].
@@ -99,7 +99,7 @@ Please run the following commands to download and build Galaxy.
 
 ```bash
 cd $GALAXY_BASE_DIR
-hg clone https://bitbucket.org/galaxy/galaxy-dist/ $GALAXY_ROOT_DIR
+hg clone https://bitbucket.org/apetkau/galaxy-dist $GALAXY_ROOT_DIR
 cd $GALAXY_ROOT_DIR
 hg update $GALAXY_VERSION # switch to version of Galaxy used by IRIDA
 hg id # verify Galaxy version
@@ -110,6 +110,19 @@ mkdir $GALAXY_BASE_DIR/shed_tools # directory for installing tool shed tools
 mkdir $GALAXY_BASE_DIR/tool_dependencies # directory for installing dependency binaries for tools
 cp $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml.sample $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml
 ```
+
+*Note: We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version 15.03.1.  This was in order to fix an issue that was not fixed in the stable branch of Galaxy as of writing this document.  The specific issue was reported at <https://trello.com/c/I0n23JEP/2484-database-deadlock-for-large-workflows> with the fix in the main Galaxy code at <https://github.com/galaxyproject/galaxy/pull/52>.*
+
+*Note: Dependening on the version of CentOS you use, you may encounter errors when attempting to clone the Galaxy bitbucket.org repository with Mercurial `hg clone`.  For Mercurial 1.4, this looks like the following:*
+
+```
+hg clone https://bitbucket.org/apetkau/galaxy-dist
+destination directory: galaxy-dist
+requesting all changes
+abort: HTTP Error 400: Bad Request
+```
+
+*If this occurs, you will have to manually install a newer version of [Mercurial][], or manually download the specific revision of Galaxy used.* 
 
 ### Step 2: Create Galaxy Environment File
 
@@ -125,24 +138,26 @@ The main Galaxy configuration file is located in `$GALAXY_ROOT_DIR/config/galaxy
 
 1. Modify the address that Galaxy should listen on for incoming connections to allow for connections external to the Galaxy server.
    * Change `#host = 127.0.0.1` to `host = 0.0.0.0`. (`0.0.0.0` listens on all interfaces and addresses)
-2. Modify the Galaxy database connection string to connect to your specific database.
+2. Modify the port that Galaxy listens on so there are no conflicts with Tomcat.
+    * Change `#port = 8080` to `port = 9090`.
+3. Modify the Galaxy database connection string to connect to your specific database.
    * `database_connection = postgresql://galaxy:password@localhost/galaxy` (use a MySQL connection string if using MySQL or MariaDB)
-3. The below is necessary to allow direct linking of files in Galaxy to the IRIDA file locations.
+4. The below is necessary to allow direct linking of files in Galaxy to the IRIDA file locations.
    * Change `#allow_library_path_paste = False` to `allow_library_path_paste = True`.
-4. Give the `$GALAXY_ADMIN_USER` and `$GALAXY_WORKFLOW_USER` users in Galaxy admin privileges (necessary for running workflows on linked files within Galaxy).
+5. Give the `$GALAXY_ADMIN_USER` and `$GALAXY_WORKFLOW_USER` users in Galaxy admin privileges (necessary for running workflows on linked files within Galaxy).
    * Change `#admin_users = None` to `admin_users = $GALAXY_ADMIN_USER,$GALAXY_WORKFLOW_USER`.
-5. Disable developer settings (from [Galaxy Disable Developer Settings][]).
+6. Disable developer settings (from [Galaxy Disable Developer Settings][]).
    * Change `debug = True` to `debug = False`.
    * Change `use_interactive = True` to `use_interactive = False`.
    * Make sure `filter-with = gzip` is disabled.
-6. Set directory for installing tools in Galaxy.
+7. Set directory for installing tools in Galaxy.
    * Change `#tool_dependency_dir = None` to `tool_dependency_dir = $GALAXY_BASE_DIR/tool_dependencies`
    * Uncomment `#tool_sheds_config_file = config/tool_sheds_conf.xml`.
-7. Set the Galaxy id_secret for encoding database ids.
+8. Set the Galaxy id_secret for encoding database ids.
    * Change `#id_secret = USING THE DEFAULT IS NOT SECURE!` to `id_secret = some secure password`
       * The command `pwgen --secure -N 1 56` may be useful for picking a hard-to-guess key.
       * ***Note: Once this key is set, please do not change it.  This key is used to translate database ids in Galaxy to API ids used by IRIDA to access datasets, histories, and workflows.  IRIDA does store some of these API ids internally for debugging and tracking purposes and changing this value will render any of the API ids stored in IRIDA useless.***
-8. Setup the Galaxy environment file `$GALAXY_ENV`.  This file is read by Galaxy to setup the environment for each tool.
+9. Setup the Galaxy environment file `$GALAXY_ENV`.  This file is read by Galaxy to setup the environment for each tool.
    * Change `#environment_setup_file = None` to `environment_setup_file = $GALAXY_ENV`
 
 ### Step 4: Start up Galaxy
@@ -151,14 +166,18 @@ Verify that Galaxy can start by running:
 
 	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log # Builds Galaxy
 
-This will attempt to build the Galaxy database and start up Galaxy on http://127.0.0.1:8080.  Note: `run.sh` builds and starts Galaxy, `tee` keeps a copy of the output, and `stdbuf` changes to no buffering to deal with pauses in output when running `tee`.  If `stdbuf` is not installed on your system you can just run `sh run.sh 2>&1 > run.sh.log` and `tail -f run.sh.log`.
+This will attempt to build the Galaxy database and start up Galaxy on <http://127.0.0.1:9090>.
+
+*Note: `run.sh` builds and starts Galaxy, `tee` keeps a copy of the output, and `stdbuf` changes to no buffering to deal with pauses in output when running `tee`.  If `stdbuf` is not installed on your system you can just run `sh run.sh 2>&1 > run.sh.log` and `tail -f run.sh.log`.*
 
 When complete you should see something similar to:
 
 	Starting server in PID 8967.
-	serving on http://127.0.0.1:8080
+	serving on 0.0.0.0:9090 view at http://127.0.0.1:9090
 
 Once complete, Galaxy can be killed by pressing `CTRL+C`.
+
+*Note: You may need to give port `9090` access through the firewall.  For CentOS this can be done by adding the line `-A INPUT -m state --state NEW -m tcp -p tcp --dport 9090 -j ACCEPT` to the file __/etc/sysconfig/iptables__ and then running `service iptables restart`.*
 
 **Do not proceed if Galaxy does not start.**
 
@@ -205,7 +224,7 @@ Now please modify the file `$GALAXY_ROOT_DIR/config/job_conf.xml` and make any c
 
 ### Step 7: Test out Galaxy
 
-Once these steps are done, you should be able to connect to Galaxy by going to http://galaxy-server-name:8080.  If this works, please move on to the next step.  If this does not work, then please check the log file `$GALAXY_ROOT_DIR/main.log` for more details.
+Once these steps are done, you should be able to connect to Galaxy by going to <http://galaxy-server-name:9090>.  If this works, please move on to the next step.  If this does not work, then please check the log file `$GALAXY_ROOT_DIR/main.log` for more details.
 
 Configure Galaxy
 ----------------
@@ -262,7 +281,7 @@ In order to link up Galaxy with IRIDA please proceed through the following steps
 
 ### Step 1: Install and configure the IRIDA web interface
 
-Follow the instructions to [install and configure the IRIDA web interface](../web).
+Follow the instructions to [install and configure the IRIDA web interface](../web).  In particular, you will need to modify the parameters **galaxy.execution.url**, **galaxy.execution.email**, and **galaxy.execution.dataStorage** in the file `/etc/irida/irida.conf`.
 
 ### Step 2: Test and monitor workflows
 
@@ -285,7 +304,7 @@ Once the parameter `irida.analysis.cleanup.days` is set, IRIDA will periodically
 
 ### Step 1: Create a Galaxy Cleanup script
 
-The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `$GALAXY_ROOT_DIR/galaxy_cleanup.sh` and make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and modify `$DAYS_TO_KEEP` which defines the number of days since last access a deleted file in Galaxy will continue to exist before being removed from the file system.
+The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `$GALAXY_ROOT_DIR/galaxy_cleanup.sh`, make executable with `chmod u+x $GALAXY_ROOT_DIR/galaxy_cleanup.sh`, and then make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and modify `$DAYS_TO_KEEP` which defines the number of days since last access a deleted file in Galaxy will continue to exist before being removed from the file system.
 
 ```bash
 #!/bin/sh
@@ -316,10 +335,10 @@ echo -e "\nEnd cleanup at `date`" >> $CLEANUP_LOG
 Once this script is installed, it can be scheduled to run periodically by adding a cron job for the Galaxy user.  To do this, please run `crontab -e` and past the following line (replacing `$GALAXY_ROOT_DIR` with the proper directory):
 
 ```
-0 4 * * * $GALAXY_ROOT_DIR/galaxy_cleanup.sh
+0 2 * * * $GALAXY_ROOT_DIR/galaxy_cleanup.sh
 ```
 
-This will clean up any **deleted** files every day at 4:00 am.  Log files will be stored in `$GALAXY_ROOT_DIR/galaxy_cleanup.log`.
+This will clean up any **deleted** files every day at 2:00 am.  Log files will be stored in `$GALAXY_ROOT_DIR/galaxy_cleanup.log`.
 
 For more information please see the [Purging Histories and Datasets][] document.  ***Note: the metadata about each analysis will still be stored and available in Galaxy, but the data file contents will be permanently removed.***
 
@@ -351,3 +370,4 @@ For more information please see the [Purging Histories and Datasets][] document.
 [galaxy-installed-repositories.jpg]: images/galaxy-installed-repositories.jpg
 [history-options-icon]: images/history-options-icon.jpg
 [Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
+[Mercurial]: http://mercurial.selenic.com/

@@ -17,7 +17,7 @@
         hiddenIFrame.style.display = 'none';
         document.body.appendChild(hiddenIFrame);
       }
-      hiddenIFrame.src = PAGE.URL.download + id;
+      hiddenIFrame.src = PAGE.URLS.download + id;
     };
   }
 

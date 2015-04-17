@@ -14,7 +14,7 @@
 	</td>
 	<td>
 		<a href="#"
-		   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.id + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
+		   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.getId() + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.getId()})}"
 		   class="btn btn-default btn-sm file-name"
 		   th:text="${file.getLabel()}"></a>
 	</td>
