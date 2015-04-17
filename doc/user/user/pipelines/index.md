@@ -158,7 +158,7 @@ The analysis details page shows you more detailed information about your pipelin
 
 ### Viewing the sequencing data submitted for analysis
 
-To view the data that was submitted to the pipeline for analysis, start from the [analysis details page](#viewing-pipeline-outputs) and click on the "Input Files" tab:
+To view the data that was submitted to the pipeline for analysis, start from the [analysis details page](#viewing-pipeline-results) and click on the "Input Files" tab:
 
 ![Input files tab.](images/input-files-tab.png)
 
@@ -170,7 +170,7 @@ You can view more details about each of the files that were submitted in the pip
 
 ### Viewing pipeline parameters used at runtime
 
-To view the parameters that were used to when submitting the pipeline, start from the [analysis details page](#viewing-pipeline-outputs) and click on the "Provenance" tab:
+To view the parameters that were used when submitting the pipeline, start from the [analysis details page](#viewing-pipeline-results) and click on the "Provenance" tab:
 
 ![Input parameters tab.](images/provenance-tab.png)
 
