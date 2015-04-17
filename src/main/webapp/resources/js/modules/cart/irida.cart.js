@@ -238,7 +238,7 @@
 
     vm.makeOauth2AuthRequest = function (clientID) {
       var request = buildOauth2Request(clientID, "code", "read", vm.redirectURI);
-      vm.iframeSrc = "/api/oauth/authorize" + request;
+      vm.iframeSrc = TL.BASE_URL + "api/oauth/authorize" + request;
     }
 
     function buildOauth2Request(clientID, responseType, scope, redirectURI) {
