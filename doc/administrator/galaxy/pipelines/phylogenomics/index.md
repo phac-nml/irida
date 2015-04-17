@@ -12,7 +12,7 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 | **msa_datatypes**    | 70227007b991  | 0 (2014-04-22)                | [Galaxy Main Shed][] |
 | **bcftools_view**    | 6572c40a8505  | 8 (2012-10-08)                | [Galaxy Main Shed][] |
 | **samtools_mpileup** | 973fea5b4bdf  | 3 (2014-03-27)                | [Galaxy Main Shed][] |
-| **sam_to_bam**       | 8176b2575aa1  | 4 (2014-03-27)                | [Galaxy Main Shed][] |
+| **sam_to_bam**       | c73bf16b45df  | 5 (2015-03-05)                | [Galaxy Main Shed][] |
 | **core_pipeline**    | 0737c0310cab  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
 | **freebayes**        | 386bc6e45b68  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
 | **phyml**            | b5867c5c7674  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
