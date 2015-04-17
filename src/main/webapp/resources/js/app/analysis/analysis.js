@@ -119,7 +119,6 @@
   angular.module('irida.analysis', ['ui.router', 'subnav', 'phylocanvas'])
     .config(['$stateProvider', function ($stateProvider) {
       var isLinux = navigator.platform.indexOf("Linux") !== -1;
-      console.log(navigator.platform);
       
       $stateProvider
         .state("preview", {
