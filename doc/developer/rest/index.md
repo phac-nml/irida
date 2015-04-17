@@ -36,6 +36,7 @@ As a REST API, clients must specify their preferred output format using the `Acc
         <tr><td>XML</td><td>application/xml</td></tr>
         <tr><td>FASTA</td><td>application/fasta</td></tr>
         <tr><td>FASTQ</td><td>application/fastq</td></tr>
+        <tr><td>Newick</td><td>application/newick</td></tr>
     </tbody>
 </table>
 
@@ -198,6 +199,60 @@ This resource contains information about a sample. A sample corresponds to a sin
 
 * **sampleName**: The name of the sample.
 
+Analysis Submissions
+--------------------
+
+### Description
+{:.no_toc}
+
+This resource contains information about the submission and results of an analysis run within IRIDA.  It will contain metadata about the analysis status, the workflow run, and links to the completed analysis if available.
+
+### Methods
+{:.no_toc}
+
+`GET`.
+
+### Navigation
+{:.no_toc}
+
+The `rel`s below will guide navigation to the described resources.
+
+* `analysisSubmissions` - View the list of all available analysis submissions.
+* `analysisSubmissions/phylogenomics` - View the phylogenomics pipeline analysis submissions.
+* `analysisSubmissions/assembly` - View the assembly and annotation analysis submissions.
+* `analysis` - View metadata about the analysis results if they are available.
+
+Analysis
+--------
+
+### Description
+{:.no_toc}
+
+This resource contains information about analysis results and their associated output files.
+
+### Methods
+{:.no_toc}
+
+`GET`.
+
+### Media Types
+{:.no_toc}
+
+`application/json`, `application/newick`, `text/csv`.
+
+### Navigation
+
+* `outputFile/{type}` - View metadata about the requested analysis output file.
+
+### Output Files
+{:.no_toc}
+
+Analysis output files can be requested with alternative accept types.
+
+* `application/newick` - Newick formatted tree file.
+* `text/csv` - Comma separated value file.
+
+
 Bookmarks
 =========
 
@@ -238,3 +293,21 @@ https://api.irida.ca/projects
 {:.no_toc}
 
 As a collection of resources, this resource contains links to other pages (i.e., `first`, `previous`, `next`, `last`, and `self`) and a link to **all** resources of this type (`collection/all`).
+
+Analysis Submission collection
+------------------------------
+
+### URI
+{:.no_toc}
+
+https://api.irida.ca/analysisSubmissions
+
+### Description
+{:.no_toc}
+
+`GET` this URI to get the list of all available analysis submissions for the authenticated user.
+
+### Links
+{:.no_toc}
+
+This resource contains links to analysis submissions of specific types.  `analysisSubmissions/phylogenomics` will return all submissions for phylogenomics pipelines, `analysisSubmissions/assembly` will return assembly and annotation analysis submissions.
