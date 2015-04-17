@@ -186,7 +186,7 @@
 							</a>
 						</li>
 						<li ng-show="uiGalaxyCtrl.inGalaxy">
-							<a href="#" ng-click="subnav.export.galaxy()">
+							<a href="#" ng-click="subnav.export.galaxy(); cart.show=false">
 								<span class="fa fa-fw fa-cloud"></span>
 								&nbsp;
 								<span th:text="#{project.samples.export.galaxy}"></span>
