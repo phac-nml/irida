@@ -11,6 +11,8 @@ IRIDA currently provides two different pipelines for analysing your sequencing d
 1. The SNVPhyl whole-genome phylogeny pipeline ([poster](https://share.corefacility.ca/public.php?service=files&t=b1fef5379e23b663d308db9ebb5b6bb5&download)), and 
 2. An assembly ([SPAdes](http://bioinf.spbau.ru/spades)) and annotation ([Prokka](http://www.vicbioinformatics.com/software.prokka.shtml)) pipeline.
 
+These pipelines take as input a set of sequencing read files from different samples. The samples must first be added to a cart before a pipeline can be run.
+
 * this comment becomes the toc
 {:toc}
 
