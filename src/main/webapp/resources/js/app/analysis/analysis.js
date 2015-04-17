@@ -18,7 +18,7 @@
         hiddenIFrame.style.display = 'none';
         document.body.appendChild(hiddenIFrame);
       }
-      hiddenIFrame.src = ANALYSIS_PAGE.URL.download + id;
+      hiddenIFrame.src = ANALYSIS_PAGE.URLS.download + id;
     };
   }
 
