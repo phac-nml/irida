@@ -99,7 +99,7 @@
 					</accordion>
 					<div th:fragment="toolsLayout (tools)">
 						<div th:each="tool : ${tools}" style="margin-left: 2rem;"
-						     th:with="toolId=${'tool' + analysisSubmission.getId() + #dates.createNow().getTime()}"
+						     th:with="toolId=${'tool' + tool.getId()}"
 						     data:ng-init="${toolId + '=false'}">
 							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
 								<i data:ng-hide="${toolId}" class="fa fa-fw fa-chevron-right"></i> <i
