@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -661,6 +662,26 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, inputFilesSingle,
 				inputFilesPaired, createdDate, modifiedDate, analysisState, analysisCleanedState, analysis,
 				referenceFile, namedParameters, submitter);
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof AnalysisSubmission) {
+			AnalysisSubmission p = (AnalysisSubmission) other;
+			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, p.modifiedDate)
+					&& Objects.equals(name, p.name) && Objects.equals(workflowId, p.workflowId)
+					&& Objects.equals(remoteAnalysisId, p.remoteAnalysisId)
+					&& Objects.equals(remoteInputDataId, p.remoteInputDataId)
+					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId)
+					&& Objects.equals(inputFilesSingle, p.inputFilesSingle)
+					&& Objects.equals(inputFilesPaired, p.inputFilesPaired)
+					&& Objects.equals(analysisState, p.analysisState)
+					&& Objects.equals(analysisCleanedState, p.analysisCleanedState)
+					&& Objects.equals(referenceFile, p.referenceFile)
+					&& Objects.equals(namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter);
+		}
+
+		return false;
 	}
 
 	@Override
