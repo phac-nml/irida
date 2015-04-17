@@ -124,6 +124,12 @@
         filtered = [];
     svc.samples = [];
     
+    svc.requested = {
+      local: false,
+      assocaited: false,
+      remote: false
+    };
+    
     //disconnected remote apis
     svc.notConnected = [];
 
@@ -242,6 +248,10 @@
       return svc.samples;
     }
     
+    svc.getRequestedTypes = function(){
+	return svc.requested;
+    }
+    
     svc.getSampleWarnings = function(){
       return svc.notConnected;
     }
@@ -254,6 +264,8 @@
     svc.loadSamples = function (getLocal, getAssociated, getRemote) {
       var samplePromises = [];
       svc.samples = [];
+      
+      svc.requested = {local: getLocal, associated: getAssociated, remote: getRemote};
       
       svc.notConnected = [];
 
@@ -494,6 +506,12 @@
     vm.filter = FilterFactory;
 
     vm.samples = [];
+    
+    vm.requested = {
+      local: false,
+      assocaited: false,
+      remote: false
+    };
 
     vm.updateSample = function (s) {
       SamplesService.updateSample(s);
@@ -501,6 +519,7 @@
 
     $rootScope.$on("SAMPLES_READY", function () {
       vm.samples = SamplesService.getSamples();
+      vm.requested = SamplesService.getRequestedTypes();
     });
 
   }
