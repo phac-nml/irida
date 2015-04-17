@@ -174,7 +174,7 @@ A sequencing run has the following properties:
 
 Sequencing runs cannot be created by a user. Instead, a sequencing run is created by the uploader tool prior to uploading any data from a sequencing run.
 
-### Analysis
+### Analyses
 
 An analysis contains the results of running a pipeline on a collection of samples in IRIDA. An analysis cannot be created manually by a user. Instead, an analysis is created automatically by IRIDA on pipeline submission and completion.
 
