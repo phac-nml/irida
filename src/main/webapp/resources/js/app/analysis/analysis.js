@@ -1,7 +1,6 @@
 /* global ANALYSIS_PAGE */
 
 (function (angular) {
-
   /**
    * Controller to download the analysis.
    * @constructor
@@ -18,7 +17,7 @@
         hiddenIFrame.style.display = 'none';
         document.body.appendChild(hiddenIFrame);
       }
-      hiddenIFrame.src = ANALYSIS_PAGE.URL.download + id;
+      hiddenIFrame.src = PAGE.URL.download + id;
     };
   }
 
@@ -34,12 +33,12 @@
 
     /**
      * Call the server to get the status for the current analysis.
-     * 'ANALYSIS_PAGE.URLS.status' is on the `_base.html` page for the analysis.
+     * 'PAGE.URLS.status' is on the `_base.html` page for the analysis.
      * @returns {*}
      * @private
      */
     function _getState() {
-      return $http.get(ANALYSIS_PAGE.URLS.status).then(function (data) {
+      return $http.get(PAGE.URLS.status).then(function (data) {
         return data.data;
       });
     }
@@ -112,14 +111,20 @@
     initialize();
   }
 
+  function PreviewController() {
+    var vm = this;
+    vm.newick = PAGE.NEWICK;
+  }
 
   angular.module('irida.analysis', ['ui.router', 'subnav', 'phylocanvas'])
     .config(['$stateProvider', function ($stateProvider) {
-
+      var isLinux = navigator.platform.indexOf("Linux") !== -1;
+      console.log(navigator.platform);
+      
       $stateProvider
         .state("preview", {
           url        : "/preview",
-          templateUrl: "preview.html"
+          templateUrl: isLinux ? "preview-linux.html" : "preview.html"
         })
         .state("inputs", {
           url        : "/inputs",
@@ -134,5 +139,6 @@
     .service('AnalysisService', ['$http', '$interval', AnalysisService])
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
+    .controller('PreviewController', [PreviewController])
   ;
 })(window.angular);

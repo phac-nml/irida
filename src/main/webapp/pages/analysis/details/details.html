@@ -44,18 +44,31 @@
 			<div ui-view=""></div>
 
 			<script type="text/ng-template" id="preview.html">
-				<phylocanvas th:if="${isCompleted} and ${preview}"
-				             shape="circular" config="{}" data:newick="${newick}">
-					<phylocanvas-controls>
-						<phylocanvas-control shape="rectangular" data:text="#{phylocanvas.shape.rectangular}"></phylocanvas-control>
-						<phylocanvas-control shape="circular" data:text="#{phylocanvas.shape.circular}"></phylocanvas-control>
-						<phylocanvas-control shape="radial" data:text="#{phylocanvas.shape.radial}"></phylocanvas-control>
-						<phylocanvas-control shape="diagonal" data:text="#{phylocanvas.shape.diagonal}"></phylocanvas-control>
-						<phylocanvas-control shape="hierarchy" data:text="#{phylocanvas.shape.hierarchy}"></phylocanvas-control>
-					</phylocanvas-controls>
-					<div id="phylocanvas"></div>
-				</phylocanvas>
+				<div th:if="${isCompleted} and ${preview}" ng-controller="PreviewController as previewController">
+					<phylocanvas
+						shape="circular" config="{}" newick="{{previewController.newick}}">
+						<phylocanvas-controls>
+							<phylocanvas-control shape="rectangular"
+							                     data:text="#{phylocanvas.shape.rectangular}"></phylocanvas-control>
+							<phylocanvas-control shape="circular"
+							                     data:text="#{phylocanvas.shape.circular}"></phylocanvas-control>
+							<phylocanvas-control shape="radial"
+							                     data:text="#{phylocanvas.shape.radial}"></phylocanvas-control>
+							<phylocanvas-control shape="diagonal"
+							                     data:text="#{phylocanvas.shape.diagonal}"></phylocanvas-control>
+							<phylocanvas-control shape="hierarchy"
+							                     data:text="#{phylocanvas.shape.hierarchy}"></phylocanvas-control>
+						</phylocanvas-controls>
+						<div id="phylocanvas"></div>
+					</phylocanvas>
+				</div>
 				<div th:unless="${isCompleted} and ${preview}"></div>
+			</script>
+
+			<script type="text/ng-template" id="preview-linux.html">
+				<div ng-controller="PreviewController as previewContoller">
+					<div class="center-block" style="width: 500px" id="phyloSVG" phylosvg="" newick="{{previewContoller.newick}}"></div>
+				</div>
 			</script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="hasPaired=${#lists.size(paired_end) > 0}">
