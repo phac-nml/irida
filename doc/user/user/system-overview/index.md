@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "User Guide"
+description: "A high-level overview of the system concepts of IRIDA."
 ---
 
 User Guide

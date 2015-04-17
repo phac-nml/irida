@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "IRIDA Dashboard Overview"
+description: "An overview of the features present on the IRIDA dashboard."
 ---
 
 IRIDA Dashboard Overview

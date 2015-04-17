@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "Building IRIDA from source"
+description: "Describes the necessary steps for building the IRIDA web interface from source."
 ---
 
 Building IRIDA from source

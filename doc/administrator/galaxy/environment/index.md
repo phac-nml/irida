@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "Galaxy Environment Setup"
+description: "Preparing your environment to run IRIDA tools in Galaxy."
 ---
 
 Galaxy Environment Setup

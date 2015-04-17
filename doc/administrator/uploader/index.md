@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "NGS Archive MiSeq Uploader"
+description: "Guide for running the NGS Archive MiSeq uploader."
 ---
 
 This document describes how the IRIDA data uploader for the Illumina MiSeq instrument can be used.
