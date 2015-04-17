@@ -123,6 +123,9 @@
         base = R.all('projects/' + project.id),
         filtered = [];
     svc.samples = [];
+    
+    //disconnected remote apis
+    svc.notConnected = [];
 
     svc.getNumSamples = function () {
       return svc.samples.length;
@@ -238,6 +241,10 @@
       $rootScope.$broadcast('SAMPLES_INIT', {total: svc.samples.length});
       return svc.samples;
     }
+    
+    svc.getSampleWarnings = function(){
+      return svc.notConnected;
+    }
 
     /**
      * Load a set of samples from the server.  Fires a SAMPLES_READY event on complete
@@ -247,6 +254,8 @@
     svc.loadSamples = function (getLocal, getAssociated, getRemote) {
       var samplePromises = [];
       svc.samples = [];
+      
+      svc.notConnected = [];
 
       if (getLocal) {
         samplePromises.push(getLocalSamples());
@@ -333,6 +342,7 @@
     function getRemoteAssociatedSamples(f) {
         _.extend(svc.filter, f || {});
         return base.customGET('associated/remote/samples').then(function (data) {
+            svc.notConnected = data.notConnected;
             return data.samples;
         });
     }
@@ -807,6 +817,20 @@
       cart.clear();
     };
   }
+  
+  function ConnectionWarningCtrl($rootScope,SamplesService){
+      var vm = this;
+      
+      vm.notConnected = [];
+      
+      vm.warningCount = 0;
+      
+      $rootScope.$on("SAMPLES_READY", function () {
+        vm.notConnected = SamplesService.getSampleWarnings();
+        
+        vm.warningCount= vm.notConnected.length;
+      });
+  }
 
   angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
@@ -829,6 +853,7 @@
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
+    .controller('ConnectionWarningCtrl', ['$rootScope', 'SamplesService', ConnectionWarningCtrl])
   ;
 })
 (angular, $, _);

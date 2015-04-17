@@ -6,8 +6,10 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -402,8 +404,7 @@ public class AssociatedProjectsController {
 		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
 				.getRemoteProjectsForProject(project);
 
-		int oauthExceptionCount = 0;
-		int unauthorizedCount = 0;
+		Set<RemoteAPI> disconnectedApis = new HashSet<>();
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		for (RemoteRelatedProject rrp : remoteProjectsForProject) {
 			try {
@@ -422,20 +423,18 @@ public class AssociatedProjectsController {
 				sampleList.addAll(collect);
 			} catch (IridaOAuthException ex) {
 				logger.debug("User couldn't read samples for project: " + ex.getMessage());
-				oauthExceptionCount++;
+				disconnectedApis.add(rrp.getRemoteAPI());
 			} catch (HttpClientErrorException ex) {
 				if (ex.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
 					logger.debug("User couldn't read samples as they don't have access to the project: "
 							+ ex.getMessage());
-					unauthorizedCount++;
 				} else {
 					throw ex;
 				}
 			}
 		}
 
-		return ImmutableMap.of("samples", sampleList, "unauthorized", unauthorizedCount, "notConnected",
-				oauthExceptionCount);
+		return ImmutableMap.of("samples", sampleList, "notConnected", disconnectedApis);
 	}
 
 	/**
