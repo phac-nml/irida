@@ -54,19 +54,13 @@ The pipelines page will allow you to choose from the pipelines that are currentl
 
 Click on the "Select" button at the bottom, right-hand side of the pipeline that you'd like to launch.
 
-<blockquote>
-<p>
-<b>Note</b>: Some pipelines will require a reference sequence:
-</p>
-<p>
-<img src="images/reference-file-required.png" alt="Reference file required.">
-</p>
-<p>
-If you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> <b>Manager</b> role on a project, you can click on the name of the project to be directed to the project details page where you can <a href="../project/#adding-reference-files-to-a-project">add a reference file to the project</a>.
-</p>
-</blockquote>
+**Note**: Some pipelines will require a reference sequence:
 
-When you select a pipeline, you will be presented with a list of the samples that you've selected for analysis in the pipeline:
+![Reference file required.](images/reference-file-required.png)
+
+If you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, you can click on the name of the project to be directed to the project details page where you can [add a reference file to the project](../project/#adding-reference-files-to-a-project).
+
+When you select a pipeline that doesn't require a reference file (or you've already [uploaded one](../project/#adding-reference-files-to-a-project)), you will be presented with a list of the samples that you've selected for analysis in the pipeline:
 
 ![Pipeline samples.](images/pipeline-samples.png)
 
