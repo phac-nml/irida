@@ -85,7 +85,7 @@
 				</ul>
 				<div class="cart-control-bottom">
 					<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
-					        ng-hide="uiGalaxyCtrl.inGalaxy" th:text="#{cart.btn.run}">Run Pipeline
+					        ng-hide="uiGalaxyCtrl.inGalaxy" ng-cloak="" th:text="#{cart.btn.run}">Run Pipeline
 					</a>
 					<a id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy(); cart.show=false"
 					        class="btn btn-primary pull-right"

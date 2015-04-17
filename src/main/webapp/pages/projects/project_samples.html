@@ -99,13 +99,13 @@
 				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" dropdown=""
 				     is-open="subnav.display.isopen">
 					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle"
-					        ng-hide="uiGalaxyCtrl.inGalaxy"
+					        ng-hide="uiGalaxyCtrl.inGalaxy" ng-cloak=""
 					        dropdown-toggle="">
 						<span th:text="#{project.samples.display.title}">_Display_</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu noclose" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
+					<ul class="dropdown-menu noclose" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy" ng-cloak="">
 						<li>
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
@@ -126,13 +126,13 @@
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
 					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle=""
-					        ng-hide="uiGalaxyCtrl.inGalaxy"
+					        ng-hide="uiGalaxyCtrl.inGalaxy" ng-cloak=""
 					        ng-disabled="subnav.count&lt;1">
 						<span>Samples</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
+					<ul class="dropdown-menu" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy" ng-cloak="">
 						<li ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
 						    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
 						    tooltip-placement="right">
