@@ -118,7 +118,7 @@ Parameter sets that [have been saved](#saving-pipeline-parameters) can be used o
 Running the pipeline
 --------------------
 
-Once you've [selected the files](#multiple-filesets-per-sample) and [selected](#using-pre-saved-pipeline-parameters) or [customized](#modifying-pipeline-parameters), you can submit the pipeline for execution by clicking on the rocket ship button on the right-hand side of the page:
+Once you've [selected the files](#multiple-filesets-per-sample) and [selected](#using-pre-saved-pipeline-parameters) or [customized](#modifying-pipeline-parameters) the parameters, you can submit the pipeline for execution by clicking on the rocket ship button on the right-hand side of the page:
 
 ![Rocket ship launch icon.](images/ready-to-launch.png)
 
