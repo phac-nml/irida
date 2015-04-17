@@ -8,7 +8,7 @@ Launching Pipelines
 
 IRIDA currently provides two different pipelines for analysing your sequencing data:
 
-1. The SNVPhyl pipeline, and 
+1. The SNVPhyl whole-genome phylogeny pipeline ([poster](https://share.corefacility.ca/public.php?service=files&t=b1fef5379e23b663d308db9ebb5b6bb5&download)), and 
 2. An assembly ([SPAdes](http://bioinf.spbau.ru/spades)) and annotation ([Prokka](http://www.vicbioinformatics.com/software.prokka.shtml)) pipeline.
 
 * this comment becomes the toc
