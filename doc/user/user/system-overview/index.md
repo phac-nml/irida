@@ -21,9 +21,9 @@ IRIDA provides a management interface for several different types of data:
 * Samples,
 * Sequence files,
 * Sequencing runs,
-* Analysis.
+* Analyses.
 
-If you already understand the different data types (or are impatient!), you can proceed directly to the [using IRIDA](#using-irida) section.
+If you already understand the different data types (or are impatient!), you can proceed directly to the [dashboard section](../dashboard/) section.
 
 ### Users
 A user account is required to use IRIDA. User accounts have the following properties:
