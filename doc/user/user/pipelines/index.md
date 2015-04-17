@@ -144,7 +144,7 @@ The "State" column will change over time if you leave your browser window open s
 Viewing pipeline results
 ------------------------
 
-You can view the outputs of a pipeline execution once a pipeline has completed:
+You can view or download the outputs of a pipeline execution once a pipeline has completed:
 
 ![Completed analysis listing.](images/completed-analysis.png)
 
