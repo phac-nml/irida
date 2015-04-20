@@ -82,6 +82,31 @@
 							</li>
 						</ul>
 					</li>
+                    <li class="list-group-item" ng-show="cart.getRemoteCount() > 0">
+                        <div class="cart-project-header" ng-click="cart.collapsed['remote'] = !cart.collapsed['remote' ]">
+                            <span class="fa fa-fw"
+                                      ng-class="cart.collapsed['remote'] ? 'fa-caret-right' : 'fa-caret-down'"></span>
+                            <span>_REMOTE_</span>
+                            <div class="pull-right">
+                                <span class="badge">{{ cart.getRemoteCount() }}</span>
+                                <button class="btn-icon" ng-click="cartCtrl.removeRemoteSamples()"
+                                    id="remove-remote"
+                                    th:title="#{cart.tooltip.removeProject}">
+                                    <i class="fa fa-remove remove-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <ul collapse="cart.collapsed['remote']">
+                            <li ng-repeat="(id,s) in cart.remote">
+                                <span>{{ s.label }}</span>
+                                <button class="btn-icon pull-right remove-sample-btn"
+                                    ng-click="cartCtrl.removeRemoteSample(id)"
+                                    th:title="#{cart.tooltip.removeSample}">
+                                    <i class="fa fa-remove remove-icon"></i>
+                                </button>
+                                </li>
+                        </ul>
+                    </li>
 				</ul>
 				<div class="cart-control-bottom">
 					<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
