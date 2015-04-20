@@ -156,12 +156,19 @@ public class CartController {
 		return ImmutableMap.of("success", true);
 	}
 	
+	/**
+	 * Add a remote sample to the cart
+	 * 
+	 * @param sampleURL
+	 *            The URL of the sample to add
+	 * @return Success if sample was added
+	 */
 	@RequestMapping(value = "/add/samples/remote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> addRemoteSample(@RequestParam String sampleURL){
+	public Map<String, Object> addRemoteSample(@RequestParam String sampleURL) {
 		Sample read = sampleRemoteService.read(sampleURL);
 		remoteSelected.put(read.getLink(Link.REL_SELF).getHref(), read);
-		
+
 		return ImmutableMap.of("success", true);
 	}
 
@@ -214,6 +221,11 @@ public class CartController {
 		return ImmutableMap.of("success", true);
 	}
 	
+	/**
+	 * Remove all remote samples
+	 * 
+	 * @return Success if the samples were removed.
+	 */
 	@RequestMapping(value = "/remove/samples/remote", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, Object> removeRemoteSamples() {
@@ -221,7 +233,14 @@ public class CartController {
 
 		return ImmutableMap.of("success", true);
 	}
-	
+
+	/**
+	 * Remove a specific remote sample
+	 * 
+	 * @param sampleURL
+	 *            The URL of the sample to remove
+	 * @return Success if it was removed
+	 */
 	@RequestMapping(value = "/remove/samples/remote", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> removeRemoteSample(@RequestParam String sampleURL) {
