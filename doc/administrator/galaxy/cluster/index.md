@@ -1,7 +1,7 @@
 ---
 layout: default
 search_title: "Integration of Galaxy with a Cluster"
-description: "Guide for setting up galaxy with a cluster back-end."
+description: "Guide for setting up Galaxy with a cluster back-end."
 ---
 
 Integration of Galaxy with a Cluster
