@@ -584,3 +584,5 @@ INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parame
 
 -- analysis_submission_sequence_file_pair
 INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13 ,1);
+
+INSERT INTO `remote_related_project`(id, created_date, remote_project_uri, project_id, remote_api_id) VALUES ('1','2015-03-27 11:13:39','http://localhost:8080/api/projects/5','4','1'); 

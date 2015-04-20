@@ -27,7 +27,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -543,7 +545,7 @@ public class ProjectSamplesPageIT {
 		assertEquals("cart should have been emptied", 0, page.getCartCount());
 		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
 	}
-	
+
 	@Test
 	public void testDeleteSampleFromCart() {
 		LoginPage.loginAsAdmin(driver);
@@ -576,6 +578,29 @@ public class ProjectSamplesPageIT {
 		int laterNumber = page.getNumberOfSamplesDisplayed();
 
 		assertNotEquals("page should have associated samples displayed", initialNumber, laterNumber);
+	}
+
+	@Test
+	public void testShowRemoteSamples() throws InterruptedException {
+		LoginPage.loginAsAdmin(driver);
+		// add the api
+		RemoteApiUtilities.addRemoteApi(driver);
+
+		// associate a project from that api
+		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver);
+		apEditPage.goTo(2L);
+		apEditPage.viewRemoteTab();
+		apEditPage.clickAssociatedButton(6L);
+		apEditPage.checkNotyStatus("success");
+
+		// go to project
+		page.goToPage("2");
+
+		assertEquals("no remote samples should be displayed", 0, page.getNumberOfRemoteSamplesDisplayed());
+
+		page.enableRemoteProjects();
+
+		assertEquals("1 remote sample sould be displayed", 1, page.getNumberOfRemoteSamplesDisplayed());
 	}
 
 	private int getSampleFlagCount(String command) {

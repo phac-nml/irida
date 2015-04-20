@@ -123,6 +123,15 @@
         base = R.all('projects/' + project.id),
         filtered = [];
     svc.samples = [];
+    
+    svc.requested = {
+      local: false,
+      assocaited: false,
+      remote: false
+    };
+    
+    //disconnected remote apis
+    svc.notConnected = [];
 
     svc.getNumSamples = function () {
       return svc.samples.length;
@@ -238,21 +247,36 @@
       $rootScope.$broadcast('SAMPLES_INIT', {total: svc.samples.length});
       return svc.samples;
     }
+    
+    svc.getRequestedTypes = function(){
+	return svc.requested;
+    }
+    
+    svc.getSampleWarnings = function(){
+      return svc.notConnected;
+    }
 
     /**
      * Load a set of samples from the server.  Fires a SAMPLES_READY event on complete
      * @param getLocal Load local samples
      * @param getAssociated Load associated samples
      */
-    svc.loadSamples = function (getLocal, getAssociated) {
+    svc.loadSamples = function (getLocal, getAssociated, getRemote) {
       var samplePromises = [];
       svc.samples = [];
+      
+      svc.requested = {local: getLocal, associated: getAssociated, remote: getRemote};
+      
+      svc.notConnected = [];
 
       if (getLocal) {
         samplePromises.push(getLocalSamples());
       }
       if (getAssociated) {
         samplePromises.push(getAssociatedSamples());
+      }
+      if(getRemote){
+          samplePromises.push(getRemoteAssociatedSamples());
       }
 
       return $q.all(samplePromises).then(function (response) {
@@ -325,6 +349,14 @@
       return base.customGET('associated/samples').then(function (data) {
         return data.samples;
       });
+    }
+
+    function getRemoteAssociatedSamples(f) {
+        _.extend(svc.filter, f || {});
+        return base.customGET('associated/remote/samples').then(function (data) {
+            svc.notConnected = data.notConnected;
+            return data.samples;
+        });
     }
   }
 
@@ -474,6 +506,12 @@
     vm.filter = FilterFactory;
 
     vm.samples = [];
+    
+    vm.requested = {
+      local: false,
+      assocaited: false,
+      remote: false
+    };
 
     vm.updateSample = function (s) {
       SamplesService.updateSample(s);
@@ -481,6 +519,7 @@
 
     $rootScope.$on("SAMPLES_READY", function () {
       vm.samples = SamplesService.getSamples();
+      vm.requested = SamplesService.getRequestedTypes();
     });
 
   }
@@ -498,9 +537,10 @@
     //set the initial display options
     vm.displayLocal = true;
     vm.displayAssociated = false;
+    vm.displayRemote = false;
 
     vm.displaySamples = function () {
-      SamplesService.loadSamples(vm.displayLocal, vm.displayAssociated);
+      SamplesService.loadSamples(vm.displayLocal, vm.displayAssociated, vm.displayRemote);
     };
 
     $rootScope.$on("SAMPLE_CONTENT_MODIFIED", function () {
@@ -796,6 +836,20 @@
       cart.clear();
     };
   }
+  
+  function ConnectionWarningCtrl($rootScope,SamplesService){
+      var vm = this;
+      
+      vm.notConnected = [];
+      
+      vm.warningCount = 0;
+      
+      $rootScope.$on("SAMPLES_READY", function () {
+        vm.notConnected = SamplesService.getSampleWarnings();
+        
+        vm.warningCount= vm.notConnected.length;
+      });
+  }
 
   angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
@@ -818,6 +872,7 @@
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
+    .controller('ConnectionWarningCtrl', ['$rootScope', 'SamplesService', ConnectionWarningCtrl])
   ;
 })
 (angular, $, _);

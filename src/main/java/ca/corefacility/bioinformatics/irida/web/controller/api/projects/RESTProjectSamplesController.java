@@ -24,12 +24,9 @@ import org.springframework.web.servlet.view.RedirectView;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceAdditionalProperties;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
@@ -52,9 +49,7 @@ public class RESTProjectSamplesController {
 	 * rel used for accessing the list of samples associated with a project.
 	 */
 	public static final String REL_PROJECT_SAMPLES = "project/samples";
-	
-	public static final String FILE_COUNT_PARAM = "sequenceFileCount";
-	
+		
 	/**
 	 * Reference to {@link ProjectService}.
 	 */
@@ -64,20 +59,13 @@ public class RESTProjectSamplesController {
 	 */
 	private SampleService sampleService;
 
-	/**
-	 * Reference to {@link SequenceFileService}
-	 */
-	private SequenceFileService sequenceFileService;
-
 	protected RESTProjectSamplesController() {
 	}
 
 	@Autowired
-	public RESTProjectSamplesController(ProjectService projectService, SampleService sampleService,
-			SequenceFileService sequenceFileService) {
+	public RESTProjectSamplesController(ProjectService projectService, SampleService sampleService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.sequenceFileService = sequenceFileService;
 	}
 
 	/**
@@ -190,17 +178,10 @@ public class RESTProjectSamplesController {
 		Project p = projectService.read(projectId);
 		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
 
-		/*
-		 * Using ResourceAdditionalProperties<Sample> so that we can add the
-		 * number of files in the sample to the JSON entity.
-		 */
-		ResourceCollection<ResourceAdditionalProperties<Sample>> sampleResources = new ResourceCollection<>(relationships.size());
+		ResourceCollection<Sample> sampleResources = new ResourceCollection<>(relationships.size());
 
 		for (Join<Project, Sample> r : relationships) {
 			Sample sample = r.getObject();
-			ResourceAdditionalProperties<Sample> resourceAdditionalProperties = new ResourceAdditionalProperties<>(sample);
-
-			resourceAdditionalProperties.addProperty(FILE_COUNT_PARAM, getSequenceFileCountForSampleResource(sample));
 			
 			sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
 					.withSelfRel());
@@ -208,7 +189,7 @@ public class RESTProjectSamplesController {
 					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sample.getId()))
 					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 			sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-			sampleResources.add(resourceAdditionalProperties);
+			sampleResources.add(sample);
 		}
 
 		sampleResources
@@ -254,13 +235,6 @@ public class RESTProjectSamplesController {
 		// get the sample for the project.
 		Sample s = sampleService.getSampleForProject(p, sampleId);
 
-		/*
-		 * Using ResourceAdditionalProperties<Sample> so that we can add the
-		 * number of files in the sample to the JSON entity.
-		 */
-		ResourceAdditionalProperties<Sample> props = new ResourceAdditionalProperties<Sample>(s);
-		props.addProperty(FILE_COUNT_PARAM, getSequenceFileCountForSampleResource(s));
-
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
 		s.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
@@ -268,7 +242,7 @@ public class RESTProjectSamplesController {
 				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 
 		// add the sample resource to the response
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, props);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
 
 		return modelMap;
 	}
@@ -349,16 +323,4 @@ public class RESTProjectSamplesController {
 		return modelMap;
 	}
 
-	/**
-	 * Get the number of sequence files to a {@link Sample}
-	 * 
-	 * @param resource
-	 *            The {@link Sample} to enhance
-	 * @return The number of sequence files in the sample
-	 */
-	private int getSequenceFileCountForSampleResource(Sample resource) {
-		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
-				.getSequenceFilesForSample(resource);
-		return sequenceFilesForSample.size();
-	}
 }
