@@ -394,7 +394,11 @@ public class AssociatedProjectControllerTest {
 		List<RemoteRelatedProject> remoteRelatedProjects = Lists.newArrayList(goodProject, noTokenProject,
 				forbiddenProject);
 
-		List<Sample> samples = Lists.newArrayList(new Sample("sample1"), new Sample("sample2"));
+		Sample sample1 = new Sample("sample1");
+		sample1.add(new Link("http://sample1",Link.REL_SELF));
+		Sample sample2 = new Sample("sample2");
+		sample2.add(new Link("http://sample2",Link.REL_SELF));
+		List<Sample> samples = Lists.newArrayList(sample1, sample2);
 
 		Project remoteProject = new Project("remote project");
 
