@@ -1,6 +1,6 @@
 ---
 layout: default
-search_title: "IRIDA Web Interface install guide"
+search_title: "IRIDA Web Interface Install Guide"
 description: "Install guide for setting up the IRIDA web interface."
 ---
 
