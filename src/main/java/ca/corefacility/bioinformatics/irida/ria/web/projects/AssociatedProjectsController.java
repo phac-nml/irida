@@ -418,7 +418,8 @@ public class AssociatedProjectsController {
 				List<Map<String, Object>> collect = samplesForProject
 						.stream()
 						.map((s) -> ProjectSamplesController.getSampleMap(s, read,
-								ProjectSamplesController.SampleType.REMOTE, s.getId())).collect(Collectors.toList());
+								ProjectSamplesController.SampleType.REMOTE, s.getLink(Link.REL_SELF).getHref()))
+						.collect(Collectors.toList());
 
 				sampleList.addAll(collect);
 			} catch (IridaOAuthException ex) {

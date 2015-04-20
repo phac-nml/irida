@@ -592,7 +592,7 @@ public class ProjectSamplesController {
 	 *            different for remote samples
 	 * @return a formatted map of {@link Sample} objects.
 	 */
-	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Number identifier) {
+	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Object identifier) {
 		Map<String, Object> sampleMap = new HashMap<>();
 		sampleMap.put("sample", sample);
 		sampleMap.put("project", project);
