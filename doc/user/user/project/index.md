@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "Managing Projects"
+description: "Documentation for managing projects in IRIDA."
 ---
 
 Managing Projects

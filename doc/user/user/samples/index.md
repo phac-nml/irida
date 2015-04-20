@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "Managing Samples"
+description: "Documentation for managing samples in IRIDA."
 ---
 
 Managing Samples

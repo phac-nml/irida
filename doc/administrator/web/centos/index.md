@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "CentOS Installation Guide"
+description: "CentOS-specific install guide for setting up IRIDA."
 ---
 
 CentOS Installation Guide

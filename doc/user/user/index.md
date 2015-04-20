@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "User Guide Index"
+description: "A collection of links for each part of the user guide."
 ---
 
 User Guide

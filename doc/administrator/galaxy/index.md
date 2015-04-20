@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "Galaxy Setup"
+description: "Galaxy install guide"
 ---
 
 Galaxy Setup
