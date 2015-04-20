@@ -1,7 +1,7 @@
 ---
 layout: default
 search_title: "IRIDA Whole Genome Phylogenomics"
-description: "Install guide for the whole genome phylogenomics pipeline."
+description: "Install guide for the SNVPhyl whole genome phylogenomics pipeline."
 ---
 
 IRIDA Whole Genome Phylogenomics
