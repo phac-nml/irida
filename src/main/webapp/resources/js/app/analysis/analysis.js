@@ -93,7 +93,7 @@
       return AnalysisService.getAnalysisState(function (data) {
         vm.state = data.state;
         vm.stateLang = data.stateLang;
-        vm.percentage = parseFloat(data.percentComplete);
+        vm.percentage = Math.round(parseFloat(data.percentComplete));
         vm.stateClass = _createClass(vm.state);
       });
     }
