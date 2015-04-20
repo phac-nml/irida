@@ -797,7 +797,7 @@
     };
   }
 
-  angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])
+  angular.module('Samples', ['cgBusy', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', [StorageService])
