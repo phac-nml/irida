@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
@@ -46,19 +48,25 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("/cart")
 public class CartController {
 	private Map<Project, Set<Sample>> selected;
+		
+	private Map<String,Sample> remoteSelected;
 
 	private final SampleService sampleService;
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final SequenceFileService sequenceFileService;
+	
+	private final SampleRemoteService sampleRemoteService;
 
 	@Autowired
-	public CartController(SampleService sampleService, UserService userService, ProjectService projectService, SequenceFileService sequenceFileService) {
+	public CartController(SampleService sampleService, UserService userService, ProjectService projectService, SequenceFileService sequenceFileService, SampleRemoteService sampleRemoteService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.userService = userService;
 		this.sequenceFileService = sequenceFileService;
+		this.sampleRemoteService = sampleRemoteService;
 		selected = new HashMap<>();
+		remoteSelected = new HashMap<>();
 	}
 	
 	/**
@@ -91,7 +99,7 @@ public class CartController {
 	@ResponseBody
 	public Map<String, Object> getCartMap() {
 		List<Map<String, Object>> projects = getProjectsAsList();
-		return ImmutableMap.of("projects", projects);
+		return ImmutableMap.of("projects", projects, "remote", remoteSelected);
 	}
 
 	/**
@@ -103,6 +111,7 @@ public class CartController {
 	@ResponseBody
 	public Map<String, Object> clearCart() {
 		selected.clear();
+		remoteSelected.clear();
 		return ImmutableMap.of("success", true);
 	}
 
@@ -144,6 +153,15 @@ public class CartController {
 
 		getSelectedSamplesForProject(project).addAll(samples);
 
+		return ImmutableMap.of("success", true);
+	}
+	
+	@RequestMapping(value = "/add/samples/remote", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> addRemoteSample(@RequestParam String sampleURL){
+		Sample read = sampleRemoteService.read(sampleURL);
+		remoteSelected.put(read.getLink(Link.REL_SELF).getHref(), read);
+		
 		return ImmutableMap.of("success", true);
 	}
 
@@ -192,6 +210,22 @@ public class CartController {
 		if (selectedSamplesForProject.isEmpty()) {
 			selected.remove(project);
 		}
+
+		return ImmutableMap.of("success", true);
+	}
+	
+	@RequestMapping(value = "/remove/samples/remote", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Map<String, Object> removeRemoteSamples() {
+		remoteSelected.clear();
+
+		return ImmutableMap.of("success", true);
+	}
+	
+	@RequestMapping(value = "/remove/samples/remote", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> removeRemoteSample(@RequestParam String sampleURL) {
+		remoteSelected.remove(sampleURL);
 
 		return ImmutableMap.of("success", true);
 	}
