@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "IRIDA Assembly and Annotation"
+description: "Install guide for the assembly and annotation pipeline."
 ---
 
 IRIDA Assembly and Annotation

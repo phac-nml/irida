@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "Logging in to IRIDA"
+description: "A guide for logging in to IRIDA for the first time, and more."
 ---
 
 Logging in to IRIDA

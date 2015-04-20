@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "IRIDA Web Interface Install Guide"
+description: "Install guide for setting up the IRIDA web interface."
 ---
 
 This document describes how to install the IRIDA web interface. We assume that you have either downloaded IRIDA as a `WAR` file distributable, or have [built IRIDA from source](../building), and also assume that you have completed [installing and configuring Galaxy](../galaxy).
