@@ -8263,8 +8263,14 @@ input {
     width: 100%;
   }
 }
+@media screen and (max-width: 992px) {
+  /* line 12, ../../styles/components/_sidenav.scss */
+  .sidenav__inner--fixed {
+    top: 110px;
+  }
+}
 
-/* line 29, ../../styles/components/_sidenav.scss */
+/* line 32, ../../styles/components/_sidenav.scss */
 .sidenav__label {
   color: #939393;
   font-weight: normal;
