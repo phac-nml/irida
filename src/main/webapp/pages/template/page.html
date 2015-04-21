@@ -86,12 +86,12 @@
                         <div class="cart-project-header" ng-click="cart.collapsed['remote'] = !cart.collapsed['remote' ]">
                             <span class="fa fa-fw"
                                       ng-class="cart.collapsed['remote'] ? 'fa-caret-right' : 'fa-caret-down'"></span>
-                            <span>_REMOTE_</span>
+                            <span th:text="#{cart.remoteSamples.title}">_REMOTE_</span>
                             <div class="pull-right">
                                 <span class="badge">{{ cart.getRemoteCount() }}</span>
                                 <button class="btn-icon" ng-click="cartCtrl.removeRemoteSamples()"
                                     id="remove-remote"
-                                    th:title="#{cart.tooltip.removeProject}">
+                                    th:title="#{cart.tooltip.remoteRemote}">
                                     <i class="fa fa-remove remove-icon"></i>
                                 </button>
                             </div>
