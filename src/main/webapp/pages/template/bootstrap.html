@@ -47,12 +47,7 @@
 						</li>
 					</ul>
 				</li>
-				<li>
-					<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
-				<li sec:authorize="!hasAnyRole('ROLE_ADMIN')">
-					<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
-				</li>
-				<li sec:authorize="hasAnyRole('ROLE_ADMIN')" class="dropdown" dropdown="">
+				<li class="dropdown" dropdown="">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
 						<span th:text="#{nav.main.analysis}">Analysis</span>
 						&nbsp;
@@ -60,9 +55,11 @@
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li>
+							<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
+						<li>
 							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-admin-user}">Your Analysis</a>
 						</li>
-						<li>
+						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
 							<a th:href="@{/analysis/list/all}" href="/analysis/list/all"
 							   th:text="#{nav.main.analysis-admin-all}">List All Analysis
 							</a>
@@ -109,37 +106,65 @@
 						</li>
 					</ul>
 				</li>
+				<!--<li class="dropdown" dropdown="">-->
+					<!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">-->
+						<!--<span th:text="#{nav.main.settings}">Account</span>-->
+						<!--<span class="caret"></span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu" role="menu">-->
+                        <!--&lt;!&ndash;/* TODO: Re-enable for federated data-->
+						<!--<li>-->
+							<!--<a href="#" th:href="@{/remote_api}" th:text="#{nav.main.remoteapis}">-->
+								<!--Remote API Status-->
+							<!--</a>-->
+						<!--</li>-->
+						<!--<li class="divider"></li>-->
+                        <!--*/&ndash;&gt;-->
+					<!--</ul>-->
+				<!--</li>-->
 				<li class="dropdown" dropdown="">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
-						<span th:text="#{nav.main.settings}">Account</span>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"
+					   dropdown-toggle="">
+						<span th:text="#{nav.main.help}">__Help__</span>
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
-                        <!--/* TODO: Re-enable for federated data
 						<li>
-							<a href="#" th:href="@{/remote_api}" th:text="#{nav.main.remoteapis}">
-								Remote API Status
+							<a th:text="#{nav.main.userguide}"
+							   href="https://irida.corefacility.ca/documentation/user/user" target="_blank">__User
+								Guide__
 							</a>
 						</li>
-						<li class="divider"></li>
-                        */-->
+						<li sec:authorize="hasRole('ROLE_ADMIN')">
+							<a th:text="#{nav.main.adminguide}"
+							   href="https://irida.corefacility.ca/documentation/user/administrator" target="_blank">
+								__Admin Guide__
+							</a>
+						</li>
 						<li>
-							<a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">
-								Account
+							<a href="http://hub.corefacility.ca/?category=irida" th:text="#{nav.main.iridahub}"
+							   target="_blank">
+								__IRIDA Hub__
 							</a>
 						</li>
 					</ul>
 				</li>
 				<li>
-					<a th:href="@{/logout}" th:title="#{nav.main.logout}" href="/logout"><i class="fa fa-sign-out"></i> </a>
+					<button type="button" id="cart-show-btn" class="btn btn-info btn-sm navbar-btn"
+					        ng-class="cart.animation"
+					        ng-click="cart.show=!cart.show">
+						<span th:text="#{cart.label}"></span>
+						&nbsp;
+						<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
+					</button>
+				</li>
+				<li>
+					<a href="#" th:href="@{/users/current}" data:tooltip="#{nav.main.account}" tooltip-placement="bottom"><i class="fa fa-fw fa-user"></i></a></li>
+				<li>
+					<a th:href="@{/logout}" data:tooltip="#{nav.main.logout}" href="/logout" tooltip-placement="bottom"><i class="fa fa-sign-out"></i>
+					</a>
 				</li>
 			</ul>
-			<button id="cart-show-btn" type="button" class="btn btn-info btn-sm navbar-btn navbar-right" ng-class="cart.animation"
-			        ng-click="cart.show=!cart.show">
-				<span th:text="#{cart.label}"></span>
-				&nbsp;
-				<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
-			</button>
 		</div>
 		<!-- /.navbar-collapse -->
 	</div>

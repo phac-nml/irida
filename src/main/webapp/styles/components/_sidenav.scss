@@ -24,6 +24,9 @@
     position: static;
     width: 100%;
   }
+  @media screen and (max-width: $screen-md) {
+    top: 110px;
+  }
 }
 
 .sidenav__label {
