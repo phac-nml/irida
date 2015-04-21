@@ -47,12 +47,7 @@
 						</li>
 					</ul>
 				</li>
-				<li>
-					<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
-				<li sec:authorize="!hasAnyRole('ROLE_ADMIN')">
-					<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
-				</li>
-				<li sec:authorize="hasAnyRole('ROLE_ADMIN')" class="dropdown" dropdown="">
+				<li class="dropdown" dropdown="">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
 						<span th:text="#{nav.main.analysis}">Analysis</span>
 						&nbsp;
@@ -60,9 +55,11 @@
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li>
+							<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
+						<li>
 							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-admin-user}">Your Analysis</a>
 						</li>
-						<li>
+						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
 							<a th:href="@{/analysis/list/all}" href="/analysis/list/all"
 							   th:text="#{nav.main.analysis-admin-all}">List All Analysis
 							</a>

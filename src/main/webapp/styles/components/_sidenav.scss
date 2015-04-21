@@ -26,12 +26,6 @@
   }
 }
 
-@media screen and (max-width: $screen-md) {
-  .sidenav__inner--fixed {
-    top: 110px;
-  }
-}
-
 .sidenav__label {
   color: $irida-colour-grey-dark;
   font-weight: normal;
