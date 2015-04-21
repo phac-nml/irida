@@ -369,49 +369,4 @@ public class ProjectSamplesControllerTest {
 		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_project.zip\"",
 				response.getHeader("Content-Disposition"));
 	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testPostUploadSampleToGalaxy() {
-		Sample sample = TestDataFactory.constructSample();
-		List<Sample> samples = ImmutableList.of(sample);
-		UploadWorker worker = TestDataFactory.constructUploadWorker();
-		MockHttpServletRequest request = new MockHttpServletRequest();
-
-		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
-		String accountEmail = "test@gmail.com";
-		String accountUsername = "Test";
-		when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
-				GalaxyAccountEmail.class)))
-				.thenReturn(worker);
-
-		Map<String, Object> result = controller
-				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request,
-						Locale.US);
-		assertTrue(result.containsKey("result"));
-		assertEquals("success", result.get("result"));
-		assertTrue(result.containsKey("msg"));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testUploadSampleToGalaxyExceptions() {
-		Sample sample = TestDataFactory.constructSample();
-		List<Sample> samples = ImmutableList.of(sample);
-		MockHttpServletRequest request = new MockHttpServletRequest();
-
-		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
-		String accountEmail = "jskd sdlid 9 ds d";
-		String accountUsername = null;
-		when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
-				GalaxyAccountEmail.class)))
-				.thenThrow(new ConstraintViolationException("Some Error", null));
-
-		Map<String, Object> result = controller
-				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request,
-						Locale.US);
-		assertTrue(result.containsKey("result"));
-		assertEquals("errors", result.get("result"));
-
-	}
 }
