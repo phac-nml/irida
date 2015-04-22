@@ -32,17 +32,17 @@ Get OAuth2 token using Authorization Code
 -----------------------------------------
 
 1. Request authorization code from /api/oauth/authorize.  Include following params:
-1. * Redirect URI to your to receive authorization code location.
-1. * ClientId of galaxy linker client
-1. * ResponseType of "authorization_code"
-1. * Scope of "read"
+ * Redirect URI to your to receive authorization code location.
+ * ClientId of galaxy linker client
+ * ResponseType of "authorization_code"
+ * Scope of "read"
 
 2. The client may be directed to login and to authorize the client access.
 
 3. Authorization code will be sent to your authorization code location redirect URI as "code" param
 
 4. Request token with authoriztion code from /api/oauth/token.  Include following params:
-4. * ClientId of linker client
-4. * ClientSecret of linker client
-4. * The same redirect URI as in step 1
-4. * Grant type of "authorization_code"
+ * ClientId of linker client
+ * ClientSecret of linker client
+ * The same redirect URI as in step 1
+ * Grant type of "authorization_code"
