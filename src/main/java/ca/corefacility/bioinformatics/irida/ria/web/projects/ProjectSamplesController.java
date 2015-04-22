@@ -63,7 +63,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
@@ -100,7 +99,6 @@ public class ProjectSamplesController {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
-	private final GalaxyUploadService galaxyUploadService;
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private MessageSource messageSource;
@@ -113,12 +111,11 @@ public class ProjectSamplesController {
 
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-			UserService userService, GalaxyUploadService galaxyUploadService, SequenceFileService sequenceFileService,
+			UserService userService, SequenceFileService sequenceFileService,
 			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
-		this.galaxyUploadService = galaxyUploadService;
 		this.sequenceFileService = sequenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.dateFormatter = new DateFormatter();
@@ -527,54 +524,6 @@ public class ProjectSamplesController {
 			// streams.
 			response.getOutputStream().close();
 		}
-	}
-
-	/**
-	 * Export samples to the local instance of galaxy
-	 *
-	 * @param projectId
-	 *            Id for the current {@link Project}
-	 * @param email
-	 *            Email address for the current user
-	 * @param name
-	 *            Name of the current user
-	 * @param sampleIds
-	 *            the collection of samples to send to galaxy.
-	 * @param request
-	 *            {@link HttpServletRequest}
-	 * @param locale
-	 *            the locale specified by the browser issuing the current
-	 *            request.
-	 *
-	 * @return A JSON object containing the current completion status (TODO:
-	 *         Include a way to get an updated status.)
-	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/galaxy/upload", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> postUploadSampleToGalaxy(@PathVariable Long projectId,
-			@RequestParam String email, @RequestParam String name,
-			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request, Locale locale) {
-
-		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
-		UploadWorker worker = null;
-		Map<String, Object> result = new HashMap<>();
-		try {
-			worker = galaxyUploadService
-					.performUploadSelectedSamples(new HashSet<>(samples), new GalaxyProjectName(name),
-							new GalaxyAccountEmail(email));
-			String sessionAttr = "gw-" + UUID.randomUUID();
-			request.getSession().setAttribute(sessionAttr, worker);
-			result.put("result", "success");
-			result.put("sessionAttr", sessionAttr);
-			result.put("msg", messageSource.getMessage("galaxy.success", new Object[] { samples.size() }, locale));
-		} catch (ConstraintViolationException e) {
-			result.put("result", "errors");
-			result.put("errors", messageSource.getMessage("galaxy.error", new Object[] { }, locale));
-		} catch (RuntimeException e) {
-			// This should only occur if there is no instance of Galaxy
-			result.put("result", "errors");
-			result.put("errors", messageSource.getMessage("galaxy.not-configured", new Object[]{}, locale));
-		}
-		return result;
 	}
 	
 	/**
