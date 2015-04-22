@@ -43,11 +43,11 @@
 	<div toaster-container=""></div>
 	<script type="text/ng-template" id="/cart.html">
 		<aside class="cart">
-			<section ng-hide="cart.projects.length">
+			<section ng-hide="cart.count">
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
 				<p class="lead" th:text="#{cart.empty-text}"></p>
 			</section>
-			<section ng-show="cart.projects.length > 0" ng-controller="CartSliderController as cartCtrl">
+			<section ng-show="cart.count > 0" ng-controller="CartSliderController as cartCtrl">
 				<div class="cart-control-buttons">
 					<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close
 					</button>
@@ -88,7 +88,7 @@
                                       ng-class="cart.collapsed['remote'] ? 'fa-caret-right' : 'fa-caret-down'"></span>
                             <span th:text="#{cart.remoteSamples.title}">_REMOTE_</span>
                             <div class="pull-right">
-                                <span class="badge">{{ cart.getRemoteCount() }}</span>
+                                <span class="badge remote-cart-count">{{ cart.getRemoteCount() }}</span>
                                 <button class="btn-icon" ng-click="cartCtrl.removeRemoteSamples()"
                                     id="remove-remote"
                                     th:title="#{cart.tooltip.remoteRemote}">
