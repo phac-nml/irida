@@ -73,7 +73,6 @@ public class ProjectSamplesControllerTest {
 	private UserService userService;
 	private SequenceFileService sequenceFileService;
 	private MessageSource messageSource;
-	private GalaxyUploadService galaxyUploadService;
 	private ProjectControllerUtils projectUtils;
 
 	@Before
@@ -84,9 +83,8 @@ public class ProjectSamplesControllerTest {
 		sequenceFileService = mock(SequenceFileService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
-		galaxyUploadService = mock(GalaxyUploadService.class);
 
-		controller = new ProjectSamplesController(projectService, sampleService, userService, galaxyUploadService, sequenceFileService,
+		controller = new ProjectSamplesController(projectService, sampleService, userService, sequenceFileService,
 				projectUtils, messageSource);
 		user.setId(1L);
 
