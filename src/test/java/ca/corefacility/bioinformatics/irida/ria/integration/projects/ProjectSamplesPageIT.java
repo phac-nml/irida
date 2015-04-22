@@ -601,6 +601,10 @@ public class ProjectSamplesPageIT {
 		page.enableRemoteProjects();
 
 		assertEquals("1 remote sample sould be displayed", 1, page.getNumberOfRemoteSamplesDisplayed());
+
+		page.selectSampleByClass("remote-sample");
+		page.addSamplesToGlobalCart();
+		assertEquals(1, page.getCartCount());
 	}
 
 	private int getSampleFlagCount(String command) {
