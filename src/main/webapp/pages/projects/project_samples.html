@@ -185,18 +185,11 @@
 								<span th:text="#{project.samples.export.linker}"></span>
 							</a>
 						</li>
-						<li ng-show="uiGalaxyCtrl.inGalaxy">
+						<li th:if="${galaxyCallback}">
 							<a href="#" ng-click="subnav.export.galaxy(); cart.show=false">
 								<span class="fa fa-fw fa-cloud"></span>
 								&nbsp;
 								<span th:text="#{project.samples.export.galaxy}"></span>
-							</a>
-						</li>
-						<li ng-show="!uiGalaxyCtrl.inGalaxy" class="disabled">
-							<a href="#">
-								<span class="fa fa-fw fa-cloud"></span>
-								&nbsp;
-								<span th:text="#{project.samples.export.galaxy-offline}"></span>
 							</a>
 						</li>
 					</ul>
