@@ -22,6 +22,8 @@
 		<javax.jstl.version>1.2</javax.jstl.version>
 		<maven.compiler.version>2.0.2</maven.compiler.version>
 		<eclipse.jetty.version>9.2.0.M0</eclipse.jetty.version>
+		<jax.ws.version>0.11</jax.ws.version>
+		<jersey.version>1.12</jersey.version>
 		<!-- Thymeleaf -->
 		<thymeleaf.version>2.1.3.RELEASE</thymeleaf.version>
 	</properties>
@@ -99,12 +101,12 @@
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>jsr311-api</artifactId>
-			<version>0.11</version>
+			<version>${jax.ws.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>1.12</version>
+			<version>${jersey.version}</version>
 		</dependency>
 
 	</dependencies>
