@@ -15,7 +15,6 @@ import org.springframework.security.test.context.support.WithSecurityContext;
  * {@link OAuth2Authentication} object into the security context for junit
  * tests.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })

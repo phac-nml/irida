@@ -44,8 +44,6 @@ import com.google.common.collect.Lists;
 /**
  * Testing the behavior of {@link CRUDServiceImpl}
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class CRUDServiceImplTest {
 
@@ -80,7 +78,7 @@ public class CRUDServiceImplTest {
 		IdentifiableTestEntity before = new IdentifiableTestEntity();
 		before.setNonNull("Definitely not null.");
 		before.setIntegerValue(Integer.MIN_VALUE);
-		Long id = 1l;
+		Long id = 1L;
 		before.setId(id);
 		String newNonNull = "new value";
 
@@ -92,7 +90,7 @@ public class CRUDServiceImplTest {
 		Map<String, Object> updatedFields = new HashMap<>();
 		updatedFields.put("nonNull", newNonNull);
 		// need to sleep for a bit so that the dates are different
-		Thread.sleep(500l);
+		Thread.sleep(500L);
 		crudService.update(id, updatedFields);
 
 		verify(crudRepository).save(pageArgument.capture());
@@ -113,10 +111,10 @@ public class CRUDServiceImplTest {
 	@Test
 	public void testUpdateWithBadPropertyName() {
 		IdentifiableTestEntity entity = new IdentifiableTestEntity();
-		entity.setId(1l);
+		entity.setId(1L);
 		Map<String, Object> updatedProperties = new HashMap<>();
 		updatedProperties.put("noSuchField", new Object());
-		when(crudRepository.findOne(1l)).thenReturn(entity);
+		when(crudRepository.findOne(1L)).thenReturn(entity);
 
 		try {
 			crudService.update(entity.getId(), updatedProperties);
@@ -132,7 +130,7 @@ public class CRUDServiceImplTest {
 		entity.setId(new Long(1));
 		Map<String, Object> updatedProperties = new HashMap<>();
 		updatedProperties.put("integerValue", new Object());
-		when(crudRepository.findOne(1l)).thenReturn(entity);
+		when(crudRepository.findOne(1L)).thenReturn(entity);
 
 		try {
 			crudService.update(entity.getId(), updatedProperties);

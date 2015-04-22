@@ -47,7 +47,6 @@ import com.google.common.collect.Lists;
 /**
  * Unit test for {@link }
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class UsersControllerTest {
 	// HTML page names
@@ -82,9 +81,9 @@ public class UsersControllerTest {
 		controller = new UsersController(userService, projectService, passwordResetService, emailController,
 				messageSource);
 
-		User u1 = new User(1l, "tom", "tom@nowhere.com", "123456798", "Tom", "Matthews", "1234");
+		User u1 = new User(1L, "tom", "tom@nowhere.com", "123456798", "Tom", "Matthews", "1234");
 		u1.setModifiedDate(new Date());
-		User u2 = new User(2l, "jeff", "jeff@somewhere.com", "ABCDEFGHIJ", "Jeff", "Guy", "5678");
+		User u2 = new User(2L, "jeff", "jeff@somewhere.com", "ABCDEFGHIJ", "Jeff", "Guy", "5678");
 		u2.setModifiedDate(new Date());
 		userPage = new PageImpl<>(Lists.newArrayList(u1, u2));
 	}
@@ -121,7 +120,7 @@ public class UsersControllerTest {
 	@Test
 	public void testGetUserSpecificPage() {
 		Principal principal = () -> USER_NAME;
-		Long userId = 1l;
+		Long userId = 1L;
 		String roleString = "User";
 
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -155,7 +154,7 @@ public class UsersControllerTest {
 	@Test
 	public void testGetOtherUsersSpecificPage() {
 		Principal principal = () -> USER_NAME;
-		Long userId = 1l;
+		Long userId = 1L;
 		String roleString = "User";
 
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -189,7 +188,7 @@ public class UsersControllerTest {
 
 	@Test
 	public void testGetEditUsersPage() {
-		Long userId = 1l;
+		Long userId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		User user = new User(userId, USER_NAME, null, null, null, null, null);
@@ -208,7 +207,7 @@ public class UsersControllerTest {
 	@Test
 	public void testSubmitEditUser() {
 		Principal principal = () -> USER_NAME;
-		Long userId = 1l;
+		Long userId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		String firstName = "NewFirst";
 		Map<String, Object> expected = new HashMap<>();
@@ -229,7 +228,7 @@ public class UsersControllerTest {
 	@Test
 	public void testSubmitEditUserError() {
 		Principal principal = () -> USER_NAME;
-		Long userId = 1l;
+		Long userId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		String email = "existing@email.com";
 		Map<String, Object> expected = new HashMap<>();
@@ -274,7 +273,7 @@ public class UsersControllerTest {
 		String password = "PassWord1";
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
-		User u = new User(1l, username, email, password, null, null, null);
+		User u = new User(1L, username, email, password, null, null, null);
 		u.setSystemRole(Role.ROLE_USER);
 		User pu = new User(USER_NAME, email, password, null, null, null);
 		pu.setSystemRole(Role.ROLE_ADMIN);
@@ -298,7 +297,7 @@ public class UsersControllerTest {
 		String password = "PassWord1";
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
-		User u = new User(1l, username, email, null, null, null, null);
+		User u = new User(1L, username, email, null, null, null, null);
 		u.setSystemRole(Role.ROLE_USER);
 		User pu = new User(USER_NAME, email, password, null, null, null);
 		pu.setSystemRole(Role.ROLE_ADMIN);
@@ -325,7 +324,7 @@ public class UsersControllerTest {
 		String password = "PassWord1";
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
-		User u = new User(1l, username, email, password, null, null, null);
+		User u = new User(1L, username, email, password, null, null, null);
 
 		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", null, model, principal);
 		assertEquals("user/create", submitCreateUser);
@@ -360,7 +359,7 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		User pu = new User(username, email, password, null, null, null);
 		pu.setSystemRole(Role.ROLE_ADMIN);
-		User u = new User(1l, username, email, password, null, null, null);
+		User u = new User(1L, username, email, password, null, null, null);
 
 		when(userService.create(any(User.class))).thenThrow(exception);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);

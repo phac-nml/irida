@@ -34,7 +34,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Controller for handling project/members views and functions
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller
@@ -116,7 +115,7 @@ public class ProjectMembersController {
 	 *            The ID of the project
 	 * @param term
 	 *            A search term
-	 * @return A Map<Long,String> of the userID and user label
+	 * @return A {@code Map<Long,String>} of the userID and user label
 	 */
 	@RequestMapping("/{projectId}/ajax/availablemembers")
 	@ResponseBody
@@ -140,9 +139,12 @@ public class ProjectMembersController {
 	 *            The project to remove from
 	 * @param userId
 	 *            The user to remove
-	 * @return
+	 * @param principal
+	 *            a reference to the logged in user.
 	 * @throws ProjectWithoutOwnerException
+	 *             if removing the user leaves the project with no owner
 	 * @throws ProjectSelfEditException
+	 *             if a user is trying to remove themself from the project.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/remove")
@@ -168,8 +170,13 @@ public class ProjectMembersController {
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role to set
+	 * @param principal
+	 *            a reference to the logged in user.
 	 * @throws ProjectWithoutOwnerException
+	 *             if changing the user role on the project leaves it without an
+	 *             owner
 	 * @throws ProjectSelfEditException
+	 *             if a user tries to change their own role on a project.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/editrole")
@@ -194,7 +201,7 @@ public class ProjectMembersController {
 	 * 
 	 * @param projectId
 	 *            The ID of the project
-	 * @return A Map<String,Collection<ProjectUserJoin>> of the users on a
+	 * @return A {@code Map<String,Collection<ProjectUserJoin>>} of the users on a
 	 *         project. The key will be the response data param, and probably
 	 *         only that. The collection will be a ProjectUserJoin collection of
 	 *         all users on the project.

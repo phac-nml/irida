@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 
 /**
  * Interface for definining code to run on events when uploading files.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public interface UploadEventListener {

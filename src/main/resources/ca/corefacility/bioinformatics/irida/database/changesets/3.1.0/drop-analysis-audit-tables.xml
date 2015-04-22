@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="drop-analysis-audit-tables" author="fbristow">
+		<dropTable tableName="analysis_phylogenomicspipeline_AUD" />
+		<dropTable tableName="analysis_fastqc_AUD" />
+		<dropTable tableName="analysis_AUD" />
+		<dropTable tableName="analysis_fastqc_overrepresented_sequence_AUD" />
+		<dropTable tableName="analysis_output_file_AUD" />
+		<dropTable tableName="analysis_output_file_map_AUD" />
+		<dropTable tableName="analysis_properties_AUD" />
+		<dropTable tableName="overrepresented_sequence_AUD" />
+		
+		<dropColumn tableName="analysis" columnName="modifiedDate" />
+		<dropColumn tableName="overrepresented_sequence"
+			columnName="modifiedDate" />
+		<dropColumn tableName="analysis_submission_AUD" columnName="analysis_id" />
+
+		<dropForeignKeyConstraint baseTableName="analysis_output_file"
+			constraintName="FK_ANALYSIS_OUTPUT_FILE_ANALYSIS" />
+		<dropColumn tableName="analysis_output_file" columnName="analysis_id" />
+		<dropColumn tableName="analysis_output_file" columnName="modified_date" />
+		<dropColumn tableName="analysis_output_file" columnName="file_revision_number" />
+	</changeSet>
+</databaseChangeLog>

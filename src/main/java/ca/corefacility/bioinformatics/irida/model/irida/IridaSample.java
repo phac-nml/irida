@@ -17,21 +17,20 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
  * these fields are based on NCBI BioSample. Information can be found at
  * https://submit.ncbi.nlm.nih.gov/biosample/template/
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface IridaSample {
 	/**
 	 * Get the local numerical identifier
 	 * 
-	 * @return
+	 * @return the numerical identifier for the sample.
 	 */
 	public Long getId();
 
 	/**
 	 * Get the name of this sample
 	 * 
-	 * @return
+	 * @return the name of the sample.
 	 */
 	@NotNull(message = "{sample.name.notnull}")
 	@Size(min = 3, message = "{sample.name.too.short}")
@@ -41,7 +40,7 @@ public interface IridaSample {
 	/**
 	 * Get the sample ID as produced by the sequencer which produced it
 	 * 
-	 * @return
+	 * @return the identifier used by the sequencer for the sample.
 	 */
 	@NotNull(message = "{sample.external.id.notnull}")
 	@Size(min = 3, message = "{sample.external.id.too.short}")
@@ -51,14 +50,14 @@ public interface IridaSample {
 	/**
 	 * Get a text description of the sample
 	 * 
-	 * @return
+	 * @return a plain-text description of the sample.
 	 */
 	public String getDescription();
 
 	/**
 	 * microbial or eukaryotic strain name
 	 * 
-	 * @return
+	 * @return the strain name of the sample.
 	 */
 	@NotNull(message = "{sample.strain.name.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
 	@Size(min = 3, message = "{sample.strain.name.too.short}")
@@ -67,7 +66,7 @@ public interface IridaSample {
 	/**
 	 * Date of sampling
 	 * 
-	 * @return
+	 * @return the collection date of the sample.
 	 */
 	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
 	public Date getCollectionDate();
@@ -75,7 +74,7 @@ public interface IridaSample {
 	/**
 	 * Name of the person who collected the sample.
 	 * 
-	 * @return
+	 * @return the name of the person who collected the sample.
 	 */
 	@NotNull(message = "{sample.collected.by.notnull}", groups = NCBISubmission.class)
 	@Size(min = 3, message = "{sample.collected.by.too.short}")
@@ -84,7 +83,7 @@ public interface IridaSample {
 	/**
 	 * Get the latitude where this sample was collected
 	 * 
-	 * @return
+	 * @return the latitude of the location where the sample was collected.
 	 */
 	@NotNull(message = "{sample.latitude.notnull}", groups = NCBISubmission.class)
 	@Latitude
@@ -93,7 +92,7 @@ public interface IridaSample {
 	/**
 	 * Get the longitude where this sample was collected
 	 * 
-	 * @return
+	 * @return the longitude of the location where the sample was collected.
 	 */
 	@NotNull(message = "{sample.longitude.notnull}", groups = NCBISubmission.class)
 	@Longitude
@@ -102,7 +101,7 @@ public interface IridaSample {
 	/**
 	 * Get the organism represented in this sample
 	 * 
-	 * @return
+	 * @return the organism found in the sample.
 	 */
 	@NotNull(message = "{sample.organism.notnull}", groups = NCBISubmission.class)
 	@Size(min = 3, message = "{sample.organism.too.short}")
@@ -112,7 +111,7 @@ public interface IridaSample {
 	 * Get the identification or description of the specific individual from
 	 * which this sample was obtained
 	 * 
-	 * @return
+	 * @return the isolate identifier for the sample.
 	 */
 	@NotNull(message = "{sample.isolate.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
 	@Size(min = 3, message = "{sample.isolate.too.short}")
@@ -122,7 +121,7 @@ public interface IridaSample {
 	 * Geographical origin of the sample (country derived from
 	 * http://www.insdc.org/documents/country-qualifier-vocabulary).
 	 * 
-	 * @return
+	 * @return the geographic location name of the sample.
 	 */
 	@NotNull(message = "{sample.geographic.location.name.notnull}", groups = NCBISubmission.class)
 	@Pattern(regexp = "\\w+(:\\w+(:\\w+)?)?", message = "{sample.geographic.location.name.pattern}")
@@ -133,7 +132,7 @@ public interface IridaSample {
 	 * Describes the physical, environmental and/or local geographical source of
 	 * the biological sample from which the sample was derived.
 	 * 
-	 * @return
+	 * @return the source of the sample.
 	 */
 	@NotNull(message = "{sample.isolation.source.notnull}", groups = NCBISubmission.class)
 	public String getIsolationSource();
@@ -143,7 +142,7 @@ public interface IridaSample {
 	 * description for the proper format and list of allowed institutes,
 	 * http://www.insdc.org/controlled-vocabulary-culturecollection-qualifier
 	 * 
-	 * @return
+	 * @return the culture identifier for the sample.
 	 */
 	@NotNull(message = "{sample.culture.collection.notnull}", groups = NCBISubmission.class)
 	@Size(min = 1, message = "{sample.culture.collection.too.short}")
@@ -152,21 +151,21 @@ public interface IridaSample {
 	/**
 	 * observed genotype
 	 * 
-	 * @return
+	 * @return the genotype of the sample.
 	 */
 	public String getGenotype();
 
 	/**
 	 * Number of passages and passage method
 	 * 
-	 * @return
+	 * @return the passage history of the sample.
 	 */
 	public String getPassageHistory();
 
 	/**
 	 * Some bacterial specific pathotypes (example Eschericia coli - STEC, UPEC)
 	 * 
-	 * @return
+	 * @return the pathotype of the sample.
 	 */
 	public String getPathotype();
 
@@ -175,7 +174,7 @@ public interface IridaSample {
 	 * usually based on its antigenic properties. Same as serovar and serogroup.
 	 * e.g. serotype="H1N1" in Influenza A virus CY098518.
 	 * 
-	 * @return
+	 * @return the serotype of the sample.
 	 */
 	public String getSerotype();
 
@@ -185,13 +184,13 @@ public interface IridaSample {
 	 * Sometimes used as species identifier in bacteria with shaky taxonomy,
 	 * e.g. Leptospira, serovar saopaolo S76607 (65357 in Entrez).
 	 * 
-	 * @return
+	 * @return the serovar of the sample.
 	 */
 	public String getSerovar();
 
 	/**
 	 * Identifier for the physical specimen. Use format:
-	 * "[<institution-code>:[<collection-code>:]]<specimen_id>", eg,
+	 * {@code "[<institution-code>:[<collection-code>:]]<specimen_id>"}, eg,
 	 * "UAM:Mamm:52179". Intended as a reference to the physical specimen that
 	 * remains after it was analyzed. If the specimen was destroyed in the
 	 * process of analysis, electronic images (e-vouchers) are an adequate
@@ -206,7 +205,7 @@ public interface IridaSample {
 	 * museum or herbarium collection where the specimen resides, please visit:
 	 * http://www.insdc.org/controlled-vocabulary-specimenvoucher-qualifier.
 	 * 
-	 * @return
+	 * @return the speciment voucher of the sample.
 	 */
 	public String getSpecimenVoucher();
 
@@ -214,14 +213,14 @@ public interface IridaSample {
 	 * Taxonomy below subspecies; sometimes used in viruses to denote subgroups
 	 * taken from a single isolate.
 	 * 
-	 * @return
+	 * @return the subgroup of the sample.
 	 */
 	public String getSubgroup();
 
 	/**
 	 * Used as classifier in viruses (e.g. HIV type 1, Group M, Subtype A).
 	 * 
-	 * @return
+	 * @return the subtype of the sample.
 	 */
 	public String getSubtype();
 

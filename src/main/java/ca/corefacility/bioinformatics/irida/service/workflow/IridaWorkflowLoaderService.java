@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 /**
  * Used to load up IRIDA workflows.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service
@@ -144,7 +143,7 @@ public class IridaWorkflowLoaderService {
 	 */
 	public IridaWorkflowDescription loadWorkflowDescription(Path descriptionFile) throws IOException,
 			IridaWorkflowLoadException {
-		checkNotNull("descriptionFile is null", descriptionFile);
+		checkNotNull(descriptionFile, "descriptionFile is null");
 		if (!Files.exists(descriptionFile)) {
 			throw new FileNotFoundException(descriptionFile.toAbsolutePath().toString());
 		}
@@ -184,7 +183,7 @@ public class IridaWorkflowLoaderService {
 	 *             If the structure file could not be found.
 	 */
 	public IridaWorkflowStructure loadWorkflowStructure(Path structureFile) throws FileNotFoundException {
-		checkNotNull("structureFile is null", structureFile);
+		checkNotNull(structureFile, "structureFile is null");
 		if (!Files.exists(structureFile)) {
 			throw new FileNotFoundException(structureFile.toAbsolutePath().toString());
 		}

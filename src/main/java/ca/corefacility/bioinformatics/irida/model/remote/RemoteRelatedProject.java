@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 /**
  * RelatedProjectJoin for remote projects
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

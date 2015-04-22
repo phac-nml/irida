@@ -42,8 +42,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Configuration for IRIDA REST API.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  */
 @Configuration
@@ -53,7 +51,7 @@ import com.google.common.collect.ImmutableMap;
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	@Value("${file.upload.max_size}")
-	private static Long REST_MAX_UPLOAD_SIZE = 10737418240l;
+	private static Long REST_MAX_UPLOAD_SIZE = 10737418240L;
 
 	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
 

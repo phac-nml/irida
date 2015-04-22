@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "IRIDA Assembly and Annotation"
+description: "Install guide for the assembly and annotation pipeline."
 ---
 
 IRIDA Assembly and Annotation
@@ -9,7 +11,7 @@ IRIDA uses the software [SPAdes][] and [Prokka][] for assembly and annotation of
 
 | Tool Name   | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:-----------:|:-------------:|:-----------------------------:|:--------------------:|
-| **spades**  | 89004d4f8dd3  | 13 (2014-12-16)               | [Galaxy Main Shed][] |
+| **spades**  | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
 | **prokka**  | 3ad7ef0ba385  | 6 (2014-10-27)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.

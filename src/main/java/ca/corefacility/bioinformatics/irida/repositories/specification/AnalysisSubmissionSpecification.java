@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 /**
  * Specification for searching {@link AnalysisSubmission} properties
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysisSubmissionSpecification {
 	public static Specification<AnalysisSubmission> searchAnalysis(String name, AnalysisState state, Date minDate, Date maxDate) {

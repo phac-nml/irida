@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
  * Implementation of {@link ProjectEventService} using a
  * {@link ProjectEventRepository}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Service

@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 /**
  * Confirms that the authenticated user is allowed to read a sample.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Component
@@ -32,6 +31,15 @@ public class ReadSamplePermission extends BasePermission<Sample, Long> {
 
 	/**
 	 * Construct an instance of {@link ReadSamplePermission}.
+	 * 
+	 * @param sampleRepository
+	 *            the sample repository.
+	 * @param userRepository
+	 *            the user repository.
+	 * @param pujRepository
+	 *            the project user join repository.
+	 * @param psjRepository
+	 *            the project sample join repository.
 	 */
 	@Autowired
 	public ReadSamplePermission(SampleRepository sampleRepository, UserRepository userRepository,

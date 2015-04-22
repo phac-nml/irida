@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -20,8 +19,10 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -35,11 +36,11 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
  * Tests for dealing with Galaxy Libraries.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -58,6 +59,7 @@ public class GalaxyLibrariesServiceIT {
 	private Path dataFile2;
 	
 	private GalaxyInstance galaxyInstanceAdmin;
+	private LibrariesClient librariesClient;
 	
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	
@@ -79,7 +81,7 @@ public class GalaxyLibrariesServiceIT {
 	@Before
 	public void setup() throws URISyntaxException {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
-		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
+		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		
@@ -179,7 +181,38 @@ public class GalaxyLibrariesServiceIT {
 			throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
-		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile),
+		galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
 				FILE_TYPE, library, DataStorage.LOCAL);
+	}
+	
+	/**
+	 * Tests successfully deleting a data library.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testDeleteLibrarySuccess() throws ExecutionManagerException {
+		Library library = buildEmptyLibrary("testDeleteLibrarySuccess");
+		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile), FILE_TYPE,
+				library, DataStorage.LOCAL);
+		String datasetId = datasetsMap.get(dataFile);
+		assertNotNull("Dataset not uploaded correctly", librariesClient.showDataset(library.getId(), datasetId));
+
+		// Note: I cannot do much more to test deleting a library beyond making
+		// sure no exception is thrown.
+		// The Galaxy API still provides access to libraries even when deleted,
+		// but sets a deleted status.
+		// The status is not available in blend4j right now.
+		galaxyLibrariesService.deleteLibrary(library.getId());
+	}
+
+	/**
+	 * Tests failure to delete a data library.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected = DeleteGalaxyObjectFailedException.class)
+	public void testDeleteLibraryFail() throws ExecutionManagerException {
+		galaxyLibrariesService.deleteLibrary("invalid");
 	}
 }

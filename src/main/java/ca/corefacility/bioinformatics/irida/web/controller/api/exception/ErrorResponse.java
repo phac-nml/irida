@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
  * Error message response class to be serialzed to Json and returned from the
  * {@link ControllerExceptionHandler}
  * 
- * @author "Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>"
  * 
  */
 public class ErrorResponse {
@@ -32,7 +31,8 @@ public class ErrorResponse {
 
 	/**
 	 * Get the message for this response
-	 * @return
+	 * 
+	 * @return the message for this response
 	 */
 	public String getMessage() {
 		return message;
@@ -40,7 +40,9 @@ public class ErrorResponse {
 
 	/**
 	 * Set the message for this response
+	 * 
 	 * @param message
+	 *            the message for this response
 	 */
 	public void setMessage(String message) {
 		this.message = message;
@@ -50,7 +52,9 @@ public class ErrorResponse {
 	 * Add an additional map property to be serialized to JSON
 	 * 
 	 * @param key
+	 *            the key of the additional property
 	 * @param value
+	 *            the value of the additional property
 	 */
 	public void addProperty(String key, Object value) {
 		otherProperties.put(key, value);
@@ -59,7 +63,7 @@ public class ErrorResponse {
 	/**
 	 * Get the other properties defined in the map
 	 * 
-	 * @return
+	 * @return the other properties defined in the map
 	 */
 	@JsonAnyGetter
 	public Map<String, Object> getOtherProperties() {
@@ -69,7 +73,7 @@ public class ErrorResponse {
 	/**
 	 * Set the additional properties to display for this response
 	 * 
-	 * @param otherProperties
+	 * @param otherProperties the additional properties to display for this message.
 	 */
 	public void setOtherProperties(Map<String, Object> otherProperties) {
 		this.otherProperties = otherProperties;

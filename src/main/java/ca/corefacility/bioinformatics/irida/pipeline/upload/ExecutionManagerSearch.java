@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 
 /**
  * Defines search methods for specific types of information within an execution manager.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  * @param <T>  The type of object to search for.
  * @param <ID>  The ID of the object to search for.

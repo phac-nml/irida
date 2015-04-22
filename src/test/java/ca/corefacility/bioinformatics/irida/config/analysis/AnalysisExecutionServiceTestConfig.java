@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.analysis;
 
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -38,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
@@ -45,17 +44,12 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.google.common.collect.Lists;
 
 /**
  * Test configuration for {@link AnalysisExecutionService} classes.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration
@@ -97,36 +91,44 @@ public class AnalysisExecutionServiceTestConfig {
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
 	
-	/**
-	 * Timeout in seconds to stop polling a Galaxy library.
-	 */
-	private static final int LIBRARY_TIMEOUT = 5 * 60;
+	@Autowired
+	private GalaxyHistoriesService galaxyHistoriesService;
 	
-	/**
-	 * Polling time in seconds to poll a Galaxy library to check if
-	 * datasets have been properly uploaded.
-	 */
-	private static final int LIBRARY_POLLING_TIME = 5;
+	@Autowired
+	private GalaxyLibrariesService galaxyLibrariesService;
+	
+	@Autowired
+	private GalaxyLibraryBuilder galaxyLibraryBuilder;
+	
+	@Autowired
+	private GalaxyWorkflowService galaxyWorkflowService;
 
 	@Lazy
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {
-		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService(),
-				analysisExecutionServiceGalaxyAsync());
+		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
+				analysisExecutionServiceGalaxyAsync(), analysisExecutionServiceGalaxyCleanupAsync());
 	}
 
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+	}
+	
+	@Lazy
+	@Bean
+	public AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync() {
+		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionService,
+				galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 	}
 
 	@Lazy
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
-		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService(), galaxyWorkflowService(),
-				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder(),
+		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
+				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder,
 				iridaWorkflowsService,
 				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy);
 	}
@@ -134,43 +136,14 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
-		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService());
+		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService);
 	}
 
 	@Lazy
 	@Bean
 	public AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy() {
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
-		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService(), toolsClient);
-	}
-
-	@Lazy
-	@Bean
-	public GalaxyHistoriesService galaxyHistoriesService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
-		return new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService());
-	}
-
-	@Lazy
-	@Bean
-	public GalaxyLibrariesService galaxyLibrariesService() {
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
-		return new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
-	}
-
-	@Lazy
-	@Bean
-	public GalaxyLibraryBuilder galaxyLibraryBuilder() {
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
-		return new GalaxyLibraryBuilder(librariesClient, galaxyRoleSearch(), localGalaxy.getGalaxyURL());
-	}
-
-	@Lazy
-	@Bean
-	public GalaxyRoleSearch galaxyRoleSearch() {
-		RolesClient rolesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getRolesClient();
-		return new GalaxyRoleSearch(rolesClient, localGalaxy.getGalaxyURL());
+		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient);
 	}
 
 	/**
@@ -202,15 +175,6 @@ public class AnalysisExecutionServiceTestConfig {
 		context.setAuthentication(adminAuthentication);
 
 		return context;
-	}
-
-	@Lazy
-	@Bean
-	public GalaxyWorkflowService galaxyWorkflowService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-
-		return new GalaxyWorkflowService(historiesClient, workflowsClient, StandardCharsets.UTF_8);
 	}
 
 	@Lazy

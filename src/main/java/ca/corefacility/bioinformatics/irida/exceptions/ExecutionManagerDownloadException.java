@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
  * Thrown when there is an issue downloading data from an execution manager.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class ExecutionManagerDownloadException extends ExecutionManagerException {

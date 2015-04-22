@@ -16,13 +16,11 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
  * @param <ProjectName>  The name of the project to upload into.
  * @param <AccountName>  The name of the user account to make an owner of a new data location.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public interface Uploader<ProjectName extends UploadProjectName, AccountName extends UploaderAccountName> {
 	/**
 	 * Defines the location of data to upload on a filesystem.
 	 * 
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 * 
 	 */
 	public enum DataStorage {

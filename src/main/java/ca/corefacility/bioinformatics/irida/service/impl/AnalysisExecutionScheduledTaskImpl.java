@@ -10,26 +10,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.AsyncResult;
 
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
+import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+
+import com.google.common.collect.Sets;
 
 /**
  * Implementation of analysis execution tasks. This will scan for
  * {@link AnalysisSubmission}s and execute the {@link Analysis} defined by the
  * submissions.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
@@ -38,11 +39,13 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private Object executeAnalysesLock = new Object();
 	private Object monitorRunningAnalysesLock = new Object();
 	private Object transferAnalysesResultsLock = new Object();
+	private Object cleanupAnalysesResultsLock = new Object();
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private AnalysisExecutionService analysisExecutionService;
+	private final CleanupAnalysisSubmissionCondition cleanupCondition;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -52,12 +55,16 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 *            A repository for {@link AnalysisSubmission}s.
 	 * @param analysisExecutionServiceGalaxy
 	 *            A service for executing {@link AnalysisSubmission}s.
+	 * @param cleanupCondition
+	 *            The condition defining when an {@link AnalysisSubmission}
+	 *            should be cleaned up.
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionService analysisExecutionServiceGalaxy) {
+			AnalysisExecutionService analysisExecutionServiceGalaxy, CleanupAnalysisSubmissionCondition cleanupCondition) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
+		this.cleanupCondition = cleanupCondition;
 	}
 
 	/**
@@ -186,35 +193,63 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			AnalysisSubmission analysisSubmission) {
 		Future<AnalysisSubmission> returnedSubmission;
 
-		GalaxyWorkflowState workflowState = workflowStatus.getState();
-		switch (workflowState) {
-		case OK:
-			logger.debug("Analysis finished " + analysisSubmission);
-
-			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
-			break;
-
-		case NEW:
-		case UPLOAD:
-		case WAITING:
-		case QUEUED:
-		case RUNNING:
-			logger.trace("Workflow for analysis " + analysisSubmission + " is running: percent "
-					+ workflowStatus.getPercentComplete());
-			returnedSubmission = new AsyncResult<>(analysisSubmission);
-
-			break;
-
-		default:
+		// Immediately switch overall workflow state to "ERROR" if an error occurred, even if some tools are still running.
+		if (workflowStatus.errorOccurred()) {
 			logger.error("Workflow for analysis " + analysisSubmission + " in error state " + workflowStatus);
 
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
+		} else if (workflowStatus.completedSuccessfully()) {
+			logger.debug("Analysis finished " + analysisSubmission);
 
-			break;
+			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
+		} else if (workflowStatus.isRunning()) {
+			logger.trace("Workflow for analysis " + analysisSubmission + " is running: proportion complete "
+					+ workflowStatus.getProportionComplete());
+			returnedSubmission = new AsyncResult<>(analysisSubmission);
+		} else {
+			// If one of the above combinations did not match, assume an error occurred.
+			logger.error("Workflow for analysis " + analysisSubmission + " is neither complete, in error, or still running. Switching to error state " + workflowStatus);
+
+			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
+			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 		}
 
 		return returnedSubmission;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Future<AnalysisSubmission>> cleanupAnalysisSubmissions() {
+		synchronized (cleanupAnalysesResultsLock) {
+			logger.trace("Running cleanupAnalysisSubmissions");
+
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.COMPLETED, AnalysisCleanedState.NOT_CLEANED);
+			analysisSubmissions.addAll(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR,
+					AnalysisCleanedState.NOT_CLEANED));
+
+			Set<Future<AnalysisSubmission>> cleanedSubmissions = Sets.newHashSet();
+
+			for (AnalysisSubmission submission : analysisSubmissions) {
+				if (AnalysisCleanedState.NOT_CLEANED.equals(submission.getAnalysisCleanedState())
+						&& cleanupCondition.shouldCleanupSubmission(submission)) {
+					logger.trace("Attempting to clean up submission " + submission);
+
+					try {
+						Future<AnalysisSubmission> cleanedSubmissionFuture = analysisExecutionService
+								.cleanupSubmission(submission);
+						cleanedSubmissions.add(cleanedSubmissionFuture);
+					} catch (ExecutionManagerException e) {
+						logger.error("Error cleaning submission " + submission, e);
+					}
+				}
+			}
+
+			return cleanedSubmissions;
+		}
 	}
 }

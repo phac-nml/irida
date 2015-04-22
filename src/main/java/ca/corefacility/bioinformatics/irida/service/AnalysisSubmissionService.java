@@ -19,7 +19,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -32,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 /**
  * A service for AnalysisSubmissions.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSubmission> {
@@ -182,6 +183,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            the named parameters to use for the workflow.
 	 * @param name
 	 *            {@link String} the name for the analysis
+	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
@@ -207,9 +209,30 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            the named parameters to use for the workflow.
 	 * @param name
 	 *            {@link String} the name for the analysis
+	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
+	 *         the supplied files.
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
+	
+	/**
+	 * Given the id of an {@link AnalysisSubmission} gets the percentage
+	 * complete.
+	 * 
+	 * @param id
+	 *            The id of an {@link AnalysisSubmission}.
+	 * @return The percentage complete for this {@link AnalysisSubmission}.
+	 * @throws NoPercentageCompleteException
+	 *             An exception that indicates there is no percentage complete
+	 *             for the submission.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue when contacting the execution manager.
+	 * @throws EntityNotFoundException
+	 *             If no such corresponding submission exists.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
+			NoPercentageCompleteException, ExecutionManagerException;
 }

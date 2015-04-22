@@ -20,12 +20,11 @@ import com.google.common.collect.Ordering;
  * Page Object to represent the project samples page.
  * </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectSamplesPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPage.class);
-	private static final String RELATIVE_URL = "projects/1/samples";
-	private static final String ALT_RELATIVE_URL = "projects/id/samples";
+	private static final String RELATIVE_URL = "projects/1";
+	private static final String ALT_RELATIVE_URL = "projects/id";
 	private PageUtilities pageUtilities;
 
 	public ProjectSamplesPage(WebDriver driver) {

@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0-alpha2-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -201,6 +201,11 @@
 			<artifactId>commons-dbcp2</artifactId>
 			<version>${commons.dbcp.version}</version>
 			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>javax.interceptor</groupId>
+			<artifactId>javax.interceptor-api</artifactId>
+			<version>${javax.interceptor-api.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -539,7 +544,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.9.1</version>
+				<version>${maven.build.helper.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>reserve-ports</id>
@@ -550,7 +555,6 @@
 						<configuration>
 							<portNames>
 								<portName>jetty.port</portName>
-								<portName>jetty.port.stop</portName>
 							</portNames>
 						</configuration>
 					</execution>
@@ -627,7 +631,16 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<compilerId>javac-with-errorprone</compilerId>
+					<forceJavacCompilerUse>true</forceJavacCompilerUse>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.plexus</groupId>
+						<artifactId>plexus-compiler-javac-errorprone</artifactId>
+						<version>${errorprone.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -636,12 +649,16 @@
 				<executions>
 					<execution>
 						<id>generate-doc</id>
-						<phase>site</phase>
+						<phase>pre-site</phase>
 						<goals>
 							<goal>javadoc</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
+					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -733,7 +750,7 @@
 				<version>${maven.jetty.plugin.version}</version>
 				<configuration>
 					<scanIntervalSeconds>1</scanIntervalSeconds>
-					<stopPort>${jetty.port.stop}</stopPort>
+					<stopPort>9966</stopPort>
 					<stopKey>STOP</stopKey>
 				</configuration>
 				<executions>
@@ -759,12 +776,8 @@
 									<value>${jetty.port}</value>
 								</systemProperty>
 								<systemProperty>
-									<name>jetty.port.stop</name>
-									<value>${jetty.port.stop}</value>
-								</systemProperty>
-								<systemProperty>
-								    <name>server.base.url</name>
-								    <value>http://localhost:${jetty.port}</value>
+									<name>server.base.url</name>
+									<value>http://localhost:${jetty.port}</value>
 								</systemProperty>
 							</systemProperties>
 						</configuration>
@@ -796,7 +809,33 @@
 							<goal>exec</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>exec-jekyll-build</id>
+						<phase>site</phase>
+						<configuration>
+							<executable>jekyll</executable>
+							<workingDirectory>doc/</workingDirectory>
+							<arguments>
+								<argument>build</argument>
+								<argument>--config</argument>
+								<argument>_build-config.yml</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>${maven.site.plugin.version}</version>
+				<configuration>
+					<!-- straight-up skip maven's site generation. We're taking over the 
+						site phase to generate documentation with jekyll outside of maven. -->
+					<skip>true</skip>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -827,7 +866,7 @@
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-06fa5da9722cf938306359ea1856a37ac4d429eb</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-f1044f9919aea71bd1d089bbf75108ee1d68c086</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.5.0</com.github.jmchilton.galaxybootstrap.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
@@ -855,11 +894,12 @@
 		<attoparser.version>1.3</attoparser.version>
 		<thymeleaf.extras.springsecurity3.version>2.1.1.RELEASE</thymeleaf.extras.springsecurity3.version>
 		<thymeleaf.extras.conditionalcomments.version>2.1.1.RELEASE</thymeleaf.extras.conditionalcomments.version>
+		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
 		<maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
-		<maven.javadoc.plugin.version>2.9.1</maven.javadoc.plugin.version>
+		<maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
 		<maven.jacoco.plugin.version>0.7.1.201405082137</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
@@ -867,6 +907,9 @@
 		<maven.war.plugin.version>2.5</maven.war.plugin.version>
 		<maven.jetty.plugin.version>9.2.1.v20140609</maven.jetty.plugin.version>
 		<maven.exec.plugin.version>1.3.2</maven.exec.plugin.version>
+		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
+		<maven.site.plugin.version>3.4</maven.site.plugin.version>
+		<errorprone.version>2.5</errorprone.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -882,14 +925,14 @@
 		<liquibase.config.changeLogFile>ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
 
 		<!-- URL to the Galaxy repository to test against by default -->
-		<test.galaxy.repository.url>https://bitbucket.org/galaxy/galaxy-dist</test.galaxy.repository.url>
+		<test.galaxy.repository.url>https://bitbucket.org/apetkau/galaxy-dist</test.galaxy.repository.url>
 
 		<!-- Branch name within the Galaxy repository to test against -->
-		<test.galaxy.branch>stable</test.galaxy.branch>
+		<test.galaxy.branch>release_15.03_database_fix</test.galaxy.branch>
 
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch 
 			in the defined repository -->
-		<test.galaxy.revision>097bbb3b7d3246faaa5188a1fc2a79b01630025c</test.galaxy.revision>
+		<test.galaxy.revision>b065a7a422d72c5436ba62bfc6d831a9df82a79f</test.galaxy.revision>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
 		<!-- Set to 'local' to use the local version stored in irida-api, or set 

@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -46,13 +45,13 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
+import com.google.common.base.Objects;
 import com.google.common.net.HttpHeaders;
 
 /**
  * Controller for managing relationships between {@link Sample} and
  * {@link SequenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTSampleSequenceFilesController {
@@ -111,7 +110,9 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Get the {@link SequenceFile} entities associated with a specific
 	 * {@link Sample}.
-	 * 
+	 *
+	 * @param projectId
+	 *            the ID of the project.
 	 * @param sampleId
 	 *            the identifier for the {@link Sample}.
 	 * @return the {@link SequenceFile} entities associated with the
@@ -159,7 +160,13 @@ public class RESTSampleSequenceFilesController {
 	 *            the identifier for the {@link Sample}.
 	 * @param file
 	 *            the content of the {@link SequenceFile}.
+	 * @param fileResource
+	 *            the parameters for the file
+	 * @param response
+	 *            the servlet response.
 	 * @return a response indicating the success of the submission.
+	 * @throws IOException
+	 *             if we can't write the file to disk.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ModelMap addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
@@ -246,14 +253,24 @@ public class RESTSampleSequenceFilesController {
 	
 	/**
 	 * Add a pair of {@link SequenceFile}s to a {@link Sample}
-	 * @param projectId The {@link Project} id to add to
-	 * @param sampleId The {@link Sample} id to add to
-	 * @param file1 The first multipart file
-	 * @param fileResource1 The metadata for the first file
-	 * @param file2 The second multipart file
-	 * @param fileResource2 the metadata for the second file 
+	 * 
+	 * @param projectId
+	 *            The {@link Project} id to add to
+	 * @param sampleId
+	 *            The {@link Sample} id to add to
+	 * @param file1
+	 *            The first multipart file
+	 * @param fileResource1
+	 *            The metadata for the first file
+	 * @param file2
+	 *            The second multipart file
+	 * @param fileResource2
+	 *            the metadata for the second file
+	 * @param response
+	 *            a reference to the servlet response.
 	 * @return Response containing the locations for the created files
 	 * @throws IOException
+	 *             if we can't write the files to disk
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ModelMap addNewSequenceFilePairToSample(@PathVariable Long projectId,
@@ -287,10 +304,13 @@ public class RESTSampleSequenceFilesController {
 		sf2.setFile(target2);
 		// get the sequencing run
 		SequencingRun sequencingRun = null;
-		Long runId = fileResource1.getMiseqRunId();
-		if (runId != fileResource2.getMiseqRunId()) {
+		
+		if (!Objects.equal(fileResource1.getMiseqRunId(), fileResource2.getMiseqRunId())) {
 			throw new IllegalArgumentException("Cannot upload a pair of files from different sequencing runs");
 		}
+
+		Long runId = fileResource1.getMiseqRunId();
+		
 		if (runId != null) {
 			sequencingRun = miseqRunService.read(runId);
 			sf1.setSequencingRun(sequencingRun);
@@ -345,71 +365,12 @@ public class RESTSampleSequenceFilesController {
 	}
 
 	/**
-	 * Add a relationship between an existing {@link SequenceFile} and a
-	 * {@link Sample}. If the {@link SequenceFile} has a relationship with the
-	 * {@link Project} that this {@link Sample} belongs to, then the
-	 * relationship is terminated. The {@link SequenceFile} is not required to
-	 * belong to the parent {@link Project}.
-	 * 
-	 * @param projectId
-	 *            the identifier of the {@link Project} that the {@link Sample}
-	 *            belongs to.
-	 * @param sampleId
-	 *            the identifier of the {@link Sample}.
-	 * @param requestBody
-	 *            the JSON/XML encoded request that contains the
-	 *            {@link SequenceFile} identifier.
-	 * @return
-	 */
-	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = {
-			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ModelMap addExistingSequenceFileToSample(@PathVariable Long projectId,
-			@PathVariable Long sampleId, @RequestBody Map<String, String> requestBody, HttpServletResponse response) {
-		ModelMap modelMap = new ModelMap();
-		// sanity checking, does the correct key exist in the request body?
-		if (!requestBody.containsKey(SEQUENCE_FILE_ID_KEY)) {
-			throw new InvalidPropertyException("Required property [" + SEQUENCE_FILE_ID_KEY + "] not found in request.");
-		}
-		Long sequenceFileIdentifier = Long.valueOf(requestBody.get(SEQUENCE_FILE_ID_KEY));
-		logger.debug("Adding sequence file reference " + sequenceFileIdentifier + " to sample " + sampleId);
-		Project p = projectService.read(projectId);
-		// confirm the relationship between the sample and the project.
-		Sample s = sampleService.getSampleForProject(p, sampleId);
-		// load the sample and sequence file from the database.
-		SequenceFile sf = sequenceFileService.read(sequenceFileIdentifier);
-		// persist the changes by calling the sample service
-		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sampleService.addSequenceFileToSample(s, sf);
-		// add a link to the sequence file itself (on the sequence file
-		// controller), and to the sequence files and sample file
-		Long sequenceFileId = sampleSequenceFileRelationship.getObject().getId();
-		LabelledRelationshipResource<Sample,SequenceFile> resource = new LabelledRelationshipResource<Sample,SequenceFile>(
-				sampleSequenceFileRelationship.getLabel(),sampleSequenceFileRelationship);
-		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
-				.withRel(REL_SAMPLE_SEQUENCE_FILES));
-		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
-				REL_SAMPLE));
-		Link selfLink = linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(
-				projectId, sampleId,sequenceFileId)).withSelfRel();
-		resource.add(selfLink);
-		// prepare the header
-		response.addHeader(HttpHeaders.LOCATION, selfLink.getHref());
-		// add the resource to the ModelMap, and set the HTTP status.
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
-		response.setStatus(HttpStatus.CREATED.value());
-		// respond to the client
-		return modelMap;
-	}
-
-	/**
 	 * Remove a {@link SequenceFile} from a {@link Sample}. The
-	 * {@link SequenceFile} will be moved to the
-	 * {@link ca.corefacility.bioinformatics.irida.model.Project} that is
-	 * related to this {@link Sample}.
+	 * {@link SequenceFile} will be moved to the {@link Project} that is related
+	 * to this {@link Sample}.
 	 * 
 	 * @param projectId
-	 *            the destination
-	 *            {@link ca.corefacility.bioinformatics.irida.model.Project}
-	 *            identifier.
+	 *            the destination {@link Project} identifier.
 	 * @param sampleId
 	 *            the source {@link Sample} identifier.
 	 * @param sequenceFileId
@@ -500,13 +461,20 @@ public class RESTSampleSequenceFilesController {
 	}
 	
 	/**
-     * Update a {@link SequenceFile} details.
-     *
-     * @param projectId     the identifier of the {@link Project} that the {@link Sample} belongs to.
-     * @param sampleId      the identifier of the {@link Sample}.
-     * @param updatedFields the updated fields of the {@link Sample}.
-     * @return a response including links to the {@link Project} and {@link Sample}.
-     */
+	 * Update a {@link SequenceFile} details.
+	 *
+	 * @param projectId
+	 *            the identifier of the {@link Project} that the {@link Sample}
+	 *            belongs to.
+	 * @param sampleId
+	 *            the identifier of the {@link Sample}.
+	 * @param sequenceFileId
+	 *            the identifier of the {@link SequenceFile} to be updated.
+	 * @param updatedFields
+	 *            the updated fields of the {@link Sample}.
+	 * @return a response including links to the {@link Project} and
+	 *         {@link Sample}.
+	 */
     @RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.PATCH,
             consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ModelMap updateSequenceFile(@PathVariable Long projectId, @PathVariable Long sampleId,

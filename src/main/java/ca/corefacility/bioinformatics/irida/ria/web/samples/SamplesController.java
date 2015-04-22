@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -35,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -52,7 +49,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Controller for all sample related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class SamplesController extends BaseController {
@@ -65,7 +61,6 @@ public class SamplesController extends BaseController {
 
 	// Model attributes
 	private static final String MODEL_ATTR_SAMPLE = "sample";
-	private static final String MODEL_ATTR_FILES = "files";
 	public static final String MODEL_ATTR_CAN_MANAGE_SAMPLE = "canManageSample";
 
 	// Page Names
@@ -167,6 +162,8 @@ public class SamplesController extends BaseController {
 	 *            Date the sample was collected (Optional)
 	 * @param params
 	 *            Map of fields to update. See FIELDS.
+	 * @param request
+	 *            a reference to the current request.
 	 * @return The name of the details page.
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
@@ -209,36 +206,19 @@ public class SamplesController extends BaseController {
 	 *            Spring {@link Model}
 	 * @param sampleId
 	 *            Sample id
-	 * @return
-	 * @throws IOException
+	 * @param principal
+	 *            a reference to the logged in user.
+	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
-	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal)
-			throws IOException {
+	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal) {
 		Sample sample = sampleService.read(sampleId);
-		List<Map<String, Object>> files = getFilesForSample(sampleId);
-
 		model.addAttribute("sampleId", sampleId);
-		model.addAttribute(MODEL_ATTR_FILES, files);
 
-		// SequenceFilePairs
-		List<SequenceFilePair> pairList = sequenceFilePairService.getSequenceFilePairsForSample(sample);
-		List<Map<String, Object>> pairs = new ArrayList<>();
-		for (SequenceFilePair pair : pairList) {
-			Map<String, Object> map = new HashMap<>();
-
-			// Get the file info
-			Set<SequenceFile> fileSet = pair.getFiles();
-			List<Map<String, Object>> pairedFiles = new ArrayList<>();
-			for (SequenceFile file : fileSet) {
-				pairedFiles.add(sequenceFileUtilities.getFileDataMap(file));
-			}
-			map.put("files", pairedFiles);
-			map.put("createdDate", pair.getCreatedDate());
-			pairs.add(map);
-		}
-		model.addAttribute("pairs", pairs);
+		// SequenceFile
+		model.addAttribute("paired_end", sequenceFilePairService.getSequenceFilePairsForSample(sample));
+		model.addAttribute("single_end", sequenceFileService.getUnpairedSequenceFilesForSample(sample));
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
@@ -258,7 +238,7 @@ public class SamplesController extends BaseController {
 	 * @return A list file details.
 	 */
 	@RequestMapping(value = "/samples/ajax/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
+	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) {
 		Sample sample = sampleService.read(sampleId);
 
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getUnpairedSequenceFilesForSample(sample);
@@ -273,10 +253,17 @@ public class SamplesController extends BaseController {
 	/**
 	 * Remove a given sequence file from a sample
 	 *
+	 * @param attributes
+	 *            the redirect attributes where we can add flash-scoped messages
+	 *            for the client.
 	 * @param sampleId
 	 *            the {@link Sample} id
 	 * @param fileId
 	 *            The {@link SequenceFile} id
+	 * @param returnUrl
+	 *            where we should send the browser after removing the file.
+	 * @param locale
+	 *            the locale specified by the browser.
 	 * @return map stating the request was successful
 	 */
 	@RequestMapping(value = "/samples/{sampleId}/files/delete", method = RequestMethod.POST)

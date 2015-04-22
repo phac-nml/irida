@@ -45,7 +45,6 @@ import com.google.common.collect.Lists;
 /**
  * Testing the behavior of {@link UserServiceImpl}
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserServiceImplTest {
 
@@ -105,9 +104,9 @@ public class UserServiceImplTest {
 	public void updateNoPassword() {
 		Map<String, Object> properties = ImmutableMap.of("username", (Object) "updated");
 
-		when(userRepository.exists(1l)).thenReturn(true);
-		when(userRepository.findOne(1l)).thenReturn(user());
-		userService.update(1l, properties);
+		when(userRepository.exists(1L)).thenReturn(true);
+		when(userRepository.findOne(1L)).thenReturn(user());
+		userService.update(1L, properties);
 		verifyZeroInteractions(passwordEncoder);
 	}
 
@@ -148,10 +147,10 @@ public class UserServiceImplTest {
 		String encodedPassword = password + "_ENCODED";
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-		when(userRepository.exists(1l)).thenReturn(true);
-		when(userRepository.findOne(1l)).thenReturn(user());
+		when(userRepository.exists(1L)).thenReturn(true);
+		when(userRepository.findOne(1L)).thenReturn(user());
 
-		userService.changePassword(1l, password);
+		userService.changePassword(1L, password);
 
 		ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);
 		verify(userRepository).save(argument.capture());
@@ -253,8 +252,8 @@ public class UserServiceImplTest {
 		String searchString = "tom";
 		
 		
-		Page<User> userPage = new PageImpl<>(Lists.newArrayList(new User(1l, "tom", "tom@nowhere.com", "123456798", "Tom",
-				"Matthews", "1234"), new User(2l, "tomorrow", "tomorrow@somewhere.com", "ABCDEFGHIJ", "Tommorrow", "Sillyname", "5678")));
+		Page<User> userPage = new PageImpl<>(Lists.newArrayList(new User(1L, "tom", "tom@nowhere.com", "123456798", "Tom",
+				"Matthews", "1234"), new User(2L, "tomorrow", "tomorrow@somewhere.com", "ABCDEFGHIJ", "Tommorrow", "Sillyname", "5678")));
 		
 		when(userRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(userPage);
 		

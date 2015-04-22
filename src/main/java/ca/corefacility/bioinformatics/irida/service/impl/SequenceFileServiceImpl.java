@@ -39,8 +39,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 /**
  * Implementation for managing {@link SequenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Service
 public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile> implements SequenceFileService {
@@ -77,6 +75,14 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            the sequence file repository.
 	 * @param validator
 	 *            validator.
+	 * @param ssfRepository
+	 *            the sample sequence file repository.
+	 * @param pairRepository
+	 *            the sequence file pair repository.
+	 * @param executor
+	 *            the task executor for processing sequence files.
+	 * @param fileProcessingChain
+	 *            the processing chain for processing sequence file.
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
@@ -190,7 +196,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * Executes {@link FileProcessingChain} asynchronously in a
 	 * {@link TaskExecutor}.
 	 * 
-	 * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
 	 * 
 	 */
 	private static final class SequenceFileProcessorLauncher implements Runnable {

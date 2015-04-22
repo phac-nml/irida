@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +51,6 @@ import com.google.common.collect.Lists;
  * Controller handling basic operations for listing, viewing, adding, and
  * removing {@link RemoteAPI}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller
@@ -122,6 +120,8 @@ public class RemoteAPIController extends BaseController {
 	 *            The ID of the api
 	 * @param model
 	 *            Model for the view
+	 * @param locale
+	 *            the locale specified by the browser.
 	 * @return The name of the remote api details page view
 	 */
 	@RequestMapping("/{apiId}")
@@ -232,7 +232,11 @@ public class RemoteAPIController extends BaseController {
 	 *            The direction of the sort
 	 * @param searchValue
 	 *            The string search value for the table
-	 * @return a Map<String,Object> for the table
+	 * @param principal
+	 *            a reference to the logged in user.
+	 * @param locale
+	 *            the locale specified by the browser.
+	 * @return a Map for the table
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxAPIList(@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
@@ -306,6 +310,8 @@ public class RemoteAPIController extends BaseController {
 	 * 
 	 * @param apiId
 	 *            the ID of the api to connect to
+	 * @param model
+	 *            the model to add attributes to.
 	 * @return The name of the PARENT_FRAME_RELOAD_PAGE view
 	 */
 	@RequestMapping("/connect/{apiId}")
@@ -327,11 +333,10 @@ public class RemoteAPIController extends BaseController {
 	 * @return A redirect to the {@link OltuAuthorizationController}'s
 	 *         authentication
 	 * @throws OAuthSystemException
-	 * @throws MalformedURLException
+	 *             if the request cannot be authenticated.
 	 */
 	@ExceptionHandler(IridaOAuthException.class)
-	public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) throws OAuthSystemException,
-			MalformedURLException {
+	public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) throws OAuthSystemException {
 		logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
 		String requestURI = request.getRequestURI();
 

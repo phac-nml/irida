@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 /**
  * This class is responsible for holding the formats of different Strings (e.g. Dates)
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public interface Formats {
 	/**

@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 /**
  * Sequence file utilities class using BioJava for calculation
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Component
@@ -31,7 +30,7 @@ public class BioJavaSequenceFileUtilitiesImpl implements SequenceFileUtilities {
 	 */
 	@Override
 	public Long countSequenceFileLengthInBases(Path file) {
-		Long totalLength = 0l;
+		Long totalLength = 0L;
 
 		logger.trace("Calculating length for file: " + file);
 		try {

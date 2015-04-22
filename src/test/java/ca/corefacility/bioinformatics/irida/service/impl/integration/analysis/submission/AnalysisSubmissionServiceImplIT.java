@@ -33,11 +33,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -58,18 +57,18 @@ import com.google.common.collect.Sets;
 /**
  * Tests for an analysis service.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiNoGalaxyTestConfig.class,
-		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionServiceIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionServiceImplIT {
+	
+	private static float DELTA = 0.000001f;
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -91,7 +90,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetStateForAnalysisSubmissionSuccess() {
-		AnalysisState state = analysisSubmissionService.getStateForAnalysisSubmission(1l);
+		AnalysisState state = analysisSubmissionService.getStateForAnalysisSubmission(1L);
 		assertEquals(AnalysisState.SUBMITTING, state);
 	}
 
@@ -101,7 +100,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = EntityNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetStateForAnalysisSubmissionFail() {
-		analysisSubmissionService.getStateForAnalysisSubmission(20l);
+		analysisSubmissionService.getStateForAnalysisSubmission(20L);
 	}
 
 	@Test
@@ -112,7 +111,7 @@ public class AnalysisSubmissionServiceImplIT {
 				null, null);
 		Page<AnalysisSubmission> paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC,
 				"createdDate");
-		assertEquals(9, paged.getContent().size());
+		assertEquals(10, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";
@@ -443,7 +442,7 @@ public class AnalysisSubmissionServiceImplIT {
 		User user = userRepository.findOne(1L);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 8, submissions.size());
+		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
 
 	/**
@@ -465,7 +464,7 @@ public class AnalysisSubmissionServiceImplIT {
 		User user = userRepository.findOne(1L);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 8, submissions.size());
+		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
 	
 	/**
@@ -476,7 +475,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 8, submissions.size());
+		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
 
 	/**
@@ -535,11 +534,68 @@ public class AnalysisSubmissionServiceImplIT {
 		assertEquals("Submission parameters should be the same as the named parameters", params.getInputParameters(),
 				submission.getInputParameters());
 	}
+	
+	/**
+	 * Tests getting the percentage complete for a submission as a regular user
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetPercentageCompleteGrantedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
+		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
+		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
+	}
+
+	/**
+	 * Tests being denied to get the percentage complete a submission as a regular user
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testGetPercentageCompleteDeniedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
+		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
+	}
+
+	/**
+	 * Tests getting the percentage complete for a submission as an admin user.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testGetPercentageCompleteGrantedAdminUser() throws EntityNotFoundException, ExecutionManagerException {
+		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
+		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
+	}
+	
+	/**
+	 * Tests getting the percentage complete for a submission as a regular user with an alternative state.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetPercentageCompleteAlternativeState() throws EntityNotFoundException, ExecutionManagerException {
+		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(3L);
+		assertEquals("submission was not properly returned", 5.0f, percentageComplete, DELTA);
+	}
+	
+	/**
+	 * Tests getting the percentage complete for a submission as a regular user and failing due to an error.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected = NoPercentageCompleteException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetPercentageCompleteFailError() throws EntityNotFoundException, ExecutionManagerException {
+		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(7L);
+	}
 
 	/**
 	 * Test specification.
 	 * 
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 *
 	 */
 	private class AnalysisSubmissionTestSpecification implements Specification<AnalysisSubmission> {

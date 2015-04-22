@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * A resource for {@link Sample}s.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "sample")
 public class SampleResource extends IdentifiableResource<Sample> {

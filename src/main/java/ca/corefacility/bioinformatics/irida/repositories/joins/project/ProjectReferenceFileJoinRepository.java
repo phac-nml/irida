@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * Repository for interacting with {@link ProjectReferenceFileJoin}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface ProjectReferenceFileJoinRepository extends IridaJpaRepository<ProjectReferenceFileJoin, Long> {
@@ -34,8 +33,8 @@ public interface ProjectReferenceFileJoinRepository extends IridaJpaRepository<P
 	 * Get the collection of {@link ReferenceFile} for the specified
 	 * {@link Project}.
 	 * 
-	 * @param project
-	 *            the {@link Project} to get {@link ReferenceFile} for.
+	 * @param referenceFile
+	 *            the {@link ReferenceFile} to get {@link Project}s for.
 	 * @return the collection of {@link ReferenceFile} for the specified
 	 *         {@link Project}.
 	 */

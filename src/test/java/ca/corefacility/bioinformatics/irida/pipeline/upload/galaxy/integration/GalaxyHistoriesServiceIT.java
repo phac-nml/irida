@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +32,15 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
@@ -55,6 +56,7 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
@@ -67,7 +69,6 @@ import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Tests for building Galaxy histories.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -76,6 +77,8 @@ import com.sun.jersey.api.client.ClientResponse;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
 public class GalaxyHistoriesServiceIT {
+	
+	private static final float DELTA = 0.00001f;
 	
 	@Autowired
 	private LocalGalaxy localGalaxy;
@@ -574,6 +577,7 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws TimeoutException 
 	 */
 	@Test(expected=ExecutionManagerDownloadException.class)
+	@Ignore("Ignored because if inconsistent behaviour between Galaxy revisions.")
 	public void testDownloadDatasetFailHistoryId() throws IOException, TimeoutException, ExecutionManagerException, InterruptedException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
@@ -663,5 +667,45 @@ public class GalaxyHistoriesServiceIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
 		galaxyHistory.libraryDatasetToHistory("fake", history);
+	}
+	
+	/**
+	 * Tests getting the status for a history successfully.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testGetStatusForHistory() throws ExecutionManagerException, TimeoutException, InterruptedException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		
+		Util.waitUntilHistoryComplete(history.getId(), galaxyHistory, 60);
+		
+		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(history.getId());
+		assertEquals("state is invalid", GalaxyWorkflowState.OK, status.getState());
+		assertEquals("proportion complete is invalid", 1.0f, status.getProportionComplete(), DELTA);
+	}
+	
+	/**
+	 * Tests deleting a history from Galaxy successfully.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testDeleteHistorySuccess() throws ExecutionManagerException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		assertNotNull("History contents should not be null", galaxyHistory.showHistoryContents(history.getId()));
+		
+		HistoryDeleteResponse deleteResponse = galaxyHistory.deleteHistory(history.getId());
+		assertTrue("History is not deleted", deleteResponse.getDeleted());
+	}
+	
+	/**
+	 * Tests deleting a history from Galaxy and failing.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected=DeleteGalaxyObjectFailedException.class)
+	public void testDeleteHistoryFail() throws ExecutionManagerException {
+		galaxyHistory.deleteHistory("invalid");
 	}
 }

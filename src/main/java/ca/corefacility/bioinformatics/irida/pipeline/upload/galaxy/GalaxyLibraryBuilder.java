@@ -26,7 +26,6 @@ import com.sun.jersey.api.client.ClientResponse;
  * Class containing methods used to build new Galaxy libraries and change
  * permissions on a library.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyLibraryBuilder {
@@ -183,7 +182,7 @@ public class GalaxyLibraryBuilder {
 	 * @return The Library we changed the owner of.
 	 * @throws ChangeLibraryPermissionsException
 	 *             If an error occurred changing the library permissions.
-	 * @throws ExecutionManagerObjectNotFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException if any of the galaxy resources cannot be found. 
 	 */
 	public Library changeLibraryOwner(Library library,
 			GalaxyAccountEmail userEmail, GalaxyAccountEmail adminEmail)

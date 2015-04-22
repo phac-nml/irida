@@ -30,7 +30,6 @@ import com.google.common.net.HttpHeaders;
 
 /**
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTSequencingRunSequenceFilesController {
@@ -49,11 +48,17 @@ public class RESTSequencingRunSequenceFilesController {
     }
     
     /**
-     * Add a relationship between a {@link MiseqRun} and a {@link SequenceFile}.
-     *
-     * @param representation the JSON key-value pair that contains the identifier for the sequenceFile
-     * @return a response indicating that the collection was modified.
-     */
+	 * Add a relationship between a {@link MiseqRun} and a {@link SequenceFile}.
+	 *
+	 * @param sequencingrunId
+	 *            the id of the run to add sequence file to.
+	 * @param representation
+	 *            the JSON key-value pair that contains the identifier for the
+	 *            sequenceFile
+	 * @param response
+	 *            a reference to the response.
+	 * @return a response indicating that the collection was modified.
+	 */
     @RequestMapping(value = "/api/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
     public ModelMap addSequenceFileToMiseqRun(@PathVariable Long sequencingrunId,
     		@RequestBody Map<String, String> representation, HttpServletResponse response) {

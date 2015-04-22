@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 /**
  * Exception that gets thrown when dealing with data or workflows from an external
  * execution manager (e.g. Galaxy).
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class ExecutionManagerException extends Exception {

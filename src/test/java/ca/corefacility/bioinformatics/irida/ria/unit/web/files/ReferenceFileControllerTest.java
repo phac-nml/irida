@@ -35,12 +35,11 @@ import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 /**
  * Unit Tests for @{link ReferenceFileController}
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ReferenceFileControllerTest {
 	// Constants
-	public static final Long FILE_ID = 1l;
-	public static final Long BAD_FILE_ID = 2l;
+	public static final Long FILE_ID = 1L;
+	public static final Long BAD_FILE_ID = 2L;
 	public static final String FILE_NAME = "test_file.fastq";
 	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
 	public static final Long PROJECT_ID = 11L;

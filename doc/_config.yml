@@ -4,8 +4,8 @@ title: IRIDA Documentation
 description: > # this means to ignore newlines until "baseurl:"
         Integrated Rapid Infectious Disease Analysis (IRIDA): A platform for genomic epidemiology.
 baseurl: "" # the subpath of your site, e.g. /blog/
-        # you can run the command `jekyll build --baseurl "/documentation" when you want to deploy
-url: "https://irida.corefacility.ca/documentation/" # the base hostname & protocol for your site
+url: "http://localhost:4000" # the base hostname & protocol for your site
+keep_files: [ developer/apidocs ]
 
 # Build settings
 markdown: KramdownPygments

@@ -36,7 +36,6 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 /**
  * Globally handles exceptions thrown by controllers.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @ControllerAdvice(basePackages = "ca.corefacility.bioinformatics.irida.web.controller.api")
 public class ControllerExceptionHandler {

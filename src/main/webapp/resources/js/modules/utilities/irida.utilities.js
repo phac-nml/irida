@@ -30,6 +30,13 @@
         };
     }
 
+    function DownloadIFrame () {
+        return {
+            restrict: "E",
+            template: '<iframe style="display:none;" ng-src="' + TL.BASE_URL + '{{relativeUrl}}' + '"></iframe>'
+        }
+    }
+
     angular
         .module('irida.utilities', [])
         .directive('ngFocus', ngFocus)

@@ -27,7 +27,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -53,6 +52,11 @@ public class AnalysesUserPageIT {
 		assertEquals("Should be 6 analyses displayed on the page after filtering by name", 6,
 				page.getNumberOfAnalyses());
 		assertEquals("Should be 2 download buttons displayed, one for each completed analysis", 2, page.getNumberOfDownloadBtns());
+
+		assertEquals("Should display progress bars with percent complete for everything except error state", 6,
+				page.getNumberOfProgressBars());
+		assertEquals("Should display 90% complete", "90%", page.getPercentComplete(4));
+		assertEquals("Should display 100% complete", "100%", page.getPercentComplete(5));
 	}
 
 	@Test

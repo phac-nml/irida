@@ -40,7 +40,6 @@ import com.google.common.collect.ImmutableList;
  * Integration test to ensure that the Project Details Page.
  * </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -539,7 +538,7 @@ public class ProjectSamplesPageIT {
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
-		page.removeProjectFromCart(1l);
+		page.removeProjectFromCart(1L);
 
 		assertEquals("cart should have been emptied", 0, page.getCartCount());
 		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
@@ -560,7 +559,7 @@ public class ProjectSamplesPageIT {
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
-		page.removeFirstSampleFromProjectInCart(1l);
+		page.removeFirstSampleFromProjectInCart(1L);
 
 		assertEquals("cart should have 2 samples", 2, page.getCartCount());
 		assertEquals("cart should have 2 samples", 1, page.getCartProjectCount());

@@ -29,7 +29,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 /**
  * <p> Integration test to ensure that the Sample Details Page. </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -41,7 +40,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class SampleFilesPageIT {
 	private final String SAMPLE_LABEL = "sample1";
 	private final Long SAMPLE_ID = 1L;
-	private final String FILE_NAME = "test_file.fastq";
+	private final String FILE_NAME = "01-1111_S1_L001_R1_001.fastq";
 	private WebDriver driver;
 	private SampleFilesPage page;
 

@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 /**
  * Repository for managing {@link RelatedProjectJoin}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface RelatedProjectRepository extends CrudRepository<RelatedProjectJoin, Long> {

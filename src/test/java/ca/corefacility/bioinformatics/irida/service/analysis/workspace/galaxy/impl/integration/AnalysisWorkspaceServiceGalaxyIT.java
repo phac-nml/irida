@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.impl.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -10,14 +14,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
-import ca.corefacility.bioinformatics.irida.exceptions.*;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +36,15 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
+import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -77,7 +88,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests out preparing a workspace for execution of workflows in Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -850,11 +860,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
-
-		// make sure files stored in analysis are same as those in analysis
-		// submission
-		assertEquals("the analysis results input files is set incorrectly", submittedSf,
-				analysis.getInputSequenceFiles());
 	}
 
 	/**
@@ -922,11 +927,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
-
-		// make sure files stored in analysis are same as those in analysis
-		// submission
-		assertEquals("the analysis results input files is set incorrectly", submittedSf,
-				analysis.getInputSequenceFiles());
 	}
 
 	/**
@@ -977,15 +977,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		Set<SequenceFile> singleFiles = analysisSubmission.getSingleInputFiles();
 		assertEquals("invalid number of single end input files", 1, singleFiles.size());
-		SequenceFile singleFile = singleFiles.iterator().next();
 		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
 		assertEquals("invalid number of paired end inputs", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
 		assertEquals("invalid number of files for paired input", 2, submittedSf.size());
-		Iterator<SequenceFile> sfIter = submittedSf.iterator();
-		SequenceFile pair1 = sfIter.next();
-		SequenceFile pair2 = sfIter.next();
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -1001,11 +997,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
-
-		// make sure files stored in analysis are same as those in analysis
-		// submission
-		assertEquals("the analysis results input files is set incorrectly", Sets.newHashSet(pair1, pair2, singleFile),
-				analysis.getInputSequenceFiles());
 	}
 
 	/**

@@ -11,7 +11,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class InitializeConfig implements WebApplicationInitializer {

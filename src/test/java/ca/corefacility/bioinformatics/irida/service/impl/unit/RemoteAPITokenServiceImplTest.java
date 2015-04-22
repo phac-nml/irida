@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.RemoteAPITokenServiceIm
 
 /**
  * Unit tests class for {@link RemoteAPITokenServiceImpl}
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class RemoteAPITokenServiceImplTest {

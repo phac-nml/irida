@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 /**
  * Tests for {@link ReadSequenceFilePermission}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class ReadSequenceFilePermissionTest {
@@ -76,16 +75,16 @@ public class ReadSequenceFilePermissionTest {
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sequenceFileRepository.findOne(1l)).thenReturn(sf);
+		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 		when(ssfRepository.getSampleForSequenceFile(sf)).thenReturn(sampleSequenceFile);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", readSequenceFilePermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted.", readSequenceFilePermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(sequenceFileRepository).findOne(1l);
+		verify(sequenceFileRepository).findOne(1L);
 		verify(psjRepository).getProjectForSample(s);
 		verify(pujRepository).getUsersForProject(p);
 		verify(ssfRepository).getSampleForSequenceFile(sf);
@@ -107,16 +106,16 @@ public class ReadSequenceFilePermissionTest {
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sequenceFileRepository.findOne(1l)).thenReturn(sf);
+		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 		when(ssfRepository.getSampleForSequenceFile(sf)).thenReturn(sampleSequenceFile);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertFalse("permission was granted.", readSequenceFilePermission.isAllowed(auth, 1l));
+		assertFalse("permission was granted.", readSequenceFilePermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(sequenceFileRepository).findOne(1l);
+		verify(sequenceFileRepository).findOne(1L);
 		verify(psjRepository).getProjectForSample(s);
 		verify(pujRepository).getUsersForProject(p);
 		verify(ssfRepository).getSampleForSequenceFile(sf);
@@ -129,7 +128,7 @@ public class ReadSequenceFilePermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertTrue("permission was not granted to admin.", readSequenceFilePermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted to admin.", readSequenceFilePermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);

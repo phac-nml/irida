@@ -53,8 +53,8 @@ public class RemoteRelatedProjectServiceImplIT {
 	@WithMockUser(username = "tom", roles = "USER")
 	@Test
 	public void testSave() {
-		Project project = projectService.read(1l);
-		RemoteAPI api = apiService.read(1l);
+		Project project = projectService.read(1L);
+		RemoteAPI api = apiService.read(1L);
 		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, api, "http://nowhere/projects/2");
 		RemoteRelatedProject created = relatedProjectService.create(remoteRelatedProject);
 		assertNotNull(created.getId());
@@ -63,7 +63,7 @@ public class RemoteRelatedProjectServiceImplIT {
 	@WithMockUser(username = "tom", roles = "USER")
 	@Test
 	public void testGetRemoteProjectsForProject() {
-		Project read = projectService.read(1l);
+		Project read = projectService.read(1L);
 		List<RemoteRelatedProject> remoteProjectsForProject = relatedProjectService.getRemoteProjectsForProject(read);
 		assertEquals(1, remoteProjectsForProject.size());
 	}

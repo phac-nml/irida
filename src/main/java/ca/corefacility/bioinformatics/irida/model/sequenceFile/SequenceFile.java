@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,7 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,23 +29,25 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
  * particular {@link Sample}.
- * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "sequence_file")
@@ -52,23 +55,27 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 @EntityListeners(AuditingEntityListener.class)
 public class SequenceFile implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long>, IridaSequenceFile {
 
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "filePath", unique = true)
+	@Column(name = "file_path", unique = true)
 	private Path file;
 
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(nullable = false, name = "created_date")
 	private final Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modified_date")
 	private Date modifiedDate;
 
+	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber; // the filesystem file revision number
 
 	// Key/value map of additional properties you could set on a sequence file.
@@ -81,11 +88,16 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	private Map<String, String> optionalProperties;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sequencingRun_id")
+	@JoinColumn(name = "sequencing_run_id")
 	private SequencingRun sequencingRun;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
-	private List<SampleSequenceFileJoin> samples;
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
+	private SampleSequenceFileJoin sample;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@NotAudited
+	@JoinColumn(name = "fastqc_analysis_id")
+	private AnalysisFastQC fastqcAnalysis;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -187,7 +199,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	/**
 	 * Get the Map of optional properties
 	 * 
-	 * @return A Map<String,String> of all the optional propertie
+	 * @return A {@code Map<String,String>} of all the optional propertie
 	 */
 	public Map<String, String> getOptionalProperties() {
 		return optionalProperties;
@@ -205,11 +217,26 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	}
 
 	/**
+	 * Get the size of the file.
+	 *
+	 * @return The String representation of the file size
+	 */
+	public String getFileSize() {
+		String size = "N/A";
+		try {
+			size = humanReadableByteCount(Files.size(file), true);
+		} catch (IOException e) {
+			logger.error("Could not calculate file size: ", e);
+		}
+		return size;
+	}
+
+	/**
 	 * Set the Map of optional properties
 	 * 
 	 * @param optionalProperties
-	 *            A Map<String,String> of all the optional properties for this
-	 *            object
+	 *            A {@code Map<String,String>} of all the optional properties
+	 *            for this object
 	 */
 	public void setOptionalProperties(Map<String, String> optionalProperties) {
 		this.optionalProperties = optionalProperties;
@@ -218,5 +245,48 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@Override
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
+	}
+
+	public AnalysisFastQC getFastQCAnalysis() {
+		return this.fastqcAnalysis;
+	}
+
+	/**
+	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
+	 * 
+	 * @param fastqcAnalysis
+	 *            the analysis to set.
+	 * @throws AnalysisAlreadySetException
+	 *             if the analysis has already been set for this
+	 *             {@link SequenceFile}.
+	 */
+	public void setFastQCAnalysis(final AnalysisFastQC fastqcAnalysis) throws AnalysisAlreadySetException {
+		if (this.fastqcAnalysis == null) {
+			this.fastqcAnalysis = fastqcAnalysis;
+		} else {
+			throw new AnalysisAlreadySetException(
+					"The FastQC Analysis can only be applied to a sequence file one time.");
+		}
+	}
+
+	/**
+	 * From
+	 * (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
+	 * into-human-readable-format-in-java)
+	 *
+	 * @param bytes
+	 *            The {@link Long} size of the file in bytes.
+	 * @param si
+	 *            {@link Boolean} true to use si units
+	 *
+	 * @return A human readable {@link String} representation of the file size.
+	 */
+	public static String humanReadableByteCount(long bytes, boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit)
+			return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }

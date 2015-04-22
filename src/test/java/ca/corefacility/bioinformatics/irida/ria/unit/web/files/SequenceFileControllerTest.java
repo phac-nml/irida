@@ -24,32 +24,28 @@ import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
  * Unit Tests for @{link SequenceFileController}
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class SequenceFileControllerTest {
-	public static final Long FILE_ID = 1l;
+	public static final Long FILE_ID = 1L;
 	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileControllerTest.class);
 	private SequenceFileController controller;
 
 	// Services
 	private SequenceFileService sequenceFileService;
-	private AnalysisService analysisService;
 	private SequencingRunService sequencingRunService;
 
 	@Before
 	public void setUp() {
 		sequenceFileService = mock(SequenceFileService.class);
-		analysisService = mock(AnalysisService.class);
 		sequencingRunService = mock(SequencingRunService.class);
-		controller = new SequenceFileController(sequenceFileService, analysisService, sequencingRunService);
+		controller = new SequenceFileController(sequenceFileService, sequencingRunService);
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);

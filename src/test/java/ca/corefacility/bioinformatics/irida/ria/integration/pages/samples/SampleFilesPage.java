@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Page Object to represent the sample sequence files page.
  * </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class SampleFilesPage extends AbstractPage {
 	public static final String RELATIVE_URL = "samples/{id}/sequenceFiles";
@@ -31,11 +30,11 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	public String getSequenceFileName() {
-		return driver.findElements(By.className("board-name")).get(0).getText();
+		return driver.findElements(By.className("file-name")).get(0).getText();
 	}
 
 	public int getSequenceFileCount() {
-		return driver.findElements(By.className("board")).size();
+		return driver.findElements(By.cssSelector("tr")).size();
 	}
 	
 	public void deleteFirstFile(){

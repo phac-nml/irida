@@ -6,7 +6,6 @@ import java.util.List;
 /**
  * Represents a sample to upload to a remote site.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public interface UploadSample {

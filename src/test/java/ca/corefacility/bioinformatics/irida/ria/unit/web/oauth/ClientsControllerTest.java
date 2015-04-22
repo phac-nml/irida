@@ -56,7 +56,7 @@ public class ClientsControllerTest {
 
 	@Test
 	public void testRead() {
-		Long clientId = 1l;
+		Long clientId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		IridaClientDetails iridaClientDetails = new IridaClientDetails();
 		iridaClientDetails.setId(clientId);
@@ -82,9 +82,9 @@ public class ClientsControllerTest {
 		String direction = "asc";
 		String searchValue = "";
 		IridaClientDetails client1 = new IridaClientDetails();
-		client1.setId(1l);
+		client1.setId(1L);
 		IridaClientDetails client2 = new IridaClientDetails();
-		client2.setId(2l);
+		client2.setId(2L);
 		Page<IridaClientDetails> clientPage = new PageImpl<>(Lists.newArrayList(client1, client2));
 
 		when(
@@ -118,14 +118,14 @@ public class ClientsControllerTest {
 	@Test
 	public void testPostCreateClient() {
 		IridaClientDetails client = new IridaClientDetails();
-		client.setId(1l);
+		client.setId(1L);
 		ExtendedModelMap model = new ExtendedModelMap();
 		String scope_read = "read";
 		String scope_write = "";
 
 		when(clientDetailsService.create(client)).thenReturn(client);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		verify(clientDetailsService).create(client);
@@ -134,7 +134,7 @@ public class ClientsControllerTest {
 	@Test
 	public void testPostCreateClientError() {
 		IridaClientDetails client = new IridaClientDetails();
-		client.setId(1l);
+		client.setId(1L);
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = LocaleContextHolder.getLocale();
 		String scope_read = "read";
@@ -145,7 +145,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.create(client)).thenThrow(ex);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
 
 		assertEquals(ClientsController.ADD_CLIENT_PAGE, postCreateClient);
 		assertTrue(model.containsAttribute("errors"));
@@ -161,7 +161,8 @@ public class ClientsControllerTest {
 		IridaClientDetails client = new IridaClientDetails();
 		client.setAuthorizedGrantTypes(ImmutableSet.of("password"));
 		client.setScope(ImmutableSet.of("read"));
-		Long id = 1l;
+		client.setAutoApprovableScopes(ImmutableSet.of(""));
+		Long id = 1L;
 		client.setId(id);
 		ExtendedModelMap model = new ExtendedModelMap();
 
@@ -178,7 +179,7 @@ public class ClientsControllerTest {
 	@SuppressWarnings("unchecked")
 	public void testSubmitEditClient() {
 		IridaClientDetails client = new IridaClientDetails();
-		Long id = 1l;
+		Long id = 1L;
 		client.setId(id);
 		ExtendedModelMap model = new ExtendedModelMap();
 		String scope_read = "read";
@@ -186,7 +187,7 @@ public class ClientsControllerTest {
 		when(clientDetailsService.read(id)).thenReturn(client);
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "","","", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		@SuppressWarnings("rawtypes")
@@ -203,8 +204,9 @@ public class ClientsControllerTest {
 	@SuppressWarnings("unchecked")
 	public void testSubmitEditClientError() {
 		IridaClientDetails client = new IridaClientDetails();
-		Long id = 1l;
+		Long id = 1L;
 		client.setId(id);
+		client.setAutoApprovableScopes(ImmutableSet.of(""));
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(clientDetailsService.read(id)).thenReturn(client);
@@ -213,7 +215,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenThrow(ex);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "","","", model, locale);
 		assertEquals(ClientsController.EDIT_CLIENT_PAGE, postCreateClient);
 	}
 
@@ -221,14 +223,14 @@ public class ClientsControllerTest {
 	@SuppressWarnings("unchecked")
 	public void testSubmitEditWithClientSecretUpdate() {
 		IridaClientDetails client = new IridaClientDetails();
-		Long id = 1l;
+		Long id = 1L;
 		client.setId(id);
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(clientDetailsService.read(id)).thenReturn(client);
 		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "true", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "","","", "true", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		@SuppressWarnings("rawtypes")
@@ -241,7 +243,7 @@ public class ClientsControllerTest {
 
 	@Test
 	public void testRemoveClient() {
-		Long id = 1l;
+		Long id = 1L;
 
 		String removeClient = controller.removeClient(id);
 

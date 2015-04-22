@@ -1,0 +1,12 @@
+<tool id="sleep" name="sleep" version="0.0.1">
+  <command>
+    sleep $time; echo sleep $time > $file2
+  </command>
+  <inputs>
+    <param name="time" label="time" type="integer" value="10"/>
+    <param name="file" type="data" label="file" format="tabular" />
+  </inputs>
+  <outputs>
+    <data format="tabular" name="file2" />
+  </outputs>
+</tool>

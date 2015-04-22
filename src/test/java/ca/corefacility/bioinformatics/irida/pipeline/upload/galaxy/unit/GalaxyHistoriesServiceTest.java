@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -52,7 +52,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Tests the GalaxyHistory class
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyHistoriesServiceTest {
@@ -154,10 +153,7 @@ public class GalaxyHistoriesServiceTest {
 	 */
 	@Test
 	public void testGetStatusOkState() throws ExecutionManagerException {
-		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
-		validStateIds.put("ok", Arrays.asList("1", "2"));
-		validStateIds.put("running", Arrays.asList());
-		validStateIds.put("queued", Arrays.asList());
+		Map<String, List<String>> validStateIds = Util.buildStateIdsWithStateFilled("ok", Arrays.asList("1", "2"));
 		
 		when(historiesClient.showHistory(VALID_HISTORY_ID)).thenReturn(historyDetails);
 		when(historyDetails.getState()).thenReturn("ok");
@@ -166,7 +162,7 @@ public class GalaxyHistoriesServiceTest {
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(GalaxyWorkflowState.OK, status.getState());
-		assertEquals(100.0f, status.getPercentComplete(), delta);
+		assertEquals("proprotion complete is invalid", 1.0f, status.getProportionComplete(), delta);
 	}
 	
 	/**
@@ -175,10 +171,7 @@ public class GalaxyHistoriesServiceTest {
 	 */
 	@Test
 	public void testGetStatusRunningState() throws ExecutionManagerException {
-		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
-		validStateIds.put("ok", Arrays.asList());
-		validStateIds.put("running", Arrays.asList("1", "2"));
-		validStateIds.put("queued", Arrays.asList());
+		Map<String, List<String>> validStateIds = Util.buildStateIdsWithStateFilled("running", Arrays.asList("1", "2"));
 		
 		when(historiesClient.showHistory(VALID_HISTORY_ID)).thenReturn(historyDetails);
 		when(historyDetails.getState()).thenReturn("running");
@@ -187,7 +180,7 @@ public class GalaxyHistoriesServiceTest {
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(GalaxyWorkflowState.RUNNING, status.getState());
-		assertEquals(0.0f, status.getPercentComplete(), delta);
+		assertEquals("proportion complete is invalid", 0.0f, status.getProportionComplete(), delta);
 	}
 	
 	/**
@@ -196,10 +189,8 @@ public class GalaxyHistoriesServiceTest {
 	 */
 	@Test
 	public void testGetStatusPartialCompleteState() throws ExecutionManagerException {
-		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
-		validStateIds.put("ok", Arrays.asList("1"));
+		Map<String, List<String>> validStateIds = Util.buildStateIdsWithStateFilled("ok", Arrays.asList("1"));
 		validStateIds.put("running", Arrays.asList("2"));
-		validStateIds.put("queued", Arrays.asList());
 		
 		when(historiesClient.showHistory(VALID_HISTORY_ID)).thenReturn(historyDetails);
 		when(historyDetails.getState()).thenReturn("running");
@@ -208,7 +199,7 @@ public class GalaxyHistoriesServiceTest {
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(GalaxyWorkflowState.RUNNING, status.getState());
-		assertEquals(50.0f, status.getPercentComplete(), delta);
+		assertEquals("proportion complete is invalid", 0.5f, status.getProportionComplete(), delta);
 	}
 	
 	/**

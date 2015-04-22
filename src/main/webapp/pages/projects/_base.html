@@ -18,29 +18,32 @@
 				<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span> <span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" th:classappend="${activeNav} == 'dashboard' ? 'active'" th:href="@{${baseLink}}" href="#"><span
-					class="glyphicon glyphicon-home"></span></a>
 		</div>
 		<div class="collapse navbar-collapse"  collapse="projectSubnav" th:inline="text">
 			<ul class="nav navbar-nav">
-
-				<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink} + '/samples'}">[[#{project.nav.samples}]]&nbsp;<span
+				<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}">[[#{project.nav.samples}]]&nbsp;<span
 						class="badge badge-default" th:text="${samples}"></span> </a></li>
-				<li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]&nbsp;<span
+				<li class="ng-cloak" th:classappend="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}"
+				        ng-hide="uiGalaxyCtrl.inGalaxy">[[#{project.nav.members}]]&nbsp;<span
 						class="badge badge-default" th:text="${users}"></span></a>
 				</li>
 				<li th:class="${activeNav} == 'associated' ? 'active'"><a th:href="@{${baseLink} + '/associated'}">[[#{project.nav.associated}]]&nbsp;<span
 						class="badge badge-default" th:text="${related_project_count}"></span></a>
 				</li>
 
-				<li th:class="${activeNav} == 'metadata' ? 'active'">
+				<li class="ng-cloak" th:classappend="${activeNav} == 'metadata' ? 'active'" ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
 				</li>
-				<li th:class="${activeNav} == 'reference' ? 'active'">
+				<li class="ng-cloak" th:classappend="${activeNav} == 'reference' ? 'active'" ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a href="" th:href="@{${baseLink} + '/referenceFiles'}" th:text="#{project.nav.referenceFiles}">
 						_Reference Files
 					</a>
 				</li>
+                <li class="ng-cloak" th:classappend="${activeNav} == 'activity' ? 'active'" ng-hide="uiGalaxyCtrl.inGalaxy">
+                    <a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">
+                        _Recent_Activity_
+                    </a>
+                </li>
 			</ul>
 		</div>
 	</div>

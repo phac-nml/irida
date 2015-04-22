@@ -30,7 +30,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 /**
  * IT for the client details page
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -43,7 +42,7 @@ public class RemoteAPIDetailsPageIT {
 	private WebDriver driver;
 	private RemoteAPIDetailsPage page;
 
-	Long id = 1l;
+	Long id = 1L;
 	String apiName = "a client";
 	String apiClient = "client";
 

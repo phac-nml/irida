@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.RemoteService;
 /**
  * Remote service to request from remote IRIDA instances using OAuth2
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            The type of object to be stored in this repository (extends

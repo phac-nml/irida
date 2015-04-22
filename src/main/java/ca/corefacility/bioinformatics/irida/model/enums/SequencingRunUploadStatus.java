@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 /**
  * Encodes the status of an uploaded {@link SequencingRun}.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @see SequencingRun
  *
  */

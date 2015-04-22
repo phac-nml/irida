@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -26,10 +27,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name = "sequencefile_sample")
+@Table(name = "sequencefile_sample", uniqueConstraints = @UniqueConstraint(columnNames = { "sequencefile_id" }, name = "UK_SEQUENCEFILE_SAMPLE_FILE"))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {

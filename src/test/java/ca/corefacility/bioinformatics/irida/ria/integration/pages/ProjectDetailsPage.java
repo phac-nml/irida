@@ -13,8 +13,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.ProjectEve
  * Page Object to represent the project details page.
  * </p>
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class ProjectDetailsPage extends AbstractPage {
 
@@ -26,7 +24,7 @@ public class ProjectDetailsPage extends AbstractPage {
 	}
 
 	public void goTo(Long projectId) {
-		get(driver, "projects/" + projectId);
+		get(driver, "projects/" + projectId + "/activity");
 	}
 
 	public String getPageTitle() {

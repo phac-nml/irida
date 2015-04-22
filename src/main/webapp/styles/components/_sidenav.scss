@@ -14,15 +14,18 @@
   top: 60px;
   width: 290px;
   z-index: 500;
-  @media screen and (max-width: 1170px) {
+  @media screen and (max-width: 1200px) {
     width: 240px;
   }
-  @media screen and (max-width: 970px) {
+  @media screen and (max-width: 1000px) {
     width: 180px;
   }
-  @media screen and (max-width: 750px) {
+  @media screen and (max-width: 830px) {
     position: static;
     width: 100%;
+  }
+  @media screen and (max-width: $screen-md) {
+    top: 110px;
   }
 }
 

@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -10,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -47,9 +44,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -69,6 +65,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -79,7 +77,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests out the analysis service for the Galaxy analyses.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -90,6 +87,8 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionServiceGalaxyIT {
+	
+	private static final float DELTA = 0.000001f;
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyIT.class);
 
@@ -122,6 +121,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 	
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+	
+	private WorkflowsClient workflowsClient;
 
 	private Path sequenceFilePath;
 	private Path sequenceFilePath2;
@@ -199,6 +200,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		pairedPaths1.add(sequenceFilePath);
 		pairedPaths2 = Lists.newArrayList();
 		pairedPaths2.add(sequenceFilePath2);
+		
+		workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 	}
 	
 	/**
@@ -485,33 +488,40 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessPhylogenomics() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+		float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 1.0f, percentComplete, DELTA);
 
 		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
 		assertNotNull("remoteInputDataId is null", analysisExecuted.getRemoteInputDataId());
 		String remoteInputDataId = analysisExecuted.getRemoteInputDataId();
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertTrue("percent complete is incorrect", 10.0f <= percentComplete && percentComplete <= 90.0f);
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 90.0f, percentComplete, DELTA);
 
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 90.0f, percentComplete, DELTA);
+		
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals(1,
-				analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
-						.size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
 		assertEquals("remoteInputDataId should be unchanged in the completed analysis", remoteInputDataId,
 				analysisSubmissionCompletedDatabase.getRemoteInputDataId());
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 100.0f, percentComplete, DELTA);
 
 		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
@@ -524,9 +534,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getSingleInputFiles(),
-				analysisResultsPhylogenomics.getInputSequenceFiles());
 
 		assertEquals(3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
@@ -561,7 +568,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.getPhylogeneticTree().getFile());
 		assertEquals(analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
 		assertEquals(analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
-		assertEquals(analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
 	}
 	
 	/**
@@ -575,10 +581,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessPhylogenomicsPaired() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairedPaths1, pairedPaths2, referenceFilePath, iridaPhylogenomicsPairedWorkflowId);
-		SequenceFilePair sequenceFilePair = analysisSubmission.getPairedInputFiles().iterator().next();
-		Iterator<SequenceFile> sequenceFilePairIter = sequenceFilePair.getFiles().iterator();
-		SequenceFile sequenceFile1 = sequenceFilePairIter.next();
-		SequenceFile sequenceFile2 = sequenceFilePairIter.next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -594,8 +596,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals("invalid number of analyses for input sequence file in database", 1, analysisRepository
-				.findAnalysesForSequenceFile(sequenceFile1, AnalysisPhylogenomicsPipeline.class).size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
@@ -615,9 +615,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles for the analysis should be set correctly",
-				Sets.newHashSet(sequenceFile1, sequenceFile2), analysisResultsPhylogenomics.getInputSequenceFiles());
 
 		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
@@ -681,8 +678,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
 		assertEquals("analysis results from database and from submission should have correct table output file",
 				analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
-		assertEquals("analysis results from database and from submission should have correct input sequence files",
-				analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
 	}
 	
 	/**
@@ -1205,10 +1200,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessAssemblyAnnotation() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairedPaths1, pairedPaths2, iridaAssemblyAnnotationWorkflowId);
-		SequenceFilePair sequenceFilePair = analysisSubmission.getPairedInputFiles().iterator().next();
-		Iterator<SequenceFile> sequenceFilePairIter = sequenceFilePair.getFiles().iterator();
-		SequenceFile sequenceFile1 = sequenceFilePairIter.next();
-		SequenceFile sequenceFile2 = sequenceFilePairIter.next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1224,8 +1215,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals("invalid number of analyses for input sequence file in database", 1, analysisRepository
-				.findAnalysesForSequenceFile(sequenceFile1, AnalysisAssemblyAnnotation.class).size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
@@ -1245,9 +1234,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsAssembly.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles for the analysis should be set correctly",
-				Sets.newHashSet(sequenceFile1, sequenceFile2), analysisResultsAssembly.getInputSequenceFiles());
 
 		assertEquals("invalid number of output files", 3, analysisResultsAssembly.getAnalysisOutputFiles().size());
 		AnalysisOutputFile contigs = analysisResultsAssembly.getContigs();
@@ -1280,7 +1266,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessTestAnalysis() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1296,7 +1281,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals(1, analysisRepository.findAnalysesForSequenceFile(sequenceFile, Analysis.class).size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
@@ -1312,9 +1296,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResults.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getSingleInputFiles(),
-				analysisResults.getInputSequenceFiles());
 
 		assertEquals(2, analysisResults.getAnalysisOutputFiles().size());
 		AnalysisOutputFile output1 = analysisResults.getAnalysisOutputFile("output1");
@@ -1355,7 +1336,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailTestAnalysisMissingOutput() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowIdMissingOutput);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1376,9 +1356,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
-			assertEquals(0,
-					analysisRepository.findAnalysesForSequenceFile(sequenceFile, Analysis.class)
-							.size());
 
 			// pull out real exception
 			throw e.getCause();
@@ -1396,7 +1373,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailInvalidId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1408,7 +1384,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
-		analysisExecuted.setId(555l);
+		analysisExecuted.setId(555L);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
@@ -1418,9 +1394,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
-			assertEquals(0,
-					analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
-							.size());
 
 			// pull out real exception
 			throw e.getCause();
@@ -1438,7 +1411,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailInvalidRemoteAnalysisId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1460,9 +1432,212 @@ public class AnalysisExecutionServiceGalaxyIT {
 			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
-			assertEquals(0,
-					analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
-							.size());
+
+			// pull out real exception
+			throw e.getCause();
+		}
+	}
+
+	/**
+	 * Tests out cleaning up a completed analysis successfully.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupCompletedAnalysisSuccess() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
+		assertEquals(AnalysisCleanedState.NOT_CLEANED, analysisSubmissionCompleted.getAnalysisCleanedState());
+
+		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(analysisSubmissionCompleted
+				.getRemoteWorkflowId());
+		assertFalse("Workflow is already deleted", workflowDetails.isDeleted());
+
+		// Once analysis is complete, attempt to clean up
+		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
+				.cleanupSubmission(analysisSubmissionCompleted);
+		AnalysisSubmission analysisSubmissionCleaned = analysisSubmissionCleanedFuture.get();
+		assertEquals("Analysis submission not properly cleaned", AnalysisCleanedState.CLEANED,
+				analysisSubmissionCleaned.getAnalysisCleanedState());
+
+		workflowDetails = workflowsClient.showWorkflow(analysisSubmissionCompleted.getRemoteWorkflowId());
+		assertTrue("Workflow is not deleted", workflowDetails.isDeleted());
+	}
+
+	/**
+	 * Tests out cleaning up an analysis in error successfully.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupErrorAnalysisSuccess() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		analysisSubmitted.setAnalysisState(AnalysisState.ERROR);
+		analysisSubmissionRepository.save(analysisSubmitted);
+
+		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(analysisSubmitted.getRemoteWorkflowId());
+		assertFalse("Workflow is already deleted", workflowDetails.isDeleted());
+
+		// Once analysis is complete, attempt to clean up
+		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
+				.cleanupSubmission(analysisSubmitted);
+		AnalysisSubmission analysisSubmissionCleaned = analysisSubmissionCleanedFuture.get();
+		assertEquals("Analysis submission not properly cleaned", AnalysisCleanedState.CLEANED,
+				analysisSubmissionCleaned.getAnalysisCleanedState());
+
+		workflowDetails = workflowsClient.showWorkflow(analysisSubmitted.getRemoteWorkflowId());
+		assertTrue("Workflow is not deleted", workflowDetails.isDeleted());
+	}
+
+	/**
+	 * Tests out cleaning up a new analysis and failing.
+	 * 
+	 * @throws Exception
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupNewAnalysisError() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		analysisExecutionService.cleanupSubmission(analysisSubmitted);
+	}
+
+	/**
+	 * Tests out cleaning up an analysis that's already been cleaned and
+	 * failing.
+	 * 
+	 * @throws Exception
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupCleanedAnalysisError() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		analysisSubmitted.setAnalysisState(AnalysisState.ERROR);
+		analysisSubmissionRepository.save(analysisSubmitted);
+
+		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
+				.cleanupSubmission(analysisSubmitted);
+		AnalysisSubmission cleanedSubmission = analysisSubmissionCleanedFuture.get();
+
+		analysisExecutionService.cleanupSubmission(cleanedSubmission);
+	}
+
+	/**
+	 * Tests out cleaning up a completed analysis and failing due to a Galaxy
+	 * exception.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test(expected = ExecutionManagerException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupCompletedAnalysisFailGalaxy() throws Throwable {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
+		assertEquals(AnalysisCleanedState.NOT_CLEANED, analysisSubmissionCompleted.getAnalysisCleanedState());
+
+		analysisSubmissionCompleted.setRemoteAnalysisId("invalid");
+		analysisSubmissionRepository.save(analysisSubmissionCompleted);
+
+		// Once analysis is complete, attempt to clean up
+		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
+				.cleanupSubmission(analysisSubmissionCompleted);
+
+		try {
+			analysisSubmissionCleanedFuture.get();
+			fail("No exception thrown");
+		} catch (ExecutionException e) {
+			assertEquals("The AnalysisState was changed from COMPLETED", AnalysisState.COMPLETED,
+					analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
+			assertEquals("The AnalysisCleanedState was not changed to error", AnalysisCleanedState.CLEANING_ERROR,
+					analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState());
+
+			// pull out real exception
+			throw e.getCause();
+		}
+	}
+
+	/**
+	 * Tests out cleaning up an analysis in error and failing due to an error in
+	 * Galaxy.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test(expected = ExecutionManagerException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupErrorAnalysisFailGalaxy() throws Throwable {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		analysisSubmitted.setAnalysisState(AnalysisState.ERROR);
+		analysisSubmitted.setRemoteWorkflowId("invalid");
+		analysisSubmissionRepository.save(analysisSubmitted);
+
+		// Once analysis is complete, attempt to clean up
+		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
+				.cleanupSubmission(analysisSubmitted);
+		try {
+			analysisSubmissionCleanedFuture.get();
+			fail("No exception thrown");
+		} catch (ExecutionException e) {
+			assertEquals("The AnalysisState was changed from ERROR", AnalysisState.ERROR, analysisSubmissionService
+					.read(analysisSubmission.getId()).getAnalysisState());
+			assertEquals("The AnalysisCleanedState was not changed to error", AnalysisCleanedState.CLEANING_ERROR,
+					analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState());
 
 			// pull out real exception
 			throw e.getCause();

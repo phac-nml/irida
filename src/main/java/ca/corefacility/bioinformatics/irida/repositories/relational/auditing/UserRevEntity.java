@@ -9,7 +9,6 @@ import org.hibernate.envers.RevisionEntity;
 
 /**
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @RevisionEntity(UserRevListener.class)

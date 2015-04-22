@@ -25,9 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -36,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
@@ -48,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 /**
  * Unit tests for {@link SampleServiceImpl}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SampleServiceImplTest {
 
@@ -56,7 +52,6 @@ public class SampleServiceImplTest {
 	private SampleRepository sampleRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
-	private AnalysisRepository analysisRepository;
 	private Validator validator;
 
 	/**
@@ -69,19 +64,18 @@ public class SampleServiceImplTest {
 		sampleRepository = mock(SampleRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
-		analysisRepository = mock(AnalysisRepository.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
-		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, analysisRepository,
+		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, 
 				validator);
 	}
 
 	@Test
 	public void testGetSampleForProject() {
 		Project p = new Project();
-		p.setId(1111l);
+		p.setId(1111L);
 		Sample s = new Sample();
-		s.setId(2222l);
+		s.setId(2222L);
 
 		ProjectSampleJoin join = new ProjectSampleJoin(p, s);
 		List<Join<Project, Sample>> joins = new ArrayList<>();
@@ -94,33 +88,11 @@ public class SampleServiceImplTest {
 	}
 
 	@Test
-	public void testAddExistingSequenceFileToSample() {
-		Sample s = new Sample();
-		s.setId(1111l);
-		SequenceFile sf = new SequenceFile();
-		sf.setId(2222l);
-
-		Project p = new Project();
-		p.setId(3333l);
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s, sf);
-
-		when(sampleRepository.exists(s.getId())).thenReturn(Boolean.TRUE);
-		when(ssfRepository.save(join)).thenReturn(join);
-
-		Join<Sample, SequenceFile> addSequenceFileToSample = sampleService.addSequenceFileToSample(s, sf);
-		verify(ssfRepository).save(join);
-
-		assertNotNull(addSequenceFileToSample);
-		assertEquals(addSequenceFileToSample.getSubject(), s);
-		assertEquals(addSequenceFileToSample.getObject(), sf);
-	}
-
-	@Test
 	public void testRemoveSequenceFileFromSample() {
 		Sample s = new Sample();
-		s.setId(1111l);
+		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
-		sf.setId(2222l);
+		sf.setId(2222L);
 
 		sampleService.removeSequenceFileFromSample(s, sf);
 
@@ -138,8 +110,8 @@ public class SampleServiceImplTest {
 
 		final int SIZE = 3;
 
-		Sample s = s(1l);
-		Project project = p(1l);
+		Sample s = s(1L);
+		Project project = p(1L);
 
 		Sample[] toMerge = new Sample[SIZE];
 		SequenceFile[] toMerge_sf = new SequenceFile[SIZE];
@@ -181,14 +153,14 @@ public class SampleServiceImplTest {
 	@Test
 	public void testRejectSampleMergeDifferentProjects() {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 		Sample s2 = new Sample();
-		s2.setId(2l);
+		s2.setId(2L);
 		Project p1 = new Project();
-		p1.setId(1l);
+		p1.setId(1L);
 		p1.setName("project 1");
 		Project p2 = new Project();
-		p2.setId(2l);
+		p2.setId(2L);
 		p2.setName("project 2");
 
 		List<Join<Project, Sample>> p1_s1 = new ArrayList<>();
@@ -221,7 +193,7 @@ public class SampleServiceImplTest {
 	@Test
 	public void testGetCoverageForSampleSuccessZero() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(new ArrayList<Join<Sample, SequenceFile>>());
 
@@ -234,25 +206,25 @@ public class SampleServiceImplTest {
 	 * file.
 	 * 
 	 * @throws SequenceFileAnalysisException
+	 * @throws AnalysisAlreadySetException 
 	 */
 	@Test
-	public void testGetCoverageForSampleSuccess() throws SequenceFileAnalysisException {
+	public void testGetCoverageForSampleSuccess() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
-		analysisFastQC1.setTotalBases(1000l);
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+				.totalBases(1000L).build();
+		sf1.setFastQCAnalysis(analysisFastQC1);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
-				analysisFastQC1);
 
-		double coverage = sampleService.estimateCoverageForSample(s1, 500l);
+		double coverage = sampleService.estimateCoverageForSample(s1, 500L);
 		assertEquals(2.0, coverage, deltaFloatEquality);
 	}
 
@@ -263,7 +235,7 @@ public class SampleServiceImplTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetCoverageForSampleInvalidReferenceLength() throws SequenceFileAnalysisException {
-		sampleService.estimateCoverageForSample(new Sample(), 0l);
+		sampleService.estimateCoverageForSample(new Sample(), 0L);
 	}
 
 	/**
@@ -275,7 +247,7 @@ public class SampleServiceImplTest {
 	@Test
 	public void testGetTotalBasesForSampleSuccessZero() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(new ArrayList<Join<Sample, SequenceFile>>());
 
@@ -288,23 +260,23 @@ public class SampleServiceImplTest {
 	 * sequence file.
 	 * 
 	 * @throws SequenceFileAnalysisException
+	 * @throws AnalysisAlreadySetException 
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException {
+	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
-		analysisFastQC1.setTotalBases(1000l);
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+				.totalBases(1000L).build();
+		sf1.setFastQCAnalysis(analysisFastQC1);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
-				analysisFastQC1);
 
 		long actualBases = sampleService.getTotalBasesForSample(s1);
 		assertEquals(1000, actualBases);
@@ -315,32 +287,30 @@ public class SampleServiceImplTest {
 	 * sequence files.
 	 * 
 	 * @throws SequenceFileAnalysisException
+	 * @throws AnalysisAlreadySetException 
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException {
+	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 		SequenceFile sf2 = new SequenceFile();
-		sf1.setId(3333l);
+		sf1.setId(3333L);
 
 		SampleSequenceFileJoin join1 = new SampleSequenceFileJoin(s1, sf1);
 		SampleSequenceFileJoin join2 = new SampleSequenceFileJoin(s1, sf2);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
-		analysisFastQC1.setTotalBases(1000l);
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+				.totalBases(1000L).build();
+		sf1.setFastQCAnalysis(analysisFastQC1);
 
-		AnalysisFastQC analysisFastQC2 = new AnalysisFastQC(Sets.newHashSet(sf2), "id2");
-		analysisFastQC2.setTotalBases(1000l);
+		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id2")
+				.totalBases(1000L).build();
+		sf2.setFastQCAnalysis(analysisFastQC2);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
-		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
-				analysisFastQC1);
-
-		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf2, AnalysisFastQC.class)).thenReturn(
-				analysisFastQC2);
 
 		long actualBases = sampleService.getTotalBasesForSample(s1);
 		assertEquals(2000, actualBases);
@@ -355,15 +325,14 @@ public class SampleServiceImplTest {
 	@Test(expected = SequenceFileAnalysisException.class)
 	public void testGetTotalBasesForSampleFailNoFastQC() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenThrow(new EntityNotFoundException(null));
 
 		sampleService.getTotalBasesForSample(s1);
 	}
@@ -377,22 +346,14 @@ public class SampleServiceImplTest {
 	@Test(expected = SequenceFileAnalysisException.class)
 	public void testGetTotalBasesForSampleFailMultipleFastQC() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
-		s1.setId(1l);
+		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
-		sf1.setId(2222l);
+		sf1.setId(2222L);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
-		analysisFastQC1.setTotalBases(1000l);
-
-		AnalysisFastQC analysisFastQC2 = new AnalysisFastQC(Sets.newHashSet(sf1), "id2");
-		analysisFastQC2.setTotalBases(1000l);
-
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenThrow(
-				new EntityNotFoundException(null));
 
 		sampleService.getTotalBasesForSample(s1);
 	}

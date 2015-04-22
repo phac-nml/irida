@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  * Rest Template used to communicate with OAuth2 enabled REST APIs. Uses a
  * {@link RemoteAPITokenService} to read OAuth2 tokens to use.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class OAuthTokenRestTemplate extends RestTemplate {
@@ -79,6 +78,7 @@ public class OAuthTokenRestTemplate extends RestTemplate {
 	 * Set the API this rest template will communicate with
 	 * 
 	 * @param remoteAPI
+	 *            the {@link RemoteAPI} that this template communicates with.
 	 */
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;

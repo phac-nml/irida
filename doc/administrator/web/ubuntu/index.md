@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "Ubuntu Installation Guide"
+description: "Ubuntu-specific install guide for setting up IRIDA."
 ---
 
 Ubuntu Installation Guide

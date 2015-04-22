@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 /**
  * Tests for {@link FilesystemSupplementedRepositoryImpl}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SequenceFileRepositoryImplTest {
 

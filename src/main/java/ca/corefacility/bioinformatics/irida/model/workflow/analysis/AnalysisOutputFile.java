@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -20,68 +19,73 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 
 /**
  * Store file references to files produced by a workflow execution that we
  * otherwise don't want to parse metadata from.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity
 @Table(name = "analysis_output_file")
-@Audited
 public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private final Long id;
 
 	@Column(name = "file_path", unique = true)
 	@NotNull(message = "{analysis.output.file.file.notnull}")
 	@JsonIgnore
-	private Path file;
+	private final Path file;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date", nullable = false)
 	private final Date createdDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "modified_date")
-	private Date modifiedDate;
-
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	@JsonIgnore
-	private Analysis analysis;
-
 	@NotNull(message = "{analysis.output.file.execution.manager.file.id}")
 	@Column(name = "execution_manager_file_id")
-	private String executionManagerFileId;
-
-	@Column(name = "file_revision_number")
-	private Long fileRevisionNumber; // the filesystem file revision number
+	private final String executionManagerFileId;
 
 	@NotNull
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "tool_execution_id")
-	@NotAudited
-	private ToolExecution createdByTool;
+	private final ToolExecution createdByTool;
 
+	/**
+	 * for hibernate
+	 */
+	@SuppressWarnings("unused")
 	private AnalysisOutputFile() {
 		this.createdDate = new Date();
-		this.fileRevisionNumber = 0L;
+		this.id = null;
+		this.file = null;
+		this.executionManagerFileId = null;
+		this.createdByTool = null;
 	}
 
-	public AnalysisOutputFile(Path file, String executionManagerFileId) {
-		this();
+	/**
+	 * Create a new instance of {@link AnalysisOutputFile}.
+	 * 
+	 * @param file
+	 *            the file that this resource owns.
+	 * @param executionManagerFileId
+	 *            the identifier for this file in the execution manager that it
+	 *            was created by.
+	 * @param createdByTool
+	 *            the tools that were used to create the file.
+	 */
+	public AnalysisOutputFile(final Path file, final String executionManagerFileId, final ToolExecution createdByTool) {
+		this.id = null;
+		this.createdDate = new Date();
 		this.file = file;
 		this.executionManagerFileId = executionManagerFileId;
+		this.createdByTool = createdByTool;
 	}
 
 	@Override
@@ -89,14 +93,27 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 		return this.createdDate;
 	}
 
+	/**
+	 * This intentionally always returns 0. We're abusing
+	 * {@link VersionedFileFields} so that we can get support from
+	 * {@link FilesystemSupplementedRepository}, even though
+	 * {@link AnalysisOutputFile} is immutable and cannot be versioned.
+	 * 
+	 * @return *always* {@code 0L} for {@link AnalysisOutputFile}.
+	 */
 	@Override
 	public Long getFileRevisionNumber() {
-		return this.fileRevisionNumber;
+		return 0L;
 	}
 
+	/**
+	 * This intentionally does nothing. We're abusing
+	 * {@link VersionedFileFields} so that we can get support from
+	 * {@link FilesystemSupplementedRepository}, even though
+	 * {@link AnalysisOutputFile} is immutable and cannot be versioned.
+	 */
 	@Override
 	public void incrementFileRevisionNumber() {
-		this.fileRevisionNumber++;
 	}
 
 	@Override
@@ -111,52 +128,28 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 
 	@Override
 	public Date getModifiedDate() {
-		return this.modifiedDate;
+		return this.createdDate;
 	}
 
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
+		throw new UnsupportedOperationException("AnalysisOutputFile is immutable.");
 	}
 
 	public Path getFile() {
 		return file;
 	}
 
-	public void setFile(Path file) {
-		this.file = file;
-	}
-
-	public Analysis getAnalysis() {
-		return analysis;
-	}
-
-	public void setAnalysis(Analysis analysis) {
-		this.analysis = analysis;
-	}
-
 	public String getExecutionManagerFileId() {
 		return executionManagerFileId;
 	}
 
-	public void setExecutionManagerFileId(String executionManagerFileId) {
-		this.executionManagerFileId = executionManagerFileId;
-	}
-
 	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public void setFileRevisionNumber(Long fileRevisionNumber) {
-		this.fileRevisionNumber = fileRevisionNumber;
+		throw new UnsupportedOperationException("AnalysisOutputFile is immutable.");
 	}
 
 	public final ToolExecution getCreatedByTool() {
 		return createdByTool;
-	}
-
-	public final void setCreatedByTool(ToolExecution createdByTool) {
-		this.createdByTool = createdByTool;
 	}
 
 	/**
@@ -164,7 +157,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(file, executionManagerFileId, fileRevisionNumber);
+		return Objects.hash(file, executionManagerFileId);
 	}
 
 	/**
@@ -178,8 +171,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 
 		if (o instanceof AnalysisOutputFile) {
 			AnalysisOutputFile a = (AnalysisOutputFile) o;
-			return Objects.equals(file, a.file) && Objects.equals(executionManagerFileId, a.executionManagerFileId)
-					&& Objects.equals(fileRevisionNumber, a.fileRevisionNumber);
+			return Objects.equals(file, a.file) && Objects.equals(executionManagerFileId, a.executionManagerFileId);
 		}
 
 		return false;

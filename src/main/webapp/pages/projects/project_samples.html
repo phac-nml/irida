@@ -64,7 +64,7 @@
 		</div>
 	</div>
 	<div class="row mrgn-bttm-md">
-		<div class="col-md-8" ng-controller="SubNavCtrl as subnav">
+		<div class="col-md-12" ng-controller="SubNavCtrl as subnav">
 			<div class="btn-toolbar">
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
@@ -98,17 +98,18 @@
 
 				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" dropdown=""
 				     is-open="subnav.display.isopen">
-					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle"
+					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle ng-cloak"
+					        ng-hide="uiGalaxyCtrl.inGalaxy"
 					        dropdown-toggle="">
 						<span th:text="#{project.samples.display.title}">_Display_</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu noclose" role="menu">
+					<ul class="dropdown-menu noclose ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
 						<li>
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
-								<span th:text="#{project.samples.display.local}">_Local Samples_</span>
+								<span th:text="#{project.samples.display.local(${project.label})}">_Local Samples_</span>
 							</label>
 
 						</li>
@@ -124,13 +125,14 @@
 
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
-					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle=""
+					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle ng-cloak" dropdown-toggle=""
+					        ng-hide="uiGalaxyCtrl.inGalaxy"
 					        ng-disabled="subnav.count&lt;1">
 						<span>Samples</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
+					<ul class="dropdown-menu ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
 						<li ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
 						    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
 						    tooltip-placement="right">
@@ -183,14 +185,14 @@
 								<span th:text="#{project.samples.export.linker}"></span>
 							</a>
 						</li>
-						<li th:if="${galaxyConnected}">
-							<a href="#" ng-click="subnav.export.galaxy()">
+						<li ng-show="uiGalaxyCtrl.inGalaxy">
+							<a href="#" ng-click="subnav.export.galaxy(); cart.show=false">
 								<span class="fa fa-fw fa-cloud"></span>
 								&nbsp;
 								<span th:text="#{project.samples.export.galaxy}"></span>
 							</a>
 						</li>
-						<li th:if="!${galaxyConnected}" class="disabled">
+						<li ng-show="!uiGalaxyCtrl.inGalaxy" class="disabled">
 							<a href="#">
 								<span class="fa fa-fw fa-cloud"></span>
 								&nbsp;
@@ -201,7 +203,9 @@
 				</div>
 
 				<button id="cart-add-btn" ng-controller="CartController as cart" ng-click="cart.add()" type="button"
-				        class="btn btn-default btn-sm" th:text="#{project.samples.nav.add-to-cart}">Add to Cart
+				        class="btn btn-info btn-sm" ng-disabled="subnav.count&lt;1">
+					<i class="fa fa-fw fa-cart-plus"></i>
+					<span th:text="#{project.samples.nav.add-to-cart}">Add to Cart></span>
 				</button>
 			</div>
 		</div>
@@ -285,8 +289,6 @@
 	        src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
 	        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
-	<script src="/resources/bower_components/ngstorage/ngStorage.min.js"
-	        th:src="@{/resources/bower_components/ngstorage/ngStorage.min.js}"></script>
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>

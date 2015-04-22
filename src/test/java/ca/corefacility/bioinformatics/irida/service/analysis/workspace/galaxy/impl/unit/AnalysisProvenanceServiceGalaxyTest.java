@@ -17,10 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 
@@ -31,12 +29,10 @@ import com.github.jmchilton.blend4j.galaxy.beans.Tool;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Tests for {@link AnalysisProvenanceServiceGalaxy}.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 public class AnalysisProvenanceServiceGalaxyTest {
@@ -198,12 +194,11 @@ public class AnalysisProvenanceServiceGalaxyTest {
 		assertTrue("predecessor step is input step.", predecessor.isInputTool());
 	}
 
-	private AnalysisSubmission analysisSubmission() {
-		return AnalysisSubmission.builder(UUID.randomUUID()).inputFilesPaired(Sets.newHashSet(new SequenceFilePair()))
-				.name("").build();
+	private String analysisSubmission() {
+		return UUID.randomUUID().toString();
 	}
 
-	private AnalysisOutputFile analysisOutputFile() {
-		return new AnalysisOutputFile(Paths.get("/" + FILENAME), "");
+	private String analysisOutputFile() {
+		return new AnalysisOutputFile(Paths.get("/" + FILENAME), "", null).getFile().getFileName().toString();
 	}
 }

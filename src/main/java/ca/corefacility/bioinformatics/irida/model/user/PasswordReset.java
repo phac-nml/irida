@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.Timestamped;
 /**
  * A password reset object.
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "password_reset")

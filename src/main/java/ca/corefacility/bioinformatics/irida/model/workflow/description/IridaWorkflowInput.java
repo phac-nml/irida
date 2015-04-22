@@ -11,7 +11,6 @@ import java.util.Optional;
 /**
  * Defines the input labels for a workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +58,7 @@ public class IridaWorkflowInput {
 	/**
 	 * Gets the sequence reads single label.
 	 * 
-	 * @return The sequence reads single label, or {@link Optional.Absent} if no
+	 * @return The sequence reads single label, or {@link Optional#empty()} if no
 	 *         such label exists.
 	 */
 	public Optional<String> getSequenceReadsSingle() {
@@ -69,7 +68,7 @@ public class IridaWorkflowInput {
 	/**
 	 * Gets the reference label.
 	 * 
-	 * @return The reference label, or {@link Optional.Absent} if no such label
+	 * @return The reference label, or {@link Optional#empty()} if no such label
 	 *         exists.
 	 */
 	public Optional<String> getReference() {
@@ -79,7 +78,7 @@ public class IridaWorkflowInput {
 	/**
 	 * Gets the sequence reads paired label.
 	 * 
-	 * @return The sequence reads paired label, or {@link Optional.Absent} if no
+	 * @return The sequence reads paired label, or {@link Optional#empty()} if no
 	 *         such label exists.
 	 */
 	public Optional<String> getSequenceReadsPaired() {

@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 /**
  * Utilities class for converting {@link SequenceFile} objects for the web
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Component
@@ -42,8 +41,6 @@ public class SequenceFileWebUtilities {
 	 * @param file
 	 *            The sequence file to convert
 	 * @return The sequence file map
-	 * @throws IOException
-	 *             if reading the file fails
 	 */
 	public Map<String, Object> getFileDataMap(SequenceFile file) {
 		Path path = file.getFile();

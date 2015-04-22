@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlElement;
 /**
  * An implementation of a resource that only has a label and an identifier.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class LabelledRelationshipResource<Owner extends IridaThing, Child extends IridaThing> extends
 		Resource<Join<Owner, Child>> {
@@ -30,11 +29,10 @@ public class LabelledRelationshipResource<Owner extends IridaThing, Child extend
 	}
 
 	/**
-	 * We don't want to expose the {@link Identifier} for the
-	 * {@link Relationship}, but rather the {@link Identifier} for the object of
-	 * the {@link Relationship}.
+	 * We don't want to expose the id for the relationship, but rather the id
+	 * for the object of the relationship.
 	 * 
-	 * @return the {@link Identifier} for the object of the relationship.
+	 * @return the id for the object of the relationship.
 	 */
 	@Override
 	public String getIdentifier() {

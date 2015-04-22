@@ -1,12 +1,13 @@
 package ca.corefacility.bioinformatics.irida.events;
 
+import java.util.Arrays;
+
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 
 /**
  * Captures the arguments and return value of a method call. Also contains the
  * {@link ProjectEvent} class that should be created from this call.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class MethodEvent {
@@ -23,7 +24,7 @@ public class MethodEvent {
 	/**
 	 * Get the arguments from the method call
 	 * 
-	 * @return
+	 * @return the args passed to the method that was called.
 	 */
 	public Object[] getArgs() {
 		return args;
@@ -32,7 +33,7 @@ public class MethodEvent {
 	/**
 	 * Get the return value for the method call
 	 * 
-	 * @return
+	 * @return the value returned by the method call
 	 */
 	public Object getReturnValue() {
 		return returnValue;
@@ -41,7 +42,7 @@ public class MethodEvent {
 	/**
 	 * Get the class of event to be created
 	 * 
-	 * @return
+	 * @return the type of object that the method was called on.
 	 */
 	public Class<? extends ProjectEvent> getEventClass() {
 		return eventClass;
@@ -49,6 +50,7 @@ public class MethodEvent {
 
 	@Override
 	public String toString() {
-		return "MethodEvent[ args= " + args + ", returnValue= " + returnValue + ", eventClass= " + eventClass + " ]";
+		return "MethodEvent[ args= " + Arrays.toString(args) + ", returnValue= " + returnValue + ", eventClass= "
+				+ eventClass + " ]";
 	}
 }

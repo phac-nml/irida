@@ -26,7 +26,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 
 /**
  * Unit tests for GalaxyLibrarySearch.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyLibrarySearchTest {

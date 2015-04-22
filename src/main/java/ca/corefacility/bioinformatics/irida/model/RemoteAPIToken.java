@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * OAuth2 token for communicating with a {@link RemoteAPI} for a given
  * {@link User}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity
@@ -126,7 +125,7 @@ public class RemoteAPIToken {
 	/**
 	 * Get the date that this token expires
 	 * 
-	 * @return
+	 * @return the {@link Date} that this token expires.
 	 */
 	public Date getExpiryDate() {
 		return expiryDate;
@@ -135,7 +134,7 @@ public class RemoteAPIToken {
 	/**
 	 * Set the date that this token expires
 	 * 
-	 * @param expiryDate
+	 * @param expiryDate the {@link Date} that this token expires.
 	 */
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;

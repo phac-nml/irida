@@ -50,8 +50,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Integration tests for the sample service.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -94,16 +92,16 @@ public class SampleServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testMergeSamples() {
-		Sample mergeInto = sampleService.read(1l);
-		Project p = projectService.read(1l);
+		Sample mergeInto = sampleService.read(1L);
+		Project p = projectService.read(1L);
 
-		Sample merged = sampleService.mergeSamples(p, mergeInto, sampleService.read(2l), sampleService.read(3l));
+		Sample merged = sampleService.mergeSamples(p, mergeInto, sampleService.read(2L), sampleService.read(3L));
 
 		assertEquals("Merged sample should be same as mergeInto.", mergeInto, merged);
 
 		// merged samples should be deleted
-		assertSampleNotFound(2l);
-		assertSampleNotFound(3l);
+		assertSampleNotFound(2L);
+		assertSampleNotFound(3L);
 
 		// the merged sample should have 3 sequence files
 		assertEquals("Merged sample should have 3 sequence files", 3,
@@ -117,24 +115,24 @@ public class SampleServiceImplIT {
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testMergeSampleReject() {
-		Sample mergeInto = sampleService.read(1l);
-		Project p = projectService.read(1l);
-		sampleService.mergeSamples(p, mergeInto, sampleService.read(4l));
+		Sample mergeInto = sampleService.read(1L);
+		Project p = projectService.read(1L);
+		sampleService.mergeSamples(p, mergeInto, sampleService.read(4L));
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
 	public void testGetSampleByExternalIdDuplicates() {
-		Project p = projectService.read(7l);
+		Project p = projectService.read(7L);
 		Sample s = sampleService.getSampleBySequencerSampleId(p, "external");
-		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(7l), s.getId());
+		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(7L), s.getId());
 	}
 
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	@Test(expected = EntityNotFoundException.class)
 	public void testgetSampleByExternalNotFound() {
-		Project p = projectService.read(1l);
+		Project p = projectService.read(1L);
 		sampleService.getSampleBySequencerSampleId(p, "garbage");
 	}
 
@@ -215,7 +213,7 @@ public class SampleServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testGetSamplesForProjectWithName() {
 		int pageSize = 2;
-		Project project = projectService.read(1l);
+		Project project = projectService.read(1L);
 		Page<ProjectSampleJoin> pageSamplesForProject = sampleService.getSamplesForProjectWithName(project, "", 0,
 				pageSize, Direction.ASC, "createdDate");
 		assertEquals(pageSize, pageSamplesForProject.getNumberOfElements());
@@ -298,7 +296,7 @@ public class SampleServiceImplIT {
 		double coverage = sampleService.estimateCoverageForSample(s, 500);
 		assertEquals(2.0, coverage, deltaFloatEquality);
 	}
-	
+
 	/**
 	 * Tests esimating coverage with a reference file.
 	 * 
@@ -309,7 +307,7 @@ public class SampleServiceImplIT {
 	public void testEstimateCoverageForSampleReferenceFile() throws SequenceFileAnalysisException {
 		Long sampleID = 1L;
 		Sample s = sampleService.read(sampleID);
-		
+
 		ReferenceFile referenceFile = new ReferenceFile();
 		referenceFile.setFileLength(500L);
 
@@ -335,7 +333,7 @@ public class SampleServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testSearchProjectSamples() {
 		int pageSize = 2;
-		Project project = projectService.read(1l);
+		Project project = projectService.read(1L);
 		Page<ProjectSampleJoin> pageSamplesForProject = sampleService.searchProjectSamples(
 				ProjectSampleJoinSpecification.searchSampleWithNameInProject("", project), 0, pageSize, Direction.ASC,
 				"createdDate");
@@ -353,7 +351,7 @@ public class SampleServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testFilterProjectSamples() {
 		int pageSize = 2;
-		Project project = projectService.read(1l);
+		Project project = projectService.read(1L);
 		Date MIN_DATE = new Date(1363634419000L);
 		Date MAX_DATE = new Date(1366312819000L);
 

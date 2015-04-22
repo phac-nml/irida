@@ -23,9 +23,8 @@ import com.google.common.collect.Lists;
 
 /**
  * This aspect automatically invokes a {@link Validator} for method parameters
- * annotated with the {@link @Valid} annotation.
+ * annotated with the {@link Valid} annotation.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Aspect
@@ -41,7 +40,7 @@ public class ValidMethodParametersAspect {
 
 	/**
 	 * Aspect that matches any method execution in our package with one or more
-	 * parameters that have the {@link @Valid} annotation.
+	 * parameters that have the {@link Valid} annotation.
 	 * 
 	 * @param jp
 	 *            the {@link JoinPoint} representing the captured method

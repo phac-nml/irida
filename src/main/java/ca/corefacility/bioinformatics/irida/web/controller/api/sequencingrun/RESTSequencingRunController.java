@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 
 /**
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/api/sequencingrun")
@@ -44,7 +43,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * {@link ProjectService}.
 	 *
 	 * @param service
-	 *            the {@link MiseqRunService} to be used by this controller.
+	 *            the {@link SequencingRunService} to be used by this controller.
 	 */
 	@Autowired
 	public RESTSequencingRunController(SequencingRunService service) {

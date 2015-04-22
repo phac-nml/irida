@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -59,17 +60,14 @@ import com.google.common.base.Strings;
 /**
  * Controller for project related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class ProjectsController {
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
-	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
-
-	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -80,6 +78,7 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
+	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
@@ -95,6 +94,11 @@ public class ProjectsController {
 	 */
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
+	
+	
+	// HTTP session variable name for Galaxy callback variable
+	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
+	public static final String GALAXY_CLIENT_ID_NAME = "galaxyExportToolClientID";
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
@@ -109,14 +113,33 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Request for the page to display a list of all projects available to the currently logged in user.
-	 *
+	 * Request for the page to display a list of all projects available to the
+	 * currently logged in user.
+	 * 
+	 * @param model
+	 *            The model to add attributes to for the template.
+	 * @param galaxyCallbackURL
+	 *            The URL at which to call the Galaxy export tool
+	 * @param galaxyClientID
+	 *            The OAuth2 client ID of the Galaxy instance to export to
+	 * @param httpSession
+	 *            The user's session
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")
-	public String getProjectsPage(Model model) {
+	public String getProjectsPage(Model model,
+			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
+			@RequestParam(value="galaxyClientID",required=false) String galaxyClientID,
+			HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("isAdmin", false);
+
+		//External exporting functionality
+		if(galaxyCallbackURL != null && galaxyClientID != null) {
+			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
+			httpSession.setAttribute(GALAXY_CLIENT_ID_NAME, galaxyClientID);
+		}
+		
 		return LIST_PROJECTS_PAGE;
 	}
 
@@ -132,19 +155,21 @@ public class ProjectsController {
 	 * Request for a specific project details page.
 	 *
 	 * @param projectId
-	 * 		The id for the project to show details for.
+	 *            The id for the project to show details for.
 	 * @param model
-	 * 		Spring model to populate the html page.
+	 *            Spring model to populate the html page.
+	 * @param principal
+	 *            a reference to the logged in user.
 	 *
 	 * @return The name of the project details page.
 	 */
-	@RequestMapping(value = "/projects/{projectId}")
+	@RequestMapping(value = "/projects/{projectId}/activity")
 	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project information for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return SPECIFIC_PROJECT_PAGE;
 	}
 
@@ -205,15 +230,16 @@ public class ProjectsController {
 	 * Returns the name of a page to add users to a *new* project.
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
+	 * @param principal
+	 *            a reference to the logged in user.
 	 * @param projectId
-	 * 		the id of the project to find the metadata for.
+	 *            the id of the project to find the metadata for.
 	 *
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/projects/{projectId}/metadata")
-	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId)
-			throws IOException {
+	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 
 		model.addAttribute("project", project);
@@ -397,13 +423,13 @@ public class ProjectsController {
 
 	/**
 	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
-	 * <p/>
+	 * <p>
 	 * Note: If the search term was not included in the results, it will be added as an option
 	 *
 	 * @param searchTerm
 	 * 		The term to find taxa for
 	 *
-	 * @return A List<Map<String,Object>> which will contain a taxonomic tree of matching terms
+	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
 	 */
 	@RequestMapping("/projects/ajax/taxonomy/search")
 	@ResponseBody
@@ -500,7 +526,7 @@ public class ProjectsController {
 
 	/**
 	 * }
-	 * <p/>
+	 * <p>
 	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
 	 *
 	 * @param node
@@ -510,12 +536,12 @@ public class ProjectsController {
 	 */
 	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
 		Map<String, Object> current = new HashMap<>();
-		
+
 		// add the node properties to the map
-		for(Entry<String,Object> property : node.getProperties().entrySet()){
+		for (Entry<String, Object> property : node.getProperties().entrySet()) {
 			current.put(property.getKey(), property.getValue());
 		}
-		
+
 		current.put("id", node.getValue());
 		current.put("text", node.getValue());
 

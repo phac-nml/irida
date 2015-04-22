@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 /**
  * Testing the validation for user objects.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserTest {
 
@@ -195,7 +194,7 @@ public class UserTest {
 		User u2 = new User();
 		User u3 = new User();
 
-		DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
+		DateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 
 		u2.setModifiedDate(sf.parse("2011-01-01"));
 		u1.setModifiedDate(sf.parse("2012-01-01"));

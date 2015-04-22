@@ -26,18 +26,15 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
-	private AnalysisRepository analysisRepository;
 	private SequenceFileRepository sequenceFileRepository;
 	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
@@ -49,10 +46,9 @@ public class FastqcFileProcessorTest {
 
 	@Before
 	public void setUp() {
-		analysisRepository = mock(AnalysisRepository.class);
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new FastqcFileProcessor(analysisRepository, messageSource, sequenceFileRepository);
+		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -76,7 +72,7 @@ public class FastqcFileProcessorTest {
 		Files.write(fastq, FASTQ_FILE_CONTENTS.getBytes());
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fastq));
 
-		ArgumentCaptor<AnalysisFastQC> argument = ArgumentCaptor.forClass(AnalysisFastQC.class);
+		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
 
 		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
@@ -88,8 +84,8 @@ public class FastqcFileProcessorTest {
 			fail();
 		}
 
-		verify(analysisRepository).save(argument.capture());
-		AnalysisFastQC updated = argument.getValue();
+		verify(sequenceFileRepository).save(argument.capture());
+		AnalysisFastQC updated = argument.getValue().getFastQCAnalysis();
 		assertEquals("GC Content was not set correctly.", Short.valueOf((short) 50), updated.getGcContent());
 		assertEquals("Filtered sequences was not 0.", Integer.valueOf(0), updated.getFilteredSequences());
 		assertEquals("File type was not correct.", "Conventional base calls", updated.getFileType());

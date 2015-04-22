@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 /**
  * Service for managing {@link SequenceFile} entities.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 
@@ -123,6 +122,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * Get the {@link SequenceFile}s that do not have pairs for a {@link Sample}
 	 * 
 	 * @param sample
+	 *            the sample to get unpaired sequence files for.
 	 * @return A List of {@link SampleSequenceFileJoin}s
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")

@@ -41,7 +41,6 @@ import com.jayway.restassured.response.Response;
 /**
  * Integration tests for working with sequence files and samples.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -157,42 +156,6 @@ public class SampleSequenceFilesIT {
 
 		// clean up
 		Files.delete(sequenceFile);
-	}
-
-	@Test
-	public void testAddExistingSequenceFileToSample() throws IOException {
-		// for now, add a sequence file to another sample
-		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
-		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
-		String projectBody = response.getBody().asString();
-		String sequenceFileUri = from(projectBody).getString(
-				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
-		// prepare a file for sending to the server
-		Path sequenceFile = Files.createTempFile(null, null);
-		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-
-		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
-				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
-
-		// figure out what the identifier for that sequence file is
-		String location = r.getHeader(HttpHeaders.LOCATION);
-		String identifier = location.substring(location.lastIndexOf('/') + 1);
-		Map<String, String> existingSequenceFile = new HashMap<>();
-		existingSequenceFile.put("sequenceFileId", identifier);
-
-		// now figure out where to post the sequence file to add it to the
-		// sample
-		String sampleBody = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri).getBody().asString();
-		sequenceFileUri = from(sampleBody).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
-
-		// add the sequence file to the sample
-		r = asUser().given().body(existingSequenceFile).expect().statusCode(HttpStatus.CREATED.value()).when()
-				.post(sequenceFileUri);
-		location = r.getHeader(HttpHeaders.LOCATION);
-
-		assertNotNull(location);
-		assertTrue(location.matches(ITestSystemProperties.BASE_URL + "/api/projects/[0-9]+/samples/[0-9]+/sequenceFiles/[0-9]+"));
-
 	}
 
 	@Test

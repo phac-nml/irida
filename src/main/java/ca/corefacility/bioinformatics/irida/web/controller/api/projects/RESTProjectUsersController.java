@@ -36,7 +36,6 @@ import com.google.common.net.HttpHeaders;
 /**
  * Controller for managing relationships between {@link Project} and {@link User}.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTProjectUsersController {
@@ -110,12 +109,20 @@ public class RESTProjectUsersController {
     }
 
     /**
-     * Add a relationship between a {@link ca.corefacility.bioinformatics.irida.model.Project} and a {@link User}.
-     *
-     * @param representation the JSON key-value pair that contains the identifier for the project and the identifier for
-     *                       the user.
-     * @return a response indicating that the collection was modified.
-     */
+	 * Add a relationship between a {@link Project} and a {@link User}.
+	 *
+	 * @param projectId
+	 *            the project ID to add the user to.
+	 * @param representation
+	 *            the JSON key-value pair that contains the identifier for the
+	 *            project and the identifier for the user.
+	 * @param response
+	 *            a reference to the servlet response.
+	 * @return a response indicating that the collection was modified.
+	 * @throws ProjectWithoutOwnerException
+	 *             this cannot actually be thrown, it's an artifact of using
+	 *             spring HATEOAS {@code linkTo} and {@code methodOn}.
+	 */
     @RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.POST)
     public ModelMap addUserToProject(@PathVariable Long projectId,
                                                    @RequestBody Map<String, String> representation,

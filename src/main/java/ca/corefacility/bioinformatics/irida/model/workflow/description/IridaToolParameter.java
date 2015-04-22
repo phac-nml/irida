@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 /**
  * A parameter for a particular tool in a workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 

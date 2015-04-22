@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 /**
  * A reference file to be associated with a {@link Project}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

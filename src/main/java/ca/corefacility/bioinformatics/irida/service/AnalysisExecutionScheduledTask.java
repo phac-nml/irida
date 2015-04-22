@@ -8,13 +8,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 /**
  * A service for executing {@link AnalysisSubmission} tasks.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisExecutionScheduledTask {
 
 	/**
-	 * Cycle through new {@AnalysisSubmission}s and prepare
+	 * Cycle through new {@link AnalysisSubmission}s and prepare
 	 * them for execution.
 	 * 
 	 * @return A {@link Set} of {@link Future} {@link AnalysisSubmission}s
@@ -52,4 +51,13 @@ public interface AnalysisExecutionScheduledTask {
 	 *         stages.
 	 */
 	public Set<Future<AnalysisSubmission>> transferAnalysesResults();
+	
+	/**
+	 * Cycle through any completed or errored {@link AnalysisSubmission}s and
+	 * delete intermediate files in the execution manager.
+	 * 
+	 * @return A {@link Set} of {@link Future} {@link AnalysisSubmission}s for
+	 *         all the analyses that were cleaned.
+	 */
+	public Set<Future<AnalysisSubmission>> cleanupAnalysisSubmissions();
 }

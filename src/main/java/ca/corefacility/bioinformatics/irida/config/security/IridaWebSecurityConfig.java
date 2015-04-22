@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
@@ -44,8 +45,6 @@ import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousA
 /**
  * Configuration for web security using OAuth2
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Configuration
@@ -94,12 +93,11 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	/**
-	 * This stands in place of {@link @EnableAuthorizationServer} so that we can
+	 * This stands in place of {@link EnableAuthorizationServer} so that we can
 	 * add our own custom filter before the OAuth2 filters are run to put an
 	 * anonymous authentication object into the security context *before*
 	 * {@link ClientDetailsService#loadClientByClientId(String)} is called.
 	 * 
-	 * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
 	 *
 	 */
 	@Configuration

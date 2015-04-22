@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -40,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * code. This includes code for setup of sequence files in a database and
  * waiting for submission to complete in Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class DatabaseSetupGalaxyITService {
@@ -447,7 +445,7 @@ public class DatabaseSetupGalaxyITService {
 	 * @throws Exception
 	 */
 	public void waitUntilSubmissionComplete(AnalysisSubmission analysisSubmission) throws Exception {
-		final int totalSecondsWait = 1 * 60; // 1 minute
+		final int totalSecondsWait = 2 * 60; // 2 minutes
 		final int pollingTime = 2000; // 2 seconds
 
 		Future<Void> waitForHistory = executor.submit(new Callable<Void>() {
@@ -480,8 +478,7 @@ public class DatabaseSetupGalaxyITService {
 	 */
 	public void assertValidStatus(GalaxyWorkflowStatus status) {
 		assertNotNull("WorkflowStatus is null", status);
-		assertFalse("WorkflowState is " + GalaxyWorkflowState.UNKNOWN, GalaxyWorkflowState.UNKNOWN.equals(status.getState()));
-		float percentComplete = status.getPercentComplete();
-		assertTrue("percentComplete not in range of 0 to 100", 0.0f <= percentComplete && percentComplete <= 100.0f);
+		float percentComplete = status.getProportionComplete();
+		assertTrue("proportion not in range of 0 to 1", 0.0f <= percentComplete && percentComplete <= 1.0f);
 	}
 }

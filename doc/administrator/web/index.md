@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "IRIDA Web Interface Install Guide"
+description: "Install guide for setting up the IRIDA web interface."
 ---
 
 This document describes how to install the IRIDA web interface. We assume that you have either downloaded IRIDA as a `WAR` file distributable, or have [built IRIDA from source](../building), and also assume that you have completed [installing and configuring Galaxy](../galaxy).
@@ -90,3 +92,5 @@ The default administrator username and password are:
 * **Password**: password1
 
 You will be required to change the password the first time you log-in with these credentials.
+
+Once you've logged in for the first time, you will probably want to create some user accounts. User account creation is outlined in our [Administrative User Guide]({{ site.url }}/user/administrator).

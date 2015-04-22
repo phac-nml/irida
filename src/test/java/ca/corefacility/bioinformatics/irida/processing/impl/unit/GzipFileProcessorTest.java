@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 /**
  * Tests for {@link GzipFileProcessor}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class GzipFileProcessorTest {

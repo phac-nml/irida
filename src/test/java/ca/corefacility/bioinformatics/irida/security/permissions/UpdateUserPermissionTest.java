@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 /**
  * Tests for {@link UpdateUserPermission}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class UpdateUserPermissionTest {
@@ -44,14 +43,14 @@ public class UpdateUserPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(userRepository.findOne(1l)).thenReturn(u);
+		when(userRepository.findOne(1L)).thenReturn(u);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", updateUserPermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted.", updateUserPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(userRepository).findOne(1l);
+		verify(userRepository).findOne(1L);
 	}
 
 	@Test
@@ -61,14 +60,14 @@ public class UpdateUserPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(userRepository.findOne(1l)).thenReturn(new User());
+		when(userRepository.findOne(1L)).thenReturn(new User());
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertFalse("permission was granted.", updateUserPermission.isAllowed(auth, 1l));
+		assertFalse("permission was granted.", updateUserPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(userRepository).findOne(1l);
+		verify(userRepository).findOne(1L);
 	}
 
 	@Test
@@ -78,7 +77,7 @@ public class UpdateUserPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertTrue("permission was not granted to admin.", updateUserPermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted to admin.", updateUserPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);
@@ -92,6 +91,6 @@ public class UpdateUserPermissionTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
 		when(userRepository.findOne(1L)).thenReturn(new User());
-		assertFalse("permission was granted to client.", updateUserPermission.isAllowed(auth, 1l));
+		assertFalse("permission was granted to client.", updateUserPermission.isAllowed(auth, 1L));
 	}
 }

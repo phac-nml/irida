@@ -42,7 +42,6 @@ import com.google.common.collect.Maps;
  * Object representing a client that has been registered to communicate with
  * this API via OAuth2
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity
@@ -79,6 +78,11 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@Column(name = "scope", nullable = false)
 	@CollectionTable(name = "client_details_scope", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> scope;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Column(name = "auto_approvable_scope")
+	@CollectionTable(name = "client_details_auto_approvable_scope", joinColumns = @JoinColumn(name = "client_details_id"))
+	private Set<String> autoApprovableScopes;
 
 	@Size(min = 1, message = "{client.details.grant.notempty}")
 	@NotNull
@@ -142,6 +146,9 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 *            The scopes this client can access
 	 * @param authorizedGrantTypes
 	 *            The grant types allowed for this client
+	 * @param authorities
+	 *            the collection of {@link ClientRole} that this client should
+	 *            have.
 	 */
 	public IridaClientDetails(String clientId, String clientSecret, Set<String> resourceIds, Set<String> scope,
 			Set<String> authorizedGrantTypes, Collection<ClientRole> authorities) {
@@ -363,6 +370,18 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 
 	@Override
 	public boolean isAutoApprove(String scope) {
-		return false;
+		boolean approved = false;
+		if(autoApprovableScopes != null) {
+			approved = autoApprovableScopes.contains(scope);
+		}
+		return approved;
+	}
+	
+	public Set<String> getAutoApprovableScopes() {
+		return autoApprovableScopes;
+	}
+
+	public void setAutoApprovableScopes(Set<String> autoApprovableScopes) {
+		this.autoApprovableScopes = autoApprovableScopes;
 	}
 }

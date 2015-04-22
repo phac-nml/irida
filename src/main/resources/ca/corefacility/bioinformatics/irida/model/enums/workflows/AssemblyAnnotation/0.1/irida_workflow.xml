@@ -3,7 +3,7 @@
 <iridaWorkflow>
 	<id>bac44f4b-46f9-4393-b247-de11a751410e</id>
 	<name>AssemblyAnnotation</name>
-	<version>0.1-dev</version>
+	<version>0.1</version>
 	<analysisType>assembly-annotation</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
@@ -45,7 +45,7 @@
 			<name>spades</name>
 			<owner>lionelguy</owner>
 			<url>http://toolshed.g2.bx.psu.edu/</url>
-			<revision>89004d4f8dd3</revision>
+			<revision>21734680d921</revision>
 		</repository>
 		<repository>
 			<name>prokka</name>
