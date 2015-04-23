@@ -1,6 +1,13 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
+import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -36,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerIntercept
 import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
@@ -56,6 +64,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
+	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Autowired
 	private Environment env;
@@ -69,7 +78,20 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	}
 	
 	@Bean AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
-		return new AnalyticsHandlerInterceptor();
+		Path analyticsPath = Paths.get(ANALYTICS_DIR);
+		StringBuilder analytics = new StringBuilder();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
+			for (Path entry : stream) {
+				List<String> lines = Files.readAllLines(entry);
+				analytics.append(Joiner.on("\n").join(lines));
+				analytics.append("\n");
+			}
+		} catch (DirectoryIteratorException ex) {
+			logger.error("Error reading analytics directory: ", ex);
+		} catch (IOException e) {
+			logger.error("Error readin analytics file: ", e);
+		}
+		return new AnalyticsHandlerInterceptor(analytics.toString());
 	}
 
 	@Bean(name = "localeResolver")
