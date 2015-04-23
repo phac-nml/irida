@@ -12,42 +12,9 @@
 		<span class="fa fa-fw fa-save"></span>
 		<span class="sr-only" th:text="#{form.save.image}">Save Image</span>
 	</a>
-	<div id="phyloSVG" class="image-preview"></div>
 </div>
 
 <th:block th:if="${preview}" layout:fragment="previewScripts">
-	<script th:src="@{/resources/bower_components/raphael/raphael-min.js}"
-	        src="/resources/bower_components/raphael/raphael-min.js"></script>
-	<script th:src="@{/resources/js/vendor/jsphylosvg-min.js}" src="/resources/js/vendor/jsphylosvg-min.js"></script>
-
-	<script th:inline="javascript">
-		/*<![CDATA[*/
-
-		var newick = /*[[${newick}]]*/ '';
-		var phylo = new Smits.PhyloCanvas({
-			'newick': newick
-		}, 'phyloSVG', 600, 600, 'circular');
-
-		(function () {
-			/*[- */
-			// There is a bug in safari that prevents this from working.
-			// TODO: find a way to get it to work.  Server option was vetoed.
-			/* -]*/
-			var name = /*[[${analysisSubmission.name + '.svg'}]]*/ 'no_name.svg',
-			    svg  = $("svg");
-
-			svg.attr({
-				version: '1.1',
-				xmlns  : "http://www.w3.org/2000/svg"
-			});
-			var content = svg.parent().html();
-			var url = "data:image/svg+xml;utf8," + encodeURIComponent(content);
-			$('#saveBtn').attr('href', url).attr('download', name);
-		})();
-
-
-		/*]]>*/
-	</script>
 </th:block>
 </body>
 

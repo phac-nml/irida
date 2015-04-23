@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "IRIDA Dashboard Overview"
+description: "An overview of the features present on the IRIDA dashboard."
 ---
 
 IRIDA Dashboard Overview
@@ -41,13 +43,13 @@ For more information about managing your projects, please see the [managing proj
 
 You can view the pipelines that are installed in IRIDA by clicking on the "Pipelines" button.
 
-For more information about running pipelines, please see the [launching pipelines](../pipeline) section.
+For more information about running pipelines, please see the [launching pipelines](../pipelines) section.
 
 ### Analyses
 
 After you've launched a pipeline, you can monitor its progress and view results by clicking on the "Analyses" button.
 
-For more information about viewing pipeline results and working with analysis, please see the [viewing pipeline results](../analysis) section.
+For more information about viewing pipeline results and working with analysis, please see the [viewing pipeline results](../pipelines/#viewing-pipeline-results) section.
 
 Cart
 ----
@@ -60,7 +62,7 @@ You can click on the cart button to reveal more information about the contents o
 
 ![Viewing the contents of the cart.](images/cart-contents.png)
 
-For more information about using the cart, please see the [launching pipelines](../pipeline) section, and the [managing samples](../samples) section.
+For more information about using the cart, please see the [launching pipelines](../pipelines) section, and the [managing samples](../samples) section.
 
 Settings
 --------

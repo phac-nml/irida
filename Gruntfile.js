@@ -10,14 +10,27 @@ module.exports = function (grunt) {
       js  : app_path + '/resources/js'
     },
     autoprefixer: {
-      options: {
-        browsers: ['last 2 versions', 'ie 9']
+      dev: {
+        options: {
+          map: true
+        },
+        multiple_files: {
+          expand: true,
+          flatten: true,
+          src: '<%= paths.css %>/*.css',
+          dest: '<%= paths.css %>/'
+        }
       },
-      multiple_files: {
-        expand: true,
-        flatten: true,
-        src: '<%= paths.css %>/*.css',
-        dest: '<%= paths.css %>/'
+      dist: {
+        options: {
+          browsers: ['last 2 versions', 'ie 9']
+        },
+        multiple_files: {
+          expand: true,
+          flatten: true,
+          src: '<%= paths.css %>/*.css',
+          dest: '<%= paths.css %>/'
+        }
       }
     },
     compass: {
@@ -26,6 +39,17 @@ module.exports = function (grunt) {
           sassDir: '<%= paths.scss %>',
           cssDir : '<%= paths.css %>'
         }
+      }
+    },
+    cssmin: {
+      target: {
+        files: [{
+          expand: true,
+          cwd: '<%= paths.css %>',
+          src: ['*/*.css', '!*.min.css'],
+          dest: '<%= paths.css %>',
+          ext: '.css'
+        }]
       }
     },
     jshint : {
@@ -61,4 +85,5 @@ module.exports = function (grunt) {
 
   grunt.registerTask("default", []);
   grunt.registerTask("dev", ['compass:dev', 'autoprefixer']);
+  grunt.registerTask("dist", ['compass:dev', 'autoprefixer', 'cssmin']);
 };

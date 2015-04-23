@@ -9,22 +9,8 @@
 <body>
 <div class="row" layout:fragment="page">
     <main class="container" role="main" property="mainContentOfPage">
-        <h1 th:utext="#{dashboard.heading}"></h1>
-        <p th:utext="#{dashboard.body}"></p>
-        <h3 th:text="#{event.title}">_Recent Activities_</h3>
+        <h1 th:text="#{event.title}">_Recent Activities_</h1>
         <div id="events"></div>
-        <div class="row mrgn-tp-lg mrgn-bttm-lg">
-            <div ng-controller="CarouselCtrl">
-                <div style="height: 200px">
-                    <div carousel="" interval="3000">
-                        <div slide="" ng-repeat="slide in slides" active="slide.active">
-                            <img ng-src="{{slide.image}}" style="margin:auto;"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
 </div>
 
@@ -32,22 +18,6 @@
 	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
 	        src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
     <script>
-
-        /*<![CDATA[*/
-        document.createElement("carousel");
-        document.createElement("slide");
-        var app = angular.module('irida');
-        app.controller('CarouselCtrl', CarouselCtrl);
-        function CarouselCtrl($scope) {
-            'use strict';
-            var carousel = this;
-
-            $scope.slides = [];
-            for (var i = 1; i < 5; i++) {
-                $scope.slides.push({image: TL.BASE_URL + "resources/img/irida-logos-" + i + ".png"});
-            }
-        }
-        
         $(function () {
             $.ajax({
             	method: "GET",
@@ -60,7 +30,6 @@
             	}
             })
         });
-        /*]]>*/
     </script>
 </th:block>
 </body>

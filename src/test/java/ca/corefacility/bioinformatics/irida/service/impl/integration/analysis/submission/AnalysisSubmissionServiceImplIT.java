@@ -189,15 +189,6 @@ public class AnalysisSubmissionServiceImplIT {
 	}
 
 	/**
-	 * Tests finding all as a regular user and being denied.
-	 */
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "aaron", roles = "USER")
-	public void testFindAllDeniedRegularUser() {
-		analysisSubmissionService.findAll();
-	}
-
-	/**
 	 * Tests finding all as an admin user.
 	 */
 	@Test

@@ -30,6 +30,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -51,7 +53,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * A file that may be stored somewhere on the file system and belongs to a
  * particular {@link Sample}.
- * 
  */
 @Entity
 @Table(name = "sequence_file")
@@ -59,6 +60,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @EntityListeners(AuditingEntityListener.class)
 public class SequenceFile extends IridaResourceSupport implements IridaThing, Comparable<SequenceFile>,
 		VersionedFileFields<Long>, IridaSequenceFile {
+
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -226,11 +229,16 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	 * Get the size of the file.
 	 *
 	 * @return The String representation of the file size
-	 * @throws IOException
 	 */
 	@JsonIgnore
-	public String getFileSize() throws IOException {
-		return humanReadableByteCount(Files.size(file), true);
+	public String getFileSize() {
+		String size = "N/A";
+		try {
+			size = humanReadableByteCount(Files.size(file), true);
+		} catch (IOException e) {
+			logger.error("Could not calculate file size: ", e);
+		}
+		return size;
 	}
 
 	/**

@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "IRIDA MiSeq Uploader"
+description: "Guide for running the IRIDA MiSeq uploader."
 ---
 
 This document describes how the IRIDA data uploader for the Illumina MiSeq instrument can be used.
@@ -9,26 +11,26 @@ This document describes how the IRIDA data uploader for the Illumina MiSeq instr
 
 Overview
 ========
-The NGS Archive Miseq Uploader is to be used in conjunction with a NGS Archive REST API to store newly run Miseq sequencing runs in a repository.  The uploader will scan a directory of Miseq runs, scan the Samplesheet.csv file to collection information about the run, then upload the files to the REST API.
+The IRIDA Miseq Uploader is to be used in conjunction with a IRIDA REST API to store newly run Miseq sequencing runs in a repository.  The uploader will scan a directory of Miseq runs, scan the Samplesheet.csv file to collection information about the run, then upload the files to the REST API.
 
 The uploader can be run in a single directory mode which will upload individual Miseq run directories, or in a scanning mode which will look for directories that have not been previously uploaded then send them to the API.
 
 When a directory completes uploading, it will be marked with a *.miseqUploaderComplete* file that prevents it from being uploaded twice when using scanning mode.
 
-Running NGS Archive Miseq Uploader
+Running IRIDA Miseq Uploader
 ==================================
 
 Arguments
 ---------
 
 * `-b,--base-url [ARG]`
-  Base NGS Archive REST API URL (required)
+  Base IRIDA REST API URL (required)
 
 * `-u,--username [ARG]`
-  Username for NGS Archive REST API
+  Username for IRIDA REST API
 
 * `-p,--password [ARG]`
-  Password for NGS Archive REST API
+  Password for IRIDA REST API
 
 * `--project [ARG]`
   Project ID to upload a directory of files to.  This option will override the

@@ -213,22 +213,9 @@
       document.body.appendChild(iframe);
     };
 
-    svc.galaxyUpload = function (email, name) {
-      return base.customPOST({
-        email    : email,
-        name     : name,
-        sampleIds: getSelectedSampleIds()
-      }, 'galaxy/upload').then(function (data) {
-        if (data.result === 'success') {
-          notifications.show({msg: data.msg});
-        }
-        return data;
-      })
-    };
-
     svc.updateSampleCount = function () {
       $rootScope.sampleCount = svc.samples.length;
-    }
+    };
 
     /**
      * Get the currently loaded samples
@@ -389,65 +376,6 @@
           scope.onsort(scope.sortedby, scope.sortdir);
         };
       }
-    };
-  }
-
-  function galaxyNotification($timeout, GalaxyService) {
-    "use strict";
-    var timer;
-
-    function link(scope, element, attrs) {
-      element.on('click', function () {
-        removeElement(300);
-      });
-
-      element.on('$destroy', function () {
-        $timeout.cancel(timer);
-      });
-
-      var poll = function poll() {
-        timer = $timeout(function () {
-          GalaxyService.poll(attrs.workerid).then(function (result) {
-            scope.progress = Math.ceil(result.data.progress * 100);
-            scope.title = result.data.title;
-            scope.message = result.data.message;
-            if (result.data.error) {
-              scope.error = true;
-              element.addClass('error');
-            }
-            else if (result.data.finished) {
-              element.addClass('success');
-              removeElement(2000);
-            }
-            else {
-              poll();
-            }
-          });
-        }, 500);
-      };
-
-      function removeElement(length) {
-        $timeout(function () {
-          element.addClass('remove');
-
-          $timeout(function () {
-            scope.$destroy();
-            element.remove();
-          }, 500);
-        }, length);
-      }
-
-      poll();
-    }
-
-    return {
-      templateUrl: '/template/notification.html',
-      restrict   : 'E',
-      replace    : true,
-      scope      : {
-        message: '@'
-      },
-      link       : link
     };
   }
 
@@ -846,7 +774,7 @@
       });
   }
 
-  angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])
+  angular.module('Samples', ['cgBusy', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', [StorageService])

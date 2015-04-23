@@ -376,7 +376,7 @@ public class ProjectsController {
 	 * @return JSON value of the page data.
 	 */
 	@RequestMapping(value = "/projects/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public @ResponseBody Map<String, Object> getAjaxProjectListForAdmin(
 			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_START) Integer start,
 			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_LENGTH) Integer length,
