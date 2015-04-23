@@ -1,5 +1,7 @@
 ---
 layout: default
+search_title: "Administrator User Guide"
+description: "A guide for demonstrating the administrative features of the IRIDA web interface."
 ---
 
 Administrator User Guide

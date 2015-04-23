@@ -6,6 +6,8 @@
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
 	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
 	      th:href="@{/resources/css/pages/sample_files.css}"/>
+	<link rel="stylesheet" href="/resources/bower_components/PhyloCanvas/src/styles/PhyloCanvas.css"
+	      th:href="@{/resources/bower_components/PhyloCanvas/src/styles/PhyloCanvas.css}"/>
 	<style>
 		.tool i {
 			font-size: .75em;
@@ -28,14 +30,102 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
-			<tabset>
-				<th:block th:if="${isCompleted} and ${preview}">
-					<tab th:replace="analysis/details/_tabs :: #preview"></tab>
-				</th:block>
-				<tab th:replace="analysis/details/_tabs :: #inputFilesTab"></tab>
-				<th:block th:if="${isCompleted}"><tab th:replace="analysis/details/_tabs :: #provenanceTab"></tab></th:block>
 
-			</tabset>
+			<sub-nav>
+				<th:block th:if="${isCompleted} and ${preview}">
+					<sub-nav-item state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
+				</th:block>
+				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
+				<th:block th:if="${isCompleted}">
+					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
+				</th:block>
+			</sub-nav>
+
+			<div ui-view=""></div>
+
+			<script type="text/ng-template" id="preview.html">
+				<div th:if="${isCompleted} and ${preview}" ng-controller="PreviewController as previewController">
+					<phylocanvas
+						shape="circular" config="{}" newick="{{previewController.newick}}">
+						<phylocanvas-controls>
+							<phylocanvas-control shape="rectangular"
+							                     data:text="#{phylocanvas.shape.rectangular}"></phylocanvas-control>
+							<phylocanvas-control shape="circular"
+							                     data:text="#{phylocanvas.shape.circular}"></phylocanvas-control>
+							<phylocanvas-control shape="radial"
+							                     data:text="#{phylocanvas.shape.radial}"></phylocanvas-control>
+							<phylocanvas-control shape="diagonal"
+							                     data:text="#{phylocanvas.shape.diagonal}"></phylocanvas-control>
+							<phylocanvas-control shape="hierarchy"
+							                     data:text="#{phylocanvas.shape.hierarchy}"></phylocanvas-control>
+						</phylocanvas-controls>
+						<div id="phylocanvas"></div>
+					</phylocanvas>
+				</div>
+				<div th:unless="${isCompleted} and ${preview}"></div>
+			</script>
+
+			<script type="text/ng-template" id="preview-linux.html">
+				<div ng-controller="PreviewController as previewContoller">
+					<div class="center-block" style="width: 500px" id="phyloSVG" phylosvg="" newick="{{previewContoller.newick}}"></div>
+				</div>
+			</script>
+
+			<script type="text/ng-template" id="inputs.html" th:with="hasPaired=${#lists.size(paired_end) > 0}">
+				<table th:if="${hasPaired}" class="table">
+					<th:block th:each="pair : ${paired_end}">
+						<tr class="paired_end paired_end__forward">
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
+						</tr>
+						<tr class="paired_end paired_end__reverse">
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+						</tr>
+					</th:block>
+				</table>
+				<div class="alert alert-info" th:unless="${hasPaired}" th:text="#{analysis.input-files.no-paired-end}">
+					__NO_PAIRED_END_DATA_
+				</div>
+			</script>
+
+			<script type="text/ng-template" id="provenance.html">
+				<div th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">
+					<accordion>
+						<accordion-group class="file-info" th:each="file : ${files}">
+							<accordion-heading class="filename"><i class="fa fa-fw fa-file-o"></i>&nbsp;
+								<th:block th:text="${file.getLabel()}"></th:block>
+							</accordion-heading>
+							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
+						</accordion-group>
+					</accordion>
+					<div th:fragment="toolsLayout (tools)">
+						<div th:each="tool : ${tools}" style="margin-left: 2rem;"
+						     th:with="toolId=${'tool' + tool.getId()}"
+						     data:ng-init="${toolId + '=false'}">
+							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
+								<i data:ng-hide="${toolId}" class="fa fa-fw fa-chevron-right"></i> <i
+								data:ng-show="${toolId}" class="fa fa-fw fa-chevron-down"></i>
+								<span th:text="${tool.getLabel()}"></span>
+							</button>
+
+							<!--/*
+								For every tool used to create the analysis, Thymeleaf will load this template, recursively finding
+								all tools and their parameters.
+								Initial tool: AnalysisOutputFile.createByTool
+							*/-->
+							<div data:ng-show="${toolId}" class="parameters">
+								<table class="table">
+									<tr class="parameter" th:each="parameter : ${tool.getExecutionTimeParameters()}">
+										<td class="para-key" th:text="${parameter.key}"></td>
+										<td class="para-value" th:text="${parameter.value}"></td>
+									</tr>
+								</table>
+							</div>
+							<div th:include="analysis/details/details :: toolsLayout (${tool.previousSteps})"></div>
+						</div>
+					</div>
+				</div>
+				<div th:unless="${isCompleted}"></div>
+			</script>
 		</div>
 	</div>
 </main>
