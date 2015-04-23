@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import nz.net.ultraq.thymeleaf.LayoutDialect;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +32,12 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.collect.ImmutableMap;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  */
@@ -66,6 +66,10 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
 		return localeChangeInterceptor;
+	}
+	
+	@Bean AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
+		return new AnalyticsHandlerInterceptor();
 	}
 
 	@Bean(name = "localeResolver")
@@ -162,6 +166,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(localeChangeInterceptor());
+		registry.addInterceptor(analyticsHandlerInterceptor());
 	}
 
 	/**
