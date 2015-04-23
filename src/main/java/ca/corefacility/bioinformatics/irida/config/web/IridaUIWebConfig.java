@@ -81,16 +81,18 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	@Bean AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
 		Path analyticsPath = Paths.get(ANALYTICS_DIR);
 		StringBuilder analytics = new StringBuilder();
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
-			for (Path entry : stream) {
-				List<String> lines = Files.readAllLines(entry);
-				analytics.append(Joiner.on("\n").join(lines));
-				analytics.append("\n");
+		if (Files.exists(analyticsPath)) {
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
+				for (Path entry : stream) {
+					List<String> lines = Files.readAllLines(entry);
+					analytics.append(Joiner.on("\n").join(lines));
+					analytics.append("\n");
+				}
+			} catch (DirectoryIteratorException ex) {
+				logger.error("Error reading analytics directory: ", ex);
+			} catch (IOException e) {
+				logger.error("Error readin analytics file: ", e);
 			}
-		} catch (DirectoryIteratorException ex) {
-			logger.error("Error reading analytics directory: ", ex);
-		} catch (IOException e) {
-			logger.error("Error readin analytics file: ", e);
 		}
 		return new AnalyticsHandlerInterceptor(analytics.toString());
 	}
