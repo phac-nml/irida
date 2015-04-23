@@ -19,8 +19,10 @@ public class AnalyticsHandlerInterceptor extends HandlerInterceptorAdapter {
 	public AnalyticsHandlerInterceptor(String analyticsString) {
 		this.analytics = analyticsString;
 	}
-	
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void postHandle(final HttpServletRequest request,
 			final HttpServletResponse response, final Object handler,
