@@ -144,7 +144,6 @@ public class ProjectsController {
 	}
 
 	@RequestMapping("/projects/all")
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public String getAllProjectsPage(Model model) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list/all");
 		model.addAttribute("isAdmin", true);
