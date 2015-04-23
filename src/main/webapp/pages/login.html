@@ -4,14 +4,8 @@
       layout:decorator="template/base">
 <head>
 	<title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
-	<th:block th:if="${analyticsGoogleId != null and !#strings.isEmpty(analyticsGoogleId)}">
-		<div th:replace="template/analytics :: #google"></div>
-	</th:block>
 </head>
-<body vocab="http://schema.org/" typeof="WebPage" ng-app="irida">
-<th:block th:if="${analyticsPiwikUrl != null and !#strings.isEmpty(analyticsPiwikUrl)}">
-	<div th:replace="template/analytics :: #piwik"></div>
-</th:block>
+<body>
 <th:block layout:fragment="content">
 	<main class="login container" role="main" property="mainContentOfPage">
 		<h1 class="page-header" th:text="#{login.title}"></h1>
