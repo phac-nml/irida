@@ -9,7 +9,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  * Interceptor to add analytics to every page.
  */
 public class AnalyticsHandlerInterceptor extends HandlerInterceptorAdapter {
