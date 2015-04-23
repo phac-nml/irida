@@ -9,7 +9,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<link rel="stylesheet" href="/resources/css/main.css" th:href="@{/resources/css/main.css}"/>
 	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
-	<th:block th:if="${analyticsGoogle != null and !#strings.isEmpty(analyticsGoogle)}">
+	<th:block th:if="${analyticsGoogleId != null and !#strings.isEmpty(analyticsGoogleId)}">
 		<div th:replace="template/analytics :: #google"></div>
 	</th:block>
 </head>

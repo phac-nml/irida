@@ -18,30 +18,28 @@ import com.google.common.base.Strings;
 @Configuration
 @PropertySource(value = { "classpath:configuration.properties", "file:/etc/irida/web.conf" }, ignoreResourceNotFound = true)
 public class AnalyticsHandlerInterceptor extends HandlerInterceptorAdapter {
-	@Value("${analytics.on}")
-	Boolean useAnalytics;
 	
-	@Value("${analytics.google}")
-	String googleAnalytics;
+	@Value("${analytics.google.id}")
+	String googleAnalyticsId;
 
 	@Value("${analytics.piwik.url}")
 	String piwikAnalyticsUrl;
 	
-	@Value("${analytics.piwik.siteId}")
-	String piwikAnalyticsSiteId;
+	@Value("${analytics.piwik.id}")
+	String piwikAnalyticsId;
 
 	@Override
 	public void postHandle(final HttpServletRequest request,
 			final HttpServletResponse response, final Object handler,
 			final ModelAndView modelAndView) throws Exception {
 
-		if (modelAndView != null && useAnalytics) {
-			if (!Strings.isNullOrEmpty(piwikAnalyticsUrl) && !Strings.isNullOrEmpty(piwikAnalyticsSiteId)) {
+		if (modelAndView != null) {
+			if (!Strings.isNullOrEmpty(piwikAnalyticsUrl) && !Strings.isNullOrEmpty(piwikAnalyticsId)) {
 				modelAndView.getModelMap().addAttribute("analyticsPiwikUrl", piwikAnalyticsUrl);
-				modelAndView.getModelMap().addAttribute("analyticsPiwikSiteId", piwikAnalyticsSiteId);
+				modelAndView.getModelMap().addAttribute("analyticsPiwikId", piwikAnalyticsId);
 			}
-			if (!Strings.isNullOrEmpty(googleAnalytics)) {
-				modelAndView.getModelMap().addAttribute("analyticsGoogle", googleAnalytics);
+			if (!Strings.isNullOrEmpty(googleAnalyticsId)) {
+				modelAndView.getModelMap().addAttribute("analyticsGoogleId", googleAnalyticsId);
 			}
 		}
 	}

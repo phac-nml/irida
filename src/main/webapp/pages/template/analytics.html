@@ -5,7 +5,7 @@
 <script type="text/javascript" id="google" th:inline="javascript">
 	var _gaq = _gaq || [];
 	_gaq.push(['_setAccount', 
-		/*[[${analytics.google}]]*/
+		/*[[${analytics.googleId}]]*/
 	]);
 	_gaq.push(['_trackPageview']);
 
@@ -26,7 +26,7 @@
 		/*[[${'https://' + analyticsPiwikUrl + '/'}]]*/  "http://{$PIWIK_URL}/"
 	);
 		_paq.push(['setSiteId', 
-			/*[[${analyticsPiwikSiteId}]]*/ 1
+			/*[[${analyticsPiwikId}]]*/ 1
 		]);
 		_paq.push(['setTrackerUrl', u+'piwik.php']);
 		_paq.push(['trackPageView']);
