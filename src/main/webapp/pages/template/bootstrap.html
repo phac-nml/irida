@@ -34,7 +34,7 @@
 							   th:text="#{nav.main.project-list}">List Projects
 							</a>
 						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
+						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
 							<a href="/projects/all" th:href="@{/projects/all}"
 							   th:text="#{nav.main.project-list-all}">One more separated link
 							</a>
