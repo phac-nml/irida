@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
 /**
@@ -32,11 +31,6 @@ public class WindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	@Bean
 	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader()
 			throws MalformedURLException, GalaxyConnectException {
-		return null;
-	}
-
-	@Bean
-	public GalaxyConnector galaxyConnector() throws MalformedURLException {
 		return null;
 	}
 

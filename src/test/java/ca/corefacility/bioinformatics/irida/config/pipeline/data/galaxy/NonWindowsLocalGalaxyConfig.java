@@ -21,8 +21,6 @@ import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -99,21 +97,6 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	private static final String LATEST_REVISION_STRING = "latest";
 	private static final String DEFAULT_REPSITORY_URL = "https://bitbucket.org/galaxy/galaxy-dist";
 	private static final String DEFAULT_BRANCH = "default";
-	
-	/**
-	 * Creates a new GalaxyConnector to connect to the local Galaxy instance.
-	 * @return  A GalaxyConnector to connect to the local Galaxy instance.
-	 * @throws Exception 
-	 */
-	@Lazy
-	@Bean
-	public GalaxyConnector galaxyConnector() throws Exception {
-		GalaxyConnector galaxyConnector = new GalaxyConnector(localGalaxy().getGalaxyURL(),
-				localGalaxy().getAdminName(), localGalaxy().getAdminAPIKey());
-		galaxyConnector.setDataStorage(DataStorage.REMOTE);
-		
-		return galaxyConnector;
-	}
 
 	/**
 	 * Builds a GalaxyAPI object to connect to a running instance of Galaxy.
