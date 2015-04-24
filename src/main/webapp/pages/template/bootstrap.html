@@ -34,7 +34,7 @@
 							   th:text="#{nav.main.project-list}">List Projects
 							</a>
 						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
+						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
 							<a href="/projects/all" th:href="@{/projects/all}"
 							   th:text="#{nav.main.project-list-all}">One more separated link
 							</a>
@@ -87,8 +87,8 @@
 					</ul>
 				</li>
 			</ul>
-			<ul class="nav navbar-nav navbar-right ng-cloak" ng-hide="uiGalaxyCtrl.inGalaxy">
-				<li sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown" dropdown="">
+			<ul class="nav navbar-nav navbar-right ng-cloak">
+				<li sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown" dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
 						<span th:text="#{nav.main.admin}">Admin</span>
 						<span class="caret"></span>
@@ -122,7 +122,7 @@
                         <!--*/&ndash;&gt;-->
 					<!--</ul>-->
 				<!--</li>-->
-				<li class="dropdown" dropdown="">
+				<li class="dropdown" dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown"
 					   dropdown-toggle="">
 						<span th:text="#{nav.main.help}">__Help__</span>
@@ -158,9 +158,9 @@
 						<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
 					</button>
 				</li>
-				<li>
+				<li ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a href="#" th:href="@{/users/current}" data:tooltip="#{nav.main.account}" tooltip-placement="bottom"><i class="fa fa-fw fa-user"></i></a></li>
-				<li>
+				<li ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a th:href="@{/logout}" data:tooltip="#{nav.main.logout}" href="/logout" tooltip-placement="bottom"><i class="fa fa-sign-out"></i>
 					</a>
 				</li>

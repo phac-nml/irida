@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.example.oauthClient.controller;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,35 +19,25 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-
 @Controller
-@Scope("session")
 public class OltuAuthorizationController {
 	private static final Logger logger = LoggerFactory.getLogger(OltuAuthorizationController.class);
 
-	private static final long ONE_SECOND_IN_MS = 1000;
-
 	private final String tokenRedirect = "http://localhost:8181/token";
 
-	private RemoteAPITokenService tokenService;
-	private RemoteAPIService apiService;
+	// Storing the entered credentials.
+	private String clientId;
+	private String clientSecret;
+	private String serviceURI;
 
-	@Autowired
-	public OltuAuthorizationController(RemoteAPITokenService tokenService, RemoteAPIService apiRepo) {
-		this.tokenService = tokenService;
-		this.apiService = apiRepo;
+	public OltuAuthorizationController() {
+
 	}
 
 	/**
@@ -63,28 +52,47 @@ public class OltuAuthorizationController {
 	 * @return A ModelAndView beginning the authentication procedure
 	 * @throws OAuthSystemException
 	 */
-	public ModelAndView authenticate(RemoteAPI remoteAPI, String redirect) throws OAuthSystemException {
-		//get the URI for the remote service we'll be requesting from
-		String serviceURI = remoteAPI.getServiceURI();
-		
-		//build the authorization path
+
+	/**
+	 * Begin authentication procedure by redirecting to remote authorization
+	 * location
+	 * 
+	 * @param serviceURI
+	 *            The base URI of the rest api service
+	 * @param clientID
+	 *            The Client ID to connect with
+	 * @param clientSecret
+	 *            The client secret to connect with
+	 * @param redirect
+	 *            Page to redirect to after auth is complete
+	 * @return ModelAndView redirecting to the authorization location
+	 * @throws OAuthSystemException
+	 */
+	public ModelAndView authenticate(String serviceURI, String clientID, String clientSecret, String redirect)
+			throws OAuthSystemException {
+		// save the client credentials and information
+		this.clientId = clientID;
+		this.clientSecret = clientSecret;
+		this.serviceURI = serviceURI;
+
+		// build the authorization path
 		URI serviceAuthLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("authorize").build();
 
-		logger.debug("Service: " + remoteAPI);
 		logger.debug("redirect: " + redirect);
 
-		//build a redirect URI to redirect to after auth flow is completed
-		String tokenRedirect = buildRedirectURI(remoteAPI.getId(), redirect);
+		// build a redirect URI to redirect to after auth flow is completed
+		String tokenRedirect = buildRedirectURI(redirect);
 
-		//build the redirect query to request an authorization code from the remote API
+		// build the redirect query to request an authorization code from the
+		// remote API
 		OAuthClientRequest request = OAuthClientRequest.authorizationLocation(serviceAuthLocation.toString())
-				.setClientId(remoteAPI.getClientId()).setRedirectURI(tokenRedirect)
-				.setResponseType(ResponseType.CODE.toString()).setScope("read").buildQueryMessage();
-		
+				.setClientId(clientID).setRedirectURI(tokenRedirect).setResponseType(ResponseType.CODE.toString())
+				.setScope("read").buildQueryMessage();
+
 		String locURI = request.getLocationUri();
 		logger.debug("authorization request location:" + locURI);
-		
-		//create the redirection
+
+		// create the redirection
 		ModelAndView modelAndView = new ModelAndView(new RedirectView(locURI));
 		return modelAndView;
 	}
@@ -109,71 +117,59 @@ public class OltuAuthorizationController {
 	 */
 	@RequestMapping("/token")
 	public ModelAndView getToken(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("apiId") Long apiId, @RequestParam("redirect") String redirect) throws IOException,
-			OAuthSystemException, OAuthProblemException, URISyntaxException {
+			@RequestParam("redirect") String redirect) throws IOException, OAuthSystemException, OAuthProblemException,
+			URISyntaxException {
 
-		// get the current time for the expiry calculation
-		Long currentTime = System.currentTimeMillis();
-
-		//Get the OAuth2 auth code
+		// Get the OAuth2 auth code
 		OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 		String code = oar.getCode();
 		logger.debug("got code " + code);
-		
-		//Read the RemoteAPI from the RemoteAPIService and get the base URI
-		RemoteAPI remoteAPI = apiService.read(apiId);
-		String serviceURI = remoteAPI.getServiceURI();
 
-		//Build the token location for this service
+		// Read the RemoteAPI from the RemoteAPIService and get the base URI
+
+		// Build the token location for this service
 		URI serviceTokenLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("token").build();
 		logger.debug("token loc " + serviceTokenLocation);
 
-		//Build the redirect URI to request a token from
-		String tokenRedirect = buildRedirectURI(apiId, redirect);
+		// Build the redirect URI to request a token from
+		String tokenRedirect = buildRedirectURI(redirect);
 
-		//Create the token request form the given auth code
+		// Create the token request form the given auth code
 		OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
-				.setClientId(remoteAPI.getClientId()).setClientSecret(remoteAPI.getClientSecret())
-				.setRedirectURI(tokenRedirect).setCode(code).setGrantType(GrantType.AUTHORIZATION_CODE)
-				.buildBodyMessage();
+				.setClientId(clientId).setClientSecret(clientSecret).setRedirectURI(tokenRedirect).setCode(code)
+				.setGrantType(GrantType.AUTHORIZATION_CODE).buildBodyMessage();
 
-		//execute the request
+		// execute the request
 		OAuthClient client = new OAuthClient(new URLConnectionClient());
 
-		//read the response for the access token
+		// read the response for the access token
 		OAuthJSONAccessTokenResponse accessTokenResponse = client.accessToken(tokenRequest,
 				OAuthJSONAccessTokenResponse.class);
 		String accessToken = accessTokenResponse.getAccessToken();
-		String refreshToken = accessTokenResponse.getRefreshToken();
-		logger.debug("refresh token is: " + refreshToken);
 
-		//check the token expiry
+		// check the token expiry
 		Long expiresIn = accessTokenResponse.getExpiresIn();
 		logger.debug("Token expires in " + expiresIn);
-		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
-		
-		//create the OAuth2 token and store it
-		RemoteAPIToken token = new RemoteAPIToken(accessToken, remoteAPI, expiry);
-		tokenService.create(token);
 
-		//redirect the response back to the requested resource
+		// adding the token to the response page. This is just a demo to show
+		// how to get an oauth token. NEVER DO THIS!!!
+		redirect = redirect + "?token=" + accessToken;
+
+		// redirect the response back to the requested resource
 		return new ModelAndView(new RedirectView(redirect));
 	}
 
 	/**
 	 * Build the redirect URI for the token page with the API and resource page
 	 * 
-	 * @param apiId
-	 *            the Long ID of the API to request from
 	 * @param redirectPage
-	 *            the resource page to redirect to once the authorizatino is
+	 *            the resource page to redirect to once the authorization is
 	 *            complete
 	 * @return
 	 */
-	private String buildRedirectURI(Long apiId, String redirectPage) {
+	private String buildRedirectURI(String redirectPage) {
 
-		URI build = UriBuilder.fromUri(tokenRedirect).queryParam("apiId", apiId).queryParam("redirect", redirectPage)
-				.build();
+		URI build = UriBuilder.fromUri(tokenRedirect).queryParam("redirect", redirectPage).build();
 		return build.toString();
 	}
 }
