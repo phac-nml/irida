@@ -19,25 +19,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 
+import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
+
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.galaxybootstrap.BootStrapper;
 import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
 import com.github.jmchilton.galaxybootstrap.DownloadProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData;
-import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
+import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.google.common.base.Optional;
-
-import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
 /**
  * Builds a local running instance of Galaxy (requires mercurial and python) for integration testing.
@@ -102,20 +99,6 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	private static final String LATEST_REVISION_STRING = "latest";
 	private static final String DEFAULT_REPSITORY_URL = "https://bitbucket.org/galaxy/galaxy-dist";
 	private static final String DEFAULT_BRANCH = "default";
-
-	/**
-	 * Builds a GalaxyUploader to connect to a running instance of Galaxy.
-	 * @return  An Uploader connected to a running instance of Galaxy.
-	 * @throws Exception 
-	 */
-	@Lazy
-	@Bean
-	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() throws Exception {
-		GalaxyUploader galaxyUploader = new GalaxyUploader();
-		galaxyUploader.connectToGalaxy(galaxyConnector());
-
-		return galaxyUploader;
-	}
 	
 	/**
 	 * Creates a new GalaxyConnector to connect to the local Galaxy instance.

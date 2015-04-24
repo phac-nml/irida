@@ -21,17 +21,13 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -106,38 +102,6 @@ public class ExecutionManagerConfig {
 	public ExecutionManagerGalaxy executionManager() throws ExecutionManagerConfigurationException {		
 		return buildExecutionManager(URL_EXECUTION_PROPERTY, API_KEY_EXECUTION_PROPERTY,
 				EMAIL_EXECUTION_PROPERTY, DATA_STORAGE_EXECUTION_PROPERTY);
-	}
-
-	/**
-	 * Builds a new GalaxyUploader for uploading files to Galaxy.
-	 * @return  A new GalaxyUploader object.
-	 */
-	@Bean
-	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() {
-		GalaxyUploader galaxyUploader = new GalaxyUploader();
-
-		try {
-			GalaxyConnector galaxyConnector;
-			
-			ExecutionManagerGalaxy executionManager = buildExecutionManager(URL_UPLODER_PROPERTY, API_KEY_UPLOADER_PROPERTY,
-					ADMIN_EMAIL_UPLOADER_PROPERTY, DATA_STORAGE_UPLOADER_PROPERTY);
-
-			galaxyConnector = new GalaxyConnector(executionManager.getLocation(),
-					executionManager.getAccountEmail(),
-					executionManager.getAPIKey());
-			galaxyConnector.setDataStorage(executionManager.getDataStorage());
-			
-			galaxyUploader.connectToGalaxy(galaxyConnector);
-
-		} catch (ExecutionManagerConfigurationException e) {
-			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
-		} catch (ConstraintViolationException e) {
-			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
-		} catch (GalaxyConnectException e) {
-			logger.error("Exception attempting to connect to Galaxy: " + e.getMessage());
-		}
-
-		return galaxyUploader;
 	}
 	
 	/**

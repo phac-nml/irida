@@ -16,9 +16,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
  */
 public interface LocalGalaxyConfig {
 
-	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader()
-			throws Exception;
-
 	public GalaxyConnector galaxyConnector() throws Exception;
 
 	public GalaxyUploaderAPI galaxyAPI() throws Exception;
