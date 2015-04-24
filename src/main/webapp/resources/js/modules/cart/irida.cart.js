@@ -312,13 +312,13 @@
     return function(list, term) {
       term = term.toLowerCase();
       return list.filter(function(item) {
-        if(item.label.toLowerCase().indexOf(term) > -1) {return true;}
         if(item.samples) {
           return item.samples.filter(function(sample) {
             return sample.label.toLowerCase().indexOf(term) > -1;
           }).length > 0;
         }
-        return false;
+        return item.label.toLowerCase().indexOf(term) > -1;
+        
       });
     };
   }
