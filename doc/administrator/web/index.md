@@ -67,6 +67,28 @@ The IRIDA platform also looks for a web application configuration file at `/etc/
     
 If this file does not exist the platform will use internal configuration values which will probably not correspond to your production environment.
 
+Analytics
+---------
+The IRIDA platform supports web analytics.  Include the analytic snippet inside a file in `/etc/irida/analytics/`.  The snippet will be injected into the page.
+
+E.g. In `/etc/irida/analytics/google-analytics.html`.
+
+{% highlight javascript %}
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-XXXXX-X']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+{% endhighlight %}
+
 Deploy the `WAR` File
 ---------------------
 Once you have adjusted the configuration files to your environment, you can deploy the `WAR` file to your servlet container.
