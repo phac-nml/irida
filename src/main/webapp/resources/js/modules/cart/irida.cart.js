@@ -9,11 +9,12 @@
         vm.projects = [];
         vm.count = 0;
         vm.collapsed = {};
+      vm.term = "";
 
         $scope.$on('cart.update', function () {
             getCart(false);
         });
-
+      
         function getCart (collapse) {
             cart.all()
               .then(function (data) {
@@ -297,6 +298,23 @@
     };
 
   }
+  
+  function CartFilter() {
+    return function(list, term) {
+      return list.map(function(item) {
+        // In project name === good
+        if(item.label.indexOf(term) > -1 ) {console.log(item); return item;}
+        // Samples?
+        var samples = item.samples.filter(function(sample) {
+          return sample.label.indexOf(term) > -1;
+        });
+        if(samples.length > 0) {
+          item.samples = samples;
+          return item;
+        }
+      });
+    };
+  }
 
   angular
       .module('irida.cart', [])
@@ -305,5 +323,6 @@
     .controller('GalaxyDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService','GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
       .directive('cart', [CartDirective])
+    .filter('cartFilter',[CartFilter])
     ;
 })();

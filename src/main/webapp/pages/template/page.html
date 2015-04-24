@@ -56,8 +56,13 @@
 						_Clear_
 					</button>
 				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<input class="form-control" type="search" ng-model="cart.term"/>
+					</div>
+				</div>
 				<ul id="cart-project-list" class="list-group">
-					<li class="list-group-item" ng-repeat="p in cart.projects" ng-attr-id="{{'cart-project-'+p.id}}">
+					<li class="list-group-item" ng-repeat="p in cart.projects | cartFilter:cart.term" ng-attr-id="{{'cart-project-'+p.id}}">
 						<div class="cart-project-header" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
 							<span class="fa fa-fw"
 							      ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
