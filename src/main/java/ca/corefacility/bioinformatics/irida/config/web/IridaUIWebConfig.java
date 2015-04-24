@@ -81,7 +81,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	}
 	
 	@Bean
-	@Profile("prod")
 	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
 		Path analyticsPath = Paths.get(ANALYTICS_DIR);
 		StringBuilder analytics = new StringBuilder();
