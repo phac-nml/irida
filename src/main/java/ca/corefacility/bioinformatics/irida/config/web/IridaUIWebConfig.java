@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
@@ -46,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
@@ -78,7 +80,9 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		return localeChangeInterceptor;
 	}
 	
-	@Bean AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
+	@Bean
+	@Profile("prod")
+	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
 		Path analyticsPath = Paths.get(ANALYTICS_DIR);
 		StringBuilder analytics = new StringBuilder();
 		if (Files.exists(analyticsPath)) {
