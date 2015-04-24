@@ -301,17 +301,14 @@
   
   function CartFilter() {
     return function(list, term) {
-      return list.map(function(item) {
-        // In project name === good
-        if(item.label.indexOf(term) > -1 ) {console.log(item); return item;}
-        // Samples?
-        var samples = item.samples.filter(function(sample) {
-          return sample.label.indexOf(term) > -1;
-        });
-        if(samples.length > 0) {
-          item.samples = samples;
-          return item;
+      return list.filter(function(item) {
+        if(item.label.indexOf(term) > -1) {return true;}
+        if(item.samples) {
+          return item.samples.filter(function(sample) {
+            return sample.label.indexOf(term) > -1;
+          }).length > 0;
         }
+        return false;
       });
     };
   }
