@@ -298,8 +298,17 @@
     };
 
   }
-  
+
+  /**
+   * @name cartFilter
+   * @desc Filters the list of projects in the cart based on the term provided in the search input.
+   * @type {Filter}
+   */
   function CartFilter() {
+    /**
+     * @param list - list to filter
+     * @param term - search term to use to filter the list.
+     */
     return function(list, term) {
       term = term.toLowerCase();
       return list.filter(function(item) {
