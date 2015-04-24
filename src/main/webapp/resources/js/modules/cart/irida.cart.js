@@ -301,11 +301,12 @@
   
   function CartFilter() {
     return function(list, term) {
+      term = term.toLowerCase();
       return list.filter(function(item) {
-        if(item.label.indexOf(term) > -1) {return true;}
+        if(item.label.toLowerCase().indexOf(term) > -1) {return true;}
         if(item.samples) {
           return item.samples.filter(function(sample) {
-            return sample.label.indexOf(term) > -1;
+            return sample.label.toLowerCase().indexOf(term) > -1;
           }).length > 0;
         }
         return false;
