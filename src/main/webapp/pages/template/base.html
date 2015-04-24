@@ -14,6 +14,8 @@
 <th:block layout:fragment="content">
 </th:block>
 
-<th:block th:utext="${analytics}"></th:block>
+<th:block th:if="${analytics}">
+	<th:block th:utext="${analytics}"></th:block>
+</th:block>
 </body>
 </html>
