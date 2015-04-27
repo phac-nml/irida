@@ -71,7 +71,7 @@ public class AssociatedProjectsEditPageIT {
 		page.goTo(projectId);
 		logger.debug("Testing: hasTheCorrectProjectsDisplayed");
 		List<String> projectsDiv = page.getProjects();
-		assertEquals("Has the correct number of projects", 4, projectsDiv.size());
+		assertEquals("Has the correct number of projects", 5, projectsDiv.size());
 
 		assertFalse("Current project should not be displayed", projectsDiv.contains("1"));
 	}
