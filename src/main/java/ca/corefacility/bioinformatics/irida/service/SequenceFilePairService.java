@@ -51,6 +51,9 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public SequenceFilePair readSequenceFilePairForSample(Sample sample, Long id);
 
 	/**
 	 * Gets a map of {@link SequenceFilePair}s and corresponding {@link Sample}

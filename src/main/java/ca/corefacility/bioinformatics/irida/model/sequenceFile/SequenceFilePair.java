@@ -28,15 +28,17 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 @Entity
 @Table(name = "sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFilePair implements IridaThing {
+public class SequenceFilePair extends IridaResourceSupport implements IridaThing {
 	
 	/**
 	 * Pattern for matching forward {@link SequenceFile}s from a file name.
@@ -79,6 +81,7 @@ public class SequenceFilePair implements IridaThing {
 	 * 
 	 * @return The forward {@link SequenceFile} from the pair.
 	 */
+	@JsonIgnore
 	public SequenceFile getForwardSequenceFile() {
 		return files.stream()
 				.filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
@@ -90,6 +93,7 @@ public class SequenceFilePair implements IridaThing {
 	 * 
 	 * @return The reverse {@link SequenceFile} from the pair.
 	 */
+	@JsonIgnore
 	public SequenceFile getReverseSequenceFile() {
 		return files.stream()
 				.filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())

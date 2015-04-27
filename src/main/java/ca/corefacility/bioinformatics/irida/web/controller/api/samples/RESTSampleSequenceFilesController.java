@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -147,6 +149,66 @@ public class RESTSampleSequenceFilesController {
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 		return modelMap;
+	}
+	
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs", method = RequestMethod.GET)
+	public ModelMap getSequenceFilePairsForSample(@PathVariable Long projectId, @PathVariable Long sampleId){		
+		ModelMap modelMap = new ModelMap();
+
+		logger.debug("Reading seq file  for sample " + sampleId +  " in project " + projectId);
+		Sample sample = sampleService.read(sampleId);
+		
+		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService.getSequenceFilePairsForSample(sample);
+
+		ResourceCollection<SequenceFilePair> resources = new ResourceCollection<>(sequenceFilePairsForSample.size());
+		for (SequenceFilePair pair : sequenceFilePairsForSample) {
+			
+			for(SequenceFile file : pair.getFiles()){
+				file.add(linkTo(
+						methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+								file.getId())).withSelfRel());
+			}
+
+			pair.add(linkTo(
+					methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(projectId, sampleId, pair.getId()))
+					.withSelfRel());
+			
+			resources.add(pair);
+		}
+
+		// add a link to this collection
+		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(projectId, sampleId))
+				.withSelfRel());
+		// add a link back to the sample
+		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE));
+
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
+		return modelMap;
+	}
+	
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs/{pairId}", method = RequestMethod.GET)
+	public ModelMap readSequenceFilePair(@PathVariable Long projectId, @PathVariable Long sampleId,
+			@PathVariable Long pairId) {
+		ModelMap modelMap = new ModelMap();
+
+		Sample sample = sampleService.read(sampleId);
+
+		SequenceFilePair readSequenceFilePairForSample = sequenceFilePairService.readSequenceFilePairForSample(sample,
+				pairId);
+		
+		for(SequenceFile file : readSequenceFilePairForSample.getFiles()){
+			file.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId, file.getId())).withSelfRel());
+		}
+
+		readSequenceFilePairForSample.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(projectId, sampleId, pairId))
+				.withSelfRel());
+		
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME,readSequenceFilePairForSample);
+
+		return modelMap;
+
 	}
 
 	/**
