@@ -289,12 +289,4 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample) {
 		return ssfRepository.getUnpairedSequenceFilesForSample(sample);
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public AnalysisFastQC getFastQCAnalysisForSequenceFile(final SequenceFile sequenceFile) {
-		return sequenceFileRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
-	}
 }
