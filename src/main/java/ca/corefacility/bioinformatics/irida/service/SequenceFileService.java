@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
 /**
  * Service for managing {@link SequenceFile} entities.
@@ -142,4 +143,14 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
 	public Map<Sample, SequenceFile> getUniqueSamplesForSequenceFiles(Set<SequenceFile> sequenceFiles)
 			throws DuplicateSampleException;
+	
+	/**
+	 * Load the fastqc report for a specific file.
+	 * 
+	 * @param sequenceFile
+	 *            the file to load the report for
+	 * @return the fastqc report for the file.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFile, 'canReadSequenceFile')")
+	public AnalysisFastQC getFastQCAnalysisForSequenceFile(final SequenceFile sequenceFile);
 }

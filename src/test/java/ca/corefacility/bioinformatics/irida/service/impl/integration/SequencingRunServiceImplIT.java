@@ -118,7 +118,7 @@ public class SequencingRunServiceImplIT {
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
 
-		AnalysisFastQC analysis = savedFile.getFastQCAnalysis();
+		AnalysisFastQC analysis = sequenceFileService.getFastQCAnalysisForSequenceFile(savedFile);
 		assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
 	}
 
@@ -249,7 +249,7 @@ public class SequencingRunServiceImplIT {
 
 		miseqRunService.addSequenceFileToSequencingRun(run, sf);
 
-		AnalysisFastQC analysis = sf.getFastQCAnalysis();
+		AnalysisFastQC analysis = sequenceFileService.getFastQCAnalysisForSequenceFile(sf);
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
 	}
 }

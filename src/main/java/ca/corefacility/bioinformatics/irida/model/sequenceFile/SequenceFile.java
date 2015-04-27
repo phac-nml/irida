@@ -94,7 +94,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private SampleSequenceFileJoin sample;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@NotAudited
 	@JoinColumn(name = "fastqc_analysis_id")
 	private AnalysisFastQC fastqcAnalysis;
@@ -245,10 +245,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@Override
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
-	}
-
-	public AnalysisFastQC getFastQCAnalysis() {
-		return this.fastqcAnalysis;
 	}
 
 	/**

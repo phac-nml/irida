@@ -141,7 +141,7 @@ public class SequenceFileController {
 	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type,
 			HttpServletResponse response) throws IOException {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
-		AnalysisFastQC fastQC = file.getFastQCAnalysis();
+		AnalysisFastQC fastQC = sequenceFileService.getFastQCAnalysisForSequenceFile(file);
 		if (fastQC != null) {
 			byte[] chart = new byte[0];
 			if (type.equals(IMG_PERBASE)) {
@@ -169,7 +169,7 @@ public class SequenceFileController {
 	private void createDefaultPageInfo(Long sequenceFileId, Model model) {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
 		SequencingRun run = sequencingRunService.getSequencingRunForSequenceFile(file);
-		AnalysisFastQC fastQC = file.getFastQCAnalysis();
+		AnalysisFastQC fastQC = sequenceFileService.getFastQCAnalysisForSequenceFile(file);
 		model.addAttribute("file", file);
 		model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
 		model.addAttribute("fastQC", fastQC);
