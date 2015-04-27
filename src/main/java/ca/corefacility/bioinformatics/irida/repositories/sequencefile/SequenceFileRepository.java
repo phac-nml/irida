@@ -27,14 +27,4 @@ public interface SequenceFileRepository extends FilesystemSupplementedRepository
 	 */
 	@Query("select f from SequenceFile f where f.sequencingRun = ?1")
 	public Set<SequenceFile> findSequenceFilesForSequencingRun(SequencingRun sequencingRun);
-
-	/**
-	 * Get the fastqc analysis for a specific file.
-	 * 
-	 * @param sequenceFile
-	 *            the file to load the fastqc analysis for
-	 * @return the fastqc analysis for the file.
-	 */
-	@Query("select f.fastqcAnalysis from SequenceFile f where f = ?1")
-	public AnalysisFastQC findFastqcAnalysisForSequenceFile(final SequenceFile sequenceFile);
 }

@@ -30,10 +30,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -64,9 +64,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequenceFileJoinRepository ssfRepository;
 	
 	/**
-	 * Reference to {@link SequenceFileRepository}.
+	 * Reference to {@link AnalysisRepository}.
 	 */
-	private final SequenceFileRepository sequenceFileRepository;
+	private final AnalysisRepository analysisRepository;
 
 	/**
 	 * Constructor.
@@ -79,16 +79,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the project sample join repository.
 	 * @param ssfRepository
 	 *            the sample sequence file join repository.
+         * @param analysisRepository
+         *            the analysis repository.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
-			SampleSequenceFileJoinRepository ssfRepository, final SequenceFileRepository sequenceFileRepository,
+			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository,
 			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.ssfRepository = ssfRepository;
-		this.sequenceFileRepository = sequenceFileRepository;
+		this.analysisRepository = analysisRepository;
 	}
 
 	/**
@@ -206,7 +208,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(sample);
 		for (Join<Sample, SequenceFile> sequenceFileJoin : sequenceFiles) {
 			SequenceFile sequenceFile = sequenceFileJoin.getObject();
-			final AnalysisFastQC sequenceFileFastQC = sequenceFileRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
+			final AnalysisFastQC sequenceFileFastQC = analysisRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
 			if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
 				throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
 						+ sequenceFile.getId() + "]");

@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 
 /**
@@ -25,16 +24,13 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 
 	private final AnalysisRepository analysisRepository;
 	private final AnalysisOutputFileRepository analysisOutputFileRepository;
-        private final SequenceFileRepository sequenceFileRepository;
 
 	@Autowired
 	public AnalysisServiceImpl(AnalysisRepository analysisRepository,
-			AnalysisOutputFileRepository analysisOutputFileRepository,
-                        final SequenceFileRepository sequenceFileRepository, Validator validator) {
+			AnalysisOutputFileRepository analysisOutputFileRepository, Validator validator) {
 		super(analysisRepository, validator, Analysis.class);
 		this.analysisRepository = analysisRepository;
 		this.analysisOutputFileRepository = analysisOutputFileRepository;
-                this.sequenceFileRepository = sequenceFileRepository;
 	}
 
 	@Override
@@ -52,6 +48,6 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 	 */
 	@Override
 	public AnalysisFastQC getFastQCAnalysisForSequenceFile(final SequenceFile sequenceFile) {
-		return sequenceFileRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
+		return analysisRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
 	}
 }
