@@ -1,8 +1,14 @@
+---
+---
+
 /**
  * A simple JSON search
  * Requires jQuery (v 1.7+)
  *
+ * Updated to also include some context in the search results
+ *
  * @author  Mat Hayward - Erskine Design
+ * @author  Franklin Bristow
  * @version  0.1
  */
 
@@ -11,7 +17,7 @@
     Initialisation
     ========================================================================== */
 
-var q, jsonFeedUrl = "/feeds/feed.json",
+var q, jsonFeedUrl = "{{ site.url }}/feeds/feed.json",
     $searchForm = $("[data-search-form]"),
     $searchInput = $("[data-search-input]"),
     $resultTemplate = $("#search-result"),
