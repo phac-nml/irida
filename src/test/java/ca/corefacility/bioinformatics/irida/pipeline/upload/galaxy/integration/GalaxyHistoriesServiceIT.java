@@ -183,10 +183,10 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws IOException 
 	 */
 	private void setupDataFiles() throws URISyntaxException, IOException {
-		dataFile = Paths.get(GalaxyAPIIT.class.getResource(
+		dataFile = Paths.get(GalaxyHistoriesServiceIT.class.getResource(
 				"testData1.fastq").toURI());
 		
-		dataFile2 = Paths.get(GalaxyAPIIT.class.getResource(
+		dataFile2 = Paths.get(GalaxyHistoriesServiceIT.class.getResource(
 				"testData2.fastq").toURI());
 		
 		File invalidFile = File.createTempFile("galaxy-test", ".fastq");

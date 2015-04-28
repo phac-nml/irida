@@ -1,5 +1,4 @@
 package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
 /**
@@ -10,8 +9,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
  *
  */
 public interface LocalGalaxyConfig {
-
-	public GalaxyUploaderAPI galaxyAPI() throws Exception;
 
 	public LocalGalaxy localGalaxy() throws Exception;
 }
