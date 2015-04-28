@@ -528,13 +528,14 @@ public class ProjectSamplesController {
 	 * @param project
 	 *            The originating project
 	 * @param type
-	 *            The {@link SampleType} of the sample (LOCAL, ASSOCIATED)
+	 *            The {@link SampleType} of the sample (LOCAL, ASSOCIATED,
+	 *            REMOTE)
 	 * @param identifier
-	 *            Number to identify the {@link Sample}. NOTE: This will be
-	 *            different for remote samples
+	 *            Object to identify the {@link Sample}. Local samples will be
+	 *            the sample id, remote may be a URL
 	 * @return a formatted map of {@link Sample} objects.
 	 */
-	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Number identifier) {
+	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Object identifier) {
 		Map<String, Object> sampleMap = new HashMap<>();
 		sampleMap.put("sample", sample);
 		sampleMap.put("project", project);

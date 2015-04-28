@@ -749,12 +749,7 @@
     vm.add = function () {
       var samples = [];
       _.forEach(storage.getSamples(), function (s) {
-        if (s.sampleType == "ASSOCIATED") {
-          samples.push({"sample": s.id, "project": s.project.id});
-        }
-        else if (s.sampleType == "LOCAL") {
-          samples.push({"sample": s.id, "project": project.id});
-        }
+        samples.push({"sample": s.id, "project": s.project.id, "type" : s.sampleType});
       });
 
       cart.add(samples);

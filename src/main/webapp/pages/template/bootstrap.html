@@ -158,6 +158,10 @@
 						<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
 					</button>
 				</li>
+                <li ng-hide="uiGalaxyCtrl.inGalaxy">
+                    <a href="#" th:href="@{/remote_api}" data:tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom"><i class="glyphicon glyphicon-transfer"></i></a>
+                </li>
+                
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a href="#" th:href="@{/users/current}" data:tooltip="#{nav.main.account}" tooltip-placement="bottom"><i class="fa fa-fw fa-user"></i></a></li>
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">

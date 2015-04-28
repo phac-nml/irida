@@ -260,10 +260,10 @@
 				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
 						<div class="large-checkbox">
-							<input class="sample-select" id="s-{{entry.sample.id}}" name="s-{{entry.sample.id}}"
+							<input class="sample-select" id="s-{{entry.id}}" name="s-{{entry.id}}"
 							       type="checkbox"
 							       ng-model="entry.selected"
-							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.sample.id}}"></label>
+							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.id}}"></label>
 						</div>
 					</td>
 					<td class="sample-name">

@@ -7,6 +7,7 @@
           initialized = false;
         vm.show = false;
         vm.projects = [];
+        vm.remote = [];
         vm.count = 0;
         vm.collapsed = {};
 
@@ -19,13 +20,18 @@
               .then(function (data) {
                 var prev = vm.count;
                 vm.count = 0;
-                  vm.projects = data;
-                  _.each(data, function(p) {
+                  vm.projects = data.projects;
+                  vm.remote = data.remote;
+                  _.each(vm.projects, function(p) {
                       vm.count += p.samples.length;
                       if(collapse){
                         vm.collapsed[p.id] = true;
                       }
                   });
+                  vm.count += vm.getRemoteCount();
+                  if(collapse){
+                      vm.collapsed['remote'] = true;
+                  }
                 if (initialized && prev !== vm.count) {
                   vm.animation = 'glow';
                   $timeout(function () {
@@ -36,6 +42,10 @@
                   initialized = true;
                 }
               });
+        }
+        
+        vm.getRemoteCount = function(){
+            return Object.keys(vm.remote).length;
         }
 
         getCart(true);
@@ -56,6 +66,14 @@
 
       vm.removeProject = function(projectId){
         CartService.removeProject(projectId);
+      }
+      
+      vm.removeRemoteSamples = function(){
+        CartService.removeRemoteSamples();
+      }
+      
+      vm.removeRemoteSample = function(sampleUrl){
+        CartService.removeRemoteSample(sampleUrl);
       }
 
       vm.removeSample = function(projectId,sampleId){
@@ -100,6 +118,8 @@
             urls = {
                 all: TL.BASE_URL + "cart",
                 add: TL.BASE_URL + "cart/add/samples",
+                addRemote: TL.BASE_URL + "cart/add/samples/remote",
+                removeRemote: TL.BASE_URL + "cart/remove/samples/remote",
                 project: TL.BASE_URL + "cart/project/"
             };
 
@@ -107,7 +127,7 @@
             return $http.get(urls.all)
               .then(function (response) {
                   if (response.data) {
-                      return response.data.projects
+                      return {projects: response.data.projects, remote: response.data.remote};
                   }
                   else {
                       return [];
@@ -119,7 +139,12 @@
           var promises = [];
 
           _.forEach(samples, function(s) {
-            promises.push($http.post(urls.add, {projectId: s.project, sampleIds: [s.sample]}));
+            if(s.type == "LOCAL" || s.type == "ASSOCAITED"){
+              promises.push($http.post(urls.add, {projectId: s.project, sampleIds: [s.sample]}));
+            }
+            else if(s.type == "REMOTE"){
+              promises.push($http.post(urls.addRemote, {sampleURL: s.sample}));
+            }
           });
 
           $q.all(promises).then(function(){
@@ -145,6 +170,18 @@
           scope.$broadcast("cart.update", {});
         })
       }
+      
+      svc.removeRemoteSamples = function(){
+	  return $http.delete(urls.removeRemote).then(function () {
+            scope.$broadcast("cart.update", {});
+          })
+      }
+      
+      svc.removeRemoteSample = function(sampleURL){
+	  return $http.post(urls.removeRemote, {sampleURL : sampleURL}).then(function () {
+            scope.$broadcast("cart.update", {});
+          })
+      }      
 
     }
 

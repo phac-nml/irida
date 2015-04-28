@@ -140,6 +140,12 @@ public class ProjectSamplesPage extends AbstractPage {
 		List<WebElement> inputs = driver.findElements(By.className("large-checkbox"));
 		inputs.get(row).click();
 	}
+	
+	public void selectSampleByClass(String sampleClass){
+		List<WebElement> findElements = driver.findElements(By.cssSelector(".sample-row."+sampleClass));
+		WebElement checkbox = findElements.iterator().next().findElement(By.className("large-checkbox"));
+		checkbox.click();
+	}
 
 	public boolean isRowSelected(int row) {
 		List<WebElement> rows = driver.findElements(By.className("sample-row"));

@@ -142,7 +142,7 @@ public class AbstractPage {
 	}
 
 	public int getCartProjectCount() {
-		return driver.findElements(By.cssSelector("#cart-project-list > li")).size();
+		return driver.findElements(By.cssSelector("#cart-project-list > li.local-project")).size();
 	}
 
 	/**
