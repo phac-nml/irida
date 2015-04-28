@@ -55,8 +55,8 @@ public class AnalysesUserPageIT {
 
 		assertEquals("Should display progress bars with percent complete for everything except error state", 6,
 				page.getNumberOfProgressBars());
-		assertEquals("Should display 90% complete", "90%", page.getPercentComplete(4));
-		assertEquals("Should display 100% complete", "100%", page.getPercentComplete(5));
+		assertEquals("Should display 90% complete", "90%", page.getPercentComplete(1));
+		assertEquals("Should display 100% complete", "5%", page.getPercentComplete(2));
 	}
 
 	@Test
