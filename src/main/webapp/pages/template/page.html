@@ -58,7 +58,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<input class="form-control cart-search" type="search" ng-model="cart.term" th:placeholder="#{cart.placeholder.search}"/>
+						<input class="form-control cart-search" type="search" ng-model="cart.term" th:placeholder="#{cart.placeholder.search}" ng-model-options="{ debounce: {'default': 500, 'blur': 0} }"/>
 					</div>
 				</div>
 				<ul id="cart-project-list" class="list-group">
