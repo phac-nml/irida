@@ -64,9 +64,7 @@ public class ToolExecution implements IridaThing {
 	@Column(name = "tool_version")
 	private final String toolVersion;
 
-	// TODO: add command-line requirement back *after* Galaxy and blend4j have
-	// been updated.
-	// @NotNull
+	@NotNull
 	@Lob
 	@Column(name = "command_line")
 	private final String commandLine;
@@ -121,7 +119,8 @@ public class ToolExecution implements IridaThing {
 	 *            the parameters that were passed to the tool at execution time.
 	 */
 	public ToolExecution(final Set<ToolExecution> previousSteps, final String toolName, final String toolVersion,
-			final String executionManagerIdentifier, final Map<String, String> executionTimeParameters) {
+			final String executionManagerIdentifier, final Map<String, String> executionTimeParameters,
+			final String commandLine) {
 		this.id = null;
 		this.toolName = toolName;
 		this.toolVersion = toolVersion;
@@ -134,13 +133,14 @@ public class ToolExecution implements IridaThing {
 		}
 		this.executionTimeParameters = addExecutionTimeParameters(executionTimeParameters);
 		this.createdDate = new Date();
-		this.commandLine = null;
+		this.commandLine = commandLine;
 	}
 
 	/**
 	 * Construct a new instance of {@link ToolExecution}.
 	 *
-	 * @param id the id for the ToolExecution
+	 * @param id
+	 *            the id for the ToolExecution
 	 * @param previousSteps
 	 *            the set of {@link ToolExecution} that led to the input of this
 	 *            {@link ToolExecution}.
@@ -154,8 +154,9 @@ public class ToolExecution implements IridaThing {
 	 * @param executionTimeParameters
 	 *            the parameters that were passed to the tool at execution time.
 	 */
-	public ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName, final String toolVersion,
-			final String executionManagerIdentifier, final Map<String, String> executionTimeParameters) {
+	public ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
+			final String toolVersion, final String executionManagerIdentifier,
+			final Map<String, String> executionTimeParameters) {
 		this.id = id;
 		this.toolName = toolName;
 		this.toolVersion = toolVersion;
