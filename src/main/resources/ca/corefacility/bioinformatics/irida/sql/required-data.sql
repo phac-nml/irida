@@ -312,15 +312,15 @@ INSERT INTO `analysis` (id, createdDate, description, executionManagerAnalysisId
 INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId) VALUES (13,'2014-07-30 08:24:35', 'Whole Genome Phylogenomics Pipeline');
 
 -- tool_execution
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (1, null, '2015-03-04 13:58:46', 'galaxyIdentifier', 'SNP Matrix', '0.0.1');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (2, null, '2015-03-04 13:58:49', 'galaxyIdentifier', 'VCF 2 pseudoalignment', '0.0.10');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (3, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Find Repeats', '0.0.2');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (5, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Filter vcf', '0.0.1');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (14, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'bcftools view', '0.0.1');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (4, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Upload File', '1.1.4');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (6, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'FreeBayes', '0.0.4');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (7, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Upload File', '1.1.4');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (8, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'SAM-to-BAM', '1.1.4');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (1, '2015-03-04 13:58:46', 'galaxyIdentifier', 'SNP Matrix', '0.0.1', '/bin/snp-matrix');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (2, '2015-03-04 13:58:49', 'galaxyIdentifier', 'VCF 2 pseudoalignment', '0.0.10', '/bin/vcf2pseudoalign');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (3, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Find Repeats', '0.0.2', '/bin/find-repeats');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (5, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Filter vcf', '0.0.1', '/bin/filter-vcf');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (14, '2015-03-04 13:58:45', 'galaxyIdentifier', 'bcftools view', '0.0.1', '/bin/bcftools');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (4, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Upload File', '1.1.4', '/bin/upload');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (6, '2015-03-04 13:58:45', 'galaxyIdentifier', 'FreeBayes', '0.0.4', '/bin/freebayes');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (7, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Upload File', '1.1.4', '/bin/upload');
+INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (8, '2015-03-04 13:58:45', 'galaxyIdentifier', 'SAM-to-BAM', '1.1.4', '/bin/sam-to-bam');
 
 -- tool_execution_parameters for "SNP Matrix"
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('1', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
