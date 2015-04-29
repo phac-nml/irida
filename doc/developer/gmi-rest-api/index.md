@@ -4,6 +4,8 @@ layout: "default"
 
 Proposal for a Unifying REST API for GMI-Compliant Repositories
 ===============================================================
+{:.no_toc}
+
 The goal of the [Global Microbial Identifier (GMI)](http://www.globalmicrobialidentifier.org/) initiative is to create a global platform for storing whole-genome sequencing data and epidemiological metadata, and to implement an analysis platform for detecting outbreaks and emerging pathogens.
 
 A major component of such a global resource, as envisioned by the GMI, is a repository for storing next-generation sequencing data and epidemiological metadata. Several repositories already exist for storing sequencing data and metadata, unified by the [International Nucleotide Sequence Database Collaboration (INSDC)](http://www.insdc.org/). Each participant in the INSDC implements their repository independently and mirrors other participating repositories on a regular basis. In this document, we propose a new, unifying **REST API** for GMI-Compliant Repositories, including, *but not limited to*, the INSDC repositories.
@@ -87,6 +89,8 @@ Below we describe a *possible* set of properties and metadata for the data model
 From [NCBI submission portal](https://submit.ncbi.nlm.nih.gov/subs/bioproject/): A BioProject (study) is a collection of biological data related to a single initiative, originating from a single organization or from a consortium of coordinating organizations.
 
 ##### Metadata
+{:.no_toc}
+
 The metadata for a study is already defined by the INSDC. Please see the [XML schema for study](ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_5/SRA.study.xsd) hosted at the EBI. A summary of the metadata for a study is listed below:
 
 * *A collection of identifiers* (both INSDC and non-INSDC); these could be rendered as links in the media type.
@@ -102,6 +106,8 @@ The metadata for a study is already defined by the INSDC. Please see the [XML sc
 * *Additional, submitter-defined properties*. (the XML schema describes free-form tags here)
 
 ##### Links
+{:.no_toc}
+
 * `http://www.g-m-i.org/links/study`: a link to return to the collection of studies.
 * `http://www.g-m-i.org/links/study/samples`: 0 or 1 links to the collection of samples associated with the study.
 * `http://www.g-m-i.org/links/submitter`: a link to the entity responsible for submitting the study resource to the repository.
@@ -109,6 +115,8 @@ The metadata for a study is already defined by the INSDC. Please see the [XML sc
 * `http://www.g-m-i.org/links/related-resources`: 0 or 1 links to a collection of other resources related to this study (publications, datasets, databases, etc.)
 
 ##### Acceptable media types
+{:.no_toc}
+
 * `application/vnd.gmi.study-v1+xml`
 * `application/vnd.gmi.study-v1+json`
 * `text/html`
@@ -117,6 +125,8 @@ The metadata for a study is already defined by the INSDC. Please see the [XML sc
 From [NCBI submission portal](https://submit.ncbi.nlm.nih.gov/subs/biosample/): A BioSample (sample) is a description of the biological source materials used in experimental assays.
 
 ##### Metadata
+{:.no_toc}
+
 The metadata for a sample is already defined by the INSDC. Please see the [XML schema for sample](ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_5/SRA.sample.xsd) hosted at the EBI. A summary of the metadata for a sample is listed below:
 
 * *A collection of identifiers* (both INSDC and non-INSDC); these could be rendered as links in the media type.
@@ -133,11 +143,15 @@ The metadata for a sample is already defined by the INSDC. Please see the [XML s
 * *Additional, submitter-defined properties*. (the XML schema describes free-form tags here)
 
 ##### Acceptable media types
+{:.no_toc}
+
 * `application/vnd.gmi.sample-v1+xml`
 * `application/vnd.gmi.sample-v1+json`
 * `text/html`
 
 ##### Links
+{:.no_toc}
+
 * `http://www.g-m-i.org/links/study/sample/experiments`: 0 or 1 links to the collection of experiments executed to produce data for the sample resource.
 * `http://www.g-m-i.org/links/study/samples`: a link to the collection of samples in a study.
 * `http://www.g-m-i.org/links/study`: a link to the study that owns the sample.
@@ -148,6 +162,8 @@ The metadata for a sample is already defined by the INSDC. Please see the [XML s
 From [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47533/#SRA_Concepts_BK.2_Concepts): An experiment is a consistent set of laboratory operations on input material with an expected result.
 
 ##### Metadata
+{:.no_toc}
+
 The metadata for a experiment is already defined by the INSDC. Please see the [XML schema for experiment](ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_5/SRA.experiment.xsd) hosted at the EBI. A summary of the metadata for an experiment is listed below:
 
 * *A collection of identifiers* (both INSDC and non-INSDC); these could be rendered as links in the media type.
@@ -199,11 +215,14 @@ The metadata for a experiment is already defined by the INSDC. Please see the [X
 * *Additional, submitter-defined properties*. (the XML schema describes free-form tags here)
 
 ##### Acceptable media types
+{:.no_toc}
+
 * `application/vnd.gmi.experiment-v1+xml`
 * `application/vnd.gmi.experiment-v1+json`
 * `text/html`
 
 ##### Links
+{:.no_toc}
 * `http://www.g-m-i.org/links/study/sample/experiment/runs`: 0 or 1 links to the collection of runs for the experiment.
 * `http://www.g-m-i.org/links/study/sample`: a link to the sample that owns the experiment.
 * `http://www.g-m-i.org/links/study`: a link to the study that owns the experiment.
@@ -213,6 +232,7 @@ The metadata for a experiment is already defined by the INSDC. Please see the [X
 From [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47533/#SRA_Concepts_BK.2_Concepts): Results are called runs. Runs comprise the data gathered for a sample or sample bundle and refer to a defining experiment.
 
 ##### Metadata
+{:.no_toc}
 The metadata for a run is already defined by the INSDC. Please see the [XML schema for run](ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_5/SRA.run.xsd) hosted at the EBI. A summary of the metadata for an experiment is listed below:
 
 * *A collection of identifiers* (both INSDC and non-INSDC); these could be rendered as links in the media type.
@@ -227,6 +247,7 @@ The metadata for a run is already defined by the INSDC. Please see the [XML sche
     * Note: In the existing implementation, the files themselves are included in a 'Submission', not as part of the 'Run' directly. The information in the run refers to the file names included as part of a submission. We propose that the Run resource should be allowed to be created in a single `POST` using the `multipart/mixed` media type.
 
 ##### Links
+{:.no_toc}
 Links for run resources are only exposed in media types that support hypermedia (i.e., `json` or `xml` file formats).
 
 * `http://www.g-m-i.org/links/study/sample/experiment/analyses`: 0 or 1 links to the collection of analyses executed on the sequence data produced by a run.
@@ -235,6 +256,7 @@ Links for run resources are only exposed in media types that support hypermedia 
 * `http://www.g-m-i.org/links/run/data`: 0 or 1 links to a collection of data files generated by this run.
 
 ##### Acceptable media types
+{:.no_toc}
 * `application/vnd.gmi.run-v1+xml`
 * `application/vnd.gmi.run-v1+json`
 * `application/vnd.ncbi.run+sra`	(SRA format)
@@ -243,7 +265,7 @@ Links for run resources are only exposed in media types that support hypermedia 
 #### Analysis
 
 ##### Metadata
-
+{:.no_toc}
 The metadata for an analysis is already defined by the INSDC. Please see the [XML schema for analysis](ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_5/SRA.analysis.xsd) hosted at the EBI. A summary of the metadata for an analysis is listed below:
 
 * *A collection of identifiers* (both INSDC and non-INSDC); these could be rendered as links in the media type.
@@ -275,6 +297,7 @@ The metadata for an analysis is already defined by the INSDC. Please see the [XM
     * Sample phenotype (no description in schema)
 
 ##### Links
+{:.no_toc}
 Links for analysis resources are only exposed in media types that support hypermedia (i.e., non-sequence file formats).
 
 * `http://www.g-m-i.org/links/study`: 1 or more links to the studies associated with the analysis.
@@ -284,6 +307,7 @@ Links for analysis resources are only exposed in media types that support hyperm
 * `http://www.g-m-i.org/links/related-resources`: 0 or 1 links to a collection of other resources related to this analysis (publications, datasets, databases, etc.)
 
 ##### Acceptable media types
+{:.no_toc}
 * `application/vnd.gmi.analysis-v1+xml`
 * `application/vnd.gmi.analysis-v1+json`
 * (Other media types specific to the type of analysis executed)
@@ -567,8 +591,8 @@ References
 Additional Resources on REST APIs
 =================================
 
-* http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm
-* http://blog.dhananjaynene.com/2009/06/why-rest/
-* http://www.crummy.com/writing/speaking/2008-QCon/
-* http://www.martinfowler.com/articles/richardsonMaturityModel.html
-* http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
+* <http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm>
+* <http://blog.dhananjaynene.com/2009/06/why-rest/>
+* <http://www.crummy.com/writing/speaking/2008-QCon/>
+* <http://www.martinfowler.com/articles/richardsonMaturityModel.html>
+* <http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven>
