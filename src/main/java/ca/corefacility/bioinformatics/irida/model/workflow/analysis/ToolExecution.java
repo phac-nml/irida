@@ -117,6 +117,8 @@ public class ToolExecution implements IridaThing {
 	 *            derived from (the history step in Galaxy).
 	 * @param executionTimeParameters
 	 *            the parameters that were passed to the tool at execution time.
+	 * @param commandLine
+	 *            the actual command line invocation that launched this tool.
 	 */
 	public ToolExecution(final Set<ToolExecution> previousSteps, final String toolName, final String toolVersion,
 			final String executionManagerIdentifier, final Map<String, String> executionTimeParameters,
