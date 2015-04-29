@@ -52,7 +52,7 @@ Setup Galaxy to Submit to Cluster
 
 The [Galaxy Cluster][] documentation contains information on how to configure Galaxy to submit jobs to a cluster.
 
-[main installation guide]: README.md
+[main installation guide]: ../../
 [Galaxy Cluster]: https://wiki.galaxyproject.org/Admin/Config/Performance/Cluster
 [Galaxy Environment Setup]: ../environment
 [PerlBrew]: http://perlbrew.pl/
