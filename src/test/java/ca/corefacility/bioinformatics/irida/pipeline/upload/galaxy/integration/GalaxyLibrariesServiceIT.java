@@ -85,10 +85,10 @@ public class GalaxyLibrariesServiceIT {
 		
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		
-		dataFile = Paths.get(GalaxyLibrariesService.class.getResource(
+		dataFile = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData1.fastq").toURI());
 		
-		dataFile2 = Paths.get(GalaxyLibrariesService.class.getResource(
+		dataFile2 = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData2.fastq").toURI());			
 	}
 	
