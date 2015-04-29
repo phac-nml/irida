@@ -7958,31 +7958,31 @@ h1, h2, h3, h4, h5, h6 {
   height: 35px;
 }
 
-/* line 3, ../../styles/components/_cart.scss */
+/* line 5, ../../styles/components/_cart.scss */
 .st-container,
 .st-pusher,
 .st-content {
   height: 100%;
 }
 
-/* line 9, ../../styles/components/_cart.scss */
+/* line 11, ../../styles/components/_cart.scss */
 .st-content {
   overflow-y: scroll;
 }
 
-/* line 13, ../../styles/components/_cart.scss */
+/* line 15, ../../styles/components/_cart.scss */
 .st-content,
 .st-content-inner {
   position: relative;
 }
 
-/* line 18, ../../styles/components/_cart.scss */
+/* line 20, ../../styles/components/_cart.scss */
 .st-container {
   position: relative;
   overflow: hidden;
 }
 
-/* line 23, ../../styles/components/_cart.scss */
+/* line 25, ../../styles/components/_cart.scss */
 .st-pusher {
   position: relative;
   right: 0;
@@ -7992,7 +7992,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: transform 0.5s;
 }
 
-/* line 32, ../../styles/components/_cart.scss */
+/* line 34, ../../styles/components/_cart.scss */
 .st-pusher::after {
   position: absolute;
   top: 0;
@@ -8006,7 +8006,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
 }
 
-/* line 45, ../../styles/components/_cart.scss */
+/* line 47, ../../styles/components/_cart.scss */
 .cart {
   padding: 10px;
   position: absolute;
@@ -8015,60 +8015,79 @@ h1, h2, h3, h4, h5, h6 {
   right: 0;
   z-index: 1100;
   visibility: hidden;
-  width: 300px;
+  width: 400px;
   background: #f3f3f3;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
   overflow-y: scroll;
 }
 
-/* line 60, ../../styles/components/_cart.scss */
+/* line 62, ../../styles/components/_cart.scss */
 .cart-open .st-pusher {
-  -webkit-transform: translate3d(-300px, 0, 0);
-  transform: translate3d(-300px, 0, 0);
+  -webkit-transform: translate3d(-400px, 0, 0);
+  transform: translate3d(-400px, 0, 0);
 }
 
-/* line 65, ../../styles/components/_cart.scss */
+/* line 67, ../../styles/components/_cart.scss */
 .cart {
   visibility: visible;
   -webkit-transform: translate3d(100%, 0, 0);
   transform: translate3d(100%, 0, 0);
 }
 
-/* line 71, ../../styles/components/_cart.scss */
+/* line 73, ../../styles/components/_cart.scss */
 .cart-open .cart {
   visibility: visible;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
 
-/* line 77, ../../styles/components/_cart.scss */
+/* line 79, ../../styles/components/_cart.scss */
 .cart::after {
   display: none;
 }
 
-/* line 81, ../../styles/components/_cart.scss */
+/* line 83, ../../styles/components/_cart.scss */
 .cart-control-buttons {
   margin-bottom: 10px;
 }
 
-/* line 85, ../../styles/components/_cart.scss */
+/* line 87, ../../styles/components/_cart.scss */
 .remove-icon {
   color: #dfdfdf;
   cursor: pointer;
 }
 
-/* line 90, ../../styles/components/_cart.scss */
+/* line 92, ../../styles/components/_cart.scss */
 .btn-icon:hover .remove-icon {
   color: #939393;
 }
 
-/* line 94, ../../styles/components/_cart.scss */
+/* line 96, ../../styles/components/_cart.scss */
+.cart-search {
+  margin-bottom: 1rem;
+}
+
+/* line 100, ../../styles/components/_cart.scss */
 .cart-project-header {
   cursor: pointer;
 }
+/* line 102, ../../styles/components/_cart.scss */
+.cart-project-header > div {
+  vertical-align: top;
+  display: inline-block;
+}
 
-/* line 98, ../../styles/components/_cart.scss */
+/* line 109, ../../styles/components/_cart.scss */
+.cart-item__label {
+  max-width: 70%;
+}
+/* line 112, ../../styles/components/_cart.scss */
+.cart-item__btns {
+  width: 50px;
+}
+
+/* line 117, ../../styles/components/_cart.scss */
 .cart-control-bottom .btn {
   width: 120px;
   white-space: normal !important;

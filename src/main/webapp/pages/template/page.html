@@ -56,14 +56,20 @@
 						_Clear_
 					</button>
 				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<input class="form-control cart-search" type="search" ng-model="cart.term" th:placeholder="#{cart.placeholder.search}" ng-model-options="{ debounce: {'default': 500, 'blur': 0} }"/>
+					</div>
+				</div>
 				<ul id="cart-project-list" class="list-group">
-					<li class="list-group-item" ng-repeat="p in cart.projects" ng-attr-id="{{'cart-project-'+p.id}}">
+					<li class="list-group-item" ng-repeat="p in cart.projects | cartFilter:cart.term" ng-attr-id="{{'cart-project-'+p.id}}">
 						<div class="cart-project-header" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
-							<span class="fa fa-fw"
-							      ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
-							<span>{{ p.label }}</span>
-							<div class="pull-right">
-								<span class="badge">{{ p.samples.length }}</span>
+							<div><i class="fa fa-fw"  ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></i></div>
+							<div class="cart-item__label">
+								{{:: p.label }}
+							</div>
+							<div class="cart_item__btns pull-right">
+								<span class="label label-info">{{p.filteredSamples.length}} / {{ p.samples.length }}</span>
 								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)"
 								        ng-attr-id="{{'remove-project-'+p.id}}"
 								        th:title="#{cart.tooltip.removeProject}">
@@ -72,7 +78,7 @@
 							</div>
 						</div>
 						<ul collapse="cart.collapsed[p.id]">
-							<li ng-repeat="s in p.samples">
+							<li ng-repeat="s in p.filteredSamples = (p.samples | cartFilter:cart.term)">
 								<span>{{ s.label }}</span>
 								<button class="btn-icon pull-right remove-sample-btn"
 								        ng-click="cartCtrl.removeSample(p.id,s.id)"

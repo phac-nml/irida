@@ -9,11 +9,12 @@
         vm.projects = [];
         vm.count = 0;
         vm.collapsed = {};
+      vm.term = "";
 
         $scope.$on('cart.update', function () {
             getCart(false);
         });
-
+      
         function getCart (collapse) {
             cart.all()
               .then(function (data) {
@@ -298,6 +299,30 @@
 
   }
 
+  /**
+   * @name cartFilter
+   * @desc Filters the list of projects in the cart based on the term provided in the search input.
+   * @type {Filter}
+   */
+  function CartFilter() {
+    /**
+     * @param list - list to filter
+     * @param term - search term to use to filter the list.
+     */
+    return function(list, term) {
+      term = term.toLowerCase();
+      return list.filter(function(item) {
+        if(item.samples) {
+          return item.samples.filter(function(sample) {
+            return sample.label.toLowerCase().indexOf(term) > -1;
+          }).length > 0;
+        }
+        return item.label.toLowerCase().indexOf(term) > -1;
+        
+      });
+    };
+  }
+
   angular
       .module('irida.cart', [])
       .service('CartService', ['$rootScope', '$http', '$q', CartService])
@@ -305,5 +330,6 @@
     .controller('GalaxyDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService','GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
       .directive('cart', [CartDirective])
+    .filter('cartFilter',[CartFilter])
     ;
 })();
