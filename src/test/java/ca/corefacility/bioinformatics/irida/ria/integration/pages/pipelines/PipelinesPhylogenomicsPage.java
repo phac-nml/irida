@@ -66,7 +66,7 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 
 	public void clickPipelineParametersBtn() {
 		driver.findElement(By.id("pipeline-parameters-btn")).click();
-		waitForTime(200);
+		waitForTime(500);
 	}
 
 	public String getParametersModalTitle() {
@@ -74,11 +74,14 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	}
 
 	public String getAlternativeAlleleFractionValue() {
-		return driver.findElements(By.className("para-input")).get(0).getText();
+		return driver.findElement(By.id("alternative-allele-fraction")).getAttribute("value");
 	}
 
 	public void setAlternativeAlleleFraction(String value) {
-		driver.findElements(By.className("para-input")).get(0).sendKeys(value);
+		final WebElement aaf = driver.findElement(By.id("alternative-allele-fraction"));
+		aaf.clear();
+		aaf.sendKeys(value);
+		waitForTime(500);
 	}
 	
 	public void setNameForSavedParameters(String value) {
@@ -88,7 +91,7 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	
 	public void clickUseParametersButton() {
 		driver.findElement(By.id("para-update-btn")).click();
-		waitForTime(250);
+		waitForTime(500);
 	}
 	
 	public void clickSaveParameters() {
