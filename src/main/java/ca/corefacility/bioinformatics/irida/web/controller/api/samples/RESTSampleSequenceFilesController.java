@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -70,6 +69,10 @@ public class RESTSampleSequenceFilesController {
 	 * Rel to get to the new location of the {@link SequenceFile}.
 	 */
 	public static final String REL_SAMPLE_SEQUENCE_FILES = "sample/sequenceFiles";
+	
+	public static final String REL_SAMPLE_SEQUENCE_FILE_PAIRS = "sample/sequenceFiles/pairs";
+	
+	public static final String REL_SAMPLE_SEQUENCE_FILE_UNPAIRED = "sample/sequenceFiles/unpaired";
 	/**
 	 * The key used in the request to add an existing {@link SequenceFile} to a
 	 * {@link Sample}.
@@ -151,7 +154,7 @@ public class RESTSampleSequenceFilesController {
 		return modelMap;
 	}
 	
-	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/pairs", method = RequestMethod.GET)
 	public ModelMap getSequenceFilePairsForSample(@PathVariable Long projectId, @PathVariable Long sampleId){		
 		ModelMap modelMap = new ModelMap();
 
@@ -187,7 +190,40 @@ public class RESTSampleSequenceFilesController {
 		return modelMap;
 	}
 	
-	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs/{pairId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/unpaired", method = RequestMethod.GET)
+	public ModelMap getUnpairedSequenceFilesForSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
+		ModelMap modelMap = new ModelMap();
+
+		logger.debug("Reading seq file  for sample " + sampleId + " in project " + projectId);
+		Sample sample = sampleService.read(sampleId);
+
+		List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
+				.getUnpairedSequenceFilesForSample(sample);
+
+		ResourceCollection<SequenceFile> resources = new ResourceCollection<>(unpairedSequenceFilesForSample.size());
+		for (Join<Sample, SequenceFile> join : unpairedSequenceFilesForSample) {
+			SequenceFile file = join.getObject();
+
+			file.add(linkTo(
+					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+							file.getId())).withSelfRel());
+
+			resources.add(file);
+		}
+
+		// add a link to this collection
+		resources.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class)
+						.getUnpairedSequenceFilesForSample(projectId, sampleId)).withSelfRel());
+		// add a link back to the sample
+		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE));
+
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
+		return modelMap;
+	}
+	
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/pairs/{pairId}", method = RequestMethod.GET)
 	public ModelMap readSequenceFilePair(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@PathVariable Long pairId) {
 		ModelMap modelMap = new ModelMap();
@@ -331,7 +367,7 @@ public class RESTSampleSequenceFilesController {
 	 * @throws IOException
 	 *             if we can't write the files to disk
 	 */
-	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/pairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ModelMap addNewSequenceFilePairToSample(@PathVariable Long projectId,
 			@PathVariable Long sampleId, @RequestPart("file1") MultipartFile file1,
 			@RequestPart(value = "parameters1") SequenceFileResource fileResource1,
