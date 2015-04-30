@@ -69,9 +69,9 @@ public class AnalysisServiceImplIT {
 
 		Map<String, String> params = new HashMap<>();
 		params.put("param", "value");
-		ToolExecution toolExecutionTree = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionTable = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionMatrix = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionTree = new ToolExecution(null, "ls", "1.0", "executionManagerId", params, "/bin/ls -lrth");
+		ToolExecution toolExecutionTable = new ToolExecution(null, "ls", "1.0", "executionManagerId", params, "/bin/ls -lrth");
+		ToolExecution toolExecutionMatrix = new ToolExecution(null, "ls", "1.0", "executionManagerId", params, "/bin/ls -lrth");
 
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", toolExecutionTree);
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", toolExecutionTable);

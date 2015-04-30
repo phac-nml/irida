@@ -70,8 +70,8 @@
     <analysis_submission id="9" name="another analysis" remote_analysis_id="1" analysis_id="1"
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19" workflow_id="ccca532d-b0be-4f2c-bd6d-9886aa722571" submitter="2" analysis_cleaned_state="NOT_CLEANED"/>
 
-    <tool_execution id="1" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix" tool_version="0.0.1" />
-    <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="VCF pseudoalignment" tool_version="0.0.10" />
+    <tool_execution id="1" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix" tool_version="0.0.1" command_line="/bin/snp-matrix" />
+    <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="VCF pseudoalignment" tool_version="0.0.10" command_line="/bin/vcf2pseudoalign" />
 
     <tool_execution_parameters tool_id="1" execution_parameter_key="ambiguous" execution_parameter_value="False" />
     <tool_execution_parameters tool_id="1" execution_parameter_key="coverage" execution_parameter_value="15" />
