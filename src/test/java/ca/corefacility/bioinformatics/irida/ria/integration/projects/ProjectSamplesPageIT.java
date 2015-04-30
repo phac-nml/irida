@@ -352,11 +352,29 @@ public class ProjectSamplesPageIT {
 		page.selectProjectByName("5", "confirm-copy-samples");
 		assertTrue(page.isBtnEnabled("confirm-copy-samples"));
 		page.clickBtn("confirm-copy-samples");
-		page.checkSuccessNotification();
+		assertTrue(page.checkSuccessNotification());
 
 		// Check to make sure the samples where copied there
 		page.goToPage("5");
 		assertEquals(3, page.getNumberOfSamplesDisplayed());
+	}
+
+	@Test
+	public void testMoveSampleToProjectConflict() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		// try to move to existing project
+		page.selectSampleByRow(0);
+		page.clickBtn("samplesOptionsBtn");
+		page.clickBtn("moveBtn");
+		assertTrue(page.isItemVisible("move-samples-modal"));
+		page.selectProjectByName("3", "confirm-move-samples");
+		assertTrue(page.isBtnEnabled("confirm-move-samples"));
+		page.clickBtn("confirm-move-samples");
+		assertTrue(page.checkWarningNotification());
+		
+		assertEquals(1,page.getTotalNumberOfSamplesSelected());
 	}
 
 	@Test
@@ -543,7 +561,7 @@ public class ProjectSamplesPageIT {
 		assertEquals("cart should have been emptied", 0, page.getCartCount());
 		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
 	}
-	
+
 	@Test
 	public void testDeleteSampleFromCart() {
 		LoginPage.loginAsAdmin(driver);
