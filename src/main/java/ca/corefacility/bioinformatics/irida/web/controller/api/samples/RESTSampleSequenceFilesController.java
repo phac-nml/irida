@@ -149,6 +149,11 @@ public class RESTSampleSequenceFilesController {
 		// add a link back to the sample
 		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE));
+		
+		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(projectId, sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
+		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getUnpairedSequenceFilesForSample(projectId, sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 		return modelMap;
