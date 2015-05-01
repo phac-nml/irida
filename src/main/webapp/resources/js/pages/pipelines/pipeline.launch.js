@@ -57,9 +57,10 @@
           }
         });
 
+        var currentSettings = ParameterService.getSelectedParameters().currentSettings;
         var selectedParameters = {
-        		"id": ParameterService.getSelectedParameters().id,
-        		"parameters": ParameterService.getSelectedParameters().parameters
+        		"id": currentSettings.id,
+        		"parameters": currentSettings.parameters
         };
 
         // Create the parameter object;
