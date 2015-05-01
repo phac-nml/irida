@@ -4,6 +4,8 @@ layout: "default"
 
 Mozilla Persona
 ===============
+{:.no_toc}
+
 Background
 ----------
 Persona is a decentralized login platform used to identify users by their email addresses easily across websites.  This allows users to log in to any Persona enabled website without having to remember individual usernames and passwords for the sites.  It also makes it easy for a website to create a login system without having to worry about managing authentication, passwords, and password security.
@@ -13,6 +15,7 @@ Persona is a decentralized login platform used to identify users by their email 
 
 Login Process
 ----------
+
 #### User process
 On a website with Persona login, the login flow for a user is as follows:
 
@@ -40,13 +43,15 @@ Persona also implements aspects of public/private key cryptography to enhance th
 
 Once the web application server-side receives the assertion, it sends the assertion to the Persona API in the following format:
 
-> assertion=[token]&audience=http://irida.ca
+    assertion=[token]&audience=http://irida.ca
 
 In a usual login the *audience* parameter will be the domain of the application the user is trying to log in to.  When the assertion is generated it encodes the domain name the user is trying to login to.  When the server passes the audience to the API it is verifying the assertion was made for its hosted website.
 
 The return data from the Persona API is in the following format:
 
->{"audience":"http://irida.ca", "expires":1385483533706, "issuer":"gmail.login.persona.org", "email":"someone@gmail.com", "status":"okay"}
+```json
+{"audience":"http://irida.ca", "expires":1385483533706, "issuer":"gmail.login.persona.org", "email":"someone@gmail.com", "status":"okay"}
+```
 
 The return parameters are:
 
@@ -95,6 +100,6 @@ A possible alternative to using Mozilla Persona is to use separate native logins
 References
 ----------
 
-* General Persona information: http://www.mozilla.org/en-US/persona/
-* Persona developer site: https://developer.mozilla.org/en-US/Persona
-* Becoming an identity provider: https://developer.mozilla.org/en-US/Persona/Identity_Provider_Overview
+* General Persona information: <http://www.mozilla.org/en-US/persona/>
+* Persona developer site: <https://developer.mozilla.org/en-US/Persona>
+* Becoming an identity provider: <https://developer.mozilla.org/en-US/Persona/Identity_Provider_Overview>
