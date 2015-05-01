@@ -20,11 +20,12 @@ public class AnalyticsHandlerInterceptor extends HandlerInterceptorAdapter {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void postHandle(final HttpServletRequest request,
-			final HttpServletResponse response, final Object handler,
+	public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
 			final ModelAndView modelAndView) throws Exception {
-		
-		if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect")) {
+
+		// ensure the request isn't for the rest api
+		if (!request.getRequestURI().startsWith("/api") && modelAndView != null
+				&& !modelAndView.getViewName().startsWith("redirect")) {
 			modelAndView.getModelMap().addAttribute("analytics", analytics);
 		}
 	}
