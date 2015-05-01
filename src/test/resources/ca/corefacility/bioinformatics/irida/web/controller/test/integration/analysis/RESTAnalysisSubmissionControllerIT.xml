@@ -47,10 +47,10 @@
 
 	<tool_execution id="1" created_date="2014-02-06 10:01:02"
 		execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix"
-		tool_version="0.0.1" />
+		tool_version="0.0.1" command_line="/bin/snp-matrix" />
 	<tool_execution id="2" created_date="2014-03-06 10:01:02"
 		execution_manager_identifier="galaxyIdentifier" tool_name="VCF pseudoalignment"
-		tool_version="0.0.10" />
+		tool_version="0.0.10" command_line="/bin/snp-matrix" />
 
 	<tool_execution_parameters tool_id="1"
 		execution_parameter_key="ambiguous" execution_parameter_value="False" />
