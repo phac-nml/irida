@@ -3,6 +3,9 @@
   /**
    * Main controller for the pipeline launch page.
    * @param $http AngularJS http object
+   * @param CartService a reference to the cart service (to clear it)
+   * @param notifications notifications
+   * @param ParameterService for passing parameter information between modal and page
    * @constructor
    */
   function PipelineController($scope, $http, CartService, notifications, ParameterService) {
@@ -20,6 +23,11 @@
      */
     vm.loading = false;
     
+    /**
+     * Update the selected parameters in the parameter service
+     * for the modal dialog whenever we select a new set of parameters
+     * from the drop-down.
+     */
     vm.parameterSelected = function() {
     	ParameterService.setSelectedParameters(vm.selectedParameters);
     };
@@ -108,6 +116,12 @@
       }
     };
 
+    /**
+	 * Remove a sample from the pipeline to be run.
+	 * 
+	 * @param projectId the project id of the sample to remove
+	 * @param sampleId the sample if to remove
+	 */
     vm.removeSample = function (projectId, sampleId) {
       CartService.removeSample(projectId,sampleId).then(function(){
         angular.element('#sample-' + sampleId).remove();
@@ -130,6 +144,10 @@
     };
   }
 
+  /**
+   * Opens the modal dialog when the "Customize" button is pressed.
+   * @param $modal reference to the modal dialog.
+   */
   function ParameterModalController($modal) {
     var vm = this;
 
@@ -141,6 +159,14 @@
     };
   }
 
+  /**
+   * Controller for handling interaction with the modal dialog.
+   * 
+   * @param $rootScope the root scope
+   * @param $http angular http reference
+   * @param $modalInstance the modal dialog
+   * @param ParameterService the service for handling parameter state
+   */
   function ParameterController($rootScope, $http, $modalInstance, ParameterService) {
     var vm = this;
 
@@ -149,6 +175,11 @@
     vm.parametersModified = ParameterService.parametersModified;
     vm.saveParameters = false;
 
+    /**
+     * When the "Use these parameters" button is pressed, mark 
+     * that the parameters were updated in the service, optionally
+     * save the parameters to the server and close the modal.
+     */
     vm.update = function () {
       ParameterService.parametersModified = true;
       if (vm.saveParameters) {
@@ -157,14 +188,26 @@
       $modalInstance.close();
     };
 
+    /**
+     * Straight up close the modal.
+     */
     vm.close = function () {
       $modalInstance.dismiss();
     };
 
+    /**
+     * Reset the specified value back to the default value.
+     * @param index the index in the list of parameters we can set.
+     */
     vm.reset = function (index) {
     	ParameterService.resetCurrentSelectionIndex(index);
     };
     
+    /**
+     * Persist the current parameter set to the server, add the
+     * saved set to the list of parameters on the page, and select
+     * the parameters.
+     */
     vm.saveAndUse = function() {
       var parametersToSave = {
         pipelineId : PIPELINE.pipelineId,
@@ -199,6 +242,13 @@
       });
     };
     
+    /**
+     * If any value is changed, mark that we're modifying parameters by
+     * changing the id of the parameter set to be custom (so the server knows
+     * to not add a reference to a set of saved parameters) and add
+     * a marker to the parameter set name to show the user that the 
+     * params have been modified.
+     */
     vm.valueChanged = function() {
     	vm.parametersModified = true;
     	vm.selectedParameters.id = "custom";
@@ -208,9 +258,17 @@
     };
   }
   
+  /**
+   * Service for handling parameter state.
+   */
   function ParameterService() {
 	  var svc = this;
 	  
+	  /**
+	   * Duplicated copy of the original set of parameters on the page
+	   * so that we can quickly roll back to default values for any 
+	   * parameter set.
+	   */
 	  var originalSettings = PIPELINE.parameters.map(function(params) {
 	    	return {
 	    		currentSettings: angular.copy(params),
@@ -220,10 +278,19 @@
 	  
 	  var selectedParameters = originalSettings[0];
 	  
+	  /**
+	   * Get the settings that the page currently has.
+	   */
 	  svc.getOriginalSettings = function() {
 		  return originalSettings;
 	  };
 	  
+	  /**
+	   * Add customized parameters to the drop-down, we'll duplicate
+	   * the values in here so that we can go back to defaults.
+	   * 
+	   * @param settingsToAdd the settings to add to the current set of settings.
+	   */
 	  svc.addSettingsToFront = function(settingsToAdd) {
 		  var savedParameters = {
 				  currentSettings: angular.copy(settingsToAdd),
@@ -233,18 +300,34 @@
 		  selectedParameters = originalSettings[0];
 	  };
 	  
+	  /**
+	   * Get the currently selected parameters from the page.
+	   */
 	  svc.getSelectedParameters = function() {
 		  return selectedParameters;
 	  };
 	  
+	  /**
+	   * Set the current set of parameters on the page.
+	   * 
+	   * @param currentSelection the parameters that are currently selected
+	   */
 	  svc.setSelectedParameters = function(currentSelection) {
 		  selectedParameters = currentSelection;
 	  };
 	  
+	  /**
+	   * Reset one of the values in the currently selected 
+	   * parameters back to its default value.
+	   * @param index the index of the parameter to reset.
+	   */
 	  svc.resetCurrentSelectionIndex = function(index) {
 		  selectedParameters.currentSettings.parameters[index] = angular.copy(selectedParameters.defaultSettings.parameters[index]);
 	  };
 	  
+	  /**
+	   * Completely reset the current settings back to the set of default values.
+	   */
 	  svc.resetCurrentSelection = function() {
 		  selectedParameters.currentSettings = angular.copy(selectedParameters.defaultSettings);
 	  }
