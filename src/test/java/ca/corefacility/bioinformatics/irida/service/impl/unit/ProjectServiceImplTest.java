@@ -52,8 +52,10 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectRe
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
@@ -75,6 +77,8 @@ public class ProjectServiceImplTest {
 	private ReferenceFileRepository referenceFileRepository;
 	private ProjectReferenceFileJoinRepository prfjRepository;
 	private SequenceFileUtilities sequenceFileUtilities;
+	private SequenceFileRepository sequenceFileRepository;
+	private SampleSequenceFileJoinRepository ssfjRepository;
 	private Validator validator;
 
 	@Before
@@ -89,9 +93,11 @@ public class ProjectServiceImplTest {
 		referenceFileRepository = mock(ReferenceFileRepository.class);
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		sequenceFileUtilities = mock(SequenceFileUtilities.class);
+		sequenceFileRepository = mock(SequenceFileRepository.class);
+		ssfjRepository = mock(SampleSequenceFileJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
-				sequenceFileUtilities, validator);
+				sequenceFileUtilities, ssfjRepository, sequenceFileRepository, validator);
 	}
 
 	@Test
@@ -413,16 +419,38 @@ public class ProjectServiceImplTest {
 		verify(sequenceFileUtilities).countSequenceFileLengthInBases(createTempFile);
 		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
 	}
-	
+
 	@Test
 	public void testRemoveSamplesFromProject() {
 		Project project = new Project();
-		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
+		Sample s1 = new Sample("s1");
+		Sample s2 = new Sample("s2");
+		List<Sample> samples = ImmutableList.of(s1, s2);
+
+		when(psjRepository.getProjectForSample(s1)).thenReturn(Lists.newArrayList());
+		when(psjRepository.getProjectForSample(s2)).thenReturn(Lists.newArrayList());
 
 		projectService.removeSamplesFromProject(project, samples);
 
 		for (Sample s : samples) {
 			verify(psjRepository).removeSampleFromProject(project, s);
+			verify(sampleRepository).delete(s);
 		}
+	}
+
+	@Test
+	public void testRemoveSampleWithOtherLinksFromProject() {
+		Sample s = new Sample("s1");
+		Project p1 = new Project("p1");
+		Project p2 = new Project("p2");
+
+		when(psjRepository.getProjectForSample(s)).thenReturn(ImmutableList.of(new ProjectSampleJoin(p2, s)));
+
+		projectService.removeSampleFromProject(p1, s);
+
+		verify(psjRepository).removeSampleFromProject(p1, s);
+
+		verifyZeroInteractions(sampleRepository);
+
 	}
 }
