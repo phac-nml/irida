@@ -24,7 +24,7 @@ public class AnalyticsHandlerInterceptor extends HandlerInterceptorAdapter {
 			final ModelAndView modelAndView) throws Exception {
 
 		// ensure the request isn't for the rest api
-		if (!request.getRequestURI().startsWith("/api") && modelAndView != null
+		if (!request.getServletPath().startsWith("/api") && modelAndView != null
 				&& !modelAndView.getViewName().startsWith("redirect")) {
 			modelAndView.getModelMap().addAttribute("analytics", analytics);
 		}
