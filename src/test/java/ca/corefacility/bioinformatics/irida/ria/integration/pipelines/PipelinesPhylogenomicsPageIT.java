@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -220,7 +219,7 @@ public class PipelinesPhylogenomicsPageIT {
 		String newValue = "10";
 		final String savedParametersName = "Saved parameters name.";
 		page.setAlternativeAlleleFraction(newValue);
-		assertNotEquals("Should not have the same value as the default after being changed", newValue,
+		assertEquals("Should have updated alternative allele fractiion value to new value.", newValue,
 				page.getAlternativeAlleleFractionValue());
 		page.clickSaveParameters();
 		assertTrue("Page should have shown name for parameters field with selected parameters name.",
