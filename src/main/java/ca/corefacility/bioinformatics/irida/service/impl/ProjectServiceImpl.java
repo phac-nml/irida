@@ -260,17 +260,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
-	public void removeSamplesFromProject(Project project, Iterable<Sample> samples) {
-		for (Sample s : samples) {
-			psjRepository.removeSampleFromProject(project, s);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Transactional(readOnly = true)
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return pujRepository.getProjectsForUser(user);
