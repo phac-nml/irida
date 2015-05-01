@@ -101,7 +101,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            {@link Sample} to be moved
 	 * @return Newly created {@link ProjectSampleJoin}
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample);
 
 	/**
