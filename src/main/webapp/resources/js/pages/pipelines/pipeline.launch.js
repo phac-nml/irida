@@ -7,13 +7,12 @@
    */
   function PipelineController($scope, $http, CartService, notifications, ParameterService) {
     var vm = this;
-    vm.parameters = PIPELINE.parameters;
-    ParameterService.selectedParameters = vm.parameters[0];
-    vm.selectedParameters = ParameterService.selectedParameters;
-    PIPELINE.selectedParameters = vm.selectedParameters;
+
+    vm.parameters = ParameterService.getOriginalSettings();
+    vm.selectedParameters = ParameterService.getSelectedParameters();
     
     $scope.$on('PARAMETERS_SAVED', function() {
-    	vm.selectedParameters = ParameterService.selectedParameters;
+    	vm.selectedParameters = ParameterService.getSelectedParameters();
     });
     
     /*
@@ -22,8 +21,7 @@
     vm.loading = false;
     
     vm.parameterSelected = function() {
-    	ParameterService.selectedParameters = vm.selectedParameters;
-    	PIPELINE.selectedParameters = vm.selectedParameters;
+    	ParameterService.setSelectedParameters(vm.selectedParameters);
     };
 
     /**
@@ -60,8 +58,8 @@
         });
 
         var selectedParameters = {
-        		"id": PIPELINE.selectedParameters.id,
-        		"parameters": PIPELINE.selectedParameters.parameters
+        		"id": ParameterService.getSelectedParameters().id,
+        		"parameters": ParameterService.getSelectedParameters().parameters
         };
 
         // Create the parameter object;
@@ -145,14 +143,13 @@
   function ParameterController($rootScope, $http, $modalInstance, ParameterService) {
     var vm = this;
 
-    vm.defaults = angular.copy(ParameterService.selectedParameters.parameters);
-    vm.selectedParameters = angular.copy(ParameterService.selectedParameters);
+    vm.selectedParameters = ParameterService.getSelectedParameters().currentSettings;
     vm.parameterSetName = vm.selectedParameters.label;
-    vm.parametersModified = false;
+    vm.parametersModified = ParameterService.parametersModified;
     vm.saveParameters = false;
 
     vm.update = function () {
-      PIPELINE.selectedParameters = angular.copy(vm.selectedParameters);
+      ParameterService.parametersModified = true;
       if (vm.saveParameters) {
     	  vm.saveAndUse();
       }
@@ -164,7 +161,7 @@
     };
 
     vm.reset = function (index) {
-      vm.selectedParameters.parameters[index] = angular.copy(vm.defaults[index]);
+    	ParameterService.resetCurrentSelectionIndex(index);
     };
     
     vm.saveAndUse = function() {
@@ -193,10 +190,10 @@
     	  // on success, we can re-use the selected parameters in
     	  // this controller; update the id and label, then append
     	  // it to PIPELINE.parameters to have it magically appear!
+    	  ParameterService.resetCurrentSelection();
     	  vm.selectedParameters.id = data.id;
     	  vm.selectedParameters.label = vm.parameterSetName;
-    	  PIPELINE.parameters.unshift(vm.selectedParameters);
-    	  ParameterService.selectedParameters = PIPELINE.parameters[0];
+    	  ParameterService.addSettingsToFront(vm.selectedParameters);
     	  $rootScope.$emit('PARAMETERS_SAVED');
       });
     };
@@ -211,7 +208,45 @@
   }
   
   function ParameterService() {
-	  return {};
+	  var svc = this;
+	  
+	  var originalSettings = PIPELINE.parameters.map(function(params) {
+	    	return {
+	    		currentSettings: angular.copy(params),
+	    		defaultSettings: angular.copy(params)
+	    	}
+	  });
+	  
+	  var selectedParameters = originalSettings[0];
+	  
+	  svc.getOriginalSettings = function() {
+		  return originalSettings;
+	  };
+	  
+	  svc.addSettingsToFront = function(settingsToAdd) {
+		  var savedParameters = {
+				  currentSettings: angular.copy(settingsToAdd),
+				  defaultSettings: angular.copy(settingsToAdd)
+		  };
+		  originalSettings.unshift(savedParameters);
+		  selectedParameters = originalSettings[0];
+	  };
+	  
+	  svc.getSelectedParameters = function() {
+		  return selectedParameters;
+	  };
+	  
+	  svc.setSelectedParameters = function(currentSelection) {
+		  selectedParameters = currentSelection;
+	  };
+	  
+	  svc.resetCurrentSelectionIndex = function(index) {
+		  selectedParameters.currentSettings.parameters[index] = angular.copy(selectedParameters.defaultSettings.parameters[index]);
+	  };
+	  
+	  svc.resetCurrentSelection = function() {
+		  selectedParameters.currentSettings = angular.copy(selectedParameters.defaultSettings);
+	  }
   }
 
   angular.module('irida.pipelines', ['irida.cart'])
