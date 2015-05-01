@@ -115,6 +115,7 @@
     <project_sample id="20" project_id="1" sample_id="20" createdDate="2013-07-18 14:41:19.0" />
     <project_sample id="21" project_id="1" sample_id="21" createdDate="2013-07-18 14:42:19.0" />
     <project_sample id="22" project_id="6" sample_id="21" createdDate="2013-07-18 14:42:19.0" />
+    <project_sample id="23" project_id="3" sample_id="1" createdDate="2013-07-18 14:42:19.0" />
 
 
     <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
