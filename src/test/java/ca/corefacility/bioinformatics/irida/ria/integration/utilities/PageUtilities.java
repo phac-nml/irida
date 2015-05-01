@@ -70,4 +70,17 @@ public class PageUtilities {
 
 		return present;
 	}
+	
+	public boolean checkWarningNotification() {
+		boolean present = false;
+		try {
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+					.className("toast-message")));
+			present = true;
+		} catch (NoSuchElementException e) {
+			present = false;
+		}
+
+		return present;
+	}
 }

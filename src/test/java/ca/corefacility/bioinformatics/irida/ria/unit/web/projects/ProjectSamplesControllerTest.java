@@ -141,10 +141,8 @@ public class ProjectSamplesControllerTest {
 			verify(sampleService).read(x);
 		}
 
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService).removeSampleFromProject(oldProject, s2);
-		verify(projectService).removeSampleFromProject(oldProject, s3);
+		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s2);
+		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s3);
 	}
 
 	@Test
