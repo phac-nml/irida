@@ -100,7 +100,7 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	}
 
 	public void clickSetDefaultAlternativeAlleleFraction() {
-		driver.findElements(By.className("set-default-btn")).get(0).click();
+		driver.findElements(By.xpath("//div[input[@id='alternative-allele-fraction']]/span/button")).get(0).click();
 	}
 
 	public void clickSeePipeline() {
