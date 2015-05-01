@@ -71,7 +71,7 @@ You can then change your password:
 
 ![Create password.](images/create-password.png)
 
-As in the [system introduction](..), passwords must:
+As in the [system overview](../system-overview), passwords must:
 
 * Have at least 6 characters (and less than 1024 characters),
 * Include at least 1 upper-case character,

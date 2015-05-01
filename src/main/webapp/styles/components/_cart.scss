@@ -1,5 +1,7 @@
 @import "../helpers/variables";
 
+$cart-width: 400px;
+
 .st-container,
 .st-pusher,
 .st-content {
@@ -50,7 +52,7 @@
   right: 0;
   z-index: 1100;
   visibility: hidden;
-  width: 300px;
+  width: $cart-width;
   background: $irida-colour-grey-light;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
@@ -58,8 +60,8 @@
 }
 
 .cart-open .st-pusher {
-  -webkit-transform: translate3d(-300px, 0, 0);
-  transform: translate3d(-300px, 0, 0);
+  -webkit-transform: translate3d(-$cart-width, 0, 0);
+  transform: translate3d(-$cart-width, 0, 0);
 }
 
 .cart {
@@ -91,8 +93,25 @@
   color: $irida-colour-grey-dark;
 }
 
+.cart-search {
+  margin-bottom: 1rem;
+}
+
 .cart-project-header {
   cursor: pointer;
+  > div {
+    vertical-align: top;
+    display: inline-block;
+  }
+}
+
+.cart-item {
+  &__label {
+    max-width: 70%;
+  }
+  &__btns {
+    width: 50px;
+  }
 }
 
 .cart-control-bottom .btn {

@@ -485,11 +485,6 @@ public class ProjectSamplesPageIT {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 
-		assertFalse(page.isCartVisible());
-		assertEquals(0, page.getCartCount());
-		page.showCart();
-		assertTrue(page.isCartVisible());
-
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
 		assertEquals(3, page.getCartCount());
@@ -509,13 +504,9 @@ public class ProjectSamplesPageIT {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 
-		assertFalse(page.isCartVisible());
-		assertEquals(0, page.getCartCount());
-		page.showCart();
-		assertTrue(page.isCartVisible());
-
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
+		page.showCart();
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
@@ -532,11 +523,10 @@ public class ProjectSamplesPageIT {
 
 		assertFalse(page.isCartVisible());
 		assertEquals(0, page.getCartCount());
-		page.showCart();
-		assertTrue(page.isCartVisible());
 
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
+		page.showCart();
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
@@ -551,13 +541,9 @@ public class ProjectSamplesPageIT {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 
-		assertFalse(page.isCartVisible());
-		assertEquals(0, page.getCartCount());
-		page.showCart();
-		assertTrue(page.isCartVisible());
-
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
+		page.showCart();
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 

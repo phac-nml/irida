@@ -117,6 +117,7 @@ public class AbstractPage {
 
 	public void showCart() {
 		driver.findElement(By.id("cart-show-btn")).click();
+		waitForTime(500);
 	}
 
 	public void clearCart() {
@@ -134,7 +135,7 @@ public class AbstractPage {
 		List<WebElement> sampleRemoveButtons = projectItem.findElements(By.className("remove-sample-btn"));
 		WebElement firstSampleRemoveBtn = sampleRemoveButtons.iterator().next();
 		firstSampleRemoveBtn.click();
-		waitForTime(250);
+		waitForTime(500);
 	}
 
 	public boolean isCartVisible() {

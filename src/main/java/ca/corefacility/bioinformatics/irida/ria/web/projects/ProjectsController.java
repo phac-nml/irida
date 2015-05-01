@@ -220,6 +220,7 @@ public class ProjectsController {
 			project = projectService.create(p);
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
+			model.addAttribute("project", p);
 			return getCreateProjectPage(model);
 		}
 

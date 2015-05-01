@@ -4,7 +4,7 @@ search_title: "IRIDA Web Interface Install Guide"
 description: "Install guide for setting up the IRIDA web interface."
 ---
 
-This document describes how to install the IRIDA web interface. We assume that you have either downloaded IRIDA as a `WAR` file distributable, or have [built IRIDA from source](../building), and also assume that you have completed [installing and configuring Galaxy](../galaxy).
+This document describes how to install the IRIDA web interface. We assume that you have either downloaded IRIDA as a `WAR` file distributable, or have [built IRIDA from source](./building), and also assume that you have completed [installing and configuring Galaxy](../galaxy).
 
 * This comment becomes the table of contents
 {:toc}
@@ -45,7 +45,7 @@ We provide *some* instructions for installing and setting up your production env
 
 Deploying IRIDA
 ===============
-Whether you are [building IRIDA from source](../building) or installing a pre-built `WAR` file, you need to follow the instructions immediately below to configure your system.
+Whether you are [building IRIDA from source](./building) or installing a pre-built `WAR` file, you need to follow the instructions immediately below to configure your system.
 
 Core Configuration
 ------------------
@@ -66,6 +66,28 @@ The IRIDA platform also looks for a web application configuration file at `/etc/
 {% endhighlight %}
     
 If this file does not exist the platform will use internal configuration values which will probably not correspond to your production environment.
+
+Analytics
+---------
+The IRIDA platform supports web analytics.  Include the analytic snippet inside a file in `/etc/irida/analytics/`.  The snippet will be injected into the page.
+
+E.g. In `/etc/irida/analytics/google-analytics.html`.
+
+{% highlight javascript %}
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-XXXXX-X']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+{% endhighlight %}
 
 Deploy the `WAR` File
 ---------------------

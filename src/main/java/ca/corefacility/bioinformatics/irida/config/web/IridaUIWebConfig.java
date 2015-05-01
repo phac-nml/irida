@@ -1,10 +1,15 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
+import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +40,13 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  */
@@ -57,6 +65,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
+	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Autowired
 	private Environment env;
@@ -67,6 +76,26 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
 		return localeChangeInterceptor;
+	}
+	
+	@Bean
+	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
+		Path analyticsPath = Paths.get(ANALYTICS_DIR);
+		StringBuilder analytics = new StringBuilder();
+		if (Files.exists(analyticsPath)) {
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
+				for (Path entry : stream) {
+					List<String> lines = Files.readAllLines(entry);
+					analytics.append(Joiner.on("\n").join(lines));
+					analytics.append("\n");
+				}
+			} catch (DirectoryIteratorException ex) {
+				logger.error("Error reading analytics directory: ", ex);
+			} catch (IOException e) {
+				logger.error("Error readin analytics file: ", e);
+			}
+		}
+		return new AnalyticsHandlerInterceptor(analytics.toString());
 	}
 
 	@Bean(name = "localeResolver")
@@ -163,6 +192,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(localeChangeInterceptor());
+		registry.addInterceptor(analyticsHandlerInterceptor());
 	}
 
 	/**
