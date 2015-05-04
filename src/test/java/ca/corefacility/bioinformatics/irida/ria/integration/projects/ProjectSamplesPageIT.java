@@ -338,6 +338,19 @@ public class ProjectSamplesPageIT {
 		assertFalse("Since the project does not exist in the list, they cannot copy files to it.",
 				page.isBtnEnabled("confirm-copy-samples"));
 	}
+	
+	@Test
+	public void testRemoveSamples(){
+		LoginPage.login(driver, "project1Manager", "Password1");
+		page.goToPage();
+				
+		selectFirstThreeSamples();
+		page.clickBtn("samplesOptionsBtn");
+		page.clickBtn("removeBtn");
+		assertTrue(page.isItemVisible("remove-samples-modal"));
+		page.clickBtn("confirmRemoveBtn");
+		assertTrue(page.checkSuccessNotification());
+	}
 
 	@Test
 	public void testAdminCopyFromAnyProjectToAnyProject() {
