@@ -1,14 +1,14 @@
 <div id="remove-samples-modal" class="form">
 	<div class="modal-header">
 		<h3 class="modal-title">
-			<span class="fa fa-fw fa-compress"></span>
-			<span>__REMOVE SAMPLES__</span>
+			<i class="fa fa-trash"></i>
+			<span th:text="#{project.samples.modal.remove.title}">__REMOVE SAMPLES__</span>
 		</h3>
 	</div>
 	<div class="modal-body">
 		<h4>
 
-			<span>_You are about to remove the following samples_</span>
+			<span th:text="#{project.samples.modal.remove.description}">_You are about to remove the following samples_</span>
 		</h4>
 		<ul>
 			<li ng-repeat="s in rmCtrl.samples">{{s.sample.sampleName}}</li>
@@ -19,13 +19,13 @@
 				<span th:text="#{alert.warning.title}"></span>
 			</h4>
 
-			<p>_If these samples do not exist in another project they will be removed from this system.  This operation cannot be undone._</p>
+			<p th:text="#{project.samples.modal.remove.warning}">_If these samples do not exist in another project they will be removed from the system.  This operation cannot be undone._</p>
 		</div>
 
 		
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="rmCtrl.close()"></button>
-		<button id="confirmMergeBtn" class="btn btn-primary" ng-click="rmCtrl.remove()">_Remove_</button>
+		<button id="confirmMergeBtn" class="btn btn-primary" th:text="#{project.samples.modal.remove.button}" ng-click="rmCtrl.remove()">_Remove_</button>
 	</div>
 </div>
