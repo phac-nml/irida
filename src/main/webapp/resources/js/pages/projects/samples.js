@@ -530,6 +530,20 @@
         });
       }
     };
+    
+    vm.remove = function () {
+      if (vm.localSelected) {
+        $modal.open({
+          templateUrl: TL.BASE_URL + 'projects/templates/remove',
+          controller : 'RemoveCtrl as rmCtrl',
+          resolve    : {
+            samples: function () {
+              return SamplesService.getSelectedSampleNames();
+            }
+          }
+        });
+      }
+    };
 
     vm.showTooltip = function () {
       if (!vm.localSelected) {
@@ -579,6 +593,24 @@
       }
       $scope.$apply();
     }, 300));
+  }
+  
+  function RemoveCtrl($scope, $modalInstance, SamplesService, samples) {
+    "use strict";
+    var vm = this;
+    console.log("i'm alive");
+    
+    vm.samples = samples;
+    vm.selected = Object.keys(samples)[0];
+
+    vm.remove = function(){
+      console.log("yeah");
+    };
+    
+    vm.close = function () {
+      $modalInstance.close();
+    };
+    
   }
 
   function CopyMoveCtrl($modalInstance, $rootScope, SamplesService, Select2Service, samples, type) {
@@ -741,6 +773,7 @@
     .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
     .controller('SamplesTableCtrl', ['$rootScope', 'SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
+    .controller('RemoveCtrl' ['$scope', '$modalInstance', 'SamplesService', 'samples', RemoveCtrl])
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
