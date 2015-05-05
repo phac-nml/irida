@@ -157,6 +157,18 @@
         }
       });
     };
+    
+    svc.removeSamples = function(sampleIds){
+      return base.customPOST({sampleIds: sampleIds}, 'ajax/samples/delete').then(function (data) {
+        if (data.result === 'success') {
+          $rootScope.$broadcast("SAMPLE_CONTENT_MODIFIED");
+          storage.clear();
+          updateSelectedCount();
+          notifications.show({type: data.result, msg: data.message});
+        }
+      });
+    };
+
 
     svc.copy = function (projectId) {
       return copyMoveSamples(projectId, false);
@@ -254,7 +266,7 @@
         updateSelectedCount();
       });
     }
-
+    
     function getSelectedSampleIds() {
       return storage.getKeys();
     }
@@ -530,6 +542,20 @@
         });
       }
     };
+    
+    vm.remove = function () {
+      if (vm.localSelected) {
+        $modal.open({
+          templateUrl: TL.BASE_URL + 'projects/templates/remove',
+          controller : 'RemoveCtrl as rmCtrl',
+          resolve    : {
+            samples: function () {
+              return SamplesService.getSelectedSampleNames();
+            }
+          }
+        });
+      }
+    };
 
     vm.showTooltip = function () {
       if (!vm.localSelected) {
@@ -579,6 +605,29 @@
       }
       $scope.$apply();
     }, 300));
+  }
+  
+  function RemoveCtrl($scope, $modalInstance, SamplesService, samples) {
+    "use strict";
+    var vm = this;
+    
+    vm.samples = samples;
+    vm.selected = Object.keys(samples)[0];
+
+    vm.remove = function () {
+      var sampleIds = [];
+      _.forEach(vm.samples, function(s){
+        sampleIds.push(s.id);
+      });
+      SamplesService.removeSamples(sampleIds).then(function(){
+        vm.close();
+      });
+    };
+    
+    vm.close = function () {
+      $modalInstance.close();
+    };
+    
   }
 
   function CopyMoveCtrl($modalInstance, $rootScope, SamplesService, Select2Service, samples, type) {
@@ -741,6 +790,7 @@
     .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
     .controller('SamplesTableCtrl', ['$rootScope', 'SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
+    .controller('RemoveCtrl', ['$scope', '$modalInstance', 'SamplesService', 'samples', RemoveCtrl])
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
