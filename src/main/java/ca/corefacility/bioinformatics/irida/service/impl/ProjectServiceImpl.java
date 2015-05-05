@@ -244,14 +244,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public void removeSampleFromProject(Project project, Sample sample) {
 		psjRepository.removeSampleFromProject(project, sample);
 
-		// if the sample is empty, delete the sample and file within
+		// if the sample doesn't refer to any other projects, delete it
 		if (psjRepository.getProjectForSample(sample).isEmpty()) {
-			List<Join<Sample, SequenceFile>> filesForSample = ssfjRepository.getFilesForSample(sample);
-
-			for (Join<Sample, SequenceFile> j : filesForSample) {
-				sequenceFileRepository.delete(j.getObject());
-			}
-
 			sampleRepository.delete(sample);
 		}
 	}
