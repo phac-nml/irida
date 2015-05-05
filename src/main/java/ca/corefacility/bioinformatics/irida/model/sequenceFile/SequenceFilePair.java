@@ -34,7 +34,6 @@ import com.google.common.collect.ImmutableSet;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 @Entity
 @Table(name = "sequence_file_pair")
@@ -161,7 +160,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Sample) {
+		if (obj instanceof SequenceFilePair) {
 			SequenceFilePair pair = (SequenceFilePair) obj;
 
 			return Objects.equals(files, pair.files);
