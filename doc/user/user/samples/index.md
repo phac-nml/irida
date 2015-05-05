@@ -170,7 +170,7 @@ Once you've finished choosing the sample to merge into, click on the "Complete M
 Exporting samples
 -----------------
 
-The [pipelines](../launching-pipelines) available in IRIDA may not be enough for the types of analysis that you want to run on your sequencing data. You can export your sample data from IRIDA in three different ways:
+The [pipelines](../pipelines) available in IRIDA may not be enough for the types of analysis that you want to run on your sequencing data. You can export your sample data from IRIDA in three different ways:
 
 1. [Downloading samples](#downloading-samples),
 2. [To the command-line](#command-line-export), or

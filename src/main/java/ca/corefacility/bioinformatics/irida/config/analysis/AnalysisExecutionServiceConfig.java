@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 
 /**
@@ -85,6 +86,9 @@ public class AnalysisExecutionServiceConfig {
 	@Autowired
 	private ToolsClient toolsClient;
 	
+	@Autowired
+	private JobsClient jobsClient;
+	
 	@Lazy
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {
@@ -117,7 +121,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisProvenanceServiceGalaxy analysisProvenanceService() {
-		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient);
+		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient, jobsClient);
 	}
 	
 	@Lazy

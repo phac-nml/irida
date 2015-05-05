@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
@@ -40,12 +41,14 @@ public class SequenceFileControllerTest {
 	// Services
 	private SequenceFileService sequenceFileService;
 	private SequencingRunService sequencingRunService;
+        private AnalysisService analysisService;
 
 	@Before
 	public void setUp() {
 		sequenceFileService = mock(SequenceFileService.class);
 		sequencingRunService = mock(SequencingRunService.class);
-		controller = new SequenceFileController(sequenceFileService, sequencingRunService);
+                analysisService = mock(AnalysisService.class);
+		controller = new SequenceFileController(sequenceFileService, sequencingRunService, analysisService);
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);

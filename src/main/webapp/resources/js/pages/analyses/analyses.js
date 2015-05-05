@@ -161,7 +161,7 @@
     };
 
     vm.tableParams = new ngTableParams({
-      sorting: {'createdDate':'asc'}
+      sorting: {'createdDate':'desc'}
     });
 
     vm.createClass = function(state) {

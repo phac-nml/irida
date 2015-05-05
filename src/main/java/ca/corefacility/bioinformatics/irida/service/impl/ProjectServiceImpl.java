@@ -215,6 +215,19 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					+ project.getId() + "]");
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample){
+		ProjectSampleJoin join = addSampleToProject(destination, sample);
+		removeSampleFromProject(source, sample);
+		
+		return join;
+	}
 
 	/**
 	 * {@inheritDoc}

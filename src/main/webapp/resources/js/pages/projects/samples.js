@@ -291,22 +291,24 @@
         removeFromOriginal: move
       }, "/ajax/samples/copy").then(function (data) {
         updateSelectedCount(data.count);
-        if (data.result === 'success') {
+        if (data.message) {
           notifications.show({msg: data.message});
         }
         _.forEach(data.warnings, function (msg) {
           notifications.show({type: 'info', msg: msg});
         });
+        
         if (move) {
+          // remove the samples which were successfully moved 
           angular.copy(_.filter(svc.samples, function (s) {
-            if (_.has(s, 'selected')) {
-              return !s.selected;
+            if (_.indexOf(data.successful, s.id) != -1) {
+              storage.removeSample(s.id);
+              return false;
             }
             return true;
           }), svc.samples);
 
-          //clear storage after moving
-          storage.clear();
+          // update storage after moving
           updateSelectedCount();
           svc.updateSampleCount();
         }

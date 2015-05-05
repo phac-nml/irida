@@ -100,7 +100,7 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private SampleSequenceFileJoin sample;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@NotAudited
 	@JoinColumn(name = "fastqc_analysis_id")
 	private AnalysisFastQC fastqcAnalysis;

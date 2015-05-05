@@ -4,9 +4,14 @@ layout: "default"
 
 OAuth2 Authorization for IRIDA
 ==============================
+{:.no_toc}
+
 This document describes how a client application can communicate with the IRIDA REST API using OAuth2 Authorization.
 
 In order for a user to access a resource on the REST API, they must first obtain an OAuth2 token from that API.  This token allows a given client and user access to a given resource on the API.  The token is stored by both the client and API.  When the client makes a request to the API they pass along their token which is compared to a list of active issued tokens, then the client is given or denied access based on the validity of that token.
+
+* this comment becomes the toc
+{:toc}
 
 Terms
 -----
@@ -19,6 +24,7 @@ Terms
 
 Authorization Code Grant Type
 ------------------------
+
 ### Introduction
 A client must provide the correct credentials to obtain a token from the API. If your client is connecting to the REST API via a web service, you will use the "authorization_code" grant type. This will enable the OAuth2 web authorization flow.
 
@@ -56,6 +62,7 @@ After this authorization occurs, the user will not have to re-authorize your ser
 
 Password Grant Type
 -------------------
+
 ### Introduction
 Similar to the *authorization_code* grant type, the *password* grant allows an application to retrieve an OAuth2 token from the REST API, then use it to request resources.  The *password* grant type differs in that it can be easily used from a desktop application as it doesn't require the user to log in via a web browser.  The user will provide their IRIDA username and password directly to the application where it will be used to request an OAuth2 token.  Although the *password* grant type is less complicated for the user and developer, the *authorization_code* grant is preferred because it doesn't require the user to pass their username and password directly to the client application.
 
@@ -91,8 +98,9 @@ If the token is valid, you will receive your requested resources.  If not you sh
 
 Examples
 --------
+
 ### Perl
-* [NGS Archive Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) - An example of a Perl script that connects to the IRIDA API via the OAuth2 *password* grant.  It uses the [OAuth::Lite2::Client::UsernameAndPassword](http://search.cpan.org/~ritou/OAuth-Lite2-0.08/lib/OAuth/Lite2/Client/UsernameAndPassword.pm) package.  The script retrieves a token from the API in the *getToken* subroutine, then sets an *Authorization: Bearer* header to be used for all requests.  Some example code can be seen below:
+* [NGS Archive Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) - An example of a Perl script that connects to the IRIDA API via the OAuth2 *password* grant.  It uses the [OAuth::Lite2::Client::UsernameAndPassword](http://search.cpan.org/~ritou/OAuth-Lite2-0.08/lib/OAuth/Lite2/Client/UsernameAndPassword.pm) package.  The script retrieves a token from the API in the `getToken` subroutine, then sets an `Authorization: Bearer` header to be used for all requests.  Some example code can be seen below:
  
 ```perl
 my $client = OAuth::Lite2::Client::UsernameAndPassword->new(
@@ -110,7 +118,7 @@ my $request = HTTP::Request->new("GET",$url,$headers);
 ```
 
 ### Python
-* [NGS Archive Galaxy Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) - This application uses [OAuth2Service](http://rauth.readthedocs.org/en/latest/) to contact the IRIDA API via the OAuth2 *password* grant.  The script retrieves a token in the *get_access_token(oauth_service, username, password)* subroutine then sets the token credentials for each request in *ngs_request(url, oauth_service, access_token)*.  Some example code is below:
+* [NGS Archive Galaxy Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) - This application uses [OAuth2Service](http://rauth.readthedocs.org/en/latest/) to contact the IRIDA API via the OAuth2 *password* grant.  The script retrieves a token in the `get_access_token(oauth_service, username, password)` subroutine then sets the token credentials for each request in `ngs_request(url, oauth_service, access_token)`.  Some example code is below:
 
 ```python
 oauth_serv = OAuth2Service(

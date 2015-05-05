@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -66,7 +68,7 @@ public class FastqcFileProcessorTest {
 	}
 
 	@Test
-	public void testHandleFastqFile() throws IOException {
+	public void testHandleFastqFile() throws IOException, IllegalArgumentException, IllegalAccessException {
 		// fastqc shouldn't barf on a fastq file.
 		Path fastq = Files.createTempFile(null, null);
 		Files.write(fastq, FASTQ_FILE_CONTENTS.getBytes());
@@ -85,7 +87,10 @@ public class FastqcFileProcessorTest {
 		}
 
 		verify(sequenceFileRepository).save(argument.capture());
-		AnalysisFastQC updated = argument.getValue().getFastQCAnalysis();
+		SequenceFile updatedFile = argument.getValue();
+		final Field fastqcAnalysis = ReflectionUtils.findField(SequenceFile.class, "fastqcAnalysis");
+		ReflectionUtils.makeAccessible(fastqcAnalysis);
+		AnalysisFastQC updated = (AnalysisFastQC) fastqcAnalysis.get(updatedFile);
 		assertEquals("GC Content was not set correctly.", Short.valueOf((short) 50), updated.getGcContent());
 		assertEquals("Filtered sequences was not 0.", Integer.valueOf(0), updated.getFilteredSequences());
 		assertEquals("File type was not correct.", "Conventional base calls", updated.getFileType());

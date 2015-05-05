@@ -6,6 +6,7 @@ description: "Galaxy install guide"
 
 Galaxy Setup
 ============
+{:.no_toc}
 
 This document describes the necessary steps for installing and integrating [Galaxy][] with IRIDA as well as using Galaxy and [Galaxy ToolSheds][] to install workflows.
 
