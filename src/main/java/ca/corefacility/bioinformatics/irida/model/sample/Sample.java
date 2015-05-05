@@ -238,9 +238,7 @@ public class Sample extends IridaResourceSupport implements IridaThing, IridaSam
 	public boolean equals(Object other) {
 		if (other instanceof Sample) {
 			Sample sample = (Sample) other;
-			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate)
-					&& Objects.equals(modifiedDate, sample.modifiedDate)
-					&& Objects.equals(sequencerSampleId, sample.sequencerSampleId)
+			return Objects.equals(sequencerSampleId, sample.sequencerSampleId)
 					&& Objects.equals(sampleName, sample.sampleName) && Objects.equals(description, sample.description)
 					&& Objects.equals(organism, sample.organism) && Objects.equals(isolate, sample.isolate)
 					&& Objects.equals(strain, sample.strain) && Objects.equals(collectedBy, sample.collectedBy)
@@ -263,7 +261,7 @@ public class Sample extends IridaResourceSupport implements IridaThing, IridaSam
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, createdDate, modifiedDate, sequencerSampleId, sampleName, description, organism,
+		return Objects.hash(sequencerSampleId, sampleName, description, organism,
 				isolate, strain, collectedBy, collectionDate, geographicLocationName, host, isolationSource, latitude,
 				longitude, cultureCollection, genotype, passageHistory, pathotype, serotype, serovar, specimenVoucher,
 				subgroup, subtype, organization);
