@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -36,7 +35,9 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p> Testing for launching a phylogenomics pipeline. </p>
+ * <p>
+ * Testing for launching a phylogenomics pipeline.
+ * </p>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -76,7 +77,8 @@ public class PipelinesPhylogenomicsPageIT {
 	public void testNoRefFileNoPermissions() {
 		LoginPage.loginAsUser(driver);
 
-		// Add sample from a project that user is a "Project User" and has no reference files.
+		// Add sample from a project that user is a "Project User" and has no
+		// reference files.
 		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
 		samplesPage.goToPage("2");
 		samplesPage.selectSampleByRow(1);
@@ -119,7 +121,7 @@ public class PipelinesPhylogenomicsPageIT {
 		assertTrue("Message should be displayed once the pipeline finished submitting",
 				page.isPipelineSubmittedSuccessMessageShown());
 	}
-	
+
 	@Test
 	public void testCheckPipelineStatusAfterSubmit() {
 		addSamplesToCart();
@@ -179,14 +181,34 @@ public class PipelinesPhylogenomicsPageIT {
 		String value = page.getAlternativeAlleleFractionValue();
 		String newValue = "10";
 		page.setAlternativeAlleleFraction(newValue);
-		assertNotEquals("Should not have the same value as the default after being changed", newValue,
+		assertEquals("Should not have the same value as the default after being changed", newValue,
 				page.getAlternativeAlleleFractionValue());
 		page.clickSetDefaultAlternativeAlleleFraction();
 		assertEquals("Value should be reset to the default value", value, page.getAlternativeAlleleFractionValue());
 	}
-	
+
 	@Test
-	
+	public void testModifyParametersAgain() throws InterruptedException {
+		addSamplesToCart();
+		page.clickPipelineParametersBtn();
+		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
+				page.getParametersModalTitle());
+
+		// set the value for the ALternative Allele Fraction
+		String newValue = "10";
+		page.setAlternativeAlleleFraction(newValue);
+		assertEquals("Should be set to the new value.", newValue, page.getAlternativeAlleleFractionValue());
+
+		page.clickUseParametersButton();
+
+		// open the dialog again and make sure that the changed values are still
+		// there:
+		page.clickPipelineParametersBtn();
+		assertEquals("alternative allele fraction should have the same value as the new value after being changed",
+				newValue, page.getAlternativeAlleleFractionValue());
+	}
+
+	@Test
 	public void testModifyAndSaveParameters() {
 		addSamplesToCart();
 		page.clickPipelineParametersBtn();
@@ -197,7 +219,7 @@ public class PipelinesPhylogenomicsPageIT {
 		String newValue = "10";
 		final String savedParametersName = "Saved parameters name.";
 		page.setAlternativeAlleleFraction(newValue);
-		assertNotEquals("Should not have the same value as the default after being changed", newValue,
+		assertEquals("Should have updated alternative allele fractiion value to new value.", newValue,
 				page.getAlternativeAlleleFractionValue());
 		page.clickSaveParameters();
 		assertTrue("Page should have shown name for parameters field with selected parameters name.",

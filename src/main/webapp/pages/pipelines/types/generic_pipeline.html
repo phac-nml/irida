@@ -74,7 +74,7 @@
 								        class="form-control"
 								        ng-model="pipeline.selectedParameters"
 								        ng-change="pipeline.parameterSelected()"
-								        ng-options="item.label for item in pipeline.parameters">
+								        ng-options="item.currentSettings.label for item in pipeline.parameters">
 
 									</select>
 								</div>
