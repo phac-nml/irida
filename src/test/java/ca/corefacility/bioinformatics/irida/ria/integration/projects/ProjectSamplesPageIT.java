@@ -338,18 +338,25 @@ public class ProjectSamplesPageIT {
 		assertFalse("Since the project does not exist in the list, they cannot copy files to it.",
 				page.isBtnEnabled("confirm-copy-samples"));
 	}
-	
+
 	@Test
-	public void testRemoveSamples(){
+	public void testRemoveSamples() {
 		LoginPage.login(driver, "project1Manager", "Password1");
 		page.goToPage();
-				
+
+		int totalSampleCount = page.getTotalSampleCount();
+
 		selectFirstThreeSamples();
 		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("removeBtn");
 		assertTrue(page.isItemVisible("remove-samples-modal"));
 		page.clickBtn("confirmRemoveBtn");
 		assertTrue(page.checkSuccessNotification());
+
+		page.goToPage();
+		int newSampleCount = page.getTotalSampleCount();
+
+		assertEquals("should be 3 less samples that we started with", totalSampleCount - 3, newSampleCount);
 	}
 
 	@Test
@@ -386,8 +393,8 @@ public class ProjectSamplesPageIT {
 		assertTrue(page.isBtnEnabled("confirm-move-samples"));
 		page.clickBtn("confirm-move-samples");
 		assertTrue(page.checkWarningNotification());
-		
-		assertEquals(1,page.getTotalNumberOfSamplesSelected());
+
+		assertEquals(1, page.getTotalNumberOfSamplesSelected());
 	}
 
 	@Test
