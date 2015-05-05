@@ -52,10 +52,8 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectRe
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
@@ -77,8 +75,6 @@ public class ProjectServiceImplTest {
 	private ReferenceFileRepository referenceFileRepository;
 	private ProjectReferenceFileJoinRepository prfjRepository;
 	private SequenceFileUtilities sequenceFileUtilities;
-	private SequenceFileRepository sequenceFileRepository;
-	private SampleSequenceFileJoinRepository ssfjRepository;
 	private Validator validator;
 
 	@Before
@@ -93,11 +89,9 @@ public class ProjectServiceImplTest {
 		referenceFileRepository = mock(ReferenceFileRepository.class);
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		sequenceFileUtilities = mock(SequenceFileUtilities.class);
-		sequenceFileRepository = mock(SequenceFileRepository.class);
-		ssfjRepository = mock(SampleSequenceFileJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
-				sequenceFileUtilities, ssfjRepository, sequenceFileRepository, validator);
+				sequenceFileUtilities, validator);
 	}
 
 	@Test
