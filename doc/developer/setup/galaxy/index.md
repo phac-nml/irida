@@ -36,9 +36,11 @@ These commands were tested on an up-to-date install of Ubuntu 14.04.
 
 You can copy/paste the command below to install the prerequisites on Ubuntu:
 
-    sudo apt-get install mariadb-{client,server} cmake mercurial libyaml-dev \\
-                         python-pip python-dev zlib1g-dev cpanminus mummer \\
-			 samtools build-essential
+```bash
+sudo apt-get install mariadb-{client,server} cmake mercurial libyaml-dev \\
+                     python-pip python-dev zlib1g-dev cpanminus mummer \\
+                     samtools build-essential
+```
 
 ### Install instructions for CentOS
 
@@ -46,11 +48,12 @@ These commands were tested on an up-to-date install of CentOS 7.
 
 You can copy/paste the command below to install the prerequisites on CentOS:
 
-    sudo yum install epel-release && \\
-    sudo yum install mariadb{,-server} cmake mercurial libyaml-devel python-pip \\
-                     python-devel zlib-devel perl-App-cpanminus ncurses-devel && \\
-    sudo yum groupinstall "Development Tools"
-    
+```bash
+sudo yum install epel-release && \\
+sudo yum install mariadb{,-server} cmake mercurial libyaml-devel python-pip \\
+                 python-devel zlib-devel perl-App-cpanminus ncurses-devel && \\
+sudo yum groupinstall "Development Tools"
+```    
 
 MUMmer and SAMtools are not available in the standard CentOS repositories.
 
@@ -101,6 +104,15 @@ Once you've finished running the distro-specific install commands, you can use `
 sudo cpanm Parallel::ForkManager http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
 ```
 
-Installing Galaxy
+Verify your setup
 -----------------
-Now that you've installed the prerequisites, you can follow the [administrator guide for installing Galaxy](../../../administrator/galaxy/).
+
+Assuming that you've finished the rest of the [developer setup guide](..), you should now be able to run the complete test suite.
+
+You can run the complete test suite with `mvn`:
+
+```bash
+mvn clean verify
+```
+
+**Warning**: The complete integration test suite takes approximately 1 hour to complete execution.
