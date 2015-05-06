@@ -291,7 +291,7 @@ public class SampleSequenceFilesControllerTest {
 		Link selfCollection = rc.getLink(Link.REL_SELF);
 		Link sampleRC = rc.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
-		String sequenceFilesLocation = sampleLocation + "/sequenceFilePairs";
+		String sequenceFilesLocation = sampleLocation + "/sequenceFiles/pairs";
 		assertEquals("Collection location should be correct",sequenceFilesLocation, selfCollection.getHref());
 		assertEquals("Sample location should be correct",sampleLocation,sampleRC.getHref());
 		

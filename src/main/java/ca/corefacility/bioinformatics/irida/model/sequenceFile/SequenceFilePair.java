@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -28,21 +29,23 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 @Entity
 @Table(name = "sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFilePair implements IridaThing {
-	
+public class SequenceFilePair extends IridaResourceSupport implements IridaThing {
+
 	/**
 	 * Pattern for matching forward {@link SequenceFile}s from a file name.
 	 */
 	private static final Pattern FORWARD_PATTERN = Pattern.compile(".*_R1_\\d\\d\\d.*");
-	
+
 	/**
 	 * Pattern for matching reverse {@link SequenceFile}s from a file name.
 	 */
@@ -79,9 +82,9 @@ public class SequenceFilePair implements IridaThing {
 	 * 
 	 * @return The forward {@link SequenceFile} from the pair.
 	 */
+	@JsonIgnore
 	public SequenceFile getForwardSequenceFile() {
-		return files.stream()
-				.filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
+		return files.stream().filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
 				.findFirst().get();
 	}
 
@@ -90,9 +93,9 @@ public class SequenceFilePair implements IridaThing {
 	 * 
 	 * @return The reverse {@link SequenceFile} from the pair.
 	 */
+	@JsonIgnore
 	public SequenceFile getReverseSequenceFile() {
-		return files.stream()
-				.filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
+		return files.stream().filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
 				.findFirst().get();
 	}
 
@@ -148,5 +151,21 @@ public class SequenceFilePair implements IridaThing {
 		}
 
 		this.files = files;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(files);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof SequenceFilePair) {
+			SequenceFilePair pair = (SequenceFilePair) obj;
+
+			return Objects.equals(files, pair.files);
+		}
+
+		return false;
 	}
 }

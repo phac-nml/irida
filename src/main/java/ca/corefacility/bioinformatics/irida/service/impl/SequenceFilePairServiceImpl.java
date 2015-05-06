@@ -36,10 +36,8 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 	private final SequenceFilePairRepository pairRepository;
 
 	@Autowired
-	public SequenceFilePairServiceImpl(
-			SampleSequenceFileJoinRepository ssfRepository,
-			SequenceFilePairRepository repository,
-			Validator validator) {
+	public SequenceFilePairServiceImpl(SampleSequenceFileJoinRepository ssfRepository,
+			SequenceFilePairRepository repository, Validator validator) {
 		super(repository, validator, SequenceFilePair.class);
 		this.ssfRepository = ssfRepository;
 		this.pairRepository = repository;
@@ -100,5 +98,16 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 		}
 
 		return sequenceFilePairsSampleMap;
+	}
+
+	@Override
+	public SequenceFilePair readSequenceFilePairForSample(Sample sample, Long id) {
+		SequenceFilePair readSequenceFilePairForSample = pairRepository.readSequenceFilePairForSample(sample, id);
+
+		if (readSequenceFilePairForSample != null) {
+			return readSequenceFilePairForSample;
+		}
+		
+		throw new EntityNotFoundException("No file pair with id " + id + " exists in the given sample");
 	}
 }

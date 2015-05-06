@@ -45,9 +45,19 @@
 		file_path="/sequenceFile1" />
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile2" />
+	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile3" />
 
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
 	<sequencefile_sample id="2" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="2" />
+	<sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
+		sample_id="1" sequencefile_id="3" />
+
+	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="2" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="3" />
 </dataset>
