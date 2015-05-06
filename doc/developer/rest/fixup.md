@@ -55,56 +55,91 @@ The `resource` section contains an array of link objects under the `links` key. 
 
 Resource collections requested in JSON format will always have the following structure:
 
-    {
-        "resource" : {
-            "links" : [ {
-                "rel" : "magic/link",
-                "href" : "http://www.example.com/magic"
-            }, {
-                "rel" : "self",
-                "href" : "http://www.example.com"
-            }, ...
-            ],
-            "resources" : [ {
-                "links" : [ {
-                    "rel" : "self",
-                    "href" : "http://www.example.com/resources/1"
-                } ],
-                "resourceProperty" : "resourceValue",
-                "resourceProperty2" : "resourceValue2",
-                ...
-            }, {
-            ...
-            } ],
-            "totalResources" : 100
-        }
-    }
+```javascript
+{
+	"resource" : {
+		"links" : [ {
+			"rel" : "magic/link",
+			"href" : "http://www.example.com/magic"
+		}, {
+			"rel" : "self",
+			"href" : "http://www.example.com"
+		}, ...
+		],
+		"resources" : [ {
+			"links" : [ {
+				"rel" : "self",
+				"href" : "http://www.example.com/resources/1"
+			} ],
+			"resourceProperty" : "resourceValue",
+			"resourceProperty2" : "resourceValue2",
+			...
+			}, {
+			...
+		} ]
+	}
+}
+```
 
-Similar to requesting an individual resource, a resource collection is wrapped with a `resource` object. Within the `resource` object is an array of links, and an array of `resources`. The `resources` array contains complete records for the resource in the resource collection, as well as links about that specific resource. Many requests for resource collections are paged, so the last part of the resource collection response is the `totalResources` field. The `totalResources` field tells the client how many resources are in the *entire* collection, not just on the current page.
-
-A resource collection is paged by default, limited to 20 resources per page. Page links can be found in the`resource.links` section and are named according to [RFC5005](https://tools.ietf.org/html/rfc5005) (so `first`, `previous`, `next`, and `last`). Additionally, a link referring to a location where *all* resources are available can be found under the `collection/all` rel.
-
-TODO: Clients can also find a URI template in the collection of links so that they can construct their own page representations instead of relying on the structure of the URIs returned for pages. Please see [RFC6570](https://tools.ietf.org/html/rfc6570) for more information about URI templates, including information about how to expand URI templates.
+Similar to requesting an individual resource, a resource collection is wrapped with a `resource` object. Within the `resource` object is an array of links, and an array of `resources`. The `resources` array may contain complete records for the resource in the resource collection. If the record is not complete, each entry in the `resources` array will have links about that specific resource to get more information.
 
 Authentication
 ==============
 
-IRIDA uses [OAuth2](http://oauth.net/2/) for authentication and authorization of clients.
+IRIDA uses [OAuth2](http://oauth.net/2/) for authentication and authorization of clients. Command-line tools must use the password grant type for OAuth2. Our examples are primarily showing how to interact with the IRIDA REST API over the using the password flow. IRIDA also supports the authorization code flow, so other web services can interact with IRIDA.
 
 Most programming languages have libraries with convenient interfaces for dealing with OAuth2 authorization. We provide some examples for the programming languages where we've written our own clients, but a comprehensive list of libraries can be found here: <http://oauth.net/code/>
 
 ### Java
 
+For Python, we recommend that you use [Spring Security OAuth2](http://projects.spring.io/spring-security-oauth/) or [Apache OLTU](https://oltu.apache.org/). We internally use Spring Security OAuth2 to implement server-side OAuth2.
+
 ### Python
+
+For Python, we recommend that you use [Rauth](http://rauth.readthedocs.org/en/latest/) or [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/). Both libraries are straightforward to use, so we provide some quick examples for both.
+
+#### Rauth
+
+A complete application that uses Rauth is the [command-line concatenater](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) for IRIDA.
+
+#### Requests-OAuthlib
+
+Another option for using Python with IRIDA is the [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/).
+
+A complete example application that uses Requests-OAuthlib is the [IRIDA Galaxy Import Tool](https://irida.corefacility.ca/gitlab/irida/import-tool-for-galaxy). This application uses the authorization code flow.
 
 ### Perl
 
+For Perl, we recommend that you use the [`OAuth::Lite2::Client::UsernameAndPassword`](https://metacpan.org/pod/OAuth::Lite2::Client::UsernameAndPassword) package. 
+
+A complete application that uses `OAuth::Lite2::Client::UsernameAndPassword` is the [command-line](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) tool for IRIDA.
+
 ### HTTP
 
-If you *really* want to interact with IRIDA on the command line, or with an esoteric programming language that hasn't yet built an OAuth2 library, you can do so with basic HTTP. The example provided here shows how to use the password flow using shell and `curl`:
+If you *really* want to interact with IRIDA on the command line, or with an esoteric programming language that hasn't yet built an OAuth2 library, you can do so with basic HTTP. The example provided here shows how to use the password flow (you can't really use the authorization code flow without a web browser...) using shell and `curl`:
 
 ```bash
-curl http://localhost:8080/irida/api/oauth/token
+curl --silent http://localhost:8080/irida/api/oauth/token -X POST -d "client_id=$CLIENT_ID&client_secret=$CLIENT_SECRET&grant_type=password&username=$USERNAME&password=$PASSWORD" | python -m json.tool
+```
+
+In the example above, you would need to replace `$CLIENT_ID`, `$CLIENT_SECRET`, `$USERNAME` and `$PASSWORD` with your own client and user credentials. The `--silent` option on `curl` suppresses the progress display, and `python -m json.tool` will pretty-print the JSON that the server responds with.
+
+An example response from the server is:
+
+```javascript
+{
+    "access_token": "my-53cr37-04u7h-4cc355-70k3n",
+    "expires_in": 43199,
+    "scope": "read write",
+    "token_type": "bearer"
+}
+```
+
+Now, to access any other resources in the REST API you must include the `access_token` value in the `Authorization` header:
+
+```bash
+curl --silent http://localhost:8080/irida/api/projects/1 \\
+     -H 'Authorization: Bearer my-53cr37-04u7h-4cc355-70k3n' | python -m json.tool
 ```
 
 Resources
