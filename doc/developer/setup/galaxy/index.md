@@ -2,9 +2,7 @@
 layout: default
 ---
 
-The workstation setup instructions describe the prerequisites that are required for running our integration test suite (that in turn installs Galaxy), but the Galaxy that's used by the tests is transient and discarded after the tests are complete.
-
-This guide describes how to configure Galaxy for executing IRIDA workflows. Please note that this guide is suitable for setting up a Galaxy instance for running on a developer workstation, **not** for setting up a cluster or production environment.
+The workstation setup instructions describe the prerequisites that are required for running our integration test suite (that in turn installs Galaxy), but the Galaxy that's used by the tests is transient and discarded after the tests are complete. This guide describes the software that you must install *before* running the complete test suite, so Galaxy can start up on your machine.
 
 * This comment becomes the table of contents
 {:toc}
