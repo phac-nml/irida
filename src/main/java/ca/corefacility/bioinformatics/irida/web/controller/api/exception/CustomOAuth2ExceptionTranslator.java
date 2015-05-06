@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.exception;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -18,7 +16,6 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator;
 import org.springframework.security.web.util.ThrowableAnalyzer;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -31,14 +28,10 @@ import com.google.common.collect.ImmutableMap;
 public class CustomOAuth2ExceptionTranslator extends DefaultWebResponseExceptionTranslator {
 	private static final Logger logger = LoggerFactory.getLogger(CustomOAuth2ExceptionTranslator.class);
 
-	/** collection of exceptions handled by this class */
-	private static final List<Class<? extends RuntimeException>> EXCEPTIONS_HANDLED = ImmutableList.of(
-			AuthenticationException.class, InvalidGrantException.class);
-
 	/** map of exception types to a human-readble message for the client */
 	private static final Map<Class<? extends Exception>, String> EXCEPTION_MESSAGES = ImmutableMap
 			.of(AuthenticationException.class,
-					"No client credentials were provided. You must get an access token from the oauth provider at /oauth/token.",
+					"No client credentials were provided. You must get an access token from the oauth provider at /api/oauth/token.",
 					InvalidGrantException.class,
 					"The credentials you provided were invalid. Please provide valid credentials and try again.");
 
@@ -46,11 +39,11 @@ public class CustomOAuth2ExceptionTranslator extends DefaultWebResponseException
 
 	@Override
 	public ResponseEntity<OAuth2Exception> translate(Exception ex) throws Exception {
-		Throwable[] causeChain = throwableAnalyzer.determineCauseChain(ex);
+		final Throwable[] causeChain = throwableAnalyzer.determineCauseChain(ex);
 
-		Optional<Throwable> exceptionHandled = EXCEPTIONS_HANDLED.stream()
-				.map(c -> throwableAnalyzer.getFirstThrowableOfType(c, causeChain)).filter(Objects::nonNull)
-				.findFirst();
+		final Optional<Map.Entry<Class<? extends Exception>, String>> exceptionHandled = EXCEPTION_MESSAGES.entrySet()
+				.stream().filter(c -> throwableAnalyzer.getFirstThrowableOfType(c.getKey(), causeChain) != null)
+				.findAny();
 
 		// defer to the default behaviour when dealing with anything
 		// except for an unauthorized response.
@@ -60,16 +53,13 @@ public class CustomOAuth2ExceptionTranslator extends DefaultWebResponseException
 		}
 
 		// handle the unauthorized request.
-		OAuth2Exception e = new OAuth2Exception(EXCEPTION_MESSAGES.get(exceptionHandled.get()), ex);
+		final OAuth2Exception e = new OAuth2Exception(exceptionHandled.get().getValue(), ex);
 
-		HttpHeaders headers = new HttpHeaders();
+		final HttpHeaders headers = new HttpHeaders();
 		headers.set("Cache-Control", "no-store");
 		headers.set("Pragma", "no-cache");
 		headers.set("WWW-Authenticate", String.format("%s %s", OAuth2AccessToken.BEARER_TYPE, e.getSummary()));
 
-		ResponseEntity<OAuth2Exception> response = new ResponseEntity<OAuth2Exception>(e, headers,
-				HttpStatus.valueOf(401));
-
-		return response;
+		return new ResponseEntity<OAuth2Exception>(e, headers, HttpStatus.valueOf(401));
 	}
 }
