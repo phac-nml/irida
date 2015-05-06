@@ -122,13 +122,7 @@ IRIDA uses Maven for build and dependency management. You can check to see that 
 
     mvn clean jetty:run
 
-#### Running the complete test suite
-
-You can run the complete test suite like so:
-
-    mvn clean verify
-
 Setting up Galaxy
 -----------------
 
-Please see the article on [setting up Galaxy](galaxy).
+The complete test suite sets up a temporary instance of Galaxy for verifying interactions between IRIDA and Galaxy, so you must install some prerequisites before you can run the complete test suite. Please see the article on [setting up Galaxy](galaxy).
