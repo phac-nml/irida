@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-alpha1.4</version>
+	<version>1.0.0-alpha1.5</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
