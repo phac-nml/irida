@@ -180,7 +180,7 @@ public class RESTSampleSequenceFilesController {
 	public ModelMap getSequenceFilePairsForSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 
-		logger.debug("Reading seq file  for sample " + sampleId + " in project " + projectId);
+		logger.debug("Reading seq file pair for sample " + sampleId + " in project " + projectId);
 		Sample sample = sampleService.read(sampleId);
 
 		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService
@@ -188,16 +188,7 @@ public class RESTSampleSequenceFilesController {
 
 		ResourceCollection<SequenceFilePair> resources = new ResourceCollection<>(sequenceFilePairsForSample.size());
 		for (SequenceFilePair pair : sequenceFilePairsForSample) {
-
-			for (SequenceFile file : pair.getFiles()) {
-				file.add(linkTo(
-						methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
-								file.getId())).withSelfRel());
-			}
-
-			pair.add(linkTo(
-					methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(projectId, sampleId,
-							pair.getId())).withSelfRel());
+			pair = addSequenceFilePairLinks(pair, projectId, sampleId);
 
 			resources.add(pair);
 		}
@@ -279,16 +270,8 @@ public class RESTSampleSequenceFilesController {
 		SequenceFilePair readSequenceFilePairForSample = sequenceFilePairService.readSequenceFilePairForSample(sample,
 				pairId);
 
-		for (SequenceFile file : readSequenceFilePairForSample.getFiles()) {
-			file.add(linkTo(
-					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
-							file.getId())).withSelfRel());
-		}
-
-		readSequenceFilePairForSample.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(projectId, sampleId, pairId))
-				.withSelfRel());
-
+		readSequenceFilePairForSample = addSequenceFilePairLinks(readSequenceFilePairForSample, projectId, sampleId);
+		
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, readSequenceFilePairForSample);
 
 		return modelMap;
@@ -641,4 +624,31 @@ public class RESTSampleSequenceFilesController {
 
         return modelMap;
     }
+    
+	/**
+	 * Add the {@link SequenceFile} and self rel links to a
+	 * {@link SequenceFilePair}
+	 * 
+	 * @param pair
+	 *            The {@link SequenceFilePair} to enhance
+	 * @param projectId
+	 *            The id of the {@link Project} the pair is in
+	 * @param sampleId
+	 *            the id of the {@link Sample} the pair is in
+	 * @return The {@link SequenceFilePair} with added links
+	 */
+	private SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long projectId, Long sampleId) {
+		for (SequenceFile file : pair.getFiles()) {
+			file.add(linkTo(
+					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+							file.getId())).withSelfRel());
+		}
+
+		pair.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(projectId, sampleId,
+						pair.getId())).withSelfRel());
+
+		return pair;
+
+	}
 }
