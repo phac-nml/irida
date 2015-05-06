@@ -1,7 +1,11 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
+import java.lang.reflect.Field;
+
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +33,7 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -36,6 +41,7 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
@@ -50,12 +56,13 @@ import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousA
 @Configuration
 @EnableWebSecurity
 public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
-
 	@Configuration
 	@EnableResourceServer
 	@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.repositories.remote")
 	@Order(Ordered.HIGHEST_PRECEDENCE + 2)
 	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+
+		private static final Logger logger = LoggerFactory.getLogger(ResourceServerConfiguration.class);
 
 		@Autowired
 		private ResourceServerTokenServices tokenServices;
@@ -63,6 +70,19 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Override
 		public void configure(final ResourceServerSecurityConfigurer resources) {
 			resources.resourceId("NmlIrida").tokenServices(tokenServices);
+			try {
+				final Field authenticationEntryPointField = ResourceServerSecurityConfigurer.class
+						.getField("authenticationEntryPoint");
+				ReflectionUtils.makeAccessible(authenticationEntryPointField);
+				final OAuth2AuthenticationEntryPoint authenticationEntryPoint = (OAuth2AuthenticationEntryPoint) authenticationEntryPointField
+						.get(resources);
+				
+				logger.debug("Customizing the authentication entry point by brute force.");
+				authenticationEntryPoint.setExceptionRenderer(null);
+				authenticationEntryPoint.setExceptionTranslator(null);
+			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				logger.error("Failed to configure the authenticationEntryPoint on ResourceServerSecurityConfigurer.", e);
+			}
 		}
 
 		@Override
@@ -73,8 +93,8 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.permitAll();
 			httpSecurity.antMatcher("/api/oauth/authorize*").authorizeRequests().antMatchers("/api/oauth/authorize*")
 					.fullyAuthenticated();
-			httpSecurity.antMatcher("/api/oauth/authorize*").authorizeRequests().antMatchers("/api/oauth/authorization/token*")
-				.fullyAuthenticated();
+			httpSecurity.antMatcher("/api/oauth/authorize*").authorizeRequests()
+					.antMatchers("/api/oauth/authorization/token*").fullyAuthenticated();
 			httpSecurity.regexMatcher("/api.*").authorizeRequests().regexMatchers(HttpMethod.GET, "/api.*")
 					.access("#oauth2.hasScope('read')");
 			httpSecurity.regexMatcher("/api.*").authorizeRequests().regexMatchers("/api.*")
@@ -197,7 +217,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and().addFilterAfter(getSessionModelFilter(), SecurityContextHolderAwareRequestFilter.class);
 			// @formatter:on
 		}
-		
+
 		@Bean
 		public GenericFilterBean getSessionModelFilter() {
 			return new SessionFilter();
