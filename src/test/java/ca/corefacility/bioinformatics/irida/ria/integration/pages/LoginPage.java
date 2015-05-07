@@ -51,7 +51,7 @@ public class LoginPage extends AbstractPage {
 	 * @param driver
 	 * 		{@link WebDriver}
 	 */
-	public static void loginAsAdmin(WebDriver driver) {
+	public static void loginAsManager(WebDriver driver) {
 		get(driver, "login");
 		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
 		loginPage.login(ADMIN_USERNAME, GOOD_PASSWORD);
