@@ -72,7 +72,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
+			SequenceFileUtilities sequenceFileUtilities	, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -215,6 +215,19 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					+ project.getId() + "]");
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample){
+		ProjectSampleJoin join = addSampleToProject(destination, sample);
+		removeSampleFromProject(source, sample);
+		
+		return join;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -223,8 +236,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	public void removeSampleFromProject(Project project, Sample sample) {
 		psjRepository.removeSampleFromProject(project, sample);
+
+		// if the sample doesn't refer to any other projects, delete it
+		if (psjRepository.getProjectForSample(sample).isEmpty()) {
+			sampleRepository.delete(sample);
+		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -232,7 +250,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	public void removeSamplesFromProject(Project project, Iterable<Sample> samples) {
 		for (Sample s : samples) {
-			psjRepository.removeSampleFromProject(project, s);
+			removeSampleFromProject(project, s);
 		}
 	}
 

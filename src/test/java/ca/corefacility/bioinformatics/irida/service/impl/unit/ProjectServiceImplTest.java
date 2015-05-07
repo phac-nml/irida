@@ -413,16 +413,38 @@ public class ProjectServiceImplTest {
 		verify(sequenceFileUtilities).countSequenceFileLengthInBases(createTempFile);
 		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
 	}
-	
+
 	@Test
 	public void testRemoveSamplesFromProject() {
 		Project project = new Project();
-		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
+		Sample s1 = new Sample("s1");
+		Sample s2 = new Sample("s2");
+		List<Sample> samples = ImmutableList.of(s1, s2);
+
+		when(psjRepository.getProjectForSample(s1)).thenReturn(Lists.newArrayList());
+		when(psjRepository.getProjectForSample(s2)).thenReturn(Lists.newArrayList());
 
 		projectService.removeSamplesFromProject(project, samples);
 
 		for (Sample s : samples) {
 			verify(psjRepository).removeSampleFromProject(project, s);
+			verify(sampleRepository).delete(s);
 		}
+	}
+
+	@Test
+	public void testRemoveSampleWithOtherLinksFromProject() {
+		Sample s = new Sample("s1");
+		Project p1 = new Project("p1");
+		Project p2 = new Project("p2");
+
+		when(psjRepository.getProjectForSample(s)).thenReturn(ImmutableList.of(new ProjectSampleJoin(p2, s)));
+
+		projectService.removeSampleFromProject(p1, s);
+
+		verify(psjRepository).removeSampleFromProject(p1, s);
+
+		verifyZeroInteractions(sampleRepository);
+
 	}
 }

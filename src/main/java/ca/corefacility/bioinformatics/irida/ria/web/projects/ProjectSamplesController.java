@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -286,14 +287,21 @@ public class ProjectSamplesController {
 
 		Map<String, Object> response = new HashMap<>();
 		List<String> warnings = new ArrayList<>();
-		List<String> successNames = new ArrayList<>();
+		List<Sample> successful = new ArrayList<>();
 
 		for (Long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
 			try {
-				projectService.addSampleToProject(newProject, sample);
+				
+				if(removeFromOriginal){
+					projectService.moveSampleBetweenProjects(originalProject, newProject, sample);
+				}
+				else{
+					projectService.addSampleToProject(newProject, sample);
+				}
+				
 				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
-				successNames.add(sample.getSampleName());
+				successful.add(sample);
 			} catch (EntityExistsException ex) {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
 						+ " where it already exists.");
@@ -301,15 +309,9 @@ public class ProjectSamplesController {
 				warnings.add(messageSource.getMessage("project.samples.copy-error-message",
 						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
 			}
-
-			if (removeFromOriginal) {
-				projectService.removeSampleFromProject(originalProject, sample);
-				logger.trace("Removed sample " + sampleId + " from original project " + projectId);
-
-			}
 		}
 
-		if (!warnings.isEmpty() || successNames.size() == 0) {
+		if (!warnings.isEmpty() || successful.size() == 0) {
 			response.put("result", "warning");
 			response.put("warnings", warnings);
 		} else {
@@ -317,26 +319,29 @@ public class ProjectSamplesController {
 		}
 		// 1. Only one sample copied
 		// 2. Only one sample moved
-		if (successNames.size() == 1) {
+		if (successful.size() == 1) {
 			if (removeFromOriginal) {
 				response.put("message", messageSource.getMessage("project.samples.move-single-success-message",
-						new Object[] { successNames.get(0), newProject.getName() }, locale));
+						new Object[] { successful.get(0).getSampleName(), newProject.getName() }, locale));
 			} else {
 				response.put("message", messageSource.getMessage("project.samples.copy-single-success-message",
-						new Object[] { successNames.get(0), newProject.getName() }, locale));
+						new Object[] { successful.get(0).getSampleName(), newProject.getName() }, locale));
 			}
 		}
 		// 3. Multiple samples copied
 		// 4. Multiple samples moved
-		else if (successNames.size() > 1) {
+		else if (successful.size() > 1) {
 			if (removeFromOriginal) {
 				response.put("message", messageSource.getMessage("project.samples.move-multiple-success-message",
-						new Object[] { successNames.size(), newProject.getName() }, locale));
+						new Object[] { successful.size(), newProject.getName() }, locale));
 			} else {
 				response.put("message", messageSource.getMessage("project.samples.copy-multiple-success-message",
-						new Object[] { successNames.size(), newProject.getName() }, locale));
+						new Object[] { successful.size(), newProject.getName() }, locale));
 			}
 		}
+		
+		response.put("successful", successful.stream().map((s) -> s.getId()).collect(Collectors.toList()));
+		
 		return response;
 	}
 
@@ -350,9 +355,9 @@ public class ProjectSamplesController {
 	 *
 	 * @return Map containing either success or errors.
 	 */
-	@RequestMapping(value = "/projects/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> deleteProjectSamples(@PathVariable Long projectId,
-			@RequestParam List<Long> sampleIds) {
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
 		Map<String, Object> result = new HashMap<>();
 		for (Long id : sampleIds) {
@@ -364,7 +369,9 @@ public class ProjectSamplesController {
 			}
 
 		}
-		result.put("success", "DONE!");
+		result.put("message", messageSource.getMessage("project.samples.remove-success", new Object[]{sampleIds.size()}, locale));
+		
+		result.put("result", "success");
 		return result;
 	}
 

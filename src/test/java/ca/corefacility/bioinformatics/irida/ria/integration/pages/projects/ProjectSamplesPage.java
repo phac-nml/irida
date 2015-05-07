@@ -184,6 +184,10 @@ public class ProjectSamplesPage extends AbstractPage {
 		return pageUtilities.checkSuccessNotification();
 	}
 
+	public boolean checkWarningNotification() {
+		return pageUtilities.checkWarningNotification();
+	}
+	
 	public int getTotalSelectedSamplesCount() {
 		return Integer.parseInt(driver.findElement(By.id("selected-count")).getText());
 	}
@@ -254,7 +258,7 @@ public class ProjectSamplesPage extends AbstractPage {
 
 	// Filtering
 	public int getTotalSampleCount() {
-		return Integer.parseInt(driver.findElement(By.id("samples-total")).getText());
+		return Integer.parseInt(driver.findElement(By.id("sample-count")).getText());
 	}
 
 	public int getFilteredSampleCount() {

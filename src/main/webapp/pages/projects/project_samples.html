@@ -158,6 +158,15 @@
 								<span th:text="#{project.samples.nav.move}"></span>
 							</a>
 						</li>
+						<li class="local-only" th:if="${isOwner} or ${isAdmin}"
+						    ng-class="{disabled: ! subnav.localSelected}" ng-attr-tooltip="{{subnav.showTooltip()}}"
+						    tooltip-append-to-body="true" tooltip-placement="right">
+							<a id="removeBtn" href="#" ng-click="subnav.remove()">
+								<i class="fa fa-trash fa-fw"></i>
+								&nbsp;
+								<span th:text="#{project.samples.nav.remove}"></span>
+							</a>
+						</li>
 					</ul>
 				</div>
 
@@ -282,8 +291,6 @@
 	        src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
 	        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
-	<script src="/resources/bower_components/ngstorage/ngStorage.min.js"
-	        th:src="@{/resources/bower_components/ngstorage/ngStorage.min.js}"></script>
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>
