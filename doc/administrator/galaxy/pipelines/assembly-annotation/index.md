@@ -4,15 +4,19 @@ search_title: "IRIDA Assembly and Annotation"
 description: "Install guide for the assembly and annotation pipeline."
 ---
 
-IRIDA Assembly and Annotation
-=============================
+Assembly and Annotation
+=======================
 
-IRIDA uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes.  The specific Galaxy tools are listed in the table below.
+This workflow uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
 
-| Tool Name   | Tool Revision | Toolshed Installable Revision | Toolshed             |
-|:-----------:|:-------------:|:-----------------------------:|:--------------------:|
-| **spades**  | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
-| **prokka**  | 3ad7ef0ba385  | 6 (2014-10-27)                | [Galaxy Main Shed][] |
+| Tool Name                 | Tool Revision | Toolshed Installable Revision | Toolshed             |
+|:-------------------------:|:-------------:|:-----------------------------:|:--------------------:|
+| **flash**                 | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
+| **filter_spades_repeats** | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
+| **assemblystats**         | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
+| **spades**                | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
+| **prokka**                | 3ad7ef0ba385  | 6 (2014-10-27)                | [Galaxy Main Shed][] |
+| **regex_find_replace**    | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
 
@@ -20,7 +24,8 @@ To install these tools please proceed through the following steps.
 
 Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory.
 
-1. [Java][]:  Please download and install [Java] version 1.6+ or make sure it is available in your execution environment.
+1. [Java][]:  Please download and install [Java][] version 1.6+ or make sure it is available in your execution environment.
+2. [gnuplot][]: Please download and install [gnuplot][] or make sure this is available in your execution environment.
 2. **Perl Modules**: Please download and install dependency Perl modules with the command.
 
 ```bash
@@ -46,7 +51,7 @@ The install progress can be checked by monitoring the Galaxy log file `$GALAXY_B
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
 
 1. Upload the [Assembly Annotation Galaxy Workflow][] by going to **Workflow > Upload or import workflow**.
-2. Upload the sequence reads by going to **Analyze Data** and then clicking on the **upload files from disk** icon ![upload-icon][].  Select the [pipelines/test/assembly-annotation/reads][] files.  Make sure to change the **Type** of each file from **Auto-detect** to **fastqsanger**.  When uploaded you should see the following in your history.
+2. Upload the sequence reads by going to **Analyze Data** and then clicking on the **upload files from disk** icon ![upload-icon][].  Select the [test/reads][] files.  Make sure to change the **Type** of each file from **Auto-detect** to **fastqsanger**.  When uploaded you should see the following in your history.
 
     ![upload-history][]
 
@@ -55,7 +60,7 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 4. This should have properly paired your data and named the sample **a**.  Enter the name of this paired dataset collection at the bottom and click **Create list**.
-5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **SPAdes and Prokka** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
+5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **FLASH, SPAdes and Prokka (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
 6. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
     ![workflow-success][]
@@ -67,13 +72,15 @@ If everything was successfull then all dependencies for this pipeline have been 
 [SPAdes]: http://bioinf.spbau.ru/spades
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
+[IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[gnuplot]: http://www.gnuplot.info/
 [BioPerl]: http://www.bioperl.org/wiki/Main_Page
-[Assembly Annotation Galaxy Workflow]: ../test/assembly-annotation/assembly-annotation.ga
+[Assembly Annotation Galaxy Workflow]: workflows/AssemblyAnnotation/0.2/assembly-annotation.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
-[pipelines/test/assembly-annotation/reads]: ../test/assembly-annotation/reads
+[test/reads]: ../test/assembly-annotation/reads
 [upload-history]: ../test/assembly-annotation/images/upload-history.jpg
 [datasets-icon]: ../test/snvphyl/images/datasets-icon.jpg
 [dataset-pair-screen]: ../test/assembly-annotation/images/dataset-pair-screen.jpg
-[workflow-success]: ../test/assembly-annotation/images/workflow-success.jpg
+[workflow-success]: ../test/assembly-annotation/images/workflow-success.png
 [view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg
