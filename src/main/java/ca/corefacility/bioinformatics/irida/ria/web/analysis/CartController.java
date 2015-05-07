@@ -125,6 +125,10 @@ public class CartController {
 		return selected;
 	}
 
+	public Map<String, Sample> getRemoteSelected(){
+		return remoteSelected;
+	}
+
 	/**
 	 * Set the cart object programatically. Used mostly for testing.
 	 * 
