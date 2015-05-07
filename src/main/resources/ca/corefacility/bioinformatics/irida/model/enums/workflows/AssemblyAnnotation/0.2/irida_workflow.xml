@@ -33,8 +33,12 @@
 		</parameter>
 	</parameters>
 	<outputs>
+		<output name="read-merge-log" fileName="flash.log" />
 		<output name="assembly-log" fileName="spades.log" />
-		<output name="contigs" fileName="contigs.fasta" />
+		<output name="filter-assembly-log" fileName="filter-spades.txt" />
+		<output name="contigs" fileName="contigs-with-repeats.fasta" />
+		<output name="contigs-no-repeats" fileName="contigs-without-repeats.fasta" />
+		<output name="assembly-stats-repeats" fileName="assembly-stats-with-repeats.txt" />
 		<output name="annotations-genbank" fileName="genome.gbk" />
 		<output name="annotations-stats" fileName="prokka_stats.txt" />
 		<output name="annotations-log" fileName="prokka.log" />
