@@ -1,0 +1,7 @@
+{
+  "preset": "google",
+  "disallowSpacesInAnonymousFunctionExpression": null,
+  "excludeFiles": ["node_modules/**"],
+  "maximumLineLength": 120,
+  "validateIndentation": 2
+}
