@@ -24,12 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 public interface SampleService extends CRUDService<Long, Sample> {
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
-	public Sample read(Long id) throws EntityNotFoundException;
-
-	/**
 	 * Get a specific instance of a {@link Sample} that belongs to a
 	 * {@link Project}. If the {@link Sample} is not associated to the
 	 * {@link Project} (i.e., no relationship is shared between the
@@ -140,6 +134,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the completely merged {@link Sample} (the persisted version of
 	 *         <code>mergeInto</code>).
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Sample mergeSamples(Project p, Sample mergeInto, Sample... toMerge);
 
 	/**
