@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -102,6 +103,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
 		logger.trace("Calling super.create");
@@ -115,6 +117,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
@@ -124,6 +127,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile sf = super.update(id, updatedFields);
 

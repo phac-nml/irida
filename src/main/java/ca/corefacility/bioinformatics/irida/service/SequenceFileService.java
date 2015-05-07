@@ -4,15 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -24,18 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * 
  */
 public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
-	public SequenceFile create(@Valid SequenceFile object) throws EntityExistsException, ConstraintViolationException;
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
-	public SequenceFile read(Long id) throws EntityNotFoundException;
 
 	/**
 	 * Persist the {@link SequenceFile} to the database and create a new
@@ -110,13 +93,8 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            references from.
 	 * @return the references to {@link SequenceFile}.
 	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
 	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun sequencingRun);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
-	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException;
 
 	/**
 	 * Get the {@link SequenceFile}s that do not have pairs for a {@link Sample}
