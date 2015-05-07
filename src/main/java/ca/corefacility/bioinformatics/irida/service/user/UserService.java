@@ -2,17 +2,12 @@ package ca.corefacility.bioinformatics.irida.service.user;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -27,14 +22,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  */
 public interface UserService extends CRUDService<Long, User>, UserDetailsService {
 
-	/**
-	 * If a user is an administrator, they are permitted to update any user
-	 * property. If a manager or user is updating an account, they should not be
-	 * permitted to change the role of the user (only administrators can create
-	 * users with role other than Role.ROLE_USER).
-	 */
-	static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "(!#properties.containsKey('systemRole') and hasPermission(#uid, 'canUpdateUser'))";
 
 	/**
 	 * A user is permitted to change their own password if they did not
@@ -81,6 +68,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 *            the project to get users for.
 	 * @return the users associated with the project.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Collection<Join<Project, User>> getUsersForProject(Project project);
 
 	/**
@@ -92,6 +80,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 *            The project we want to list the available users for
 	 * @return A List of {@link User}s that are not associated with the project.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<User> getUsersAvailableForProject(Project project);
 
 	/**
@@ -104,6 +93,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @return A Collection of {@code Join<Project,User>}s that have the given
 	 *         role
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole);
 
 	/**
@@ -121,38 +111,6 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 */
 	@PreAuthorize(CHANGE_PASSWORD_PERMISSIONS)
 	public User changePassword(Long userId, String password);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize(CREATE_USER_PERMISSIONS)
-	public User create(@Valid User u) throws EntityExistsException, ConstraintViolationException;
-
-	/**
-	 * If a user is an administrator, they are permitted to create a user
-	 * account with any role. If a user is a manager, then they are only
-	 * permitted to create user accounts with a ROLE_USER role.
-	 */
-	static final String CREATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.user.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize(UPDATE_USER_PERMISSIONS)
-	public User update(Long uid, Map<String, Object> properties);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_MANAGER')")
-	public void delete(Long id);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Iterable<User> findAll();
 
 	/**
 	 * Get the set of {@link User} that belong to a {@link Group}.

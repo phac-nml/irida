@@ -10,12 +10,14 @@ import java.util.regex.Pattern;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -77,6 +79,24 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	private UserGroupJoinRepository userGroupRepository;
 
 	private static final Pattern USER_CONSTRAINT_PATTERN;
+	
+
+	/**
+	 * If a user is an administrator, they are permitted to create a user
+	 * account with any role. If a user is a manager, then they are only
+	 * permitted to create user accounts with a ROLE_USER role.
+	 */
+	private static final String CREATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.user.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
+
+	/**
+	 * If a user is an administrator, they are permitted to update any user
+	 * property. If a manager or user is updating an account, they should not be
+	 * permitted to change the role of the user (only administrators can create
+	 * users with role other than Role.ROLE_USER).
+	 */
+	static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "(!#properties.containsKey('systemRole') and hasPermission(#uid, 'canUpdateUser'))";
 
 	static {
 		String regex = "^USER_(.*)_CONSTRAINT$";
@@ -111,8 +131,18 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Iterable<User> findAll() {
 		return super.findAll();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_MANAGER')")
+	public void delete(final Long id) {
+		super.delete(id);
 	}
 
 	/**
@@ -133,7 +163,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
-	public User create(User u) {
+	@PreAuthorize(CREATE_USER_PERMISSIONS)
+	public User create(@Valid User u) {
 		String password = u.getPassword();
 		u.setPassword(passwordEncoder.encode(password));
 		try {
@@ -156,6 +187,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize(UPDATE_USER_PERMISSIONS)
 	public User update(Long uid, Map<String, Object> properties) {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
