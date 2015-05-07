@@ -17,13 +17,26 @@
 		</parameter>
 		<parameter name="assembly-contig-min-length" defaultValue="1000">
 			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/lionelguy/spades/filter_spades_output/0.1"
-				parameterName="length_co" />
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
+				parameterName="len_cutoff" />
 		</parameter>
-		<parameter name="assembly-contig-min-coverage" defaultValue="10">
+		<parameter name="assembly-contig-min-coverage-ratio"
+			defaultValue="0.33">
 			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/lionelguy/spades/filter_spades_output/0.1"
-				parameterName="coverage_co" />
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
+				parameterName="cov_cutoff" />
+		</parameter>
+		<parameter name="assembly-contig-min-repeat-coverage-ratio"
+			defaultValue="1.75">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
+				parameterName="rep_cutoff" />
+		</parameter>
+		<parameter name="assembly-contig-min-length-coverage-calculation"
+			defaultValue="5000">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
+				parameterName="cov_len_cutoff" />
 		</parameter>
 		<parameter name="annotation-similarity-e-value-cutoff"
 			defaultValue="1e-06">
