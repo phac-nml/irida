@@ -10,6 +10,7 @@ import org.springframework.hateoas.ResourceSupport;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
@@ -151,5 +152,14 @@ public class IridaResourceSupport {
 
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;
+	}
+	
+	@JsonIgnore
+	public String getSelfHref(){
+		Link link = getLink(Link.REL_SELF);
+		if(link != null){
+			return link.getHref();
+		}
+		return null;
 	}
 }
