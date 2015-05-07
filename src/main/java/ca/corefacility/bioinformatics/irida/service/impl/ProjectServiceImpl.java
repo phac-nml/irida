@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -85,11 +87,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	public Iterable<Project> findAll() {
 		return super.findAll();
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadProject')")
 	public Project read(Long id) {
 		return super.read(id);
 	}
@@ -277,22 +282,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<ProjectUserJoin> getProjectsForUserWithRole(User user, ProjectRole role) {
-		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
-				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, role), 0, Integer.MAX_VALUE, Direction.ASC);
-		return searchProjectUsers.getContent();
-	}
-
-	/**
 	 * {@inheritDoc }
 	 */
 	@Override
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
-		List<ProjectUserJoin> projects = getProjectsForUserWithRole(user, projectRole);
-		return projects.contains(new ProjectUserJoin(project, user, projectRole));
+		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
+				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE, Direction.ASC);
+		return searchProjectUsers.getContent().contains(new ProjectUserJoin(project, user, projectRole));
 	}
 
 	/**

@@ -135,6 +135,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return the projects associated with the user.
 	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public List<Join<Project, User>> getProjectsForUser(User user);
 
 	/**
@@ -153,21 +154,9 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return The matching ProjectUserJoins
 	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
 			Direction order, String... sortProperties);
-
-	/**
-	 * Get all {@link Project}s associated with a particular {@link User} where that user has a {@link
-	 * ProjectRole}.PROJECT_OWNER role on the project.
-	 *
-	 * @param user
-	 * 		the user to get projects for.
-	 * @param role
-	 * 		the user's role on the project
-	 *
-	 * @return A collection of {@link ProjectUserJoin}s describing the projects associated with the user.
-	 */
-	public List<ProjectUserJoin> getProjectsForUserWithRole(User user, ProjectRole role);
 
 	/**
 	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
@@ -183,19 +172,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadProject')")
-	public Project read(Long id);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
-	@PostFilter("hasPermission(filterObject, 'canReadProject')")
-	public Iterable<Project> findAll();
 
 	/**
 	 * Add a related {@link Project} to the given {@link Project}
