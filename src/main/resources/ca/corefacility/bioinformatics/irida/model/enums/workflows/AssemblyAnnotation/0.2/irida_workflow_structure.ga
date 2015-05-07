@@ -161,11 +161,6 @@
                     "action_type": "HideDatasetAction", 
                     "output_name": "out_contig_stats"
                 }, 
-                "HideDatasetActionout_contigs": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "out_contigs"
-                }, 
                 "HideDatasetActionout_scaffold_stats": {
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
@@ -175,6 +170,13 @@
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
                     "output_name": "out_scaffolds"
+                }, 
+                "RenameDatasetActionout_contigs": {
+                    "action_arguments": {
+                        "newname": "contigs-all.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_contigs"
                 }, 
                 "RenameDatasetActionout_log": {
                     "action_arguments": {
@@ -211,7 +213,7 @@
                 }
             ], 
             "position": {
-                "left": 1096, 
+                "left": 1092, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -268,7 +270,7 @@
                 }
             ], 
             "position": {
-                "left": 1409, 
+                "left": 1405, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -351,7 +353,7 @@
                 }
             ], 
             "position": {
-                "left": 1713, 
+                "left": 1709, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -455,7 +457,7 @@
                 }
             ], 
             "position": {
-                "left": 1713, 
+                "left": 1709, 
                 "top": 494
             }, 
             "post_job_actions": {
@@ -539,5 +541,5 @@
             "uuid": "e37d6253-7ea6-435c-8840-62218275aba0"
         }
     }, 
-    "uuid": "2dd0ca4d-6be3-4abe-9cea-c1f5ca1c38e4"
+    "uuid": "516202c4-681e-4d08-87cf-953afb7da18d"
 }
