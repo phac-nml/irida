@@ -86,7 +86,7 @@ Similar to requesting an individual resource, a resource collection is wrapped w
 Authentication
 ==============
 
-IRIDA uses [OAuth2](http://oauth.net/2/) for authentication and authorization of clients. Command-line tools must use the password grant type for OAuth2. Our examples are primarily showing how to interact with the IRIDA REST API over the using the password flow. IRIDA also supports the authorization code flow, so other web services can interact with IRIDA.
+IRIDA does not allow any un-authenticated interaction with the REST API. IRIDA uses [OAuth2](http://oauth.net/2/) for authentication and authorization of clients. Command-line tools must use the password grant type for OAuth2. Our examples are primarily showing how to interact with the IRIDA REST API over the using the password flow. IRIDA also supports the authorization code flow, so other web services can interact with IRIDA.
 
 Most programming languages have libraries with convenient interfaces for dealing with OAuth2 authorization. We provide some examples for the programming languages where we've written our own clients, but a comprehensive list of libraries can be found here: <http://oauth.net/code/>
 
@@ -98,11 +98,7 @@ For Python, we recommend that you use [Spring Security OAuth2](http://projects.s
 
 For Python, we recommend that you use [Rauth](http://rauth.readthedocs.org/en/latest/) or [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/). Both libraries are straightforward to use, so we provide some quick examples for both.
 
-#### Rauth
-
 A complete application that uses Rauth is the [command-line concatenater](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) for IRIDA.
-
-#### Requests-OAuthlib
 
 Another option for using Python with IRIDA is the [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/).
 
@@ -142,127 +138,100 @@ curl --silent http://localhost:8080/irida/api/projects/1 \\
      -H 'Authorization: Bearer my-53cr37-04u7h-4cc355-70k3n' | python -m json.tool
 ```
 
+General Contracts
+=================
+
+### Formats
+
+By default, IRIDA will respond to requests with JSON if no `Accept` is specified. IRIDA can also generally respond to requests for `application/xml`. Some resources (specifically marked) will be able to respond to requests for `application/fastq` and `application/fasta`.
+
+All timestamps in IRIDA are returned in **milliseconds** since the [epoch](http://en.wikipedia.org/wiki/Unix_time).
+
+### Client Errors
+
+As in the [authentication](#authentication) section, all resources in the IRIDA REST API are protected and require authorization to access. Clients attempting to access *any* URL under the `/api` path without an authorization token will receive an HTTP `401 Unauthorized` response, regardless of the existence of a resource.
+
+When sending resources to the server, the following will result in `400 Bad Request`:
+
+* Sending invalid JSON (malformed, wrong type of quotes, etc.).
+* Sending data that is considered invalid (field length is too short, for example).
+* Sending data that includes unexpected fields (the server will respond with a list of acceptable field names).
+
+Some resources may not respond to all HTTP verbs. If an HTTP verb is not supported, the response will be `405 Request method not supported`.
+
+If you are not permitted to execute an HTTP verb on a resource, the response will be `403 Forbidden`.
+
+### HTTP Verbs
+
+All endpoints will respond to HTTP `GET` requests.
+
+[Resource collections](#resource-collection) will respond to HTTP `POST` requests to create a new instance of that resource.
+
+[Individual resources](#individual-resource) will respond to HTTP `PATCH` requests to update a resource and `DELETE` requests to delete a resource (if the resource is allowed to be deleted). A response of `403 Forbidden` will be issued if you are not permitted to modify or delete a resource (you may have read-only permissions).
+
+Root Endpoints
+==============
+
+To begin accessing IRIDA, you can issue a `GET` request to get a collection of links to the top-level resources:
+
+```bash
+$ curl http://irida.corefacility.ca/irida/api
+```
+
+The root resource returned matches the [individual resource](#individual-resource) format.
+
+### Links
+
+The root endpoint has links to the top-level resource collections in IRIDA.
+
+| Name | Description |
+|------|-------------|
+| `self` | the root resource |
+| `projects` | the collection of project resources |
+| `users` | the collection of user resources |
+| `sequencingRuns` | the collection of sequencing run resources |
+
 Resources
 =========
 
-IRIDA has four major resources:
+IRIDA has several major resources:
 
 1. Users,
 2. Projects,
-3. Samples,
-4. Sequence files.
+  * Samples
+  * Sequence files
+3. Sequencing Runs
 
-User
-----
+### Users
 
-### Description
+#### Links
 {:.no_toc}
 
-This resource contains user information. User objects are used for authentication and authorization.
-
-### Methods
+#### Properties
 {:.no_toc}
 
-`GET`, `POST`, `PATCH`, `DELETE`.
+### Projects
 
-### Media Types
+#### Links
 {:.no_toc}
 
-`application/xml`, `application/json`.
-
-### Properties
+#### Properties
 {:.no_toc}
 
-* **username**: A unique name that identifies the user. Must be at least 3 characters long.
-* **email**: An e-mail address where the user can receive mail. E-mail addresses *can* be validated using [RFC2822](https://tools.ietf.org/html/rfc2822), but our implementation uses [Hibernate e-mail validator](https://docs.jboss.org/hibernate/validator/4.2/api/org/hibernate/validator/constraints/impl/EmailValidator.html).
-* **password**: A string of characters that the user can use to authenticate themselves. Passwords must contain at least one upper-case letter, at least one lower-case letter, at least one number, and must be at least 6 characters long. **Note**: the password field is *never* sent back to the client, so is not part of the JSON/XML response.
-* **firstName**: The given name of the user. Must be at least 2 characters long.
-* **lastName**: The family name of the user. Must be at least 2 characters long.
-* **phoneNumber**: The phone number where the user can be called. Must be at least 4 characters long (i.e., at least an internal extension). No other validation is done on this field.
+### Samples
 
-Project
--------
-
-### Description
+#### Links
 {:.no_toc}
 
-This resource contains information about a project. A project contains metadata about a project (like the project name, a brief description), a collection of samples, and any other project-related files.
-
-### Methods
+#### Properties
 {:.no_toc}
 
-`GET`, `POST`, `PATCH`, `DELETE`.
+### Sequence Files
 
-### Media Types
+#### Links
 {:.no_toc}
 
-`application/xml`, `application/json`.
-
-### Properties
+#### Properties
 {:.no_toc}
 
-* **name**: The name of the project.
-
-Sample
-------
-
-### Description
-{:.no_toc}
-
-This resource contains information about a sample. A sample corresponds to a single strain. A sample contains metadata about the strain (like the sample name, a brief description) and a collection of files. In general, a sample will contain a pair of files (forward and reverse) for a paired-end run, and may also contain more files if top-up runs are executed for the strain.
-
-### Methods
-{:.no_toc}
-
-`GET`, `POST`, `PATCH`, `DELETE`.
-
-### Media Types
-{:.no_toc}
-
-`application/xml`, `application/json`.
-
-### Properties
-{:.no_toc}
-
-* **sampleName**: The name of the sample.
-
-Bookmarks
-=========
-
-User collection
----------------
-
-### URI
-{:.no_toc}
-
-https://api.irida.ca/users
-
-### Description
-{:.no_toc}
-
-`GET` this URI to get the first page of user accounts. By default, the first page contains 20 users and is sorted by account creation date. `POST` this URI to create a new user account. The body of the `POST` request should include a JSON or XML representation of the required properties of a user object (as above).
-
-### Links
-{:.no_toc}
-
-As a collection of resources, this resource contains links to other pages (i.e., `first`, `previous`, `next`, `last`, and `self`) and a link to **all** resources of this type (`collection/all`).
-
-Each resource in the collection has a link to itself (`self`) and a link to a list of the projects that the user has permissions to view (`user/projects`).
-
-Project collection
-------------------
-
-### URI
-{:.no_toc}
-
-https://api.irida.ca/projects
-
-### Description
-{:.no_toc}
-
-`GET` this URI to get the first page of projects. The first page contains 20 projects by default and is sorted by project creation date. `POST` this URI to create a new project. The body of the `POST` request should include a JSON or XML representation of the required properties of a project object (as above).
-
-### Links
-{:.no_toc}
-
-As a collection of resources, this resource contains links to other pages (i.e., `first`, `previous`, `next`, `last`, and `self`) and a link to **all** resources of this type (`collection/all`).
+### Sequencing Runs

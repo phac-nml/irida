@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.web.controller.api;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,7 @@ public class RESTRootController {
     public void initLinks() {
         CONTROLLERS.put("users", RESTUsersController.class);
         CONTROLLERS.put("projects", RESTProjectsController.class);
+        CONTROLLERS.put("sequencingRuns", RESTSequencingRunController.class);
     }
 
     /**
