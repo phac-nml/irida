@@ -6,6 +6,7 @@ import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -36,11 +37,13 @@ public class GroupServiceImpl extends CRUDServiceImpl<Long, Group> implements Gr
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Group create(Group g) {
 		return super.create(g);
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Group update(Long id, Map<String, Object> updatedProperties) {
 		return super.update(id, updatedProperties);
 	}
