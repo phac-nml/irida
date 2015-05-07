@@ -75,7 +75,7 @@ public class LoginPageIT {
 
 	@Test
 	public void testGoodLogin() throws Exception {
-		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
+		LoginPage.login(driver, LoginPage.MANAGER_USERNAME, LoginPage.GOOD_PASSWORD);
 		assertTrue("The 'test' user is logged in and redirected.", driver.getCurrentUrl().contains("dashboard"));
 	}
 

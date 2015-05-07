@@ -68,7 +68,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testInitialPageSetUp() {
 		logger.info("Testing page set up for: Project Samples");
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 		assertTrue(page.getTitle().contains("Samples"));
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
@@ -77,7 +77,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testPaging() {
 		logger.info("Testing paging for: Project Samples");
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		// Initial setup
@@ -131,7 +131,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testSelectSamples() {
 		logger.info("Testing selecting samples for: Project Samples");
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		assertEquals(0, page.getNumberOfSamplesSelected());
@@ -145,7 +145,7 @@ public class ProjectSamplesPageIT {
 	public void testPagingWithSelectingSamples() {
 		logger.info("Testing paging with selecting samples for: Project Samples");
 		List<Integer> page1 = ImmutableList.of(0, 1, 6);
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		assertEquals(0, page.getNumberOfSamplesSelected());
@@ -183,7 +183,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testSelectedSampleCount() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		page.selectSampleByRow(0);
@@ -210,7 +210,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testDefaultMerge() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
@@ -228,7 +228,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testRenameMerge() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
@@ -361,7 +361,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testAdminCopyFromAnyProjectToAnyProject() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		selectFirstThreeSamples();
@@ -381,7 +381,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testMoveSampleToProjectConflict() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		// try to move to existing project
@@ -399,7 +399,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testMultiSelection() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		// Test selecting a page
@@ -437,7 +437,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testExportLinker() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		assertFalse(page.isBtnEnabled("exportOptionsBtn"));
@@ -468,7 +468,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testTableSorts() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		// Page should be sorted by creation date first
@@ -487,7 +487,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testSampleFilter() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		// Filter by name
@@ -506,7 +506,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testChangingTableSize() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
@@ -518,7 +518,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testCart() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		selectFirstThreeSamples();
@@ -537,7 +537,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testClearCart() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		selectFirstThreeSamples();
@@ -554,7 +554,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testDeleteProjectFromCart() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		assertFalse(page.isCartVisible());
@@ -574,7 +574,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testDeleteSampleFromCart() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage();
 
 		selectFirstThreeSamples();
@@ -591,7 +591,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testShowAssociatedSamples() throws InterruptedException {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page.goToPage("6");
 		int initialNumber = page.getNumberOfSamplesDisplayed();
 

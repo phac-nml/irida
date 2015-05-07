@@ -42,7 +42,7 @@ public class SequencingRunFilesPageIT {
 	@Before
 	public void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page = new SequencingRunFilesPage(driver);
 		page.getFilesPage(1L);
 	}

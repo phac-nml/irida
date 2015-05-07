@@ -58,7 +58,7 @@ public class SequenceFilePageIT {
 	@Before
 	public void setUp() {
 		this.driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page = new SequenceFilePages(driver);
 	}
 
