@@ -126,3 +126,51 @@ Setting up Galaxy
 -----------------
 
 The complete test suite sets up a temporary instance of Galaxy for verifying interactions between IRIDA and Galaxy, so you must install some prerequisites before you can run the complete test suite. Please see the article on [setting up Galaxy](galaxy).
+
+Front End Development
+---------------------
+
+### Brackets
+
+[Brackets](http://www.brackets.io) is an open editor founded by Adobe.  Go to the web page to download the current version.
+
+#### Install Plugins
+
+Click the Extension Manager icon on the top right of the editor window.
+
+![Brackets Screen Shot](images/brackets-extension-manager.png)
+
+Search for and install the following plugins:
+
+- Beautify
+- FixMyJS
+- Interactive Linter
+- JSCS
+
+**Beautify** and **FixMyJS** can be set to run automatically on save in the `Edit` menu.
+
+![Brackets Save Shot](images/brackets-update-save.png)
+
+#### Interactive Linting
+
+Bottom right of the Brackets window will display the results of continual JSHinting.
+
+##### Passing JSHint
+
+![Brackets JSHint Passing](images/brackets-jshint-good.png)
+
+##### Failing JSHint
+
+![Brackets JSHint Passing](images/brackets-jshint-bad.png)
+
+Clicking on the red X will display the errors:
+
+![Brackets JSHint Errors](images/brackets-linter-errors.png)
+
+#### Open the `webapp` directory to edit only front end code
+
+This sets configuration files to the root directory for brackets.
+
+Ensure to set the spacing for JavaScript files to **2 Characters**
+
+![Brackets JS Spacing](images/brackets-js-2-spaces.png)
