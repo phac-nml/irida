@@ -167,6 +167,61 @@
 
 							</div>
 						</th:block>
+                        
+                        <th:block>
+                            <div th:id="${'remote-sample-' + sample.id}" class="sample-container" th:each="sample : ${remoteSamples}">
+                                <h3>
+                                    <span th:text="${'Remote Sample / ' + sample.name}">_Remote Samples_</span>
+                                    <button type="button"
+                                            class="btn btn-xs btn-default pull-right remove remove-sample-button"
+                                            th:text="#{form.btn.remove}">
+                                        _Remove_
+                                    </button>
+                                </h3>
+                                <th:block
+									th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
+								    hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
+									<table class="table" th:if="${hasPaired or hasSingles}">
+
+										<!--/* (15-03-26 ) PAIRED END DATA */-->
+										<th:block th:if="${hasPaired}"
+										          th:with="pairs=${sample.files.paired_end}">
+											<th:block th:each="pair : ${pairs}">
+												<tr class="paired_end paired_end__forward">
+													<td class="td_radio" rowspan="2">
+														<!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
+														<input type="radio" data-type="paired_end" th:value="${pair.getSelfHref()}"
+														       th:checked="${pairStat.first}" th:name="${sample.id}"/>
+													</td>
+													<td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
+												</tr>
+												<tr class="paired_end paired_end__reverse">
+													<td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+												</tr>
+											</th:block>
+										</th:block>
+
+										<!--/* (15-03-26 ) SINGLE END DATA */-->
+										<th:block th:if="${hasSingles}" th:with="files=${sample.files.single_end}">
+											<tr class="single_end" th:each="join : ${files}" th:with="file=${join.getObject()}">
+											<td>
+												<!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
+												<input type="radio" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" th:checked="${!hasPaired and fileStat.first}"/>
+											</td>
+											<td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${file},icon='single')"></td>
+										</tr>
+										</th:block>
+									</table>
+
+									<!--/* (15-03-26 ) If there are no files available in this sample to run on the selected pipeline show a warning with no files. */-->
+									<div th:unless="${hasPaired or hasSingles}" class="alert alert-warning">
+										<strong
+											class="fa fa-fw fa-ban"></strong>
+										<th:block th:text="#{workflow.files.files-not-appropriate}"></th:block>
+									</div>
+								</th:block>
+                            </div>
+                        </th:block>
 					</div>
 				</div>
 			</div>
