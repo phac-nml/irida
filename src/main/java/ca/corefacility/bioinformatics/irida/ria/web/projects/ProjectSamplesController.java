@@ -150,6 +150,13 @@ public class ProjectSamplesController {
 		return PROJECT_SAMPLES_PAGE;
 	}
 
+	@RequestMapping("/projects/{projectId}/samples/new")
+	public String getCreateNewSamplePage(@PathVariable Long projectId, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		return "projects/project_add_sample";
+	}
+
 	/**
 	 * Special method to add the correct linker script name to the modal template
 	 *

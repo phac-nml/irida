@@ -38,7 +38,8 @@
     "ng-table": "0.5.2",
     "Font-Awesome": "4.3.0",
     "PhyloCanvas": "1.2.26",
-    "angular-ui-router": "0.2.13"
+    "angular-ui-router": "0.2.13",
+    "angular-wizard": "0.4.3"
   },
   "devDependencies": {},
   "resolutions": {
