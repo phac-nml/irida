@@ -347,17 +347,29 @@
      * @param term - search term to use to filter the list.
      */
     return function(list, term) {
-      term = term.toLowerCase();
-      return list.filter(function(item) {
+      //filter each element in the collection
+      return _.filter(list,function(item) {
+        //if we have a project, check for how many samples we have left
         if(item.samples) {
-          return item.samples.filter(function(sample) {
-            return sample.label.toLowerCase().indexOf(term) > -1;
-          }).length > 0;
+          return filterList(item.samples,term).length > 0;
         }
-        return item.label.toLowerCase().indexOf(term) > -1;
+        //if we have an individual sample, filter it
+        return filterSample(item,term);
         
       });
     };
+    
+    function filterList(samples, term){
+      return _.filter(samples,function(s){
+        return filterSample(s,term);
+      });
+    }
+    
+    function filterSample(item, term){
+      term = term.toLowerCase();
+      return item.label.toLowerCase().indexOf(term) > -1;
+    }
+    
   }
 
   angular
