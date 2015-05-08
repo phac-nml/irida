@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  */
 public interface UserService extends CRUDService<Long, User>, UserDetailsService {
 
-
 	/**
 	 * A user is permitted to change their own password if they did not
 	 * successfully log in, but the reason for the login failure is that their
@@ -98,10 +97,9 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 
 	/**
 	 * Change the password on the {@link User} account. This method may be
-	 * called by a fully-authenticated {@link User} (though they should just
-	 * call {@link UserService#update(Long, java.util.Map)}), or by a
-	 * {@link User} who is <i>NOT</i> fully-authenticated and
-	 * {@link User#isCredentialsNonExpired()} returns <code>false</code>.
+	 * called by a fully-authenticated {@link User}, or by a {@link User} who is
+	 * <i>NOT</i> fully-authenticated and {@link User#isCredentialsNonExpired()}
+	 * returns <code>false</code>.
 	 * 
 	 * @param userId
 	 *            the identifier of the account to change the password for.
