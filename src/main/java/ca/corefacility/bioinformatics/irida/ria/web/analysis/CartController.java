@@ -125,7 +125,13 @@ public class CartController {
 		return selected;
 	}
 
-	public Map<String, Sample> getRemoteSelected(){
+	/**
+	 * Return the map of remote selected samples. This method should only be
+	 * accessed programmatically.
+	 * 
+	 * @return The cart map of remote samples
+	 */
+	public Map<String, Sample> getRemoteSelected() {
 		return remoteSelected;
 	}
 
