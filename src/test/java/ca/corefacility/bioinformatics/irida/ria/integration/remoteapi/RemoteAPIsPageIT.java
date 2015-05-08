@@ -40,7 +40,7 @@ public class RemoteAPIsPageIT {
 	@Before
 	public void setup() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 
 		apisPage = new RemoteAPIsPage(driver);
 	}

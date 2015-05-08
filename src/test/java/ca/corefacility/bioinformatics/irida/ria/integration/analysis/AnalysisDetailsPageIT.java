@@ -58,7 +58,7 @@ public class AnalysisDetailsPageIT {
 	public void testPageSetUp() throws URISyntaxException, IOException {
 		logger.debug("Testing 'Analysis Details Page'");
 
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver, 4L);
 
 		// Ensure files are displayed

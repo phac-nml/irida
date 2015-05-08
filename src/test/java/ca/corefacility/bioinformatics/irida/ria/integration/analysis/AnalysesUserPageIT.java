@@ -41,7 +41,7 @@ public class AnalysesUserPageIT {
 	@Before
 	public void setUp() {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 	}
 
 	@Test

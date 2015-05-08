@@ -43,7 +43,7 @@ public class UserDetailsPageIT {
 	@Before
 	public void setup() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		usersPage = new UserDetailsPage(driver);
 	}
 
