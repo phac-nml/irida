@@ -174,7 +174,8 @@
                                     <span th:text="#{workflow.samples.remote(${sample.name})}">_Remote Samples_</span>
                                     <button type="button"
                                             class="btn btn-xs btn-default pull-right remove remove-sample-button"
-                                            th:text="#{form.btn.remove}">
+                                            th:text="#{form.btn.remove}"
+                                            th:attr="ng-click=${'pipeline.removeRemoteSample(&#34;'+sample.id+'&#34;)'}">
                                         _Remove_
                                     </button>
                                 </h3>

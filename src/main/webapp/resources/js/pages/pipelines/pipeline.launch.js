@@ -130,6 +130,22 @@
         }
       });
     };
+    
+    /**
+	 * Remove a sample from the pipeline to be run.
+	 * 
+	 * @param projectId the project id of the sample to remove
+	 * @param sampleId the sample if to remove
+	 */
+    vm.removeRemoteSample = function (sampleId) {
+      CartService.removeRemoteSample(sampleId).then(function(){
+        //need funky selection style here because css selectors don't like slashes
+        angular.element("[id*='remote-sample-" + sampleId + "']").remove();
+        if(angular.element('.sample-container').length === 0) {
+          location.reload();
+        }
+      });
+    };
 
     /**
      * Clear the cart and redirect to the projects page
