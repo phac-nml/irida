@@ -388,7 +388,8 @@ public class CartController {
 	}
 
 	/**
-	 * Get the number of samples contained in the cart.
+	 * Get the number of samples contained in the cart. This count includes the
+	 * remote samples
 	 *
 	 * @return {@link Integer} number of samples in the cart.
 	 */
@@ -397,6 +398,9 @@ public class CartController {
 		for (Project project : selected.keySet()) {
 			count += selected.get(project).size();
 		}
+
+		count += remoteSelected.size();
+
 		return count;
 	}
 
