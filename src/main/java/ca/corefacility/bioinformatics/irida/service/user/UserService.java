@@ -120,6 +120,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @throws EntityNotFoundException
 	 *             if the {@link Group} cannot be found.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException;
 
 }

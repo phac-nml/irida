@@ -17,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -79,7 +82,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	private UserGroupJoinRepository userGroupRepository;
 
 	private static final Pattern USER_CONSTRAINT_PATTERN;
-	
 
 	/**
 	 * If a user is an administrator, they are permitted to create a user
@@ -132,10 +134,19 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
+	public User read(final Long id) {
+		return super.read(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Iterable<User> findAll() {
 		return super.findAll();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -143,6 +154,16 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@PreAuthorize("hasRole('ROLE_MANAGER')")
 	public void delete(final Long id) {
 		super.delete(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<User> search(Specification<User> specification, int page, int size, Direction order,
+			String... sortProperties) {
+		return super.search(specification, page, size, order, sortProperties);
 	}
 
 	/**
@@ -164,7 +185,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@PreAuthorize(CREATE_USER_PERMISSIONS)
-	public User create(@Valid User u) {
+	public User create(final @Valid User u) {
 		String password = u.getPassword();
 		u.setPassword(passwordEncoder.encode(password));
 		try {

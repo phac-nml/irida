@@ -36,18 +36,36 @@ public class GroupServiceImpl extends CRUDServiceImpl<Long, Group> implements Gr
 		this.userGroupRepository = userGroupRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Group create(Group g) {
 		return super.create(g);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Group update(Long id, Map<String, Object> updatedProperties) {
 		return super.update(id, updatedProperties);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Group read(Long id) {
+		return super.read(id);
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Join<User, Group> addUserToGroup(Group g, User u) throws EntityNotFoundException, EntityExistsException {
 		try {
