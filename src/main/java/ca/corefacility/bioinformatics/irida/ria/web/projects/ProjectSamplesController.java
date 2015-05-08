@@ -33,6 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -544,31 +545,33 @@ public class ProjectSamplesController {
 	 * @return Success status and id if successful, errors if not
 	 */
 	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
-	public Map<String, Object> createSampleInProject(@PathVariable Long projectId, @ModelAttribute Sample sample) {
+	public Map<String, Object> createSampleInProject(@PathVariable Long projectId, @ModelAttribute Sample sample, HttpServletResponse response) {
 		// get the project
 		Project project = projectService.read(projectId);
 
-		Map<String, Object> response = new HashMap<>();
+		Map<String, Object> responseBody = new HashMap<>();
 
 		// try to add the sample to the project
 		Join<Project, Sample> addSampleToProject = null;
 		try {
 			addSampleToProject = projectService.addSampleToProject(project, sample);
 			Long sampleId = addSampleToProject.getObject().getId();
-			response.put("sampleId", sampleId);
+			responseBody.put("sampleId", sampleId);
 		} catch (ConstraintViolationException ex) {
 			// if errors respond with the errors
 			Map<String, String> errorsFromViolationException = getErrorsFromViolationException(ex);
-			response.put("errors", errorsFromViolationException);
+			responseBody.put("errors", errorsFromViolationException);
 		}
 
-		if (!response.containsKey("errors")) {
-			response.put("status", "success");
+		if (!responseBody.containsKey("errors")) {
+			responseBody.put("status", "success");
+			response.setStatus(HttpStatus.CREATED.value());
 		} else {
-			response.put("status", "error");
+			responseBody.put("status", "error");
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
 		}
 
-		return response;
+		return responseBody;
 	}
 
 	/**
