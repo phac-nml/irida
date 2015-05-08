@@ -171,7 +171,7 @@
                         <th:block>
                             <div th:id="${'remote-sample-' + sample.id}" class="sample-container" th:each="sample : ${remoteSamples}">
                                 <h3>
-                                    <span th:text="${'Remote Sample / ' + sample.name}">_Remote Samples_</span>
+                                    <span th:text="#{workflow.samples.remote(${sample.name})}">_Remote Samples_</span>
                                     <button type="button"
                                             class="btn btn-xs btn-default pull-right remove remove-sample-button"
                                             th:text="#{form.btn.remove}">
