@@ -99,6 +99,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
+	public Boolean exists(Long id) {
+		return super.exists(id);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER')")
 	public Sample create(final @Valid Sample s) {
 		return super.create(s);

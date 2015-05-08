@@ -97,6 +97,16 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
+	public Boolean exists(Long id) {
+		return super.exists(id);
+	}
 
 	/**
 	 * {@inheritDoc}
