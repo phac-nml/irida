@@ -153,11 +153,17 @@ public class IridaResourceSupport {
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;
 	}
-	
+
+	/**
+	 * Convenience method for getting the self rel href for an object read from
+	 * a remote site
+	 * 
+	 * @return String href if available, null otherwise
+	 */
 	@JsonIgnore
-	public String getSelfHref(){
+	public String getSelfHref() {
 		Link link = getLink(Link.REL_SELF);
-		if(link != null){
+		if (link != null) {
 			return link.getHref();
 		}
 		return null;
