@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -104,12 +105,33 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_USER')")
 	public Project create(Project p) {
 		Project project = super.create(p);
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		addUserToProject(project, user, ProjectRole.PROJECT_OWNER);
 		return project;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#id, 'isProjectOwner')")
+	public Project update(final Long id, final Map<String, Object> updateProperties) {
+		return super.update(id, updateProperties);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#id, 'isProjectOwner')")
+	public void delete(final Long id) {
+		super.delete(id);
 	}
 
 	/**
