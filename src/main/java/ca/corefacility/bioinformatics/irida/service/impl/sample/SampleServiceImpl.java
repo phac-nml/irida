@@ -5,9 +5,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.slf4j.Logger;
@@ -16,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +93,24 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.psjRepository = psjRepository;
 		this.ssfRepository = ssfRepository;
 		this.analysisRepository = analysisRepository;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER')")
+	public Sample create(final @Valid Sample s) {
+		return super.create(s);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateSample')")
+	public Sample update(final Long id, final Map<String, Object> updatedProperties) {
+		return super.update(id, updatedProperties);
 	}
 
 	/**
@@ -245,14 +264,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		checkNotNull(referenceFile, "referenceFile is null");
 
 		return estimateCoverageForSample(sample, referenceFile.getFileLength());
-	}
-
-	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
-			int size, Direction order, String... sortProperties) {
-
-		sortProperties = verifySortProperties(sortProperties);
-
-		return psjRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 
 	/**

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -73,24 +72,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
 			Direction order, String... sortProperties);
-
-	/**
-	 * Search the samples for a project using a given specification
-	 * 
-	 * @param specification
-	 *            The specification to search with
-	 * @param page
-	 *            The page number
-	 * @param size
-	 *            the size of the page
-	 * @param order
-	 *            the sort direction and order
-	 * @param sortProperties
-	 *            The properties to sort on
-	 * @return A Page of {@link ProjectSampleJoin}s
-	 */
-	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
-			int size, Direction order, String... sortProperties);
 
 	/**
 	 * Get the {@link Sample} for the given ID
