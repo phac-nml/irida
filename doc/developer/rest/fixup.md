@@ -184,12 +184,12 @@ The root resource returned matches the [individual resource](#individual-resourc
 
 The root endpoint has links to the top-level resource collections in IRIDA.
 
-| Name | Description |
-|------|-------------|
-| `self` | the root resource |
-| `projects` | the collection of project resources |
-| `users` | the collection of user resources |
-| `sequencingRuns` | the collection of sequencing run resources |
+| Name             | Description                         |
+|------------------|-------------------------------------|
+| `self`           | the root resource                   |
+| `projects`       | the collection of project resources |
+| `users`          | the collection of user resources    |
+| `sequencingRuns` |                                     |
 
 Resources
 =========
@@ -202,12 +202,65 @@ IRIDA has several major resources:
   * Sequence files
 3. Sequencing Runs
 
-### Users
+### Users collection
+
+The user collection contains a reference to all users in the system. Each user resource has a `self` rel that can be followed to access details about the individual user account.
 
 #### Links
 {:.no_toc}
 
+| Name   | Description                    |
+|--------|--------------------------------|
+| `self` | A link to the users collection |
+
+#### Example Response
+{:.no_toc}
+
+```javascript
+{
+  "resource" : {
+    "resources" : [ {
+      "username" : "exampleuser",
+      "email" : "user@example.org",
+      "firstName" : "Example",
+      "lastName" : "User",
+      "phoneNumber" : "867-5309",
+      "identifier" : "1",
+      "createdDate" : 1431111435000,
+      "links" : [ {
+        "rel" : "user/projects",
+        "href" : "http://localhost:8080/api/users/exampleuser/projects"
+      }, {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/users/1"
+      } ]
+    } ],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/users"
+    } ]
+  }
+```
+
+### User
+
+Each user account can be accessed by a unique URL.
+
 #### Properties
+{:.no_toc}
+
+| Name          | Description                      | Validation                                                                                                                                                                                                                               |
+|---------------|----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `username`    | A username (used for logging in) | Required, minimum length 3, must be unique                                                                                                                                                                                               |
+| `email`       | An e-mail address                | Required, minimum length 5, must be unique, must be a valid e-mail address (validated with [Hibernate Validator E-mail constraint](http://docs.jboss.org/hibernate/validator/5.1/reference/en-US/html_single/#table-custom-constraints)) |
+| `firstName`   | The user's first name            | Required, minimum length 2                                                                                                                                                                                                               |
+| `lastName`    | The user's last name             | Required, minimum length 2                                                                                                                                                                                                               |
+| `phoneNumber` | A contact phone number           | Required, minimum length 4 (no other phone-number-related validation is done on this field)                                                                                                                                              |
+
+#### Links
+{:.no_toc}
+
+#### Example Response
 {:.no_toc}
 
 ### Projects
