@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
@@ -30,6 +31,15 @@ public class WorkflowNamedParametersServiceImpl extends CRUDServiceImpl<Long, Ir
 			final Validator validator) {
 		super(repository, validator, IridaWorkflowNamedParameters.class);
 		this.repository = repository;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Iterable<IridaWorkflowNamedParameters> findAll() {
+		return super.findAll();
 	}
 
 	@Override
