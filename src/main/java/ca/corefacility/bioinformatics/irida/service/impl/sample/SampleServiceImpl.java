@@ -100,6 +100,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#idents, 'canReadSample')")
+	public Iterable<Sample> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
 	public Boolean exists(Long id) {
 		return super.exists(id);
