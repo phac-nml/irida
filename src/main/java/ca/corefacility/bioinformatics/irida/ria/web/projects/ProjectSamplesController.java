@@ -36,6 +36,7 @@ import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -532,7 +533,44 @@ public class ProjectSamplesController {
 			response.getOutputStream().close();
 		}
 	}
-	
+
+	/**
+	 * Create a new {@link Sample} in a {@link Project}
+	 * 
+	 * @param projectId
+	 *            the ID of the {@link Project} to add to
+	 * @param sample
+	 *            The {@link Sample} to create
+	 * @return Success status and id if successful, errors if not
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
+	public Map<String, Object> createSampleInProject(@PathVariable Long projectId, @ModelAttribute Sample sample) {
+		// get the project
+		Project project = projectService.read(projectId);
+
+		Map<String, Object> response = new HashMap<>();
+
+		// try to add the sample to the project
+		Join<Project, Sample> addSampleToProject = null;
+		try {
+			addSampleToProject = projectService.addSampleToProject(project, sample);
+			Long sampleId = addSampleToProject.getObject().getId();
+			response.put("sampleId", sampleId);
+		} catch (ConstraintViolationException ex) {
+			// if errors respond with the errors
+			Map<String, String> errorsFromViolationException = getErrorsFromViolationException(ex);
+			response.put("errors", errorsFromViolationException);
+		}
+
+		if (!response.containsKey("errors")) {
+			response.put("status", "success");
+		} else {
+			response.put("status", "error");
+		}
+
+		return response;
+	}
+
 	/**
 	 * Get the Map format of {@link Sample}s to return for the project/samples
 	 * page
