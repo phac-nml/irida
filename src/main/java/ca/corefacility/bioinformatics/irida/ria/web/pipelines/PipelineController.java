@@ -40,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
-import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
@@ -259,8 +258,11 @@ public class PipelineController extends BaseController {
 				projectList.add(projectMap);
 			}
 			
+			/*
+			 * Add remote samples
+			 */
 			List<Map<String, Object>> remoteSamples = new ArrayList<>();
-			logger.debug("Getting remote files");
+			logger.trace("Getting remote files for samples in cart");
 			for(String url : remoteSelected.keySet()){
 				Sample sample = remoteSelected.get(url);
 				Map<String, Object> sampleMap = new HashMap<>();
@@ -269,12 +271,12 @@ public class PipelineController extends BaseController {
 				Map<String, List<? extends Object>> files = new HashMap<>();
 				
 				if (description.acceptsPairedSequenceFiles()) {
-					logger.debug("Getting pairs");
+					logger.trace("Getting remote pairs for sample " + url);
 					files.put("paired_end", sequenceFileRemoteService.getSequenceFilePairsForSample(sample));
 				}
 				
 				if (description.acceptsSingleSequenceFiles()) {
-					logger.debug("Getting single files");
+					logger.trace("Getting remote single files for sample " + url);
 					files.put("single_end", sequenceFileRemoteService.getUnpairedSequenceFilesForSample(sample));
 				}
 				
