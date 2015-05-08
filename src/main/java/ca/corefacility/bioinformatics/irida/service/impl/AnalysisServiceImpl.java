@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -33,9 +36,13 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 		this.analysisOutputFileRepository = analysisOutputFileRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
-	public Analysis create(Analysis analysis) {
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Analysis create(@Valid Analysis analysis) {
 		for (AnalysisOutputFile a : analysis.getAnalysisOutputFiles()) {
 			analysisOutputFileRepository.save(a);
 		}
