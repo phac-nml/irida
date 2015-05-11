@@ -191,7 +191,7 @@
                                               <tr class="paired_end paired_end__forward">
                                                   <td class="td_radio" rowspan="2">
                                                       <!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
-                                                      <input type="radio" data-type="paired_end" th:value="${pair.getSelfHref()}"
+                                                      <input type="radio" class="remote" data-type="paired_end" th:value="${pair.getSelfHref()}"
                                                              th:checked="${pairStat.first}" th:name="${sample.id}"/>
                                                   </td>
                                                   <td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
@@ -207,7 +207,7 @@
                                           <tr class="single_end" th:each="join : ${files}" th:with="file=${join.getObject()}">
                                           <td>
                                               <!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
-                                              <input type="radio" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" th:checked="${!hasPaired and fileStat.first}"/>
+                                              <input type="radio" class="remote" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" th:checked="${!hasPaired and fileStat.first}"/>
                                           </td>
                                           <td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${file},icon='single')"></td>
                                       </tr>
