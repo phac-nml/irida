@@ -19,20 +19,24 @@
         <div class="panel-heading">
           <h2 class="panel-title" th:text="#{project.samples.new.form.header}">__Create_New_Sample__</h2>
         </div>
-        <section class="panel-body" ng-controller="SampleController as sample">
+        <section class="panel-body" ng-controller="SampleController as sampleCtrl">
           <wizard>
             <wz-step title="Sample Details">
-              <form novalidate="novalidate">
+              <form novalidate="novalidate" name="sampleDetailForm">
                 <div class="form-group">
-                  <label for="name" th:text="#{samples.details.sampleName}">Sample Name</label>
-                  <input id="name" type="text" class="form-control" />
+                  <label for="label" th:text="#{samples.details.sampleName}">Sample Name</label>
+                  <input id="label" name="label" type="text" class="form-control" ng-model="sampleCtrl.sample.label" minlength="3" ng-model-options="sampleCtrl.nameOptions" required="true" />
+                  <div ng-messages="sampleDetailForm.label.$dirty &amp;&amp; sampleDetailForm.label.$error">
+                    <div class="alert alert-warning" ng-message="required" th:text="#{project.samples.new.form.name.error.required}">REQUIRED</div>
+                    <div class="alert alert-warning" ng-message="minlength" th:text="#{project.samples.new.form.name.error.minlength}">Must be at least 3 characters long</div>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="organism" th:text="#{samples.details.organism}">Organism__</label>
-                  <input ng-model="sample.organism" class="form-control" type="text" id="organism" select2="" />
+                  <input ng-model="sampleCtrl.sample.organism" class="form-control" type="text" id="organism" select2="" />
                 </div>
                 <div class="form-group text-right">
-                  <button class="btn btn-primary" ng-disabled="true" wz-next="">Continue</button>
+                  <button class="btn btn-primary" ng-disabled="sampleDetailForm.$invalid" ng-click="sampleCtrl.createSample()">Create Sample</button>
                 </div>
               </form>
             </wz-step>
@@ -46,6 +50,13 @@
   </div>
 
   <th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script th:inline="javascript">
+      var PAGE = {
+        project: {
+          id: /*[[${project.getId()}]]*/ '1'
+        }
+      };
+    </script>
     <script src="/resources/bower_components/select2/select2.min.js" th:src="@{/resources/bower_components/select2/select2.min.js}"></script>
     <script src="/resources/bower_components/angular-wizard/dist/angular-wizard.min.js" th:src="@{/resources/bower_components/angular-wizard/dist/angular-wizard.min.js}"></script>
     <script src="/resources/js/pages/projects/add-samples.js" th:src="@{/resources/js/pages/projects/add-samples.js}"></script>
