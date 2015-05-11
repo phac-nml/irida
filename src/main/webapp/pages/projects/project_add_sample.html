@@ -22,13 +22,14 @@
         <section class="panel-body" ng-controller="SampleController as sampleCtrl">
           <wizard>
             <wz-step title="Sample Details">
-              <form novalidate="novalidate" name="sampleDetailForm">
+              <form novalidate="novalidate" name="sampleCtrl.sampleDetailForm">
                 <div class="form-group">
                   <label for="sampleName" th:text="#{samples.details.sampleName}">Sample Name</label>
-                  <input id="sampleName" name="sampleName" type="text" class="form-control" ng-model="sampleCtrl.sample.sampleName" minlength="3" ng-model-options="sampleCtrl.nameOptions" required="true" />
-                  <div ng-messages="sampleDetailForm.sampleName.$dirty &amp;&amp; sampleDetailForm.sampleName.$error">
+                  <input id="sampleName" name="sampleName" type="text" class="form-control" ng-model="sampleCtrl.sample.sampleName" name-validator="" minlength="3" ng-model-options="sampleCtrl.nameOptions" required="true" />
+                  <div ng-messages="sampleCtrl.sampleDetailForm.sampleName.$dirty &amp;&amp; sampleCtrl.sampleDetailForm.sampleName.$error">
                     <div class="alert alert-warning" ng-message="required" th:text="#{project.samples.new.form.name.error.required}">REQUIRED</div>
                     <div class="alert alert-warning" ng-message="minlength" th:text="#{project.samples.new.form.name.error.minlength}">Must be at least 3 characters long</div>
+                    <div class="alert alert-warning" ng-message="nameValidator" th:text="#{project.samples.new.form.name.error.special}"></div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -36,11 +37,14 @@
                   <input ng-model="sampleCtrl.sample.organism" class="form-control" type="text" id="organism" select2="" />
                 </div>
                 <div class="form-group text-right">
-                  <button class="btn btn-primary" ng-disabled="sampleDetailForm.$invalid" ng-click="sampleCtrl.createSample()">Create Sample</button>
+                  <button class="btn btn-primary" ng-disabled="sampleCtrl.sampleDetailForm.$invalid" ng-click="sampleCtrl.createSample()">Create Sample</button>
                 </div>
               </form>
             </wz-step>
             <wz-step title="Upload Files">
+              <div class="alert alert-success" role="alert">
+                <strong>__Sample successfully created.__</strong>  It is time to upload some files to it!
+              </div>
               <input class="form-control" type="text" />
             </wz-step>
           </wizard>
@@ -59,6 +63,8 @@
     </script>
     <script src="/resources/bower_components/select2/select2.min.js" th:src="@{/resources/bower_components/select2/select2.min.js}"></script>
     <script src="/resources/bower_components/angular-wizard/dist/angular-wizard.min.js" th:src="@{/resources/bower_components/angular-wizard/dist/angular-wizard.min.js}"></script>
+    <script src="/resources/bower_components/ng-file-upload/angular-file-upload.min.js"
+            th:src="@{/resources/bower_components/ng-file-upload/angular-file-upload.min.js}"></script>
     <script src="/resources/js/pages/projects/add-samples.js" th:src="@{/resources/js/pages/projects/add-samples.js}"></script>
   </th:block>
 
