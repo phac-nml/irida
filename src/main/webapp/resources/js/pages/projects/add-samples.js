@@ -1,13 +1,14 @@
 (function(angular, $, TL, PAGE) {
   'use strict';
 
-  function SampleService($http) {
+  function SampleService($http, $log) {
     var url = TL.BASE_URL + 'projects/' + PAGE.project.id + '/samples';
     return {
       createSample: createSample
     };
 
     function createSample(sample) {
+      $log.info(sample);
       return $http.post(url, {
           sample: sample
         })
@@ -54,15 +55,13 @@
     };
 
     vm.createSample = function createSample() {
-      vm.sample.sequencerSampleId = vm.sample.label;
-      vm.sample.sampleName = vm.sample.label;
-      console.log(vm.sample);
+      vm.sample.sequencerSampleId = vm.sample.sampleName;
       sampleService.createSample(vm.sample);
     };
   }
 
   angular.module('samples.new', ['mgo-angular-wizard'])
-    .factory('SampleService', ['$http', SampleService])
+    .factory('SampleService', ['$http', '$log', SampleService])
     .directive('select2', [select2])
     .controller('SampleController', ['SampleService', 'WizardHandler', SampleController]);
 })(window.angular, window.$, window.TL, window.PAGE);
