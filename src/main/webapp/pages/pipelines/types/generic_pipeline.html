@@ -169,7 +169,7 @@
 						</th:block>
                         
                         <th:block>
-                            <div th:id="${'remote-sample-' + sample.id}" class="sample-container" th:each="sample : ${remoteSamples}">
+                            <div th:id="${'remote-sample-' + sample.id}" class="sample-container remote-sample-container" th:each="sample : ${remoteSamples}">
                                 <h3>
                                     <span th:text="#{workflow.samples.remote(${sample.name})}">_Remote Samples_</span>
                                     <button type="button"

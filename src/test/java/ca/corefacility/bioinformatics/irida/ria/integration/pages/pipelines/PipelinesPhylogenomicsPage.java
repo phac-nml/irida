@@ -122,4 +122,8 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public boolean isCreatePipelineAreaVisible() {
 		return driver.findElements(By.id("pipeline-creation")).size() > 0;
 	}
+	
+	public boolean isRemoteSampleDisplayed(){
+		return driver.findElements(By.className("remote-sample-container")).size() > 0;
+	}
 }
