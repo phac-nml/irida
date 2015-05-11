@@ -204,7 +204,7 @@ IRIDA has several major resources:
 
 ### Users collection
 
-The user collection contains a reference to all users in the system. Each user resource has a `self` rel that can be followed to access details about the individual user account.
+The user collection contains a reference to all users in the system. Each user resource has a `self` rel that can be followed to access details about the [individual user account](#user).
 
 #### Links
 {:.no_toc}
@@ -260,21 +260,150 @@ Each user account can be accessed by a unique URL.
 #### Links
 {:.no_toc}
 
+| Name | Description |
+|------|-------------|
+| `self` | A link to this user record |
+| `user/projects` | The collection of projects that this user has permissions to view |
+
+
 #### Example Response
 {:.no_toc}
 
+```javascript
+{
+    "resource": {
+        "createdDate": 1431301716000,
+        "email": "user@example.org",
+        "firstName": "Example",
+        "identifier": "1",
+        "lastName": "User",
+        "links": [
+            {
+                "href": "http://localhost:8080/api/users/example/projects",
+                "rel": "user/projects"
+            },
+            {
+                "href": "http://localhost:8080/api/example/1",
+                "rel": "self"
+            }
+        ],
+        "phoneNumber": "867-5309",
+        "username": "example"
+    }
+}
+```
+
 ### Projects
+
+The projects collection provides the list of projects that the authorized user account has permissions to read. Each project entry in the list has a `self` rel that can be followed to view details about the [individual project](#project).
 
 #### Links
 {:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | The list of projects that the user has permissions to read. |
+
+#### Example Response
+{:.no_toc}
+
+```javascript
+{
+    "resource": {
+        "links": [
+            {
+                "href": "http://localhost:8080/api/projects",
+                "rel": "self"
+            }
+        ],
+        "resources": [
+            {
+                "createdDate": 1431301716000,
+                "identifier": "1",
+                "links": [
+                    {
+                        "href": "http://localhost:8080/api/projects/1/users",
+                        "rel": "project/users"
+                    },
+                    {
+                        "href": "http://localhost:8080/api/projects/1/samples",
+                        "rel": "project/samples"
+                    },
+                    {
+                        "href": "http://localhost:8080/api/projects/1",
+                        "rel": "self"
+                    }
+                ],
+                "name": "Project 1",
+                "projectDescription": null
+            }
+        ]
+    }
+}
+
+```
+
+### Project
+
+Each project can be accessed by a unique URL.
+
+#### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to this project |
+| `project/users` | A link to view the collection of users that can view this project (the same format as [the list of users](#users) |
+| `project/samples` | A link to view the collection of samples that are contained within this project. |
 
 #### Properties
 {:.no_toc}
 
+| Name | Description | Validation |
+|------|-------------|------------|
+| `name` | The project name. | Required. Must be at least 5 characters long. Must not contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | &`|
+| `projectDescription` | A description of the project | Optional. Not validated. |
+
+#### Example Response
+{:.no_toc}
+
+```javascript
+{
+    "resource": {
+        "createdDate": 1431301716000,
+        "identifier": "1",
+        "links": [
+            {
+                "href": "http://localhost:8080/api/projects/1/users",
+                "rel": "project/users"
+            },
+            {
+                "href": "http://localhost:8080/api/projects/1/samples",
+                "rel": "project/samples"
+            },
+            {
+                "href": "http://localhost:8080/api/projects/1",
+                "rel": "self"
+            }
+        ],
+        "name": "Project 1",
+        "projectDescription": null
+    }
+}
+
+```
+
 ### Samples
+
+A sample corresponds to a single isolate and contains the sequencing data and metadata. A collection of samples can only be accessed via a [project](#project).
 
 #### Links
 {:.no_toc}
+
+#### Example Response
+{:.no_toc}
+
+### Sample
 
 #### Properties
 {:.no_toc}
