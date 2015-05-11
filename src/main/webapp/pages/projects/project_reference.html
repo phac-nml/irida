@@ -24,7 +24,7 @@
 		</section>
 		<section th:if="${owner}" class="row" ng-controller="FileUploadCtrl as upload">
 			<div class="col-md-12">
-				<button class="btn btn-default uploadRefBtn" ng-file-select="upload.onFileSelect($files)">
+				<button class="btn btn-default uploadRefBtn" ngf-select="upload.onFileSelect($files)">
 					<span class="fa fa-fw fa-upload"></span>
 					<span th:text="#{referenceFile.upload-btn}"></span>
 				</button>
@@ -62,7 +62,7 @@
 	</div>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
-	<script th:src="@{/resources/bower_components/ng-file-upload/angular-file-upload.min.js}" src="/resources/bower_components/ng-file-upload/angular-file-upload.min.js"></script>
+	<script src="/resources/bower_components/ng-file-upload/ng-file-upload.min.js" th:src="@{/resources/bower_components/ng-file-upload/ng-file-upload.min.js}"></script>
 	<script th:src="@{/resources/js/pages/projects/reference.js}" src="/resources/js/pages/projects/reference.js"></script>
 </th:block>
 </body>
