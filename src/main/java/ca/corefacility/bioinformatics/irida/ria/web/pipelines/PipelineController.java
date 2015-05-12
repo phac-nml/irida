@@ -48,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
@@ -94,6 +95,8 @@ public class PipelineController extends BaseController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private final WorkflowNamedParametersService namedParameterService;
+	
+	private SequenceFileRemoteService sequenceFileRemoteService;
 	/*
 	 * CONTROLLERS
 	 */
@@ -107,6 +110,7 @@ public class PipelineController extends BaseController {
 			IridaWorkflowsService iridaWorkflowsService,
 			ProjectService projectService,
 			UserService userService,
+			SequenceFileRemoteService sequenceFileRemoteService,
 			CartController cartController,
 			MessageSource messageSource,
 			final WorkflowNamedParametersService namedParameterService) {
@@ -120,6 +124,7 @@ public class PipelineController extends BaseController {
 		this.cartController = cartController;
 		this.messageSource = messageSource;
 		this.namedParameterService = namedParameterService;
+		this.sequenceFileRemoteService = sequenceFileRemoteService;
 	}
 
 	/**
@@ -183,8 +188,9 @@ public class PipelineController extends BaseController {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
+		Map<String, Sample> remoteSelected = cartController.getRemoteSelected();
 		// Cannot run a pipeline on an empty cart!
-		if (!cartMap.isEmpty()) {
+		if (!cartMap.isEmpty() || !remoteSelected.isEmpty()) {
 
 			IridaWorkflow flow = null;
 			try {
@@ -251,6 +257,33 @@ public class PipelineController extends BaseController {
 				projectMap.put("samples", sampleList);
 				projectList.add(projectMap);
 			}
+			
+			/*
+			 * Add remote samples
+			 */
+			List<Map<String, Object>> remoteSamples = new ArrayList<>();
+			logger.trace("Getting remote files for samples in cart");
+			for(String url : remoteSelected.keySet()){
+				Sample sample = remoteSelected.get(url);
+				Map<String, Object> sampleMap = new HashMap<>();
+				sampleMap.put("name", sample.getLabel());
+				sampleMap.put("id", sample.getSelfHref());
+				Map<String, List<? extends Object>> files = new HashMap<>();
+				
+				if (description.acceptsPairedSequenceFiles()) {
+					logger.trace("Getting remote pairs for sample " + url);
+					files.put("paired_end", sequenceFileRemoteService.getSequenceFilePairsForSample(sample));
+				}
+				
+				if (description.acceptsSingleSequenceFiles()) {
+					logger.trace("Getting remote single files for sample " + url);
+					files.put("single_end", sequenceFileRemoteService.getUnpairedSequenceFilesForSample(sample));
+				}
+				
+				sampleMap.put("files", files);
+				remoteSamples.add(sampleMap);
+			}
+			
 
 			// Need to add the pipeline parameters
 			final List<IridaWorkflowParameter> defaultWorkflowParameters = flow.getWorkflowDescription().getParameters();
@@ -298,6 +331,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("referenceRequired", description.requiresReference());
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
+			model.addAttribute("remoteSamples", remoteSamples);
 			response = URL_GENERIC_PIPELINE;
 		}
 

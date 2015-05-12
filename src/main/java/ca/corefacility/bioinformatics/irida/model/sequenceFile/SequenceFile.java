@@ -183,10 +183,12 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 		return fileRevisionNumber;
 	}
 
+	@JsonIgnore
 	public SequencingRun getSequencingRun() {
 		return sequencingRun;
 	}
 
+	@JsonIgnore
 	public void setSequencingRun(SequencingRun sequencingRun) {
 		this.sequencingRun = sequencingRun;
 	}

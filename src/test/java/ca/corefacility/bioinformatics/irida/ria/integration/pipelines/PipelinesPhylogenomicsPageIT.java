@@ -27,7 +27,9 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlac
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -228,6 +230,36 @@ public class PipelinesPhylogenomicsPageIT {
 		page.clickUseParametersButton();
 		assertEquals("Selected parameter set should be the saved one.", savedParametersName,
 				page.getSelectedParameterSet());
+	}
+	
+	@Test
+	public void testRemoteSample() throws InterruptedException{
+		LoginPage.loginAsAdmin(driver);
+		// add the api
+		RemoteApiUtilities.addRemoteApi(driver);
+
+		// associate a project from that api
+		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver);
+		apEditPage.goTo(1L);
+		apEditPage.viewRemoteTab();
+		apEditPage.clickAssociatedButton(1L);
+		assertTrue(apEditPage.checkNotyStatus("success"));
+		
+		
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		samplesPage.goToPage("1");
+		
+		samplesPage.selectSampleByRow(0);
+		samplesPage.addSamplesToGlobalCart();
+		
+		samplesPage.enableRemoteProjects();
+		
+		samplesPage.selectSampleByClass("remote-sample");
+		samplesPage.addSamplesToGlobalCart();
+		
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		
+		assertTrue(page.isRemoteSampleDisplayed());
 	}
 
 	private void addSamplesToCart() {

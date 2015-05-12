@@ -116,6 +116,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 		return createdDate;
 	}
 
+	@JsonIgnore
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		throw new UnsupportedOperationException("Cannot update a sequence file pair");

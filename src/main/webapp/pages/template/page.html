@@ -88,13 +88,13 @@
 							</li>
 						</ul>
 					</li>
-                    <li class="list-group-item remote-samples" ng-show="cart.getRemoteCount() > 0">
+                    <li class="list-group-item remote-samples" ng-show="r.filteredSamples.length > 0">
                         <div class="cart-project-header" ng-click="cart.collapsed['remote'] = !cart.collapsed['remote' ]">
                             <span class="fa fa-fw"
                                       ng-class="cart.collapsed['remote'] ? 'fa-caret-right' : 'fa-caret-down'"></span>
                             <span th:text="#{cart.remoteSamples.title}">_REMOTE_</span>
                             <div class="pull-right">
-                                <span class="badge remote-cart-count">{{ cart.getRemoteCount() }}</span>
+                                <span class="label label-info">{{r.filteredSamples.length}} / {{ cart.getRemoteCount() }}</span>
                                 <button class="btn-icon" ng-click="cartCtrl.removeRemoteSamples()"
                                     id="remove-remote"
                                     th:title="#{cart.tooltip.remoteRemote}">
@@ -103,7 +103,7 @@
                             </div>
                         </div>
                         <ul collapse="cart.collapsed['remote']">
-                            <li ng-repeat="(id,s) in cart.remote">
+                            <li ng-repeat="(id,s) in r.filteredSamples = (cart.remote | cartFilter:cart.term)">
                                 <span>{{ s.label }}</span>
                                 <button class="btn-icon pull-right remove-sample-btn"
                                     ng-click="cartCtrl.removeRemoteSample(id)"

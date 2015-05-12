@@ -73,4 +73,16 @@ public abstract class RemoteServiceImpl<Type extends IridaResourceSupport & Irid
 		return repository.getServiceStatus(remoteAPI);
 	}
 
+	/**
+	 * Convenience method for getting the {@link RemoteAPI} for a given string
+	 * URI
+	 * 
+	 * @param uri
+	 *            the URI to get a {@link RemoteAPI} for
+	 * @return the {@link RemoteAPI}
+	 */
+	protected RemoteAPI getRemoteApiForURI(String uri) {
+		return remoteAPIRepository.getRemoteAPIForUrl(uri);
+	}
+
 }
