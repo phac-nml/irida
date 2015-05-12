@@ -1,15 +1,30 @@
+/**
+ * @fileOverview AngularJS module to handle creating a new sample
+ */
 (function(angular, $, TL, PAGE) {
   'use strict';
   var URL_BASE = TL.BASE_URL + 'projects/' + PAGE.project.id + '/samples';
 
+  /**
+   * Service to communicate with the server API.
+   * @param $http
+   * @returns {{createSample: createSample}}
+   * @constructor
+   */
   function SampleService($http) {
-    var url = URL_BASE;
     return {
       createSample: createSample
     };
 
+    /**
+     * Create a new sample
+     * @param sample
+     * @param successFn Success Callback
+     * @param errorFn Error Callback
+     * @returns {*}
+     */
     function createSample(sample, successFn, errorFn) {
-      return $http.post(url, sample)
+      return $http.post(URL_BASE, sample)
         .success(function(response) {
           successFn(response);
         })
@@ -19,6 +34,11 @@
     }
   }
 
+  /**
+   * Custom validation directive for the name input field
+   *   Only letter, numbers, underscores, and dashes allowed.
+   * @returns {{restrict: string, require: string, link: Function}}
+   */
   function nameValidator() {
     var re = /[^A-Za-z0-9\-_]/;
     return {
@@ -32,6 +52,11 @@
     };
   }
 
+  /**
+   * Custom Select2 directive for searching through the organism ontology using
+   * JQuery Select2 plugin.
+   * @returns {{restrict: string, require: string, link: Function}}
+   */
   function select2() {
     return {
       restrict: 'A',
@@ -58,6 +83,11 @@
     };
   }
 
+  /**
+   * Main page controller.
+   * @param sampleService
+   * @constructor
+   */
   function SampleController(sampleService) {
     var vm = this;
     vm.sample = {};
