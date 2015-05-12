@@ -86,7 +86,7 @@
     };
   }
 
-  function SampleController(sampleService, fileService, wizardHandler, $modal) {
+  function SampleController(sampleService, fileService, $modal) {
     var vm = this;
     vm.files = [];
     vm.sample = {};
@@ -125,7 +125,7 @@
 
     function sampleCreatedSuccess(response) {
       vm.sample = response.sample;
-      wizardHandler.wizard().next();
+      window.location = URL_BASE + '/' + response.sample.id + '/sequenceFiles';
     }
 
     function sampleCreatedError(response) {
@@ -155,12 +155,12 @@
     };
   }
 
-  angular.module('samples.new', ['mgo-angular-wizard', 'ngFileUpload'])
+  angular.module('samples.new', ['ngFileUpload'])
     .factory('SampleService', ['$http', SampleService])
     .factory('FileService', ['Upload', FileService])
     .directive('select2', [select2])
     .directive('nameValidator', [nameValidator])
     .filter('sizeConverter', [sizeConverter])
-    .controller('SampleController', ['SampleService', 'FileService', 'WizardHandler', '$modal', SampleController])
-    .controller('PairedUploadController', ['$modalInstance', PairedUploadController]);;
+    .controller('SampleController', ['SampleService', 'FileService', '$modal', SampleController])
+    .controller('PairedUploadController', ['$modalInstance', PairedUploadController]);
 })(window.angular, window.$, window.TL, window.PAGE);

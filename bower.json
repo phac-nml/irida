@@ -38,7 +38,6 @@
     "Font-Awesome": "4.3.0",
     "PhyloCanvas": "1.2.26",
     "angular-ui-router": "0.2.13",
-    "angular-wizard": "0.4.3",
     "ng-file-upload": "4.2.0"
   },
   "devDependencies": {},

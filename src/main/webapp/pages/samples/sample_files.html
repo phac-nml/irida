@@ -1,115 +1,120 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="samples/_base">
-<head lang="en">
-	<meta charset="UTF-8"/>
-	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
-	      th:href="@{/resources/css/pages/sample_files.css}"/>
-	<script>window.dependencies = ['irida.sample.files'];</script>
-</head>
-<body>
-<main layout:fragment="main">
-	<div class="row">
-		<div class="col-md-12">
-			<h1 id="page-title" role="heading" th:text="#{samples.files.page-title(${sample.getLabel()})}">
-				__TITLE__</h1>
-		</div>
-	</div>
-	<div class="row" th:if="${fileDeleted}">
-		<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="col-md-12 alert alert-success" role="alert">
-			<strong th:text="${fileDeletedMessage}"></strong>
-		</div>
-		<div th:if="${fileDeletedError}" class="col-md-12 alert alert-error" role="alert">
-			<strong th:text="${fileDeletedError}"></strong>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<table class="table" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
-			       ng-controller="FileController as fileCtrl">
-				<th:block th:each="pair : ${paired_end}">
-					<tr class="paired_end paired_end__forward" th:with="file=${pair.getForwardSequenceFile()}">
-						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='forward')"></td>
-						<td>
-							<div class="btn-group btn-group-sm pull-right" role="group">
-								<button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
-									<span class="fa fa-fw fa-download"></span>
-								</button>
-								<button th:if="${canManageSample}"
-								        class="btn btn-default remove-file"
-								        th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
-								        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
-									<span class="fa fa-fw fa-trash"></span>
-								</button>
-							</div>
-						</td>
-					</tr>
-					<tr class="paired_end paired_end__reverse" th:with="file=${pair.getReverseSequenceFile()}">
-						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='reverse')"></td>
-						<td>
-							<div class="btn-group btn-group-sm pull-right" role="group">
-								<button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
-									<span class="fa fa-fw fa-download"></span>
-								</button>
-								<button th:if="${canManageSample}"
-								        class="btn btn-default remove-file"
-								        th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
-								        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
-									<span class="fa fa-fw fa-trash"></span>
-								</button>
-							</div>
-						</td>
-					</tr>
-				</th:block>
-				<tr class="single_end" th:each="join : ${single_end}" th:with="file=${join.getObject()}">
-					<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='single')"></td>
-					<td>
-						<div class="btn-group btn-group-sm pull-right" role="group">
-							<button class="btn btn-default"
-							        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
-								<span class="fa fa-fw fa-download"></span>
-							</button>
-							<button th:if="${canManageSample}"
-							        class="btn btn-default remove-file"
-							        th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
-							        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
-								<span class="fa fa-fw fa-trash"></span>
-							</button>
-						</div>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="samples/_base">
 
-</main>
-<th:block layout:fragment="page-scripts" th:inline="javascript">
-	<script type="text/ng-template" id="/confirm.html">
-		<form method="post" th:action="@{/samples/{sId}/files/delete(sId=${sampleId})}">
-			<div class="modal-header">
-			<h3 class="modal-title" th:text="#{samples.files.remove.confirmation}"></h3>
-		</div>
-		<div class="modal-body">
-			<h4>{{ ::deleteCtrl.label }}</h4>
-			<input type="hidden" name="fileId" value="{{ deleteCtrl.fileId }}"/> <input type="hidden" name="returnUrl" th:value="@{${#httpServletRequest.requestURI}}"/>
-		</div>
-		<div class="modal-footer">
-			<button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
-			<button id="remove-file-confirm" type="submit" class="btn btn-warning remove-file-confirm" th:text="#{form.btn.remove}">OK</button>
-		</div>
-		</form>
-	</script>
-	<script th:inline="javascript">
-		var URLS = {
-			base: /*[[@{${#httpServletRequest.requestURI}}]]*/ '/sequenceFiles',
-			download: /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/'
-		};
-	</script>
-	<script src="/resources/js/pages/samples/files.js" th:src="@{/resources/js/pages/samples/files.js}"></script>
-</th:block>
+<head lang="en">
+  <meta charset="UTF-8" />
+  <title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
+  <link rel="stylesheet" href="/resources/css/pages/sample_files.css" th:href="@{/resources/css/pages/sample_files.css}" />
+  <script>
+    window.dependencies = ['irida.sample.files'];
+  </script>
+</head>
+
+<body>
+  <main layout:fragment="main">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 id="page-title" role="heading">
+				<span th:text="#{samples.files.page-title(${sample.getLabel()})}"></span>
+				<div class="btn-group pull-right" dropdown="" is-open="fun">
+					<button class="btn btn-default" dropdown-toggle="">
+						<span class="fa fa-fw fa-cloud-upload"></span>
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a href="#" ngf-select="" ngf-multiple="false"
+							   th:text="#{project.samples.new.form.file-upload.single}"></a>
+						</li>
+					</ul>
+				</div>
+			</h1>
+      </div>
+    </div>
+    <div class="row" th:if="${fileDeleted}">
+      <div id="file-deleted-success" th:if="${fileDeletedMessage}" class="col-md-12 alert alert-success" role="alert">
+        <strong th:text="${fileDeletedMessage}"></strong>
+      </div>
+      <div th:if="${fileDeletedError}" class="col-md-12 alert alert-error" role="alert">
+        <strong th:text="${fileDeletedError}"></strong>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}" ng-controller="FileController as fileCtrl">
+          <th:block th:each="pair : ${paired_end}">
+            <tr class="paired_end paired_end__forward" th:with="file=${pair.getForwardSequenceFile()}">
+              <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='forward')"></td>
+              <td>
+                <div class="btn-group btn-group-sm pull-right" role="group">
+                  <button class="btn btn-default" data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+                    <span class="fa fa-fw fa-download"></span>
+                  </button>
+                  <button th:if="${canManageSample}" class="btn btn-default remove-file" th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}" data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
+                    <span class="fa fa-fw fa-trash"></span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr class="paired_end paired_end__reverse" th:with="file=${pair.getReverseSequenceFile()}">
+              <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='reverse')"></td>
+              <td>
+                <div class="btn-group btn-group-sm pull-right" role="group">
+                  <button class="btn btn-default" data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+                    <span class="fa fa-fw fa-download"></span>
+                  </button>
+                  <button th:if="${canManageSample}" class="btn btn-default remove-file" th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}" data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
+                    <span class="fa fa-fw fa-trash"></span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </th:block>
+          <tr class="single_end" th:each="join : ${single_end}" th:with="file=${join.getObject()}">
+            <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='single')"></td>
+            <td>
+              <div class="btn-group btn-group-sm pull-right" role="group">
+                <button class="btn btn-default" data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+                  <span class="fa fa-fw fa-download"></span>
+                </button>
+                <button th:if="${canManageSample}" class="btn btn-default remove-file" th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}" data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
+                  <span class="fa fa-fw fa-trash"></span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </main>
+  <th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script type="text/ng-template" id="/confirm.html">
+      <form method="post" th:action="@{/samples/{sId}/files/delete(sId=${sampleId})}">
+        <div class="modal-header">
+          <h3 class="modal-title" th:text="#{samples.files.remove.confirmation}"></h3>
+        </div>
+        <div class="modal-body">
+          <h4>{{ ::deleteCtrl.label }}</h4>
+          <input type="hidden" name="fileId" value="{{ deleteCtrl.fileId }}" />
+          <input type="hidden" name="returnUrl" th:value="@{${#httpServletRequest.requestURI}}" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel
+          </button>
+          <button id="remove-file-confirm" type="submit" class="btn btn-warning remove-file-confirm" th:text="#{form.btn.remove}">OK
+          </button>
+        </div>
+      </form>
+    </script>
+    <script th:inline="javascript">
+      var URLS = {
+        base: /*[[@{${#httpServletRequest.requestURI}}]]*/ '/sequenceFiles',
+        download: /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/'
+      };
+    </script>
+    <script src="/resources/js/pages/samples/files.js" th:src="@{/resources/js/pages/samples/files.js}"></script>
+  </th:block>
 </body>
+
 </html>
