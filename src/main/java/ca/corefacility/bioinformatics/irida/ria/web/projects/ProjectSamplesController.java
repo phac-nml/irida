@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -536,54 +535,6 @@ public class ProjectSamplesController {
 			// close the response outputStream so that we're not leaking
 			// streams.
 			response.getOutputStream().close();
-		}
-	}
-
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/files", method = RequestMethod.POST)
-	public void upload(@RequestParam MultipartFile file, @PathVariable Long projectId,
-			@PathVariable Long sampleId) {
-		if (!file.isEmpty()) {
-			Sample sample = sampleService.read(sampleId);
-
-			try {
-					Path temp = null;
-					temp = Files.createTempDirectory(null);
-					Path target = temp.resolve(file.getOriginalFilename());
-					file.transferTo(target.toFile());
-
-					// Create the sequence file
-					SequenceFile sequenceFile = new SequenceFile(target);
-
-					// Add sequence file to sample
-					sequenceFileService.createSequenceFileInSample(sequenceFile, sample);
-			} catch (IOException e) {
-				logger.error("Error writing file", e.getMessage());
-			}
-		}
-	}
-
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/paires", method = RequestMethod.POST)
-	public void upload(@RequestParam(value = "file") List<MultipartFile> files, @PathVariable Long projectId,
-			@PathVariable Long sampleId) {
-		if (!files.isEmpty()) {
-			Sample sample = sampleService.read(sampleId);
-
-			try {
-				for (MultipartFile file : files) {
-					Path temp = null;
-					temp = Files.createTempDirectory(null);
-					Path target = temp.resolve(file.getOriginalFilename());
-					file.transferTo(target.toFile());
-
-					// Create the sequence file
-					SequenceFile sequenceFile = new SequenceFile(target);
-
-					// Add sequence file to sample
-					sequenceFileService.createSequenceFileInSample(sequenceFile, sample);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
