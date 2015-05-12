@@ -48,21 +48,6 @@
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
 				parameterName="cov_len_cutoff" />
 		</parameter>
-		<parameter name="annotation-use-genus" defaultValue="False">
-			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0"
-				parameterName="usegenus" />
-		</parameter>
-		<parameter name="annotation-genus-name" defaultValue="">
-			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0"
-				parameterName="genus" />
-		</parameter>
-		<parameter name="annotation-species-name" defaultValue="">
-			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0"
-				parameterName="species" />
-		</parameter>
 		<parameter name="annotation-similarity-e-value-cutoff"
 			defaultValue="1e-06">
 			<toolParameter
