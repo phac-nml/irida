@@ -43,9 +43,31 @@
             </wz-step>
             <wz-step title="Upload Files">
               <div class="alert alert-success" role="alert">
-                <strong>__Sample successfully created.__</strong>  It is time to upload some files to it!
+                <strong>__Sample successfully created.__</strong> It is time to upload some files to it!
               </div>
-              <input class="form-control" type="text" />
+              <button class="btn btn-default" ngf-select="" ngf-multiple="false" ngf-change="sampleCtrl.uploadSingle($files)"><span class="fa fa-fw fa-cloud-upload"></span>&nbsp;<span th:text="#{project.samples.new.form.file-upload.single}"></span>
+              </button>
+              <button class="btn btn-default" ng-click="sampleCtrl.showPairedModal()"><span class="fa fa-fw fa-cloud-upload"></span>&nbsp;<span th:text="#{project.samples.new.form.file-upload.paired}"></span>
+              </button>
+              <div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <td>__File Name__</td>
+                      <td>__File Size__</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="file in sampleCtrl.files">
+                      <td ng-bind="file.name"></td>
+                      <td ng-bind="file.size | sizeConverter"></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="text-right">
+                  <button class="btn btn-primary" ng-disabled="sampleCtrl.uploader.inProgress" ng-click="sampleCtrl.upload()">Upload Files</button>
+                </div>
+              </div>
             </wz-step>
           </wizard>
         </section>
@@ -54,6 +76,24 @@
   </div>
 
   <th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script type="text/ng-template" id="/paired-template.html">
+      <div class="modal-header">
+        <h3 class="modal-title">__Select Paired End Files__</h3>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <button class="btn btn-default" ngf-select="" ngf-multiple="false" ngf-change="pairCtrl.selectForward($files)">__Forward Read__</button>
+          {{pairCtrl.files.forward.name}}
+        </div>
+        <div class="form-group">
+          <button class="btn btn-default" ngf-select="" ngf-multiple="false" ngf-change="pairCtrl.selectReverse($files)">__Forward Read__</button>
+          {{pairCtrl.files.reverse.name}}
+        </div>
+        <div class="modal-footer text-right">
+          <button class="btn btn-primary" ng-disabled="pairCtrl.files.forward === undefined || pairCtrl.files.reverse === undefined" ng-click="pairCtrl.upload()">__SUBMIT__</button>
+        </div>
+      </div>
+    </script>
     <script th:inline="javascript">
       var PAGE = {
         project: {
@@ -63,8 +103,7 @@
     </script>
     <script src="/resources/bower_components/select2/select2.min.js" th:src="@{/resources/bower_components/select2/select2.min.js}"></script>
     <script src="/resources/bower_components/angular-wizard/dist/angular-wizard.min.js" th:src="@{/resources/bower_components/angular-wizard/dist/angular-wizard.min.js}"></script>
-    <script src="/resources/bower_components/ng-file-upload/angular-file-upload.min.js"
-            th:src="@{/resources/bower_components/ng-file-upload/angular-file-upload.min.js}"></script>
+    <script src="/resources/bower_components/ng-file-upload/ng-file-upload.min.js" th:src="@{/resources/bower_components/ng-file-upload/ng-file-upload.min.js}"></script>
     <script src="/resources/js/pages/projects/add-samples.js" th:src="@{/resources/js/pages/projects/add-samples.js}"></script>
   </th:block>
 

@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -130,13 +131,13 @@ public class ProjectSamplesController {
 	 * @param projectId
 	 * 		The ID of the project
 	 * @param httpSession
-	 *      The user's session
+	 * 		The user's session
 	 *
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping("/projects/{projectId}")
 	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId,
-		HttpSession httpSession) {
+			HttpSession httpSession) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
@@ -144,7 +145,8 @@ public class ProjectSamplesController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
-		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME) != null);
+		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME)
+				!= null);
 		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
 		model.addAttribute("galaxyCallback", haveGalaxyCallbackURL);
 
@@ -186,29 +188,32 @@ public class ProjectSamplesController {
 		Map<String, Object> result = new HashMap<>();
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
-		List<Map<String,Object>> samples = new ArrayList<>(joinList.size());
+		List<Map<String, Object>> samples = new ArrayList<>(joinList.size());
 		for (Join<Project, Sample> join : joinList) {
-			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join.getObject().getId());
+			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL,
+					join.getObject().getId());
 
 			//Galaxy Export Functionality:
-			List<Join<Sample,SequenceFile>> sampleSeqFiles = sequenceFileService.getSequenceFilesForSample(join.getObject());			
-			List<Map<String,Object>> sequences = new ArrayList<>();
-			Map<String,Object> embedded = new HashMap<>(1);
-			for(Join<Sample,SequenceFile> sampleSeqJoin : sampleSeqFiles) {
-				
-				Map<String,Object> seqFileMap = new HashMap<>(1);
-				Map<String,Object> links = new HashMap<>(1);
-				Map<String,Object> self = new HashMap<>(1);
+			List<Join<Sample, SequenceFile>> sampleSeqFiles = sequenceFileService
+					.getSequenceFilesForSample(join.getObject());
+			List<Map<String, Object>> sequences = new ArrayList<>();
+			Map<String, Object> embedded = new HashMap<>(1);
+			for (Join<Sample, SequenceFile> sampleSeqJoin : sampleSeqFiles) {
+
+				Map<String, Object> seqFileMap = new HashMap<>(1);
+				Map<String, Object> links = new HashMap<>(1);
+				Map<String, Object> self = new HashMap<>(1);
 				seqFileMap.put("_links", links);
 				links.put("self", self);
 				String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
-						.getSequenceFileForSample(projectId, sampleSeqJoin.getSubject().getId(),sampleSeqJoin.getObject().getId())).withSelfRel().getHref();
+						.getSequenceFileForSample(projectId, sampleSeqJoin.getSubject().getId(),
+								sampleSeqJoin.getObject().getId())).withSelfRel().getHref();
 				self.put("href", seqFileLoc);
 				sequences.add(seqFileMap);
 			}
 			embedded.put("sample_files", sequences);
 			sampleMap.put("embedded", embedded);
-			
+
 			samples.add(sampleMap);
 		}
 		result.put("samples", samples);
@@ -227,8 +232,8 @@ public class ProjectSamplesController {
 	 * @param principal
 	 * 		The logged in user.
 	 *
-	 * @return a {@code Map<String,Object>} containing: total: total number of elements results: A {@code Map<Long,String>} of project
-	 * IDs and project names.
+	 * @return a {@code Map<String,Object>} containing: total: total number of elements results: A {@code
+	 * Map<Long,String>} of project IDs and project names.
 	 */
 	@RequestMapping(value = "/projects/ajax/samples/available_projects")
 	@ResponseBody
@@ -273,16 +278,15 @@ public class ProjectSamplesController {
 	 * Copy or move samples from one project to another
 	 *
 	 * @param projectId
-	 *            The original project id
+	 * 		The original project id
 	 * @param sampleIds
-	 *            the sample identifiers to copy
+	 * 		the sample identifiers to copy
 	 * @param newProjectId
-	 *            The new project id
+	 * 		The new project id
 	 * @param removeFromOriginal
-	 *            true/false whether to remove the samples from the original
-	 *            project
+	 * 		true/false whether to remove the samples from the original project
 	 * @param locale
-	 *            the locale specified by the browser.
+	 * 		the locale specified by the browser.
 	 *
 	 * @return A list of warnings
 	 */
@@ -301,14 +305,13 @@ public class ProjectSamplesController {
 		for (Long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
 			try {
-				
-				if(removeFromOriginal){
+
+				if (removeFromOriginal) {
 					projectService.moveSampleBetweenProjects(originalProject, newProject, sample);
-				}
-				else{
+				} else {
 					projectService.addSampleToProject(newProject, sample);
 				}
-				
+
 				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
 				successful.add(sample);
 			} catch (EntityExistsException ex) {
@@ -348,9 +351,9 @@ public class ProjectSamplesController {
 						new Object[] { successful.size(), newProject.getName() }, locale));
 			}
 		}
-		
+
 		response.put("successful", successful.stream().map((s) -> s.getId()).collect(Collectors.toList()));
-		
+
 		return response;
 	}
 
@@ -378,29 +381,29 @@ public class ProjectSamplesController {
 			}
 
 		}
-		result.put("message", messageSource.getMessage("project.samples.remove-success", new Object[]{sampleIds.size()}, locale));
-		
+		result.put("message",
+				messageSource.getMessage("project.samples.remove-success", new Object[] { sampleIds.size() }, locale));
+
 		result.put("result", "success");
 		return result;
 	}
 
 	/**
-	 * Merges a list of samples into either the first sample in the list with a
-	 * new name if provided, or into the selected sample based on the id.
+	 * Merges a list of samples into either the first sample in the list with a new name if provided, or into the
+	 * selected sample based on the id.
 	 *
 	 * @param projectId
-	 *            The id for the current {@link Project}
+	 * 		The id for the current {@link Project}
 	 * @param mergeSampleId
-	 *            An id for a {@link Sample} to merge the other samples into.
+	 * 		An id for a {@link Sample} to merge the other samples into.
 	 * @param sampleIds
-	 *            A list of ids for {@link Sample} to merge together.
+	 * 		A list of ids for {@link Sample} to merge together.
 	 * @param newName
-	 *            An optional new name for the {@link Sample}.
+	 * 		An optional new name for the {@link Sample}.
 	 * @param locale
-	 *            The {@link Locale} of the current user.
+	 * 		The {@link Locale} of the current user.
 	 *
-	 * @return a map of {@link Sample} properties representing the merged
-	 *         sample.
+	 * @return a map of {@link Sample} properties representing the merged sample.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
@@ -445,13 +448,14 @@ public class ProjectSamplesController {
 
 	/**
 	 * Remove the given {@link Sample}s from the given {@link Project}
-	 * 
+	 *
 	 * @param projectId
-	 *            ID of the project to remove from
+	 * 		ID of the project to remove from
 	 * @param samples
-	 *            {@link Sample} ids to remove
+	 * 		{@link Sample} ids to remove
 	 * @param locale
-	 *            User's locale
+	 * 		User's locale
+	 *
 	 * @return Map with success message
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/remove", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -459,13 +463,13 @@ public class ProjectSamplesController {
 	public Map<String, Object> removeSamplesFromProject(@PathVariable Long projectId,
 			@RequestParam(value = "samples[]") List<Long> samples, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
-		
+
 		//read the project
 		Project project = projectService.read(projectId);
-		
+
 		//get the samples
 		Iterable<Sample> readMultiple = sampleService.readMultiple(samples);
-		
+
 		//remove all samples
 		projectService.removeSamplesFromProject(project, readMultiple);
 
@@ -483,14 +487,14 @@ public class ProjectSamplesController {
 	 * Download a set of sequence files from selected samples within a project
 	 *
 	 * @param projectId
-	 *            Id for a {@link Project}
+	 * 		Id for a {@link Project}
 	 * @param ids
-	 *            List of ids ofr {@link Sample} within the project
+	 * 		List of ids ofr {@link Sample} within the project
 	 * @param response
-	 *            {@link HttpServletResponse}
+	 * 		{@link HttpServletResponse}
 	 *
 	 * @throws IOException
-	 *             if we fail to read a file from the filesystem.
+	 * 		if we fail to read a file from the filesystem.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/download/files")
 	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids,
@@ -535,17 +539,67 @@ public class ProjectSamplesController {
 		}
 	}
 
+	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/files", method = RequestMethod.POST)
+	public void upload(@RequestParam MultipartFile file, @PathVariable Long projectId,
+			@PathVariable Long sampleId) {
+		if (!file.isEmpty()) {
+			Sample sample = sampleService.read(sampleId);
+
+			try {
+					Path temp = null;
+					temp = Files.createTempDirectory(null);
+					Path target = temp.resolve(file.getOriginalFilename());
+					file.transferTo(target.toFile());
+
+					// Create the sequence file
+					SequenceFile sequenceFile = new SequenceFile(target);
+
+					// Add sequence file to sample
+					sequenceFileService.createSequenceFileInSample(sequenceFile, sample);
+			} catch (IOException e) {
+				logger.error("Error writing file", e.getMessage());
+			}
+		}
+	}
+
+	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/paires", method = RequestMethod.POST)
+	public void upload(@RequestParam(value = "file") List<MultipartFile> files, @PathVariable Long projectId,
+			@PathVariable Long sampleId) {
+		if (!files.isEmpty()) {
+			Sample sample = sampleService.read(sampleId);
+
+			try {
+				for (MultipartFile file : files) {
+					Path temp = null;
+					temp = Files.createTempDirectory(null);
+					Path target = temp.resolve(file.getOriginalFilename());
+					file.transferTo(target.toFile());
+
+					// Create the sequence file
+					SequenceFile sequenceFile = new SequenceFile(target);
+
+					// Add sequence file to sample
+					sequenceFileService.createSequenceFileInSample(sequenceFile, sample);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	/**
 	 * Create a new {@link Sample} in a {@link Project}
-	 * 
+	 *
 	 * @param projectId
-	 *            the ID of the {@link Project} to add to
+	 * 		the ID of the {@link Project} to add to
 	 * @param sample
-	 *            The {@link Sample} to create
+	 * 		The {@link Sample} to create
+	 *
 	 * @return Success status and id if successful, errors if not
 	 */
 	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
-	public Map<String, Object> createSampleInProject(@PathVariable Long projectId, @ModelAttribute Sample sample, HttpServletResponse response) {
+	public Map<String, Object> createSampleInProject(@PathVariable Long projectId, @ModelAttribute Sample sample,
+			HttpServletResponse response) {
 		// get the project
 		Project project = projectService.read(projectId);
 
@@ -575,18 +629,17 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get the Map format of {@link Sample}s to return for the project/samples
-	 * page
-	 * 
+	 * Get the Map format of {@link Sample}s to return for the project/samples page
+	 *
 	 * @param sample
-	 *            The sample to display
+	 * 		The sample to display
 	 * @param project
-	 *            The originating project
+	 * 		The originating project
 	 * @param type
-	 *            The {@link SampleType} of the sample (LOCAL, ASSOCIATED)
+	 * 		The {@link SampleType} of the sample (LOCAL, ASSOCIATED)
 	 * @param identifier
-	 *            Number to identify the {@link Sample}. NOTE: This will be
-	 *            different for remote samples
+	 * 		Number to identify the {@link Sample}. NOTE: This will be different for remote samples
+	 *
 	 * @return a formatted map of {@link Sample} objects.
 	 */
 	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Number identifier) {
@@ -618,10 +671,8 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Type of sample being displayed in the project/samples page. This will be
-	 * used to determine how to link to resources and add them to the cart.
-	 * 
-	 *
+	 * Type of sample being displayed in the project/samples page. This will be used to determine how to link to
+	 * resources and add them to the cart.
 	 */
 	public enum SampleType {
 		// samples in the local project
