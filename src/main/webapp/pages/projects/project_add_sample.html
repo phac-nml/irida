@@ -20,56 +20,24 @@
           <h2 class="panel-title" th:text="#{project.samples.new.form.header}">__Create_New_Sample__</h2>
         </div>
         <section class="panel-body" ng-controller="SampleController as sampleCtrl">
-          <wizard>
-            <wz-step title="Sample Details">
-              <form novalidate="novalidate" name="sampleCtrl.sampleDetailForm">
-                <div class="form-group">
-                  <label for="sampleName" th:text="#{samples.details.sampleName}">Sample Name</label>
-                  <input id="sampleName" name="sampleName" type="text" class="form-control" ng-model="sampleCtrl.sample.sampleName" name-validator="" minlength="3" ng-model-options="sampleCtrl.nameOptions" required="true" />
-                  <div ng-messages="sampleCtrl.sampleDetailForm.sampleName.$dirty &amp;&amp; sampleCtrl.sampleDetailForm.sampleName.$error">
-                    <div class="alert alert-warning" ng-message="required" th:text="#{project.samples.new.form.name.error.required}">REQUIRED</div>
-                    <div class="alert alert-warning" ng-message="minlength" th:text="#{project.samples.new.form.name.error.minlength}">Must be at least 3 characters long</div>
-                    <div class="alert alert-warning" ng-message="nameValidator" th:text="#{project.samples.new.form.name.error.special}"></div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="organism" th:text="#{samples.details.organism}">Organism__</label>
-                  <input ng-model="sampleCtrl.sample.organism" class="form-control" type="text" id="organism" select2="" />
-                </div>
-                <div class="form-group text-right">
-                  <button class="btn btn-primary" ng-disabled="sampleCtrl.sampleDetailForm.$invalid" ng-click="sampleCtrl.createSample()">Create Sample</button>
-                </div>
-              </form>
-            </wz-step>
-            <wz-step title="Upload Files">
-              <div class="alert alert-success" role="alert">
-                <strong>__Sample successfully created.__</strong> It is time to upload some files to it!
+          <form novalidate="novalidate" name="sampleCtrl.sampleDetailForm">
+            <div class="form-group">
+              <label for="sampleName" th:text="#{samples.details.sampleName}">Sample Name</label>
+              <input id="sampleName" name="sampleName" type="text" class="form-control" ng-model="sampleCtrl.sample.sampleName" name-validator="" minlength="3" ng-model-options="sampleCtrl.nameOptions" required="true" />
+              <div ng-messages="sampleCtrl.sampleDetailForm.sampleName.$dirty &amp;&amp; sampleCtrl.sampleDetailForm.sampleName.$error">
+                <div class="alert alert-warning" ng-message="required" th:text="#{project.samples.new.form.name.error.required}">REQUIRED</div>
+                <div class="alert alert-warning" ng-message="minlength" th:text="#{project.samples.new.form.name.error.minlength}">Must be at least 3 characters long</div>
+                <div class="alert alert-warning" ng-message="nameValidator" th:text="#{project.samples.new.form.name.error.special}"></div>
               </div>
-              <button class="btn btn-default" ngf-select="" ngf-multiple="false" ngf-change="sampleCtrl.uploadSingle($files)"><span class="fa fa-fw fa-cloud-upload"></span>&nbsp;<span th:text="#{project.samples.new.form.file-upload.single}"></span>
-              </button>
-              <button class="btn btn-default" ng-click="sampleCtrl.showPairedModal()"><span class="fa fa-fw fa-cloud-upload"></span>&nbsp;<span th:text="#{project.samples.new.form.file-upload.paired}"></span>
-              </button>
-              <div>
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <td>__File Name__</td>
-                      <td>__File Size__</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr ng-repeat="file in sampleCtrl.files">
-                      <td ng-bind="file.name"></td>
-                      <td ng-bind="file.size | sizeConverter"></td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div class="text-right">
-                  <button class="btn btn-primary" ng-disabled="sampleCtrl.uploader.inProgress" ng-click="sampleCtrl.upload()">Upload Files</button>
-                </div>
-              </div>
-            </wz-step>
-          </wizard>
+            </div>
+            <div class="form-group">
+              <label for="organism" th:text="#{samples.details.organism}">Organism__</label>
+              <input ng-model="sampleCtrl.sample.organism" class="form-control" type="text" id="organism" select2="" />
+            </div>
+            <div class="form-group text-right">
+              <button class="btn btn-primary" ng-disabled="sampleCtrl.sampleDetailForm.$invalid" ng-click="sampleCtrl.createSample()">Create Sample</button>
+            </div>
+          </form>
         </section>
       </div>
     </div>
@@ -102,7 +70,6 @@
       };
     </script>
     <script src="/resources/bower_components/select2/select2.min.js" th:src="@{/resources/bower_components/select2/select2.min.js}"></script>
-    <script src="/resources/bower_components/ng-file-upload/ng-file-upload.min.js" th:src="@{/resources/bower_components/ng-file-upload/ng-file-upload.min.js}"></script>
     <script src="/resources/js/pages/projects/add-samples.js" th:src="@{/resources/js/pages/projects/add-samples.js}"></script>
   </th:block>
 
