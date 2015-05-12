@@ -25,17 +25,17 @@
               <label for="sampleName" th:text="#{samples.details.sampleName}">Sample Name</label>
               <input id="sampleName" name="sampleName" type="text" class="form-control" ng-model="sampleCtrl.sample.sampleName" name-validator="" minlength="3" ng-model-options="sampleCtrl.nameOptions" required="true" />
               <div ng-messages="sampleCtrl.sampleDetailForm.sampleName.$dirty &amp;&amp; sampleCtrl.sampleDetailForm.sampleName.$error">
-                <div class="alert alert-warning" ng-message="required" th:text="#{project.samples.new.form.name.error.required}">REQUIRED</div>
-                <div class="alert alert-warning" ng-message="minlength" th:text="#{project.samples.new.form.name.error.minlength}">Must be at least 3 characters long</div>
-                <div class="alert alert-warning" ng-message="nameValidator" th:text="#{project.samples.new.form.name.error.special}"></div>
+                <div id="required-name-error" class="alert alert-warning" ng-message="required" th:text="#{project.samples.new.form.name.error.required}">REQUIRED</div>
+                <div id="minlength-name-error" class="alert alert-warning" ng-message="minlength" th:text="#{project.samples.new.form.name.error.minlength}">Must be at least 3 characters long</div>
+                <div id="nameValidator-name-error" class="alert alert-warning" ng-message="nameValidator" th:text="#{project.samples.new.form.name.error.special}"></div>
               </div>
             </div>
             <div class="form-group">
               <label for="organism" th:text="#{samples.details.organism}">Organism__</label>
-              <input ng-model="sampleCtrl.sample.organism" class="form-control" type="text" id="organism" select2="" />
+              <input ng-model="sampleCtrl.sample.organism" class="form-control" type="text" id="organism" name="organism" select2="" />
             </div>
             <div class="form-group text-right">
-              <button class="btn btn-primary" ng-disabled="sampleCtrl.sampleDetailForm.$invalid" ng-click="sampleCtrl.createSample()">Create Sample</button>
+              <button id="createBtn" class="btn btn-primary" ng-disabled="sampleCtrl.sampleDetailForm.$invalid" ng-click="sampleCtrl.createSample()">Create Sample</button>
             </div>
           </form>
         </section>
