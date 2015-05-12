@@ -24,11 +24,12 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 
 @Entity
 @Table(name = "remote_sequence_file")
-public class RemoteSequenceFile implements IridaSequenceFile, IridaThing {
+public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,9 +61,14 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing {
 	@CollectionTable(name = "remote_sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"sequence_file_id", "property_key" }, name = "UK_SEQUENCE_FILE_PROPERTY_KEY"))
 	private Map<String, String> optionalProperties;
+	
+	@NotNull
+	@Column(name = "file_revision_number")
+	private Long fileRevisionNumber;
 
 	public RemoteSequenceFile(SequenceFile base) {
 		createdDate = new Date();
+		fileRevisionNumber = 0L;
 
 		remoteURI = base.getSelfHref();
 		optionalProperties = base.getOptionalProperties();
@@ -110,6 +116,16 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing {
 	@Override
 	public String getLabel() {
 		return file.getFileName().toString();
+	}
+
+	@Override
+	public Long getFileRevisionNumber() {
+		return fileRevisionNumber;
+	}
+
+	@Override
+	public void incrementFileRevisionNumber() {
+		fileRevisionNumber++;		
 	}
 
 }
