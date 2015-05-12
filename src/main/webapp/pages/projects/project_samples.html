@@ -126,8 +126,7 @@
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
 					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle ng-cloak" dropdown-toggle=""
-					        ng-hide="uiGalaxyCtrl.inGalaxy"
-					        ng-disabled="subnav.count&lt;1">
+					        ng-hide="uiGalaxyCtrl.inGalaxy">
 						<span>Samples</span>
 						&nbsp;
 						<span class="caret"></span>
@@ -142,31 +141,41 @@
 								<span th:text="#{project.samples.nav.merge}">Merge</span>
 							</a>
 						</li>
-						<li th:if="${isOwner} or ${isAdmin}">
-							<a id="copyBtn" href="" ng-click="subnav.openModal('copy')">
-								<span class="fa fa-fw fa-copy"></span>
-								&nbsp;
-								<span th:text="#{project.samples.nav.copy}">_COPY_</span>
-							</a>
-						</li>
-						<li class="local-only" th:if="${isOwner} or ${isAdmin}"
-						    ng-class="{disabled: ! subnav.localSelected}" ng-attr-tooltip="{{subnav.showTooltip()}}"
-						    tooltip-append-to-body="true" tooltip-placement="right">
-							<a id="moveBtn" href="#" ng-click="subnav.openModal('move')">
-								<span class="fa fa-truck fa-fw"></span>
-								&nbsp;
-								<span th:text="#{project.samples.nav.move}"></span>
-							</a>
-						</li>
-						<li class="local-only" th:if="${isOwner} or ${isAdmin}"
-						    ng-class="{disabled: ! subnav.localSelected}" ng-attr-tooltip="{{subnav.showTooltip()}}"
-						    tooltip-append-to-body="true" tooltip-placement="right">
-							<a id="removeBtn" href="#" ng-click="subnav.remove()">
-								<i class="fa fa-trash fa-fw"></i>
-								&nbsp;
-								<span th:text="#{project.samples.nav.remove}"></span>
-							</a>
-						</li>
+						<th:block th:if="${isOwner} or ${isAdmin}">
+							<li ng-class="{disabled: subnav.count&lt;2}">
+								<a id="copyBtn" href="" ng-click="subnav.openModal('copy')">
+									<span class="fa fa-fw fa-copy"></span>
+									&nbsp;
+									<span th:text="#{project.samples.nav.copy}">_COPY_</span>
+								</a>
+							</li>
+							<li class="local-only" ng-class="{disabled: subnav.count&lt;2 || ! subnav.localSelected}"
+							    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
+							    tooltip-placement="right">
+								<a id="moveBtn" href="#" ng-click="subnav.openModal('move')">
+									<span class="fa fa-truck fa-fw"></span>
+									&nbsp;
+									<span th:text="#{project.samples.nav.move}"></span>
+								</a>
+							</li>
+							<li class="local-only" ng-class="{disabled: subnav.count&lt;2 || ! subnav.localSelected}"
+							    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
+							    tooltip-placement="right">
+								<a id="removeBtn" href="#" ng-click="subnav.remove()">
+									<i class="fa fa-trash fa-fw"></i> &nbsp;
+									<span th:text="#{project.samples.nav.remove}"></span>
+								</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a th:href="@{/projects/{projectId}/samples/new(projectId=${project.getId()})}"
+								   href="#">
+									<span class="fa fa-fw fa-plus"></span>
+									&nbsp;
+									<th:block th:text="#{project.samples.nav.new}">__New Sample__</th:block>
+								</a>
+							</li>
+						</th:block>
 					</ul>
 				</div>
 

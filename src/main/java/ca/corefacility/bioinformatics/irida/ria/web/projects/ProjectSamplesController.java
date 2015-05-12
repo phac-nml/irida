@@ -134,7 +134,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Name of the project samples list view
 	 */
-	@RequestMapping("/projects/{projectId}")
+	@RequestMapping(value = {"/projects/{projectId}", "/projects/{projectId}/samples"})
 	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId,
 			HttpSession httpSession) {
 		Project project = projectService.read(projectId);
