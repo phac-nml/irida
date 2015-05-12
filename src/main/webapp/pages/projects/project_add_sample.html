@@ -44,24 +44,6 @@
   </div>
 
   <th:block layout:fragment="page-scripts" th:inline="javascript">
-    <script type="text/ng-template" id="/paired-template.html">
-      <div class="modal-header">
-        <h3 class="modal-title">__Select Paired End Files__</h3>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <button class="btn btn-default" ngf-select="" ngf-multiple="false" ngf-change="pairCtrl.selectForward($files)">__Forward Read__</button>
-          {{pairCtrl.files.forward.name}}
-        </div>
-        <div class="form-group">
-          <button class="btn btn-default" ngf-select="" ngf-multiple="false" ngf-change="pairCtrl.selectReverse($files)">__Forward Read__</button>
-          {{pairCtrl.files.reverse.name}}
-        </div>
-        <div class="modal-footer text-right">
-          <button class="btn btn-primary" ng-disabled="pairCtrl.files.forward === undefined || pairCtrl.files.reverse === undefined" ng-click="pairCtrl.upload()">__SUBMIT__</button>
-        </div>
-      </div>
-    </script>
     <script th:inline="javascript">
       var PAGE = {
         project: {
