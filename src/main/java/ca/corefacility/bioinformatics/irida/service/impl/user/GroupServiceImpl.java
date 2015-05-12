@@ -58,7 +58,7 @@ public class GroupServiceImpl extends CRUDServiceImpl<Long, Group> implements Gr
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Group read(Long id) {
 		return super.read(id);
 	}
