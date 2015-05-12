@@ -400,20 +400,337 @@ A sample corresponds to a single isolate and contains the sequencing data and me
 #### Links
 {:.no_toc}
 
+| Name | Description |
+|------|-------------|
+| `self` | The link back to this collection of samples. |
+
 #### Example Response
 {:.no_toc}
 
+```javascript
+{
+  "resource" : {
+    "resources" : [ {
+      "sequenceFileCount" : 0,
+      "description" : "The first sample",
+      "sampleName" : "Sample 1",
+      "sequencerSampleId" : "sample1",
+      "strain" : null,
+      "collectionDate" : null,
+      "collectedBy" : null,
+      "latitude" : null,
+      "longitude" : null,
+      "organism" : "E. coli",
+      "isolate" : null,
+      "geographicLocationName" : null,
+      "isolationSource" : null,
+      "cultureCollection" : null,
+      "genotype" : null,
+      "passageHistory" : null,
+      "pathotype" : null,
+      "serotype" : null,
+      "serovar" : null,
+      "specimenVoucher" : null,
+      "subtype" : null,
+      "hostTaxonomicName" : null,
+      "hostDisease" : null,
+      "hostDescription" : null,
+      "hostDiseaseOutcome" : null,
+      "hostDiseaseStage" : null,
+      "hostHealthState" : null,
+      "hostSex" : null,
+      "hostSubjectId" : null,
+      "hostTissueSampleId" : null,
+      "hostAge" : null,
+      "identifier" : "1",
+      "createdDate" : 1406733849000,
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/projects/5/samples/1"
+      }, {
+        "rel" : "sample/sequenceFiles",
+        "href" : "http://localhost:8080/api/projects/5/samples/1/sequenceFiles"
+      }, {
+        "rel" : "sample/project",
+        "href" : "http://localhost:8080/api/projects/5"
+      } ]
+    }],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/5/samples"
+    } ]
+  }
+}
+```
+
 ### Sample
 
-#### Properties
-{:.no_toc}
-
-### Sequence Files
+An individual sample contains the metadata associated with an isolate. The sample will also link to the collection of [sequence files](#sequence-files) produced by a sequencer for the isolate.
 
 #### Links
 {:.no_toc}
 
+| Name | Description |
+|------|-------------|
+| `self` | A link to this sample. |
+| `sample/project` | A link to the project that owns this sample. |
+| `sample/sequenceFiles` | A link to the collection of sequence files in this sample. |
+
 #### Properties
 {:.no_toc}
 
+
+| Name | Description | Validation |
+|------|-------------|------------|
+| `sampleName` | The name used to refer to the sample by the user. This is often the same as `sequencerSampleId`, but *may* be different. | Required. Must be at least 3 characters long. Must not contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' . |` (note: this blacklist of characters is defined by the set of invalid characters on the Windows file system)|
+| `sequencerSampleId` | The name used to refer to this sample by a sequencer. For Illumina, this is the value of the `Sample_Name` column in `SampleSheet.csv`.| Required. Must be at least 3 characters long. Must not contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' .` (note: this blacklist of characters is defined by the set of invalid characters on the Windows file system)|
+| `description` | A plain-text description of the sample. | Not required. |
+| `strain` | The microbial or eukaryotic strain name. | Not required. Must be at least 3 characters long. |
+| `collectionDate` | The date that the sample was collected. | Not required. Must be a valid date (in IRIDA, that is the number of milliseconds since the epoch). |
+| `collectedBy` | The person (or organization) that collected the sample. | Not required. Must be at least 3 characters long. |
+| `latitude` | The latitude of the location where the sample was collected. | Not required. Must be a valid latitude (must match the pattern `^-?(\d){1,2}(\.\d+)?$` and the first number group must be in the range `[-90, 90]`). |
+| `longitude` | The longitude of the location where the sample was collected. | Not required. Must be a valid longitude (must match the pattern `-?(\d){1,3}(\.\d+)?$` and the first number group must be in the range `[-180, 180]`). |
+| `organism` | The name of the organism that is contained by the sample. | Not required. Must be at least 3 characters long. |
+| `isolate` | The identification or description of the specific individual from which this sample was obtained. | Not required. Must be at least 3 characters long. |
+| `geographicLocationName` | A human-readable geographic location name, complementing the latitude and longitude of collection location. | Not required. Must be at least 3 characters long. Must match the pattern `\w+(:\w+(:\w+)?)?`, as defined by the NCBI location name pattern. |
+| `isolationSource` | Describes the physical, environmental, and/or the geographical source of the biological sample from which the sample was derived. | Not required. |
+| `cultureCollection` | Name of source institute and unique culture identifier. See the NCBI description for the proper format and list of allowed institutes: <http://www.insdc.org/controlled-vocabulary-culturecollection-qualifier> | Not required. |
+| `genotype` | The observed genotype. | Not required. |
+| `passageHistory` | Number of passages and passage method. | Not required. |
+| `pathotype` | The bacterial-specific pathotype (examples: Eschericia coli - STEC, UPEC) | Not required. |
+| `serotype` | The taxonomy below subspecies; a variety (in bacteria, fungi, or virus) usually based on its antigenic properties. Same as serovar and serogroup. e.g., serotype="H1N1" in Influenza A virus CY098518. | Not required. |
+| `serovar` | The taxonomy below subspecies. | Not required. |
+| `specimenVoucher` | Individual identifier for the physical specimen. | Not required. |
+| `subgroup` | Taxonomy below subspecies. | Not required. |
+| `subtype` | Used as classifier in viruses. | Not required. |
+
+
+#### Example Response
+{:.no_toc}
+
+```javascript
+{
+  "resource" : {
+    "sequenceFileCount" : 0,
+    "description" : "The fifth sample",
+    "sampleName" : "Sample 5",
+    "sequencerSampleId" : "sample5",
+    "strain" : null,
+    "collectionDate" : null,
+    "collectedBy" : null,
+    "latitude" : null,
+    "longitude" : null,
+    "organism" : "E. coli",
+    "isolate" : null,
+    "geographicLocationName" : null,
+    "isolationSource" : null,
+    "cultureCollection" : null,
+    "genotype" : null,
+    "passageHistory" : null,
+    "pathotype" : null,
+    "serotype" : null,
+    "serovar" : null,
+    "specimenVoucher" : null,
+    "subtype" : null,
+    "hostTaxonomicName" : null,
+    "hostDisease" : null,
+    "hostDescription" : null,
+    "hostDiseaseOutcome" : null,
+    "hostDiseaseStage" : null,
+    "hostHealthState" : null,
+    "hostSex" : null,
+    "hostSubjectId" : null,
+    "hostTissueSampleId" : null,
+    "hostAge" : null,
+    "identifier" : "5",
+    "createdDate" : 1406733854000,
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/5/samples/5"
+    }, {
+      "rel" : "sample/project",
+      "href" : "http://localhost:8080/api/projects/5"
+    }, {
+      "rel" : "sample/sequenceFiles",
+      "href" : "http://localhost:8080/api/projects/5/samples/5/sequenceFiles"
+    } ]
+  }
+
+```
+
+### Sequence Files
+
+Each sample will refer to a collection of sequence files that have been sequenced and uploaded to IRIDA. Every record in the sequence files resource collection has a `self` rel to access more information about that file.
+
+#### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to this collection of sequence files. |
+| `sample` | A link back to the sample that owns this sequence file collection. |
+
+#### Example response
+{:no_toc}
+
+```javascript
+{
+  "resource" : {
+    "resources" : [ {
+      "file" : "/IRIDA/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq",
+      "fileName" : "01-1111_S1_L001_R1_001.fastq",
+      "identifier" : "9",
+      "createdDate" : 1407344463000,
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/9"
+      } ]
+    }, {
+      "file" : "/IRIDA/sequence-files/10/2/01-1111_S1_L001_R2_001.fastq",
+      "fileName" : "01-1111_S1_L001_R2_001.fastq",
+      "identifier" : "10",
+      "createdDate" : 1407344463000,
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/10"
+      } ]
+    } ],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
+    }, {
+      "rel" : "sample",
+      "href" : "http://localhost:8080/api/projects/4/samples/51"
+    } ]
+  }
+
+```
+
+### Sequence File
+
+Each sequence file corresponds to a single file (may be one of a pair for paired-end sequencing) generated for an isolate. A sequence file record contains a reference to the file-system location where the file can be found locally. A file can also be downloaded from IRIDA by making a request for the file using an `Accept` header of `application/fastq`.
+
+#### Links
+{:no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to this sequence file record. |
+| `sample` | A link to the sample that contains this sequence file. |
+| `sample/sequenceFiles` | A link to the collection of sequence files for the parent sample. |
+
+#### Properties
+{:.no_toc}
+
+| Name | Description | Validation |
+|------|-------------|------------|
+| `file` | The local file system location where the file can be found. | Not specified by a client. |
+| `fileName` | The `basename` of the file, without the directory. | Derived from the `file` property, not specified by a client. |
+
+#### Example response
+{:no_toc}
+
+```javascript
+{
+  "resource" : {
+    "file" : "/IRIDA/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq",
+    "fileName" : "01-1111_S1_L001_R1_001.fastq",
+    "identifier" : "9",
+    "createdDate" : 1407344463000,
+    "links" : [ {
+      "rel" : "sample/sequenceFiles",
+      "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
+    }, {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/9"
+    }, {
+      "rel" : "sample",
+      "href" : "http://localhost:8080/api/projects/4/samples/51"
+    } ]
+  }
+
+```
+
 ### Sequencing Runs
+
+[Sequence files](#sequence-file) are commonly uploaded to IRIDA as part of a set of files generated by a single execution of a sequencer. Sequencing runs can only be viewed by administrative user accounts. Each record in the sequencing runs collection has a `self` rel that can be used to access details about the inddividual sequencing run resource.
+
+#### Links
+{:no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to the collection of sequencing runs. |
+
+#### Example response
+{:.no_toc}
+
+```javascript
+{
+  "resource" : {
+    "resources" : [ {
+      "projectName" : "Test Project",
+      "workflow" : "test workflow",
+      "experimentName" : "Test Experiment",
+      "application" : "FASTQ",
+      "assay" : "Nextera",
+      "chemistry" : "Amplicon",
+      "readLengths" : 250,
+      "investigatorName" : "Jon Doe",
+      "description" : "Superbug",
+      "uploadStatus" : "COMPLETE",
+      "layoutType" : "SINGLE_END",
+      "identifier" : "1",
+      "createdDate" : 1406733873000,
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/sequencingrun/1"
+      } ]
+    } ],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/sequencingrun"
+    } ]
+  }
+
+```
+### Sequencing RUn
+
+A sequencing run contains a reference to all of the files that were generated by the same execution of a sequencer (may span many samples). The run resource also contains metadata captured when the files were uploaded (on Illumina this is metadata in the `SampleSheet.csv` file).
+
+#### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to this sequencing run. |
+
+#### Properties
+{:.no_toc}
+
+#### Example response
+{:.no_toc}
+
+```javascript
+{
+  "resource" : {
+    "projectName" : "Test Project",
+    "workflow" : "test workflow",
+    "experimentName" : "Test Experiment",
+    "application" : "FASTQ",
+    "assay" : "Nextera",
+    "chemistry" : "Amplicon",
+    "readLengths" : 250,
+    "investigatorName" : "Jon Doe",
+    "description" : "Superbug",
+    "uploadStatus" : "COMPLETE",
+    "layoutType" : "SINGLE_END",
+    "identifier" : "1",
+    "createdDate" : 1406733873000,
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/sequencingrun/1"
+    } ]
+  }
+
+```
