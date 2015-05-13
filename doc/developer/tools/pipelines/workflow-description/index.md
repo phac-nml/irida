@@ -204,13 +204,16 @@ None.
 
 ```xml
 <parameters>
+    <parameter name="myparameter" defaultValue="1">
+        <toolParameter toolId="my_galaxy_tool" parameterName="parameter.section.name" />
+    </parameter>
 </parameters>
 ```
 
 `<parameter>`
 -------------
 
-Contained in the `<parameters>` tag.  This defines a single parameter for a workflow.
+Contained in the `<parameters>` tag.  This defines a single parameter for a workflow.  This must contain at least one `<toolParameter>` element which defines the specific Galaxy tool and parameter to override.  The `defaultValue` should also correspond to one of the acceptible Galaxy parameter values.
 
 ### Attributes
 
@@ -221,15 +224,18 @@ Contained in the `<parameters>` tag.  This defines a single parameter for a work
 
 ### Example
 
+To override the model parameter defined in the Galaxy version of PhyML in <http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml>, the following entry can be used.  The `defaultValue="HKY85"` must correspond to the value defined in the Galaxy PhyML Tool (see [phyml.xml#L38][]].
+
 ```xml
-<parameter name="myparameter" defaultValue="1">
+<parameter name="myparameter" defaultValue="HKY85">
+    <toolParameter toolId="phyml1" parameterName="datatype_condition.model" />
 </parameter>
 ```
 
 `<toolParameter>`
 -----------------
 
-Contained in the `<parameter>` tag.  This defines a parameter in a Galaxy tool to map to from the parent `<parameter>` definition.
+Contained in the `<parameter>` tag.  This defines a parameter in a Galaxy tool to map to from the parent `<parameter>` definition.  The `toolId` and `parameterName` must correspond to the information defined in the Galaxy tool `XML` configuration file.
 
 ### Attributes
 
@@ -240,8 +246,26 @@ Contained in the `<parameter>` tag.  This defines a parameter in a Galaxy tool t
 
 ### Example
 
+For the model parameter defined in the Galaxy version of PhyML in <http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml>, the `toolId` and `parameterName` entries are given below.
+
+**toolId** (see [phyml.xml#L1][])
+
 ```xml
-<toolParameter toolId="my_galaxy_tool" parameterName="parameter.section.name" />
+<tool id="phyml1" name="PhyML" version="3.1">
+```
+
+**parameterName** (see [phyml.xml#L6][])
+
+```xml
+<command interpreter="bash">./phyml.sh ... -m $datatype_condition.model ...
+...
+</command>
+```
+
+These entries should be written in the IRIDA Workflow Description file as follows.
+
+```xml
+<toolParameter toolId="phyml1" parameterName="datatype_condition.model" />
 ```
 
 `<outputs>`
@@ -443,6 +467,9 @@ An example workflow description XML file is given below.
 ```
 
 [UUID]: http://en.wikipedia.org/wiki/Universally_unique_identifier
+[phyml.xml#L1]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L1
+[phyml.xml#L6]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L6
+[phyml.xml#L38]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L38
 [AnalysisType JavaDoc]: ../../../apidocs/ca/corefacility/bioinformatics/irida/model/enums/AnalysisType.html
 [galaxy-paired-input]: images/galaxy-paired-input.png
 [galaxy-single-input]: images/galaxy-single-input.png
