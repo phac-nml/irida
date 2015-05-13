@@ -78,7 +78,7 @@ None.
 `<analysisType>`
 ----------------
 
-The particular type or class of analysis this workflow belongs to.  This must be one of the types defined in the `AnalysisType` enum in IRIDA.  Please see the [AnalysisType JavaDoc][] for the valid types.
+The particular type or class of analysis this workflow belongs to.  This must be one of the types defined in the `AnalysisType` enum in IRIDA.  Currently, the type can be either `assembly-annotation` or `phylogenomics`.  Please see the [AnalysisType JavaDoc][] for more details.
 
 ### Attributes
 
@@ -93,7 +93,7 @@ None.
 `<inputs>`
 ----------
 
-A description of the different types of inputs to this workflow.
+A description of the different types of inputs to this workflow.  This must contain at least one of `<sequenceReadsPaired>` or `<sequenceReadsSingle>` as a sub-tag.
 
 ### Attributes
 
@@ -118,7 +118,17 @@ None.
 
 ### Example
 
+If a Galaxy workflow contains an **Input dataset collection** of type **list:paired** then the name of the dataset collection, `sequence_reads_paired`, should correspond to the name in this element.  Please see the image below.
+
+#### Galaxy Workflow Input
+
+![galaxy-paired-input][]
+
+#### Workflow Description File
+
+```xml
 <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+```
 
 `<sequenceReadsSingle>`
 -------------
@@ -130,6 +140,14 @@ An optional tag contained in the `<inputs>` tag set.  This defines the name, if 
 None.
 
 ### Example
+
+If a Galaxy workflow contains an **Input dataset collection** of type **list** then the name of the dataset collection, `sequence_reads_single`, should correspond to the name in this element.  Please see the image below.
+
+#### Galaxy Workflow Input
+
+![galaxy-single-input][]
+
+#### Workflow Description File
 
 ```xml
 <sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
@@ -146,6 +164,14 @@ None.
 
 ### Example
 
+If a Galaxy workflow contains an **Input dataset** for a reference genome, then the name of the dataset, `reference`, should correspond to the name in this element.  Please see the image below.
+
+#### Galaxy Workflow Input
+
+![galaxy-reference-input][]
+
+#### Workflow Description File
+
 ```xml
 <reference>reference</reference>
 ```
@@ -153,7 +179,7 @@ None.
 `<requiresSingleSample>`
 -------------
 
-An optional tag contained in the `<inputs>` tag set.  This defines whether or not this workflow only operates on a single sample `true` or can handle multiple samples `false`.
+An optional tag contained in the `<inputs>` tag set.  This defines whether or not this workflow only operates on a single sample `true` or can handle multiple samples `false`.  That is to say, if this workflow will upload only a single sample to Galaxy to execute the workflow, such as with the assembly and annotation workflow, then this should be set to `true`.  Otherwise this should be set to `false`.  The default is `false`.
 
 ### Attributes
 
@@ -162,7 +188,7 @@ None.
 ### Example
 
 ```xml
-<requiresSingleSample>false</requiresSingleSample>
+<requiresSingleSample>true</requiresSingleSample>
 ```
 
 `<parameters>`
@@ -385,3 +411,6 @@ An example workflow description XML file is given below.
 
 [UUID]: http://en.wikipedia.org/wiki/Universally_unique_identifier
 [AnalysisType JavaDoc]: ../../../apidocs/ca/corefacility/bioinformatics/irida/model/enums/AnalysisType.html
+[galaxy-paired-input]: images/galaxy-paired-input.png
+[galaxy-single-input]: images/galaxy-single-input.png
+[galaxy-reference-input]: images/galaxy-reference-input.png
