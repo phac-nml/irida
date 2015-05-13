@@ -54,7 +54,7 @@ import com.google.common.collect.ImmutableMap;
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	@Value("${file.upload.max_size}")
-	private static Long REST_MAX_UPLOAD_SIZE = 10737418240L;
+	private Long REST_MAX_UPLOAD_SIZE = -1L;
 
 	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
 

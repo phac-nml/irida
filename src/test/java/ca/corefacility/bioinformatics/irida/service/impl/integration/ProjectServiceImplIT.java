@@ -267,6 +267,7 @@ public class ProjectServiceImplIT {
 
 		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
+		assertFalse("sample should be deleted because it was detached", sampleService.exists(s.getId()));
 	}
 
 	@Test

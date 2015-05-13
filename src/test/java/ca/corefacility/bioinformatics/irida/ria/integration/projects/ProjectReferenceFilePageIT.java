@@ -80,7 +80,7 @@ public class ProjectReferenceFilePageIT {
 	@Test
 	public void testPageSetupAdminManager() {
 		// NON-MANAGER
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 
 		// 1. Without Files
 		ProjectReferenceFilePage page_noFiles = ProjectReferenceFilePage
@@ -104,7 +104,7 @@ public class ProjectReferenceFilePageIT {
 
 	@Test
 	public void testRemoveReferenceFile() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		ProjectReferenceFilePage page = ProjectReferenceFilePage.goTo(driver, PROJECT_ID_WITH_REFERENCE_FILES);
 
 		assertEquals(2, page.numRefFiles());
