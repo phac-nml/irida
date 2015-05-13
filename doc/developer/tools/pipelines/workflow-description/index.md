@@ -257,13 +257,14 @@ None.
 
 ```xml
 <outputs>
+    <output name="my-output-1" fileName="phylogeneticTree.tre" />
 </outputs>
 ```
 
 `<output>`
 ----------
 
-Contained in the `<outputs>` tag.  Defines a particular output file from a Galaxy workflow.
+Contained in the `<outputs>` tag.  Defines a particular output file from a Galaxy workflow. In order to save this output file in IRIDA, the name of the dataset file in Galaxy must be defined in the `fileName` attribute of the `<output>` element.  This can be accomplished by using the **Rename Dataset** action in a Galaxy workflow to give an output dataset file an explicit name.
 
 ### Attributes
 
@@ -274,8 +275,20 @@ Contained in the `<outputs>` tag.  Defines a particular output file from a Galax
 
 ### Example
 
+If the **Rename Dataset** action is set on a tool to give an output file the name `phylogeneticTree.tre`
+
+![galaxy-workflow-action-output][]
+
+then the corresponding dataset will appear with this name in the Galaxy History.
+
+![galaxy-workflow-dataset-output][]
+
+This name must then correspond to the `fileName` in the workflow description file.
+
+#### Workflow Description File
+
 ```xml
-<output name="my-output-1" fileName="output-file.txt" />
+<output name="my-output-1" fileName="phylogeneticTree.tre" />
 ```
 
 `<toolRepositories>`
@@ -291,13 +304,19 @@ None.
 
 ```xml
 <toolRepositories>
+    <repository>
+        <name>my_tool</name>
+        <owner>irida</owner>
+        <url>https://irida.corefacility.ca/galaxy-shed</url>
+        <revision>de3e46eaf5ba</revision>
+    </repository>
 </toolRepositories>
 ```
 
 `<repository>`
 --------------
 
-Contained within a `<toolRepositories>` tag.  Defines a particular repository storing a dependency for the workflow.
+Contained within a `<toolRepositories>` tag.  Defines a particular repository storing a dependency for the workflow.  This must correspond to the information within some Galaxy ToolShed containing this repository.  For example, for SPAdes <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>.
 
 ### Attributes
 
@@ -305,8 +324,14 @@ None.
 
 ### Example
 
+For the version of SPAdes stored within the main Galaxy ToolShed, <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>, the following information should be defined.
+
 ```xml
 <repository>
+    <name>spades</name>
+    <owner>lionelguy</owner>
+    <url>https://toolshed.g2.bx.psu.edu/</url>
+    <revision>21734680d921</revision>
 </repository>
 ```
 
@@ -321,8 +346,10 @@ None.
 
 ### Example
 
+For SPAdes, <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>, the name would be `spades`.
+
 ```xml
-<name>my_tool</name>
+<name>spades</name>
 ```
 
 `<owner>`
@@ -336,8 +363,10 @@ None.
 
 ### Example
 
+For SPAdes, <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>, the owner would be `lionelguy`.
+
 ```xml
-<owner>irida</owner>
+<owner>lionelguy</owner>
 ```
 
 `<url>`
@@ -351,8 +380,10 @@ None.
 
 ### Example
 
+For SPAdes on the main Galaxy ToolShed, <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>, the url would be `https://toolshed.g2.bx.psu.edu/`.
+
 ```xml
-<url>https://irida.corefacility.ca/galaxy-shed</url>
+<url>https://toolshed.g2.bx.psu.edu/</url>
 ```
 
 `<revision>`
@@ -365,6 +396,8 @@ Contained in the `<repository>` tag.  Defines the revision number of tool.
 None.
 
 ### Example
+
+For the version of SPAdes on the main Galaxy ToolShed, <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>, the revision would be `21734680d921`.
 
 ```xml
 <revision>de3e46eaf5ba</revision>
@@ -414,3 +447,5 @@ An example workflow description XML file is given below.
 [galaxy-paired-input]: images/galaxy-paired-input.png
 [galaxy-single-input]: images/galaxy-single-input.png
 [galaxy-reference-input]: images/galaxy-reference-input.png
+[galaxy-workflow-action-output]: images/galaxy-workflow-action-output.png
+[galaxy-workflow-dataset-output]: images/galaxy-workflow-dataset-output.png
