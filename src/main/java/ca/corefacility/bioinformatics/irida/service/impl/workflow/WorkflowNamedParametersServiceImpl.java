@@ -37,6 +37,16 @@ public class WorkflowNamedParametersServiceImpl extends CRUDServiceImpl<Long, Ir
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public IridaWorkflowNamedParameters create(final IridaWorkflowNamedParameters parameters) {
+		return super.create(parameters);
+	}
+
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Iterable<IridaWorkflowNamedParameters> findAll() {
 		return super.findAll();
