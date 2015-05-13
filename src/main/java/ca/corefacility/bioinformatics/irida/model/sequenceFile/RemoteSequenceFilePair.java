@@ -29,6 +29,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
+/**
+ * Remote representation of a {@link IridaSequenceFilePair}. Refers to 2
+ * {@link RemoteSequenceFile}s and a URI for the remote resource.
+ */
 @Entity
 @Table(name = "remote_sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
@@ -105,7 +109,7 @@ public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getRemoteURI() {
 		return remoteURI;
 	}

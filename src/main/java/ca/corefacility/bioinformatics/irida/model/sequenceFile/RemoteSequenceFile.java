@@ -29,6 +29,10 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 
+/**
+ * Remote representation of an {@link IridaSequenceFile}. This object will point
+ * to both a URI on a remote API and a local Path.
+ */
 @Entity
 @Table(name = "remote_sequence_file")
 @EntityListeners(AuditingEntityListener.class)
