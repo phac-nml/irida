@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Validator;
@@ -103,13 +102,12 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 
 	@Override
 	public SequenceFilePair readSequenceFilePairForSample(Sample sample, Long id) {
-		Optional<SequenceFilePair> findFirst = getSequenceFilePairsForSample(sample).stream()
-				.filter((p) -> (p.getId().equals(id))).findFirst();
+		SequenceFilePair readSequenceFilePairForSample = pairRepository.readSequenceFilePairForSample(sample, id);
 
-		if (findFirst.isPresent()) {
-			return findFirst.get();
+		if (readSequenceFilePairForSample != null) {
+			return readSequenceFilePairForSample;
 		}
-
+		
 		throw new EntityNotFoundException("No file pair with id " + id + " exists in the given sample");
 	}
 }
