@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="remote-sequence-file" author="tom">
+		<createTable tableName="remote_sequence_file">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="file_path" type="varchar(255)"/>
+			<column name="file_revision_number" type="bigint(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="modified_date" type="datetime" />
+			<column name="remote_uri" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addUniqueConstraint columnNames="file_path"
+			constraintName="UK_REMOTE_SEQUENCE_FILE_FILE" tableName="remote_sequence_file" />
+
+		<createTable tableName="remote_sequence_file_properties">
+			<column name="sequence_file_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="property_value" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="property_key" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>
