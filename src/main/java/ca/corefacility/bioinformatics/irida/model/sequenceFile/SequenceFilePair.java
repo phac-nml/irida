@@ -29,17 +29,18 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableSet;
-
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableSet;
 
 @Entity
 @Table(name = "sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFilePair extends IridaResourceSupport implements IridaThing {
+public class SequenceFilePair extends IridaResourceSupport implements IridaThing, IridaSequenceFilePair {
 
 	/**
 	 * Pattern for matching forward {@link SequenceFile}s from a file name.
