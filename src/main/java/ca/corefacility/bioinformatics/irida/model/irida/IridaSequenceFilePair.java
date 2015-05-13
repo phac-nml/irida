@@ -22,19 +22,19 @@ public interface IridaSequenceFilePair {
 	 * 
 	 * @return Forward {@link SequenceFile}
 	 */
-	public SequenceFile getForwardSequenceFile();
+	public IridaSequenceFile getForwardSequenceFile();
 
 	/**
 	 * Get the reverse oriented {@link SequenceFile}
 	 * 
 	 * @return reverse {@link SequenceFile}
 	 */
-	public SequenceFile getReverseSequenceFile();
+	public IridaSequenceFile getReverseSequenceFile();
 
 	/**
 	 * Get a Set of the {@link SequenceFile}s for this pair
 	 * 
 	 * @return Set of {@link SequenceFile}s
 	 */
-	public Set<SequenceFile> getFiles();
+	public Set<? extends IridaSequenceFile> getFiles();
 }
