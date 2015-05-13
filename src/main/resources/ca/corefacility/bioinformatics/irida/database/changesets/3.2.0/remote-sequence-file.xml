@@ -45,6 +45,9 @@
             <column name="created_date" type="datetime">
                 <constraints nullable="false" />
             </column>
+            <column name="remote_uri" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
         
         <createTable tableName="remote_sequence_file_pair_files">
