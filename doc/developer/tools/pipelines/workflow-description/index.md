@@ -11,13 +11,13 @@ This file describes the IRIDA Workflow Description format.  This is an **XML** f
 {:toc}
 
 
-Workflow Description XML Tag Details
-====================================
+Workflow Description XML Element Details
+========================================
 
 `<iridaWorkflow>`
 ----------------
 
-The outer-most tag. All other tags are contained within an `<iridaWorkflow>`.
+The outer-most element tag. All other tags are contained within an `<iridaWorkflow>`.
 
 ### Attributes
 
@@ -93,7 +93,7 @@ None.
 `<inputs>`
 ----------
 
-A description of the different types of inputs to this workflow.  This must contain at least one of `<sequenceReadsPaired>` or `<sequenceReadsSingle>` as a sub-tag.
+A description of the different types of inputs to this workflow.  This must contain at least one of `<sequenceReadsPaired>` or `<sequenceReadsSingle>` as a sub-element.
 
 ### Attributes
 
@@ -110,7 +110,7 @@ None.
 `<sequenceReadsPaired>`
 -----------------------
 
-An optional tag contained in the `<inputs>` tag set.  This defines the name, if any, of a list of paired-end files used as input to the Galaxy workflow.
+An optional element tag contained in the `<inputs>` tag set.  This defines the name, if any, of a list of paired-end files used as input to the Galaxy workflow.
 
 ### Attributes
 
@@ -133,7 +133,7 @@ If a Galaxy workflow contains an **Input dataset collection** of type **list:pai
 `<sequenceReadsSingle>`
 -------------
 
-An optional tag contained in the `<inputs>` tag set.  This defines the name, if any, of a list of single-end files used as input to the Galaxy workflow.
+An optional element tag contained in the `<inputs>` tag set.  This defines the name, if any, of a list of single-end files used as input to the Galaxy workflow.
 
 ### Attributes
 
@@ -156,7 +156,7 @@ If a Galaxy workflow contains an **Input dataset collection** of type **list** t
 `<reference>`
 -------------
 
-An optional tag contained in the `<inputs>` tag set.  This defines the name, if any, of the reference input for the Galaxy workflow.
+An optional element tag contained in the `<inputs>` tag set.  This defines the name, if any, of the reference input for the Galaxy workflow.
 
 ### Attributes
 
@@ -179,7 +179,7 @@ If a Galaxy workflow contains an **Input dataset** for a reference genome, then 
 `<requiresSingleSample>`
 -------------
 
-An optional tag contained in the `<inputs>` tag set.  This defines whether or not this workflow only operates on a single sample `true` or can handle multiple samples `false`.  That is to say, if this workflow will upload only a single sample to Galaxy to execute the workflow, such as with the assembly and annotation workflow, then this should be set to `true`.  Otherwise this should be set to `false`.  The default is `false`.
+An optional element tag contained in the `<inputs>` tag set.  This defines whether or not this workflow only operates on a single sample `true` or can handle multiple samples `false`.  That is to say, if this workflow will upload only a single sample to Galaxy to execute the workflow, such as with the assembly and annotation workflow, then this should be set to `true`.  Otherwise this should be set to `false`.  The default is `false`.
 
 ### Attributes
 
@@ -213,7 +213,7 @@ None.
 `<parameter>`
 -------------
 
-Contained in the `<parameters>` tag.  This defines a single parameter for a workflow.  This must contain at least one `<toolParameter>` element which defines the specific Galaxy tool and parameter to override.  The `defaultValue` should also correspond to one of the acceptible Galaxy parameter values.
+Contained in the `<parameters>` element tag.  This defines a single parameter for a workflow.  This must contain at least one `<toolParameter>` element which defines the specific Galaxy tool and parameter to override.  The `defaultValue` should also correspond to one of the acceptible Galaxy parameter values.
 
 ### Attributes
 
@@ -235,7 +235,7 @@ To override the model parameter defined in the Galaxy version of PhyML in <http:
 `<toolParameter>`
 -----------------
 
-Contained in the `<parameter>` tag.  This defines a parameter in a Galaxy tool to map to from the parent `<parameter>` definition.  The `toolId` and `parameterName` must correspond to the information defined in the Galaxy tool `XML` configuration file.
+Contained in the `<parameter>` element tag.  This defines a parameter in a Galaxy tool to map to from the parent `<parameter>` definition.  The `toolId` and `parameterName` must correspond to the information defined in the Galaxy tool `XML` configuration file.
 
 ### Attributes
 
@@ -288,7 +288,7 @@ None.
 `<output>`
 ----------
 
-Contained in the `<outputs>` tag.  Defines a particular output file from a Galaxy workflow. In order to save this output file in IRIDA, the name of the dataset file in Galaxy must be defined in the `fileName` attribute of the `<output>` element.  This can be accomplished by using the **Rename Dataset** action in a Galaxy workflow to give an output dataset file an explicit name.
+Contained in the `<outputs>` element tag.  Defines a particular output file from a Galaxy workflow. In order to save this output file in IRIDA, the name of the dataset file in Galaxy must be defined in the `fileName` attribute of the `<output>` element.  This can be accomplished by using the **Rename Dataset** action in a Galaxy workflow to give an output dataset file an explicit name.
 
 ### Attributes
 
@@ -340,7 +340,7 @@ None.
 `<repository>`
 --------------
 
-Contained within a `<toolRepositories>` tag.  Defines a particular repository storing a dependency for the workflow.  This must correspond to the information within some Galaxy ToolShed containing this repository.  For example, for SPAdes <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>.
+Contained within a `<toolRepositories>` element tag.  Defines a particular repository storing a dependency for the workflow.  This must correspond to the information within some Galaxy ToolShed containing this repository.  For example, for SPAdes <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>.
 
 ### Attributes
 
@@ -362,7 +362,7 @@ For the version of SPAdes stored within the main Galaxy ToolShed, <https://tools
 `<name>`
 ----------
 
-Contained in the `<repository>` tag.  Defines the name of the tool repository.
+Contained in the `<repository>` element tag.  Defines the name of the tool repository.
 
 ### Attributes
 
@@ -379,7 +379,7 @@ For SPAdes, <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>,
 `<owner>`
 ----------
 
-Contained in the `<repository>` tag.  Defines the owner of the tool repository.
+Contained in the `<repository>` element tag.  Defines the owner of the tool repository.
 
 ### Attributes
 
@@ -396,7 +396,7 @@ For SPAdes, <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>,
 `<url>`
 ----------
 
-Contained in the `<repository>` tag.  Defines the url of the tool repository.
+Contained in the `<repository>` element tag.  Defines the url of the tool repository.
 
 ### Attributes
 
@@ -413,7 +413,7 @@ For SPAdes on the main Galaxy ToolShed, <https://toolshed.g2.bx.psu.edu/view/lio
 `<revision>`
 ----------
 
-Contained in the `<repository>` tag.  Defines the revision number of tool.
+Contained in the `<repository>` element tag.  Defines the revision number of tool.
 
 ### Attributes
 
@@ -436,32 +436,36 @@ An example workflow description XML file is given below.
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-        <id>49507566-e10c-41b2-ab6f-0fb5383be997</id>
+        <id>79872edb-4f3b-4a51-aff7-33ddbc05ec5e</id>
         <name>MyPipeline</name>
-        <version>0.1</version>
-        <analysisType>mypipeline</analysisType>
+        <version>1.0</version>
+        <analysisType>phylogenomics</analysisType>
         <inputs>
                 <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
                 <reference>reference</reference>
                 <requiresSingleSample>false</requiresSingleSample>
         </inputs>
         <parameters>
-                <parameter name="my_parameter" defaultValue="1">
-                        <toolParameter
-                                toolId="my_tool"
-                                parameterName="my_parameter" />
-                </parameter>
+            <parameter name="myparameter" defaultValue="1">
+                <toolParameter toolId="my_galaxy_tool" parameterName="parameter.section.name" />
+            </parameter>
         </parameters>
         <outputs>
                 <output name="tree" fileName="phylogeneticTree.tre" />
         </outputs>
         <toolRepositories>
-                <repository>
-                        <name>my_tool</name>
-                        <owner>irida</owner>
-                        <url>https://irida.corefacility.ca/galaxy-shed</url>
-                        <revision>de3e46eaf5ba</revision>
-                </repository>
+            <repository>
+                <name>spades</name>
+                <owner>lionelguy</owner>
+                <url>https://toolshed.g2.bx.psu.edu/</url>
+                <revision>21734680d921</revision>
+            </repository>
+            <repository>
+                <name>phyml</name>
+                <owner>irida</owner>
+                <url>https://irida.corefacility.ca/galaxy-shed</url>
+                <revision>b5867c5c7674</revision>
+            </repository>
         </toolRepositories>
 </iridaWorkflow>
 ```
