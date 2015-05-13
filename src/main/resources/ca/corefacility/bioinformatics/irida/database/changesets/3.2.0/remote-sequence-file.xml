@@ -37,5 +37,27 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 		</createTable>
+		
+		<createTable tableName="remote_sequence_file_pair">
+            <column name="id" type="bigint(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+        <createTable tableName="remote_sequence_file_pair_files">
+            <column name="pair_id" type="bigint(20)">
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PAIR_FILES_PAIR"
+                    referencedColumnNames="id" referencedTableName="remote_sequence_file_pair" />
+            </column>
+            <column name="files_id" type="bigint(20)">
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PAIR_FILES_FILE"
+                    referencedColumnNames="id" referencedTableName="remote_sequence_file" />
+            </column>
+        </createTable>
 	</changeSet>
 </databaseChangeLog>
