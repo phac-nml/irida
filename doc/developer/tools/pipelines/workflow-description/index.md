@@ -27,6 +27,7 @@ None.
 
 ```xml
 <iridaWorkflow>
+...
 </iridaWorkflow>
 ```
 
@@ -107,6 +108,67 @@ None.
 </inputs>
 ```
 
+`<parameters>`
+-------------
+
+This defines the set of parameters for a workflow as well as how to map these parameters to Galaxy tool names and versions.
+
+### Attributes
+
+None.
+
+### Example
+
+```xml
+<parameters>
+    <parameter name="myparameter" defaultValue="1">
+        <toolParameter toolId="my_galaxy_tool" parameterName="parameter.section.name" />
+    </parameter>
+</parameters>
+```
+
+`<outputs>`
+-----------
+
+Used to define a list of output files from the Galaxy workflow which will be saved back into IRIDA.
+
+### Attributes
+
+None.
+
+### Example
+
+```xml
+<outputs>
+    <output name="my-output-1" fileName="phylogeneticTree.tre" />
+</outputs>
+```
+
+`<toolRepositories>`
+--------------------
+
+Defines a list of the repositories storing the dependency Galaxy tools for this workflow.  This is used to keep track of the particular versions of dependencies and can also be used for integration testing with Galaxy.
+
+### Attributes
+
+None.
+
+### Example
+
+```xml
+<toolRepositories>
+    <repository>
+        <name>my_tool</name>
+        <owner>irida</owner>
+        <url>https://irida.corefacility.ca/galaxy-shed</url>
+        <revision>de3e46eaf5ba</revision>
+    </repository>
+</toolRepositories>
+```
+
+**`<inputs>`** Elements
+=====================
+
 `<sequenceReadsPaired>`
 -----------------------
 
@@ -131,7 +193,7 @@ If a Galaxy workflow contains an **Input dataset collection** of type **list:pai
 ```
 
 `<sequenceReadsSingle>`
--------------
+-----------------------
 
 An optional element tag contained in the `<inputs>` tag set.  This defines the name, if any, of a list of single-end files used as input to the Galaxy workflow.
 
@@ -177,7 +239,7 @@ If a Galaxy workflow contains an **Input dataset** for a reference genome, then 
 ```
 
 `<requiresSingleSample>`
--------------
+------------------------
 
 An optional element tag contained in the `<inputs>` tag set.  This defines whether or not this workflow only operates on a single sample `true` or can handle multiple samples `false`.  That is to say, if this workflow will upload only a single sample to Galaxy to execute the workflow, such as with the assembly and annotation workflow, then this should be set to `true`.  Otherwise this should be set to `false`.  The default is `false`.
 
@@ -191,24 +253,8 @@ None.
 <requiresSingleSample>true</requiresSingleSample>
 ```
 
-`<parameters>`
--------------
-
-This defines the set of parameters for a workflow as well as how to map these parameters to Galaxy tool names and versions.
-
-### Attributes
-
-None.
-
-### Example
-
-```xml
-<parameters>
-    <parameter name="myparameter" defaultValue="1">
-        <toolParameter toolId="my_galaxy_tool" parameterName="parameter.section.name" />
-    </parameter>
-</parameters>
-```
+**`<parameters>`** Elements
+=========================
 
 `<parameter>`
 -------------
@@ -217,10 +263,10 @@ Contained in the `<parameters>` element tag.  This defines a single parameter fo
 
 ### Attributes
 
-| attribute         | type   | details                                                                                                                 | required | example            |
-|-------------------|--------|-------------------------------------------------------------------------------------------------------------------------|----------|--------------------|
-| name              | string | The name of the parameter.  This will be used in the IRIDA database and configuration files to refer to this parameter. | yes      | name="myparameter" |
-| defaultValue      | string | The default value of the parameter.                                                                                     | yes      | defaultValue="1"   |
+| attribute         | type   | details                                                                                                                 | required | example              |
+|-------------------|--------|-------------------------------------------------------------------------------------------------------------------------|----------|----------------------|
+| name              | string | The name of the parameter.  This will be used in the IRIDA database and configuration files to refer to this parameter. | yes      | `name="myparameter"` |
+| defaultValue      | string | The default value of the parameter.                                                                                     | yes      | `defaultValue="1"`   |
 
 ### Example
 
@@ -239,10 +285,10 @@ Contained in the `<parameter>` element tag.  This defines a parameter in a Galax
 
 ### Attributes
 
-| attribute         | type   | details                                                    | required | example                                |
-|-------------------|--------|------------------------------------------------------------|----------|----------------------------------------|
-| toolId            | string | The id of the tool in Galaxy of the parameter to override. | yes      | toolId="my_galaxy_tool"                |
-| parameterName     | string | The name of the parameter in the Galaxy tool to override.  | yes      | parameterName="parameter.section.name" |
+| attribute         | type   | details                                                    | required | example                                  |
+|-------------------|--------|------------------------------------------------------------|----------|------------------------------------------|
+| toolId            | string | The id of the tool in Galaxy of the parameter to override. | yes      | `toolId="my_galaxy_tool"`                |
+| parameterName     | string | The name of the parameter in the Galaxy tool to override.  | yes      | `parameterName="parameter.section.name"` |
 
 ### Example
 
@@ -268,22 +314,8 @@ These entries should be written in the IRIDA Workflow Description file as follow
 <toolParameter toolId="phyml1" parameterName="datatype_condition.model" />
 ```
 
-`<outputs>`
------------
-
-Used to define a list of output files from the Galaxy workflow which will be saved back into IRIDA.
-
-### Attributes
-
-None.
-
-### Example
-
-```xml
-<outputs>
-    <output name="my-output-1" fileName="phylogeneticTree.tre" />
-</outputs>
-```
+**`<outputs>`** Elements
+======================
 
 `<output>`
 ----------
@@ -292,10 +324,10 @@ Contained in the `<outputs>` element tag.  Defines a particular output file from
 
 ### Attributes
 
-| attribute | type   | details                                                                                                                                        | required | example                    |
-|-----------|--------|------------------------------------------------------------------------------------------------------------------------------------------------|----------|----------------------------|
-| name      | string | A label for the output file name.  This is used internally to map to a particular output file in the IRIDA database.                           | yes      | name="my-output-1"         |
-| fileName  | string | The name of an output file from the Galaxy workflow.  This is used to find the particular output file when transferring results back to IRIDA. | yes      | fileName="output-file.txt" |
+| attribute | type   | details                                                                                                                                        | required | example                      |
+|-----------|--------|------------------------------------------------------------------------------------------------------------------------------------------------|----------|------------------------------|
+| name      | string | A label for the output file name.  This is used internally to map to a particular output file in the IRIDA database.                           | yes      | `name="my-output-1"`         |
+| fileName  | string | The name of an output file from the Galaxy workflow.  This is used to find the particular output file when transferring results back to IRIDA. | yes      | `fileName="output-file.txt"` |
 
 ### Example
 
@@ -315,27 +347,8 @@ This name must then correspond to the `fileName` in the workflow description fil
 <output name="my-output-1" fileName="phylogeneticTree.tre" />
 ```
 
-`<toolRepositories>`
---------------------
-
-Defines a list of the repositories storing the dependency Galaxy tools for this workflow.  This is used to keep track of the particular versions of dependencies and can also be used for integration testing with Galaxy.
-
-### Attributes
-
-None.
-
-### Example
-
-```xml
-<toolRepositories>
-    <repository>
-        <name>my_tool</name>
-        <owner>irida</owner>
-        <url>https://irida.corefacility.ca/galaxy-shed</url>
-        <revision>de3e46eaf5ba</revision>
-    </repository>
-</toolRepositories>
-```
+**`<toolRepositories>`** Elements
+===============================
 
 `<repository>`
 --------------
