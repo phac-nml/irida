@@ -5,7 +5,7 @@ layout: default
 IRIDA Workflow Description
 ==========================
 
-This file describes the IRIDA Workflow Description format.  This is an **XML** format that is used to link up a Galaxy workflow into IRIDA and provide IRIDA with the necessary information on the input datasets for Galaxy, parameters, and output files to save.
+This file describes the IRIDA Workflow Description format.  This is an **XML** format that is used to link up a [Galaxy Workflow][] and the corresponding [Galaxy Tools][] into IRIDA and provide IRIDA with the necessary information on the input datasets for Galaxy, parameters, and output files to save.
 
 * This comment becomes the table of contents.
 {:toc}
@@ -470,6 +470,8 @@ An example workflow description XML file is given below.
 </iridaWorkflow>
 ```
 
+[Galaxy Workflow]: https://wiki.galaxyproject.org/Learn/AdvancedWorkflow
+[Galaxy Tools]: https://toolshed.g2.bx.psu.edu/
 [UUID]: http://en.wikipedia.org/wiki/Universally_unique_identifier
 [phyml.xml#L1]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L1
 [phyml.xml#L6]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L6
