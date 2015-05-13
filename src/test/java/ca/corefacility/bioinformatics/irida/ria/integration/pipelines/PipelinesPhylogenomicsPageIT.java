@@ -99,7 +99,7 @@ public class PipelinesPhylogenomicsPageIT {
 
 	@Test
 	public void testNoRefFileWithPermissions() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
 		samplesPage.goToPage("2");
 		samplesPage.selectSampleByRow(1);

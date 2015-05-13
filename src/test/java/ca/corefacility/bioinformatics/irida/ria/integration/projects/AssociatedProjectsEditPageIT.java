@@ -53,7 +53,7 @@ public class AssociatedProjectsEditPageIT {
 	@Before
 	public void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 
 		page = new AssociatedProjectEditPage(driver);
 	}

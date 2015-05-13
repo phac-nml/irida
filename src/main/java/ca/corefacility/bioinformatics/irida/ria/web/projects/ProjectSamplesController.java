@@ -355,9 +355,9 @@ public class ProjectSamplesController {
 	 *
 	 * @return Map containing either success or errors.
 	 */
-	@RequestMapping(value = "/projects/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> deleteProjectSamples(@PathVariable Long projectId,
-			@RequestParam List<Long> sampleIds) {
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
 		Map<String, Object> result = new HashMap<>();
 		for (Long id : sampleIds) {
@@ -369,7 +369,9 @@ public class ProjectSamplesController {
 			}
 
 		}
-		result.put("success", "DONE!");
+		result.put("message", messageSource.getMessage("project.samples.remove-success", new Object[]{sampleIds.size()}, locale));
+		
+		result.put("result", "success");
 		return result;
 	}
 

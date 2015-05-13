@@ -10,7 +10,8 @@ import org.openqa.selenium.support.PageFactory;
  *
  */
 public class LoginPage extends AbstractPage {
-	public static final String ADMIN_USERNAME = "mrtest";
+	public static final String MANAGER_USERNAME = "mrtest";
+	public static final String ADMIN_USERNAME = "admin";
 	public static final String USER_USERNAME = "testUser";
 	public static final String GOOD_PASSWORD = "Password1";
 	public static final String BAD_USERNAME = "badman";
@@ -46,18 +47,6 @@ public class LoginPage extends AbstractPage {
 	}
 
 	/**
-	 * Login as an admin
-	 *
-	 * @param driver
-	 * 		{@link WebDriver}
-	 */
-	public static void loginAsAdmin(WebDriver driver) {
-		get(driver, "login");
-		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
-		loginPage.login(ADMIN_USERNAME, GOOD_PASSWORD);
-	}
-
-	/**
 	 * Login as a user.
 	 *
 	 * @param driver
@@ -67,6 +56,30 @@ public class LoginPage extends AbstractPage {
 		get(driver, "login");
 		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
 		loginPage.login(USER_USERNAME, GOOD_PASSWORD);
+	}
+
+	/**
+	 * Login as an manager
+	 *
+	 * @param driver
+	 * 		{@link WebDriver}
+	 */
+	public static void loginAsManager(WebDriver driver) {
+		get(driver, "login");
+		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
+		loginPage.login(MANAGER_USERNAME, GOOD_PASSWORD);
+	}
+
+	/**
+	 * Login as an admin
+	 *
+	 * @param driver
+	 * 		{@link WebDriver}
+	 */
+	public static void loginAsAdmin(WebDriver driver) {
+		get(driver, "login");
+		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
+		loginPage.login(ADMIN_USERNAME, GOOD_PASSWORD);
 	}
 
 	/**
