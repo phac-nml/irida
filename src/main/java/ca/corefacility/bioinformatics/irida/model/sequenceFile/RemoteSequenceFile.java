@@ -8,6 +8,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +23,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
@@ -29,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 
 @Entity
 @Table(name = "remote_sequence_file")
+@EntityListeners(AuditingEntityListener.class)
 public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
 
 	@Id
@@ -61,7 +64,7 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	@CollectionTable(name = "remote_sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"sequence_file_id", "property_key" }, name = "UK_SEQUENCE_FILE_PROPERTY_KEY"))
 	private Map<String, String> optionalProperties;
-	
+
 	@NotNull
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber;
@@ -125,7 +128,7 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 
 	@Override
 	public void incrementFileRevisionNumber() {
-		fileRevisionNumber++;		
+		fileRevisionNumber++;
 	}
 
 }
