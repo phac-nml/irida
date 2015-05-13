@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.model.irida;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
@@ -33,6 +35,7 @@ public interface IridaSequenceFilePair {
 	 * 
 	 * @return Forward {@link SequenceFile}
 	 */
+	@JsonIgnore
 	public default IridaSequenceFile getForwardSequenceFile() {
 		return getFiles().stream().filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
 				.findFirst().get();
@@ -43,6 +46,7 @@ public interface IridaSequenceFilePair {
 	 * 
 	 * @return reverse {@link SequenceFile}
 	 */
+	@JsonIgnore
 	public default IridaSequenceFile getReverseSequenceFile() {
 		return getFiles().stream().filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
 				.findFirst().get();
