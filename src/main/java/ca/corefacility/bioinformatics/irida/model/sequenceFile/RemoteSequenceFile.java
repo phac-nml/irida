@@ -21,6 +21,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -37,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 @Entity
 @Table(name = "remote_sequence_file")
 @EntityListeners(AuditingEntityListener.class)
+@Audited
 public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
 
 	@Id

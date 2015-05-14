@@ -23,6 +23,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -36,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 @Entity
 @Table(name = "remote_sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
+@Audited
 public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing {
 
 	@Id
