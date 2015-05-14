@@ -1,0 +1,7 @@
+{
+  "preset": "google",
+  "disallowSpacesInAnonymousFunctionExpression": null,
+  "excludeFiles": ["resources/bower_components/**"],
+  "maximumLineLength": 120,
+  "validateIndentation": 2
+}

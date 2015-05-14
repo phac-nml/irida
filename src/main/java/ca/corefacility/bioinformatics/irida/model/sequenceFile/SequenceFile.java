@@ -67,6 +67,7 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@NotNull(message = "{sequencefile.file.notnull}")
 	@Column(name = "file_path", unique = true)
 	private Path file;
 

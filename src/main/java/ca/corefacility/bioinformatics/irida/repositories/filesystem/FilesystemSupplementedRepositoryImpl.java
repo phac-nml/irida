@@ -79,6 +79,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		if (objectToWrite.getId() == null) {
 			throw new IllegalArgumentException("Identifier is required.");
 		}
+		
 		objectToWrite.incrementFileRevisionNumber();
 
 		Path sequenceFileDir = baseDirectory.resolve(objectToWrite.getId().toString());
@@ -92,26 +93,28 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		for (Field field : pathFields) {
 			ReflectionUtils.makeAccessible(field);
 			Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
-			Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
-			try {
-				if (!Files.exists(sequenceFileDir)) {
-					Files.createDirectory(sequenceFileDir);
-					logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
+			if(source != null){
+				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
+				try {
+					if (!Files.exists(sequenceFileDir)) {
+						Files.createDirectory(sequenceFileDir);
+						logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
+					}
+	
+					if (!Files.exists(sequenceFileDirWithRevision)) {
+						Files.createDirectory(sequenceFileDirWithRevision);
+						logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+					}
+	
+					Files.move(source, target);
+					logger.trace("Moved file " + source + " to " + target);
+				} catch (IOException e) {
+					logger.error("Unable to move file into new directory", e);
+					throw new StorageException("Failed to move file into new directory.", e);
 				}
-
-				if (!Files.exists(sequenceFileDirWithRevision)) {
-					Files.createDirectory(sequenceFileDirWithRevision);
-					logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
-				}
-
-				Files.move(source, target);
-				logger.trace("Moved file " + source + " to " + target);
-			} catch (IOException e) {
-				logger.error("Unable to move file into new directory", e);
-				throw new StorageException("Failed to move file into new directory.", e);
+	
+				ReflectionUtils.setField(field, objectToWrite, target);
 			}
-
-			ReflectionUtils.setField(field, objectToWrite, target);
 		}
 
 		return objectToWrite;

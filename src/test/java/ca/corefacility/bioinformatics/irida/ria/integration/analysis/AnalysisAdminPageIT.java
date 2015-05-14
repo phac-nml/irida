@@ -44,7 +44,7 @@ public class AnalysisAdminPageIT {
 	public void setUp() {
 		// TODO (14-11-07 - josh): Find out why PhantomJS fails here.
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 	}
 
 	@After

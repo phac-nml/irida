@@ -217,8 +217,8 @@ public class ProjectSamplesControllerTest {
 		idList.add(1L);
 		when(projectService.read(PROJECT_ID)).thenReturn(project1);
 		when(sampleService.read(anyLong())).thenReturn(sample);
-		Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
-		assertTrue("Result contains the word success", result.containsKey("success"));
+		Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList, Locale.US);
+		assertTrue("Result contains the word success", result.containsKey("result"));
 		verify(projectService).removeSampleFromProject(project1, sample);
 	}
 
