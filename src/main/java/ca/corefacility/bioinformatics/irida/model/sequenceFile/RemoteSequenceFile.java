@@ -25,6 +25,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.exceptions.RemoteFileNotCachedException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -101,6 +102,10 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 
 	@Override
 	public Path getFile() {
+		if (file == null) {
+			throw new RemoteFileNotCachedException(
+					"The remote sequence files are not yet available as they have not been cached");
+		}
 		return file;
 	}
 
