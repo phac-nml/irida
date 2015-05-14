@@ -71,6 +71,15 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 			EntityExistsException {
 		return super.create(object);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public IridaClientDetails read(Long object) {
+		return super.read(object);
+	}
 
 	/**
 	 * {@inheritDoc}
