@@ -274,31 +274,43 @@ To override the model parameter defined in the Galaxy version of PhyML in <http:
 
 ```xml
 <parameter name="myparameter" defaultValue="HKY85">
-    <toolParameter toolId="phyml1" parameterName="datatype_condition.model" />
+    <toolParameter toolId="irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1" parameterName="datatype_condition.model" />
 </parameter>
 ```
 
 `<toolParameter>`
 -----------------
 
-Contained in the `<parameter>` element tag.  This defines a parameter in a Galaxy tool to map to from the parent `<parameter>` definition.  The `toolId` and `parameterName` must correspond to the information defined in the Galaxy tool `XML` configuration file.
+Contained in the `<parameter>` element tag.  This defines a parameter in a Galaxy tool to map to from the parent `<parameter>` definition.  The `toolId` and `parameterName` must correspond to the information defined in the Galaxy workflow and Galaxy tool XML configuration files.
 
 ### Attributes
 
-| attribute         | type   | details                                                    | required | example                                  |
-|:------------------|:-------|:-----------------------------------------------------------|:---------|:-----------------------------------------|
-| **toolId**        | string | The id of the tool in Galaxy of the parameter to override. | yes      | `toolId="my_galaxy_tool"`                |
-| **parameterName** | string | The name of the parameter in the Galaxy tool to override.  | yes      | `parameterName="parameter.section.name"` |
+| attribute         | type   | details                                                                 | required | example                                  |
+|:------------------|:-------|:------------------------------------------------------------------------|:---------|:-----------------------------------------|
+| **toolId**        | string | The id of the tool in the Galaxy workflow of the parameter to override. | yes      | `toolId="my_galaxy_tool"`                |
+| **parameterName** | string | The name of the parameter in the Galaxy tool to override.               | yes      | `parameterName="parameter.section.name"` |
 
 ### Example
 
-For the model parameter defined in the Galaxy version of PhyML in <http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml>, the `toolId` and `parameterName` entries are given below.
+For the tool **PhyML** in the [SNVPhyl Galaxy Workflow][], the `tool_id` is given below:
 
-**toolId** (see [phyml.xml#L1][])
+**tool_id** (see [snvphyl-workflow.ga#L506][])
 
-```xml
-<tool id="phyml1" name="PhyML" version="3.1">
 ```
+"tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1"
+```
+
+This corresponds to the `toolId` attribute to use in the `<toolParameters>` element (`tool_id="irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1"`).
+
+For the `model` parameter name, the corresponding line in the [SNVPhyl Galaxy workflow][] is given below:
+
+**model** (see [snvphyl-workflow.ga#L507][])
+
+```
+"tool_state": "...\\\"model\\\": \\\"HKY85\\\"...
+```
+
+However, this parameter is stored as a sub-element of other parameters.  To get the full parameter name the [PhyML Galaxy Tool XML][] file must be referenced:
 
 **parameterName** (see [phyml.xml#L6][])
 
@@ -308,10 +320,13 @@ For the model parameter defined in the Galaxy version of PhyML in <http://irida.
 </command>
 ```
 
-These entries should be written in the IRIDA Workflow Description file as follows.
+Since the string `datatype_condition.model` is used to refer to the `model` parameter, this should be used as the full `parameterName` attribute.
+
+Putting both these together into the IRIDA Workflow Description `<toolParameter>` element gives:
 
 ```xml
-<toolParameter toolId="phyml1" parameterName="datatype_condition.model" />
+<toolParameter toolId="irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1"
+	parameterName="datatype_condition.model" />
 ```
 
 **`<outputs>`** Elements
@@ -486,7 +501,11 @@ An example workflow description XML file is given below.
 [Galaxy Workflow]: https://wiki.galaxyproject.org/Learn/AdvancedWorkflow
 [Galaxy Tools]: https://toolshed.g2.bx.psu.edu/
 [UUID]: http://en.wikipedia.org/wiki/Universally_unique_identifier
+[SNVPhyl Galaxy Workflow]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga
+[PhyML Galaxy Tool XML]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml
 [phyml.xml#L1]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L1
+[snvphyl-workflow.ga#L506]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga#L506
+[snvphyl-workflow.ga#L507]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga#L507
 [phyml.xml#L6]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L6
 [phyml.xml#L38]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L38
 [AnalysisType JavaDoc]: ../../../apidocs/ca/corefacility/bioinformatics/irida/model/enums/AnalysisType.html
