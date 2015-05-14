@@ -8,7 +8,9 @@ import java.util.Set;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -44,6 +46,17 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 		this.ssfRepository = ssfRepository;
 		this.pairRepository = repository;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadSequenceFilePair')")
+	public Iterable<SequenceFilePair> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
+	}
+	
 
 	/**
 	 * {@inheritDoc}
