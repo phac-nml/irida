@@ -18,9 +18,6 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="modified_date" type="datetime" />
-			<column name="remote_uri" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
 		</createTable>
 
 		<addUniqueConstraint columnNames="file_path"

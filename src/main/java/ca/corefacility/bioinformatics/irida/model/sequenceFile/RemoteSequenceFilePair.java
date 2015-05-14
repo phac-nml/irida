@@ -53,18 +53,21 @@ public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing
 	@CollectionTable(name = "remote_sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_REMOTE_SEQUENCE_FILE_PAIR"))
 	private Set<RemoteSequenceFile> files;
 
-	@NotNull
-	@Column(name = "remote_uri")
-	private final String remoteURI;
-
-	public RemoteSequenceFilePair(RemoteSequenceFile file1, RemoteSequenceFile file2, String remoteURI) {
+	/**
+	 * Construct a new {@link RemoteSequenceFilePair} for two
+	 * {@link RemoteSequenceFile}s.
+	 * 
+	 * @param file1
+	 *            a file in the relationship
+	 * @param file2
+	 *            another file in the relationship
+	 */
+	public RemoteSequenceFilePair(RemoteSequenceFile file1, RemoteSequenceFile file2) {
 		createdDate = new Date();
 		files = new HashSet<>(2);
 
 		files.add(file1);
 		files.add(file2);
-
-		this.remoteURI = remoteURI;
 	}
 
 	@Override
@@ -108,10 +111,6 @@ public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing
 	@Override
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getRemoteURI() {
-		return remoteURI;
 	}
 
 }
