@@ -263,14 +263,14 @@ Contained in the `<parameters>` element tag.  This defines a single parameter fo
 
 ### Attributes
 
-| attribute         | type   | details                                                                                                                 | required | example              |
-|-------------------|--------|-------------------------------------------------------------------------------------------------------------------------|----------|----------------------|
-| name              | string | The name of the parameter.  This will be used in the IRIDA database and configuration files to refer to this parameter. | yes      | `name="myparameter"` |
-| defaultValue      | string | The default value of the parameter.                                                                                     | yes      | `defaultValue="1"`   |
+| attribute        | type   | details                                                                                                                 | required | example              |
+|:-----------------|:-------|:------------------------------------------------------------------------------------------------------------------------|:---------|:---------------------|
+| **name**         | string | The name of the parameter.  This will be used in the IRIDA database and configuration files to refer to this parameter. | yes      | `name="myparameter"` |
+| **defaultValue** | string | The default value of the parameter.                                                                                     | yes      | `defaultValue="1"`   |
 
 ### Example
 
-To override the model parameter defined in the Galaxy version of PhyML in <http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml>, the following entry can be used.  The `defaultValue="HKY85"` must correspond to the value defined in the Galaxy PhyML Tool (see [phyml.xml#L38][]].
+To override the model parameter defined in the Galaxy version of PhyML in <http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml>, the following entry can be used.  The `defaultValue="HKY85"` must correspond to the value defined in the Galaxy PhyML Tool (see [phyml.xml#L38][]).
 
 ```xml
 <parameter name="myparameter" defaultValue="HKY85">
@@ -286,9 +286,9 @@ Contained in the `<parameter>` element tag.  This defines a parameter in a Galax
 ### Attributes
 
 | attribute         | type   | details                                                    | required | example                                  |
-|-------------------|--------|------------------------------------------------------------|----------|------------------------------------------|
-| toolId            | string | The id of the tool in Galaxy of the parameter to override. | yes      | `toolId="my_galaxy_tool"`                |
-| parameterName     | string | The name of the parameter in the Galaxy tool to override.  | yes      | `parameterName="parameter.section.name"` |
+|:------------------|:-------|:-----------------------------------------------------------|:---------|:-----------------------------------------|
+| **toolId**        | string | The id of the tool in Galaxy of the parameter to override. | yes      | `toolId="my_galaxy_tool"`                |
+| **parameterName** | string | The name of the parameter in the Galaxy tool to override.  | yes      | `parameterName="parameter.section.name"` |
 
 ### Example
 
@@ -324,10 +324,10 @@ Contained in the `<outputs>` element tag.  Defines a particular output file from
 
 ### Attributes
 
-| attribute | type   | details                                                                                                                                        | required | example                      |
-|-----------|--------|------------------------------------------------------------------------------------------------------------------------------------------------|----------|------------------------------|
-| name      | string | A label for the output file name.  This is used internally to map to a particular output file in the IRIDA database.                           | yes      | `name="my-output-1"`         |
-| fileName  | string | The name of an output file from the Galaxy workflow.  This is used to find the particular output file when transferring results back to IRIDA. | yes      | `fileName="output-file.txt"` |
+| attribute    | type   | details                                                                                                                                        | required | example                      |
+|:-------------|:-------|:-----------------------------------------------------------------------------------------------------------------------------------------------|:---------|:-----------------------------|
+| **name**     | string | A label for the output file name.  This is used internally to map to a particular output file in the IRIDA database.                           | yes      | `name="my-output-1"`         |
+| **fileName** | string | The name of an output file from the Galaxy workflow.  This is used to find the particular output file when transferring results back to IRIDA. | yes      | `fileName="output-file.txt"` |
 
 ### Example
 
