@@ -35,6 +35,15 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 		this.analysisRepository = analysisRepository;
 		this.analysisOutputFileRepository = analysisOutputFileRepository;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#analysisId, 'canReadAnalysis')")
+	public Analysis read(final Long analysisId) {
+		return super.read(analysisId);
+	}
 
 	/**
 	 * {@inheritDoc}

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
@@ -16,7 +17,8 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  * 
  *
  */
-public interface AnalysisSubmissionRepository extends IridaJpaRepository<AnalysisSubmission, Long> {
+public interface AnalysisSubmissionRepository extends
+		IridaJpaRepository<AnalysisSubmission, Long> {
 
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given state.
@@ -28,7 +30,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1")
 	public List<AnalysisSubmission> findByAnalysisState(AnalysisState state);
-	
+
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given states.
 	 * 
@@ -41,7 +43,8 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 *         given states.
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1 and s.analysisCleanedState = ?2")
-	public List<AnalysisSubmission> findByAnalysisState(AnalysisState analysisState,
+	public List<AnalysisSubmission> findByAnalysisState(
+			AnalysisState analysisState,
 			AnalysisCleanedState analysisCleanedState);
 
 	/**
@@ -54,4 +57,15 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 */
 	@Query("select s from AnalysisSubmission s where s.submitter = ?1")
 	public Set<AnalysisSubmission> findBySubmitter(User submitter);
+
+	/**
+	 * Finds the {@link AnalysisSubmission} that caused the passed
+	 * {@link Analysis} to be created.
+	 * 
+	 * @param analysis
+	 *            the analysis to find the submission for
+	 * @return the submission for the analysis
+	 */
+	@Query("select s from AnalysisSubmission s where s.analysis = ?1")
+	public AnalysisSubmission findByAnalysis(final Analysis analysis);
 }
