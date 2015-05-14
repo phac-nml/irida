@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -97,23 +99,19 @@ public class PipelineController extends BaseController {
 	private final WorkflowNamedParametersService namedParameterService;
 	
 	private SequenceFileRemoteService sequenceFileRemoteService;
+	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	/*
 	 * CONTROLLERS
 	 */
 	private CartController cartController;
 
 	@Autowired
-	public PipelineController(SequenceFileService sequenceFileService,
-			SequenceFilePairService sequenceFilePairService,
-			ReferenceFileService referenceFileService,
-			AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService,
-			ProjectService projectService,
-			UserService userService,
-			SequenceFileRemoteService sequenceFileRemoteService,
-			CartController cartController,
-			MessageSource messageSource,
-			final WorkflowNamedParametersService namedParameterService) {
+	public PipelineController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
+			ReferenceFileService referenceFileService, AnalysisSubmissionService analysisSubmissionService,
+			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
+			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
+			MessageSource messageSource, final WorkflowNamedParametersService namedParameterService,
+			SequenceFilePairRemoteService sequenceFilePairRemoteService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.referenceFileService = referenceFileService;
@@ -125,6 +123,7 @@ public class PipelineController extends BaseController {
 		this.messageSource = messageSource;
 		this.namedParameterService = namedParameterService;
 		this.sequenceFileRemoteService = sequenceFileRemoteService;
+		this.sequenceFilePairRemoteService = sequenceFilePairRemoteService;
 	}
 
 	/**
@@ -272,7 +271,7 @@ public class PipelineController extends BaseController {
 				
 				if (description.acceptsPairedSequenceFiles()) {
 					logger.trace("Getting remote pairs for sample " + url);
-					files.put("paired_end", sequenceFileRemoteService.getSequenceFilePairsForSample(sample));
+					files.put("paired_end", sequenceFilePairRemoteService.getSequenceFilePairsForSample(sample));
 				}
 				
 				if (description.acceptsSingleSequenceFiles()) {
@@ -365,11 +364,12 @@ public class PipelineController extends BaseController {
 	 * @return a JSON response with the status and any messages.
 	 */
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> ajaxStartPipeline(Locale locale,
-			@PathVariable UUID pipelineId,
+	public @ResponseBody Map<String, Object> ajaxStartPipeline(Locale locale, @PathVariable UUID pipelineId,
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
-			@RequestParam(required = false) Map<String, String> parameters,
-			@RequestParam(required = false) Long ref, @RequestParam String name) {
+			@RequestParam(required = false) List<String> remoteSingle,
+			@RequestParam(required = false) List<String> remotePaired,
+			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
+			@RequestParam String name) {
 		Map<String, Object> result = ImmutableMap.of("success", true);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
@@ -401,6 +401,23 @@ public class PipelineController extends BaseController {
 				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
 				sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(Sets.newHashSet(sequenceFilePairs));
+			}
+			
+			
+			// Get a list of the remote files to submit
+			List<SequenceFile> remoteSingleFiles = new ArrayList<>();
+			List<SequenceFilePair> remotePairFiles = new ArrayList<>();
+			
+			if(remoteSingle != null){
+				remoteSingleFiles = remoteSingle.stream().map((u) -> {
+					return sequenceFileRemoteService.read(u);
+				}).collect(Collectors.toList());
+			}
+			
+			if(remotePaired != null){
+				remotePairFiles = remotePaired.stream().map((u) -> {
+					return sequenceFilePairRemoteService.read(u);
+				}).collect(Collectors.toList());
 			}
 
 			// Get the pipeline parameters
