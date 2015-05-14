@@ -73,6 +73,14 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber;
 
+	/**
+	 * Create a new {@link RemoteSequenceFile} based on an existing remote
+	 * {@link SequenceFile}. This will copy the properties of the file along
+	 * with its {@code self} rel.
+	 * 
+	 * @param base
+	 *            The {@link SequenceFile} to base this copy on
+	 */
 	public RemoteSequenceFile(SequenceFile base) {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
