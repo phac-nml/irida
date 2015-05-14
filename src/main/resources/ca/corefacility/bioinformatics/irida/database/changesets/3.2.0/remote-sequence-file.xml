@@ -13,7 +13,7 @@
 			<column name="created_date" type="datetime">
 				<constraints nullable="false" />
 			</column>
-			<column name="file_path" type="varchar(255)"/>
+			<column name="file_path" type="varchar(255)" />
 			<column name="file_revision_number" type="bigint(20)">
 				<constraints nullable="false" />
 			</column>
@@ -26,9 +26,30 @@
 		<addUniqueConstraint columnNames="file_path"
 			constraintName="UK_REMOTE_SEQUENCE_FILE_FILE" tableName="remote_sequence_file" />
 
+
+		<createTable tableName="remote_sequence_file_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="file_path" type="varchar(255)" />
+			<column name="file_revision_number" type="bigint(20)" />
+			<column name="modified_date" type="datetime" />
+			<column name="remote_uri" type="varchar(255)" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_AUD" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+
 		<createTable tableName="remote_sequence_file_properties">
 			<column name="sequence_file_id" type="bigint(20)">
-				<constraints primaryKey="true" nullable="false" />
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="remote_sequence_file" referencedColumnNames="id"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PROPERTIES" />
 			</column>
 			<column name="property_value" type="varchar(255)">
 				<constraints nullable="false" />
@@ -37,30 +58,76 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 		</createTable>
-		
+
+		<createTable tableName="remote_sequence_file_properties_AUD">
+			<column name="sequence_file_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="property_value" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="property_key" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PROPERTIES_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
 		<createTable tableName="remote_sequence_file_pair">
-            <column name="id" type="bigint(20)" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="created_date" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="remote_uri" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        
-        <createTable tableName="remote_sequence_file_pair_files">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="remote_sequence_file_pair_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PAIR_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<createTable tableName="remote_sequence_file_pair_files">
+			<column name="pair_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PAIR_FILES_PAIR"
+					referencedColumnNames="id" referencedTableName="remote_sequence_file_pair" />
+			</column>
+			<column name="files_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PAIR_FILES_FILE"
+					referencedColumnNames="id" referencedTableName="remote_sequence_file" />
+			</column>
+		</createTable>
+		
+		<addUniqueConstraint columnNames="files_id"
+            constraintName="UK_REMOTE_SEQUENCE_FILE_PAIR" tableName="remote_sequence_file_pair_files" />
+		
+		<createTable tableName="remote_sequence_file_pair_files_AUD">
             <column name="pair_id" type="bigint(20)">
-                <constraints primaryKey="true" nullable="false"
-                    foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PAIR_FILES_PAIR"
-                    referencedColumnNames="id" referencedTableName="remote_sequence_file_pair" />
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="files_id" type="bigint(20)">
-                <constraints primaryKey="true" nullable="false"
-                    foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PAIR_FILES_FILE"
-                    referencedColumnNames="id" referencedTableName="remote_sequence_file" />
+                <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="REV" type="int(11)">
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="FK_REMOTE_SEQUENCE_FILE_PAIR_FILES_AUD"
+                    referencedColumnNames="id" referencedTableName="Revisions" />
+            </column>
+            <column name="REVTYPE" type="tinyint(4)" />
         </createTable>
 	</changeSet>
 </databaseChangeLog>

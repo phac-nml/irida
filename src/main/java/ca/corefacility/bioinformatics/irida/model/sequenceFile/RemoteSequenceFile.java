@@ -21,10 +21,12 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.exceptions.RemoteFileNotCachedException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -36,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 @Entity
 @Table(name = "remote_sequence_file")
 @EntityListeners(AuditingEntityListener.class)
+@Audited
 public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
 
 	@Id
@@ -73,6 +76,14 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber;
 
+	/**
+	 * Create a new {@link RemoteSequenceFile} based on an existing remote
+	 * {@link SequenceFile}. This will copy the properties of the file along
+	 * with its {@code self} rel.
+	 * 
+	 * @param base
+	 *            The {@link SequenceFile} to base this copy on
+	 */
 	public RemoteSequenceFile(SequenceFile base) {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
@@ -93,6 +104,10 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 
 	@Override
 	public Path getFile() {
+		if (file == null) {
+			throw new RemoteFileNotCachedException(
+					"The remote sequence files are not yet available as they have not been cached");
+		}
 		return file;
 	}
 
