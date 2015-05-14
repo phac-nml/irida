@@ -121,8 +121,9 @@ None.
 
 ```xml
 <parameters>
-    <parameter name="myparameter" defaultValue="1">
-        <toolParameter toolId="my_galaxy_tool" parameterName="parameter.section.name" />
+    <parameter name="myparameter" defaultValue="HKY85">
+        <toolParameter toolId="irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1"
+            parameterName="datatype_condition.model" />
     </parameter>
 </parameters>
 ```
@@ -140,7 +141,7 @@ None.
 
 ```xml
 <outputs>
-    <output name="my-output-1" fileName="phylogeneticTree.tre" />
+    <output name="tree" fileName="phylogeneticTree.tre" />
 </outputs>
 ```
 
@@ -158,10 +159,10 @@ None.
 ```xml
 <toolRepositories>
     <repository>
-        <name>my_tool</name>
-        <owner>irida</owner>
-        <url>https://irida.corefacility.ca/galaxy-shed</url>
-        <revision>de3e46eaf5ba</revision>
+        <name>spades</name>
+        <owner>lionelguy</owner>
+        <url>https://toolshed.g2.bx.psu.edu/</url>
+        <revision>21734680d921</revision>
     </repository>
 </toolRepositories>
 ```
@@ -250,7 +251,7 @@ None.
 ### Example
 
 ```xml
-<requiresSingleSample>true</requiresSingleSample>
+<requiresSingleSample>false</requiresSingleSample>
 ```
 
 **`<parameters>`** Elements
@@ -274,7 +275,8 @@ To override the model parameter defined in the Galaxy version of PhyML in <http:
 
 ```xml
 <parameter name="myparameter" defaultValue="HKY85">
-    <toolParameter toolId="irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1" parameterName="datatype_condition.model" />
+    <toolParameter toolId="irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1"
+        parameterName="datatype_condition.model" />
 </parameter>
 ```
 
@@ -359,7 +361,7 @@ This name must then correspond to the `fileName` in the workflow description fil
 #### Workflow Description File
 
 ```xml
-<output name="my-output-1" fileName="phylogeneticTree.tre" />
+<output name="tree" fileName="phylogeneticTree.tre" />
 ```
 
 **`<toolRepositories>`** Elements
@@ -452,7 +454,7 @@ None.
 For the version of SPAdes on the main Galaxy ToolShed, <https://toolshed.g2.bx.psu.edu/view/lionelguy/spades/21734680d921>, the revision would be `21734680d921`.
 
 ```xml
-<revision>de3e46eaf5ba</revision>
+<revision>21734680d921</revision>
 ```
 
 Workflow Description Example
@@ -474,8 +476,9 @@ An example workflow description XML file is given below.
                 <requiresSingleSample>false</requiresSingleSample>
         </inputs>
         <parameters>
-            <parameter name="myparameter" defaultValue="1">
-                <toolParameter toolId="my_galaxy_tool" parameterName="parameter.section.name" />
+            <parameter name="myparameter" defaultValue="HKY85">
+                <toolParameter toolId="irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1"
+                    parameterName="datatype_condition.model" />
             </parameter>
         </parameters>
         <outputs>
