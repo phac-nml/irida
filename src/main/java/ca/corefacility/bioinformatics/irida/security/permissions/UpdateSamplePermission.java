@@ -57,6 +57,6 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 	protected boolean customPermissionAllowed(final Authentication authentication, final Sample targetDomainObject) {
 		final List<Join<Project, Sample>> projects = projectSampleJoinRepository
 				.getProjectForSample(targetDomainObject);
-		return projects.stream().anyMatch(p -> projectOwnerPermission.isAllowed(authentication, p));
+		return projects.stream().anyMatch(p -> projectOwnerPermission.isAllowed(authentication, p.getSubject()));
 	}
 }
