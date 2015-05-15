@@ -48,7 +48,7 @@ public class SampleEditPageIT {
 	@Before
 	public void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		page = new SampleEditPage(driver);
 		detailsPage = new SampleDetailsPage(driver);
 		page.goToPage();

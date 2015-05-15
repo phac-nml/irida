@@ -54,7 +54,7 @@ public class ProjectMembersPageIT {
 	@Before
 	public void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		membersPage = new ProjectMembersPage(driver);
 	}
 
