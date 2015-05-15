@@ -33,19 +33,19 @@ Resources requested in JSON format will always have the following structure:
 
 ```javascript
 {
-	"resource" : {
-		"links" : [ {
-			"rel" : "self",
-			"href" : "http://www.example.com"
-		}, {
-			"rel" : "magic/link",
-			"href" : "http://www.example.com/magic"
-		}, ...
-		],
-		"resourceProperty1" : "resourceValue",
-		"resourceProperty2" : "resourceValue",
-		...
-	},
+  "resource" : {
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://www.example.com"
+    }, {
+      "rel" : "magic/link",
+      "href" : "http://www.example.com/magic"
+    }, ...
+    ],
+    "resourceProperty1" : "resourceValue",
+    "resourceProperty2" : "resourceValue",
+    ...
+  },
 }
 ```
 
@@ -60,27 +60,27 @@ Resource collections requested in JSON format will always have the following str
 
 ```javascript
 {
-	"resource" : {
-		"links" : [ {
-			"rel" : "magic/link",
-			"href" : "http://www.example.com/magic"
-		}, {
-			"rel" : "self",
-			"href" : "http://www.example.com"
-		}, ...
-		],
-		"resources" : [ {
-			"links" : [ {
-				"rel" : "self",
-				"href" : "http://www.example.com/resources/1"
-			} ],
-			"resourceProperty" : "resourceValue",
-			"resourceProperty2" : "resourceValue2",
-			...
-			}, {
-			...
-		} ]
-	}
+  "resource" : {
+    "links" : [ {
+      "rel" : "magic/link",
+      "href" : "http://www.example.com/magic"
+    }, {
+      "rel" : "self",
+      "href" : "http://www.example.com"
+    }, ...
+    ],
+    "resources" : [ {
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://www.example.com/resources/1"
+      } ],
+      "resourceProperty" : "resourceValue",
+      "resourceProperty2" : "resourceValue2",
+      ...
+      }, {
+      ...
+    } ]
+  }
 }
 ```
 
@@ -131,10 +131,10 @@ An example response from the server is:
 
 ```javascript
 {
-    "access_token": "my-53cr37-04u7h-4cc355-70k3n",
-    "expires_in": 43199,
-    "scope": "read write",
-    "token_type": "bearer"
+  "access_token": "my-53cr37-04u7h-4cc355-70k3n",
+  "expires_in": 43199,
+  "scope": "read write",
+  "token_type": "bearer"
 }
 ```
 
@@ -142,7 +142,7 @@ Now, to access any other resources in the REST API you must include the `access_
 
 ```bash
 curl --silent http://localhost:8080/irida/api/projects/1 \\
-     -H 'Authorization: Bearer my-53cr37-04u7h-4cc355-70k3n' | python -m json.tool
+   -H 'Authorization: Bearer my-53cr37-04u7h-4cc355-70k3n' | python -m json.tool
 ```
 
 General Contracts
@@ -192,12 +192,12 @@ The root resource returned matches the [individual resource](#individual-resourc
 
 The root endpoint has links to the top-level resource collections in IRIDA.
 
-| Name             | Description                         |
+| Name       | Description             |
 |------------------|-------------------------------------|
-| `self`           | the root resource                   |
-| `projects`       | the collection of project resources |
-| `users`          | the collection of user resources    |
-| `sequencingRuns` |                                     |
+| `self`       | the root resource           |
+| `projects`     | the collection of project resources |
+| `users`      | the collection of user resources  |
+| `sequencingRuns` |                   |
 
 Resources
 =========
@@ -222,7 +222,7 @@ The user collection contains a reference to all users in the system. Each user r
 ##### Links
 {:.no_toc}
 
-| Name   | Description                    |
+| Name   | Description          |
 |--------|--------------------------------|
 | `self` | A link to the users collection |
 
@@ -232,26 +232,26 @@ The user collection contains a reference to all users in the system. Each user r
 ```javascript
 {
   "resource" : {
-    "resources" : [ {
-      "username" : "exampleuser",
-      "email" : "user@example.org",
-      "firstName" : "Example",
-      "lastName" : "User",
-      "phoneNumber" : "867-5309",
-      "identifier" : "1",
-      "createdDate" : 1431111435000,
-      "links" : [ {
-        "rel" : "user/projects",
-        "href" : "http://localhost:8080/api/users/exampleuser/projects"
-      }, {
-        "rel" : "self",
-        "href" : "http://localhost:8080/api/users/1"
-      } ]
-    } ],
+  "resources" : [ {
+    "username" : "exampleuser",
+    "email" : "user@example.org",
+    "firstName" : "Example",
+    "lastName" : "User",
+    "phoneNumber" : "867-5309",
+    "identifier" : "1",
+    "createdDate" : 1431111435000,
     "links" : [ {
-      "rel" : "self",
-      "href" : "http://localhost:8080/api/users"
+    "rel" : "user/projects",
+    "href" : "http://localhost:8080/api/users/exampleuser/projects"
+    }, {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/users/1"
     } ]
+  } ],
+  "links" : [ {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/users"
+  } ]
   }
 ```
 
@@ -263,13 +263,13 @@ Each user account can be accessed by a unique URL.
 ##### Properties
 {:.no_toc}
 
-| Name          | Description                      | Validation                                                                                                                                                                                                                               |
+| Name      | Description            | Validation                                                                                                                 |
 |---------------|----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `username`    | A username (used for logging in) | Required, minimum length 3, must be unique                                                                                                                                                                                               |
-| `email`       | An e-mail address                | Required, minimum length 5, must be unique, must be a valid e-mail address (validated with [Hibernate Validator E-mail constraint](http://docs.jboss.org/hibernate/validator/5.1/reference/en-US/html_single/#table-custom-constraints)) |
-| `firstName`   | The user's first name            | Required, minimum length 2                                                                                                                                                                                                               |
-| `lastName`    | The user's last name             | Required, minimum length 2                                                                                                                                                                                                               |
-| `phoneNumber` | A contact phone number           | Required, minimum length 4 (no other phone-number-related validation is done on this field)                                                                                                                                              |
+| `username`  | A username (used for logging in) | Required, minimum length 3, must be unique                                                                                                 |
+| `email`     | An e-mail address        | Required, minimum length 5, must be unique, must be a valid e-mail address (validated with [Hibernate Validator E-mail constraint](http://docs.jboss.org/hibernate/validator/5.1/reference/en-US/html_single/#table-custom-constraints)) |
+| `firstName`   | The user's first name      | Required, minimum length 2                                                                                                         |
+| `lastName`  | The user's last name       | Required, minimum length 2                                                                                                         |
+| `phoneNumber` | A contact phone number       | Required, minimum length 4 (no other phone-number-related validation is done on this field)                                                                        |
 
 ##### Links
 {:.no_toc}
@@ -285,25 +285,25 @@ Each user account can be accessed by a unique URL.
 
 ```javascript
 {
-    "resource": {
-        "createdDate": 1431301716000,
-        "email": "user@example.org",
-        "firstName": "Example",
-        "identifier": "1",
-        "lastName": "User",
-        "links": [
-            {
-                "href": "http://localhost:8080/api/users/example/projects",
-                "rel": "user/projects"
-            },
-            {
-                "href": "http://localhost:8080/api/example/1",
-                "rel": "self"
-            }
-        ],
-        "phoneNumber": "867-5309",
-        "username": "example"
-    }
+  "resource": {
+    "createdDate": 1431301716000,
+    "email": "user@example.org",
+    "firstName": "Example",
+    "identifier": "1",
+    "lastName": "User",
+    "links": [
+      {
+        "href": "http://localhost:8080/api/users/example/projects",
+        "rel": "user/projects"
+      },
+      {
+        "href": "http://localhost:8080/api/example/1",
+        "rel": "self"
+      }
+    ],
+    "phoneNumber": "867-5309",
+    "username": "example"
+  }
 }
 ```
 
@@ -326,36 +326,36 @@ The [projects collection](#project-collection) provides the list of projects tha
 
 ```javascript
 {
-    "resource": {
+  "resource": {
+    "links": [
+      {
+        "href": "http://localhost:8080/api/projects",
+        "rel": "self"
+      }
+    ],
+    "resources": [
+      {
+        "createdDate": 1431301716000,
+        "identifier": "1",
         "links": [
-            {
-                "href": "http://localhost:8080/api/projects",
-                "rel": "self"
-            }
+          {
+            "href": "http://localhost:8080/api/projects/1/users",
+            "rel": "project/users"
+          },
+          {
+            "href": "http://localhost:8080/api/projects/1/samples",
+            "rel": "project/samples"
+          },
+          {
+            "href": "http://localhost:8080/api/projects/1",
+            "rel": "self"
+          }
         ],
-        "resources": [
-            {
-                "createdDate": 1431301716000,
-                "identifier": "1",
-                "links": [
-                    {
-                        "href": "http://localhost:8080/api/projects/1/users",
-                        "rel": "project/users"
-                    },
-                    {
-                        "href": "http://localhost:8080/api/projects/1/samples",
-                        "rel": "project/samples"
-                    },
-                    {
-                        "href": "http://localhost:8080/api/projects/1",
-                        "rel": "self"
-                    }
-                ],
-                "name": "Project 1",
-                "projectDescription": null
-            }
-        ]
-    }
+        "name": "Project 1",
+        "projectDescription": null
+      }
+    ]
+  }
 }
 
 ```
@@ -387,26 +387,26 @@ Each project can be accessed by a unique URL.
 
 ```javascript
 {
-    "resource": {
-        "createdDate": 1431301716000,
-        "identifier": "1",
-        "links": [
-            {
-                "href": "http://localhost:8080/api/projects/1/users",
-                "rel": "project/users"
-            },
-            {
-                "href": "http://localhost:8080/api/projects/1/samples",
-                "rel": "project/samples"
-            },
-            {
-                "href": "http://localhost:8080/api/projects/1",
-                "rel": "self"
-            }
-        ],
-        "name": "Project 1",
-        "projectDescription": null
-    }
+  "resource": {
+    "createdDate": 1431301716000,
+    "identifier": "1",
+    "links": [
+      {
+        "href": "http://localhost:8080/api/projects/1/users",
+        "rel": "project/users"
+      },
+      {
+        "href": "http://localhost:8080/api/projects/1/samples",
+        "rel": "project/samples"
+      },
+      {
+        "href": "http://localhost:8080/api/projects/1",
+        "rel": "self"
+      }
+    ],
+    "name": "Project 1",
+    "projectDescription": null
+  }
 }
 
 ```
@@ -431,55 +431,55 @@ A sample corresponds to a single isolate and contains the sequencing data and me
 ```javascript
 {
   "resource" : {
-    "resources" : [ {
-      "sequenceFileCount" : 0,
-      "description" : "The first sample",
-      "sampleName" : "Sample 1",
-      "sequencerSampleId" : "sample1",
-      "strain" : null,
-      "collectionDate" : null,
-      "collectedBy" : null,
-      "latitude" : null,
-      "longitude" : null,
-      "organism" : "E. coli",
-      "isolate" : null,
-      "geographicLocationName" : null,
-      "isolationSource" : null,
-      "cultureCollection" : null,
-      "genotype" : null,
-      "passageHistory" : null,
-      "pathotype" : null,
-      "serotype" : null,
-      "serovar" : null,
-      "specimenVoucher" : null,
-      "subtype" : null,
-      "hostTaxonomicName" : null,
-      "hostDisease" : null,
-      "hostDescription" : null,
-      "hostDiseaseOutcome" : null,
-      "hostDiseaseStage" : null,
-      "hostHealthState" : null,
-      "hostSex" : null,
-      "hostSubjectId" : null,
-      "hostTissueSampleId" : null,
-      "hostAge" : null,
-      "identifier" : "1",
-      "createdDate" : 1406733849000,
-      "links" : [ {
-        "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/5/samples/1"
-      }, {
-        "rel" : "sample/sequenceFiles",
-        "href" : "http://localhost:8080/api/projects/5/samples/1/sequenceFiles"
-      }, {
-        "rel" : "sample/project",
-        "href" : "http://localhost:8080/api/projects/5"
-      } ]
-    }],
+  "resources" : [ {
+    "sequenceFileCount" : 0,
+    "description" : "The first sample",
+    "sampleName" : "Sample 1",
+    "sequencerSampleId" : "sample1",
+    "strain" : null,
+    "collectionDate" : null,
+    "collectedBy" : null,
+    "latitude" : null,
+    "longitude" : null,
+    "organism" : "E. coli",
+    "isolate" : null,
+    "geographicLocationName" : null,
+    "isolationSource" : null,
+    "cultureCollection" : null,
+    "genotype" : null,
+    "passageHistory" : null,
+    "pathotype" : null,
+    "serotype" : null,
+    "serovar" : null,
+    "specimenVoucher" : null,
+    "subtype" : null,
+    "hostTaxonomicName" : null,
+    "hostDisease" : null,
+    "hostDescription" : null,
+    "hostDiseaseOutcome" : null,
+    "hostDiseaseStage" : null,
+    "hostHealthState" : null,
+    "hostSex" : null,
+    "hostSubjectId" : null,
+    "hostTissueSampleId" : null,
+    "hostAge" : null,
+    "identifier" : "1",
+    "createdDate" : 1406733849000,
     "links" : [ {
-      "rel" : "self",
-      "href" : "http://localhost:8080/api/projects/5/samples"
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/projects/5/samples/1"
+    }, {
+    "rel" : "sample/sequenceFiles",
+    "href" : "http://localhost:8080/api/projects/5/samples/1/sequenceFiles"
+    }, {
+    "rel" : "sample/project",
+    "href" : "http://localhost:8080/api/projects/5"
     } ]
+  }],
+  "links" : [ {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/projects/5/samples"
+  } ]
   }
 }
 ```
@@ -533,49 +533,49 @@ An individual sample contains the metadata associated with an isolate. The sampl
 ```javascript
 {
   "resource" : {
-    "sequenceFileCount" : 0,
-    "description" : "The fifth sample",
-    "sampleName" : "Sample 5",
-    "sequencerSampleId" : "sample5",
-    "strain" : null,
-    "collectionDate" : null,
-    "collectedBy" : null,
-    "latitude" : null,
-    "longitude" : null,
-    "organism" : "E. coli",
-    "isolate" : null,
-    "geographicLocationName" : null,
-    "isolationSource" : null,
-    "cultureCollection" : null,
-    "genotype" : null,
-    "passageHistory" : null,
-    "pathotype" : null,
-    "serotype" : null,
-    "serovar" : null,
-    "specimenVoucher" : null,
-    "subtype" : null,
-    "hostTaxonomicName" : null,
-    "hostDisease" : null,
-    "hostDescription" : null,
-    "hostDiseaseOutcome" : null,
-    "hostDiseaseStage" : null,
-    "hostHealthState" : null,
-    "hostSex" : null,
-    "hostSubjectId" : null,
-    "hostTissueSampleId" : null,
-    "hostAge" : null,
-    "identifier" : "5",
-    "createdDate" : 1406733854000,
-    "links" : [ {
-      "rel" : "self",
-      "href" : "http://localhost:8080/api/projects/5/samples/5"
-    }, {
-      "rel" : "sample/project",
-      "href" : "http://localhost:8080/api/projects/5"
-    }, {
-      "rel" : "sample/sequenceFiles",
-      "href" : "http://localhost:8080/api/projects/5/samples/5/sequenceFiles"
-    } ]
+  "sequenceFileCount" : 0,
+  "description" : "The fifth sample",
+  "sampleName" : "Sample 5",
+  "sequencerSampleId" : "sample5",
+  "strain" : null,
+  "collectionDate" : null,
+  "collectedBy" : null,
+  "latitude" : null,
+  "longitude" : null,
+  "organism" : "E. coli",
+  "isolate" : null,
+  "geographicLocationName" : null,
+  "isolationSource" : null,
+  "cultureCollection" : null,
+  "genotype" : null,
+  "passageHistory" : null,
+  "pathotype" : null,
+  "serotype" : null,
+  "serovar" : null,
+  "specimenVoucher" : null,
+  "subtype" : null,
+  "hostTaxonomicName" : null,
+  "hostDisease" : null,
+  "hostDescription" : null,
+  "hostDiseaseOutcome" : null,
+  "hostDiseaseStage" : null,
+  "hostHealthState" : null,
+  "hostSex" : null,
+  "hostSubjectId" : null,
+  "hostTissueSampleId" : null,
+  "hostAge" : null,
+  "identifier" : "5",
+  "createdDate" : 1406733854000,
+  "links" : [ {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/projects/5/samples/5"
+  }, {
+    "rel" : "sample/project",
+    "href" : "http://localhost:8080/api/projects/5"
+  }, {
+    "rel" : "sample/sequenceFiles",
+    "href" : "http://localhost:8080/api/projects/5/samples/5/sequenceFiles"
+  } ]
   }
 
 ```
@@ -601,32 +601,32 @@ Each sample will refer to a [collection of sequence files](#sequence-file-collec
 ```javascript
 {
   "resource" : {
-    "resources" : [ {
-      "file" : "/IRIDA/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq",
-      "fileName" : "01-1111_S1_L001_R1_001.fastq",
-      "identifier" : "9",
-      "createdDate" : 1407344463000,
-      "links" : [ {
-        "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/9"
-      } ]
-    }, {
-      "file" : "/IRIDA/sequence-files/10/2/01-1111_S1_L001_R2_001.fastq",
-      "fileName" : "01-1111_S1_L001_R2_001.fastq",
-      "identifier" : "10",
-      "createdDate" : 1407344463000,
-      "links" : [ {
-        "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/10"
-      } ]
-    } ],
+  "resources" : [ {
+    "file" : "/IRIDA/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq",
+    "fileName" : "01-1111_S1_L001_R1_001.fastq",
+    "identifier" : "9",
+    "createdDate" : 1407344463000,
     "links" : [ {
-      "rel" : "self",
-      "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
-    }, {
-      "rel" : "sample",
-      "href" : "http://localhost:8080/api/projects/4/samples/51"
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/9"
     } ]
+  }, {
+    "file" : "/IRIDA/sequence-files/10/2/01-1111_S1_L001_R2_001.fastq",
+    "fileName" : "01-1111_S1_L001_R2_001.fastq",
+    "identifier" : "10",
+    "createdDate" : 1407344463000,
+    "links" : [ {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/10"
+    } ]
+  } ],
+  "links" : [ {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
+  }, {
+    "rel" : "sample",
+    "href" : "http://localhost:8080/api/projects/4/samples/51"
+  } ]
   }
 
 ```
@@ -659,20 +659,20 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 ```javascript
 {
   "resource" : {
-    "file" : "/IRIDA/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq",
-    "fileName" : "01-1111_S1_L001_R1_001.fastq",
-    "identifier" : "9",
-    "createdDate" : 1407344463000,
-    "links" : [ {
-      "rel" : "sample/sequenceFiles",
-      "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
-    }, {
-      "rel" : "self",
-      "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/9"
-    }, {
-      "rel" : "sample",
-      "href" : "http://localhost:8080/api/projects/4/samples/51"
-    } ]
+  "file" : "/IRIDA/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq",
+  "fileName" : "01-1111_S1_L001_R1_001.fastq",
+  "identifier" : "9",
+  "createdDate" : 1407344463000,
+  "links" : [ {
+    "rel" : "sample/sequenceFiles",
+    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
+  }, {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/9"
+  }, {
+    "rel" : "sample",
+    "href" : "http://localhost:8080/api/projects/4/samples/51"
+  } ]
   }
 
 ```
@@ -694,29 +694,29 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 ```javascript
 {
   "resource" : {
-    "resources" : [ {
-      "projectName" : "Test Project",
-      "workflow" : "test workflow",
-      "experimentName" : "Test Experiment",
-      "application" : "FASTQ",
-      "assay" : "Nextera",
-      "chemistry" : "Amplicon",
-      "readLengths" : 250,
-      "investigatorName" : "Jon Doe",
-      "description" : "Superbug",
-      "uploadStatus" : "COMPLETE",
-      "layoutType" : "SINGLE_END",
-      "identifier" : "1",
-      "createdDate" : 1406733873000,
-      "links" : [ {
-        "rel" : "self",
-        "href" : "http://localhost:8080/api/sequencingrun/1"
-      } ]
-    } ],
+  "resources" : [ {
+    "projectName" : "Test Project",
+    "workflow" : "test workflow",
+    "experimentName" : "Test Experiment",
+    "application" : "FASTQ",
+    "assay" : "Nextera",
+    "chemistry" : "Amplicon",
+    "readLengths" : 250,
+    "investigatorName" : "Jon Doe",
+    "description" : "Superbug",
+    "uploadStatus" : "COMPLETE",
+    "layoutType" : "SINGLE_END",
+    "identifier" : "1",
+    "createdDate" : 1406733873000,
     "links" : [ {
-      "rel" : "self",
-      "href" : "http://localhost:8080/api/sequencingrun"
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/sequencingrun/1"
     } ]
+  } ],
+  "links" : [ {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/sequencingrun"
+  } ]
   }
 
 ```
@@ -740,23 +740,23 @@ A sequencing run contains a reference to all of the files that were generated by
 ```javascript
 {
   "resource" : {
-    "projectName" : "Test Project",
-    "workflow" : "test workflow",
-    "experimentName" : "Test Experiment",
-    "application" : "FASTQ",
-    "assay" : "Nextera",
-    "chemistry" : "Amplicon",
-    "readLengths" : 250,
-    "investigatorName" : "Jon Doe",
-    "description" : "Superbug",
-    "uploadStatus" : "COMPLETE",
-    "layoutType" : "SINGLE_END",
-    "identifier" : "1",
-    "createdDate" : 1406733873000,
-    "links" : [ {
-      "rel" : "self",
-      "href" : "http://localhost:8080/api/sequencingrun/1"
-    } ]
+  "projectName" : "Test Project",
+  "workflow" : "test workflow",
+  "experimentName" : "Test Experiment",
+  "application" : "FASTQ",
+  "assay" : "Nextera",
+  "chemistry" : "Amplicon",
+  "readLengths" : 250,
+  "investigatorName" : "Jon Doe",
+  "description" : "Superbug",
+  "uploadStatus" : "COMPLETE",
+  "layoutType" : "SINGLE_END",
+  "identifier" : "1",
+  "createdDate" : 1406733873000,
+  "links" : [ {
+    "rel" : "self",
+    "href" : "http://localhost:8080/api/sequencingrun/1"
+  } ]
   }
 
 ```
