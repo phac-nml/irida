@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -28,18 +27,18 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableSet;
-
+/**
+ * Remote representation of a {@link IridaSequenceFilePair}. Refers to 2
+ * {@link RemoteSequenceFile}s and a URI for the remote resource.
+ */
 @Entity
-@Table(name = "sequence_file_pair")
+@Table(name = "remote_sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFilePair extends IridaResourceSupport implements IridaThing, IridaSequenceFilePair {
+public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -53,28 +52,37 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 
 	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Size(min = 2, max = 2)
-	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
-	private Set<SequenceFile> files;
+	@CollectionTable(name = "remote_sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_REMOTE_SEQUENCE_FILE_PAIR"))
+	private Set<RemoteSequenceFile> files;
 
-	public SequenceFilePair() {
+	/**
+	 * Construct a new {@link RemoteSequenceFilePair} for two
+	 * {@link RemoteSequenceFile}s.
+	 * 
+	 * @param file1
+	 *            a file in the relationship
+	 * @param file2
+	 *            another file in the relationship
+	 */
+	public RemoteSequenceFilePair(RemoteSequenceFile file1, RemoteSequenceFile file2) {
 		createdDate = new Date();
-		files = new HashSet<>();
-	}
+		files = new HashSet<>(2);
 
-	public SequenceFilePair(SequenceFile file1, SequenceFile file2) {
-		this();
 		files.add(file1);
 		files.add(file2);
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	@Override
+	public Set<RemoteSequenceFile> getFiles() {
+		return files;
 	}
 
+	@Override
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -84,10 +92,9 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 		return createdDate;
 	}
 
-	@JsonIgnore
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("Cannot update a sequence file pair");
+		throw new UnsupportedOperationException("cannot update a SequenceFilePair");
 	}
 
 	@Override
@@ -97,44 +104,15 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder("SequenceFilePair: ");
-		Iterator<SequenceFile> iterator = files.iterator();
+		StringBuilder builder = new StringBuilder("RemoteSequenceFilePair: ");
+		Iterator<RemoteSequenceFile> iterator = files.iterator();
 		builder.append(iterator.next().getLabel()).append(", ").append(iterator.next().getLabel());
 		return builder.toString();
 	}
 
-	public Set<SequenceFile> getFiles() {
-		// returning an ImmutableSet to ensure it isn't changed
-		return ImmutableSet.copyOf(files);
-	}
-
-	/**
-	 * Set the {@link SequenceFile}s in this pair. Note it must contain 2 files.
-	 * 
-	 * @param files
-	 *            The set of {@link SequenceFile}s
-	 */
-	public void setFiles(Set<SequenceFile> files) {
-		if (files.size() != 2) {
-			throw new IllegalArgumentException("SequenceFilePair must have 2 files");
-		}
-
-		this.files = files;
-	}
-
 	@Override
-	public int hashCode() {
-		return Objects.hash(files);
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof SequenceFilePair) {
-			SequenceFilePair pair = (SequenceFilePair) obj;
-
-			return Objects.equals(files, pair.files);
-		}
-
-		return false;
-	}
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -128,8 +129,8 @@ public class AnalysisCollectionServiceGalaxy {
 		Set<Path> pathsToUpload = new HashSet<>();
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
 			SequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
-			SequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
-			SequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
+			IridaSequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
+			IridaSequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
 
 			samplesMapPairForward.put(sample, fileForward.getFile());
 			samplesMapPairReverse.put(sample, fileReverse.getFile());
