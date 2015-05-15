@@ -49,7 +49,7 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	@Column(name = "remote_uri")
 	private final String remoteURI;
 
-	@Column(name = "file_path", unique = true)
+	@Column(name = "file_path", unique = true, nullable = true)
 	private Path file;
 
 	@CreatedDate
@@ -137,7 +137,12 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 
 	@Override
 	public String getLabel() {
-		return file.getFileName().toString();
+		if (file == null) {
+			return "Unmirrored Sequence File";
+		} else {
+			return file.getFileName().toString();
+		}
+
 	}
 
 	@Override
