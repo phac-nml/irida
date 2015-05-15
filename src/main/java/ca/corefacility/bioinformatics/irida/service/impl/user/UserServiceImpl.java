@@ -185,7 +185,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@PreAuthorize(CREATE_USER_PERMISSIONS)
-	public User create(User u) {
+	public User create(@Valid User u) {
 		String password = u.getPassword();
 		u.setPassword(passwordEncoder.encode(password));
 		try {
