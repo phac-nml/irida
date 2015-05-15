@@ -210,6 +210,68 @@ IRIDA has several major resources:
   * Sequence files
 3. Sequencing Runs
 
+### Resource Graph
+
+{% digraph %}
+compound = true;
+edge [ fontname = monospace, fontcolor = blue ];
+node [ shape = box3d ];
+
+# Note: subgraphs must be prefixed with 'cluster', otherwise they won't render.
+
+subgraph cluster_users_collection {
+	node [ style = filled, shape = record ];
+	user -> user [label = "self" ];
+	label = "Users";
+	color = purple;
+}
+subgraph cluster_projects_collection {
+	node [ style = filled, shape = record ];
+	project -> project [ label = "self" ];
+	label = "Projects";
+	color = purple;
+}
+
+
+subgraph cluster_sequencing_runs_collection {
+	node [ style = filled, shape = record ];
+	sequencing_run -> sequencing_run [ label = "self" ];
+	label = "Sequencing Runs";
+	color = purple;
+}
+
+subgraph cluster_samples_collection {
+	node [ style = filled, shape = record ];
+	sample -> sample [ label = "self" ];
+	label = "Samples";
+	color = purple;
+}
+
+subgraph cluster_sequence_files_collection {
+	node [ style = filled, shape = record ];
+	sequence_file -> sequence_file [ label = "self" ];
+	label = "Sequence Files";
+	color = purple;
+}
+
+Root -> project [ label = "projects", lhead = cluster_projects_collection ];
+Root -> user [ label = "users", lhead = cluster_users_collection ];
+Root -> sequencing_run [ label = "sequencingRun", lhead = cluster_sequencing_runs_collection ];
+Root -> Root [ label = "self" ];
+
+user -> project [ label = "user/projects", lhead = cluster_projects_collection ];
+
+project -> user [ label = "project/users", lhead = cluster_users_collection ];
+project -> sample [ label = "project/samples", lhead = cluster_samples_collection ];
+
+sample -> project [ label = "sample/project" ];
+sample -> sequence_file [ label = "sample/sequenceFiles", lhead = cluster_sequence_files_collection ];
+
+sequence_file -> sample [ label = "sample", ltail = cluster_sequence_files_collection ];
+# sequence_file -> sequence_file [ label = "sample/sequenceFiles", lhead = cluster_sequence_files_collection ];
+
+{% enddigraph %}
+
 ### Users
 
 Users can be accessed as a [collection](#user-collection) or as an [individual resource](#user-individual).
