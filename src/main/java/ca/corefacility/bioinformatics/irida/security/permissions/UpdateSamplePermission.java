@@ -32,6 +32,8 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 	 *            the sample repository
 	 * @param projectOwnerPermission
 	 *            the project owner permission
+	 * @param projectSampleJoinRepository
+	 *            the project sample join repository
 	 */
 	@Autowired
 	protected UpdateSamplePermission(final SampleRepository sampleRepository,

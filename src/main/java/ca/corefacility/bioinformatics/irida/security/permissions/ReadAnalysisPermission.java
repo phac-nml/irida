@@ -36,6 +36,8 @@ public class ReadAnalysisPermission extends BasePermission<Analysis, Long> {
 	 *            A {@link AnalysisSubmissionRepository}.
 	 * @param userRepository
 	 *            A {@link UserRepository}.
+	 * @param analysisRepository
+	 * 			  A {@link AnalysisRepository}
 	 */
 	@Autowired
 	public ReadAnalysisPermission(final AnalysisRepository analysisRepository,
