@@ -59,14 +59,14 @@
     }
   }
 
-  function FileUploadService($rootScope, $upload, notifications) {
+  function FileUploadService($rootScope, upload, notifications) {
     "use strict";
     var svc = this;
 
-    svc.uploadFiles = function ($files) {
+    svc.uploadFiles = function (files) {
       // TODO: add a check to see if this file has already been upload and give a warning if it has.
-      _.each($files, function (file) {
-        $upload.upload({
+      _.each(files, function (file) {
+        upload.upload({
           url: TL.BASE_URL + "referenceFiles/project/" + project.id + "/new",
           file: file
         }).success(function (data) {
@@ -141,10 +141,10 @@
     };
   }
 
-  angular.module('References', ['angularFileUpload'])
+  angular.module('References', ['ngFileUpload'])
     .service('ProjectFileService', ['$rootScope', 'Restangular', ProjectFileService])
     .service('FileService', ['$rootScope', '$modal', 'Restangular', 'notifications', FileService])
-    .service('FileUploadService', ['$rootScope', '$upload', 'notifications', FileUploadService])
+    .service('FileUploadService', ['$rootScope', 'Upload', 'notifications', FileUploadService])
     .filter('bytes', [bytes])
     .controller('FilesCtrl', ['ProjectFileService', 'FileService', FilesCtrl])
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])

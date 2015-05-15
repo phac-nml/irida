@@ -47,7 +47,7 @@ public class EditClientPageIT {
 	@Before
 	public void setup() {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 	}
 
 	@After

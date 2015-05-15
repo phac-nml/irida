@@ -45,7 +45,7 @@ public class ProjectsAdminPageViewIT {
 	@Before
 	public void setup() {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver);
 		projectsPage = new ProjectsPage(driver);
 		projectsPage.toAdminProjectsPage();
 	}
