@@ -17,6 +17,10 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.RemoteSequ
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.snapshot.RemoteSequenceFilePairService;
 
+/**
+ * {@link CRUDServiceImpl} implementation of
+ * {@link RemoteSequenceFilePairService}
+ */
 @Service
 public class RemoteSequenceFilePairServiceImpl extends CRUDServiceImpl<Long, RemoteSequenceFilePair> implements
 		RemoteSequenceFilePairService {
@@ -30,6 +34,9 @@ public class RemoteSequenceFilePairServiceImpl extends CRUDServiceImpl<Long, Rem
 		this.fileRepository = fileRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public RemoteSequenceFilePair mirrorPair(SequenceFilePair pair) {
 		Set<SequenceFile> files = pair.getFiles();

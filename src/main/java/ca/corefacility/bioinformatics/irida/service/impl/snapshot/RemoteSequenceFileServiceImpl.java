@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.RemoteSequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.snapshot.RemoteSequenceFileService;
 
+/**
+ * {@link CRUDService} implementation of {@link RemoteSequenceFileService}
+ */
 @Service
 public class RemoteSequenceFileServiceImpl extends CRUDServiceImpl<Long, RemoteSequenceFile> implements
 		RemoteSequenceFileService {
@@ -20,6 +24,9 @@ public class RemoteSequenceFileServiceImpl extends CRUDServiceImpl<Long, RemoteS
 		super(repository, validator, RemoteSequenceFile.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public RemoteSequenceFile mirrorFile(SequenceFile file) {
 
 		RemoteSequenceFile mirror = new RemoteSequenceFile(file);
