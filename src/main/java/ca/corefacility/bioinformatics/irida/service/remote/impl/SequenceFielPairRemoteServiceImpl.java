@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -13,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFilePair
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
+@Service
 public class SequenceFielPairRemoteServiceImpl extends RemoteServiceImpl<SequenceFilePair> implements
 		SequenceFilePairRemoteService {
 
@@ -24,6 +26,7 @@ public class SequenceFielPairRemoteServiceImpl extends RemoteServiceImpl<Sequenc
 	public SequenceFielPairRemoteServiceImpl(SequenceFilePairRemoteRepository repository,
 			RemoteAPIRepository remoteAPIRepository) {
 		super(repository, remoteAPIRepository);
+		this.repository = repository;
 	}
 
 	/**

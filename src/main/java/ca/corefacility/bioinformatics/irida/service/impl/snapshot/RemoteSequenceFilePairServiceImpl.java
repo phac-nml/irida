@@ -5,6 +5,9 @@ import java.util.Set;
 
 import javax.validation.Validator;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -14,11 +17,13 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.RemoteSequ
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.snapshot.RemoteSequenceFilePairService;
 
+@Service
 public class RemoteSequenceFilePairServiceImpl extends CRUDServiceImpl<Long, RemoteSequenceFilePair> implements
 		RemoteSequenceFilePairService {
 
 	private RemoteSequenceFileRepository fileRepository;
 
+	@Autowired
 	public RemoteSequenceFilePairServiceImpl(RemoteSequenceFilePairRepository repository,
 			RemoteSequenceFileRepository fileRepository, Validator validator) {
 		super(repository, validator, RemoteSequenceFilePair.class);
