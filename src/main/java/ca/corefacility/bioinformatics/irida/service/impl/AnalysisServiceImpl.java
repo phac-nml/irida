@@ -1,15 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
