@@ -63,7 +63,7 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 * @throws DuplicateSampleException
 	 *             If there is a duplicate sample.
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#pairedInputFiles, 'canReadSequenceFile')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#pairedInputFiles, 'canReadSequenceFilePair')")
 	public Map<Sample, SequenceFilePair> getUniqueSamplesForSequenceFilePairs(Set<SequenceFilePair> pairedInputFiles)
 			throws DuplicateSampleException;
 }
