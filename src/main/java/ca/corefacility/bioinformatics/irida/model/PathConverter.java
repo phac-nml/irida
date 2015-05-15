@@ -16,6 +16,8 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.StringType;
 import org.hibernate.usertype.UserType;
 
+import com.google.common.base.Objects;
+
 /**
  * Converts a {@link Path} to a {@link String} before persisting a value to a
  * column in a database. Allows us to store a the absolute path to a file
@@ -58,7 +60,7 @@ public class PathConverter implements UserType {
 
 	@Override
 	public boolean equals(Object x, Object y) throws HibernateException {
-		return x.equals(y);
+		return Objects.equal(x, y);
 	}
 
 	@Override
