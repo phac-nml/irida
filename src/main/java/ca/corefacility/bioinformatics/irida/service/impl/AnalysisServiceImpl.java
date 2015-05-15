@@ -51,7 +51,7 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Analysis create(@Valid Analysis analysis) {
+	public Analysis create(Analysis analysis) {
 		for (AnalysisOutputFile a : analysis.getAnalysisOutputFiles()) {
 			analysisOutputFileRepository.save(a);
 		}

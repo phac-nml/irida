@@ -17,8 +17,7 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  * 
  *
  */
-public interface AnalysisSubmissionRepository extends
-		IridaJpaRepository<AnalysisSubmission, Long> {
+public interface AnalysisSubmissionRepository extends IridaJpaRepository<AnalysisSubmission, Long> {
 
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given state.
@@ -31,6 +30,7 @@ public interface AnalysisSubmissionRepository extends
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1")
 	public List<AnalysisSubmission> findByAnalysisState(AnalysisState state);
 
+	
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given states.
 	 * 
@@ -43,8 +43,7 @@ public interface AnalysisSubmissionRepository extends
 	 *         given states.
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1 and s.analysisCleanedState = ?2")
-	public List<AnalysisSubmission> findByAnalysisState(
-			AnalysisState analysisState,
+	public List<AnalysisSubmission> findByAnalysisState(AnalysisState analysisState,
 			AnalysisCleanedState analysisCleanedState);
 
 	/**
