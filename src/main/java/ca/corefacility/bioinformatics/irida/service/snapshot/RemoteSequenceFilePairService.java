@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.snapshot;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -8,5 +9,5 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * {@link RemoteSequenceFilePair}s
  */
 public interface RemoteSequenceFilePairService extends CRUDService<Long, RemoteSequenceFilePair> {
-
+	public RemoteSequenceFilePair mirrorPair(SequenceFilePair pair);
 }
