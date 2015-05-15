@@ -8,23 +8,64 @@
 	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
 	      th:href="@{/resources/css/pages/sample_files.css}"/>
 	<script>window.dependencies = ['irida.sample.files'];</script>
+	<style>
+		.drop-box {
+			width: 568px;
+			height: 50px;
+			border-radius: 4px;
+			background-color: #fefefe;
+			border: 2px dashed darkgreen;
+			padding: 1rem;
+			margin-bottom: 1rem;
+			transition: background-color 0.5s ease;
+		}
+
+		.drop-box.dragover {
+			background-color: #bbb;
+		}
+
+		.seq-file {
+			display: flex;
+			justify-content: center;
+		}
+
+		.seq-file_name {
+			flex-grow: 2;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+
+		.seq-file_size {
+			width: 100px;
+		}
+
+		.seq-file_remove {
+			width: 30px;
+		}
+
+	</style>
 </head>
 <body>
 <main layout:fragment="main">
 	<div class="row">
 		<div class="col-md-12">
-			<h1 id="page-title" role="heading" th:text="#{samples.files.page-title(${sample.getLabel()})}">
-				__TITLE__</h1>
+			<h1 id="page-title" role="heading">
+				<th:block th:text="#{samples.files.page-title(${sample.getLabel()})}"></th:block>
+				<file-upload></file-upload></h1>
 		</div>
 	</div>
 	<div class="row" th:if="${fileDeleted}">
-		<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="col-md-12 alert alert-success" role="alert">
-			<strong th:text="${fileDeletedMessage}"></strong>
-		</div>
-		<div th:if="${fileDeletedError}" class="col-md-12 alert alert-error" role="alert">
-			<strong th:text="${fileDeletedError}"></strong>
+		<div class="col-md-12">
+			<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="alert alert-success"
+			     role="alert">
+				<strong th:text="${fileDeletedMessage}"></strong>
+			</div>
+			<div th:if="${fileDeletedError}" class="alert alert-error" role="alert">
+				<strong th:text="${fileDeletedError}"></strong>
+			</div>
 		</div>
 	</div>
+	<upload-error></upload-error>
 	<div class="row">
 		<div class="col-md-12">
 			<table class="table" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
@@ -88,6 +129,44 @@
 
 </main>
 <th:block layout:fragment="page-scripts" th:inline="javascript">
+	<script type="text/ng-template" id="/upload-error.html">
+		<div class="alert alert-warning" ng-show="errorCtrl.showError">
+			<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
+
+			<p th:text="#{project.samples.files.upload.error.body}">__Upload_error_message__</p>
+		</div>
+	</script>
+	<script type="text/ng-template" id="/upload.html">
+		<div class="modal-header">
+			<h3 class="modal-title" th:text="#{project.samples.files.upload}">I'm a modal!</h3>
+		</div>
+		<div class="modal-body">
+			<div ngf-drop="" ngf-change="modalCtrl.addFiles($files, $event, $rejectedFiles)" class="drop-box"
+			     ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+			     ngf-accept="'.fastq,.fastq.gz'" th:text="#{samples.files.upload.upload-drop}">Drop directory of files here.</div>
+			<div class="text-right select-files-btn">
+				<button class="btn btn-default btn-sm" ngf-accept="'.fastq,.fastq.gz'" ngf-select="" ngf-multiple="true" ngf-change="modalCtrl.addFiles($files, $event, $rejectedFiles)" th:text="#{samples.files.upload.btn}">Or Select Files</button>
+			</div>
+			<ul class="list-group">
+				<li class="list-group-item seq-file" ng-repeat="file in modalCtrl.files">
+					<div class="seq-file_name"><span class="fa fa-fw fa-file-o"></span>&nbsp;{{file.name}}</div>
+					<div class="seq-file_size">{{file.size | humanReadableBytes}}</div>
+					<div class="seq-file_remove"><button type="button" class="btn btn-default btn-xs" data-dismiss="alert" aria-label="Remove" ng-click="modalCtrl.remove(file)"><span aria-hidden="true">&times;</span></button></div>
+				</li>
+			</ul>
+			<div class="alert alert-warning" role="alert" ng-show="modalCtrl.rejects.length">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<strong th:text="#{samples.files.upload.reject}">Warning!</strong>
+				<ul>
+					<li ng-repeat="file in modalCtrl.rejects">{{file.name}}</li>
+				</ul>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-warning" ng-click="modalCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
+			<button class="btn btn-primary" ng-disabled="modalCtrl.files.length===0" ng-click="modalCtrl.ok()"><span class="fa fa-fw fa-upload"></span>&nbsp;<th:block th:text="#{form.btn.upload}"></th:block></button>
+		</div>
+	</script>
 	<script type="text/ng-template" id="/confirm.html">
 		<form method="post" th:action="@{/samples/{sId}/files/delete(sId=${sampleId})}">
 			<div class="modal-header">
@@ -104,11 +183,14 @@
 		</form>
 	</script>
 	<script th:inline="javascript">
-		var URLS = {
-			base: /*[[@{${#httpServletRequest.requestURI}}]]*/ '/sequenceFiles',
-			download: /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/'
+		var PAGE = {
+			sample: {
+				id: /*[[${sample.getId()}]]*/ '1'
+			}
 		};
 	</script>
+	<script src="/resources/bower_components/ng-file-upload/ng-file-upload.min.js"
+	        th:src="@{/resources/bower_components/ng-file-upload/ng-file-upload.min.js}"></script>
 	<script src="/resources/js/pages/samples/files.js" th:src="@{/resources/js/pages/samples/files.js}"></script>
 </th:block>
 </body>

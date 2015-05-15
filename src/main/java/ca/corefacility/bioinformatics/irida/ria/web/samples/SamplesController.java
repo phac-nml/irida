@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,8 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -284,6 +291,86 @@ public class SamplesController extends BaseController {
 		}
 
 		return "redirect:" + returnUrl;
+	}
+
+	/**
+	 * Upload {@link SequenceFile}'s to a sample
+	 *
+	 * @param sampleId
+	 * 		The {@link Sample} id to upload to
+	 * @param files
+	 * 		A list of {@link MultipartFile} sequence files.
+	 */
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" })
+	public void uploadSequenceFiles(@PathVariable Long sampleId,
+			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) {
+		Sample sample = sampleService.read(sampleId);
+
+		Pattern pairPattern = Pattern.compile("(.+)_R\\d_.*");
+		List<MultipartFile> singles = new ArrayList<>();
+		List<List<MultipartFile>> pairs = new ArrayList<>();
+		// Determine if there are any paired end files
+
+		while (files.size() > 0) {
+			MultipartFile file = files.remove(0);
+			String name = file.getOriginalFilename();
+
+			// Check to see if this is part of a pair
+			Matcher pairMatcher = pairPattern.matcher(name);
+			if (pairMatcher.matches()) {
+				boolean found = false;
+				// Let's look for its match
+				String matched = pairMatcher.group(1);
+				for (int i = 0; i < files.size() && !found; i++) {
+					if (files.get(i).getOriginalFilename().startsWith(matched)) {
+						pairs.add(ImmutableList.of(
+								file, files.remove(i)
+						));
+						found = true;
+					}
+				}
+				if (!found) {
+					singles.add(file);
+				}
+			} else {
+				singles.add(file);
+			}
+		}
+
+		try {
+			// Add the single files to the sample
+			for (MultipartFile file : singles) {
+				SequenceFile sequenceFile = createSequenceFile(file);
+				sequenceFileService.createSequenceFileInSample(sequenceFile, sample);
+			}
+
+			// Create sequence file pairs
+			for (List<MultipartFile> pair : pairs) {
+				SequenceFile firstFile = createSequenceFile(pair.get(0));
+				SequenceFile secondFile = createSequenceFile(pair.get(1));
+				sequenceFileService.createSequenceFilePairInSample(firstFile, secondFile, sample);
+			}
+		} catch (IOException e) {
+			logger.error("Error writing sequence file", e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * Private method to move the sequence file into the correct directory and create the {@link SequenceFile} object.
+	 *
+	 * @param file
+	 * 		{@link MultipartFile} sequence file uploaded.
+	 *
+	 * @return {@link SequenceFile}
+	 * @throws IOException
+	 * 		Exception thrown if there is an error handling the file.
+	 */
+	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
+		file.transferTo(target.toFile());
+		return new SequenceFile(target);
 	}
 
 	/**
