@@ -29,10 +29,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -51,6 +55,8 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.RemoteSequenceFilePairService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.RemoteSequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
@@ -100,6 +106,10 @@ public class PipelineController extends BaseController {
 	
 	private SequenceFileRemoteService sequenceFileRemoteService;
 	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
+	
+	private RemoteSequenceFileService remoteSequenceFileService;
+	private RemoteSequenceFilePairService remoteSequenceFilePairService;
+	
 	/*
 	 * CONTROLLERS
 	 */
@@ -111,7 +121,7 @@ public class PipelineController extends BaseController {
 			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
 			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
 			MessageSource messageSource, final WorkflowNamedParametersService namedParameterService,
-			SequenceFilePairRemoteService sequenceFilePairRemoteService) {
+			SequenceFilePairRemoteService sequenceFilePairRemoteService, RemoteSequenceFileService remoteSequenceFileService, RemoteSequenceFilePairService remoteSequenceFilePairService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.referenceFileService = referenceFileService;
@@ -124,6 +134,9 @@ public class PipelineController extends BaseController {
 		this.namedParameterService = namedParameterService;
 		this.sequenceFileRemoteService = sequenceFileRemoteService;
 		this.sequenceFilePairRemoteService = sequenceFilePairRemoteService;
+		this.remoteSequenceFileService = remoteSequenceFileService;
+		this.remoteSequenceFilePairService = remoteSequenceFilePairService;
+		
 	}
 
 	/**
@@ -405,18 +418,22 @@ public class PipelineController extends BaseController {
 			
 			
 			// Get a list of the remote files to submit
-			List<SequenceFile> remoteSingleFiles = new ArrayList<>();
-			List<SequenceFilePair> remotePairFiles = new ArrayList<>();
+			List<RemoteSequenceFile> remoteSingleFiles = new ArrayList<>();
+			List<RemoteSequenceFilePair> remotePairFiles = new ArrayList<>();
 			
 			if(remoteSingle != null){
+				logger.debug("Mirroring" + remoteSingle.size() + " single files.");
 				remoteSingleFiles = remoteSingle.stream().map((u) -> {
-					return sequenceFileRemoteService.read(u);
+					SequenceFile file = sequenceFileRemoteService.read(u);
+					return remoteSequenceFileService.mirrorFile(file);
 				}).collect(Collectors.toList());
 			}
 			
 			if(remotePaired != null){
+				logger.debug("Mirroring" + remotePaired.size() + " pairs.");
 				remotePairFiles = remotePaired.stream().map((u) -> {
-					return sequenceFilePairRemoteService.read(u);
+					SequenceFilePair pair = sequenceFilePairRemoteService.read(u);
+					return remoteSequenceFilePairService.mirrorPair(pair);
 				}).collect(Collectors.toList());
 			}
 
