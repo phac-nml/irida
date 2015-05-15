@@ -24,8 +24,10 @@ Both XML and JSON are valid output formats for all resources. Some resources (no
 
 JSON Format
 -----------
+{:.no_toc}
 
 ### Individual Resource
+{:.no_toc}
 
 Resources requested in JSON format will always have the following structure:
 
@@ -52,6 +54,7 @@ The entire response consists of the `resource` object. The `resource` object con
 The `resource` section contains an array of link objects under the `links` key. Each link has a `rel` and an `href`. In addition to the `links` section, the `resource` section contains all properties associated with the resource.
 
 ### Resource Collection
+{:.no_toc}
 
 Resource collections requested in JSON format will always have the following structure:
 
@@ -91,10 +94,12 @@ IRIDA does not allow any un-authenticated interaction with the REST API. IRIDA u
 Most programming languages have libraries with convenient interfaces for dealing with OAuth2 authorization. We provide some examples for the programming languages where we've written our own clients, but a comprehensive list of libraries can be found here: <http://oauth.net/code/>
 
 ### Java
+{:.no_toc}
 
 For Python, we recommend that you use [Spring Security OAuth2](http://projects.spring.io/spring-security-oauth/) or [Apache OLTU](https://oltu.apache.org/). We internally use Spring Security OAuth2 to implement server-side OAuth2.
 
 ### Python
+{:.no_toc}
 
 For Python, we recommend that you use [Rauth](http://rauth.readthedocs.org/en/latest/) or [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/). Both libraries are straightforward to use, so we provide some quick examples for both.
 
@@ -105,12 +110,14 @@ Another option for using Python with IRIDA is the [Requests-OAuthlib](https://re
 A complete example application that uses Requests-OAuthlib is the [IRIDA Galaxy Import Tool](https://irida.corefacility.ca/gitlab/irida/import-tool-for-galaxy). This application uses the authorization code flow.
 
 ### Perl
+{:.no_toc}
 
 For Perl, we recommend that you use the [`OAuth::Lite2::Client::UsernameAndPassword`](https://metacpan.org/pod/OAuth::Lite2::Client::UsernameAndPassword) package. 
 
 A complete application that uses `OAuth::Lite2::Client::UsernameAndPassword` is the [command-line](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) tool for IRIDA.
 
 ### HTTP
+{:.no_toc}
 
 If you *really* want to interact with IRIDA on the command line, or with an esoteric programming language that hasn't yet built an OAuth2 library, you can do so with basic HTTP. The example provided here shows how to use the password flow (you can't really use the authorization code flow without a web browser...) using shell and `curl`:
 
@@ -181,6 +188,7 @@ $ curl http://irida.corefacility.ca/irida/api
 The root resource returned matches the [individual resource](#individual-resource) format.
 
 ### Links
+{:.no_toc}
 
 The root endpoint has links to the top-level resource collections in IRIDA.
 
@@ -202,18 +210,23 @@ IRIDA has several major resources:
   * Sequence files
 3. Sequencing Runs
 
-### Users collection
+### Users
+
+Users can be accessed as a [collection](#user-collection) or as an [individual resource](#user-individual).
+
+#### User Collection
+{:.no_toc}
 
 The user collection contains a reference to all users in the system. Each user resource has a `self` rel that can be followed to access details about the [individual user account](#user).
 
-#### Links
+##### Links
 {:.no_toc}
 
 | Name   | Description                    |
 |--------|--------------------------------|
 | `self` | A link to the users collection |
 
-#### Example Response
+##### Example Response
 {:.no_toc}
 
 ```javascript
@@ -242,11 +255,12 @@ The user collection contains a reference to all users in the system. Each user r
   }
 ```
 
-### User
+#### User Individual
+{:.no_toc}
 
 Each user account can be accessed by a unique URL.
 
-#### Properties
+##### Properties
 {:.no_toc}
 
 | Name          | Description                      | Validation                                                                                                                                                                                                                               |
@@ -257,7 +271,7 @@ Each user account can be accessed by a unique URL.
 | `lastName`    | The user's last name             | Required, minimum length 2                                                                                                                                                                                                               |
 | `phoneNumber` | A contact phone number           | Required, minimum length 4 (no other phone-number-related validation is done on this field)                                                                                                                                              |
 
-#### Links
+##### Links
 {:.no_toc}
 
 | Name | Description |
@@ -266,7 +280,7 @@ Each user account can be accessed by a unique URL.
 | `user/projects` | The collection of projects that this user has permissions to view |
 
 
-#### Example Response
+##### Example Response
 {:.no_toc}
 
 ```javascript
@@ -295,16 +309,19 @@ Each user account can be accessed by a unique URL.
 
 ### Projects
 
-The projects collection provides the list of projects that the authorized user account has permissions to read. Each project entry in the list has a `self` rel that can be followed to view details about the [individual project](#project).
+The [projects collection](#project-collection) provides the list of projects that the authorized user account has permissions to read. Each project entry in the list has a `self` rel that can be followed to view details about the [individual project](#project-individual).
 
-#### Links
+#### Project Collection
+{:.no_toc}
+
+##### Links
 {:.no_toc}
 
 | Name | Description |
 |------|-------------|
 | `self` | The list of projects that the user has permissions to read. |
 
-#### Example Response
+##### Example Response
 {:.no_toc}
 
 ```javascript
@@ -343,11 +360,12 @@ The projects collection provides the list of projects that the authorized user a
 
 ```
 
-### Project
+#### Project Individual
+{:.no_toc}
 
 Each project can be accessed by a unique URL.
 
-#### Links
+##### Links
 {:.no_toc}
 
 | Name | Description |
@@ -356,7 +374,7 @@ Each project can be accessed by a unique URL.
 | `project/users` | A link to view the collection of users that can view this project (the same format as [the list of users](#users) |
 | `project/samples` | A link to view the collection of samples that are contained within this project. |
 
-#### Properties
+##### Properties
 {:.no_toc}
 
 | Name | Description | Validation |
@@ -364,7 +382,7 @@ Each project can be accessed by a unique URL.
 | `name` | The project name. | Required. Must be at least 5 characters long. Must not contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | &`|
 | `projectDescription` | A description of the project | Optional. Not validated. |
 
-#### Example Response
+##### Example Response
 {:.no_toc}
 
 ```javascript
@@ -395,16 +413,19 @@ Each project can be accessed by a unique URL.
 
 ### Samples
 
-A sample corresponds to a single isolate and contains the sequencing data and metadata. A collection of samples can only be accessed via a [project](#project).
+A sample corresponds to a single isolate and contains the sequencing data and metadata. A [collection of samples](#sample-collection) can only be accessed via a [project](#project), and an [individual sample](#sample-individual) can only be accessed from a sample collection.
 
-#### Links
+#### Sample Collection
+{:.no_toc}
+
+##### Links
 {:.no_toc}
 
 | Name | Description |
 |------|-------------|
 | `self` | The link back to this collection of samples. |
 
-#### Example Response
+##### Example Response
 {:.no_toc}
 
 ```javascript
@@ -463,11 +484,12 @@ A sample corresponds to a single isolate and contains the sequencing data and me
 }
 ```
 
-### Sample
+#### Sample Individual
+{:.no_toc}
 
 An individual sample contains the metadata associated with an isolate. The sample will also link to the collection of [sequence files](#sequence-files) produced by a sequencer for the isolate.
 
-#### Links
+##### Links
 {:.no_toc}
 
 | Name | Description |
@@ -476,7 +498,7 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `sample/project` | A link to the project that owns this sample. |
 | `sample/sequenceFiles` | A link to the collection of sequence files in this sample. |
 
-#### Properties
+##### Properties
 {:.no_toc}
 
 
@@ -505,7 +527,7 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `subtype` | Used as classifier in viruses. | Not required. |
 
 
-#### Example Response
+##### Example Response
 {:.no_toc}
 
 ```javascript
@@ -560,9 +582,12 @@ An individual sample contains the metadata associated with an isolate. The sampl
 
 ### Sequence Files
 
-Each sample will refer to a collection of sequence files that have been sequenced and uploaded to IRIDA. Every record in the sequence files resource collection has a `self` rel to access more information about that file.
+Each sample will refer to a [collection of sequence files](#sequence-file-collection) that have been sequenced and uploaded to IRIDA. Every record in the sequence files resource collection has a `self` rel to access the [individual sequence file](#sequence-file-individual).
 
-#### Links
+#### Sequence File Collection
+{:.no_toc}
+
+##### Links
 {:.no_toc}
 
 | Name | Description |
@@ -570,8 +595,8 @@ Each sample will refer to a collection of sequence files that have been sequence
 | `self` | A link to this collection of sequence files. |
 | `sample` | A link back to the sample that owns this sequence file collection. |
 
-#### Example response
-{:no_toc}
+##### Example response
+{:.no_toc}
 
 ```javascript
 {
@@ -606,12 +631,13 @@ Each sample will refer to a collection of sequence files that have been sequence
 
 ```
 
-### Sequence File
+#### Sequence File Individual
+{:.no_toc}
 
 Each sequence file corresponds to a single file (may be one of a pair for paired-end sequencing) generated for an isolate. A sequence file record contains a reference to the file-system location where the file can be found locally. A file can also be downloaded from IRIDA by making a request for the file using an `Accept` header of `application/fastq`.
 
-#### Links
-{:no_toc}
+##### Links
+{:.no_toc}
 
 | Name | Description |
 |------|-------------|
@@ -619,7 +645,7 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 | `sample` | A link to the sample that contains this sequence file. |
 | `sample/sequenceFiles` | A link to the collection of sequence files for the parent sample. |
 
-#### Properties
+##### Properties
 {:.no_toc}
 
 | Name | Description | Validation |
@@ -627,8 +653,8 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 | `file` | The local file system location where the file can be found. | Not specified by a client. |
 | `fileName` | The `basename` of the file, without the directory. | Derived from the `file` property, not specified by a client. |
 
-#### Example response
-{:no_toc}
+##### Example response
+{:.no_toc}
 
 ```javascript
 {
@@ -656,7 +682,7 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 [Sequence files](#sequence-file) are commonly uploaded to IRIDA as part of a set of files generated by a single execution of a sequencer. Sequencing runs can only be viewed by administrative user accounts. Each record in the sequencing runs collection has a `self` rel that can be used to access details about the inddividual sequencing run resource.
 
 #### Links
-{:no_toc}
+{:.no_toc}
 
 | Name | Description |
 |------|-------------|
