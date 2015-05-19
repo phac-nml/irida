@@ -97,6 +97,25 @@ If you need to delete a sequence file from IRIDA, you can do so by clicking on t
 
 You can only delete a sequence file from a sample if you have the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
 
+Adding a new sample
+-------------------
+
+Samples can be manually added to a project, you can do so by clicking on the 'New Sample Button' in the samples menu.
+
+![New sample button](images/add-sample-button.png)
+
+Clicking this button will take you to the Create New Sample page.  Where you must fill in a name for the sample (must be at least 3 characters and only letters, numbers, _ or -).
+
+![Create new sample palge](images/create-sample-page.png)
+
+When entering the name for the organism, if you type more than 2 letters IRIDA will give you a list of probable taxonomic terms.
+
+![Taxonomic terms](images/create-sample-page-organism.png)
+
+Clicking on the 'Create Sample' button will create the sample and take you to the sample page where you can upload files.
+
+![Create Sample](images/create-sample-page-create.png)
+
 Searching and filtering samples
 -------------------------------
 

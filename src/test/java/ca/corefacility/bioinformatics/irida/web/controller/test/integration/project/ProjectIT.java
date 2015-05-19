@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asOtherUser;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -100,6 +101,16 @@ public class ProjectIT {
 		project.put("name", updatedName);
 		asUser().body(project).expect().statusCode(HttpStatus.OK.value()).when().patch(location);
 		asUser().expect().body("resource.name", equalTo(updatedName)).when().get(location);
+	}
+	
+	@Test
+	public void testUpdateProjectNameWithoutPrivileges() {
+		Map<String, String> project = new HashMap<>();
+		String updatedName = "updated new project";
+		String location = PROJECTS + "/5";
+		project.put("name", updatedName);
+		asOtherUser().body(project).expect().statusCode(HttpStatus.FORBIDDEN.value()).when().patch(location);
+		asUser().expect().body("resource.name", equalTo("project22")).when().get(location);
 	}
 
 	@Test

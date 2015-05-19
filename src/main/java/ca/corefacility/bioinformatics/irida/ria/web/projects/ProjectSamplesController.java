@@ -153,6 +153,12 @@ public class ProjectSamplesController {
 		return PROJECT_SAMPLES_PAGE;
 	}
 
+	/**
+	 * Get the create new sample page.
+	 * @param projectId Id for the {@link Project} the sample will belong to.
+	 * @param model {@link Model}
+	 * @return Name of the add sample page.
+	 */
 	@RequestMapping("/projects/{projectId}/samples/new")
 	public String getCreateNewSamplePage(@PathVariable Long projectId, Model model) {
 		Project project = projectService.read(projectId);
@@ -363,6 +369,8 @@ public class ProjectSamplesController {
 	 * 		Id of the project to remove the samples from
 	 * @param sampleIds
 	 * 		An array of samples to remove from a project
+	 * @param locale
+	 * 		The locale of the web browser.
 	 *
 	 * @return Map containing either success or errors.
 	 */
