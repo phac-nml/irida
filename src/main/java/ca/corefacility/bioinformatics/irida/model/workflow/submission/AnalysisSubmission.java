@@ -553,6 +553,13 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 			return this;
 		}
 
+		/**
+		 * Sets the remoteFilesSingle for this submission
+		 * 
+		 * @param remoteFilesSingle
+		 *            Single ended {@link RemoteSequenceFile}s
+		 * @return A {@link Builder}
+		 */
 		public Builder remoteFilesSingle(Set<RemoteSequenceFile> remoteFilesSingle) {
 			checkNotNull(remoteFilesSingle, "remoteFilesSingle is null");
 			checkArgument(!remoteFilesSingle.isEmpty(), "remoteFilesSingle is empty");
@@ -561,6 +568,13 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 			return this;
 		}
 
+		/**
+		 * Sets the remoteFilesPaired for this submission
+		 * 
+		 * @param remoteFilesPaired
+		 *            The remote paired files
+		 * @return A {@link Builder}
+		 */
 		public Builder remoteFilesPaired(Set<RemoteSequenceFilePair> remoteFilesPaired) {
 			checkNotNull(remoteFilesPaired, "remoteFilesPaired is null");
 			checkArgument(!remoteFilesPaired.isEmpty(), "remoteFilesPaired is empty");
