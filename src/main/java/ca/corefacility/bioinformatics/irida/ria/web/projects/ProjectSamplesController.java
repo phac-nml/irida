@@ -153,6 +153,12 @@ public class ProjectSamplesController {
 		return PROJECT_SAMPLES_PAGE;
 	}
 
+	/**
+	 * Get the create new sample page.
+	 * @param projectId Id for the {@link Project} the sample will belong to.
+	 * @param model {@link Model}
+	 * @return Name of the add sample page.
+	 */
 	@RequestMapping("/projects/{projectId}/samples/new")
 	public String getCreateNewSamplePage(@PathVariable Long projectId, Model model) {
 		Project project = projectService.read(projectId);
