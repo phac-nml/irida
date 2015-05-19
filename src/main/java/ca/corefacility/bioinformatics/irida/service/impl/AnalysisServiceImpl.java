@@ -61,6 +61,7 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 	 * {@inheritDoc}
 	 */
 	@Override
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFile, 'canReadSequenceFile')")
 	public AnalysisFastQC getFastQCAnalysisForSequenceFile(final SequenceFile sequenceFile) {
 		return analysisRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
 	}

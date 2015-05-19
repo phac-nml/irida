@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
@@ -18,7 +16,6 @@ public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 	 * @param file
 	 *            The {@link SequenceFile}
 	 */
-	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
 	public void addSequenceFileToSequencingRun(SequencingRun run, SequenceFile file);
 
 	/**
@@ -28,6 +25,5 @@ public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 	 *            The {@link SequenceFile} for to get the run for
 	 * @return A SequencingRun for the file
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
 	public SequencingRun getSequencingRunForSequenceFile(SequenceFile file);
 }

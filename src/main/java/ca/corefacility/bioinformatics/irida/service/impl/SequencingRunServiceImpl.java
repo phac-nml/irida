@@ -71,6 +71,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
 	public void addSequenceFileToSequencingRun(SequencingRun run, SequenceFile file) {
 		// attach a copy of the file to the current transaction.
 		file = sequenceFileRepository.findOne(file.getId());
@@ -83,6 +84,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
 	public SequencingRun getSequencingRunForSequenceFile(SequenceFile file) {
 		SequenceFile loaded = sequenceFileRepository.findOne(file.getId());
 		return loaded.getSequencingRun();

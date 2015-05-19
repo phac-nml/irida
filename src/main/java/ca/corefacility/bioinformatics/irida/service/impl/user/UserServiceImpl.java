@@ -82,6 +82,16 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	private UserGroupJoinRepository userGroupRepository;
 
 	private static final Pattern USER_CONSTRAINT_PATTERN;
+	
+	/**
+	 * A user is permitted to change their own password if they did not
+	 * successfully log in, but the reason for the login failure is that their
+	 * credentials are expired. This permission checks to see that the user is
+	 * authenticated, or that the principle in the security context has an
+	 * expired password.
+	 */
+	private static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
+			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.user.User) and !principal.isCredentialsNonExpired())";
 
 	/**
 	 * If a user is an administrator, they are permitted to create a user
@@ -169,6 +179,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize(CHANGE_PASSWORD_PERMISSIONS)
 	public User changePassword(Long userId, String password) {
 		Set<ConstraintViolation<User>> violations = validatePassword(password);
 		if (violations.isEmpty()) {
@@ -228,6 +239,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("permitAll")
 	public User getUserByUsername(String username) throws EntityNotFoundException {
 		User u = userRepository.loadUserByUsername(username);
 		if (u == null) {
@@ -241,6 +253,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Collection<Join<Project, User>> getUsersForProject(Project project) {
 		return pujRepository.getUsersForProject(project);
 	}
@@ -250,6 +263,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("permitAll")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		logger.trace("Loading user with username: [" + username + "].");
 		org.springframework.security.core.userdetails.User userDetails = null;
@@ -269,6 +283,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("permitAll")
 	public User loadUserByEmail(String email) throws EntityNotFoundException {
 		logger.trace("Loading user with email " + email);
 		User loadUserByEmail = userRepository.loadUserByEmail(email);
@@ -295,6 +310,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<User> getUsersAvailableForProject(Project project) {
 		return userRepository.getUsersAvailableForProject(project);
 	}
@@ -304,6 +320,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
 		return pujRepository.getUsersForProjectByRole(project, projectRole);
 	}
@@ -313,6 +330,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException {
 		return userGroupRepository.getUsersForGroup(g);
 	}

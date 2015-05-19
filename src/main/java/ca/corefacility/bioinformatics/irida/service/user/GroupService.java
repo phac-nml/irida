@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.user;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -31,6 +29,5 @@ public interface GroupService extends CRUDService<Long, Group> {
 	 * @throws EntityExistsException
 	 *             if the {@link User} already belongs to the {@link Group}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Join<User, Group> addUserToGroup(Group g, User u) throws EntityNotFoundException, EntityExistsException;
 }

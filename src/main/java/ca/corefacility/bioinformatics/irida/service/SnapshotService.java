@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import javax.validation.ConstraintViolationException;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
@@ -40,7 +38,6 @@ public interface SnapshotService extends CRUDService<Long, Snapshot> {
 	 *            The {@link IridaSequenceFile}s to take a snapshot of
 	 * @return a persisted {@link Snapshot} object
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
 	public Snapshot takeSnapshot(Collection<? extends IridaProject> projects,
 			Collection<? extends IridaSample> samples, Collection<? extends IridaSequenceFile> sequenceFiles);
 }

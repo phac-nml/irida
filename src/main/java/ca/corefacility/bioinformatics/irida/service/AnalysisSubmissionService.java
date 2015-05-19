@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
@@ -35,7 +33,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @throws EntityNotFoundException
 	 *             If the corresponding analysis cannot be found.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#analysisSubmissionId, 'canReadAnalysisSubmission')")
 	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
 	
 	/**
@@ -45,7 +42,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            The {@link User} to find all submissions for.
 	 * @return A {@link Set} of {@link AnalysisSubmission}s for a user.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
 	public Set<AnalysisSubmission> getAnalysisSubmissionsForUser(User user);
 
 	/**
@@ -55,7 +51,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return A {@link Set} of {@link AnalysisSubmission}s for the current
 	 *         user.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public Set<AnalysisSubmission> getAnalysisSubmissionsForCurrentUser();
 	
 	/**
@@ -79,7 +74,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link String} the name for the analysis
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
@@ -106,7 +100,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
 	 *         the supplied files.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
@@ -126,7 +119,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @throws EntityNotFoundException
 	 *             If no such corresponding submission exists.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
 			NoPercentageCompleteException, ExecutionManagerException;
 }

@@ -52,11 +52,18 @@ public class WorkflowNamedParametersServiceImpl extends CRUDServiceImpl<Long, Ir
 		return super.findAll();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public List<IridaWorkflowNamedParameters> findNamedParametersForWorkflow(UUID workflowId) {
 		return repository.findByWorkflowId(workflowId);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public IridaWorkflowNamedParameters update(final Long id, final Map<String, Object> properties) {
 		throw new UnsupportedOperationException("IridaWorkflowNamedParameters may not be modified.");

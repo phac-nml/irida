@@ -47,6 +47,7 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<RemoteRelatedProject> getRemoteProjectsForProject(Project project) {
 		return repository.getRemoteRelatedProjectsForProject(project);
 	}
@@ -55,6 +56,7 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public RemoteRelatedProject getRemoteRelatedProjectForProjectAndURI(Project project, String remoteProjectURI) {
 		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = repository.getRemoteRelatedProjectForProjectAndURI(
 				project, remoteProjectURI);

@@ -138,6 +138,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException {
 		Optional<Sample> sample = psjRepository.getSamplesForProject(project).stream().map(j -> j.getObject())
 				.filter(s -> s.getId().equals(identifier)).findFirst();
@@ -153,6 +154,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleBySequencerSampleId(Project project, String sampleId) {
 		Sample s = sampleRepository.getSampleBySequencerSampleId(project, sampleId);
 		if (s != null) {
@@ -168,6 +170,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
 		ssfRepository.removeFileFromSample(sample, sequenceFile);
 	}
@@ -176,6 +179,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
 		logger.debug("Getting samples for project [" + project.getId() + "]");
 		return psjRepository.getSamplesForProject(project);
@@ -185,6 +189,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Sample mergeSamples(Project project, Sample mergeInto, Sample... toMerge) {
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
@@ -228,6 +233,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
 			Direction order, String... sortProperties) {
 		sortProperties = verifySortProperties(sortProperties);
@@ -241,6 +247,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
 
@@ -265,6 +272,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Double estimateCoverageForSample(Sample sample, long referenceFileLength)
 			throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
@@ -278,6 +286,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Double estimateCoverageForSample(Sample sample, ReferenceFile referenceFile)
 			throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");

@@ -67,6 +67,7 @@ public class GroupServiceImpl extends CRUDServiceImpl<Long, Group> implements Gr
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Join<User, Group> addUserToGroup(Group g, User u) throws EntityNotFoundException, EntityExistsException {
 		try {
 			UserGroupJoin ug = new UserGroupJoin(u, g);

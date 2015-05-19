@@ -54,6 +54,7 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("permitAll()")
 	public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
 		IridaClientDetails client = clientDetailsRepository.loadClientDetailsByClientId(clientId);
 		if (client == null) {

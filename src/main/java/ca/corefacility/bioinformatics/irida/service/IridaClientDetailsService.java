@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
@@ -17,6 +16,5 @@ public interface IridaClientDetailsService extends ClientDetailsService, CRUDSer
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("permitAll()")
 	public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException;
 }

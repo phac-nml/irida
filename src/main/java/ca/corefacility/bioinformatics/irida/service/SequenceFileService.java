@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -35,7 +33,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @return the {@link Join} between the {@link SequenceFile} and its
 	 *         {@link Sample}.
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample);
 
 	/**
@@ -53,7 +50,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            The {@link Sample} to add to
 	 * @return The created {@link Join}s
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> createSequenceFilePairInSample(SequenceFile file1, SequenceFile file2,
 			Sample sample);
 
@@ -66,7 +62,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample);
 
 	/**
@@ -80,7 +75,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @throws EntityNotFoundException
 	 *             if the file doesn't exist in the sample
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> getSequenceFileForSample(Sample sample, Long identifier)
 			throws EntityNotFoundException;
 
@@ -93,7 +87,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            references from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
 	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 
 	/**
@@ -103,7 +96,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            the sample to get unpaired sequence files for.
 	 * @return A List of {@link SampleSequenceFileJoin}s
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);
 
 	/**
@@ -117,7 +109,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *             If there was more than one sequence file with the same
 	 *             sample.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
 	public Map<Sample, SequenceFile> getUniqueSamplesForSequenceFiles(Set<SequenceFile> sequenceFiles)
 			throws DuplicateSampleException;
 }

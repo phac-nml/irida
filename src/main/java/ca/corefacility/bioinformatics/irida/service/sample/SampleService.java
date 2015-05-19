@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
@@ -38,7 +37,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             if no relationship exists between {@link Sample} and
 	 *             {@link Project}.
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
 
 	/**
@@ -48,7 +46,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link Project} to get samples for.
 	 * @return the collection of samples for the {@link Project}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 
 	/**
@@ -69,7 +66,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return A {@link Page} of {@link Join}s between {@link Project} and
 	 *         {@link Sample}
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
 			Direction order, String... sortProperties);
 
@@ -82,7 +78,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            The id for the requested sample
 	 * @return A {@link Sample} with the given ID
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleBySequencerSampleId(Project project, String sampleId);
 
 	/**
@@ -95,7 +90,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sequenceFile
 	 *            the {@link SequenceFile} that we're moving.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
 
 	/**
@@ -115,7 +109,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the completely merged {@link Sample} (the persisted version of
 	 *         <code>mergeInto</code>).
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Sample mergeSamples(Project p, Sample mergeInto, Sample... toMerge);
 
 	/**
@@ -129,7 +122,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             If there was an error getting FastQC analyses for a sequence
 	 *             file.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Long getTotalBasesForSample(Sample sample)
 			throws SequenceFileAnalysisException;
 
@@ -147,7 +139,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             If there was an error getting FastQC analyses for a sequence
 	 *             file.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Double estimateCoverageForSample(Sample sample,
 			long referenceFileLength) throws SequenceFileAnalysisException;
 	
@@ -165,7 +156,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             If there was an error getting FastQC analyses for a sequence
 	 *             file.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Double estimateCoverageForSample(Sample sample,
 			ReferenceFile referenceFile) throws SequenceFileAnalysisException;
 }

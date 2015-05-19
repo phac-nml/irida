@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
+import ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.ReadReferenceFilePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateReferenceFilePermission;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -65,6 +66,8 @@ public class ReferenceFileServiceImpl extends CRUDServiceImpl<Long, ReferenceFil
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, '" + ReadProjectPermission.PERMISSION_PROVIDED
+			+ "')")
 	public List<Join<Project, ReferenceFile>> getReferenceFilesForProject(Project project) {
 		return prfjRepository.findReferenceFilesForProject(project);
 	}

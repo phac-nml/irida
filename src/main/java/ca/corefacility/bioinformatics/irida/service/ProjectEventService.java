@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -24,7 +23,6 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 *            The page description
 	 * @return A List of {@link ProjectEvent}s
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<ProjectEvent> getEventsForProject(Project project, Pageable pageable);
 
 	/**
@@ -36,7 +34,6 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 *            The page description.
 	 * @return A List of {@link ProjectEvent}s
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #user.username")
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
 
 }

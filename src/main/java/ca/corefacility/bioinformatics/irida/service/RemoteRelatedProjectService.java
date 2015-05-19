@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
@@ -21,7 +19,6 @@ public interface RemoteRelatedProjectService extends CRUDService<Long, RemoteRel
 	 *            The project to get related projects for
 	 * @return A List of {@link RemoteRelatedProject}s
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<RemoteRelatedProject> getRemoteProjectsForProject(Project project);
 
 	/**
@@ -36,7 +33,6 @@ public interface RemoteRelatedProjectService extends CRUDService<Long, RemoteRel
 	 * @throws EntityNotFoundException
 	 *             if the relationship doesn't exist
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public RemoteRelatedProject getRemoteRelatedProjectForProjectAndURI(Project project, String remoteProjectURI)
 			throws EntityNotFoundException;
 }
