@@ -29,8 +29,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -466,10 +464,10 @@ public class PipelineController extends BaseController {
 			}
 
 			if (description.getInputs().requiresSingleSample()) {
-				analysisSubmissionService.createSingleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs,
+				analysisSubmissionService.createSingleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
 						params, namedParameters, name);
 			} else {
-				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs,
+				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
 						params, namedParameters, name);
 			}
 
