@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -40,7 +38,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role);
 
 	/**
@@ -54,7 +51,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @throws ProjectWithoutOwnerException
 	 * 		if removing this user would leave the project without an owner
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException;
 
 	/**
@@ -71,7 +67,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @throws ProjectWithoutOwnerException
 	 * 		If the role change would leave the project without an owner
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project,'isProjectOwner')")
 	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
 			throws ProjectWithoutOwnerException;
 
@@ -86,7 +81,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample);
 	
 	
@@ -101,7 +95,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            {@link Sample} to be moved
 	 * @return Newly created {@link ProjectSampleJoin}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample);
 
 	/**
@@ -113,7 +106,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param sample
 	 * 		the {@link Sample} to remove.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeSampleFromProject(Project project, Sample sample);
 	
 	/**
@@ -124,7 +116,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param samples
 	 *            the {@link Sample}s to remove.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeSamplesFromProject(Project project, Iterable<Sample> samples);
 
 	/**
@@ -157,19 +148,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 			Direction order, String... sortProperties);
 
 	/**
-	 * Get all {@link Project}s associated with a particular {@link User} where that user has a {@link
-	 * ProjectRole}.PROJECT_OWNER role on the project.
-	 *
-	 * @param user
-	 * 		the user to get projects for.
-	 * @param role
-	 * 		the user's role on the project
-	 *
-	 * @return A collection of {@link ProjectUserJoin}s describing the projects associated with the user.
-	 */
-	public List<ProjectUserJoin> getProjectsForUserWithRole(User user, ProjectRole role);
-
-	/**
 	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
 	 *
 	 * @param user
@@ -181,21 +159,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return true/false whether the user has the given role
 	 */
-	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadProject')")
-	public Project read(Long id);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
-	@PostFilter("hasPermission(filterObject, 'canReadProject')")
-	public Iterable<Project> findAll();
 
 	/**
 	 * Add a related {@link Project} to the given {@link Project}
@@ -207,7 +171,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a {@link RelatedProjectJoin} describing the relationship
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'canReadProject')")
 	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject);
 
 	/**
@@ -218,8 +181,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return A list of {@link RelatedProjectJoin}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	@PostFilter("hasPermission(filterObject.object, 'canReadProject')")
 	public List<RelatedProjectJoin> getRelatedProjects(Project project);
 
 	/**
@@ -230,7 +191,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return A list of {@link RelatedProjectJoin}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<RelatedProjectJoin> getReverseRelatedProjects(Project project);
 
 	/**
@@ -239,7 +199,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param relatedProject
 	 * 		The {@link RelatedProjectJoin} to remove
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project.subject, 'isProjectOwner')")
 	public void removeRelatedProject(RelatedProjectJoin relatedProject);
 
 	/**
@@ -250,7 +209,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param relatedProject
 	 * 		The related project
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner')")
 	public void removeRelatedProject(Project subject, Project relatedProject);
 
 	/**
@@ -261,7 +219,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return All the projects a sample exists in
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Project, Sample>> getProjectsForSample(Sample sample);
 
 	/**
@@ -274,7 +231,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a {@link Join} representing the relationship between the {@link Project} and {@link ReferenceFile}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile);
 
 	/**
@@ -285,6 +241,5 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param referenceFile
 	 *            the {@link ReferenceFile} to remove.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeReferenceFileFromProject(Project project, ReferenceFile referenceFile);
 }

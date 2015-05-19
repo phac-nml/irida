@@ -2,11 +2,15 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
@@ -29,11 +33,21 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 		super(repository, validator, RemoteRelatedProject.class);
 		this.repository = repository;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public RemoteRelatedProject create(@Valid RemoteRelatedProject object) throws EntityExistsException, ConstraintViolationException {
+		return super.create(object);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<RemoteRelatedProject> getRemoteProjectsForProject(Project project) {
 		return repository.getRemoteRelatedProjectsForProject(project);
 	}
@@ -42,6 +56,7 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public RemoteRelatedProject getRemoteRelatedProjectForProjectAndURI(Project project, String remoteProjectURI) {
 		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = repository.getRemoteRelatedProjectForProjectAndURI(
 				project, remoteProjectURI);

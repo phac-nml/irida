@@ -198,4 +198,13 @@ public class ProjectEventServiceImplIT {
 
 	}
 
+	@WithMockUser(username = "fbristow", password = "password1", roles = "USER")
+	@Test
+	public void testGetEventsForIndividualUser() {
+		User user1 = userService.read(1L);
+		
+		Page<ProjectEvent> events1 = projectEventService.getEventsForUser(user1, new PageRequest(0, 10));
+		
+		assertEquals(1L, events1.getTotalElements());
+	}
 }

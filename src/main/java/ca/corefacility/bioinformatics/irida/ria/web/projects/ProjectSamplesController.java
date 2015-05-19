@@ -363,6 +363,8 @@ public class ProjectSamplesController {
 	 * 		Id of the project to remove the samples from
 	 * @param sampleIds
 	 * 		An array of samples to remove from a project
+	 * @param locale
+	 * 		The locale of the web browser.
 	 *
 	 * @return Map containing either success or errors.
 	 */
