@@ -29,6 +29,8 @@ public abstract class RemoteServiceImpl<Type extends IridaResourceSupport & Irid
 	 * @param repository
 	 *            The {@link RemoteRepository} handling basic operations with
 	 *            the given Type
+	 * @param remoteAPIRepository
+	 *            repository for storing and retrieving {@link RemoteAPI}s
 	 */
 	public RemoteServiceImpl(RemoteRepository<Type> repository, RemoteAPIRepository remoteAPIRepository) {
 		this.repository = repository;

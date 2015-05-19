@@ -363,6 +363,10 @@ public class PipelineController extends BaseController {
 	 *            a list of {@link SequenceFile} id's
 	 * @param paired
 	 *            a list of {@link SequenceFilePair} id's
+	 * @param remoteSingle
+	 *            a list of remote {@link SequenceFile} URLs
+	 * @param remotePaired
+	 *            A list of remote {@link SequenceFilePair} URLs
 	 * @param parameters
 	 *            TODO: This is a hack! Update when fixing issue #100
 	 *            {@link Map} of ALL parameters passed. Only want the 'paras'
