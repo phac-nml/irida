@@ -154,5 +154,9 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	public void incrementFileRevisionNumber() {
 		fileRevisionNumber++;
 	}
+	
+	public String getRemoteURI() {
+		return remoteURI;
+	}
 
 }
