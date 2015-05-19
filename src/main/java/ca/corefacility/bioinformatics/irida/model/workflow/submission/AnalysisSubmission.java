@@ -123,11 +123,11 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_pair_id", nullable = false))
 	private Set<SequenceFilePair> inputFilesPaired;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_remote_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "remote_file_id", nullable = false))
 	private Set<RemoteSequenceFile> remoteFilesSingle;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_remote_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "remote_file_pair_id", nullable = false))
 	private Set<RemoteSequenceFilePair> remoteFilesPaired;
@@ -192,8 +192,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public AnalysisSubmission(Builder builder) {
 		this();
 		checkNotNull(builder.workflowId, "workflowId is null");
-		checkArgument(builder.inputFilesSingle != null || builder.inputFilesPaired != null,
-				"both inputFilesSingle and inputFilesPaired are null.  You must supply at least one set of input files");
+
+		checkArgument(builder.inputFilesSingle != null || builder.inputFilesPaired != null
+				|| builder.remoteFilesSingle != null || builder.remoteFilesPaired != null,
+				"all input file collections are null.  You must supply at least one set of input files");
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
 		this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
@@ -550,19 +552,19 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 			this.inputFilesPaired = inputFilesPaired;
 			return this;
 		}
-		
-		public Builder remoteFilesSingle(Set<RemoteSequenceFile> remoteFilesSingle){
+
+		public Builder remoteFilesSingle(Set<RemoteSequenceFile> remoteFilesSingle) {
 			checkNotNull(remoteFilesSingle, "remoteFilesSingle is null");
 			checkArgument(!remoteFilesSingle.isEmpty(), "remoteFilesSingle is empty");
-			
+
 			this.remoteFilesSingle = remoteFilesSingle;
 			return this;
 		}
-		
-		public Builder remoteFilesPaired(Set<RemoteSequenceFilePair> remoteFilesPaired){
+
+		public Builder remoteFilesPaired(Set<RemoteSequenceFilePair> remoteFilesPaired) {
 			checkNotNull(remoteFilesPaired, "remoteFilesPaired is null");
 			checkArgument(!remoteFilesPaired.isEmpty(), "remoteFilesPaired is empty");
-			
+
 			this.remoteFilesPaired = remoteFilesPaired;
 			return this;
 		}
@@ -637,8 +639,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		}
 
 		public AnalysisSubmission build() {
-			checkArgument(inputFilesSingle != null || inputFilesPaired != null,
-					"both inputFilesSingle and inputFilesPaired are null.  You must supply at least one set of input files");
+			checkArgument(inputFilesSingle != null || inputFilesPaired != null || remoteFilesSingle != null
+					|| remoteFilesPaired != null,
+					"all input file collections are null.  You must supply at least one set of input files");
 
 			return new AnalysisSubmission(this);
 		}
