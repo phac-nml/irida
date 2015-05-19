@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.util.Date;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -36,8 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -327,66 +323,6 @@ public class SampleServiceImplIT {
 		Sample s = sampleService.read(sampleID);
 
 		sampleService.estimateCoverageForSample(s, 500);
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void testSearchProjectSamples() {
-		int pageSize = 2;
-		Project project = projectService.read(1L);
-		Page<ProjectSampleJoin> pageSamplesForProject = sampleService.searchProjectSamples(
-				ProjectSampleJoinSpecification.searchSampleWithNameInProject("", project), 0, pageSize, Direction.ASC,
-				"createdDate");
-		assertEquals(pageSize, pageSamplesForProject.getNumberOfElements());
-		assertEquals(3, pageSamplesForProject.getTotalElements());
-
-		pageSamplesForProject = sampleService.searchProjectSamples(
-				ProjectSampleJoinSpecification.searchSampleWithNameInProject("2", project), 0, pageSize, Direction.ASC,
-				"createdDate");
-		assertEquals(1, pageSamplesForProject.getTotalElements());
-
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void testFilterProjectSamples() {
-		int pageSize = 2;
-		Project project = projectService.read(1L);
-		Date MIN_DATE = new Date(1363634419000L);
-		Date MAX_DATE = new Date(1366312819000L);
-
-		// Check with no filters.
-		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification.searchProjectSamples(project,
-				"", "", null, null);
-		Page<ProjectSampleJoin> page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC,
-				"createdDate");
-		assertEquals(pageSize, page.getNumberOfElements());
-		assertEquals(3, page.getTotalElements());
-
-		// Check with a name filter
-		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "2", "", null, null);
-		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
-		assertEquals(1, page.getTotalElements());
-
-		// Check with a name that does not exist
-		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "FRED_PENNER", "", null, null);
-		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
-		assertEquals(0, page.getTotalElements());
-
-		// Check with a min date filter
-		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", MIN_DATE, null);
-		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
-		assertEquals(2, page.getSize());
-
-		// Check with max date filter
-		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", null, MAX_DATE);
-		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
-		assertEquals(2, page.getSize());
-
-		// Check with min and max date filter
-		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", MIN_DATE, MAX_DATE);
-		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
-		assertEquals(2, page.getSize());
 	}
 
 	private void assertSampleNotFound(Long id) {

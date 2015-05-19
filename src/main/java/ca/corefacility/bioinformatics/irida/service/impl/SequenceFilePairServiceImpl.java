@@ -8,7 +8,9 @@ import java.util.Set;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -44,11 +46,23 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 		this.ssfRepository = ssfRepository;
 		this.pairRepository = repository;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadSequenceFilePair')")
+	public Iterable<SequenceFilePair> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
+	}
+	
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
 	public SequenceFile getPairedFileForSequenceFile(SequenceFile file) throws EntityNotFoundException {
 		SequenceFilePair pairForSequenceFile = pairRepository.getPairForSequenceFile(file);
 		if (pairForSequenceFile != null) {
@@ -66,6 +80,7 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#file1, 'canReadSequenceFile') and hasPermission(#file2, 'canReadSequenceFile'))")
 	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2) {
 		return pairRepository.save(new SequenceFilePair(file1, file2));
 	}
@@ -74,6 +89,7 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample) {
 		return pairRepository.getSequenceFilePairsForSample(sample);
 	}
@@ -82,6 +98,7 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#pairedInputFiles, 'canReadSequenceFilePair')")
 	public Map<Sample, SequenceFilePair> getUniqueSamplesForSequenceFilePairs(Set<SequenceFilePair> pairedInputFiles)
 			throws DuplicateSampleException {
 		Map<Sample, SequenceFilePair> sequenceFilePairsSampleMap = new HashMap<>();

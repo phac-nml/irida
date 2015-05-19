@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,7 @@ public class SnapshotServiceImpl extends CRUDServiceImpl<Long, Snapshot> impleme
 	 * {@inheritDoc} TODO: Change this to use an AnalysisSubmission once it is
 	 * fully fleshed out
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
 	public Snapshot takeSnapshot(Collection<? extends IridaProject> projects,
 			Collection<? extends IridaSample> samples, Collection<? extends IridaSequenceFile> sequenceFiles) {
 		Snapshot analysisSnapshot = new Snapshot();

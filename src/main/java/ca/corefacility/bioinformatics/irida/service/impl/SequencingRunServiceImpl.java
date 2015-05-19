@@ -11,6 +11,7 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +50,9 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	/**
 	 * {@inheritDoc}
 	 */
-	@Transactional(readOnly = true)
 	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingRun read(Long id) {
 		return super.read(id);
 	}
@@ -59,6 +61,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public Iterable<SequencingRun> findAll() {
 		return super.findAll();
 	}
@@ -68,6 +71,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
 	public void addSequenceFileToSequencingRun(SequencingRun run, SequenceFile file) {
 		// attach a copy of the file to the current transaction.
 		file = sequenceFileRepository.findOne(file.getId());
@@ -80,12 +84,14 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
 	public SequencingRun getSequencingRunForSequenceFile(SequenceFile file) {
 		SequenceFile loaded = sequenceFileRepository.findOne(file.getId());
 		return loaded.getSequencingRun();
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
 	public SequencingRun create(SequencingRun o) {
 		return super.create(o);
 	}
@@ -95,6 +101,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void delete(Long id) {
 		Set<Sample> referencedSamples = new HashSet<>();
 
@@ -128,6 +135,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
 	public SequencingRun update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
 			EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
