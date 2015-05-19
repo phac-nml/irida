@@ -33,7 +33,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 		IridaApiPropertyPlaceholderConfig.class })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectsAddSampleView.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectAddSamplePageIT {
 	private String NAME_ERROR_TOO_SHORT = "a";

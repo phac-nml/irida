@@ -213,7 +213,7 @@ public class ProjectSamplesPageIT {
 		LoginPage.loginAsManager(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
-		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
+
 		page.selectSampleByRow(0);
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getTotalSelectedSamplesCount());
@@ -231,7 +231,7 @@ public class ProjectSamplesPageIT {
 		LoginPage.loginAsManager(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
-		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
+
 		page.selectSampleByRow(0);
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getTotalSelectedSamplesCount());
@@ -327,7 +327,6 @@ public class ProjectSamplesPageIT {
 	public void testCopySamplesAsManagerToUnmanagedProject() {
 		LoginPage.login(driver, "project1Manager", "Password1");
 		page.goToPage();
-		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
 
 		// Should be able to copy files to a project that they are a manager of.
 		selectFirstThreeSamples();

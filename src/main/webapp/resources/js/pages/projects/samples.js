@@ -527,7 +527,7 @@
     };
 
     vm.openModal = function (type) {
-      if (vm.count > 1 && ( type === 'copy' || vm.localSelected )) {
+      if (vm.count > 0 && ( type === 'copy' || vm.localSelected )) {
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/' + type,
           controller : 'CopyMoveCtrl as cmCtrl',
