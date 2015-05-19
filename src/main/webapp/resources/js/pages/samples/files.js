@@ -132,7 +132,7 @@
   function fileUpload() {
     return {
       'restrict': 'E',
-      'template': '<button class="btn btn-default pull-right" ng-click="uploadCtrl.open()"><span class="fa fa-fw fa-upload"></span></button>',
+      'templateUrl': '/upload-btn.html',
       'controllerAs': 'uploadCtrl',
       'controller': ['$modal', 'FileService', function ($modal, fileService) {
         var vm = this;

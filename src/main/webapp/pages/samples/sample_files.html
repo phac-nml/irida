@@ -136,6 +136,12 @@
 			<p th:text="#{project.samples.files.upload.error.body}">__Upload_error_message__</p>
 		</div>
 	</script>
+	<script type="text/ng-template" id="/upload-btn.html">
+		<button class="btn btn-default pull-right" ng-click="uploadCtrl.open()">
+			<span class="fa fa-fw fa-upload"></span>
+			<th:block th:text="#{samples.files.upload-modal.btn}">Upload New Files</th:block>
+		</button>
+	</script>
 	<script type="text/ng-template" id="/upload.html">
 		<div class="modal-header">
 			<h3 class="modal-title" th:text="#{project.samples.files.upload}">I'm a modal!</h3>
@@ -147,7 +153,7 @@
 			<div class="text-right select-files-btn">
 				<button class="btn btn-default btn-sm" ngf-accept="'.fastq,.fastq.gz'" ngf-select="" ngf-multiple="true" ngf-change="modalCtrl.addFiles($files, $event, $rejectedFiles)" th:text="#{samples.files.upload.btn}">Or Select Files</button>
 			</div>
-			<ul class="list-group">
+			<ul class="list-group" style="margin-top: 1rem;">
 				<li class="list-group-item seq-file" ng-repeat="file in modalCtrl.files">
 					<div class="seq-file_name"><span class="fa fa-fw fa-file-o"></span>&nbsp;{{file.name}}</div>
 					<div class="seq-file_size">{{file.size | humanReadableBytes}}</div>

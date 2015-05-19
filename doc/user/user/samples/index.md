@@ -63,6 +63,28 @@ Paired-end files will appear in a pair:
 
 ![Paired-end sequencing file.](images/sample-sequence-file-paired-end.png)
 
+#### Upload a sequence file
+
+Sequence files can be uploaded by clicking on the "Upload new files" button at the top, right hand side of the sequence file table.  Files must have the extension <code>.fastq</code>, all other formats will be ignored.
+
+![Upload sequence file.](images/upload-sample-file-btn.png)
+
+Sequence files can either be added by dragging and dropping a directing of .fastq files, onto the the drop area in the pop-up window.
+
+![Drag and drop area.](images/upload-sample-file-drop-area.png)
+
+Files can also be added using the normal window file dialog by clicking the `Or Select Files` button.
+
+![Select files button.](images/upload-sample-file-select-file-btn.png)
+
+The added files will be displayed in the pop-up window, and can be removed before upload by clicking the `x` button to the right of the file size.
+
+![Selected files.](images/upload-sample-file-dropped-dir.png)
+
+To complete the upload press the Upload button.
+
+![Upload button.](images/upload-sample-file-btn-upload.png)
+
 #### Downloading a sequence file
 
 You can download a sequence file by clicking on the <img src="images/download-icon.png" alt="Download icon" class="inline"> icon, on the right-hand side of the row for the sequence file.
