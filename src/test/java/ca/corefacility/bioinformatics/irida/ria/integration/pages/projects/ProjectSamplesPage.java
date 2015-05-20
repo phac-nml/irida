@@ -294,4 +294,25 @@ public class ProjectSamplesPage extends AbstractPage {
 		driver.findElement(By.id("cart-add-btn")).click();
 		waitForTime(500);
 	}
+
+	// Sample buttons
+	public void showSamplesDropdownMenu() {
+		driver.findElement(By.id("samplesOptionsBtn")).click();
+	}
+
+	public boolean isSampleMergeOptionEnabled() {
+		return !driver.findElement(By.id("merge-li")).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isSampleCopyOptionEnabled() {
+		return !driver.findElement(By.id("copy-li")).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isSampleMoveOptionEnabled() {
+		return !driver.findElement(By.id("move-li")).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isSampleRemoveOptionEnabled() {
+		return !driver.findElement(By.id("remove-li")).getAttribute("class").contains("disabled");
+	}
 }

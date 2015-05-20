@@ -527,7 +527,7 @@
     };
 
     vm.openModal = function (type) {
-      if (type === 'copy' || vm.localSelected) {
+      if (vm.count > 0 && ( type === 'copy' || vm.localSelected )) {
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/' + type,
           controller : 'CopyMoveCtrl as cmCtrl',
@@ -544,7 +544,7 @@
     };
     
     vm.remove = function () {
-      if (vm.localSelected) {
+      if (vm.count > 1 && vm.localSelected) {
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/remove',
           controller : 'RemoveCtrl as rmCtrl',
