@@ -48,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
@@ -74,6 +75,8 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private GalaxyLibrariesService galaxyLibrariesService;
 	@Mock
 	private AnalysisWorkspaceServiceGalaxy analysisWorkspaceService;
+	@Mock
+	private SequenceFileSnapshotService sequenceFileSnapshotService;
 	@Mock
 	private Analysis analysisResults;
 	@Mock
@@ -142,7 +145,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
-				iridaWorkflowsService);
+				iridaWorkflowsService,sequenceFileSnapshotService);
 		AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync = new AnalysisExecutionServiceGalaxyCleanupAsync(
 				analysisSubmissionService, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
