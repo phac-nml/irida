@@ -570,17 +570,11 @@ public class ProjectSamplesController {
 			addSampleToProject = projectService.addSampleToProject(project, sample);
 			Long sampleId = addSampleToProject.getObject().getId();
 			responseBody.put("sampleId", sampleId);
+			response.setStatus(HttpStatus.CREATED.value());
 		} catch (ConstraintViolationException ex) {
 			// if errors respond with the errors
 			Map<String, String> errorsFromViolationException = getErrorsFromViolationException(ex);
 			responseBody.put("errors", errorsFromViolationException);
-		}
-
-		if (!responseBody.containsKey("errors")) {
-			responseBody.put("status", "success");
-			response.setStatus(HttpStatus.CREATED.value());
-		} else {
-			responseBody.put("status", "error");
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
 		}
 

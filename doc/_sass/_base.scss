@@ -221,3 +221,11 @@ pre {
         }
     }
 }
+
+table {
+	border-collapse: collapse;
+	th, td {
+		border: 1px solid #CFCFD9;
+		padding: 5px;
+	}
+}

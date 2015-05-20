@@ -72,6 +72,28 @@ public class ProjectSamplesPageIT {
 		page.goToPage();
 		assertTrue(page.getTitle().contains("Samples"));
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
+
+		page.showSamplesDropdownMenu();
+		assertFalse("Merge should be disabled", page.isSampleMergeOptionEnabled());
+		assertFalse("Copy should be disabled", page.isSampleCopyOptionEnabled());
+		assertFalse("Move should be disabled", page.isSampleMoveOptionEnabled());
+		assertFalse("Remove should be disabled", page.isSampleRemoveOptionEnabled());
+
+		// Check when selecting a sample
+		page.selectSampleByRow(1);
+		page.showSamplesDropdownMenu();
+		assertFalse("Merge should be disabled", page.isSampleMergeOptionEnabled());
+		assertTrue("Copy should be enabled", page.isSampleCopyOptionEnabled());
+		assertTrue("Move should be enabled", page.isSampleMoveOptionEnabled());
+		assertTrue("Remove should be enabled", page.isSampleRemoveOptionEnabled());
+
+		// Check when selecting a second sample
+		page.selectSampleByRow(2);
+		page.showSamplesDropdownMenu();
+		assertTrue("Merge should be enabled", page.isSampleMergeOptionEnabled());
+		assertTrue("Copy should be enabled", page.isSampleCopyOptionEnabled());
+		assertTrue("Move should be enabled", page.isSampleMoveOptionEnabled());
+		assertTrue("Remove should be enabled", page.isSampleRemoveOptionEnabled());
 	}
 
 	@Test

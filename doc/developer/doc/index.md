@@ -84,3 +84,8 @@ Administrator documentation should be strictly related to **installing or runnin
 1. An install guide for running Galaxy in a clustered environment,
 2. How to install IRIDA on a CentOS 7 machine with Tomcat,
 3. Configuring IRIDA's file management options.
+
+General Tips
+------------
+
+Writing tables in Markdown is tedious, a nice tool to do that automatically for you is: <http://www.tablesgenerator.com/markdown_tables>

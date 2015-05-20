@@ -40,7 +40,7 @@
    * @returns {{restrict: string, require: string, link: Function}}
    */
   function nameValidator() {
-    var re = /[^A-Za-z0-9\-_]/;
+    var re = /[^A-Za-z0-9\-_!@#\$%~`]/;
     return {
       restrict: 'A',
       require: 'ngModel',
@@ -53,15 +53,31 @@
   }
 
   /**
+   * Allows for the clearing of the server message once the user has changed the input on the field.
+   * @returns {{restrict: string, require: string, link: Function}}
+   */
+  function serverValidated() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function(scope, elem, attrs, ctrl) {
+        ctrl.$validators.server = function() {
+          return true;
+        };
+      }
+    };
+  }
+
+  /**
    * Custom Select2 directive for searching through the organism ontology using
    * JQuery Select2 plugin.
    * @returns {{restrict: string, require: string, link: Function}}
    */
-  function select2() {
+  function select2($timeout) {
     return {
       restrict: 'A',
       require: 'ngModel',
-      link: function(scope, elem) {
+      link: function(scope, elem, attrs, ctrl) {
         $(elem).select2({
           minimumInputLength: 3,
           ajax: {
@@ -78,7 +94,16 @@
               };
             }
           }
-        });
+        })
+          .on('change', function (data) {
+            scope.$apply(function () {
+              if (ctrl.$validators.custom !== data.added.searchTerm) {
+                $timeout(function () {
+                  ctrl.$validators.custom = data.added.searchTerm;
+                }, false);
+              }
+            });
+          });
       }
     };
   }
@@ -113,8 +138,8 @@
       for (var key in errors) {
         if (errors.hasOwnProperty(key) && key !== 'label' && key !== 'sequencerSampleId') {
           vm.sampleDetailForm[key].$dirty = true;
-          vm.sampleDetailForm[key].$setValidity(errors[key], false);
-          vm.sampleNameError = errors[key];
+          vm.sampleDetailForm[key].$setValidity('server', false);
+          vm.sampleDetailForm[key].serverError = errors[key];
         }
       }
     }
@@ -122,7 +147,8 @@
 
   angular.module('samples.new', [])
     .factory('SampleService', ['$http', SampleService])
-    .directive('select2', [select2])
+    .directive('select2', ['$timeout', select2])
+    .directive('serverValidated',[serverValidated])
     .directive('nameValidator', [nameValidator])
     .controller('SampleController', ['SampleService', '$modal', SampleController]);
 })(window.angular, window.$, window.TL, window.PAGE);
