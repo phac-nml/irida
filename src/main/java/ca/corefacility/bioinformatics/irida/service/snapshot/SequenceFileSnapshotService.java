@@ -1,18 +1,18 @@
 package ca.corefacility.bioinformatics.irida.service.snapshot;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
-public interface RemoteSequenceFileService extends CRUDService<Long, RemoteSequenceFile> {
+public interface SequenceFileSnapshotService extends CRUDService<Long, SequenceFileSnapshot> {
 
 	/**
 	 * Mirror the metadata for a {@link SequenceFile} locally and return a
-	 * {@link RemoteSequenceFile}
+	 * {@link SequenceFileSnapshot}
 	 * 
 	 * @param file
 	 *            The {@link SequenceFile} to mirror
-	 * @return persisted {@link RemoteSequenceFile}
+	 * @return persisted {@link SequenceFileSnapshot}
 	 */
-	public RemoteSequenceFile mirrorFile(SequenceFile file);
+	public SequenceFileSnapshot mirrorFile(SequenceFile file);
 }

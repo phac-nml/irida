@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Sets;
@@ -73,6 +74,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public UploadSample convertToUploadSample(Sample sample) {
 
 		UploadSample galaxySample;
@@ -101,6 +103,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
 	public Set<UploadSample> getUploadSamplesForProject(Long projectId) {
 		checkNotNull(projectId, "projectId is null");
 
@@ -128,6 +131,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#samples, 'canReadSample')")
 	public Set<UploadSample> convertToUploadSamples(Set<Sample> samples) {
 
 		Set<UploadSample> galaxySamples = new HashSet<>();
@@ -144,6 +148,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#samples, 'canReadSample')")
 	public Set<UploadSample> convertToUploadSamples(Sample... samples) {
 		return convertToUploadSamples(Sets.newHashSet(samples));
 	}
@@ -152,6 +157,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
 	public Set<UploadSample> convertSequenceFilesToUploadSamples(
 			Set<SequenceFile> sequenceFiles) throws EntityNotFoundException {
 		checkNotNull(sequenceFiles, "sequenceFiles are null");
@@ -183,6 +189,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
 	public Set<UploadSample> convertSequenceFilesByIdToUploadSamples(
 			Set<Long> sequenceFileIds) throws EntityNotFoundException {
 		checkNotNull(sequenceFileIds, "sequenceFileIds is null");

@@ -33,8 +33,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -53,8 +53,8 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.RemoteSequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.RemoteSequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
@@ -105,8 +105,8 @@ public class PipelineController extends BaseController {
 	private SequenceFileRemoteService sequenceFileRemoteService;
 	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	
-	private RemoteSequenceFileService remoteSequenceFileService;
-	private RemoteSequenceFilePairService remoteSequenceFilePairService;
+	private SequenceFileSnapshotService remoteSequenceFileService;
+	private SequenceFilePairSnapshotService remoteSequenceFilePairService;
 	
 	/*
 	 * CONTROLLERS
@@ -119,7 +119,7 @@ public class PipelineController extends BaseController {
 			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
 			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
 			MessageSource messageSource, final WorkflowNamedParametersService namedParameterService,
-			SequenceFilePairRemoteService sequenceFilePairRemoteService, RemoteSequenceFileService remoteSequenceFileService, RemoteSequenceFilePairService remoteSequenceFilePairService) {
+			SequenceFilePairRemoteService sequenceFilePairRemoteService, SequenceFileSnapshotService remoteSequenceFileService, SequenceFilePairSnapshotService remoteSequenceFilePairService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.referenceFileService = referenceFileService;
@@ -420,8 +420,8 @@ public class PipelineController extends BaseController {
 			
 			
 			// Get a list of the remote files to submit
-			List<RemoteSequenceFile> remoteSingleFiles = new ArrayList<>();
-			List<RemoteSequenceFilePair> remotePairFiles = new ArrayList<>();
+			List<SequenceFileSnapshot> remoteSingleFiles = new ArrayList<>();
+			List<SequenceFilePairSnapshot> remotePairFiles = new ArrayList<>();
 			
 			if(remoteSingle != null){
 				logger.debug("Mirroring" + remoteSingle.size() + " single files.");

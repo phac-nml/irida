@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.sample;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,10 +18,6 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
@@ -38,8 +32,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisReposi
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -364,60 +356,7 @@ public class SampleServiceImplTest {
 
 		sampleService.getTotalBasesForSample(s1);
 	}
-
-	@Test
-	public void testSearchProjectSamples() {
-		Project project = new Project();
-		int page = 0;
-		int size = 1;
-		Direction order = Direction.ASC;
-		String sortProperties = "createdDate";
-		Specification<ProjectSampleJoin> specification = ProjectSampleJoinSpecification.searchSampleWithNameInProject(
-				"", project);
-
-		sampleService.searchProjectSamples(specification, page, size, order, sortProperties);
-
-		ArgumentCaptor<PageRequest> pageRequest = ArgumentCaptor.forClass(PageRequest.class);
-		verify(psjRepository).findAll(eq(specification), pageRequest.capture());
-
-		assertNotNull(pageRequest.getValue().getSort().getOrderFor(sortProperties));
-	}
-
-	@Test
-	public void testSearchProjectSamplesWithoutProperty() {
-		Project project = new Project();
-		int page = 0;
-		int size = 1;
-		Direction order = Direction.ASC;
-		String sortProperties = "createdDate";
-		Specification<ProjectSampleJoin> specification = ProjectSampleJoinSpecification.searchSampleWithNameInProject(
-				"", project);
-
-		sampleService.searchProjectSamples(specification, page, size, order);
-
-		ArgumentCaptor<PageRequest> pageRequest = ArgumentCaptor.forClass(PageRequest.class);
-		verify(psjRepository).findAll(eq(specification), pageRequest.capture());
-
-		assertNotNull(pageRequest.getValue().getSort().getOrderFor(sortProperties));
-	}
-
-	@Test
-	public void testProjectSampleFilterSpecification() {
-		Project project = new Project();
-		int page = 0;
-		int size = 10;
-		Direction order = Direction.ASC;
-		String sortProperties = "createdDate";
-		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification.searchProjectSamples(project,
-				"", "", null, null);
-		sampleService.searchProjectSamples(specification, page, size, order, sortProperties);
-
-		ArgumentCaptor<PageRequest> pageRequest = ArgumentCaptor.forClass(PageRequest.class);
-		verify(psjRepository).findAll(eq(specification), pageRequest.capture());
-
-		assertNotNull(pageRequest.getValue().getSort().getOrderFor(sortProperties));
-	}
-
+	
 	private Sample s(Long id) {
 		Sample s = new Sample();
 		s.setId(id);

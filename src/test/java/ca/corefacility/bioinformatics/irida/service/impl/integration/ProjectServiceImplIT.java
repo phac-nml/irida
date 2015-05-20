@@ -206,17 +206,6 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetProjectsManagedBy() {
-		User u = userService.read(3L);
-
-		Collection<ProjectUserJoin> projects = projectService.getProjectsForUserWithRole(u, ProjectRole.PROJECT_OWNER);
-
-		assertEquals("User should have one project.", 1, projects.size());
-		assertEquals("User should be on project 2.", Long.valueOf(2L), projects.iterator().next().getSubject().getId());
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddSampleToProject() {
 		Sample s = sampleService.read(1L);
 		Project p = projectService.read(1L);

@@ -5,6 +5,7 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -33,6 +34,7 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<ProjectEvent> getEventsForProject(Project project, Pageable pageable) {
 		return repository.getEventsForProject(project, pageable);
 	}
@@ -40,6 +42,7 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #user.username")
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable) {
 		return repository.getEventsForUser(user, pageable);
 	}

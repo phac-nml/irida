@@ -50,8 +50,8 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -126,11 +126,11 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_remote_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "remote_file_id", nullable = false))
-	private Set<RemoteSequenceFile> remoteFilesSingle;
+	private Set<SequenceFileSnapshot> remoteFilesSingle;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_remote_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "remote_file_pair_id", nullable = false))
-	private Set<RemoteSequenceFilePair> remoteFilesPaired;
+	private Set<SequenceFilePairSnapshot> remoteFilesPaired;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "name", nullable = false)
@@ -489,8 +489,8 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		private String name;
 		private Set<SequenceFile> inputFilesSingle;
 		private Set<SequenceFilePair> inputFilesPaired;
-		private Set<RemoteSequenceFile> remoteFilesSingle;
-		private Set<RemoteSequenceFilePair> remoteFilesPaired;
+		private Set<SequenceFileSnapshot> remoteFilesSingle;
+		private Set<SequenceFilePairSnapshot> remoteFilesPaired;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
 		private Map<String, String> inputParameters;
@@ -557,10 +557,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		 * Sets the remoteFilesSingle for this submission
 		 * 
 		 * @param remoteFilesSingle
-		 *            Single ended {@link RemoteSequenceFile}s
+		 *            Single ended {@link SequenceFileSnapshot}s
 		 * @return A {@link Builder}
 		 */
-		public Builder remoteFilesSingle(Set<RemoteSequenceFile> remoteFilesSingle) {
+		public Builder remoteFilesSingle(Set<SequenceFileSnapshot> remoteFilesSingle) {
 			checkNotNull(remoteFilesSingle, "remoteFilesSingle is null");
 			checkArgument(!remoteFilesSingle.isEmpty(), "remoteFilesSingle is empty");
 
@@ -575,7 +575,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		 *            The remote paired files
 		 * @return A {@link Builder}
 		 */
-		public Builder remoteFilesPaired(Set<RemoteSequenceFilePair> remoteFilesPaired) {
+		public Builder remoteFilesPaired(Set<SequenceFilePairSnapshot> remoteFilesPaired) {
 			checkNotNull(remoteFilesPaired, "remoteFilesPaired is null");
 			checkArgument(!remoteFilesPaired.isEmpty(), "remoteFilesPaired is empty");
 
