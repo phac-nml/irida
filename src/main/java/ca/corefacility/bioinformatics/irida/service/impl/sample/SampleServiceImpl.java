@@ -5,9 +5,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.slf4j.Logger;
@@ -16,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,12 +94,51 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.ssfRepository = ssfRepository;
 		this.analysisRepository = analysisRepository;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#idents, 'canReadSample')")
+	public Iterable<Sample> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
+	public Boolean exists(Long id) {
+		return super.exists(id);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER')")
+	public Sample create(final @Valid Sample s) {
+		return super.create(s);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateSample')")
+	public Sample update(final Long id, final Map<String, Object> updatedProperties) {
+		return super.update(id, updatedProperties);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException {
 		Optional<Sample> sample = psjRepository.getSamplesForProject(project).stream().map(j -> j.getObject())
 				.filter(s -> s.getId().equals(identifier)).findFirst();
@@ -113,6 +154,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleBySequencerSampleId(Project project, String sampleId) {
 		Sample s = sampleRepository.getSampleBySequencerSampleId(project, sampleId);
 		if (s != null) {
@@ -128,6 +170,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
 		ssfRepository.removeFileFromSample(sample, sequenceFile);
 	}
@@ -136,6 +179,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
 		logger.debug("Getting samples for project [" + project.getId() + "]");
 		return psjRepository.getSamplesForProject(project);
@@ -145,6 +189,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Sample mergeSamples(Project project, Sample mergeInto, Sample... toMerge) {
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
@@ -179,6 +224,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
 	public Sample read(Long id) {
 		return super.read(id);
 	}
@@ -187,6 +233,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
 			Direction order, String... sortProperties) {
 		sortProperties = verifySortProperties(sortProperties);
@@ -200,6 +247,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
 
@@ -224,6 +272,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Double estimateCoverageForSample(Sample sample, long referenceFileLength)
 			throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
@@ -237,20 +286,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Double estimateCoverageForSample(Sample sample, ReferenceFile referenceFile)
 			throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
 		checkNotNull(referenceFile, "referenceFile is null");
 
 		return estimateCoverageForSample(sample, referenceFile.getFileLength());
-	}
-
-	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
-			int size, Direction order, String... sortProperties) {
-
-		sortProperties = verifySortProperties(sortProperties);
-
-		return psjRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 
 	/**

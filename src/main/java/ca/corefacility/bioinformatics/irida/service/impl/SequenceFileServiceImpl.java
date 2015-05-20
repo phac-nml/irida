@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -96,12 +97,23 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
+	public Boolean exists(Long id) {
+		return super.exists(id);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
 		logger.trace("Calling super.create");
@@ -115,6 +127,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
@@ -124,6 +137,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile sf = super.update(id, updatedFields);
 
@@ -141,6 +155,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		// check for consistency with the sequencing run
 		SequencingRun sequencingRun = sequenceFile.getSequencingRun();
@@ -158,6 +173,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> createSequenceFilePairInSample(SequenceFile file1, SequenceFile file2,
 			Sample sample) {
 		// check for consistency with the sequencing run
@@ -182,12 +198,14 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample) {
 		return ssfRepository.getFilesForSample(sample);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
 	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun miseqRun) {
 		return sequenceFileRepository.findSequenceFilesForSequencingRun(miseqRun);
 	}
@@ -244,6 +262,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> getSequenceFileForSample(Sample sample, Long identifier)
 			throws EntityNotFoundException {
 		Optional<Join<Sample, SequenceFile>> file = getSequenceFilesForSample(sample).stream()
@@ -258,6 +277,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
 	public Map<Sample, SequenceFile> getUniqueSamplesForSequenceFiles(Set<SequenceFile> sequenceFiles)
 			throws DuplicateSampleException {
 		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
@@ -285,6 +306,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample) {
 		return ssfRepository.getUnpairedSequenceFilesForSample(sample);
 	}

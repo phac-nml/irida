@@ -4,6 +4,10 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,18 +39,55 @@ public class RemoteAPIServiceImpl extends CRUDServiceImpl<Long, RemoteAPI> imple
 		super(repository, validator, RemoteAPI.class);
 		this.repository = repository;
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public RemoteAPI create(final RemoteAPI remoteAPI) {
+		return super.create(remoteAPI);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Page<RemoteAPI> search(Specification<RemoteAPI> specification, int page, int size, Direction order,
+			String... sortProperties) {
+		return super.search(specification, page, size, order, sortProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void delete(Long id) throws EntityNotFoundException {
+		super.delete(id);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("permitAll")
 	public RemoteAPI read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@PreAuthorize("permitAll")
 	public Iterable<RemoteAPI> findAll() {
 		return super.findAll();
 	}
 
 	@Override
+	@PreAuthorize("permitAll")
 	public RemoteAPI getRemoteAPIForUrl(String url) {
 		return repository.getRemoteAPIForUrl(url);
 	}
