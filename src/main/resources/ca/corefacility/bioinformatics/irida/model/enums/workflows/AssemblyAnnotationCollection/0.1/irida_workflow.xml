@@ -62,7 +62,7 @@
 		<output name="contigs-with-repeats" fileName="contigs-with-repeats-combined.fasta.zip" />
 		<output name="contigs-without-repeats" fileName="contigs-without-repeats-combined.fasta.zip" />
 		<output name="assembly-stats-repeats" fileName="assembly-stats-with-repeats-combined.tsv" />
-		<output name="annotations-genbank" fileName="genome.gbk-combined.zip" />
+		<output name="annotations-genbank" fileName="genome-combined.gbk.zip" />
 		<output name="annotations-stats" fileName="prokka_stats-combined.txt.zip" />
 		<output name="annotations-log" fileName="prokka-combined.log.zip" />
 		<output name="annotations-error" fileName="prokka-combined.err.zip" />
