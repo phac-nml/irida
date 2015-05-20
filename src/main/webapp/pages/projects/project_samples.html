@@ -132,7 +132,7 @@
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
-						<li ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
+						<li id="merge-li" ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
 						    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
 						    tooltip-placement="right">
 							<a id="mergeBtn" href="#" ng-click="subnav.merge()">
@@ -142,14 +142,14 @@
 							</a>
 						</li>
 						<th:block th:if="${isOwner} or ${isAdmin}">
-							<li ng-class="{disabled: subnav.count&lt;1}">
+							<li id="copy-li" ng-class="{disabled: subnav.count&lt;1}">
 								<a id="copyBtn" href="" ng-click="subnav.openModal('copy')">
 									<span class="fa fa-fw fa-copy"></span>
 									&nbsp;
 									<span th:text="#{project.samples.nav.copy}">_COPY_</span>
 								</a>
 							</li>
-							<li class="local-only" ng-class="{disabled: subnav.count&lt;1 || ! subnav.localSelected}"
+							<li id="move-li" class="local-only" ng-class="{disabled: subnav.count&lt;1 || ! subnav.localSelected}"
 							    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
 							    tooltip-placement="right">
 								<a id="moveBtn" href="#" ng-click="subnav.openModal('move')">
@@ -158,7 +158,7 @@
 									<span th:text="#{project.samples.nav.move}"></span>
 								</a>
 							</li>
-							<li class="local-only" ng-class="{disabled: subnav.count&lt;1 || ! subnav.localSelected}"
+							<li id="remove-li" class="local-only" ng-class="{disabled: subnav.count&lt;1 || ! subnav.localSelected}"
 							    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
 							    tooltip-placement="right">
 								<a id="removeBtn" href="#" ng-click="subnav.remove()">
