@@ -46,7 +46,9 @@
       // Holds all the ids for the selected single-end
       single = [],
       // Holds all the ids for the selected paired-end
-      paired = [];
+      paired = [],
+      remoteSingle = [],
+      remotePaired = [];
 
       if (name === null || name.length === 0) {
         vm.error = PIPELINE.required;
@@ -57,11 +59,21 @@
         // Get a list of paired and single end files to run.
         _.forEach(radioBtns, function (c) {
           c = $(c);
-          if (c.attr('data-type') === 'single_end') {
-            single.push(Number(c.val()));
+          if(c.hasClass("remote")){
+            if (c.attr('data-type') === 'single_end') {
+              remoteSingle.push(c.val());
+            }
+            else {
+              remotePaired.push(c.val());
+            }
           }
-          else {
-            paired.push(Number(c.val()));
+          else{
+            if (c.attr('data-type') === 'single_end') {
+              single.push(Number(c.val()));
+            }
+            else {
+              paired.push(Number(c.val()));
+            }
           }
         });
 
@@ -82,6 +94,14 @@
         if (paired.length > 0) {
           params['paired'] = paired;
         }
+        
+        if(remoteSingle.length > 0){
+          params['remoteSingle'] = remoteSingle;
+        }
+        if(remotePaired.length > 0){
+          params['remotePaired'] = remotePaired;
+        }
+        
         if (_.keys(selectedParameters).length > 0) {
           params['selectedParameters'] = selectedParameters;
         }

@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFilePairRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 
@@ -26,14 +25,13 @@ import com.google.common.collect.Lists;
 public class SequenceFileRemoteServiceImplTest {
 	SequenceFileRemoteService service;
 	SequenceFileRemoteRepository repository;
-	SequenceFilePairRemoteRepository pairRemoteRepository;
 	RemoteAPIRepository apiRepo;
 
 	@Before
 	public void setUp() {
 		repository = mock(SequenceFileRemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);
-		service = new SequenceFileRemoteServiceImpl(repository, pairRemoteRepository, apiRepo);
+		service = new SequenceFileRemoteServiceImpl(repository, apiRepo);
 	}
 
 	@Test

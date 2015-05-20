@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 @Table(name = "remote_sequence_file")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
+public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,7 +49,7 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	@Column(name = "remote_uri")
 	private final String remoteURI;
 
-	@Column(name = "file_path", unique = true)
+	@Column(name = "file_path", unique = true, nullable = true)
 	private Path file;
 
 	@CreatedDate
@@ -77,14 +77,14 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	private Long fileRevisionNumber;
 
 	/**
-	 * Create a new {@link RemoteSequenceFile} based on an existing remote
+	 * Create a new {@link SequenceFileSnapshot} based on an existing remote
 	 * {@link SequenceFile}. This will copy the properties of the file along
 	 * with its {@code self} rel.
 	 * 
 	 * @param base
 	 *            The {@link SequenceFile} to base this copy on
 	 */
-	public RemoteSequenceFile(SequenceFile base) {
+	public SequenceFileSnapshot(SequenceFile base) {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
 
@@ -137,7 +137,12 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 
 	@Override
 	public String getLabel() {
-		return file.getFileName().toString();
+		if (file == null) {
+			return "Unmirrored Sequence File";
+		} else {
+			return file.getFileName().toString();
+		}
+
 	}
 
 	@Override
@@ -148,6 +153,10 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	@Override
 	public void incrementFileRevisionNumber() {
 		fileRevisionNumber++;
+	}
+	
+	public String getRemoteURI() {
+		return remoteURI;
 	}
 
 }

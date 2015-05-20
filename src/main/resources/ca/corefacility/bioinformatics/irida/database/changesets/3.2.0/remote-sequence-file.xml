@@ -129,5 +129,61 @@
             </column>
             <column name="REVTYPE" type="tinyint(4)" />
         </createTable>
+
+		<createTable tableName="analysis_submission_remote_file_single">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedColumnNames="id" referencedTableName="remote_sequence_file"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_SINGLE_ANALYSIS" />
+			</column>
+			<column name="remote_file_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedColumnNames="id" referencedTableName="analysis_submission"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_SINGLE_FILE" />
+			</column>
+		</createTable>
+	
+		<createTable tableName="analysis_submission_remote_file_single_AUD">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="remote_file_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_FILE_SINGLE_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+	
+		<createTable tableName="analysis_submission_remote_file_pair">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedColumnNames="id" referencedTableName="remote_sequence_file_pair"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_PAIR_ANALYSIS" />
+			</column>
+			<column name="remote_file_pair_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedColumnNames="id" referencedTableName="analysis_submission"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_PAIR_FILE" />
+			</column>
+		</createTable>
+	
+		<createTable tableName="analysis_submission_remote_file_pair_AUD">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="remote_file_pair_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_FILE_PAIR_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
 	</changeSet>
 </databaseChangeLog>

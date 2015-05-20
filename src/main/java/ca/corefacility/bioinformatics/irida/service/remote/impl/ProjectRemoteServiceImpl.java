@@ -29,6 +29,8 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<Project> impleme
 	 * 
 	 * @param repository
 	 *            the {@link ProjectRemoteRepository}
+	 * @param apiRepository
+	 *            Repository storing information about {@link RemoteAPI}s
 	 */
 	@Autowired
 	public ProjectRemoteServiceImpl(ProjectRemoteRepository repository, RemoteAPIRepository apiRepository) {
@@ -36,8 +38,7 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<Project> impleme
 	}
 
 	/**
-	 * Read a {@link Project} for a given {@link RemoteRelatedProject}
-	 * reference
+	 * Read a {@link Project} for a given {@link RemoteRelatedProject} reference
 	 * 
 	 * @param project
 	 *            The {@link RemoteRelatedProject} to read

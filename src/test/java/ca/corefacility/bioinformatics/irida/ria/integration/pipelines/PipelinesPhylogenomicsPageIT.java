@@ -260,6 +260,11 @@ public class PipelinesPhylogenomicsPageIT {
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 		
 		assertTrue(page.isRemoteSampleDisplayed());
+
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
 	}
 
 	private void addSamplesToCart() {
