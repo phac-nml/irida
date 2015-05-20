@@ -59,6 +59,19 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		this.analysisExecutionServiceGalaxyAsync = analysisExecutionServiceGalaxyAsync;
 		this.analysisExecutionServiceGalaxyCleanupAsync = analysisExecutionServiceGalaxyCleanupAsync;
 	}
+	
+
+	@Override
+	@Transactional
+	public Future<AnalysisSubmission> downloadSubmissionFiles(AnalysisSubmission analysisSubmission) {
+		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
+				+ AnalysisState.NEW);
+
+		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("analysisState", AnalysisState.DOWNLOADING));
+
+		return analysisExecutionServiceGalaxyAsync.downloadFilesForSubmission(preparingAnalysis);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -67,8 +80,8 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	@Transactional
 	public Future<AnalysisSubmission> prepareSubmission(final AnalysisSubmission analysisSubmission)
 			throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException {
-		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
-				+ AnalysisState.NEW);
+		checkArgument(AnalysisState.FINISHED_DOWNLOADING.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
+				+ AnalysisState.FINISHED_DOWNLOADING);
 
 		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.PREPARING));
