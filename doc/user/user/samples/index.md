@@ -78,7 +78,7 @@ You can only delete a sequence file from a sample if you have the project <img s
 Adding a new sample
 -------------------
 
-Samples can be manually added to a project, you can do so by clicking on the 'New Sample Button' in the samples menu.
+You can add a new sample to the project if you have the project Manager role on the project. To add a new sample to the project, click on the "Add New Sample" button in the "Samples" menu:
 
 ![New sample button](images/add-sample-button.png)
 
