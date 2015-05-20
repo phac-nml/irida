@@ -96,9 +96,13 @@
           }
         })
           .on('change', function (data) {
-            $timeout(function () {
-              ctrl.$validators.custom = data.added.searchTerm;
-            }, 0, true);
+            scope.$apply(function () {
+              if (ctrl.$validators.custom !== data.added.searchTerm) {
+                $timeout(function () {
+                  ctrl.$validators.custom = data.added.searchTerm;
+                }, false);
+              }
+            });
           });
       }
     };
