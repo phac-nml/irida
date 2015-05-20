@@ -86,7 +86,7 @@ Clicking this button will take you to the Create New Sample page.  When creating
 
 ![Create new sample palge](images/create-sample-page.png)
 
-When entering the name for the organism, if you type more than 2 letters IRIDA will give you a list of probable taxonomic terms.
+If you choose to set a sample organism, click on the "Organism" drop-down menu and begin typing the name of the organism. For example, if you wanted to specify a sample organism of “Escherichia coli O26:NM”, you would begin to type "Esc" and the menu would allow you to choose from a set of well-defined organism names:
 
 ![Taxonomic terms](images/create-sample-page-organism.png)
 
