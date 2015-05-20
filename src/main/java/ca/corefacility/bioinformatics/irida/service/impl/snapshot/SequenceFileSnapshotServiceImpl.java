@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableMap;
@@ -23,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapsho
  * {@link CRUDService} implementation of {@link SequenceFileSnapshotService}
  */
 @Service
+@PreAuthorize("permitAll")
 public class SequenceFileSnapshotServiceImpl extends CRUDServiceImpl<Long, SequenceFileSnapshot> implements
 		SequenceFileSnapshotService {
 
