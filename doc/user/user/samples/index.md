@@ -82,7 +82,7 @@ You can add a new sample to the project if you have the project Manager role on 
 
 ![New sample button](images/add-sample-button.png)
 
-Clicking this button will take you to the Create New Sample page.  Where you must fill in a name for the sample (must be at least 3 characters and only letters, numbers, _ or -).
+Clicking this button will take you to the Create New Sample page.  When creating a sample, you must define the sample name (only upper and lowercase letters, numbers, and the special characters <code>!, @, #, $, %, _, -</code>, and <code>`</code> are allowed) and optionally choose an organism for the sample:
 
 ![Create new sample palge](images/create-sample-page.png)
 
