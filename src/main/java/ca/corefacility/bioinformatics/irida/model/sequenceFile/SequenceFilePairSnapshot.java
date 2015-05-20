@@ -56,6 +56,13 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 	private Set<SequenceFileSnapshot> files;
 
 	/**
+	 * Required constructor for hibernate
+	 */
+	protected SequenceFilePairSnapshot(){
+		createdDate = new Date();
+		files = new HashSet<>(2);
+	}
+	/**
 	 * Construct a new {@link SequenceFilePairSnapshot} for two
 	 * {@link SequenceFileSnapshot}s.
 	 * 
@@ -65,8 +72,7 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 	 *            another file in the relationship
 	 */
 	public SequenceFilePairSnapshot(SequenceFileSnapshot file1, SequenceFileSnapshot file2) {
-		createdDate = new Date();
-		files = new HashSet<>(2);
+		this();
 
 		files.add(file1);
 		files.add(file2);
