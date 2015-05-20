@@ -75,11 +75,21 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Value("${irida.analysis.cleanup.days}")
 	private Double daysToCleanup;
 	
+	
 	/**
 	 * Cycle through any newly created submissions and prepare them for
 	 * execution.
 	 */
 	@Scheduled(initialDelay = 1000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	public void downloadFiles() {
+		analysisExecutionScheduledTask().downloadFiles();
+	}
+	
+	/**
+	 * Cycle through any newly created submissions and prepare them for
+	 * execution.
+	 */
+	@Scheduled(initialDelay = 2000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void prepareAnalyses() {
 		analysisExecutionScheduledTask().prepareAnalyses();
 	}
@@ -87,7 +97,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any outstanding submissions and execute them.
 	 */
-	@Scheduled(initialDelay = 2000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 3000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void executeAnalyses() {
 		analysisExecutionScheduledTask().executeAnalyses();
 	}
@@ -95,7 +105,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any submissions running in Galaxy and monitor the status.
 	 */
-	@Scheduled(initialDelay = 3000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 4000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void monitorRunningAnalyses() {
 		analysisExecutionScheduledTask().monitorRunningAnalyses();
 	}
@@ -103,7 +113,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any completed submissions and transfer the results.
 	 */
-	@Scheduled(initialDelay = 4000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 5000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void transferAnalysesResults() {
 		analysisExecutionScheduledTask().transferAnalysesResults();
 	}

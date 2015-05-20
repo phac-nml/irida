@@ -33,6 +33,8 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${remote.file.temporary.directory}") String remoteFilesTempDirectory;
 
+	private @Value("${snapshot.file.base.directory}") String snapshotFileBaseDirectory;
+
 	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
 
 	@Autowired
@@ -72,6 +74,12 @@ public class IridaApiFilesystemRepositoryConfig {
 		return getExistingPathOrThrow(outputFileBaseDirectory);
 	}
 
+	@Profile("prod")
+	@Bean(name = "snapshotFileBaseDirectory")
+	public Path snapshotFileBaseDirectoryProd() {
+		return getExistingPathOrThrow(snapshotFileBaseDirectory);
+	}
+
 	@Profile({ "dev", "it", "test" })
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
@@ -94,6 +102,12 @@ public class IridaApiFilesystemRepositoryConfig {
 	@Bean(name = "remoteFilesTempDirectory")
 	public Path remoteFilesTempDirectory() throws IOException {
 		return configureDirectory(remoteFilesTempDirectory, "remote-temp-file-dev");
+	}
+
+	@Profile({ "dev", "it", "test" })
+	@Bean(name = "snapshotFileBaseDirectory")
+	public Path snapshotFileBaseDirectory() throws IOException {
+		return configureDirectory(remoteFilesTempDirectory, "snapshot-file-dev");
 	}
 
 	private Path getExistingPathOrThrow(String directory) {
