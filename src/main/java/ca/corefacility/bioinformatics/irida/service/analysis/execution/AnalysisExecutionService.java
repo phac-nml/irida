@@ -18,6 +18,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  */
 public interface AnalysisExecutionService {
 
+	
+	public Future<AnalysisSubmission> downloadSubmissionFiles(AnalysisSubmission analysisSubmission);
+	
 	/**
 	 * Prepares the given {@link AnalysisSubmission} to be executed within an
 	 * execution manager. This will persist the submission within the database.
