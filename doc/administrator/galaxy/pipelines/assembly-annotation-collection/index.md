@@ -1,22 +1,24 @@
 ---
 layout: default
-search_title: "IRIDA Assembly and Annotation"
-description: "Install guide for the assembly and annotation pipeline."
+search_title: "IRIDA Assembly and Annotation Collection"
+description: "Install guide for the assembly and annotation collection pipeline."
 ---
 
-Assembly and Annotation
-=======================
+Assembly and Annotation Collection
+==================================
 
-This workflow uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
+This workflow can be used for assemblying and annotating many genomes in one execution.  It uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
 
-| Tool Name                 | Tool Revision | Toolshed Installable Revision | Toolshed             |
-|:-------------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **flash**                 | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **filter_spades_repeats** | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **assemblystats**         | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
-| **spades**                | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
-| **prokka**                | 3ad7ef0ba385  | 6 (2014-10-27)                | [Galaxy Main Shed][] |
-| **regex_find_replace**    | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
+| Tool Name                  | Tool Revision | Toolshed Installable Revision | Toolshed             |
+|:--------------------------:|:-------------:|:-----------------------------:|:--------------------:|
+| **flash**                  | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
+| **filter_spades_repeats**  | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
+| **assemblystats**          | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
+| **bundle_collections**     | 7bc329e1ada4  | 0 (2015-05-20)                | [IRIDA Toolshed][]   |
+| **combine_assembly_stats** | c970d74729e9  | 0 (2015-05-20)                | [IRIDA Toolshed][]   |
+| **spades**                 | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
+| **prokka**                 | 3ad7ef0ba385  | 6 (2014-10-27)                | [Galaxy Main Shed][] |
+| **regex_find_replace**     | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
 
@@ -76,7 +78,7 @@ If everything was successfull then all dependencies for this pipeline have been 
 [Java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [gnuplot]: http://www.gnuplot.info/
 [BioPerl]: http://www.bioperl.org/wiki/Main_Page
-[Assembly Annotation Galaxy Workflow]: ../test/assembly-annotation/assembly-annotation.ga
+[Assembly Annotation Galaxy Workflow]: ../test/assembly-annotation-collection/assembly-annotation-collection.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [test/reads]: ../test/assembly-annotation/reads
 [upload-history]: ../test/assembly-annotation/images/upload-history.jpg
