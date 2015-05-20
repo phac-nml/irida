@@ -12,6 +12,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  */
 public interface AnalysisExecutionScheduledTask {
 
+	
+	public Set<Future<AnalysisSubmission>> downloadFiles();
+	
 	/**
 	 * Cycle through new {@link AnalysisSubmission}s and prepare
 	 * them for execution.
