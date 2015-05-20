@@ -53,7 +53,7 @@ public class RemoteAPIServiceImpl extends CRUDServiceImpl<Long, RemoteAPI> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("permitAll")
 	public Page<RemoteAPI> search(Specification<RemoteAPI> specification, int page, int size, Direction order,
 			String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);
