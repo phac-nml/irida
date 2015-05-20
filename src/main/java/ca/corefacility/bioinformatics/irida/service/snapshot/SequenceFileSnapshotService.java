@@ -15,4 +15,6 @@ public interface SequenceFileSnapshotService extends CRUDService<Long, SequenceF
 	 * @return persisted {@link SequenceFileSnapshot}
 	 */
 	public SequenceFileSnapshot mirrorFile(SequenceFile file);
+	
+	public SequenceFileSnapshot mirrorFileContent(SequenceFileSnapshot snapshot);
 }
