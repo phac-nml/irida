@@ -258,6 +258,26 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public Set<SequenceFilePair> getPairedInputFiles() {
 		return inputFilesPaired;
 	}
+	
+	/**
+	 * Gets the set of {@link SequenceFilePairSnapshot} submitted for this
+	 * analysis
+	 * 
+	 * @return set of {@link SequenceFilePairSnapshot}
+	 */
+	public Set<SequenceFilePairSnapshot> getRemoteFilesPaired() {
+		return remoteFilesPaired;
+	}
+
+	/**
+	 * Gets the set of {@link SequenceFileSnapshot} submitted for this analysis
+	 * 
+	 * @return set of {@link SequenceFileSnapshot}
+	 */
+	public Set<SequenceFileSnapshot> getRemoteFilesSingle() {
+		return remoteFilesSingle;
+	}
+
 
 	/**
 	 * Gets the id of a remote location to store input files.
