@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -32,13 +31,4 @@ public interface SequenceFileRemoteService extends RemoteService<SequenceFile> {
 	 */
 	List<SequenceFile> getUnpairedSequenceFilesForSample(Sample sample);
 
-	/**
-	 * Download a {@link SequenceFile} locally
-	 * 
-	 * @param sequenceFile
-	 *            The {@link SequenceFile} object we want to get the sequence
-	 *            data for
-	 * @return A temporary {@link Path} object for the downloaded file
-	 */
-	public Path downloadSequenceFile(SequenceFile sequenceFile);
 }

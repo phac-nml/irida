@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +56,4 @@ public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<SequenceFil
 		return repository.list(href, remoteApiForURI);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Path downloadSequenceFile(SequenceFile sequenceFile) {
-		return repository.downloadRemoteSequenceFile(sequenceFile, sequenceFile.getRemoteAPI());
-	}
 }
