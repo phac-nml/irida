@@ -68,13 +68,8 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI remoteAPI,
-			MediaType... mediaTypes) {
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI, MediaType... mediaTypes) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-
-		// get the resource's URI
-		Link link = sequenceFile.getLink(Link.REL_SELF);
-		String uri = link.getHref();
 
 		// add the sequence file message converter
 		List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
@@ -95,8 +90,8 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI remoteAPI) {
-		return downloadRemoteSequenceFile(sequenceFile, remoteAPI, DEFAULT_DOWNLOAD_MEDIA_TYPE);
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI) {
+		return downloadRemoteSequenceFile(uri, remoteAPI, DEFAULT_DOWNLOAD_MEDIA_TYPE);
 	}
 
 }

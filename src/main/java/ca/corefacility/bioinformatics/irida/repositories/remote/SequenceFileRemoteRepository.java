@@ -24,7 +24,7 @@ public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceF
 	 *            The {@link RemoteAPI} this file resides on
 	 * @return A temporary {@link Path} to the sequence file data
 	 */
-	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI api);
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI api);
 
 	/**
 	 * Get a local copy of a {@link SequenceFile}
@@ -37,5 +37,5 @@ public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceF
 	 *            The media types to request from the remote API
 	 * @return A temporary {@link Path} to the sequence file data
 	 */
-	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI api, MediaType... mediaTypes);
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI api, MediaType... mediaTypes);
 }
