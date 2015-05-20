@@ -90,7 +90,7 @@ If you choose to set a sample organism, click on the "Organism" drop-down menu a
 
 ![Taxonomic terms](images/create-sample-page-organism.png)
 
-Clicking on the 'Create Sample' button will create the sample and take you to the sample page where you can upload files.
+When you've finished choosing the name and organism for the sample, click on the "Create Sample" button.
 
 ![Create Sample](images/create-sample-page-create.png)
 
