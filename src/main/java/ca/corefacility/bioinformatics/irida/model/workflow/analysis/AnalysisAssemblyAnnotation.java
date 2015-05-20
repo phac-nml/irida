@@ -33,12 +33,32 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 		super(executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 	
+	public AnalysisOutputFile getReadMergeLog() {
+		return getAnalysisOutputFile("read-merge-log");
+	}
+	
 	public AnalysisOutputFile getAssemblyLog() {
 		return getAnalysisOutputFile("assembly-log");
 	}
+	
+	public AnalysisOutputFile getFilterAssemblyLog() {
+		return getAnalysisOutputFile("filter-assembly-log");
+	}
 
 	public AnalysisOutputFile getContigs() {
-		return getAnalysisOutputFile("contigs");
+		return getAnalysisOutputFile("contigs-all");
+	}
+	
+	public AnalysisOutputFile getContigsWithRepeats() {
+		return getAnalysisOutputFile("contigs-with-repeats");
+	}
+	
+	public AnalysisOutputFile getContigsWithoutRepeats() {
+		return getAnalysisOutputFile("contigs-without-repeats");
+	}
+	
+	public AnalysisOutputFile getAssemblyStatsWithRepeats() {
+		return getAnalysisOutputFile("assembly-stats-repeats");
 	}
 	
 	public AnalysisOutputFile getAnnotations() {
