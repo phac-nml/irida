@@ -40,7 +40,7 @@
    * @returns {{restrict: string, require: string, link: Function}}
    */
   function nameValidator() {
-    var re = /[^A-Za-z0-9\-_]/;
+    var re = /[^A-Za-z0-9\-_!@#\$%~`]/;
     return {
       restrict: 'A',
       require: 'ngModel',
