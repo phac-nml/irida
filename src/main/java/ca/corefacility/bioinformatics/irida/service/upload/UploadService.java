@@ -5,8 +5,6 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
@@ -37,7 +35,6 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
 	public UploadWorker performUploadAllSamples(long projectId,
 			ProjectName projectName, AccountName accountName)
 			throws ConstraintViolationException;
@@ -57,7 +54,6 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSamples, 'canReadSample')")
 	public UploadWorker performUploadSelectedSamples(
 			Set<Sample> selectedSamples, ProjectName projectName,
 			AccountName accountName) throws ConstraintViolationException;
@@ -76,7 +72,6 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSequenceFileIds, 'canReadSequenceFile')")
 	public UploadWorker performUploadSelectedSequenceFiles(
 			Set<Long> selectedSequenceFileIds, ProjectName projectName,
 			AccountName accountName) throws ConstraintViolationException;
@@ -95,7 +90,6 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSequenceFileIds, 'canReadSequenceFile')")
 	public UploadWorker performUploadSelectedSequenceFiles(
 			Set<Long> selectedSequenceFileIds, String projectName,
 			String accountName) throws ConstraintViolationException;

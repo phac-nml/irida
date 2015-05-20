@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -73,6 +74,7 @@ public class GalaxyUploadService implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
 	public UploadWorker performUploadAllSamples(long projectId,
 			GalaxyProjectName projectName, GalaxyAccountEmail accountName)
 			throws ConstraintViolationException {
@@ -109,6 +111,7 @@ public class GalaxyUploadService implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSamples, 'canReadSample')")
 	public UploadWorker performUploadSelectedSamples(
 			Set<Sample> selectedSamples, GalaxyProjectName projectName,
 			GalaxyAccountEmail accountName) throws ConstraintViolationException {
@@ -127,6 +130,7 @@ public class GalaxyUploadService implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSequenceFileIds, 'canReadSequenceFile')")
 	public UploadWorker performUploadSelectedSequenceFiles(
 			Set<Long> selectedSequenceFileIds, GalaxyProjectName projectName,
 			GalaxyAccountEmail accountName) throws ConstraintViolationException {
@@ -145,6 +149,7 @@ public class GalaxyUploadService implements
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSequenceFileIds, 'canReadSequenceFile')")
 	public UploadWorker performUploadSelectedSequenceFiles(
 			Set<Long> selectedSequenceFileIds, String projectName,
 			String accountName) throws ConstraintViolationException {
