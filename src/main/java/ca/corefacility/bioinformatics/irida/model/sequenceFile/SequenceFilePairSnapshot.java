@@ -32,13 +32,13 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 /**
  * Remote representation of a {@link IridaSequenceFilePair}. Refers to 2
- * {@link RemoteSequenceFile}s and a URI for the remote resource.
+ * {@link SequenceFileSnapshot}s and a URI for the remote resource.
  */
 @Entity
 @Table(name = "remote_sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing {
+public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -53,18 +53,18 @@ public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing
 	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Size(min = 2, max = 2)
 	@CollectionTable(name = "remote_sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_REMOTE_SEQUENCE_FILE_PAIR"))
-	private Set<RemoteSequenceFile> files;
+	private Set<SequenceFileSnapshot> files;
 
 	/**
-	 * Construct a new {@link RemoteSequenceFilePair} for two
-	 * {@link RemoteSequenceFile}s.
+	 * Construct a new {@link SequenceFilePairSnapshot} for two
+	 * {@link SequenceFileSnapshot}s.
 	 * 
 	 * @param file1
 	 *            a file in the relationship
 	 * @param file2
 	 *            another file in the relationship
 	 */
-	public RemoteSequenceFilePair(RemoteSequenceFile file1, RemoteSequenceFile file2) {
+	public SequenceFilePairSnapshot(SequenceFileSnapshot file1, SequenceFileSnapshot file2) {
 		createdDate = new Date();
 		files = new HashSet<>(2);
 
@@ -78,7 +78,7 @@ public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing
 	}
 
 	@Override
-	public Set<RemoteSequenceFile> getFiles() {
+	public Set<SequenceFileSnapshot> getFiles() {
 		return files;
 	}
 
@@ -105,7 +105,7 @@ public class RemoteSequenceFilePair implements IridaSequenceFilePair, IridaThing
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder("RemoteSequenceFilePair: ");
-		Iterator<RemoteSequenceFile> iterator = files.iterator();
+		Iterator<SequenceFileSnapshot> iterator = files.iterator();
 		builder.append(iterator.next().getLabel()).append(", ").append(iterator.next().getLabel());
 		return builder.toString();
 	}

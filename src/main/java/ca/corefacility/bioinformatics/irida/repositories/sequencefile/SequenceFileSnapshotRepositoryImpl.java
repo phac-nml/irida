@@ -7,13 +7,13 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.RemoteSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl;
 
-public class RemoteSequenceFileRepositoryImpl extends FilesystemSupplementedRepositoryImpl<RemoteSequenceFile> {
+public class SequenceFileSnapshotRepositoryImpl extends FilesystemSupplementedRepositoryImpl<SequenceFileSnapshot> {
 
 	@Autowired
-	public RemoteSequenceFileRepositoryImpl(EntityManager entityManager,
+	public SequenceFileSnapshotRepositoryImpl(EntityManager entityManager,
 			@Qualifier("sequenceFileBaseDirectory") Path baseDirectory) {
 		super(entityManager, baseDirectory);
 	}
@@ -22,7 +22,7 @@ public class RemoteSequenceFileRepositoryImpl extends FilesystemSupplementedRepo
 	 * {@inheritDoc}
 	 */
 	@Override
-	public RemoteSequenceFile save(RemoteSequenceFile entity) {
+	public SequenceFileSnapshot save(SequenceFileSnapshot entity) {
 		return super.saveInternal(entity);
 	}
 

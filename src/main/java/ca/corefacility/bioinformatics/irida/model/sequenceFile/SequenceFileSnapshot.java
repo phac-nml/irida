@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 @Table(name = "remote_sequence_file")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
+public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -77,14 +77,14 @@ public class RemoteSequenceFile implements IridaSequenceFile, IridaThing, Versio
 	private Long fileRevisionNumber;
 
 	/**
-	 * Create a new {@link RemoteSequenceFile} based on an existing remote
+	 * Create a new {@link SequenceFileSnapshot} based on an existing remote
 	 * {@link SequenceFile}. This will copy the properties of the file along
 	 * with its {@code self} rel.
 	 * 
 	 * @param base
 	 *            The {@link SequenceFile} to base this copy on
 	 */
-	public RemoteSequenceFile(SequenceFile base) {
+	public SequenceFileSnapshot(SequenceFile base) {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
 
