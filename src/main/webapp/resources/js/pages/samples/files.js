@@ -1,4 +1,4 @@
-(function (angular, TL, PAGE) {
+(function(angular, TL, PAGE) {
   'use strict';
   var UPLOAD_ERROR = 'upload_error';
 
@@ -33,13 +33,13 @@
     function uploadFiles(files) {
       if (files && files.length) {
         upload.upload({
-          url: TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload',
-          file: files
-        })
-          .success(function () {
+            url: TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload',
+            file: files
+          })
+          .success(function() {
             window.location.href = window.location.href;
           })
-          .error(function () {
+          .error(function() {
             $rootScope.$broadcast(UPLOAD_ERROR);
           });
       }
@@ -55,10 +55,10 @@
       restrict: 'E',
       templateUrl: '/upload-error.html',
       controllerAs: 'errorCtrl',
-      controller: ['$scope', function (scope) {
+      controller: ['$scope', function(scope) {
         var vm = this;
         vm.showError = false;
-        scope.$on(UPLOAD_ERROR, function () {
+        scope.$on(UPLOAD_ERROR, function() {
           vm.showError = true;
         });
       }]
@@ -77,11 +77,11 @@
     vm.fileId = id;
     vm.label = label;
 
-    vm.deleteFile = function () {
+    vm.deleteFile = function() {
       $modalInstance.close();
     };
 
-    vm.cancel = function () {
+    vm.cancel = function() {
       $modalInstance.dismiss();
     };
   }
@@ -99,7 +99,7 @@
      * Click handler for the download button for a sequenceFile
      * @param id Id for the sequenceFile to download
      */
-    vm.download = function (id) {
+    vm.download = function(id) {
       fileService.download(id);
     };
 
@@ -109,15 +109,15 @@
      * @param id Id for the sequenceFile to delete
      * @param label Name of the sequenceFile to delete
      */
-    vm.deleteFile = function (id, label) {
+    vm.deleteFile = function(id, label) {
       $modal.open({
         templateUrl: '/confirm.html',
         controller: 'FileDeletionController as deleteCtrl',
         resolve: {
-          id: function () {
+          id: function() {
             return id;
           },
-          label: function () {
+          label: function() {
             return label;
           }
         }
@@ -134,20 +134,20 @@
       'restrict': 'E',
       'templateUrl': '/upload-btn.html',
       'controllerAs': 'uploadCtrl',
-      'controller': ['$modal', 'FileService', function ($modal, fileService) {
+      'controller': ['$modal', 'FileService', function($modal, fileService) {
         var vm = this;
         vm.files = [];
         /**
          * Open the modal for file selection
          */
-        vm.open = function () {
+        vm.open = function() {
           $modal.open({
-            animation: true,
-            templateUrl: '/upload.html',
-            controllerAs: 'modalCtrl',
-            controller: 'UploadModalController'
-          })
-            .result.then(function (files) {
+              animation: true,
+              templateUrl: '/upload.html',
+              controllerAs: 'modalCtrl',
+              controller: 'UploadModalController'
+            })
+            .result.then(function(files) {
               fileService.upload(files);
             });
         };
@@ -172,15 +172,15 @@
      * @param e event triggering.
      * @param rejects Array of files that do not match the requirements.
      */
-    vm.addFiles = function (files, e, rejects) {
+    vm.addFiles = function(files, e, rejects) {
       // Filter to ensure that we do not upload the same file twice.
-      vm.files = vm.files.concat(files.filter(function (file) {
-        return (vm.files.filter(function (f) {
+      vm.files = vm.files.concat(files.filter(function(file) {
+        return (vm.files.filter(function(f) {
           return (f.path !== file.path);
         }).length === 0);
       }));
 
-      vm.rejects = vm.rejects.concat(rejects.filter(function (reject) {
+      vm.rejects = vm.rejects.concat(rejects.filter(function(reject) {
         return reject.type !== 'directory';
       }));
     };
@@ -189,16 +189,16 @@
      * Remove a file from the list of files to upload
      * @param file
      */
-    vm.remove = function (file) {
-      vm.files = vm.files.filter(function (f) {
-        return f.path !== file.path;
+    vm.remove = function(file) {
+      vm.files = vm.files.filter(function(f) {
+        return f !== file;
       });
     };
 
     /**
      * Trigger the upload of files.
      */
-    vm.ok = function () {
+    vm.ok = function() {
       if (vm.files.length > 0) {
         $modalInstance.close(vm.files);
       }
@@ -207,7 +207,7 @@
     /**
      * Clears the upload list and closes the modal.
      */
-    vm.cancel = function () {
+    vm.cancel = function() {
       $modalInstance.dismiss();
     };
   }
@@ -217,7 +217,7 @@
    * @returns {Function}
    */
   function humanReadableBytes() {
-    return function (bytes) {
+    return function(bytes) {
       var thresh = 1024;
       if (Math.abs(bytes) < thresh) {
         return bytes + ' B';
