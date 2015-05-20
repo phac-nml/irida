@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisType
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
@@ -29,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableMap;
@@ -48,10 +52,11 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
+	private final SequenceFileSnapshotService sequenceFileSnapshotService;
 
 	/**
-	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with
-	 * the given information.
+	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with the given
+	 * information.
 	 * 
 	 * @param analysisSubmissionService
 	 *            A service for analysis submissions.
@@ -67,12 +72,38 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	@Autowired
 	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
-			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService) {
+			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService,
+			SequenceFileSnapshotService sequenceFileSnapshotService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
+		this.sequenceFileSnapshotService = sequenceFileSnapshotService;
+	}
+	
+	@Transactional
+	public Future<AnalysisSubmission> downloadFilesForSubmission(final AnalysisSubmission analysisSubmission){
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
+		
+		Set<SequenceFilePairSnapshot> remoteFilesPaired = analysisSubmission.getRemoteFilesPaired();
+		for(SequenceFilePairSnapshot pair : remoteFilesPaired){
+			for(SequenceFileSnapshot file : pair.getFiles()){
+				sequenceFileSnapshotService.mirrorFileContent(file);
+			}
+		}
+		
+		for(SequenceFileSnapshot file : analysisSubmission.getRemoteFilesSingle()){
+			sequenceFileSnapshotService.mirrorFileContent(file);
+		}
+		
+		
+		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission.getId(), ImmutableMap
+				.of("analysisState",
+						AnalysisState.FINISHED_DOWNLOADING));
+		
+		return new AsyncResult<>(analysisPrepared);
 	}
 
 	/**
