@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -307,53 +309,53 @@ public class SamplesController extends BaseController {
 		Sample sample = sampleService.read(sampleId);
 
 		Pattern pairPattern = Pattern.compile("(.+)_R\\d_.*");
-		List<MultipartFile> singles = new ArrayList<>();
-		List<List<MultipartFile>> pairs = new ArrayList<>();
-		// Determine if there are any paired end files
-
-		while (files.size() > 0) {
-			MultipartFile file = files.remove(0);
-			String name = file.getOriginalFilename();
-
-			// Check to see if this is part of a pair
-			Matcher pairMatcher = pairPattern.matcher(name);
-			if (pairMatcher.matches()) {
-				boolean found = false;
-				// Let's look for its match
-				String matched = pairMatcher.group(1);
-				for (int i = 0; i < files.size() && !found; i++) {
-					if (files.get(i).getOriginalFilename().startsWith(matched)) {
-						pairs.add(ImmutableList.of(
-								file, files.remove(i)
-						));
-						found = true;
+		final Map<String, List<MultipartFile>> pairedUpFiles = files.stream().collect(
+				Collectors.groupingBy((final MultipartFile f) -> {
+					final Matcher m = pairPattern.matcher(f.getOriginalFilename());
+					if (m.find()) {
+						return m.group(1);
+					} else {
+						return f.getOriginalFilename();
 					}
-				}
-				if (!found) {
-					singles.add(file);
-				}
-			} else {
-				singles.add(file);
-			}
-		}
+				}));
 
 		try {
-			// Add the single files to the sample
-			for (MultipartFile file : singles) {
-				SequenceFile sequenceFile = createSequenceFile(file);
-				sequenceFileService.createSequenceFileInSample(sequenceFile, sample);
-			}
-
-			// Create sequence file pairs
-			for (List<MultipartFile> pair : pairs) {
-				SequenceFile firstFile = createSequenceFile(pair.get(0));
-				SequenceFile secondFile = createSequenceFile(pair.get(1));
-				sequenceFileService.createSequenceFilePairInSample(firstFile, secondFile, sample);
+			for (String key : pairedUpFiles.keySet()) {
+				List<MultipartFile> list = pairedUpFiles.get(key);
+				if (list.size() > 1) {
+					createSequenceFilePairsInSample(list, sample);
+				}
+				else {
+					createSequenceFileInSample(list.get(0), sample);
+				}
 			}
 		} catch (IOException e) {
 			logger.error("Error writing sequence file", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	/**
+	 * Create a {@link SequenceFile} and add it to a {@link Sample}
+	 * @param file {@link MultipartFile}
+	 * @param sample {@link Sample} to add the file to.
+	 * @throws IOException
+	 */
+	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
+		SequenceFile sequenceFile = createSequenceFile(file);
+		sequenceFileService.createSequenceFileInSample(sequenceFile, sample);
+	}
+
+	/**
+	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair} to a {@link Sample}
+	 * @param pair {@link List} of {@link MultipartFile}
+	 * @param sample {@link Sample} to add the pair to.
+	 * @throws IOException
+	 */
+	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
+		SequenceFile firstFile = createSequenceFile(pair.get(0));
+		SequenceFile secondFile = createSequenceFile(pair.get(1));
+		sequenceFileService.createSequenceFilePairInSample(firstFile, secondFile, sample);
 	}
 
 	/**
