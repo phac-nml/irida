@@ -39,16 +39,17 @@ public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleS
 	public List<Join<Sample, SequenceFile>> getFilesForSample(Sample sample);
 
 	/**
-	 * Remove a {@link SequenceFile} from a {@link Sample}
+	 * Read a {@link SequenceFile} for a {@link Sample}. Used to get the join
+	 * object for a file and sample.
 	 * 
 	 * @param sample
-	 *            The sample to remove the file from
+	 *            The sample to get the join for
 	 * @param file
-	 *            The file to remove
+	 *            The file to get the join for
+	 * @return a {@link SampleSequenceFileJoin}
 	 */
-	@Modifying
-	@Query("delete from SampleSequenceFileJoin j where j.sample = ?1 and j.sequenceFile = ?2")
-	public void removeFileFromSample(Sample sample, SequenceFile file);
+	@Query("from SampleSequenceFileJoin j where j.sample = ?1 and j.sequenceFile = ?2")
+	public SampleSequenceFileJoin getJoinForSampleAndFile(Sample sample, SequenceFile file);
 
 	/**
 	 * Get {@link SequenceFile}s for a {@link Sample} that do not have a
