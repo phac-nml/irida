@@ -77,7 +77,7 @@ You may also upload files by clicking on the "Or Select Files" button:
 
 ![Select files button.](images/upload-sample-file-select-file-btn.png)
 
-The added files will be displayed in the pop-up window, and can be removed before upload by clicking the <img src="images/trash.png"/> button to the right of the file size.
+The added files will be displayed in the pop-up window, and can be removed before upload by clicking the <img src="images/trash.png" class="inline" alt="trash can icon"/> icon, on the right-hand side of the file size.
 
 ![Selected files.](images/upload-sample-file-dropped-dir.png)
 
