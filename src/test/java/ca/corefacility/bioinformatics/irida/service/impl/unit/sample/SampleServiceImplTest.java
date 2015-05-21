@@ -124,16 +124,18 @@ public class SampleServiceImplTest {
 		SampleSequenceFileJoin[] s_sf_joins = new SampleSequenceFileJoin[SIZE];
 		SampleSequenceFileJoin[] s_sf_original = new SampleSequenceFileJoin[SIZE];
 		ProjectSampleJoin[] p_s_joins = new ProjectSampleJoin[SIZE];
+
 		for (long i = 0; i < SIZE; i++) {
 			int p = (int) i;
 			toMerge[p] = s(i + 2);
 			toMerge_sf[p] = sf(i + 2);
 			s_sf_joins[p] = new SampleSequenceFileJoin(s, toMerge_sf[p]);
 			p_s_joins[p] = new ProjectSampleJoin(project, toMerge[p]);
+
 			List<Join<Project, Sample>> projectSampleJoins = new ArrayList<>();
 			projectSampleJoins.add(p_s_joins[p]);
 			List<Join<Sample, SequenceFile>> sampleSequenceFileJoins = new ArrayList<>();
-			
+
 			SampleSequenceFileJoin join = new SampleSequenceFileJoin(toMerge[p], toMerge_sf[p]);
 			sampleSequenceFileJoins.add(join);
 			s_sf_original[p] = join;
@@ -142,6 +144,9 @@ public class SampleServiceImplTest {
 			when(ssfRepository.save(s_sf_joins[p])).thenReturn(s_sf_joins[p]);
 			when(ssfRepository.readFileForSample(toMerge[p], toMerge_sf[p])).thenReturn(join);
 			when(psjRepository.getProjectForSample(toMerge[p])).thenReturn(projectSampleJoins);
+
+			// for deletion
+			when(psjRepository.readSampleForProject(project, toMerge[p])).thenReturn(p_s_joins[p]);
 		}
 		List<Join<Project, Sample>> joins = new ArrayList<>();
 		joins.add(new ProjectSampleJoin(project, s));
@@ -156,7 +161,6 @@ public class SampleServiceImplTest {
 			verify(ssfRepository).delete(s_sf_original[i]);
 			verify(sampleRepository).delete(toMerge[i].getId());
 			verify(psjRepository).getProjectForSample(toMerge[i]);
-			//verify(psjRepository).removeSampleFromProject(project, toMerge[i]);
 			verify(psjRepository).delete(p_s_joins[i]);
 		}
 		assertEquals("The saved sample should be the same as the sample to merge into.", s, saved);
