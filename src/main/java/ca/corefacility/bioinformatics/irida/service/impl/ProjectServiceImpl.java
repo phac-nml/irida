@@ -134,7 +134,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		if (!allowRoleChange(projectJoinForUser)) {
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
-		pujRepository.removeUserFromProject(project, user);
+		pujRepository.delete(projectJoinForUser);
 	}
 
 	/**
