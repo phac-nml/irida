@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
@@ -15,6 +17,7 @@ import com.google.common.collect.ImmutableList;
  * Element processor to handle icons in the IRIDA UI.
  */
 public class IridaIconElementProcessor extends AbstractMarkupSubstitutionElementProcessor {
+	private static final Logger logger = LoggerFactory.getLogger(IridaIconElementProcessor.class);
 	// ATTRIBUTES
 	// =================================================================================================================
 
@@ -94,9 +97,11 @@ public class IridaIconElementProcessor extends AbstractMarkupSubstitutionElement
 		Get the type of icon needed.
 		 */
 		final String type = element.getAttributeValue(TYPE_ATTRIBUTE);
-		String classString = "";
+		String classString = ICON_BASE;
 		if (ICON_CLASS_MAP.containsKey(type)) {
-			classString = ICON_BASE + ICON_CLASS_MAP.get(type);
+			classString += ICON_CLASS_MAP.get(type);
+		} else {
+			logger.error("Cannot find icon of type: " + type);
 		}
 
 		final Boolean isFixedWidth = element.hasAttribute(FIXED_ATTRIBUTE);
