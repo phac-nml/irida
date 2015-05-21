@@ -149,7 +149,7 @@
 		<div class="modal-body">
 			<div ngf-drop="" ngf-change="modalCtrl.addFiles($files, $event, $rejectedFiles)" class="drop-box"
 			     ngf-drag-over-class="dragover" ngf-multiple="true"
-			     ngf-accept="'.fastq'" th:text="#{samples.files.upload.upload-drop}">Drop files here.</div>
+			     ngf-accept="'.fastq, .fastq.gz'" th:text="#{samples.files.upload.upload-drop}">Drop files here.</div>
 			<div class="text-right select-files-btn">
 				<button class="btn btn-default btn-sm" ngf-accept="'.fastq,.fastq.gz'" ngf-select="" ngf-multiple="true" ngf-change="modalCtrl.addFiles($files, $event, $rejectedFiles)" th:text="#{samples.files.upload.btn}">Or Select Files</button>
 			</div>

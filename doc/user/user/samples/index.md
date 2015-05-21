@@ -65,7 +65,7 @@ Paired-end files will appear in a pair:
 
 #### Upload a sequence file
 
-Sequence files can be uploaded by clicking on the "Upload new files" button at the top, right hand side of the sequence file table.  Files must have the extension <code>.fastq</code>, all other formats will be ignored.
+Sequence files can be uploaded by clicking on the "Upload new files" button at the top, right hand side of the sequence file table.  Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
 
 ![Upload sequence file.](images/upload-sample-file-btn.png)
 
