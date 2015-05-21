@@ -40,7 +40,7 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	 *            the {@link Sample} to read
 	 * @return The {@link ProjectSampleJoin} for these
 	 */
-	@Query("ProjectSampleJoin j where j.project = ?1 and j.sample = ?2")
+	@Query("from ProjectSampleJoin j where j.project = ?1 and j.sample = ?2")
 	public ProjectSampleJoin readSampleForProject(Project project, Sample sample);
 
 	/**
