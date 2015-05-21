@@ -96,10 +96,13 @@ public class SampleServiceImplTest {
 		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
 		sf.setId(2222L);
+		SampleSequenceFileJoin sampleSequenceFileJoin = new SampleSequenceFileJoin(s, sf);
+		
+		when(ssfRepository.getJoinForSampleAndFile(s, sf)).thenReturn(sampleSequenceFileJoin);
 
 		sampleService.removeSequenceFileFromSample(s, sf);
-
-		verify(ssfRepository).removeFileFromSample(s, sf);
+		
+		verify(ssfRepository).delete(sampleSequenceFileJoin);
 	}
 
 	@Test
@@ -119,6 +122,7 @@ public class SampleServiceImplTest {
 		Sample[] toMerge = new Sample[SIZE];
 		SequenceFile[] toMerge_sf = new SequenceFile[SIZE];
 		SampleSequenceFileJoin[] s_sf_joins = new SampleSequenceFileJoin[SIZE];
+		SampleSequenceFileJoin[] s_sf_original = new SampleSequenceFileJoin[SIZE];
 		ProjectSampleJoin[] p_s_joins = new ProjectSampleJoin[SIZE];
 		for (long i = 0; i < SIZE; i++) {
 			int p = (int) i;
@@ -129,10 +133,14 @@ public class SampleServiceImplTest {
 			List<Join<Project, Sample>> projectSampleJoins = new ArrayList<>();
 			projectSampleJoins.add(p_s_joins[p]);
 			List<Join<Sample, SequenceFile>> sampleSequenceFileJoins = new ArrayList<>();
-			sampleSequenceFileJoins.add(new SampleSequenceFileJoin(toMerge[p], toMerge_sf[p]));
+			
+			SampleSequenceFileJoin join = new SampleSequenceFileJoin(toMerge[p], toMerge_sf[p]);
+			sampleSequenceFileJoins.add(join);
+			s_sf_original[p] = join;
 
 			when(ssfRepository.getFilesForSample(toMerge[p])).thenReturn(sampleSequenceFileJoins);
 			when(ssfRepository.save(s_sf_joins[p])).thenReturn(s_sf_joins[p]);
+			when(ssfRepository.getJoinForSampleAndFile(toMerge[p], toMerge_sf[p])).thenReturn(join);
 			when(psjRepository.getProjectForSample(toMerge[p])).thenReturn(projectSampleJoins);
 		}
 		List<Join<Project, Sample>> joins = new ArrayList<>();
@@ -145,7 +153,7 @@ public class SampleServiceImplTest {
 		for (int i = 0; i < SIZE; i++) {
 			verify(ssfRepository).getFilesForSample(toMerge[i]);
 			verify(ssfRepository).save(s_sf_joins[i]);
-			verify(ssfRepository).removeFileFromSample(toMerge[i], toMerge_sf[i]);
+			verify(ssfRepository).delete(s_sf_original[i]);
 			verify(sampleRepository).delete(toMerge[i].getId());
 			verify(psjRepository).getProjectForSample(toMerge[i]);
 			verify(psjRepository).removeSampleFromProject(project, toMerge[i]);
