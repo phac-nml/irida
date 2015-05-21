@@ -103,6 +103,7 @@ public class SamplesController extends BaseController {
 	private final SequenceFilePairService sequenceFilePairService;
 
 	private final MessageSource messageSource;
+	public static final Pattern PAIR_PATTERN = Pattern.compile("(.+)_R\\d_.*");
 
 	@Autowired
 	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
@@ -308,10 +309,9 @@ public class SamplesController extends BaseController {
 			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) {
 		Sample sample = sampleService.read(sampleId);
 
-		Pattern pairPattern = Pattern.compile("(.+)_R\\d_.*");
 		final Map<String, List<MultipartFile>> pairedUpFiles = files.stream().collect(
 				Collectors.groupingBy((final MultipartFile f) -> {
-					final Matcher m = pairPattern.matcher(f.getOriginalFilename());
+					final Matcher m = PAIR_PATTERN.matcher(f.getOriginalFilename());
 					if (m.find()) {
 						return m.group(1);
 					} else {
