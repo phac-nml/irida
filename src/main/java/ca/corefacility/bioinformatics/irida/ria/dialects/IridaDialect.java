@@ -6,7 +6,7 @@ import java.util.Set;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
 
-import ca.corefacility.bioinformatics.irida.ria.dialects.processors.IridaIconElementProcessor;
+import ca.corefacility.bioinformatics.irida.ria.dialects.processors.icons.IridaIconElementProcessor;
 
 /**
  * Thymeleaf dialect specifically for components of the IRIDA UI.
