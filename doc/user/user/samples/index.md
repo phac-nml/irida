@@ -73,7 +73,7 @@ You can upload a collection of sequencing data to IRIDA by dragging the files in
 
 ![Drag and drop area.](images/upload-sample-file-drop-area.png)
 
-Files can also be added using the normal window file dialog by clicking the `Or Select Files` button.
+You may also upload files by clicking on the "Or Select Files" button:
 
 ![Select files button.](images/upload-sample-file-select-file-btn.png)
 
