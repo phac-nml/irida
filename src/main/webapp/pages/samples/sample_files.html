@@ -157,7 +157,7 @@
 				<li class="list-group-item seq-file" ng-repeat="file in modalCtrl.files">
 					<div class="seq-file_name"><span class="fa fa-fw fa-file-o"></span>&nbsp;{{file.name}}</div>
 					<div class="seq-file_size">{{file.size | humanReadableBytes}}</div>
-					<div class="seq-file_remove"><button type="button" class="btn btn-default btn-xs" data-dismiss="alert" aria-label="Remove" ng-click="modalCtrl.remove(file)"><span aria-hidden="true">&times;</span></button></div>
+					<div class="seq-file_remove"><button type="button" class="btn btn-default btn-xs pull-right" data-dismiss="alert" aria-label="Remove" ng-click="modalCtrl.remove(file)"><span class="fa fa-fw fa-trash"></span></button></div>
 				</li>
 			</ul>
 			<div class="alert alert-warning" role="alert" ng-show="modalCtrl.rejects.length">
