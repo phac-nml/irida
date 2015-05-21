@@ -69,7 +69,7 @@ Sequence files can be uploaded by clicking on the "Upload new files" button at t
 
 ![Upload sequence file.](images/upload-sample-file-btn.png)
 
-Sequence files can either be added by dragging and dropping a directing of .fastq files, onto the the drop area in the pop-up window.
+You can upload a collection of sequencing data to IRIDA by dragging the files in a directory to the drop area in the pop-up window:
 
 ![Drag and drop area.](images/upload-sample-file-drop-area.png)
 
