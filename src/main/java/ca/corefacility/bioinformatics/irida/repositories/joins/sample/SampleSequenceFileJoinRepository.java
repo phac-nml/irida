@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.sample;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -49,7 +48,7 @@ public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleS
 	 * @return a {@link SampleSequenceFileJoin}
 	 */
 	@Query("from SampleSequenceFileJoin j where j.sample = ?1 and j.sequenceFile = ?2")
-	public SampleSequenceFileJoin getJoinForSampleAndFile(Sample sample, SequenceFile file);
+	public SampleSequenceFileJoin readFileForSample(Sample sample, SequenceFile file);
 
 	/**
 	 * Get {@link SequenceFile}s for a {@link Sample} that do not have a

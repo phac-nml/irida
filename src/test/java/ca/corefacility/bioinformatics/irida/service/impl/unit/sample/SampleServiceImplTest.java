@@ -156,7 +156,8 @@ public class SampleServiceImplTest {
 			verify(ssfRepository).delete(s_sf_original[i]);
 			verify(sampleRepository).delete(toMerge[i].getId());
 			verify(psjRepository).getProjectForSample(toMerge[i]);
-			verify(psjRepository).removeSampleFromProject(project, toMerge[i]);
+			//verify(psjRepository).removeSampleFromProject(project, toMerge[i]);
+			verify(psjRepository).delete(p_s_joins[i]);
 		}
 		assertEquals("The saved sample should be the same as the sample to merge into.", s, saved);
 	}

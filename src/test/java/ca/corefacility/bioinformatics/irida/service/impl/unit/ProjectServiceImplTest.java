@@ -418,11 +418,18 @@ public class ProjectServiceImplTest {
 	public void testRemoveSamplesFromProject() {
 		Project project = new Project();
 		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
+		
+		ProjectSampleJoin psj0 = new ProjectSampleJoin(project, samples.get(0));
+		ProjectSampleJoin psj1 = new ProjectSampleJoin(project, samples.get(1));
+		
+		when(psjRepository.readSampleForProject(project, samples.get(0))).thenReturn(psj0);
+		when(psjRepository.readSampleForProject(project, samples.get(1))).thenReturn(psj1);
 
 		projectService.removeSamplesFromProject(project, samples);
 
-		for (Sample s : samples) {
-			verify(psjRepository).removeSampleFromProject(project, s);
-		}
+		
+		verify(psjRepository).delete(psj0);
+		verify(psjRepository).delete(psj1);
+		
 	}
 }

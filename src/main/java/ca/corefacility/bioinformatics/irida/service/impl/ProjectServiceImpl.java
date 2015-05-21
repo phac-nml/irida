@@ -222,7 +222,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	public void removeSampleFromProject(Project project, Sample sample) {
-		psjRepository.removeSampleFromProject(project, sample);
+		ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, sample);
+		psjRepository.delete(readSampleForProject);
 	}
 	
 	/**
@@ -232,7 +233,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	public void removeSamplesFromProject(Project project, Iterable<Sample> samples) {
 		for (Sample s : samples) {
-			psjRepository.removeSampleFromProject(project, s);
+			removeSampleFromProject(project, s);
 		}
 	}
 
