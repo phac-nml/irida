@@ -92,6 +92,7 @@ public class SamplesController extends BaseController {
 	public static final String LONGITUDE = "longitude";
 	private static final ImmutableList<String> FIELDS = ImmutableList.of(SAMPLE_NAME, DESCRIPTION, ORGANISM, ISOLATE,
 			STRAIN, COLLECTED_BY, ISOLATION_SOURCE, GEOGRAPHIC_LOCATION_NAME, LATITUDE, LONGITUDE);
+	private static final Pattern PAIR_PATTERN = Pattern.compile("(.+)_R\\d_.*");
 
 	// Services
 	private final SampleService sampleService;
@@ -103,7 +104,6 @@ public class SamplesController extends BaseController {
 	private final SequenceFilePairService sequenceFilePairService;
 
 	private final MessageSource messageSource;
-	public static final Pattern PAIR_PATTERN = Pattern.compile("(.+)_R\\d_.*");
 
 	@Autowired
 	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
