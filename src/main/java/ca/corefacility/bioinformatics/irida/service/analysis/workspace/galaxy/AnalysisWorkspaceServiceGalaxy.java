@@ -8,12 +8,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -23,6 +25,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateEx
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -44,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -78,6 +83,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	private AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy;
 
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+	
+	private SampleRemoteService sampleRemoteService;
 
 	/**
 	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
@@ -210,7 +217,29 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(
 				analysisSubmission
 						.getPairedInputFiles());
-		if (samplesInCommon(sampleSequenceFilesSingle, sampleSequenceFilesPaired)) {
+
+		Map<Sample, IridaSequenceFile> singleFiles = sampleRemoteService
+				.getUniqueSamplesforSequenceFileSnapshots(analysisSubmission.getRemoteFilesSingle());
+
+		Map<Sample, IridaSequenceFilePair> pairedFiles = sampleRemoteService
+				.getUniqueSamplesforSequenceFilePairSnapshots(analysisSubmission.getRemoteFilesPaired());
+		
+		// merge local and remote
+		for(Sample s : sampleSequenceFilesSingle.keySet()){
+			if(singleFiles.containsKey(s)){
+				throw new DuplicateSampleException("sample is duplicated between local and remote files");
+			}
+			singleFiles.put(s, sampleSequenceFilesSingle.get(s));
+		}
+		
+		for(Sample s : sampleSequenceFilesPaired.keySet()){
+			if(pairedFiles.containsKey(s)){
+				throw new DuplicateSampleException("sample is duplicated between local and remote files");
+			}
+			pairedFiles.put(s, sampleSequenceFilesPaired.get(s));
+		}
+
+		if (samplesInCommon(singleFiles, pairedFiles)) {
 			throw new SampleAnalysisDuplicateException("Single and paired input files share a common sample for submission "
 					+ analysisSubmission);
 		}
@@ -224,22 +253,22 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
 
-		if (!sampleSequenceFilesSingle.isEmpty()) {
+		if (!singleFiles.isEmpty()) {
 			String sequenceFilesLabelSingle = workflowInput.getSequenceReadsSingle().get();
 			String workflowSequenceFileSingleInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelSingle);
-			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(sampleSequenceFilesSingle,
+			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(singleFiles,
 					workflowHistory, workflowLibrary);
 			inputs.setInput(workflowSequenceFileSingleInputId,
 					new WorkflowInputs.WorkflowInput(collectionResponseSingle.getId(),
 							WorkflowInputs.InputSourceType.HDCA));
 		}
 
-		if (!sampleSequenceFilesPaired.isEmpty()) {
+		if (!pairedFiles.isEmpty()) {
 			String sequenceFilesLabelPaired = workflowInput.getSequenceReadsPaired().get();
 			String workflowSequenceFilePairedInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelPaired);
-			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilesPaired,
+			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(pairedFiles,
 					workflowHistory, workflowLibrary);
 			inputs.setInput(workflowSequenceFilePairedInputId,
 					new WorkflowInputs.WorkflowInput(collectionResponsePaired.getId(),
@@ -268,8 +297,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 * @return True if the two data structures share a common sample, false
 	 *         otherwise.
 	 */
-	private boolean samplesInCommon(Map<Sample, SequenceFile> sampleSequenceFilesSingle,
-			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired) {
+	private boolean samplesInCommon(Map<Sample, IridaSequenceFile> sampleSequenceFilesSingle,
+			Map<Sample, IridaSequenceFilePair> sampleSequenceFilesPaired) {
 		for (Sample sampleSingle : sampleSequenceFilesSingle.keySet()) {
 			
 			if (sampleSequenceFilesPaired.containsKey(sampleSingle)) {

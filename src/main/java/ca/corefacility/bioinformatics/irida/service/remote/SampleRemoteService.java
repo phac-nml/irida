@@ -1,11 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 
 /**
@@ -37,6 +42,12 @@ public interface SampleRemoteService extends RemoteService<Sample> {
 	 * @return A Page of {@link Sample}s
 	 */
 	public Page<Sample> searchSamplesForProject(Project project, String search, int page, int size);
-	
+
 	public Sample getSampleForSequenceFileSnapshot(SequenceFileSnapshot file);
+
+	public Map<Sample, IridaSequenceFile> getUniqueSamplesforSequenceFileSnapshots(
+			Collection<SequenceFileSnapshot> files);
+
+	public Map<Sample, IridaSequenceFilePair> getUniqueSamplesforSequenceFilePairSnapshots(
+			Collection<SequenceFilePairSnapshot> files);
 }
