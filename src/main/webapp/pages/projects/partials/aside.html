@@ -5,12 +5,12 @@
 		</div>
 		<div class="sidebar__body">
 			<div class="sidebar__item">
-				<div class="sidebar__icon"><i class="fa fa-fw fa-barcode"></i></div>
+				<div class="sidebar__icon"><irida:icon type="id" fixed=""></irida:icon></div>
 				<div th:text="#{project.id}"></div>
 				<div class="sidebar__value" th:text="*{id}"></div>
 			</div>
 			<div class="sidebar__item" th:if="${project.organism} != null">
-				<div class="sidebar__icon"><i class="fa fa-fw fa-leaf"></i></div>
+				<div class="sidebar__icon"><irida:icon type="organism" fixed=""></irida:icon></div>
 				<div th:text="#{project.organism}"></div>
 				<div class="sidebar__value" id="project-organism"><i th:text="*{organism}"></i></div>
 			</div>
@@ -20,12 +20,12 @@
 				<span class="sidebar__value" id="project-owner" th:text="${owner.label}">__DATE_CREATED__</span>
 			</div>
 			<div class="sidebar__item">
-				<div class="sidebar__icon"><i class="fa fa-fw fa-calendar-o"></i></div>
+				<div class="sidebar__icon"><irida:icon type="date" fixed=""></irida:icon></div>
 				<div th:text="#{project.created}"></div>
 				<div class="sidebar__value" id="project-created" th:text="${#calendars.format(project.createdDate, 'dd MMM yyyy')}">__DATE_CREATED__</div>
 			</div>
 			<div class="sidebar__item" th:if="${project.modifiedDate} != null">
-				<div class="sidebar__icon"><i class="fa fa-fw fa-calendar-o"></i></div>
+				<div class="sidebar__icon"><irida:icon type="date" fixed=""></irida:icon></div>
 				<div th:text="#{project.modified}"></div>
 				<div class="sidebar__value" id="project-modified" data:livestamp="*{modifiedDate}" th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"></div>
 			</div>
