@@ -14,11 +14,6 @@
 				<div th:text="#{project.organism}"></div>
 				<div class="sidebar__value" id="project-organism"><i th:text="*{organism}"></i></div>
 			</div>
-			<div class="sidebar__item" th:if="${owner} != null">
-				<span class="glyphicon glyphicon-tower"></span>
-				<span th:text="#{project.owner}"></span>
-				<span class="sidebar__value" id="project-owner" th:text="${owner.label}">__DATE_CREATED__</span>
-			</div>
 			<div class="sidebar__item">
 				<div class="sidebar__icon"><irida:icon type="date" fixed=""></irida:icon></div>
 				<div th:text="#{project.created}"></div>
