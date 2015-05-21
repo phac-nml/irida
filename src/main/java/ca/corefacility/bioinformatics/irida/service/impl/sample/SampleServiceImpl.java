@@ -129,7 +129,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@Transactional
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
-		SampleSequenceFileJoin joinForSampleAndFile = ssfRepository.getJoinForSampleAndFile(sample, sequenceFile);
+		SampleSequenceFileJoin joinForSampleAndFile = ssfRepository.readFileForSample(sample, sequenceFile);
 		ssfRepository.delete(joinForSampleAndFile);
 	}
 

@@ -98,7 +98,7 @@ public class SampleServiceImplTest {
 		sf.setId(2222L);
 		SampleSequenceFileJoin sampleSequenceFileJoin = new SampleSequenceFileJoin(s, sf);
 		
-		when(ssfRepository.getJoinForSampleAndFile(s, sf)).thenReturn(sampleSequenceFileJoin);
+		when(ssfRepository.readFileForSample(s, sf)).thenReturn(sampleSequenceFileJoin);
 
 		sampleService.removeSequenceFileFromSample(s, sf);
 		
@@ -140,7 +140,7 @@ public class SampleServiceImplTest {
 
 			when(ssfRepository.getFilesForSample(toMerge[p])).thenReturn(sampleSequenceFileJoins);
 			when(ssfRepository.save(s_sf_joins[p])).thenReturn(s_sf_joins[p]);
-			when(ssfRepository.getJoinForSampleAndFile(toMerge[p], toMerge_sf[p])).thenReturn(join);
+			when(ssfRepository.readFileForSample(toMerge[p], toMerge_sf[p])).thenReturn(join);
 			when(psjRepository.getProjectForSample(toMerge[p])).thenReturn(projectSampleJoins);
 		}
 		List<Join<Project, Sample>> joins = new ArrayList<>();

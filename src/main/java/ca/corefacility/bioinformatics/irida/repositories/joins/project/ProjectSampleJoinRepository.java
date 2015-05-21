@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -32,16 +31,17 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	public List<Join<Project, Sample>> getProjectForSample(Sample sample);
 
 	/**
-	 * Remove a {@link Sample} from a {@link Project}
+	 * Get a specific {@link ProjectSampleJoin} for a {@link Project} and
+	 * {@link Sample}
 	 * 
 	 * @param project
-	 *            The {@link Project} to remove from
+	 *            the {@link Project} to read from
 	 * @param sample
-	 *            The {@link Sample} to remove
+	 *            the {@link Sample} to read
+	 * @return The {@link ProjectSampleJoin} for these
 	 */
-	@Modifying
-	@Query("delete from ProjectSampleJoin j where j.project = ?1 and j.sample = ?2")
-	public void removeSampleFromProject(Project project, Sample sample);
+	@Query("ProjectSampleJoin j where j.project = ?1 and j.sample = ?2")
+	public ProjectSampleJoin readSampleForProject(Project project, Sample sample);
 
 	/**
 	 * Get the {@link Sample}s associated with a {@link Project}
