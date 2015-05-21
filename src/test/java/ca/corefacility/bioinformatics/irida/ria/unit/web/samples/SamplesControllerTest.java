@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
@@ -17,12 +18,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -50,6 +56,8 @@ import com.google.common.collect.Lists;
 /**
  */
 public class SamplesControllerTest {
+	public static final String[] MULTIPARTFILE_PATHS = { "src/test/resources/files/test_file_1.fastq",
+			"src/test/resources/files/test_file_2.fastq" };
 
 	// Services
 	private SamplesController controller;
@@ -258,5 +266,23 @@ public class SamplesControllerTest {
 		assertTrue("File has an id", file1.containsKey("id"));
 		assertTrue("File has an name", file1.containsKey("label"));
 		assertTrue("File has an created", file1.containsKey("createdDate"));
+	}
+
+	@Test
+	public void testUploadSequenceFiles() throws IOException {
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(sample.getId())).thenReturn(sample);
+
+		List<MultipartFile> fileList = new ArrayList<>();
+		for (String pathName : MULTIPARTFILE_PATHS) {
+			Path path = Paths.get(pathName);
+			byte[] bytes = Files.readAllBytes(path);
+			fileList.add(new MockMultipartFile(path.getFileName().toString(), path.getFileName().toString(), "octet-stream", bytes));
+		}
+
+		HttpServletResponse response = new MockHttpServletResponse();
+		controller.uploadSequenceFiles(sample.getId(), fileList, response);
+
+		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
 	}
 }
