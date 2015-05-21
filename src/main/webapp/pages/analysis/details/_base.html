@@ -26,28 +26,28 @@
         <div class="sidebar__body">
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <i class="fa fa-fw fa-barcode"></i>
+              <irida:icon type="id"></irida:icon>
             </div>
             <div th:text="#{iridaThing.id}">_ID_</div>
             <div class="sidebar__value" th:text="${analysisSubmission.getId()}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <i class="fa fa-cogs"></i>
+              <irida:icon type="pipelineType"></irida:icon>
             </div>
             <div th:text="#{analysis.details.type}">_Workflow_</div>
             <div class="sidebar__value" th:text="${workflowName}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <i class="fa fa-history"></i>
+              <irida:icon type="pipelineState"></irida:icon>
             </div>
             <div th:text="#{analysis.details.state}">_State_</div>
             <div class="sidebar__value" ng-bind="stateController.stateLang"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <i class="fa fa-fw fa-calendar-o"></i>
+              <irida:icon type="date"></irida:icon>
             </div>
             <div th:text="#{iridaThing.timestamp}">Created</div>
             <div class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></div>
@@ -62,13 +62,13 @@
         <div class="sidebar__body">
           <div class="sidebar__item" th:each="file : ${files}">
             <div class="sidebar__icon">
-              <i class="fa fa-fw fa-file-o"></i>
+              <irida:icon type="file"></irida:icon>
             </div>
             <div th:text="${file.getLabel()}"></div>
           </div>
           <div class="sidebar__item">
             <button class="btn btn-primary btn-sm btn-block" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
-              <span class="fa fa-download fa-fw"></span>&nbsp;
+              <irida:icon type="download"></irida:icon>&nbsp;
               <th:block th:text="#{form.download-files}">Download Files</th:block>
             </button>
           </div>
