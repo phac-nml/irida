@@ -7,7 +7,7 @@ description: "Install guide for the assembly and annotation collection pipeline.
 Assembly and Annotation Collection
 ==================================
 
-This workflow can be used for assemblying and annotating many genomes in one execution.  It uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
+This workflow can be used for assemblying and annotating many genomes in one submission.  The results from one submission will be packaged together into a single file.  The workflow uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
 
 | Tool Name                  | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:--------------------------:|:-------------:|:-----------------------------:|:--------------------:|
