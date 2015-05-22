@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -106,6 +107,9 @@ public class AnalysisExecutionServiceTestConfig {
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	@Autowired
+	SampleRemoteService sampleRemoteService;
+	
+	@Autowired
 	private SequenceFileSnapshotService sequenceFileSnapshotService;
 
 	@Lazy
@@ -135,7 +139,7 @@ public class AnalysisExecutionServiceTestConfig {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder,
 				iridaWorkflowsService,
-				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy);
+				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy,sampleRemoteService);
 	}
 	
 	@Lazy

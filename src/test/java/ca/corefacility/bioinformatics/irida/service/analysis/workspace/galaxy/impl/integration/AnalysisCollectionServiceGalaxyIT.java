@@ -253,7 +253,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(
-				sampleSequenceFiles, createdHistory, createdLibrary);
+				null, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -304,7 +304,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(
-				sampleSequenceFilePairs, createdHistory, createdLibrary);
+				null, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -390,7 +390,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
 				.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
 
-		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
+		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(null, createdHistory,
 				createdLibrary);
 	}
 

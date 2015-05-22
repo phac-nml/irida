@@ -112,7 +112,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			SequenceFilePairService sequenceFilePairService,
 			GalaxyLibraryBuilder libraryBuilder,
 			IridaWorkflowsService iridaWorkflowsService, AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
-			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy, AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy) {
+			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy, AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sequenceFileService = sequenceFileService;
@@ -122,6 +122,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		this.analysisCollectionServiceGalaxy = analysisCollectionServiceGalaxy;
 		this.analysisProvenanceServiceGalaxy = analysisProvenanceServiceGalaxy;
 		this.analysisParameterServiceGalaxy = analysisParameterServiceGalaxy;
+		this.sampleRemoteService = sampleRemoteService;
 	}
 
 	/**
@@ -183,7 +184,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 		checkArgument(!(analysisSubmission.getSingleInputFiles().isEmpty()
-				&& analysisSubmission.getPairedInputFiles().isEmpty()),
+				&& analysisSubmission.getPairedInputFiles().isEmpty() && analysisSubmission.getRemoteFilesSingle().isEmpty() && analysisSubmission.getRemoteFilesPaired().isEmpty()),
 				"no single or paired sequence files passed to submission " + analysisSubmission
 						+ " . At least one type of file must be available");
 

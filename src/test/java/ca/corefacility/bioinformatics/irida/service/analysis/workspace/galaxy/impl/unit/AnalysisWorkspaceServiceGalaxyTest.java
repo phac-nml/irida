@@ -210,7 +210,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				sequenceFileService, sequenceFilePairService, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy,
-				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy);
+				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy, null);
 
 		output1Dataset = new Dataset();
 		output1Dataset.setId("1");
@@ -301,10 +301,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				REFERENCE_FILE_ID);
 
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(sampleSequenceFileMap, workflowHistory,
+				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(null, workflowHistory,
 						workflowLibrary)).thenReturn(collectionResponseSingle);
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairMap, workflowHistory,
+				analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(null, workflowHistory,
 						workflowLibrary)).thenReturn(collectionResponsePaired);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
@@ -367,7 +367,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				REFERENCE_FILE_ID);
 
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(sampleSequenceFileMap, workflowHistory,
+				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(null, workflowHistory,
 						workflowLibrary)).thenReturn(collectionResponseSingle);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
@@ -430,7 +430,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				REFERENCE_FILE_ID);
 
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairMap, workflowHistory,
+				analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(null, workflowHistory,
 						workflowLibrary)).thenReturn(collectionResponsePaired);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);

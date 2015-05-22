@@ -68,11 +68,13 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 */
 	@Override
 	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI, MediaType... mediaTypes) {
+		SequenceFile file = read(uri, remoteAPI);
+		
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
 		// add the sequence file message converter
 		List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
-		converters.add(new SequenceFileMessageConverter(tempDirectory));
+		converters.add(new SequenceFileMessageConverter(tempDirectory,file.getFileName()));
 		restTemplate.setMessageConverters(converters);
 
 		// add the application/fastq accept header

@@ -31,9 +31,11 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 	public static final MediaType MEDIA_TYPE = new MediaType("application","fastq");
 
 	private final Path tempDirectory;
+	private final String fileName;
 
-	public SequenceFileMessageConverter(Path tempDirectory) {
+	public SequenceFileMessageConverter(Path tempDirectory, String fileName) {
 		this.tempDirectory = tempDirectory;
+		this.fileName = fileName;
 	}
 
 	/**
@@ -67,7 +69,10 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 			HttpMessageNotReadableException {
 		logger.debug("Converting  response to " + clazz);
 		InputStream inputStream = inputMessage.getBody();
-		Path tempFile = Files.createTempFile(tempDirectory, "remote-file", ".fastq");
+		Path fileDirectory = Files.createTempDirectory(tempDirectory, "remote-file");
+		//Path tempFile = Files.createTempFile(tempDirectory, "remote-file", ".fastq");
+		Path tempFile = fileDirectory.resolve(fileName);
+		tempFile = Files.createFile(tempFile);
 		try (OutputStream outputStream = Files.newOutputStream(tempFile)) {
 			IOUtils.copy(inputStream, outputStream);
 		}

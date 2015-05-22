@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -22,6 +23,7 @@ import org.springframework.mock.http.MockHttpInputMessage;
 public class SequenceFileMessageConverterTest {
 	private SequenceFileMessageConverter converter;
 	private static Path tempDirectory;
+	private String fileName = "testFile";
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
@@ -30,12 +32,12 @@ public class SequenceFileMessageConverterTest {
 
 	@AfterClass
 	public static void afterClass() throws IOException {
-		Files.deleteIfExists(tempDirectory);
+		FileUtils.deleteDirectory(tempDirectory.toFile());
 	}
 
 	@Before
 	public void setUp() {
-		converter = new SequenceFileMessageConverter(tempDirectory);
+		converter = new SequenceFileMessageConverter(tempDirectory, fileName);
 	}
 
 	@Test
