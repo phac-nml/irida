@@ -23,10 +23,25 @@ public class FontAwesome {
 	private static final String REMOVE_ATTRIBUTE = "remove";
 	private static final String REMOVE_ICON = "times";
 	/*
+	Attribute to be used when merging files
+	 */
+	private static final String MERGE_ATTRIBUTE = "merge";
+	private static final String MERGE_ICON = "compress";
+	/*
 	Attribute to delete an item.  This should be used when deleting an item from the UI.
 	 */
 	private static final String DELETE_ATTRIBUTE = "delete";
 	private static final String DELETE_ICON = "trash-o";
+	/*
+	Attribute to be used any time there is something to save
+	 */
+	private static final String SAVE_ATTRIBUTE = "save";
+	private static final String SAVE_ICON = "save";
+	/*
+	Attribute to be used when the copy action is required
+	 */
+	private static final String COPY_ATTRIBUTE = "copy";
+	private static final String COPY_ICON = "copy";
 	/*
 	Attribute to be used in a warning message.
 	 */
@@ -72,6 +87,18 @@ public class FontAwesome {
 	 */
 	private static final String FILE_ATTRIBUTE = "file";
 	private static final String FILE_ICON = "file-o";
+	/*
+	Attribute to display terminal icon
+	 */
+	private static final String TERMINAL_ATTRIBITE = "terminal";
+	private static final String TERMINAL_ICON = "terminal";
+	/*
+	Attribute be used to indicate for collapsible panels
+	*/
+	private static final String COLLAPSE_SHOW_ATTRIBUTE = "show";
+	private static final String COLLAPSE_SHOW_ICON = "chevron-right";
+	private static final String COLLAPSE_CLOSE_ATTRIBUTE = "hide";
+	private static final String COLLAPSE_CLOSE_ICON = "chevron-down";
 
 	/*
 	If using multiple icons in a list (such as a side bar) add the 'fixed=""' attribute to append this class.
@@ -82,6 +109,8 @@ public class FontAwesome {
 	private static final Map<String, String> FA_ATTRIBUTE_TO_CLASS_MAP = new ImmutableMap.Builder<String, String>()
 			.put(REMOVE_ATTRIBUTE, REMOVE_ICON)
 			.put(DELETE_ATTRIBUTE, DELETE_ICON)
+			.put(SAVE_ATTRIBUTE, SAVE_ICON)
+			.put(MERGE_ATTRIBUTE, MERGE_ICON)
 			.put(WARNING_ATTRIBUTE, WARNING_ICON)
 			.put(IDENTIFIER_ATTRIBUTE, IDENTIFIER_ICON)
 			.put(ORGANISM_ATTRIBUTE, ORGANISM_ICON)
@@ -91,7 +120,19 @@ public class FontAwesome {
 			.put(PIPELINE_TYPE_ATTRIBUTE, PIPELINE_TYPE_ICON)
 			.put(PIPELINE_STATE_ATTRIBUTE, PIPELINE_STATE_ICON)
 			.put(FILE_ATTRIBUTE, FILE_ICON)
+			.put(COPY_ATTRIBUTE, COPY_ICON)
+			.put(TERMINAL_ATTRIBITE, TERMINAL_ICON)
+			.put(COLLAPSE_SHOW_ATTRIBUTE, COLLAPSE_SHOW_ICON)
+			.put(COLLAPSE_CLOSE_ATTRIBUTE, COLLAPSE_CLOSE_ICON)
 			.build();
+
+	private static final Map<String, String> ICON_SIZE = ImmutableMap.of(
+			"lg", "fa-lg",
+			"2x", "fa-2x",
+			"3x", "fa-3x",
+			"4x", "fa-4x",
+			"5x", "fa-5x"
+	);
 
 	private List<String> classes;
 
@@ -104,11 +145,19 @@ public class FontAwesome {
 		}
 	}
 
-	public String getClassList() {
+	public String getClassString() {
 		return StringUtils.collectionToDelimitedString(classes, " ");
 	}
 
 	public void isFixedWidth() {
 		classes.add(FIXED_WIDTH_CLASS);
+	}
+
+	public void setIconSize(String size) throws IconNotFoundException {
+		if (ICON_SIZE.containsKey(size)) {
+			classes.add(ICON_SIZE.get(size));
+		} else {
+			throw new IconNotFoundException("Icon size " + size + " is not available");
+		}
 	}
 }
