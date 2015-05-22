@@ -6,4 +6,5 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<include file="command-line-not-nullable.xml" relativeToChangelogFile="true"/>
+	<include file="assembly-annotation-collection.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
