@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.persistence.EntityExistsException;
 import javax.validation.Validator;
 
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(SampleServiceImpl.class);
 
 	/**
@@ -62,7 +63,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link SampleSequenceFileJoin}.
 	 */
 	private SampleSequenceFileJoinRepository ssfRepository;
-	
+
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
@@ -79,8 +80,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the project sample join repository.
 	 * @param ssfRepository
 	 *            the sample sequence file join repository.
-         * @param analysisRepository
-         *            the analysis repository.
+	 * @param analysisRepository
+	 *            the analysis repository.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
@@ -130,7 +131,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
 		SampleSequenceFileJoin joinForSampleAndFile = ssfRepository.readFileForSample(sample, sequenceFile);
+		logger.trace("Removing " + joinForSampleAndFile.getObject().getId() + " from sample "
+				+ joinForSampleAndFile.getSubject().getId());
 		ssfRepository.delete(joinForSampleAndFile);
+
 	}
 
 	/**
@@ -262,6 +266,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
 		// call the relationship repository to create the relationship between
 		// the two entities.
+		if (ssfRepository.getSampleForSequenceFile(sampleFile) != null) {
+			throw new EntityExistsException("This sequencefile is already associated with a sample");
+		}
+		logger.trace("adding " + sampleFile.getId() + " to sample " + sample.getId());
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, sampleFile);
 		return ssfRepository.save(join);
 	}
