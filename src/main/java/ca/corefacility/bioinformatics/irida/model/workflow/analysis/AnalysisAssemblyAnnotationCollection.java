@@ -11,16 +11,16 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "analysis_assemblyannotation")
-public class AnalysisAssemblyAnnotation extends Analysis {
+@Table(name = "analysis_assemblyannotation_collection")
+public class AnalysisAssemblyAnnotationCollection extends Analysis {
 
 	@SuppressWarnings("unused")
-	private AnalysisAssemblyAnnotation() {
+	private AnalysisAssemblyAnnotationCollection() {
 		super();
 	}
 
 	/**
-	 * Builds a new {@link AnalysisAssemblyAnnotation} with the given
+	 * Builds a new {@link AnalysisAssemblyAnnotationCollection} with the given
 	 * information.
 	 * 
 	 * @param executionManagerAnalysisId
@@ -28,7 +28,7 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 	 * @param analysisOutputFilesMap
 	 *            A {@link Map} of output files for this analysis.
 	 */
-	public AnalysisAssemblyAnnotation(final String executionManagerAnalysisId,
+	public AnalysisAssemblyAnnotationCollection(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		super(executionManagerAnalysisId, analysisOutputFilesMap);
 	}
