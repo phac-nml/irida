@@ -63,6 +63,28 @@ Paired-end files will appear in a pair:
 
 ![Paired-end sequencing file.](images/sample-sequence-file-paired-end.png)
 
+#### Upload a sequence file
+
+Sequence files can be uploaded by clicking on the "Upload new files" button at the top, right hand side of the sequence file table.  Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
+
+![Upload sequence file.](images/upload-sample-file-btn.png)
+
+You can upload a collection of sequencing data to IRIDA by dragging the files in a directory to the drop area in the pop-up window:
+
+![Drag and drop area.](images/upload-sample-file-drop-area.png)
+
+You may also upload files by clicking on the "Or Select Files" button:
+
+![Select files button.](images/upload-sample-file-select-file-btn.png)
+
+The added files will be displayed in the pop-up window, and can be removed before upload by clicking the <img src="images/trash.png" class="inline" alt="trash can icon"/> icon, on the right-hand side of the file size.
+
+![Selected files.](images/upload-sample-file-dropped-dir.png)
+
+To complete the upload press the Upload button.
+
+![Upload button.](images/upload-sample-file-btn-upload.png)
+
 #### Downloading a sequence file
 
 You can download a sequence file by clicking on the <img src="images/download-icon.png" alt="Download icon" class="inline"> icon, on the right-hand side of the row for the sequence file.
