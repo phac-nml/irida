@@ -44,6 +44,9 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		this.fileRepository = fileRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Sample> getSamplesForProject(Project project) {
 		Link link = project.getLink(PROJECT_SAMPLES_REL);
@@ -51,6 +54,9 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		return list(samplesHref, project.getRemoteAPI());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Page<Sample> searchSamplesForProject(Project project, String search, int page, int size) {
 		List<Sample> samplesForProject = getSamplesForProject(project);
@@ -67,6 +73,9 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		return new PageImpl<>(paged, new PageRequest(page, size), samplesForProject.size());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Sample getSampleForSequenceFileSnapshot(SequenceFileSnapshot file) {
 		String fileURI = file.getRemoteURI();
