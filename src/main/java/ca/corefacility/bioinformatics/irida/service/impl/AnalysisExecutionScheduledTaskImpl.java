@@ -68,6 +68,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		this.cleanupCondition = cleanupCondition;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Future<AnalysisSubmission>> downloadFiles() {
 		synchronized (downloadFilesLock) {

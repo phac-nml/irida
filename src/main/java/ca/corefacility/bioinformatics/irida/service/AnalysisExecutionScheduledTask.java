@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -13,6 +14,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 public interface AnalysisExecutionScheduledTask {
 
 	
+	/**
+	 * Download any {@link SequenceFileSnapshot}s required for this analysis.
+	 * 
+	 * @return A {@link Set} of {@link Future} {@link AnalysisSubmission}s
+	 *         reflecting the changes in this submission along each of the
+	 *         stages.
+	 */
 	public Set<Future<AnalysisSubmission>> downloadFiles();
 	
 	/**
