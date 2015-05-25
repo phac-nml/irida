@@ -16,7 +16,11 @@ public class IridaDialect extends AbstractDialect {
 		return "irida";
 	}
 
-	@Override public Set<IProcessor> getProcessors() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<IProcessor> getProcessors() {
 		final Set<IProcessor> processors = new HashSet<>();
 		processors.add(new IridaIconElementProcessor());
 		return processors;
