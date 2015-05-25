@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
@@ -46,7 +47,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(SampleServiceImpl.class);
 
 	/**
@@ -64,7 +65,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link SampleSequenceFileJoin}.
 	 */
 	private SampleSequenceFileJoinRepository ssfRepository;
-	
+
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
@@ -81,8 +82,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the project sample join repository.
 	 * @param ssfRepository
 	 *            the sample sequence file join repository.
-         * @param analysisRepository
-         *            the analysis repository.
+	 * @param analysisRepository
+	 *            the analysis repository.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
@@ -172,7 +173,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
-		ssfRepository.removeFileFromSample(sample, sequenceFile);
+		SampleSequenceFileJoin joinForSampleAndFile = ssfRepository.readFileForSample(sample, sequenceFile);
+		logger.trace("Removing " + joinForSampleAndFile.getObject().getId() + " from sample "
+				+ joinForSampleAndFile.getSubject().getId());
+		ssfRepository.delete(joinForSampleAndFile);
+
 	}
 
 	/**
@@ -202,7 +207,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				addSequenceFileToSample(mergeInto, sequenceFile.getObject());
 			}
 			// have to remove the sample to be deleted from its project:
-			psjRepository.removeSampleFromProject(project, s);
+			ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, s);
+			psjRepository.delete(readSampleForProject);
 			sampleRepository.delete(s.getId());
 		}
 		return mergeInto;
@@ -302,6 +308,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
 		// call the relationship repository to create the relationship between
 		// the two entities.
+		if (ssfRepository.getSampleForSequenceFile(sampleFile) != null) {
+			throw new EntityExistsException("This sequencefile is already associated with a sample");
+		}
+		logger.trace("adding " + sampleFile.getId() + " to sample " + sample.getId());
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, sampleFile);
 		return ssfRepository.save(join);
 	}

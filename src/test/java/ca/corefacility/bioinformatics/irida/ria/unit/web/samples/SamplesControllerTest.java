@@ -3,12 +3,15 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
@@ -17,12 +20,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -50,6 +60,12 @@ import com.google.common.collect.Lists;
 /**
  */
 public class SamplesControllerTest {
+	public static final String[] MULTIPARTFILE_PATHS = { "src/test/resources/files/test_file_1.fastq",
+			"src/test/resources/files/test_file_2.fastq" };
+	public static final String[] MULTIPARTFILE_PAIR_PATHS = {
+			"src/test/resources/files/pairs/pair_test_R1_001.fastq",
+			"src/test/resources/files/pairs/pair_test_R2_001.fastq"
+	};
 
 	// Services
 	private SamplesController controller;
@@ -258,5 +274,86 @@ public class SamplesControllerTest {
 		assertTrue("File has an id", file1.containsKey("id"));
 		assertTrue("File has an name", file1.containsKey("label"));
 		assertTrue("File has an created", file1.containsKey("createdDate"));
+	}
+
+	@Test
+	public void testUploadSequenceFiles() throws IOException {
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(sample.getId())).thenReturn(sample);
+
+		List<MultipartFile> fileList = createMultipartFileList(MULTIPARTFILE_PATHS);
+
+		ArgumentCaptor<SequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+
+		HttpServletResponse response = new MockHttpServletResponse();
+		controller.uploadSequenceFiles(sample.getId(), fileList, response);
+
+		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
+		verify(sequenceFileService, times(2)).createSequenceFileInSample(sequenceFileArgumentCaptor.capture(), any(Sample.class));
+		assertEquals("Should have the correct file name", "test_file_2.fastq",
+				sequenceFileArgumentCaptor.getValue().getLabel());
+	}
+
+	@Test
+	public void testUploadSequenceFilePairs() throws IOException {
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(sample.getId())).thenReturn(sample);
+
+		List<MultipartFile> fileList = createMultipartFileList(MULTIPARTFILE_PAIR_PATHS);
+
+		ArgumentCaptor<SequenceFile> sequenceFileOneArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<SequenceFile> sequenceFileTwoArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+
+		HttpServletResponse response = new MockHttpServletResponse();
+		controller.uploadSequenceFiles(sample.getId(), fileList, response);
+
+		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
+		verify(sequenceFileService, times(1)).createSequenceFilePairInSample(sequenceFileOneArgumentCaptor.capture(),
+				sequenceFileTwoArgumentCaptor.capture(), any(Sample.class));
+		assertEquals("Should have the correct file name", "pair_test_R1_001.fastq",
+				sequenceFileOneArgumentCaptor.getValue().getLabel());
+		assertEquals("Should have the correct file name", "pair_test_R2_001.fastq",
+				sequenceFileTwoArgumentCaptor.getValue().getLabel());
+	}
+
+	@Test
+	public void testUploadSequenceFilePairsAndSingle() throws IOException {
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(sample.getId())).thenReturn(sample);
+
+		List<MultipartFile> fileList = createMultipartFileList(ArrayUtils.addAll(MULTIPARTFILE_PATHS, MULTIPARTFILE_PAIR_PATHS));
+
+		ArgumentCaptor<SequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<SequenceFile> sequenceFileOneArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<SequenceFile> sequenceFileTwoArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+
+		HttpServletResponse response = new MockHttpServletResponse();
+		controller.uploadSequenceFiles(sample.getId(), fileList, response);
+
+		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
+		verify(sequenceFileService, times(2)).createSequenceFileInSample(sequenceFileArgumentCaptor.capture(),
+				any(Sample.class));
+		verify(sequenceFileService, times(1)).createSequenceFilePairInSample(sequenceFileOneArgumentCaptor.capture(),
+				sequenceFileTwoArgumentCaptor.capture(), any(Sample.class));
+		assertEquals("Should have the correct file name", "pair_test_R1_001.fastq",
+				sequenceFileOneArgumentCaptor.getValue().getLabel());
+		assertEquals("Should have the correct file name", "pair_test_R2_001.fastq",
+				sequenceFileTwoArgumentCaptor.getValue().getLabel());
+	}
+
+	/**
+	 * Create a list of {@link MultipartFile}
+	 * @param list A list of paths to files.
+	 * @return
+	 * @throws IOException
+	 */
+	private List<MultipartFile> createMultipartFileList(String[] list) throws IOException {
+		List<MultipartFile> fileList = new ArrayList<>();
+		for (String pathName : list) {
+			Path path = Paths.get(pathName);
+			byte[] bytes = Files.readAllBytes(path);
+			fileList.add(new MockMultipartFile(path.getFileName().toString(), path.getFileName().toString(), "octet-stream", bytes));
+		}
+		return fileList;
 	}
 }
