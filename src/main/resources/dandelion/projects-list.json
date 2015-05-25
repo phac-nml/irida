@@ -1,0 +1,13 @@
+{
+  "bundle": "projects-list",
+  "assets": [
+    {
+      "name": "projects-list",
+      "version": "1.0.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/projects-list.js"
+      }
+    }
+  ]
+}

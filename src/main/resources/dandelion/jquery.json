@@ -1,0 +1,11 @@
+{
+  "bundle": "jquery",
+  "assets": [{
+    "name": "jquery",
+    "version": "2.1.1",
+    "type": "js",
+    "locations": {
+      "cdn": "/resources/bower_components/jquery/dist/jquery.js"
+    }
+  }]
+}

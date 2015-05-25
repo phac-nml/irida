@@ -1,0 +1,32 @@
+{
+  "bundle": "irida-datatables",
+  "dependencies": [
+    "jquery"
+  ],
+  "assets": [
+    {
+      "name": "datatables",
+      "version": "1.10.7",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/DataTables/media/js/jquery.dataTables.js"
+      }
+    },
+    {
+      "name": "datatables",
+      "version": "1.10.7",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/DataTables/media/css/jquery.dataTables.css"
+      }
+    },
+    {
+      "name": "irida-datatables",
+      "version": "1.0.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/utils/datatable-utils.js"
+      }
+    }
+  ]
+}
