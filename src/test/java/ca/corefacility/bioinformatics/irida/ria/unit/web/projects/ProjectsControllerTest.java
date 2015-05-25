@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
@@ -12,21 +11,21 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
@@ -97,74 +96,9 @@ public class ProjectsControllerTest {
 	public void showAllProjects() {
 		Model model = new ExtendedModelMap();
 		HttpSession ses = mock(HttpSession.class);
-		String page = controller.getProjectsPage(model, null,null, ses);
-		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetAjaxProjectListForUser() {
-		List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
-		List<Join<Project, User>> usersJoin = getUsersForProject();
-		String requestDraw = "1";
 		Principal principal = () -> USER_NAME;
-
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.searchProjectUsers(any(Specification.class), anyInt(), anyInt(), any(), anyString()))
-				.thenReturn(getProjectsPage());
-
-		when(sampleService.getSamplesForProject(project)).thenReturn(samplesJoin);
-		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
-
-		Map<String, Object> response = controller.getAjaxProjectListForUser(principal, 0, 10, 1, 0, "asc", "");
-
-		// Make sure response has the expected keys:
-		checkAjaxDataTableResponse(response);
-
-		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
-				response.get(DataTable.RESPONSE_PARAM_DRAW));
-
-		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
-		List<HashMap<String, Object>> projectList;
-		assertTrue(listObject instanceof List);
-		projectList = (List<HashMap<String, Object>>) listObject;
-		HashMap<String, Object> data = projectList.get(0);
-
-		assertEquals("Has the correct project name", PROJECT_NAME, data.get("name"));
-		assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
-		assertEquals("Has the correct number of project members", NUM_PROJECT_USERS + "", data.get("members"));
-		assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES + "", data.get("samples"));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetAjaxProjectListForAdmin() {
-		List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
-		List<Join<Project, User>> usersJoin = getUsersForProject();
-		List<Project> projects = getAdminProjectsList();
-		String requestDraw = "1";
-		Page<Project> page = new PageImpl<>(projects);
-
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.search(any(Specification.class), anyInt(), anyInt(), any(), anyString())).thenReturn(page);
-		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
-		when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
-
-		Map<String, Object> response = controller.getAjaxProjectListForAdmin(0, 10, 1, 0, "asc", "");
-
-		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
-				response.get(DataTable.RESPONSE_PARAM_DRAW));
-
-		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
-		List<HashMap<String, Object>> projectList;
-		assertTrue(listObject instanceof List);
-		projectList = (List<HashMap<String, Object>>) listObject;
-		HashMap<String, Object> data = projectList.get(0);
-
-		assertEquals("Has the correct project name", "project0", data.get("name"));
-		assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
-		assertEquals("Has the correct number of project members", NUM_PROJECT_USERS + "", data.get("members"));
-		assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES + "", data.get("samples"));
+		String page = controller.getProjectsPage(model, principal, null,null, ses);
+		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
 	@Test
