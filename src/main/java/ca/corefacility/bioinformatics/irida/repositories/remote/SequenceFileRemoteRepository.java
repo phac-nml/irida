@@ -29,8 +29,8 @@ public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceF
 	/**
 	 * Get a local copy of a {@link SequenceFile}
 	 * 
-	 * @param sequenceFile
-	 *            The {@link SequenceFile} to get sequence data for
+	 * @param uri
+	 *            the URI of the file to download
 	 * @param api
 	 *            The {@link RemoteAPI} this file resides on
 	 * @param mediaTypes

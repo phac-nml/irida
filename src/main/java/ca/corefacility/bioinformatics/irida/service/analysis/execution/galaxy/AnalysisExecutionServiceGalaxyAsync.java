@@ -68,6 +68,9 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
 	 *            A service for loading up {@link IridaWorkflow}s.
+	 * @param sequenceFileSnapshotService
+	 *            A service for storing and retrieving local
+	 *            {@link SequenceFileSnapshot}s
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
@@ -87,7 +90,8 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to get files for.
-	 * @return
+	 * @return A Future {@link AnalysisSubmission} with the files locally
+	 *         mirrored
 	 */
 	@Transactional
 	public Future<AnalysisSubmission> downloadFilesForSubmission(final AnalysisSubmission analysisSubmission) {
