@@ -16,8 +16,8 @@ import com.google.common.collect.ImmutableList;
 /**
  * Element processor to handle icons in the IRIDA UI.
  */
-public class IridaIconElementProcessor extends AbstractMarkupSubstitutionElementProcessor {
-	private static final Logger logger = LoggerFactory.getLogger(IridaIconElementProcessor.class);
+public class FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionElementProcessor {
+	private static final Logger logger = LoggerFactory.getLogger(FontAwesomeIconElementProcessor.class);
 
 	// This is required!  This determines the type of icon to add (see list of attributes below).
 	private static final String TYPE_ATTRIBUTE = "type";
@@ -29,11 +29,15 @@ public class IridaIconElementProcessor extends AbstractMarkupSubstitutionElement
 	//	DOM Element to create the icon in.
 	private static final String ICON_CONTAINER = "span";
 
-	public IridaIconElementProcessor() {
+	public FontAwesomeIconElementProcessor() {
 		super("icon");
 	}
 
-	@Override protected List<Node> getMarkupSubstitutes(Arguments arguments, Element element) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected List<Node> getMarkupSubstitutes(Arguments arguments, Element element) {
 		// Create the DOM element for the icons
 		final Element container = new Element(ICON_CONTAINER);
 		/*
@@ -76,7 +80,12 @@ public class IridaIconElementProcessor extends AbstractMarkupSubstitutionElement
 		}
 	}
 
-	@Override public int getPrecedence() {
+	/**
+	 *
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getPrecedence() {
 		return 1000;
 	}
 }

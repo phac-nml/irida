@@ -12,12 +12,12 @@ import org.thymeleaf.context.IContext;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.ria.dialects.IridaDialect;
+import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
 
 /**
- * Unit test for the {@link IridaDialect}
+ * Unit test for the {@link FontAwesomeDialect}
  */
-public class IridaDialectTest {
+public class FontAwesomeDialectTest {
 	private static final IContext EMPTY_CONTEXT = new Context();
 	private static final String SAVE_ICON = "<span class=\"fa fa-save\"></span>";
 	private static final String DELETE_ICON = "<span class=\"fa fa-trash-o\"></span>";
@@ -51,8 +51,8 @@ public class IridaDialectTest {
 	private static TemplateEngine initTemplateEngine() throws Exception {
 		final TemplateEngine engine = new TemplateEngine();
 
-		final IridaDialect iridaDialect = new IridaDialect();
-		engine.addDialect(iridaDialect);
+		final FontAwesomeDialect fontAwesomeDialect = new FontAwesomeDialect();
+		engine.addDialect(fontAwesomeDialect);
 
 		final ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
 		classLoaderTemplateResolver.setTemplateMode("HTML5");

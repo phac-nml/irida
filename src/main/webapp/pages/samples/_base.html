@@ -32,14 +32,14 @@
 			<div class="sidebar__body">
 				<div class="sidebar__item">
 					<div class="sidebar__item">
-						<irida:icon type="id"></irida:icon>
+						<fa:icon type="id"></fa:icon>
 					</div>
 					<div th:text="#{samples.details.id}">ID</div>
 					<div id="sb-id" class="sidebar__value" th:text="${sample.getId()}"></div>
 				</div>
 				<div class="sidebar__item">
 					<div class="sidebar__icon">
-						<irida:icon type="organism"></irida:icon>
+						<fa:icon type="organism"></fa:icon>
 					</div>
 					<div th:text="#{samples.details.organism}">Organism</div>
 					<div class="sidebar__value"><i
@@ -48,7 +48,7 @@
 				</div>
 				<div class="sidebar__item">
 					<div class="sidebar__icon">
-						<irida:icon type="date"></irida:icon>
+						<fa:icon type="date"></fa:icon>
 					</div>
 					<div><em th:text="#{samples.details.created}">Created</em></div>
 					<div id="sb-created" class="sidebar__value"
@@ -56,7 +56,7 @@
 				</div>
 				<div class="sidebar__item">
 					<div class="sidebar__icon">
-						<irida:icon type="date"></irida:icon>
+						<fa:icon type="date"></fa:icon>
 					</div>
 					<div th:text="#{samples.details.modified}">Modified</div>
 					<div class="sidebar__value" id="sb-modified" data:livestamp="${sample.getModifiedDate()}"

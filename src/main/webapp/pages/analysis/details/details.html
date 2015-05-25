@@ -92,7 +92,7 @@
 					<accordion>
 						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename">
-								<irida:icon type="file"></irida:icon>&nbsp;
+								<fa:icon type="file"></fa:icon>&nbsp;
 								<th:block th:text="${file.getLabel()}"></th:block>
 							</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
@@ -103,8 +103,8 @@
 						     th:with="toolId=${'tool' + tool.getId()}"
 						     data:ng-init="${toolId + '=false'}">
 							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
-								<irida:icon data:ng-hide="${toolId}" type="show"></irida:icon>
-								<irida:icon data:ng-show="${toolId}" type="hide"></irida:icon>
+								<fa:icon data:ng-hide="${toolId}" type="show"></fa:icon>
+								<fa:icon data:ng-show="${toolId}" type="hide"></fa:icon>
 								&nbsp;<span th:text="${tool.getLabel()}"></span>
 							</button>
 

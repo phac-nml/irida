@@ -5,18 +5,18 @@ import java.util.Set;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
 
-import ca.corefacility.bioinformatics.irida.ria.dialects.processors.icons.IridaIconElementProcessor;
+import ca.corefacility.bioinformatics.irida.ria.dialects.processors.icons.FontAwesomeIconElementProcessor;
 
 import com.google.common.collect.ImmutableSet;
 
 /**
  * Thymeleaf dialect specifically for components of the IRIDA UI.
  */
-public class IridaDialect extends AbstractDialect {
-	private static final Set<IProcessor> PROCESSORS = ImmutableSet.of(new IridaIconElementProcessor());
+public class FontAwesomeDialect extends AbstractDialect {
+	private static final Set<IProcessor> PROCESSORS = ImmutableSet.of(new FontAwesomeIconElementProcessor());
 
 	@Override public String getPrefix() {
-		return "irida";
+		return "fa";
 	}
 
 	/**
