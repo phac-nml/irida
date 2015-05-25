@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapsho
  * {@link CRUDService} implementation of {@link SequenceFileSnapshotService}
  */
 @Service
-@PreAuthorize("permitAll")
 public class SequenceFileSnapshotServiceImpl extends CRUDServiceImpl<Long, SequenceFileSnapshot> implements
 		SequenceFileSnapshotService {
 
@@ -44,6 +43,7 @@ public class SequenceFileSnapshotServiceImpl extends CRUDServiceImpl<Long, Seque
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("permitAll")
 	public SequenceFileSnapshot mirrorFile(SequenceFile file) {
 
 		SequenceFileSnapshot mirror = new SequenceFileSnapshot(file);
@@ -51,6 +51,10 @@ public class SequenceFileSnapshotServiceImpl extends CRUDServiceImpl<Long, Seque
 		return create(mirror);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("permitAll")
 	@Override
 	public SequenceFileSnapshot mirrorFileContent(SequenceFileSnapshot snapshot) {
 		RemoteAPI remoteAPIForUrl = remoteApiRepo.getRemoteAPIForUrl(snapshot.getRemoteURI());
