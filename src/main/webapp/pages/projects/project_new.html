@@ -97,7 +97,6 @@
     <script>
         $("#new-organism-warning").hide();
         $(".organism-select").select2({
-            placeholder: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
             minimumInputLength: 2,
             ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
                 url: /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',

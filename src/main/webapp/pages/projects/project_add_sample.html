@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorator="template/page">
+
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="#{project.samples.new.title(${project.label})}">__NEW_SAMPLE__</title>
+  <link rel="stylesheet" href="/resources/bower_components/angular-wizard/dist/angular-wizard.min.css" th:href="@{/resources/bower_components/angular-wizard/dist/angular-wizard.min.css}" />
+  <link rel="stylesheet" href="/resources/bower_components/select2/select2.css" th:href="@{/resources/bower_components/select2/select2.css}" />
+  <link rel="stylesheet" href="/resources/bower_components/select2/select2-bootstrap.css" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}" />
+  <script>
+    window.dependencies = ["samples.new"];
+  </script>
+</head>
+
+<body>
+  <div layout:fragment="page">
+    <div style="margin-top: 1rem;" class="col-md-8 col-md-offset-2 mrgn-tp-lg">
+      <div class="panel panel-info ng-cloak" name="newSample">
+        <div class="panel-heading">
+          <h2 class="panel-title" th:text="#{project.samples.new.form.header}">__Create_New_Sample__</h2>
+        </div>
+        <section class="panel-body" ng-controller="SampleController as sampleCtrl">
+          <form novalidate="novalidate" name="sampleCtrl.sampleDetailForm">
+            <div class="form-group">
+              <label for="sampleName" th:text="#{samples.details.sampleName}">Sample Name</label>
+              <input id="sampleName" name="sampleName" type="text" class="form-control" ng-model="sampleCtrl.sample.sampleName" name-validator="" server-validated="" minlength="3" ng-model-options="sampleCtrl.nameOptions" required="required" />
+              <div ng-messages="sampleCtrl.sampleDetailForm.sampleName.$dirty &amp;&amp; sampleCtrl.sampleDetailForm.sampleName.$error">
+                <div id="required-name-error" class="alert alert-warning" ng-message="required" th:text="#{project.samples.new.form.name.error.required}">REQUIRED</div>
+                <div id="minlength-name-error" class="alert alert-warning" ng-message="minlength" th:text="#{project.samples.new.form.name.error.minlength}">Must be at least 3 characters long</div>
+                <div id="nameValidator-name-error" class="alert alert-warning" ng-message="nameValidator" th:text="#{project.samples.new.form.name.error.special}"></div>
+                <div id="server-name-error" class="alert alert-warning" ng-message="server">{{ sampleCtrl.sampleDetailForm.sampleName.serverError }}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="organism" th:text="#{samples.details.organism}">Organism__</label>
+              <input ng-model="sampleCtrl.sample.organism" class="form-control" server-validated="" type="text" id="organism" name="organism" select2="" />
+              <div ng-messages="sampleCtrl.sampleDetailForm.organism.$dirty &amp;&amp; sampleCtrl.sampleDetailForm.organism.$error">
+                <div id="invalid-organism" class="alert alert-warning" ng-message="server">{{ sampleCtrl.sampleDetailForm.organism.serverError }}</div>
+              </div>
+              <div ng-if="sampleCtrl.sampleDetailForm.organism.$validators.custom" class="alert alert-info" th:text="#{projects.create.new-organism-warning}">CUSTOM NAME SHOWN</div>
+            </div>
+            <div class="form-group text-right">
+              <button id="createBtn" class="btn btn-primary" ng-disabled="sampleCtrl.sampleDetailForm.$invalid" ng-click="sampleCtrl.createSample()">Create Sample</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script th:inline="javascript">
+      var PAGE = {
+        project: {
+          id: /*[[${project.getId()}]]*/ '1'
+        }
+      };
+    </script>
+    <script src="/resources/bower_components/select2/select2.min.js" th:src="@{/resources/bower_components/select2/select2.min.js}"></script>
+    <script src="/resources/js/pages/projects/add-samples.js" th:src="@{/resources/js/pages/projects/add-samples.js}"></script>
+  </th:block>
+
+</body>
+
+</html>

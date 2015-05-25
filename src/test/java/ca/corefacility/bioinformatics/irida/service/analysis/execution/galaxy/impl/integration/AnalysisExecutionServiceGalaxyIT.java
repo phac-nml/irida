@@ -1244,9 +1244,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResultsAssembly.getExecutionManagerAnalysisId());
 
 		assertEquals("invalid number of output files", 3, analysisResultsAssembly.getAnalysisOutputFiles().size());
-		AnalysisOutputFile contigs = analysisResultsAssembly.getContigs();
-		AnalysisOutputFile annotations = analysisResultsAssembly.getAnnotations();
-		AnalysisOutputFile prokkaLog = analysisResultsAssembly.getAnnotationLog();
+		AnalysisOutputFile contigs = analysisResultsAssembly.getAnalysisOutputFile("contigs");
+		AnalysisOutputFile annotations = analysisResultsAssembly.getAnalysisOutputFile("annotations-genbank");
+		AnalysisOutputFile prokkaLog = analysisResultsAssembly.getAnalysisOutputFile("annotations-log");
 
 		assertTrue("contigs should be equal",
 				com.google.common.io.Files.equal(expectedContigs.toFile(), contigs.getFile().toFile()));

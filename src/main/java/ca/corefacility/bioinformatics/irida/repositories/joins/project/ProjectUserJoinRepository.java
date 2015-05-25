@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -54,19 +53,6 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 */
 	@Query("select j from ProjectUserJoin j where j.user = ?1")
 	public List<Join<Project, User>> getProjectsForUser(User user);
-
-
-	/**
-	 * Remove a {@link User} from a {@link Project}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to remove the {@link User} from.
-	 * @param user
-	 *            the {@link User} to remove from the {@link Project}.
-	 */
-	@Modifying
-	@Query("delete from ProjectUserJoin j where j.project = ?1 and j.user = ?2")
-	public void removeUserFromProject(Project project, User user);
 
 	/**
 	 * Get the join object between a given {@link Project} and {@link User}
