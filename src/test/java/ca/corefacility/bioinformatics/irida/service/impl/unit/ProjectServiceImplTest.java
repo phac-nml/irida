@@ -417,32 +417,34 @@ public class ProjectServiceImplTest {
 	@Test
 	public void testRemoveSamplesFromProject() {
 		Project project = new Project();
-		Sample s1 = new Sample("s1");
-		Sample s2 = new Sample("s2");
-		List<Sample> samples = ImmutableList.of(s1, s2);
 
-		when(psjRepository.getProjectForSample(s1)).thenReturn(Lists.newArrayList());
-		when(psjRepository.getProjectForSample(s2)).thenReturn(Lists.newArrayList());
+		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
+		
+		ProjectSampleJoin psj0 = new ProjectSampleJoin(project, samples.get(0));
+		ProjectSampleJoin psj1 = new ProjectSampleJoin(project, samples.get(1));
+		
+		when(psjRepository.readSampleForProject(project, samples.get(0))).thenReturn(psj0);
+		when(psjRepository.readSampleForProject(project, samples.get(1))).thenReturn(psj1);
 
 		projectService.removeSamplesFromProject(project, samples);
 
-		for (Sample s : samples) {
-			verify(psjRepository).removeSampleFromProject(project, s);
-			verify(sampleRepository).delete(s);
-		}
+		
+		verify(psjRepository).delete(psj0);
+		verify(psjRepository).delete(psj1);
 	}
 
 	@Test
 	public void testRemoveSampleWithOtherLinksFromProject() {
 		Sample s = new Sample("s1");
 		Project p1 = new Project("p1");
-		Project p2 = new Project("p2");
+		final ProjectSampleJoin j = new ProjectSampleJoin(p1, s);
 
-		when(psjRepository.getProjectForSample(s)).thenReturn(ImmutableList.of(new ProjectSampleJoin(p2, s)));
+		when(psjRepository.getProjectForSample(s)).thenReturn(ImmutableList.of(j));
+		when(psjRepository.readSampleForProject(p1, s)).thenReturn(j);
 
 		projectService.removeSampleFromProject(p1, s);
 
-		verify(psjRepository).removeSampleFromProject(p1, s);
+		verify(psjRepository).delete(j);
 
 		verifyZeroInteractions(sampleRepository);
 

@@ -13,6 +13,7 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,6 +38,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
@@ -79,6 +81,11 @@ public class IridaApiServicesConfig {
 
 	@Value("${file.processing.decompress.remove.compressed.file}")
 	private Boolean removeCompressedFiles;
+	
+	@Bean
+	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
+		return new ForbidJpqlUpdateDeletePostProcessor();
+	}
 
 	@Bean
 	public MessageSource apiMessageSource() {

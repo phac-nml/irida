@@ -79,7 +79,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities	, Validator validator) {
+			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -90,7 +90,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.prfjRepository = prfjRepository;
 		this.sequenceFileUtilities = sequenceFileUtilities;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -99,7 +99,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Revisions<Integer, Project> findRevisions(Long id) throws EntityRevisionDeletedException {
 		return super.findRevisions(id);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -109,7 +109,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -152,7 +152,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		addUserToProject(project, user, ProjectRole.PROJECT_OWNER);
 		return project;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -162,7 +162,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Project update(final Long id, final Map<String, Object> updateProperties) {
 		return super.update(id, updateProperties);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -202,7 +202,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		if (!allowRoleChange(projectJoinForUser)) {
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
-		pujRepository.removeUserFromProject(project, user);
+		pujRepository.delete(projectJoinForUser);
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					+ project.getId() + "]");
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -293,10 +293,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample){
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample) {
 		ProjectSampleJoin join = addSampleToProject(destination, sample);
 		removeSampleFromProject(source, sample);
-		
+
 		return join;
 	}
 
@@ -307,8 +307,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeSampleFromProject(Project project, Sample sample) {
-		psjRepository.removeSampleFromProject(project, sample);
-
+		ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, sample);
+		psjRepository.delete(readSampleForProject);
+		
 		// if the sample doesn't refer to any other projects, delete it
 		if (psjRepository.getProjectForSample(sample).isEmpty()) {
 			sampleRepository.delete(sample);
@@ -358,7 +359,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
-				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE, Direction.ASC);
+				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE,
+				Direction.ASC);
 		return searchProjectUsers.getContent().contains(new ProjectUserJoin(project, user, projectRole));
 	}
 
