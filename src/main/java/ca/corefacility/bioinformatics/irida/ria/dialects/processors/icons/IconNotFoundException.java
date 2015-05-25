@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.dialects.processors.icons;
 
 /**
- * Created by josh on 15-05-21.
+ * {@link Exception} thrown when the icon is not in the predefined list.
  */
 public class IconNotFoundException extends Exception {
 	public IconNotFoundException(String message) {
