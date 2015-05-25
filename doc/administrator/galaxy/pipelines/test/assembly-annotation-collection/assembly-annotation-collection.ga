@@ -1,0 +1,1029 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "FLASH, SPAdes, and Prokka Collection", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "sequence_reads_paired"
+                }
+            ], 
+            "label": null, 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 200
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "user_outputs": [], 
+            "uuid": "be86142b-682a-4ab3-a942-44265cda5ea3"
+        }, 
+        "1": {
+            "annotation": "", 
+            "id": 1, 
+            "input_connections": {
+                "input_type|fastq_collection": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "FLASH", 
+            "outputs": [
+                {
+                    "name": "extendedFrags", 
+                    "type": "fastqsanger"
+                }, 
+                {
+                    "name": "notCombined1", 
+                    "type": "fastqsanger"
+                }, 
+                {
+                    "name": "notCombined2", 
+                    "type": "fastqsanger"
+                }, 
+                {
+                    "name": "interNotCombined", 
+                    "type": "fastqsanger"
+                }, 
+                {
+                    "name": "readsAndPairs", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "log_file", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 462, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionextendedFrags": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "extendedFrags"
+                }, 
+                "HideDatasetActioninterNotCombined": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "interNotCombined"
+                }, 
+                "HideDatasetActionlog_file": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "log_file"
+                }, 
+                "HideDatasetActionnotCombined1": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "notCombined1"
+                }, 
+                "HideDatasetActionnotCombined2": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "notCombined2"
+                }, 
+                "HideDatasetActionreadsAndPairs": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "readsAndPairs"
+                }, 
+                "RenameDatasetActionlog_file": {
+                    "action_arguments": {
+                        "newname": "flash.log"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "log_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0", 
+            "tool_state": "{\"__page__\": 0, \"min_overlap\": \"\\\"20\\\"\", \"input_type\": \"{\\\"fastq_collection\\\": null, \\\"sPaired\\\": \\\"collections\\\", \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"max_overlap\": \"\\\"300\\\"\", \"options\": \"{\\\"__current_case__\\\": 1, \\\"options_select\\\": \\\"basic\\\"}\", \"outputs\": \"{\\\"output_type\\\": \\\"Non-interleaved_fastq\\\", \\\"__current_case__\\\": 0}\"}", 
+            "tool_version": "1.3.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "2dee1f73-72b0-4f2b-a0bb-8a02bec455d2"
+        }, 
+        "2": {
+            "annotation": "", 
+            "id": 2, 
+            "input_connections": {
+                "libraries_0|files_0|file_type|fastq_collection": {
+                    "id": 0, 
+                    "output_name": "output"
+                }, 
+                "libraries_1|files_0|file_type|unpaired_reads": {
+                    "id": 1, 
+                    "output_name": "extendedFrags"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "spades", 
+            "outputs": [
+                {
+                    "name": "out_contigs", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "out_contig_stats", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "out_scaffolds", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "out_scaffold_stats", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "out_log", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 768, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionout_contig_stats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_contig_stats"
+                }, 
+                "HideDatasetActionout_contigs": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_contigs"
+                }, 
+                "HideDatasetActionout_log": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_log"
+                }, 
+                "HideDatasetActionout_scaffold_stats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_scaffold_stats"
+                }, 
+                "HideDatasetActionout_scaffolds": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_scaffolds"
+                }, 
+                "RenameDatasetActionout_contigs": {
+                    "action_arguments": {
+                        "newname": "contigs-all.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_contigs"
+                }, 
+                "RenameDatasetActionout_log": {
+                    "action_arguments": {
+                        "newname": "spades.log"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_log"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/lionelguy/spades/spades/1.0", 
+            "tool_state": "{\"__page__\": 0, \"iontorrent\": \"\\\"False\\\"\", \"kmers\": \"\\\"21,33,55,77,99,127\\\"\", \"cov\": \"{\\\"state\\\": \\\"off\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"nanopore\": \"[]\", \"libraries\": \"[{\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 0, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"fastq_collection\\\": null, \\\"type\\\": \\\"paired-collection\\\", \\\"__current_case__\\\": 3}, \\\"__index__\\\": 0}]}, {\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 1, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"type\\\": \\\"unpaired\\\", \\\"unpaired_reads\\\": null, \\\"__current_case__\\\": 2}, \\\"__index__\\\": 0}]}]\", \"onlyassembler\": \"\\\"False\\\"\", \"trustedcontigs\": \"[]\", \"pacbio\": \"[]\", \"sc\": \"\\\"False\\\"\", \"untrustedcontigs\": \"[]\", \"sanger\": \"[]\", \"careful\": \"\\\"True\\\"\"}", 
+            "tool_version": "1.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "5b6cacc2-04c9-4d06-b944-0edfb12439f2"
+        }, 
+        "3": {
+            "annotation": "", 
+            "id": 3, 
+            "input_connections": {
+                "input": {
+                    "id": 1, 
+                    "output_name": "log_file"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 768, 
+                "top": 511
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "flash-combined.log.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "731a0255-67ca-4666-a877-bda2740191c6"
+        }, 
+        "4": {
+            "annotation": "", 
+            "id": 4, 
+            "input_connections": {
+                "input": {
+                    "id": 2, 
+                    "output_name": "out_contig_stats"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Column Regex Find And Replace", 
+            "outputs": [
+                {
+                    "name": "out_file1", 
+                    "type": "input"
+                }
+            ], 
+            "position": {
+                "left": 1096, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionout_file1": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/jjohnson/regex_find_replace/regexColumn1/0.1.0", 
+            "tool_state": "{\"__page__\": 0, \"field\": \"{\\\"__class__\\\": \\\"UnvalidatedValue\\\", \\\"value\\\": \\\"3\\\"}\", \"__rerun_remap_job_id__\": null, \"checks\": \"[{\\\"__index__\\\": 0, \\\"replacement\\\": \\\"0.000000000000000001\\\", \\\"pattern\\\": \\\"^0$\\\"}]\", \"input\": \"null\"}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "eb8b22f6-768c-4460-88a9-efa3e0dad5c9"
+        }, 
+        "5": {
+            "annotation": "", 
+            "id": 5, 
+            "input_connections": {
+                "input": {
+                    "id": 2, 
+                    "output_name": "out_contigs"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 1096, 
+                "top": 321
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "contigs-all-combined.fasta.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "a4c16f14-922f-4723-958d-2653fe84fae9"
+        }, 
+        "6": {
+            "annotation": "", 
+            "id": 6, 
+            "input_connections": {
+                "input": {
+                    "id": 2, 
+                    "output_name": "out_log"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 1096, 
+                "top": 434
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "spades-combined.log.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "ca68a6be-f0e4-451a-ac36-7ef3571d02ab"
+        }, 
+        "7": {
+            "annotation": "", 
+            "id": 7, 
+            "input_connections": {
+                "fasta_input": {
+                    "id": 2, 
+                    "output_name": "out_contigs"
+                }, 
+                "tab_input": {
+                    "id": 4, 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Filter SPAdes repeats", 
+            "outputs": [
+                {
+                    "name": "output_with_repeats", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "output_without_repeats", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "repeat_sequences_only", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "discarded_sequences", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "summary", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 1409, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActiondiscarded_sequences": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "discarded_sequences"
+                }, 
+                "HideDatasetActionoutput_with_repeats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_with_repeats"
+                }, 
+                "HideDatasetActionoutput_without_repeats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_without_repeats"
+                }, 
+                "HideDatasetActionrepeat_sequences_only": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "repeat_sequences_only"
+                }, 
+                "HideDatasetActionsummary": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "summary"
+                }, 
+                "RenameDatasetActionoutput_with_repeats": {
+                    "action_arguments": {
+                        "newname": "contigs-with-repeats.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_with_repeats"
+                }, 
+                "RenameDatasetActionoutput_without_repeats": {
+                    "action_arguments": {
+                        "newname": "contigs-without-repeats.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_without_repeats"
+                }, 
+                "RenameDatasetActionsummary": {
+                    "action_arguments": {
+                        "newname": "filter-spades.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "summary"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0", 
+            "tool_state": "{\"__page__\": 0, \"len_cutoff\": \"\\\"1000\\\"\", \"rep_cutoff\": \"\\\"1.75\\\"\", \"__rerun_remap_job_id__\": null, \"keep_leftover\": \"\\\"yes\\\"\", \"tab_input\": \"null\", \"cov_len_cutoff\": \"\\\"5000\\\"\", \"print_summary\": \"\\\"yes\\\"\", \"cov_cutoff\": \"\\\"0.33\\\"\", \"fasta_input\": \"null\"}", 
+            "tool_version": "1.0.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "b7ad2cb6-127f-4a9d-90a5-4ed6792cc54f"
+        }, 
+        "8": {
+            "annotation": "", 
+            "id": 8, 
+            "input_connections": {
+                "input": {
+                    "id": 7, 
+                    "output_name": "output_with_repeats"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 1713, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "contigs-with-repeats-combined.fasta.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "fc5707d3-0434-4b8f-81f8-6a77639c75e2"
+        }, 
+        "9": {
+            "annotation": "", 
+            "id": 9, 
+            "input_connections": {
+                "input": {
+                    "id": 7, 
+                    "output_name": "output_without_repeats"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 1713, 
+                "top": 313
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "contigs-without-repeats-combined.fasta.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "10670c7b-c272-40d9-9df2-9b65abbf8c06"
+        }, 
+        "10": {
+            "annotation": "", 
+            "id": 10, 
+            "input_connections": {
+                "input": {
+                    "id": 7, 
+                    "output_name": "output_with_repeats"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "assemblystats", 
+            "outputs": [
+                {
+                    "name": "stats", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "sortedcontigs", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "histogrampng", 
+                    "type": "png"
+                }, 
+                {
+                    "name": "summedcontigspng", 
+                    "type": "png"
+                }, 
+                {
+                    "name": "histogramdata", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "summedcontigdata", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 1713, 
+                "top": 426
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionhistogramdata": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "histogramdata"
+                }, 
+                "HideDatasetActionhistogrampng": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "histogrampng"
+                }, 
+                "HideDatasetActionsortedcontigs": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "sortedcontigs"
+                }, 
+                "HideDatasetActionstats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "stats"
+                }, 
+                "HideDatasetActionsummedcontigdata": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "summedcontigdata"
+                }, 
+                "HideDatasetActionsummedcontigspng": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "summedcontigspng"
+                }, 
+                "RenameDatasetActionstats": {
+                    "action_arguments": {
+                        "newname": "assembly-stats-with-repeats.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "stats"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/assemblystats/assemblystats/1.0.2", 
+            "tool_state": "{\"__page__\": 0, \"input_type\": \"\\\"contig\\\"\", \"__rerun_remap_job_id__\": null, \"bucket\": \"\\\"False\\\"\", \"all_outputs\": \"\\\"False\\\"\", \"input\": \"null\"}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "8bb9d2b4-a854-4630-a96b-a21823bf4253"
+        }, 
+        "11": {
+            "annotation": "", 
+            "id": 11, 
+            "input_connections": {
+                "input": {
+                    "id": 7, 
+                    "output_name": "summary"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 1713, 
+                "top": 720
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "filter-spades-combined.txt.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "7a7b71ca-389a-426f-8d71-445381eed76f"
+        }, 
+        "12": {
+            "annotation": "", 
+            "id": 12, 
+            "input_connections": {
+                "input": {
+                    "id": 7, 
+                    "output_name": "output_with_repeats"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Prokka", 
+            "outputs": [
+                {
+                    "name": "out_gff", 
+                    "type": "gff"
+                }, 
+                {
+                    "name": "out_gbk", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "out_fna", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "out_faa", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "out_ffn", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "out_sqn", 
+                    "type": "asn1"
+                }, 
+                {
+                    "name": "out_fsa", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "out_tbl", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "out_err", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "out_txt", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "out_log", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 1713, 
+                "top": 833
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionout_err": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_err"
+                }, 
+                "HideDatasetActionout_faa": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_faa"
+                }, 
+                "HideDatasetActionout_ffn": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_ffn"
+                }, 
+                "HideDatasetActionout_fna": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_fna"
+                }, 
+                "HideDatasetActionout_fsa": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_fsa"
+                }, 
+                "HideDatasetActionout_gbk": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_gbk"
+                }, 
+                "HideDatasetActionout_gff": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_gff"
+                }, 
+                "HideDatasetActionout_log": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_log"
+                }, 
+                "HideDatasetActionout_sqn": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_sqn"
+                }, 
+                "HideDatasetActionout_tbl": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_tbl"
+                }, 
+                "HideDatasetActionout_txt": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_txt"
+                }, 
+                "RenameDatasetActionout_err": {
+                    "action_arguments": {
+                        "newname": "prokka.err"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_err"
+                }, 
+                "RenameDatasetActionout_gbk": {
+                    "action_arguments": {
+                        "newname": "genome.gbk"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_gbk"
+                }, 
+                "RenameDatasetActionout_log": {
+                    "action_arguments": {
+                        "newname": "prokka.log"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_log"
+                }, 
+                "RenameDatasetActionout_sqn": {
+                    "action_arguments": {
+                        "newname": "genome.sqn"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_sqn"
+                }, 
+                "RenameDatasetActionout_txt": {
+                    "action_arguments": {
+                        "newname": "prokka_stats.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_txt"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0", 
+            "tool_state": "{\"kingdom\": \"{\\\"gcode\\\": \\\"11\\\", \\\"kingdom_select\\\": \\\"Bacteria\\\", \\\"__current_case__\\\": 1}\", \"__page__\": 0, \"norrna\": \"\\\"False\\\"\", \"usegenus\": \"\\\"False\\\"\", \"metagenome\": \"\\\"False\\\"\", \"centre\": \"\\\"IRIDA\\\"\", \"evalue\": \"\\\"1e-06\\\"\", \"proteins\": \"null\", \"compliant\": \"{\\\"mincontig\\\": \\\"200\\\", \\\"compliant_select\\\": \\\"no\\\", \\\"__current_case__\\\": 0, \\\"addgenes\\\": \\\"True\\\"}\", \"fast\": \"\\\"False\\\"\", \"strain\": \"\\\"\\\"\", \"locustag\": \"\\\"PROKKA\\\"\", \"__rerun_remap_job_id__\": null, \"plasmid\": \"\\\"\\\"\", \"increment\": \"\\\"1\\\"\", \"gffver\": \"\\\"3\\\"\", \"input\": \"null\", \"rfam\": \"\\\"True\\\"\", \"genus\": \"\\\"\\\"\", \"species\": \"\\\"\\\"\", \"notrna\": \"\\\"False\\\"\"}", 
+            "tool_version": "1.4.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "18821f1f-f3bc-45d1-a989-4b210624759a"
+        }, 
+        "13": {
+            "annotation": "", 
+            "id": 13, 
+            "input_connections": {
+                "texts": {
+                    "id": 10, 
+                    "output_name": "stats"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Combine AssemblyStats", 
+            "outputs": [
+                {
+                    "name": "output", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 2041, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionoutput": {
+                    "action_arguments": {
+                        "newname": "assembly-stats-with-repeats-combined.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/combine_assembly_stats/combine_stats/0.2", 
+            "tool_state": "{\"texts\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "64df536f-681c-4521-9b95-032cff101cad"
+        }, 
+        "14": {
+            "annotation": "", 
+            "id": 14, 
+            "input_connections": {
+                "input": {
+                    "id": 12, 
+                    "output_name": "out_gbk"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 2041, 
+                "top": 331
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "genome-combined.gbk.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "072c6e10-9aba-4215-a27e-859b30f6d1c6"
+        }, 
+        "15": {
+            "annotation": "", 
+            "id": 15, 
+            "input_connections": {
+                "input": {
+                    "id": 12, 
+                    "output_name": "out_err"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 2041, 
+                "top": 444
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka-combined.err.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "b9ef4141-4ada-4d61-b7b7-53e0b9628a2c"
+        }, 
+        "16": {
+            "annotation": "", 
+            "id": 16, 
+            "input_connections": {
+                "input": {
+                    "id": 12, 
+                    "output_name": "out_txt"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 2041, 
+                "top": 557
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka_stats-combined.txt.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "8c155499-8fa5-4268-9012-3df76ce82d4f"
+        }, 
+        "17": {
+            "annotation": "", 
+            "id": 17, 
+            "input_connections": {
+                "input": {
+                    "id": 12, 
+                    "output_name": "out_log"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Bundle Collection", 
+            "outputs": [
+                {
+                    "name": "html_file", 
+                    "type": "html"
+                }
+            ], 
+            "position": {
+                "left": 2041, 
+                "top": 670
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka-combined.log.zip"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "html_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "7a3cdc6c-d6a3-45c7-8225-97e2b0cd97f4"
+        }
+    }, 
+    "uuid": "39089dd9-d80c-412a-8aef-502c326abeb6"
+}

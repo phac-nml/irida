@@ -5,8 +5,6 @@ import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * Metadata for an assembly and annotation analysis.
  * 
@@ -34,6 +32,11 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		super(executionManagerAnalysisId, analysisOutputFilesMap);
 	}
+
+	@JsonIgnore
+	public AnalysisOutputFile getReadMergeLog() {
+		return getAnalysisOutputFile("read-merge-log");
+	}
 	
 	@JsonIgnore
 	public AnalysisOutputFile getAssemblyLog() {
@@ -43,6 +46,21 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 	@JsonIgnore
 	public AnalysisOutputFile getContigs() {
 		return getAnalysisOutputFile("contigs");
+	}
+
+	@JsonIgnore
+	public AnalysisOutputFile getContigsWithRepeats() {
+		return getAnalysisOutputFile("contigs-with-repeats");
+	}
+
+	@JsonIgnore	
+	public AnalysisOutputFile getContigsWithoutRepeats() {
+		return getAnalysisOutputFile("contigs-without-repeats");
+	}
+	
+	@JsonIgnore
+	public AnalysisOutputFile getAssemblyStatsWithRepeats() {
+		return getAnalysisOutputFile("assembly-stats-repeats");
 	}
 	
 	@JsonIgnore
