@@ -54,7 +54,7 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "sequencingRun", orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE }, mappedBy = "sequencingRun", orphanRemoval = true)
 	private Set<SequenceFile> sequenceFiles;
 
 	@NotNull
