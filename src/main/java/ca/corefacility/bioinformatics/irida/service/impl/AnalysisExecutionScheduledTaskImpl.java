@@ -82,7 +82,6 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
 			for (AnalysisSubmission submission : analysisSubmissions) {
-				logger.debug("Imma transfer some stuff");
 				submissions.add(analysisExecutionService.downloadSubmissionFiles(submission));
 			}
 
