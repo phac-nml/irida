@@ -1,144 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ddl="http://www.thymeleaf.org/dandelion"
+      xmlns:dt="http://www.thymeleaf.org/dandelion/datatables"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
 <head>
     <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-          href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
 </head>
-<body>
+<body ddl:bundle-includes="irida-datatables">
 <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
-        <h1><span th:text="#{projects.title}">Projects</span><a ng-hide="uiGalaxyCtrl.inGalaxy" th:href="@{/projects/new}" href="/projects/new" class="btn btn-default pull-right"  id="newProjectBtn"><span class="fa fa-fw fa-plus ng-cloak"></span>&nbsp;<span th:text="#{projects.btb.create-project}">Create New Project</span></a></h1>
-        <table id="projectsTable" class="table table-hover">
+        <h1>
+            <span th:text="#{projects.title}">Projects</span>
+            <a ng-hide="uiGalaxyCtrl.inGalaxy" th:href="@{/projects/new}" href="/projects/new"
+               class="btn btn-default pull-right" id="newProjectBtn">
+                <span class="fa fa-fw fa-plus ng-cloak"></span>
+                &nbsp;
+                <span th:text="#{projects.btb.create-project}">Create New Project</span>
+            </a>
+        </h1>
+        <div dt:conf="projectsTable">
+            <div dt:confType="callback" dt:type="draw" dt:function="irida-datatables#tableDrawn"></div>
+        </div>
+        <table id="projectsTable" dt:table="true">
             <thead>
             <tr role="row" th:inline="text">
-                <td><input type="checkbox" id="selectAll"/></td>
-                <th id="project-id">[[#{projects.table.id}]]<i class="glyphicon"></i></th>
-                <th id="project-name">[[#{projects.table.name}]]<i class="glyphicon"></i></th>
-                <th id="project-organism">[[#{projects.table.organism}]]<i class="glyphicon"></i></th>
-                <th>[[#{projects.table.role}]]<i class="glyphicon"></i></th>
-                <th>[[#{projects.table.samples}]]</th>
-                <th>[[#{projects.table.members}]]</th>
-                <th>[[#{projects.table.created}]]<i class="glyphicon"></i></th>
-                <th>[[#{projects.table.modified}]]<i class="glyphicon"></i></th>
+                <th id="project-id" th:text="#{projects.table.id}"></th>
+                <th id="project-name" th:text="#{projects.table.name}"></th>
+                <th id="project-organism" th:text="#{projects.table.organism}"></th>
+                <th th:text="#{projects.table.role}"></th>
+                <th th:text="#{projects.table.samples}"></th>
+                <th th:text="#{projects.table.members}"></th>
+                <th th:text="#{projects.table.created}"></th>
+                <th th:text="#{projects.table.modified}"></th>
             </tr>
             </thead>
-            <tbody></tbody>
+            <tbody th:with="dateformat=#{locale.date.short}">
+            <tr th:each="project : ${projects}">
+                <td th:text="${project?.id}">1</td>
+                <td>
+                    <a class="btn btn-default btn-xs" th:href="@{'/projects/' + ${project.id}}" href="#" th:text="${project?.name}"></a></td>
+                <td th:text="${project?.organism}">E. coli</td>
+                <td th:text="#{'projectRole.' + ${project?.role}}">User</td>
+                <td th:text="${project?.samples}">20</td>
+                <td th:text="${project?.members}">120</td>
+                <td th:text="${#dates.format(project?.created, dateformat)}">21 Jun, 1976</td>
+                <td th:text="${#dates.format(project?.modified, dateformat)}">21 Jun, 1979</td>
+            </tr>
+            </tbody>
         </table>
     </main>
-</div>
-<div layout:fragment="page-scripts">
-    <script src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js" th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
-            src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function () {
-            var allChecked = false,
-                    selected = [],
-                    $selectAll = $("#selectAll"),
-                    $projectsTable = $('#projectsTable');
-
-            $projectsTable.DataTable({
-                'dom': "<'top'lf>rt<'bottom'ip><'clear'>",
-                'processing': true,
-                'serverSide': true,
-                'deferRender': true,
-                'ajax': {
-                    "url": /*[[@{${ajaxURL}}]]*/ '/projects/ajax/list'
-                },
-                'columns': [
-                    {
-                        "data": "id",
-                        "render": function (data) {
-                            var checked = allChecked || selected.indexOf(data) >= 0 ? "checked" : "";
-                            return '<input type="checkbox" value="' + data + '" ' + checked + '/>';
-                        },
-                        "visible": /*[[${isAdmin}]]*/ false,
-                        "sortable": false
-                    },
-                    {
-                        "data": "id"
-                    },
-                    {
-                        "data": "name",
-                        'render': function (data, type, row) {
-                            var urlBase = /*[[@{/projects/}]]*/ '/projects/';
-                            return '<a class="btn btn-default btn-xs" href="' + urlBase + row.id + '">' + data + '</a>';
-                        }
-                    },
-                    {
-                        "data": "organism",
-                        'render': function (data) {
-                            if (data != null && data !== undefined) {
-                                return '<i class="organism">' + data + '</i>';
-                            }
-                            else {
-                                return /*[[#{generic.unknown}]]*/ 'unknown';
-                            }
-                        }
-                    },
-                    {
-                        "data": "role",
-                        "visible": /*[[${not isAdmin}]]*/ true,
-                        'render': function (data) {
-                            if (data === 'PROJECT_OWNER') {
-                                return '<span class="glyphicon glyphicon-tower"></span>&nbsp;&nbsp;' + /*[[#{project.role.owner}]]*/ 'Owner';
-                            }
-                            else if (data === 'PROJECT_USER') {
-                                return '<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;' + /*[[#{project.role.collaborator}]]*/ 'Collaborator';
-                            }
-                            else {
-                                return '<span class="glyphicon glyphicon-minus"></span>';
-                            }
-                        }
-                    },
-                    {
-                        "data": "samples",
-                        'sortable': false
-                    },
-                    {
-                        "data": "members",
-                        'sortable': false,
-                    },
-                    {
-                        "data": "dateCreated"
-                    },
-                    {
-                        "data": "dateModified",
-                        'render': function (data) {
-                            return '<span data-livestamp="' + data + '" title="' + new Date(data) + '">'
-                        },
-                        "orderSequence": ["asc"]
-                    }
-                ]
-            });
-
-            $projectsTable.find('tbody').on('click', 'input', function () {
-                var id = $(this).val();
-                console.log(id);
-                var index = selected.indexOf(id);
-                if (index == -1) {
-                    selected.push(id);
-                }
-                else {
-                    selected.splice(index, 1);
-                }
-                $selectAll.prop('indeterminate', selected.length);
-            });
-
-            $selectAll.on("click", function () {
-                console.log("clicked")
-                var $this = $(this);
-                selected = [];
-                allChecked = $this.prop("checked");
-                $projectsTable.find('input').prop('checked', allChecked);
-            });
-        });
-        /*]]>*/
-    </script>
 </div>
 </body>
 </html>
