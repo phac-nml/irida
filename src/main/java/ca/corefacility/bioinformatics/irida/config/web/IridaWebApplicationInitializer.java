@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
 import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -10,6 +12,9 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
+
+import com.github.dandelion.core.web.DandelionFilter;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * REST API initializer with security.
@@ -33,6 +38,16 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 				.setContextAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.dispatcher");
 		servletContext.addFilter("springSecurityFilterChain", springSecurityFilterChain).addMappingForUrlPatterns(null,
 				false, "/*");
+
+		// Register the Dandelion filter
+		FilterRegistration.Dynamic dandelionFilter = servletContext.addFilter("dandelionFilter", new DandelionFilter());
+		dandelionFilter.addMappingForUrlPatterns(null, false, "/*");
+
+		// Register the Dandelion servlet
+		ServletRegistration.Dynamic dandelionServlet = servletContext.addServlet("dandelionServlet",
+				new DandelionServlet());
+		dandelionServlet.setLoadOnStartup(2);
+		dandelionServlet.addMapping("/dandelion-assets/*");
 	}
 
 	@Override
@@ -42,7 +57,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[] { new HttpHeadFilter() };
+		return new Filter[] { new HttpHeadFilter()};
 	}
 
 	@Override
