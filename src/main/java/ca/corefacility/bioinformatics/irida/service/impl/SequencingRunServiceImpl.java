@@ -121,24 +121,31 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 		SequencingRun read = read(id);
 		Set<SequenceFile> filesForSequencingRun = sequenceFileRepository.findSequenceFilesForSequencingRun(read);
 
-		// Get the Samples used in the SequencingRun and delete the joins
+		// For each file in the run
 		for (SequenceFile file : filesForSequencingRun) {
-			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(file);
 
+			// get the sample the file is in. If the sample is empty when this
+			// is complete it will be removed
+			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(file);
 			logger.trace("Sample " + sampleForSequenceFile.getSubject().getId() + " is used in this run");
 			referencedSamples.add(sampleForSequenceFile.getSubject());
 
+			// Get the SequenceFilePair for this object
 			SequenceFilePair pair = pairRepository.getPairForSequenceFile(file);
+
+			// Get the analysis submissions this file is included in
 			Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionForSequenceFile(file);
 			Set<AnalysisSubmission> pairSubmissions = submissionRepository
 					.findAnalysisSubmissionForSequenceFilePair(pair);
 
+			// If there are no submissions, we can delete the pair and file
 			if (submissions.isEmpty() && pairSubmissions.isEmpty()) {
 				if (pair != null) {
 					pairRepository.delete(pair);
 				}
 				sequenceFileRepository.delete(file);
 			} else {
+				// otherwise we'll just remove it from the sample
 				ssfRepository.delete((SampleSequenceFileJoin) sampleForSequenceFile);
 			}
 		}
