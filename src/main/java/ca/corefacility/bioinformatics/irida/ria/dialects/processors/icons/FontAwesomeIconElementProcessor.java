@@ -53,6 +53,14 @@ public class FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionE
 					.setIconSize(element.getAttributeValue(SIZE_ATTRIBUTE)).build();
 			container.setAttribute("class", fontAwesome.getClassString());
 
+			// Remove FontAwesome attributes
+			if (element.hasAttribute(FIXED_ATTRIBUTE)) {
+				element.removeAttribute(FIXED_ATTRIBUTE);
+			}
+			if (element.hasAttribute(SIZE_ATTRIBUTE)) {
+				element.removeAttribute(SIZE_ATTRIBUTE);
+			}
+
 			// Copy over and other remaining attributes
 			Map<String, Attribute> attrmap = element.getAttributeMap();
 			for (String attr : attrmap.keySet()) {
