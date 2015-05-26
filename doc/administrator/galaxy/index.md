@@ -217,13 +217,9 @@ For more details, please refer to the [Running Galaxy in a production environmen
 
 ### Step 6: Configure Galaxy Jobs Scheduler
 
-There are many different ways to configure how Galaxy schedules jobs for execution.  The default method is to run all jobs on the local machine and limit to 4 jobs at any given time.  This can be modified by doing the following:
+The default job configuration is fine for running Galaxy on a single server or for evaluation purposes.  This will default to running all jobs on the local machine and limit to 4 jobs at any given time.
 
-```bash
-cp $GALAXY_ROOT_DIR/config/job_conf.xml.sample_basic $GALAXY_ROOT_DIR/config/job_conf.xml
-```
-
-Now please modify the file `$GALAXY_ROOT_DIR/config/job_conf.xml` and make any changes specific to your environment.  Please refer to the documentation [Galaxy Job Config][] for more information.
+For more complicated job scheduling, please refer to the [Galaxy Job Config][] documentation.
 
 ### Step 7: Test out Galaxy
 
