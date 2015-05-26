@@ -83,6 +83,8 @@ The IRIDA platform also looks for a web application configuration file at `/etc/
     
 If this file does not exist the platform will use internal configuration values which will probably not correspond to your production environment.
 
+The `mail.server.*` configuration parameters will need to correspond to a configured mail server, such as [Postfix][].  This will be used by IRIDA to send email notifications to users on the creation of an account or on password resets.
+
 Analytics
 ---------
 The IRIDA platform supports web analytics.  Include the analytic snippet inside a file in `/etc/irida/analytics/`.  The snippet will be injected into the page.
@@ -132,3 +134,5 @@ The default administrator username and password are:
 You will be required to change the password the first time you log-in with these credentials.
 
 Once you've logged in for the first time, you will probably want to create some user accounts. User account creation is outlined in our [Administrative User Guide]({{ site.url }}/user/administrator).
+
+[Postfix]: http://www.postfix.org/
