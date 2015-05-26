@@ -12,6 +12,8 @@ Thymeleaf Font Awesome Dialect
 
 The IRIDA UI relies heavily on [Font Awesome](http://fortawesome.github.io/Font-Awesome/) for vector icons. In order to ensure consistent use of icons within the UI a Thymeleaf dialect was created.
 
+If the type of icon selected is not available an error will be thrown and the page will not render.
+
 Dialect Usage
 -------------
 
