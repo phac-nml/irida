@@ -36,7 +36,7 @@ The Font Awesome Dialect will render the following after server sided processing
 Not all icons in Font Awesome are a consistent width.  If the intent of usage is in a list (such as a sidebar) add the `fixed` to the tag:
 
 ```html
-<fa:icon type="organism" fixed="" />
+<fa:icon type="organism" fixed="fixed" />
 ```
 
 The Font Awesome Dialect will render the following after server sided processing by Thymeleaf:
