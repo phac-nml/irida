@@ -91,7 +91,7 @@ public class FontAwesome {
 	/*
 	Attribute to display terminal icon
 	 */
-	private static final String TERMINAL_ATTRIBITE = "terminal";
+	private static final String TERMINAL_ATTRIBUTE = "terminal";
 	private static final String TERMINAL_ICON = "terminal";
 	/*
 	Attribute be used to indicate for collapsible panels
@@ -125,7 +125,7 @@ public class FontAwesome {
 			.put(PIPELINE_STATE_ATTRIBUTE, PIPELINE_STATE_ICON)
 			.put(FILE_ATTRIBUTE, FILE_ICON)
 			.put(COPY_ATTRIBUTE, COPY_ICON)
-			.put(TERMINAL_ATTRIBITE, TERMINAL_ICON)
+			.put(TERMINAL_ATTRIBUTE, TERMINAL_ICON)
 			.put(COLLAPSE_SHOW_ATTRIBUTE, COLLAPSE_SHOW_ICON)
 			.put(COLLAPSE_CLOSE_ATTRIBUTE, COLLAPSE_CLOSE_ICON)
 			.build();
