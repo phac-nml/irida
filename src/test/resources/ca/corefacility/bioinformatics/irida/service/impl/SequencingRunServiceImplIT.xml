@@ -46,6 +46,18 @@
 		created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
 	<sequence_file id="4" sequencing_run_id="3" file_path="/FileThatMayNotExist3"
 		created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
+	<sequence_file id="5" sequencing_run_id="2" file_path="/FileThatMayNotExist4"
+        created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
+    <sequence_file id="6" sequencing_run_id="2" file_path="/FileThatMayNotExist5"
+        created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
+    <sequence_file id="7" sequencing_run_id="2" file_path="/FileThatMayNotExist6"
+        created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
+        
+    <sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
+    <sequence_file_pair_files pair_id="1"
+        files_id="5" />
+    <sequence_file_pair_files pair_id="1"
+        files_id="6" />
 
 	<sample id="1" sampleName="sample" sequencerSampleId="sample1"
 		createdDate="2013-07-18 14:20:19.0" />
@@ -66,4 +78,10 @@
 		createdDate="2013-07-18 14:20:19.0" />
 	<project_user id="1" project_id="1" user_id="1"
 		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0" />
+	
+	<analysis_submission id="1" name="my analysis" remote_analysis_id="1"
+        analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
+        workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1" analysis_cleaned_state="NOT_CLEANED"/>
+        
+    <analysis_submission_sequence_file_single analysis_submission_id="1" sequence_file_id="7" />
 </dataset>

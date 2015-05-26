@@ -127,8 +127,10 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 			// get the sample the file is in. If the sample is empty when this
 			// is complete it will be removed
 			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(file);
-			logger.trace("Sample " + sampleForSequenceFile.getSubject().getId() + " is used in this run");
-			referencedSamples.add(sampleForSequenceFile.getSubject());
+			if (sampleForSequenceFile != null) {
+				logger.trace("Sample " + sampleForSequenceFile.getSubject().getId() + " is used in this run");
+				referencedSamples.add(sampleForSequenceFile.getSubject());
+			}
 
 			// Get the SequenceFilePair for this object
 			SequenceFilePair pair = pairRepository.getPairForSequenceFile(file);
@@ -140,18 +142,25 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 
 			// If there are no submissions, we can delete the pair and file
 			if (submissions.isEmpty() && pairSubmissions.isEmpty()) {
+				logger.trace("Deleting file " + file.getId());
 				if (pair != null) {
 					pairRepository.delete(pair);
 				}
 				sequenceFileRepository.delete(file);
 			} else {
-				// otherwise we'll just remove it from the sample
-				ssfRepository.delete((SampleSequenceFileJoin) sampleForSequenceFile);
+				logger.trace("Keeping file " + file.getId() + " because it's used in an analysis");
+				if (sampleForSequenceFile != null) {
+					// otherwise we'll just remove it from the sample
+					ssfRepository.delete((SampleSequenceFileJoin) sampleForSequenceFile);
+				}
+				
+				file.setSequencingRun(null);
+				sequenceFileRepository.updateWithoutFileRevision(file);
 			}
 		}
 
 		// Delete the run
-		logger.trace("Deleting SequencingRun");
+		logger.trace("Deleting SequencingRun " + id);
 		super.delete(id);
 
 		// Search if samples are empty. If they are, delete the sample.

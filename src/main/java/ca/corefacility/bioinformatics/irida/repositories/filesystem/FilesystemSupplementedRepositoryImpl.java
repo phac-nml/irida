@@ -56,6 +56,14 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Type updateWithoutFileRevision(Type entity) {
+		return entityManager.merge(entity);
+	}
+
+	/**
 	 * Persist an entity to disk and database. Implementors of this method are
 	 * recommended to call {@link FilesystemSupplementedRepositoryImpl#saveInternal}
 	 * to avoid repeated boilerplate code.
