@@ -192,6 +192,7 @@ The provided startup script uses a default system user named `galaxy-irida` to r
 
 ```bash
 useradd --no-create-home --system galaxy-irida
+chown -R galaxy-irida $GALAXY_BASE_DIR
 ```
 
 Please make any necessary changes to this script and do the following:
