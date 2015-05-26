@@ -93,7 +93,7 @@
 						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename">
 								<fa:icon type="file" />&nbsp;
-								<th:block th:text="${file.getLabel()}"></th:block>
+								<span class="name" th:text="${file.getLabel()}"></span>
 							</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
 						</accordion-group>
