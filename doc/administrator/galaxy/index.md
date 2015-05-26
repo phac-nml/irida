@@ -93,6 +93,8 @@ The following dependencies are required for running or building some of the tool
 	yum groupinstall "Development tools"
 	yum install db4-devel expat-devel java
 
+These instructions will walk through installing [PerlBrew][] for managing Perl and dependencies.  If you do not wish to install PerlBrew, you will have to, at minimum, install Perl and [App::cpanminus][].
+
 Galaxy Database Setup
 ---------------------
 
@@ -380,3 +382,5 @@ For more information please see the [Purging Histories and Datasets][] document.
 [history-options-icon]: images/history-options-icon.jpg
 [Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
 [Mercurial]: http://mercurial.selenic.com/
+[PerlBrew]: http://perlbrew.pl/
+[App::cpanminus]: http://search.cpan.org/~miyagawa/App-cpanminus-1.7027/lib/App/cpanminus.pm
