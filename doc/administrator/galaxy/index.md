@@ -125,7 +125,7 @@ requesting all changes
 abort: HTTP Error 400: Bad Request
 ```
 
-*If this occurs, you will have to manually install a newer version of [Mercurial][], or manually download the specific revision of Galaxy used.* 
+*If this occurs, you will have to manually install a newer version of [Mercurial][], or manually download the specific revision of Galaxy used at <https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz>* 
 
 ### Step 2: Create Galaxy Environment File
 
