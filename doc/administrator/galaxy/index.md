@@ -86,10 +86,11 @@ Dependency Installation
 
 The installation and setup of Galaxy requires a number of dependency software to be installed.  To install this software on CentOS (>= 6.6) please run:
 
-	yum install mercurial nginx pwgen python
+	yum install mercurial nginx pwgen python zlib-devel ncurses-devel tcsh
 
 The following dependencies are required for running or building some of the tools.
 
+	yum groupinstall "Development tools"
 	yum install db4-devel expat-devel java
 
 Galaxy Database Setup
