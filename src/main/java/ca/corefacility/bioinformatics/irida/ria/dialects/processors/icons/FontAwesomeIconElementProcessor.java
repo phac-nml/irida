@@ -16,7 +16,8 @@ import com.google.common.collect.ImmutableList;
 /**
  * Element processor to handle icons in the IRIDA UI.
  */
-public class FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionElementProcessor {
+public class
+		FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionElementProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FontAwesomeIconElementProcessor.class);
 
 	// DOM tag name

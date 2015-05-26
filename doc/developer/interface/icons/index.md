@@ -51,263 +51,32 @@ Since Font Awesome icons are vector icons, they can be rendered at larger sizes 
 
 There are six sizes of icons that can be add in IRIDA UI: 
 
-<table>
-<tr>
-<td>
-no tag
-</td>
-<td>
-&lt;fa:icon type="organism" /&gt;
-</td>
-<td>    
-{% icon fa-leaf %}
-</td>
-</tr>
-<tr>
-<td>
-size="lg"
-</td>
-<td>
-&lt;fa:icon type="organism" size="lg" /&gt;
-</td>
-<td>    
-{% icon fa-leaf fa-lg %}
-</td>
-</tr>
-<tr>
-<td>
-size="2x"
-</td>
-<td>
-&lt;fa:icon type="organism" size="2x" /&gt;
-</td>
-<td>    
-{% icon fa-leaf fa-2x %}
-</td>
-</tr>
-<tr>
-<td>
-size="3x"
-</td>
-<td>
-&lt;fa:icon type="organism" size="3x" /&gt;
-</td>
-<td>    
-{% icon fa-leaf fa-3x %}
-</td>
-</tr>
-<tr>
-<td>
-size="4x"
-</td>
-<td>
-&lt;fa:icon type="organism" size="4x" /&gt;
-</td>
-<td>    
-{% icon fa-leaf fa-4x %}
-</td>
-</tr>
-<tr>
-<td>
-size="5x"
-</td>
-<td>
-&lt;fa:icon type="organism" size="5x" /&gt;
-</td>
-<td>    
-{% icon fa-leaf fa-5x %}
-</td>
-</tr>
-</table>
+|-----------|---------------------------------------------|--------------------------|
+| no tag    | &lt;fa:icon type="organism" /&gt;           | {% icon fa-leaf %}       |
+| size="lg" | &lt;fa:icon type="organism" size="lg" /&gt; | {% icon fa-leaf fa-lg %} |
+| size="2x" | &lt;fa:icon type="organism" size="2x" /&gt; | {% icon fa-leaf fa-2x %} |
+| size="3x" | &lt;fa:icon type="organism" size="3x" /&gt; | {% icon fa-leaf fa-3x %} |
+| size="4x" | &lt;fa:icon type="organism" size="4x" /&gt; | {% icon fa-leaf fa-4x %} |
+| size="5x" | &lt;fa:icon type="organism" size="5x" /&gt; | {% icon fa-leaf fa-5x %} |
 
 ### Available Icons
 
-<table>
-<tr>
-<td>
-file
-</td>
-<td>
-File
-</td>
-<td>
-{% icon fa-file-o %}
-</td>
-</tr>
-<tr>
-<td>
-remove
-</td>
-<td>
-Non-permanent removal of an item from a list.
-</td>
-<td>
-{% icon fa-remove %}
-</td>
-</tr>
-<tr>
-<td>
-delete
-</td>
-<td>
-Permanent deletion of an item from the UI.
-</td>
-<td>
-{% icon fa-trash-o %}
-</td>
-</tr>
-<tr>
-<td>
-merge
-</td>
-<td>
-Merging files
-</td>
-<td>
-{% icon fa-compress %}
-</td>
-</tr>
-<tr>
-<td>
-copy
-</td>
-<td>
-Copy an item to another location.
-</td>
-<td>
-{% icon fa-copy %}
-</td>
-</tr>
-<tr>
-<td>
-save
-</td>
-<td>
-Save an item.
-</td>
-<td>
-{% icon fa-save %}
-</td>
-</tr>
-<tr>
-<td>
-download
-</td>
-<td>
-Download
-</td>
-<td>
-{% icon fa-download %}
-</td>
-</tr>
-<tr>
-<td>
-warning
-</td>
-<td>
-Prefix warning messages to warning messages
-</td>
-<td>
-{% icon fa-exclamation-triangle %}
-</td>
-</tr>
-<tr>
-<td>
-id
-</td>
-<td>
-Any IRIDA item's identifier
-</td>
-<td>
-{% icon fa-barcode %}
-</td>
-</tr>
-<tr>
-<td>
-organism
-</td>
-<td>
-Organism
-</td>
-<td>
-{% icon fa-leaf %}
-</td>
-</tr>
-<tr>
-<td>
-date
-</td>
-<td>
-Any date or calendar
-</td>
-<td>
-{% icon fa-calendar-o %}
-</td>
-</tr>
-<tr>
-<td>
-loading
-</td>
-<td>
-Prefix loading messages
-</td>
-<td>
-{% icon fa-spinner fa-pulse %}
-</td>
-</tr>
-<tr>
-<td>
-terminal
-</td>
-<td>
-Displaying terminal commands
-</td>
-<td>
-{% icon fa-terminal %}
-</td>
-</tr>
-<tr>
-<td>
-show
-</td>
-<td>
-Disclosure panels (accordions) open icon
-</td>
-<td>
-{% icon fa-chevron-right %}
-</td>
-</tr>
-<tr>
-<td>
-hide
-</td>
-<td>
-Disclosure panels (accordions) hide icon
-</td>
-<td>
-{% icon fa-chevron-down %}
-</td>
-</tr>
-<tr>
-<td>
-pipelineType
-</td>
-<td>
-Refers to pipeline type
-</td>
-<td>
-{% icon fa-cogs %}
-</td>
-</tr>
-<tr>
-<td>
-pipelineState
-</td>
-<td>
-Refers to pipeline state
-</td>
-<td>
-{% icon fa-heartbeat %}
-</td>
-</tr>
-</table>
+| Type          | When to Use                                               | Icon                               |
+|---------------|-----------------------------------------------------------|:----------------------------------:|
+| file          | Use to refer to a file                                    | {% icon fa-file-o %}               |
+| remove        | Use when performing a non-permanent removal from a list   | {% icon fa-remove %}               |
+| delete        | Use when deleting an item permanently from the UI         | {% icon fa-trash-o %}              |
+| merge         | Use for merging files                                     | {% icon fa-compress %}             |
+| copy          | Use for copying an item                                   | {% icon fa-copy %}                 |
+| save          | Use for saving an item                                    | {% icon fa-save %}                 |
+| download      | Use for downloading an item                               | {% icon fa-download %}             |
+| warning       | Use to prefix warning messages                            | {% icon fa-exclamation-triangle %} |
+| id            | Use for IRIDA identifier                                  | {% icon fa-barcode %}              |
+| organism      | Use for IRIDA organisms                                   | {% icon fa-leaf %}                 |
+| date          | Use for any date or calendar                              | {% icon fa-calendar-o %}           |
+| loading       | Use for displaying ajax loading                           | {% icon fa-spinner fa-pulse %}     |
+| terminal      | Use for terminal commands                                 | {% icon fa-terminal %}             |
+| show          | Use for indicating opening a disclosure panel (accordion) | {% icon fa-chevron-right %}        |
+| hide          | Use for indicating hiding a disclosure panel (accordion)  | {% icon fa-chevron-down %}         |
+| pipelineType  | Use to indicate a type of pipeline                        | {% icon fa-cogs %}                 |
+| pipelineState | Use to indicate the state of a pipeline                   | {% icon fa-heartbeat %}            |
