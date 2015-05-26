@@ -20,6 +20,7 @@ import java.util.concurrent.TimeoutException;
 
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;

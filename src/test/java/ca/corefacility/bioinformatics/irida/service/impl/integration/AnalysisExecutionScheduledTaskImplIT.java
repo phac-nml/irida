@@ -292,8 +292,17 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
 				validIridaWorkflowId);
 
+		// Download files for submission
+		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.downloadFiles();
+		assertEquals(1, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.FINISHED_DOWNLOADING, returnedSubmission.getAnalysisState());
+		}
+		
 		// PREPARE SUBMISSION
-		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
+		submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
 		assertEquals(1, submissionsFutureSet.size());
 		// wait until finished
 		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
@@ -441,9 +450,18 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	 *             On any exception.
 	 */
 	private void validateFullAnalysis(Set<AnalysisSubmission> submissions, int expectedSubmissionsToProcess)
-			throws Exception {		
+			throws Exception {
+		// Download files for submission
+		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.downloadFiles();
+		assertEquals(1, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.FINISHED_DOWNLOADING, returnedSubmission.getAnalysisState());
+		}
+				
 		// PREPARE SUBMISSION
-		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
+		submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
 		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
 		// wait until finished
 		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
