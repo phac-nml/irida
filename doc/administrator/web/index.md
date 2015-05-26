@@ -57,6 +57,22 @@ All IRIDA configuration files are stored in `/etc/irida/`. The main IRIDA config
 
 If this file does not exist, the platform will use internal configuration values. The internal configuration values point at a local instance of the database server. The likelihood of the internal configuration values correspond to your production environment is alarmingly low (or at least, should be).
 
+The main configuration parameters you will need to change are:
+
+1. **Directories to store files managed by IRIDA:**
+  * `sequence.file.base.directory=/opt/irida/data/sequence`
+  * `reference.file.base.directory=/opt/irida/data/reference`
+  * `output.file.base.directory=/opt/irida/data/output`
+  * `remote.file.temporary.directory=/opt/irida/data/remote-temporary-files`
+2. **Database connection information:**
+  * `jdbc.url=jdbc:mysql://localhost:3306/irida_test`
+  * `jdbc.username=test`
+  * `jdbc.password=test`
+3. **Galaxy connection information for executing pipelines:**
+  * `galaxy.execution.url=http://localhost/`
+  * `galaxy.execution.apiKey=xxxx`
+  * `galaxy.execution.email=user@localhost`
+
 Web Configuration
 -----------------
 The IRIDA platform also looks for a web application configuration file at `/etc/irida/web.conf`.  Similar to the irida.conf file, this file is a plain Java configuration file.  The properties in this file will be used to configure parameters of the web application component of the IRIDA platform.  You can download the file from [config/web.conf](config/web.conf), or you can find an example below:
