@@ -13,10 +13,12 @@ import com.google.common.collect.ImmutableSet;
  * Thymeleaf dialect specifically for components of the IRIDA UI.
  */
 public class FontAwesomeDialect extends AbstractDialect {
+	private static final String FONT_AWESOME_TAG_PREFIX = "fa";
 	private static final Set<IProcessor> PROCESSORS = ImmutableSet.of(new FontAwesomeIconElementProcessor());
 
-	@Override public String getPrefix() {
-		return "fa";
+	@Override
+	public String getPrefix() {
+		return FONT_AWESOME_TAG_PREFIX;
 	}
 
 	/**
