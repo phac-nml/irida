@@ -64,7 +64,7 @@
 							       ng-model="filter.minDate" is-open="filter.opened.minDate"
 							       max-date="filter.max" ng-change="filter.doDateFilter('minDate')"/>
 			              <span class="input-group-btn">
-			                <button type="button" class="btn btn-default" ng-click="filter.open($event, 'minDate')"><fa:icon type="date"></fa:icon></button>
+			                <button type="button" class="btn btn-default" ng-click="filter.open($event, 'minDate')"><fa:icon type="date" /></button>
 			              </span>
 						</div>
 						<label class="sidenav__label" th:text="#{analysis.filter.date-latest}">Latest Date</label>
@@ -75,7 +75,7 @@
 							       ng-model="filter.maxDate" is-open="filter.opened.maxDate"
 							       max-date="filter.max" close-text="Close" ng-change="filter.doDateFilter('maxDate')"/>
 			              <span class="input-group-btn">
-			                <button type="button" class="btn btn-default" ng-click="filter.open($event, 'maxDate')"><fa:icon type="date"></fa:icon></button>
+			                <button type="button" class="btn btn-default" ng-click="filter.open($event, 'maxDate')"><fa:icon type="date" /></button>
 			              </span>
 						</div>
 					</div>
@@ -88,7 +88,7 @@
 
 			<div class="ng-cloak" ng-controller="analysisController as ctrl">
 				<div ng-show="ctrl.loading" class="alert alert-info fade-in">
-					<b><fa:icon type="loading"></fa:icon>&nbsp;
+					<b><fa:icon type="loading" />&nbsp;
 						<span th:text="#{analysis.loading}">_CHECKING_SERVER_</span>
 					</b>
 				</div>
@@ -120,13 +120,13 @@
 								<button ng-show="analysis.analysisState==='COMPLETED'"
 								        class="btn btn-default btn-xs pull-right download-analysis-btn"
 								        th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
-									<fa:icon type="download"></fa:icon>
+									<fa:icon type="download" />
 								</button>
 							</td>
 						</tr>
 					</table>
 					<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak fade-in">
-						<strong><fa:icon type="warning"></fa:icon>&nbsp;
+						<strong><fa:icon type="warning" />&nbsp;
 							<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span>
 						</strong>
 
