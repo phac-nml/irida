@@ -72,7 +72,6 @@ The main configuration parameters you will need to change are:
   * `galaxy.execution.url=http://localhost/`
   * `galaxy.execution.apiKey=xxxx`
   * `galaxy.execution.email=user@localhost`
-  * `galaxy.execution.dataStorage=local`
 
 Web Configuration
 -----------------
