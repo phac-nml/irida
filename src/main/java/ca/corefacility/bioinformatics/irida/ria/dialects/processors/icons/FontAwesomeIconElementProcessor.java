@@ -19,6 +19,9 @@ import com.google.common.collect.ImmutableList;
 public class FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionElementProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FontAwesomeIconElementProcessor.class);
 
+	// DOM tag name
+	private static final String DOM_TAG_NAME = "icon";
+
 	// This is required!  This determines the type of icon to add (see list of attributes below).
 	private static final String TYPE_ATTRIBUTE = "type";
 	// Optional.  This will add a class to give the icon a fixed width.  Use when creating lists which have icons.
@@ -30,7 +33,7 @@ public class FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionE
 	private static final String ICON_CONTAINER = "span";
 
 	public FontAwesomeIconElementProcessor() {
-		super("icon");
+		super(DOM_TAG_NAME);
 	}
 
 	/**
@@ -39,11 +42,11 @@ public class FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionE
 	@Override
 	protected List<Node> getMarkupSubstitutes(Arguments arguments, Element element) {
 		// Create the DOM element for the icons
-		final Element container = new Element(ICON_CONTAINER);
+		Element container = new Element(ICON_CONTAINER);
 		/*
 		Get the type of icon needed.  If the icon is not available you should not create the DOM element.
 		 */
-		final String type = element.getAttributeValue(TYPE_ATTRIBUTE);
+		String type = element.getAttributeValue(TYPE_ATTRIBUTE);
 		element.removeAttribute(TYPE_ATTRIBUTE);
 		try {
 			FontAwesome fontAwesome = FontAwesome.builder(type).fixedWidth(element.hasAttribute(FIXED_ATTRIBUTE))
@@ -57,15 +60,13 @@ public class FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionE
 			}
 
 			return ImmutableList.of(container);
-		}
-		catch (IconNotFoundException e){
+		} catch (IconNotFoundException e) {
 			logger.error(e.getMessage());
 			return null;
 		}
 	}
 
 	/**
-	 *
 	 * {@inheritDoc}
 	 */
 	@Override
