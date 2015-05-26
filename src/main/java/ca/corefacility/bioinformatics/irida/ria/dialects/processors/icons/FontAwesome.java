@@ -82,7 +82,7 @@ public class FontAwesome {
 	Attribute for pipeline state
 	 */
 	private static final String PIPELINE_STATE_ATTRIBUTE = "pipelineState";
-	private static final String PIPELINE_STATE_ICON = "history";
+	private static final String PIPELINE_STATE_ICON = "heartbeat";
 	/*
 	Attribute to be used for all files
 	 */
