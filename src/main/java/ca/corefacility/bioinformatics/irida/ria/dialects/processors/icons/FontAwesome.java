@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -106,6 +107,9 @@ public class FontAwesome {
 	 */
 	private static final String FIXED_WIDTH_CLASS = "fa-fw";
 
+	/*
+	Map to convert the attribute to the icon name
+	 */
 	private static final Map<String, String> FA_ATTRIBUTE_TO_CLASS_MAP = new ImmutableMap.Builder<String, String>()
 			.put(REMOVE_ATTRIBUTE, REMOVE_ICON)
 			.put(DELETE_ATTRIBUTE, DELETE_ICON)
@@ -126,6 +130,9 @@ public class FontAwesome {
 			.put(COLLAPSE_CLOSE_ATTRIBUTE, COLLAPSE_CLOSE_ICON)
 			.build();
 
+	/*
+	Map to convert the size attribute to an icon size.
+	 */
 	private static final Map<String, String> ICON_SIZE = ImmutableMap.of(
 			"lg", "fa-lg",
 			"2x", "fa-2x",
@@ -136,28 +143,104 @@ public class FontAwesome {
 
 	private List<String> classes;
 
-	public FontAwesome(String type) throws IconNotFoundException {
-		if (FA_ATTRIBUTE_TO_CLASS_MAP.containsKey(type)) {
-			classes = new ArrayList<>();
-			classes.add(ICON_BASE + FA_ATTRIBUTE_TO_CLASS_MAP.get(type));
-		} else {
-			throw new IconNotFoundException("Do not have icon registered for type: " + type);
+	/**
+	 * Used to build a {@link FontAwesome}
+	 */
+	public static class Builder {
+		private List<String> classes;
+
+		/**
+		 * Creates a {@link Builder} with the type of icon to create
+		 * @param type {@link String} type of icon to use.
+		 * @throws IconNotFoundException
+		 */
+		public Builder(String type) throws IconNotFoundException {
+			if (FA_ATTRIBUTE_TO_CLASS_MAP.containsKey(type)) {
+				classes = new ArrayList<>();
+				classes.add(ICON_BASE + FA_ATTRIBUTE_TO_CLASS_MAP.get(type));
+			} else {
+				throw new IconNotFoundException("Do not have icon registered for type: " + type);
+			}
+		}
+
+		/**
+		 * Sets the fixed with class if needed
+		 *
+		 * @param isFixed
+		 * 		{@link Boolean} if it is to be fixed width
+		 *
+		 * @return {@link Builder}
+		 */
+		public Builder fixedWidth(boolean isFixed) {
+			if (isFixed) {
+				this.classes.add(FIXED_WIDTH_CLASS);
+			}
+			return this;
+		}
+
+		/**
+		 * Sets the appropriate icon size for the {@link FontAwesome}
+		 *
+		 * @param size
+		 * 		{@link String} desired icon size or null
+		 *
+		 * @return {@link Builder}
+		 * @throws IconNotFoundException
+		 */
+		public Builder setIconSize(String size) throws IconNotFoundException {
+			if (!Strings.isNullOrEmpty(size)) {
+				if (ICON_SIZE.containsKey(size)) {
+					this.classes.add(ICON_SIZE.get(size));
+				} else {
+					throw new IconNotFoundException("Icon size " + size + " is not available");
+				}
+			}
+			return this;
+		}
+
+		/**
+		 * Build the desired {@link FontAwesome}
+		 *
+		 * @return {@link FontAwesome}
+		 */
+		public FontAwesome build() {
+			return new FontAwesome(this);
 		}
 	}
 
+	protected FontAwesome() {
+	}
+
+	/**
+	 * Builds a new {@link FontAwesome} with the given {@link Builder}
+	 *
+	 * @param builder
+	 * 		The {@link Builder} to build the {@link FontAwesome}
+	 */
+	public FontAwesome(Builder builder) {
+		this();
+		this.classes = builder.classes;
+	}
+
+	/**
+	 * Get the {@link Builder} for Font-Awesome Icons
+	 *
+	 * @param type
+	 * 		{@link String} type of icon to create.
+	 *
+	 * @return {@link Builder} for icons
+	 * @throws IconNotFoundException
+	 */
+	public static Builder builder(String type) throws IconNotFoundException {
+		return new FontAwesome.Builder(type);
+	}
+
+	/**
+	 * Get the class list in string form for the icon.
+	 *
+	 * @return {@link String} class list for the desired icon.
+	 */
 	public String getClassString() {
 		return StringUtils.collectionToDelimitedString(classes, " ");
-	}
-
-	public void isFixedWidth() {
-		classes.add(FIXED_WIDTH_CLASS);
-	}
-
-	public void setIconSize(String size) throws IconNotFoundException {
-		if (ICON_SIZE.containsKey(size)) {
-			classes.add(ICON_SIZE.get(size));
-		} else {
-			throw new IconNotFoundException("Icon size " + size + " is not available");
-		}
 	}
 }

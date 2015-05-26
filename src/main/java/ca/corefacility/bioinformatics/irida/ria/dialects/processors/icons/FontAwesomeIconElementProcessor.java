@@ -46,25 +46,9 @@ public class FontAwesomeIconElementProcessor extends AbstractMarkupSubstitutionE
 		final String type = element.getAttributeValue(TYPE_ATTRIBUTE);
 		element.removeAttribute(TYPE_ATTRIBUTE);
 		try {
-			FontAwesome fontAwesome = new FontAwesome(type);
-
-			if (element.hasAttribute(FIXED_ATTRIBUTE)) {
-				fontAwesome.isFixedWidth();
-				element.removeAttribute(FIXED_ATTRIBUTE);
-			}
-
-			if (element.hasAttribute(SIZE_ATTRIBUTE)) {
-				fontAwesome.setIconSize(element.getAttributeValue(SIZE_ATTRIBUTE));
-				element.removeAttribute(SIZE_ATTRIBUTE);
-			}
-
-			// Check to see if there are any classes already on the element
-			String classes = "";
-			if (element.hasAttribute("class")) {
-				classes = element.getAttributeValue("classes");
-			}
-			classes += fontAwesome.getClassString();
-			container.setAttribute("class", classes);
+			FontAwesome fontAwesome = FontAwesome.builder(type).fixedWidth(element.hasAttribute(FIXED_ATTRIBUTE))
+					.setIconSize(element.getAttributeValue(SIZE_ATTRIBUTE)).build();
+			container.setAttribute("class", fontAwesome.getClassString());
 
 			// Copy over and other remaining attributes
 			Map<String, Attribute> attrmap = element.getAttributeMap();
