@@ -1,8 +1,8 @@
 {
-  "bundle": "projects-list",
+  "bundle": "projectsList",
   "assets": [
     {
-      "name": "projects-list",
+      "name": "projectsList",
       "version": "1.0.0",
       "type": "js",
       "locations": {

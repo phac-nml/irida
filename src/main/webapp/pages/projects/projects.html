@@ -7,7 +7,7 @@
 <head>
     <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
 </head>
-<body ddl:bundle-includes="irida-datatables">
+<body ddl:bundle-includes="irida-datatables, projectsList">
 <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
         <h1>
@@ -22,32 +22,19 @@
         <div dt:conf="projectsTable">
             <div dt:confType="callback" dt:type="draw" dt:function="irida-datatables#tableDrawn"></div>
         </div>
-        <table id="projectsTable" dt:table="true">
+        <table id="projectsTable" dt:table="true" dt:url="@{/projects/ajax/list}">
             <thead>
             <tr role="row" th:inline="text">
-                <th id="project-id" th:text="#{projects.table.id}"></th>
-                <th id="project-name" th:text="#{projects.table.name}"></th>
-                <th id="project-organism" th:text="#{projects.table.organism}"></th>
-                <th th:text="#{projects.table.role}"></th>
-                <th th:text="#{projects.table.samples}"></th>
-                <th th:text="#{projects.table.members}"></th>
-                <th th:text="#{projects.table.created}"></th>
-                <th th:text="#{projects.table.modified}"></th>
+                <th id="project-id" dt:property="id" th:text="#{projects.table.id}"></th>
+                <th id="project-name" dt:property="name" th:text="#{projects.table.name}"></th>
+                <th id="project-organism" dt:property="organism" th:text="#{projects.table.organism}"></th>
+                <th dt:property="role" th:text="#{projects.table.role}"></th>
+                <th dt:property="samples" th:text="#{projects.table.samples}"></th>
+                <th dt:property="members" th:text="#{projects.table.members}"></th>
+                <th dt:property="created" th:text="#{projects.table.created}"></th>
+                <th dt:property="modified" th:text="#{projects.table.modified}"></th>
             </tr>
             </thead>
-            <tbody th:with="dateformat=#{locale.date.short}">
-            <tr th:each="project : ${projects}">
-                <td th:text="${project?.id}">1</td>
-                <td>
-                    <a class="btn btn-default btn-xs" th:href="@{'/projects/' + ${project.id}}" href="#" th:text="${project?.name}"></a></td>
-                <td th:text="${project?.organism}">E. coli</td>
-                <td th:text="#{'projectRole.' + ${project?.role}}">User</td>
-                <td th:text="${project?.samples}">20</td>
-                <td th:text="${project?.members}">120</td>
-                <td th:text="${#dates.format(project?.created, dateformat)}">21 Jun, 1976</td>
-                <td th:text="${#dates.format(project?.modified, dateformat)}">21 Jun, 1979</td>
-            </tr>
-            </tbody>
         </table>
     </main>
 </div>

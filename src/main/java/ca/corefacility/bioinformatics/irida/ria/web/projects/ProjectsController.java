@@ -126,9 +126,6 @@ public class ProjectsController {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("isAdmin", false);
 
-		User user = userService.getUserByUsername(principal.getName());
-		model.addAttribute("projects", getProjectsDataMap(projectService.getProjectsForUser(user)));
-
 		//External exporting functionality
 		if (galaxyCallbackURL != null && galaxyClientID != null) {
 			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
@@ -339,6 +336,14 @@ public class ProjectsController {
 			elements.add(transformTreeNode);
 		}
 		return elements;
+	}
+
+	@RequestMapping("/projects/ajax/list")
+	@ResponseBody
+	public List<Map<String, Object>> getAjaxProjectList(final Principal principal) {
+
+		User user = userService.getUserByUsername(principal.getName());
+		return getProjectsDataMap(projectService.getProjectsForUser(user));
 	}
 
 	/**
