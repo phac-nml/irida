@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -72,6 +73,8 @@ public class SequencingRunServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private SequenceFilePairService pairService;
 
 	@Autowired
 	private AnalysisService analysisService;
@@ -186,10 +189,13 @@ public class SequencingRunServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	public void testDeleteCascadeToSequenceFile() {
+	public void testDeleteCascade() {
 		assertTrue("Sequence file should exist before", sequenceFileService.exists(2L));
+		assertTrue("file pair should exist before", pairService.exists(1L));
 		miseqRunService.delete(2L);
 		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(2L));
+		assertFalse("file pair should not exist after", pairService.exists(1L));
+		assertTrue("file 7 should not be deleted because it's in an analysis", sequenceFileService.exists(7L));
 	}
 
 	@Test
