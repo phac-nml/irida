@@ -42,6 +42,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
+import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
 
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
@@ -212,6 +213,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		dialects.add(new DataAttributeDialect());
 		dialects.add(new DandelionDialect());
 		dialects.add(new DataTablesDialect());
+		dialects.add(new FontAwesomeDialect());
 		return dialects;
 	}
 
