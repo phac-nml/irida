@@ -453,7 +453,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 			throws Exception {
 		// Download files for submission
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.downloadFiles();
-		assertEquals(1, submissionsFutureSet.size());
+		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
 		// wait until finished
 		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
 			AnalysisSubmission returnedSubmission = submissionFuture.get();
