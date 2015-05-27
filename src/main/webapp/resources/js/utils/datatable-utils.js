@@ -27,6 +27,13 @@ var datatable = (function(moment, tl, page) {
     }
   }
 
+  /**
+   * Create a link button to the IRIDA thing
+   * @param data column data
+   * @param type type of data
+   * @param full full object for the row.
+   * @returns {*}
+   */
   function createItemButton(data, type, full) {
     if (tl && full.link && tl.BASE_URL) {
       return '<a class="item-link btn btn-default btn-xs" href="' + tl.BASE_URL + full.link + '">' + data + '</a>';
@@ -36,14 +43,18 @@ var datatable = (function(moment, tl, page) {
   }
 
   /**
-   * Called when the datatable is drawn.  This sizes the table container to either the height of the table, or, if the
-   * table is larger than the screen height, it sets its bottom to near the bottom of the screen.
+   * Called when the datatable is drawn.
+   *    Resizes the table
+   *    Fixes bootstrap issues
    */
   function tableDrawn() {
     addClassesToFilters();
     resizeTable();
   }
 
+  /**
+   * Updates the filters and search field to use the appropriate bootstrap classes.
+   */
   function addClassesToFilters() {
     var filters = document.querySelectorAll('input.search_init, select.search_init');
     if (filters && filters.length) {
@@ -59,6 +70,9 @@ var datatable = (function(moment, tl, page) {
     }
   }
 
+  /**
+   * Resizes the datatable to be full screen.
+   */
   function resizeTable() {
     var h = window.innerHeight,
       scrollBody = document.getElementsByClassName('dataTables_scrollBody')[0],
