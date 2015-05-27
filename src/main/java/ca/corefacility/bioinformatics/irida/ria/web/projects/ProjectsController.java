@@ -134,10 +134,18 @@ public class ProjectsController {
 		return LIST_PROJECTS_PAGE;
 	}
 
+	/**
+	 * Get the admin projects page.
+	 *
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return The name of the page
+	 */
 	@RequestMapping("/projects/all")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public String getAllProjectsPage(Model model) {
-		model.addAttribute("ajaxURL", "/projects/all/ajax/list");
+		model.addAttribute("ajaxURL", "/projects/admin/ajax/list");
 		return LIST_PROJECTS_PAGE;
 	}
 
@@ -336,6 +344,11 @@ public class ProjectsController {
 		return elements;
 	}
 
+	/**
+	 * User mapping to get a list of all project they are on.
+	 * @param principal {@link Principal} currently logged in user.
+	 * @return {@link List} of project {@link Map}
+	 */
 	@RequestMapping("/projects/ajax/list")
 	@ResponseBody
 	public List<Map<String, Object>> getAjaxProjectList(final Principal principal) {
@@ -344,7 +357,15 @@ public class ProjectsController {
 		return getProjectsDataMap(projectService.getProjectsForUser(user));
 	}
 
-	@RequestMapping("/projects/all/ajax/list")
+	/**
+	 * Admin mapping to get a list of all project they are on.
+	 *
+	 * @param principal
+	 * 		{@link Principal} currently logged in user.
+	 *
+	 * @return {@link List} of project {@link Map}
+	 */
+	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
 	public List<Map<String, Object>> getAjaxAdminProjectsList(final Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
@@ -369,6 +390,12 @@ public class ProjectsController {
 		return projectsData;
 	}
 
+	/**
+	 * Generates a map of projects for an admin user.
+	 * @param user {@link User} currently logged in user.
+	 * @param projects {@link List} of {@link Project}
+	 * @return {@link List} of {@link Map} of project data.
+	 */
 	private List<Map<String, Object>> generateAdminProjectMap(User user, List<Project> projects) {
 		List<Map<String, Object>> result = new ArrayList<>(projects.size());
 		for (Project project : projects) {
@@ -381,7 +408,13 @@ public class ProjectsController {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * Generates a map of the project data.  This is required for specific fields such as 'role', 'samples' and 'members'
+	 * @param project {@link Project}
+	 * @param role {@link String} user's role on the project.
+	 * @return
+	 */
 	private Map<String, Object> getProjectAttributes(Project project, String role) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("id", project.getId().toString());
@@ -395,7 +428,6 @@ public class ProjectsController {
 		map.put("modified", project.getModifiedDate());
 		return map;
 	}
-
 
 	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
