@@ -31,10 +31,12 @@ public class ProjectsPage extends AbstractPage {
 
 	public void toUserProjectsPage() {
 		get(driver, RELATIVE_URL);
+		waitForAjax();
 	}
 
 	public void toAdminProjectsPage() {
 		get(driver, ADMIN_URL);
+		waitForAjax();
 	}
 
 	public int projectsTableSize() {
@@ -42,23 +44,18 @@ public class ProjectsPage extends AbstractPage {
 		return driver.findElements(By.cssSelector("#projectsTable tbody tr")).size();
 	}
 
-	public String getCollaboratorClass() {
-		return driver.findElement(
-				By.cssSelector("#projectsTable tbody tr:nth-child(3) td:nth-child(4) span")).getAttribute("class");
-	}
-
-	public String getOwnerClass() {
-		return driver.findElement(By.cssSelector("#projectsTable tbody tr:nth-child(1) td:nth-child(4) span")).getAttribute(
-				"class");
+	public void gotoProjectPage(int row) {
+		driver.findElements(By.cssSelector("#projectsTable .item-link")).get(row).click();
 	}
 
 	public List<WebElement> getProjectColumn() {
-		waitForAjax();
 		return driver.findElements(By.cssSelector("#projectsTable tbody td:nth-child(2)"));
 	}
 
-	public void clickProjectNameHeader(){
-		driver.findElement(By.id("project-name")).click();
+	public void clickProjectNameHeader() {
+		// Sorting row is the second one
+		WebElement headerRow = driver.findElements(By.cssSelector(".dataTables_scrollHeadInner thead tr")).get(1);
+		headerRow.findElements(By.cssSelector("th")).get(1).click();
 		waitForAjax();
 	}
 

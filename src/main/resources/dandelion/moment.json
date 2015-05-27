@@ -1,0 +1,11 @@
+{
+  "bundle": "momentjs",
+  "assets": [{
+    "name": "momentjs",
+    "version": "2.10.3",
+    "type": "js",
+    "locations": {
+      "webapp": "/resources/bower_components/moment/min/moment.min.js"
+    }
+  }]
+}

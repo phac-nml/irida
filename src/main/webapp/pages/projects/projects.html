@@ -7,7 +7,7 @@
 <head>
     <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
 </head>
-<body ddl:bundle-includes="irida-datatables, projectsList">
+<body ddl:bundle-includes="irida-datatables">
 <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
         <h1>
@@ -20,23 +20,43 @@
             </a>
         </h1>
         <div dt:conf="projectsTable">
-            <div dt:confType="callback" dt:type="draw" dt:function="irida-datatables#tableDrawn"></div>
+            <div dt:confType="callback" dt:type="draw" dt:function="iridaDatatables#datatable.tableDrawn"></div>
         </div>
-        <table id="projectsTable" dt:table="true" dt:url="@{/projects/ajax/list}">
+        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="head_before">
             <thead>
-            <tr role="row" th:inline="text">
+            <tr role="row">
                 <th id="project-id" dt:property="id" th:text="#{projects.table.id}"></th>
-                <th id="project-name" dt:property="name" th:text="#{projects.table.name}"></th>
-                <th id="project-organism" dt:property="organism" th:text="#{projects.table.organism}"></th>
-                <th dt:property="role" th:text="#{projects.table.role}"></th>
-                <th dt:property="samples" th:text="#{projects.table.samples}"></th>
-                <th dt:property="members" th:text="#{projects.table.members}"></th>
-                <th dt:property="created" th:text="#{projects.table.created}"></th>
-                <th dt:property="modified" th:text="#{projects.table.modified}"></th>
+                <th id="project-name" dt:filterable="true" dt:property="name" th:text="#{projects.table.name}"
+                    dt:renderFunction="iridaDatatables#datatable.createItemButton"></th>
+                <th id="project-organism" dt:filterable="true" dt:filterType="select" dt:property="organism" th:text="#{projects.table.organism}"></th>
+                <th dt:property="role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles" th:text="#{projects.table.role}"
+                    dt:renderFunction="iridaDatatables#datatable.i18n"></th>
+                <th dt:property="samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
+                <th dt:property="members" dt:searchable="false" th:text="#{projects.table.members}"></th>
+                <th dt:property="created" dt:sortType="natural" th:text="#{projects.table.created}"
+                    dt:renderFunction="iridaDatatables#datatable.formatDate"></th>
+                <th dt:property="modified" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
+                    dt:renderFunction="iridaDatatables#datatable.formatDate"></th>
             </tr>
             </thead>
         </table>
     </main>
 </div>
+<th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script>
+        var roles = [
+                /*[[#{projectRole.PROJECT_USER}]]*/ 'Collaborator',
+                /*[[#{projectRole.PROJECT_OWNER}]]*/ 'Manager',
+                /*[[#{projectRole.PROJECT_NONE}]]*/ 'None'
+            ],
+            PAGE = {
+                lang: {
+                    'PROJECT_USER': roles[0],
+                    'PROJECT_OWNER': roles[1],
+                    'PROJECT_NONE': roles[2]
+                }
+            };
+    </script>
+</th:block>
 </body>
 </html>

@@ -119,12 +119,11 @@ public class ProjectsController {
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")
-	public String getProjectsPage(Model model, Principal principal,
+	public String getProjectsPage(Model model,
 			@RequestParam(value = "galaxyCallbackUrl", required = false) String galaxyCallbackURL,
 			@RequestParam(value = "galaxyClientID", required = false) String galaxyClientID,
 			HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
-		model.addAttribute("isAdmin", false);
 
 		//External exporting functionality
 		if (galaxyCallbackURL != null && galaxyClientID != null) {
@@ -137,9 +136,8 @@ public class ProjectsController {
 
 	@RequestMapping("/projects/all")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-	public String getAllProjectsPage(Model model, Principal principal) {
-		User user = userService.getUserByUsername(principal.getName());
-		model.addAttribute("projects", generateAdminProjectMap(user, (List<Project>) projectService.findAll()));
+	public String getAllProjectsPage(Model model) {
+		model.addAttribute("ajaxURL", "/projects/all/ajax/list");
 		return LIST_PROJECTS_PAGE;
 	}
 
@@ -346,6 +344,13 @@ public class ProjectsController {
 		return getProjectsDataMap(projectService.getProjectsForUser(user));
 	}
 
+	@RequestMapping("/projects/all/ajax/list")
+	@ResponseBody
+	public List<Map<String, Object>> getAjaxAdminProjectsList(final Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		return generateAdminProjectMap(user, (List<Project>) projectService.findAll());
+	}
+
 	/**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
 	 *
@@ -380,6 +385,7 @@ public class ProjectsController {
 	private Map<String, Object> getProjectAttributes(Project project, String role) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("id", project.getId().toString());
+		map.put("link", "projects/" + project.getId());
 		map.put("name", project.getName());
 		map.put("organism", project.getOrganism());
 		map.put("role", role);

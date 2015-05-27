@@ -1,7 +1,8 @@
 {
-  "bundle": "irida-datatables",
+  "bundle": "iridaDatatables",
   "dependencies": [
-    "jquery"
+    "jquery",
+    "momentjs"
   ],
   "assets": [
     {
@@ -21,7 +22,7 @@
       }
     },
     {
-      "name": "irida-datatables",
+      "name": "iridaDatatables",
       "version": "1.0.0",
       "type": "js",
       "locations": {

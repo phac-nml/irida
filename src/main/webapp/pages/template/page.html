@@ -136,6 +136,11 @@
 					"last" : /*[[#{table.last}]]*/ 'Last'
 				}
 			},
+			date: {
+				moment: {
+					short: /*[[#{moment.short}]]*/ 'Do MMM YYYY'
+				}
+			},
 			galaxyCallback: /*[[${#httpSession.getAttribute('galaxyExportToolCallbackURL')}!= null]]*/ false,
 			galaxyClientID: /*[[${#httpSession.getAttribute('galaxyExportToolClientID')}]]*/ ""
 		};
@@ -145,8 +150,8 @@
 	        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
 	<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
 	        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
-	<script src="/resources/bower_components/moment/min/moment-with-langs.min.js"
-	        th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"></script>
+	<script src="/resources/bower_components/moment/min/moment-with-locales.min.js"
+	        th:src="@{/resources/bower_components/moment/min/moment-with-locales.min.js}"></script>
 
 	<script th:src="@{/resources/bower_components/angular/angular.min.js}"
 	        src="/resources/bower_components/angular/angular.min.js"></script>

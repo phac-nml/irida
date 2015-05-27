@@ -338,7 +338,12 @@
 		<dependency>
 			<groupId>com.github.dandelion</groupId>
 			<artifactId>datatables-thymeleaf</artifactId>
-			<version>0.10.1</version>
+			<version>${thymeleaf-dandelion.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.dandelion</groupId>
+			<artifactId>datatables-spring3</artifactId>
+			<version>${thymeleaf-dandelion.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.attoparser</groupId>
