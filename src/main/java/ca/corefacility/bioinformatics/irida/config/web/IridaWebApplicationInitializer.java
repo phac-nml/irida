@@ -57,7 +57,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[] { new HttpHeadFilter()};
+		return new Filter[] { new HttpHeadFilter() };
 	}
 
 	@Override
