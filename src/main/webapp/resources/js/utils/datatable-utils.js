@@ -40,6 +40,26 @@ var datatable = (function(moment, tl, page) {
    * table is larger than the screen height, it sets its bottom to near the bottom of the screen.
    */
   function tableDrawn() {
+    addClassesToFilters();
+    resizeTable();
+  }
+
+  function addClassesToFilters() {
+    var filters = document.querySelectorAll('input.search_init, select.search_init');
+    if (filters && filters.length) {
+      [].forEach.call(filters, function (el) {
+        var classList = el.classList;
+        if (!classList.contains('form-control')) {
+          el.classList.add('form-control');
+        }
+        if (!classList.contains('input-sm')) {
+          el.classList.add('input-sm');
+        }
+      });
+    }
+  }
+
+  function resizeTable() {
     var h = window.innerHeight,
       scrollBody = document.getElementsByClassName('dataTables_scrollBody')[0],
       scrollBodyClientRect = scrollBody.getBoundingClientRect(),
@@ -53,7 +73,7 @@ var datatable = (function(moment, tl, page) {
     }
   }
 
-  window.onresize = tableDrawn;
+  window.onresize = resizeTable;
 
   return {
     formatDate: formatDate,
