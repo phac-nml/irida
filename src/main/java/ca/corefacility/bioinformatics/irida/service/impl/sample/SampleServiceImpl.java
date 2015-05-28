@@ -186,7 +186,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
-		logger.debug("Getting samples for project [" + project.getId() + "]");
 		return psjRepository.getSamplesForProject(project);
 	}
 
