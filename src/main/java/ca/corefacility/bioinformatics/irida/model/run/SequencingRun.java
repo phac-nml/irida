@@ -55,7 +55,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "sequencingRun", orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, mappedBy = "sequencingRun")
 	private Set<SequenceFile> sequenceFiles;
 
 	@NotNull

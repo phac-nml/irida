@@ -20,4 +20,13 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @NoRepositoryBean
 public interface FilesystemSupplementedRepository<Type extends VersionedFileFields<Long> & IridaThing> {
 
+	/**
+	 * Update an entity without creating a new file revision. This method is
+	 * only to be used in cases where any file property is not being updated.
+	 * 
+	 * @param entity
+	 *            The entity to update
+	 * @return The updated entity.
+	 */
+	public Type updateWithoutFileRevision(Type entity);
 }
