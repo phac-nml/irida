@@ -91,6 +91,12 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample) {
 		return pairRepository.getSequenceFilePairsForSample(sample);
 	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadSequenceFilePair')")
+	@Override
+	public Boolean exists(Long id) {
+		return super.exists(id);
+	}
 
 	/**
 	 * {@inheritDoc}

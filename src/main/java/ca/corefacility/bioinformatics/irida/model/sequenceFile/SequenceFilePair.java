@@ -51,7 +51,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 	@Column(name = "created_date")
 	private Date createdDate;
 
-	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
 	@Size(min = 2, max = 2)
 	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
 	private Set<SequenceFile> files;
