@@ -65,5 +65,14 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 		}
 		return remoteRelatedProjectForProjectAndURI;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public RemoteRelatedProject read(Long id) throws EntityNotFoundException {
+		return super.read(id);
+	}
 
 }
