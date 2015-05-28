@@ -250,6 +250,14 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
 				validIridaWorkflowId);
 
+		// DOWNLOAD SUBMISSION FILES
+		Set<Future<AnalysisSubmission>> downloadFiles = analysisExecutionScheduledTask.downloadFiles();
+		assertEquals(1, downloadFiles.size());
+		for (Future<AnalysisSubmission> submissionFuture : downloadFiles) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.FINISHED_DOWNLOADING, returnedSubmission.getAnalysisState());
+		}
+				
 		// PREPARE SUBMISSION
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
 		assertEquals(1, submissionsFutureSet.size());
@@ -354,6 +362,14 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
 				iridaWorkflowIdWithError);
 
+		// DOWNLOAD SUBMISSION FILES
+		Set<Future<AnalysisSubmission>> downloadFiles = analysisExecutionScheduledTask.downloadFiles();
+		assertEquals(1, downloadFiles.size());
+		for (Future<AnalysisSubmission> submissionFuture : downloadFiles) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.FINISHED_DOWNLOADING, returnedSubmission.getAnalysisState());
+		}
+		
 		// PREPARE SUBMISSION
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
 		assertEquals(1, submissionsFutureSet.size());
