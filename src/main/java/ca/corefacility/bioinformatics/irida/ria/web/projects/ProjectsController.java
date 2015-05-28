@@ -50,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
@@ -385,7 +386,7 @@ public class ProjectsController {
 			String role = ((ProjectUserJoin) join).getProjectRole() != null ?
 					((ProjectUserJoin) join).getProjectRole().toString() :
 					"";
-			projectsData.add(getProjectAttributes(p, role));
+			projectsData.add(createProjectDetailsMap(p, role));
 		}
 		return projectsData;
 	}
@@ -404,28 +405,31 @@ public class ProjectsController {
 					projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_USER) ?
 							ProjectRole.PROJECT_USER.toString() :
 							"PROJECT_NONE";
-			result.add(getProjectAttributes(project, role));
+			result.add(createProjectDetailsMap(project, role));
 		}
 		return result;
 	}
 
 	/**
-	 * Generates a map of the project data.  This is required for specific fields such as 'role', 'samples' and 'members'
-	 * @param project {@link Project}
-	 * @param role {@link String} user's role on the project.
+	 * Generates a map of the project data.  This is required for specific fields such as 'role', 'samples' and
+	 * 'members'
+	 *
+	 * @param project
+	 * 		{@link Project}
+	 * @param role
+	 * 		{@link String} user's role on the project.
+	 *
 	 * @return
 	 */
-	private Map<String, Object> getProjectAttributes(Project project, String role) {
+	private Map<String, Object> createProjectDetailsMap(Project project, String role) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("id", project.getId().toString());
+		map.put("item", project);
 		map.put("link", "projects/" + project.getId());
-		map.put("name", project.getName());
-		map.put("organism", project.getOrganism());
-		map.put("role", role);
-		map.put("samples", String.valueOf(sampleService.getSamplesForProject(project).size()));
-		map.put("members", String.valueOf(userService.getUsersForProject(project).size()));
-		map.put("created", project.getCreatedDate());
-		map.put("modified", project.getModifiedDate());
+		map.put("custom", ImmutableMap.of(
+				"samples", String.valueOf(sampleService.getSamplesForProject(project).size()),
+				"members", String.valueOf(userService.getUsersForProject(project).size()),
+				"role", role
+		));
 		return map;
 	}
 

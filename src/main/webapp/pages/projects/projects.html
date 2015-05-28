@@ -22,20 +22,20 @@
         <div dt:conf="projectsTable">
             <div dt:confType="callback" dt:type="draw" dt:function="iridaDatatables#datatable.tableDrawn"></div>
         </div>
-        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="head_before">
+        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="head_before" dt:dom="lti">
             <thead>
             <tr role="row">
-                <th id="project-id" dt:property="id" th:text="#{projects.table.id}"></th>
-                <th id="project-name" dt:filterable="true" dt:property="name" th:text="#{projects.table.name}"
+                <th id="project-id" dt:property="item.id" th:text="#{projects.table.id}"></th>
+                <th id="project-name" dt:filterable="true" dt:property="item.name" th:text="#{projects.table.name}"
                     dt:renderFunction="iridaDatatables#datatable.createItemButton"></th>
-                <th id="project-organism" dt:filterable="true" dt:filterType="select" dt:property="organism" th:text="#{projects.table.organism}"></th>
-                <th dt:property="role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles" th:text="#{projects.table.role}"
+                <th id="project-organism" dt:filterable="true" dt:filterType="select" dt:property="item.organism" th:text="#{projects.table.organism}"></th>
+                <th dt:property="custom.role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles" th:text="#{projects.table.role}"
                     dt:renderFunction="iridaDatatables#datatable.i18n"></th>
-                <th dt:property="samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
-                <th dt:property="members" dt:searchable="false" th:text="#{projects.table.members}"></th>
-                <th dt:property="created" dt:sortType="natural" th:text="#{projects.table.created}"
+                <th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
+                <th dt:property="custom.members" dt:searchable="false" th:text="#{projects.table.members}"></th>
+                <th dt:property="item.createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
                     dt:renderFunction="iridaDatatables#datatable.formatDate"></th>
-                <th dt:property="modified" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
+                <th dt:property="item.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
                     dt:renderFunction="iridaDatatables#datatable.formatDate"></th>
             </tr>
             </thead>
