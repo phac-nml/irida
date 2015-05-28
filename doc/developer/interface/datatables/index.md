@@ -23,11 +23,11 @@ Dandelion will automatically inject the required css and javascript into the web
 ```
 
 Dandelion will inject the following css into the **end** of the header tag:
-- `/resources/bower_components/DataTables/media/js/jquery.dataTables.css`
+* `/resources/bower_components/DataTables/media/js/jquery.dataTables.css`
 
 Dandelion will inject the following javascript at the **end** of the body tag:
-- `/resources/bower_components/DataTables/media/js/jquery.dataTables.js`
-- `/resources/js/utils/datatable-utils.js`
+* `/resources/bower_components/DataTables/media/js/jquery.dataTables.js`
+* `/resources/js/utils/datatable-utils.js`
 
 Table Layout
 ------------
