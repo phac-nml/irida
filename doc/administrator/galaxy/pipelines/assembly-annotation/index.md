@@ -76,7 +76,7 @@ If everything was successfull then all dependencies for this pipeline have been 
 [Java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [gnuplot]: http://www.gnuplot.info/
 [BioPerl]: http://www.bioperl.org/wiki/Main_Page
-[Assembly Annotation Galaxy Workflow]: workflows/AssemblyAnnotation/0.2/assembly-annotation.ga
+[Assembly Annotation Galaxy Workflow]: ../test/assembly-annotation/assembly-annotation.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [test/reads]: ../test/assembly-annotation/reads
 [upload-history]: ../test/assembly-annotation/images/upload-history.jpg

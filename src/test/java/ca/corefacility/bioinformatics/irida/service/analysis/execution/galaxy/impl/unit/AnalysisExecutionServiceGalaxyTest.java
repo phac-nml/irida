@@ -278,6 +278,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	@Test
 	public void testPrepareSubmissionSuccess() throws InterruptedException, ExecutionManagerException, IOException,
 			NoSuchValueException, ExecutionException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
 		AnalysisSubmission returnedSubmission = preparedAnalysisFuture.get();
 
@@ -307,6 +308,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile)).thenThrow(
 				new WorkflowUploadException(null, null));
 
+		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
 
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
@@ -331,6 +333,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		when(analysisWorkspaceService.prepareAnalysisWorkspace(any(AnalysisSubmission.class))).thenThrow(
 				new ExecutionManagerException());
 
+		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
 
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,

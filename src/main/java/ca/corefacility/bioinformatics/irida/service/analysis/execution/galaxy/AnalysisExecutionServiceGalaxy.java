@@ -61,6 +61,9 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	}
 	
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	public Future<AnalysisSubmission> downloadSubmissionFiles(AnalysisSubmission analysisSubmission) {

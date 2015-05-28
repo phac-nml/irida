@@ -34,7 +34,12 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		super(executionManagerAnalysisId, analysisOutputFilesMap);
 	}
-	
+
+	@JsonIgnore
+	public AnalysisOutputFile getReadMergeLog() {
+		return getAnalysisOutputFile("read-merge-log");
+	}
+
 	@JsonIgnore
 	public AnalysisOutputFile getAssemblyLog() {
 		return getAnalysisOutputFile("assembly-log");
@@ -44,22 +49,37 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 	public AnalysisOutputFile getContigs() {
 		return getAnalysisOutputFile("contigs");
 	}
-	
+
+	@JsonIgnore
+	public AnalysisOutputFile getContigsWithRepeats() {
+		return getAnalysisOutputFile("contigs-with-repeats");
+	}
+
+	@JsonIgnore
+	public AnalysisOutputFile getContigsWithoutRepeats() {
+		return getAnalysisOutputFile("contigs-without-repeats");
+	}
+
+	@JsonIgnore
+	public AnalysisOutputFile getAssemblyStatsWithRepeats() {
+		return getAnalysisOutputFile("assembly-stats-repeats");
+	}
+
 	@JsonIgnore
 	public AnalysisOutputFile getAnnotations() {
 		return getAnalysisOutputFile("annotations-genbank");
 	}
-	
+
 	@JsonIgnore
 	public AnalysisOutputFile getAnnotationsStats() {
 		return getAnalysisOutputFile("annotations-stats");
 	}
-	
+
 	@JsonIgnore
 	public AnalysisOutputFile getAnnotationLog() {
 		return getAnalysisOutputFile("annotations-log");
 	}
-	
+
 	@JsonIgnore
 	public AnalysisOutputFile getAnnotationsError() {
 		return getAnalysisOutputFile("annotations-error");

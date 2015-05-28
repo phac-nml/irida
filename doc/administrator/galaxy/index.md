@@ -74,17 +74,26 @@ Please customize these environment variables to your system and proceed through 
 
 For more information about installing Galaxy, please see [Running Galaxy in a production environment][].
 
+***Note: For any configuration files, please replace any instance of an environment variable, such as `$GALAXY_ADMIN_USER`, with the actual value, such as `galaxy-irida`.  These configuration files include any of the following.***
+
+* `galaxy-dist/config/*`
+* `env.sh`
+* `/etc/init.d/galaxy`
+* `galaxy-dist/galaxy_cleanup.sh`
 
 Dependency Installation
 -----------------------
 
 The installation and setup of Galaxy requires a number of dependency software to be installed.  To install this software on CentOS (>= 6.6) please run:
 
-	yum install mercurial nginx pwgen python
+	yum install mercurial nginx pwgen python zlib-devel ncurses-devel tcsh
 
 The following dependencies are required for running or building some of the tools.
 
+	yum groupinstall "Development tools"
 	yum install db4-devel expat-devel java
+
+These instructions will walk through installing [PerlBrew][] for managing Perl and dependencies.  If you do not wish to install PerlBrew, you will have to, at minimum, install Perl and [App::cpanminus][].
 
 Galaxy Database Setup
 ---------------------
@@ -125,7 +134,7 @@ requesting all changes
 abort: HTTP Error 400: Bad Request
 ```
 
-*If this occurs, you will have to manually install a newer version of [Mercurial][], or manually download the specific revision of Galaxy used.* 
+*If this occurs, you will have to manually install a newer version of [Mercurial][], or manually download the specific revision of Galaxy used at <https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz>* 
 
 ### Step 2: Create Galaxy Environment File
 
@@ -192,6 +201,7 @@ The provided startup script uses a default system user named `galaxy-irida` to r
 
 ```bash
 useradd --no-create-home --system galaxy-irida
+chown -R galaxy-irida $GALAXY_BASE_DIR
 ```
 
 Please make any necessary changes to this script and do the following:
@@ -217,13 +227,9 @@ For more details, please refer to the [Running Galaxy in a production environmen
 
 ### Step 6: Configure Galaxy Jobs Scheduler
 
-There are many different ways to configure how Galaxy schedules jobs for execution.  The default method is to run all jobs on the local machine and limit to 4 jobs at any given time.  This can be modified by doing the following:
+The default job configuration is fine for running Galaxy on a single server or for evaluation purposes.  This will default to running all jobs on the local machine and limit to 4 jobs at any given time.
 
-```bash
-cp $GALAXY_ROOT_DIR/config/job_conf.xml.sample_basic $GALAXY_ROOT_DIR/config/job_conf.xml
-```
-
-Now please modify the file `$GALAXY_ROOT_DIR/config/job_conf.xml` and make any changes specific to your environment.  Please refer to the documentation [Galaxy Job Config][] for more information.
+For more complicated job scheduling, please refer to the [Galaxy Job Config][] documentation.
 
 ### Step 7: Test out Galaxy
 
@@ -270,6 +276,7 @@ The main pipelines included with IRIDA each require a specific set of tools to b
 
 * [SNVPhyl Whole Genome Phylogeny][]
 * [Assembly and Annotation][]
+* [Assembly and Annotation Collection][]
 
 Each of these will step through installing the necessary tools in IRIDA.  These steps will involve going to Galaxy, navigating to **Admin > Search and browse tool sheds**, finding the appropriate tool and installing.  On completion, you should be able to go to **Admin > Manage installed tool shed repositories** to check the status of each tool.  For a successfull install, you should see a status of `Installed`.  If there is an error, you can click on each tool for more details.
 
@@ -367,6 +374,7 @@ For more information please see the [Purging Histories and Datasets][] document.
 [Installing Repositories to Galaxy]: https://wiki.galaxyproject.org/InstallingRepositoriesToGalaxy
 [SNVPhyl Whole Genome Phylogeny]: pipelines/phylogenomics/
 [Assembly and Annotation]: pipelines/assembly-annotation/
+[Assembly and Annotation Collection]: pipelines/assembly-annotation-collection/
 [Galaxy Job Config]: https://wiki.galaxyproject.org/Admin/Config/Jobs
 [saved-histories.jpg]: images/saved-histories.jpg
 [scripts/galaxy]: scripts/galaxy
@@ -374,3 +382,5 @@ For more information please see the [Purging Histories and Datasets][] document.
 [history-options-icon]: images/history-options-icon.jpg
 [Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
 [Mercurial]: http://mercurial.selenic.com/
+[PerlBrew]: http://perlbrew.pl/
+[App::cpanminus]: http://search.cpan.org/~miyagawa/App-cpanminus-1.7027/lib/App/cpanminus.pm

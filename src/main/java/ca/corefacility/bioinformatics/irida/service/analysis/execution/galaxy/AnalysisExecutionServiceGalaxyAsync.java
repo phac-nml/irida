@@ -68,6 +68,9 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
 	 *            A service for loading up {@link IridaWorkflow}s.
+	 * @param sequenceFileSnapshotService
+	 *            A service for storing and retrieving local
+	 *            {@link SequenceFileSnapshot}s
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
@@ -82,27 +85,36 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		this.sequenceFileSnapshotService = sequenceFileSnapshotService;
 	}
 	
+	/**
+	 * Download the remote files for an {@link AnalysisSubmission}.
+	 * 
+	 * @param analysisSubmission
+	 *            The {@link AnalysisSubmission} to get files for.
+	 * @return A Future {@link AnalysisSubmission} with the files locally
+	 *         mirrored
+	 */
 	@Transactional
-	public Future<AnalysisSubmission> downloadFilesForSubmission(final AnalysisSubmission analysisSubmission){
+	public Future<AnalysisSubmission> downloadFilesForSubmission(final AnalysisSubmission analysisSubmission) {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
-		
+
+		// Get all the remote paired files and save them locally
 		Set<SequenceFilePairSnapshot> remoteFilesPaired = analysisSubmission.getRemoteFilesPaired();
-		for(SequenceFilePairSnapshot pair : remoteFilesPaired){
-			for(SequenceFileSnapshot file : pair.getFiles()){
+		for (SequenceFilePairSnapshot pair : remoteFilesPaired) {
+			for (SequenceFileSnapshot file : pair.getFiles()) {
 				sequenceFileSnapshotService.mirrorFileContent(file);
 			}
 		}
-		
-		for(SequenceFileSnapshot file : analysisSubmission.getRemoteFilesSingle()){
+
+		// Get all the individual files and save them locally
+		for (SequenceFileSnapshot file : analysisSubmission.getRemoteFilesSingle()) {
 			sequenceFileSnapshotService.mirrorFileContent(file);
 		}
-		
-		
-		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission.getId(), ImmutableMap
-				.of("analysisState",
-						AnalysisState.FINISHED_DOWNLOADING));
-		
+
+		// once complete update the state
+		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("analysisState", AnalysisState.FINISHED_DOWNLOADING));
+
 		return new AsyncResult<>(analysisPrepared);
 	}
 

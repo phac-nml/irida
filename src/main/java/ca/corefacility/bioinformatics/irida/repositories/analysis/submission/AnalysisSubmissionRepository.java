@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -30,7 +32,6 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1")
 	public List<AnalysisSubmission> findByAnalysisState(AnalysisState state);
 
-	
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given states.
 	 * 
@@ -67,4 +68,26 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysis = ?1")
 	public AnalysisSubmission findByAnalysis(final Analysis analysis);
+
+	/**
+	 * Get the Set of {@link AnalysisSubmission}s which use a given
+	 * {@link SequenceFile}
+	 * 
+	 * @param file
+	 *            The {@link SequenceFile} to get submissions for
+	 * @return Set of {@link AnalysisSubmission}
+	 */
+	@Query("FROM AnalysisSubmission s WHERE ?1 IN elements(s.inputFilesSingle)")
+	public Set<AnalysisSubmission> findAnalysisSubmissionForSequenceFile(SequenceFile file);
+
+	/**
+	 * Get the Set of {@link AnalysisSubmission}s which use a given
+	 * {@link SequenceFilePair}
+	 * 
+	 * @param pair
+	 *            The {@link SequenceFilePair} to get submissions for
+	 * @return Set of {@link AnalysisSubmission}
+	 */
+	@Query("FROM AnalysisSubmission s WHERE ?1 IN elements(s.inputFilesPaired)")
+	public Set<AnalysisSubmission> findAnalysisSubmissionForSequenceFilePair(SequenceFilePair pair);
 }
