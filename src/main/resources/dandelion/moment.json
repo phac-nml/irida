@@ -5,7 +5,7 @@
     "version": "2.10.3",
     "type": "js",
     "locations": {
-      "webapp": "/resources/bower_components/moment/min/moment.min.js"
+      "webapp": "/resources/bower_components/moment/min/moment-with-langs.min.js"
     }
   }]
 }
