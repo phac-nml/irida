@@ -111,3 +111,12 @@ Where the __KEY__ is the key is the column value, and the __VALUE__ is the thyme
 ### `iridaDatatables#datatable.createItemButton` Render a link to the table item 
 
 This `dt:renderFunction` is used to create a link to an IRIDA *thing* that has its own page.  It is expecting the object to contain a `link` attribute which the server should generate for the relative path to the *thing*'s page
+
+Internationalization
+--------------------
+
+Dandelion Datatables provides the ability to provide internationalization to all components. For more information see [Dandelion-Databales Internationalization](http://dandelion.github.io/datatables/features/i18n/).
+
+Of note:
+* All properties can contain HTML tags
+* The _START_, _END_ and _TOTAL_ variables are all dynamically replaced as the table display updates, and can be freely moved or removed as the language requirements change
