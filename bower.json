@@ -37,8 +37,9 @@
     "PhyloCanvas": "1.2.26",
     "angular-ui-router": "0.2.13",
     "ng-file-upload": "4.2.0",
-    "DataTables": "1.10.7",
-    "moment": "2.10.3"
+    "moment": "2.10.3",
+    "datatables": "1.10.7",
+    "datatables-colvis": "1.1.2"
   },
   "devDependencies": {},
   "resolutions": {

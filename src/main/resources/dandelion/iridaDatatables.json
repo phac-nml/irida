@@ -10,7 +10,7 @@
       "version": "1.10.7",
       "type": "js",
       "locations": {
-        "webapp": "/resources/bower_components/DataTables/media/js/jquery.dataTables.js"
+        "webapp": "/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"
       }
     },
     {
@@ -18,7 +18,7 @@
       "version": "1.10.7",
       "type": "css",
       "locations": {
-        "webapp": "/resources/bower_components/DataTables/media/css/jquery.dataTables.css"
+        "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"
       }
     },
     {
