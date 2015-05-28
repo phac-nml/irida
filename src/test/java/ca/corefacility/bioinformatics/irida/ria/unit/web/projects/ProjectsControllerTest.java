@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
@@ -98,6 +99,26 @@ public class ProjectsControllerTest {
 		HttpSession ses = mock(HttpSession.class);
 		String page = controller.getProjectsPage(model, null,null, ses);
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
+	}
+
+	@Test
+	public void testGetAjaxProjectList() {
+		Principal principal = () -> USER_NAME;
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+		when(projectService.getProjectsForUser(user)).thenReturn(TestDataFactory.constructListJoinProjectUser(user));
+		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
+		List<Map<String, Object>> result = controller.getAjaxProjectList(principal);
+		testGetAnyAjaxProjectListResult(result, 10);
+	}
+
+	@Test
+	public void testGetAjaxAdminProjectsList() {
+		Principal principal = () -> USER_NAME;
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+		when(projectService.findAll()).thenReturn(TestDataFactory.constructProjectList());
+		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(true);
+		List<Map<String, Object>> result = controller.getAjaxAdminProjectsList(principal);
+		testGetAnyAjaxProjectListResult(result, 50);
 	}
 
 	@Test
@@ -299,5 +320,15 @@ public class ProjectsControllerTest {
 		List<Join<Project, User>> list = new ArrayList<>();
 		list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
 		return list;
+	}
+
+	private void testGetAnyAjaxProjectListResult(List<Map<String, Object>> result, int expectedSize) {
+		assertEquals("Should be 10 items in the list", expectedSize, result.size());
+
+		for (Map<String, Object> map : result) {
+			assertTrue("Should have key 'item'", map.containsKey("item"));
+			assertTrue("Should have key 'link'", map.containsKey("link"));
+			assertTrue("Should have key 'custom'", map.containsKey("custom"));
+		}
 	}
 }

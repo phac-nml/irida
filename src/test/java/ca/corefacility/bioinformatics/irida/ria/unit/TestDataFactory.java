@@ -17,7 +17,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -216,4 +219,31 @@ public class TestDataFactory {
 		);
 	}
 
+	public static List<Join<Project, User>> constructListJoinProjectUser(User user) {
+		List<Join<Project, User>> list = new ArrayList<>();
+		Project project = constructProject();
+		for (int i = 0; i < 10; i++) {
+			list.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER));
+		}
+		return list;
+	}
+
+	public static List<Join<Project, Sample>> constructListJoinProjectSample() {
+		List<Join<Project, Sample>> list = new ArrayList<>();
+		Sample sample = constructSample();
+		Project project = constructProject();
+		for (int i = 0; i < 10; i++) {
+			list.add(new ProjectSampleJoin(project, sample));
+		}
+		return list;
+	}
+
+	public static List<Project> constructProjectList() {
+		List<Project> projects = new ArrayList<>();
+		Project project = constructProject();
+		for (int i = 0; i < 50; i++) {
+			projects.add(project);
+		}
+		return projects;
+	}
 }
