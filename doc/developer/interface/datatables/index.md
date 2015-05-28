@@ -115,7 +115,7 @@ This `dt:renderFunction` is used to create a link to an IRIDA *thing* that has i
 Internationalization
 --------------------
 
-Dandelion Datatables provides the ability to provide internationalization to all components. For more information see [Dandelion-Databales Internationalization](http://dandelion.github.io/datatables/features/i18n/).
+Dandelion Datatables provides the ability to provide internationalization to all components. For more information see [Dandelion-Datatables Internationalization](http://dandelion.github.io/datatables/features/i18n/).
 
 Of note:
 * All properties can contain HTML tags
