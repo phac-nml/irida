@@ -89,6 +89,7 @@ public class ProjectsController {
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
 
+
 	// HTTP session variable name for Galaxy callback variable
 	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
 	public static final String GALAXY_CLIENT_ID_NAME = "galaxyExportToolClientID";
@@ -106,28 +107,28 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Request for the page to display a list of all projects available to the currently logged in user.
+	 * Request for the page to display a list of all projects available to the
+	 * currently logged in user.
 	 *
 	 * @param model
-	 * 		The model to add attributes to for the template.
+	 *            The model to add attributes to for the template.
 	 * @param galaxyCallbackURL
-	 * 		The URL at which to call the Galaxy export tool
+	 *            The URL at which to call the Galaxy export tool
 	 * @param galaxyClientID
-	 * 		The OAuth2 client ID of the Galaxy instance to export to
+	 *            The OAuth2 client ID of the Galaxy instance to export to
 	 * @param httpSession
-	 * 		The user's session
-	 *
+	 *            The user's session
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")
 	public String getProjectsPage(Model model,
-			@RequestParam(value = "galaxyCallbackUrl", required = false) String galaxyCallbackURL,
-			@RequestParam(value = "galaxyClientID", required = false) String galaxyClientID,
+			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
+			@RequestParam(value="galaxyClientID",required=false) String galaxyClientID,
 			HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 
 		//External exporting functionality
-		if (galaxyCallbackURL != null && galaxyClientID != null) {
+		if(galaxyCallbackURL != null && galaxyClientID != null) {
 			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
 			httpSession.setAttribute(GALAXY_CLIENT_ID_NAME, galaxyClientID);
 		}
@@ -154,11 +155,11 @@ public class ProjectsController {
 	 * Request for a specific project details page.
 	 *
 	 * @param projectId
-	 * 		The id for the project to show details for.
+	 *            The id for the project to show details for.
 	 * @param model
-	 * 		Spring model to populate the html page.
+	 *            Spring model to populate the html page.
 	 * @param principal
-	 * 		a reference to the logged in user.
+	 *            a reference to the logged in user.
 	 *
 	 * @return The name of the project details page.
 	 */
@@ -230,11 +231,11 @@ public class ProjectsController {
 	 * Returns the name of a page to add users to a *new* project.
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 * @param principal
-	 * 		a reference to the logged in user.
+	 *            a reference to the logged in user.
 	 * @param projectId
-	 * 		the id of the project to find the metadata for.
+	 *            the id of the project to find the metadata for.
 	 *
 	 * @return The name of the add users to new project page.
 	 */
