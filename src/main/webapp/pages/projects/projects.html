@@ -10,15 +10,7 @@
 <body ddl:bundle-includes="irida-datatables">
 <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
-        <h1>
-            <span th:text="#{projects.title}">Projects</span>
-            <a ng-hide="uiGalaxyCtrl.inGalaxy" th:href="@{/projects/new}" href="/projects/new"
-               class="btn btn-default pull-right" id="newProjectBtn">
-                <span class="fa fa-fw fa-plus ng-cloak"></span>
-                &nbsp;
-                <span th:text="#{projects.btb.create-project}">Create New Project</span>
-            </a>
-        </h1>
+        <h1 th:text="#{projects.title}"></h1>
         <div dt:conf="projectsTable">
             <div dt:confType="callback" dt:type="draw" dt:function="iridaDatatables#datatable.tableDrawn"></div>
         </div>
