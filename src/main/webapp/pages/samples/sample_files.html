@@ -74,16 +74,16 @@
 					<tr class="paired_end paired_end__forward" th:with="file=${pair.getForwardSequenceFile()}">
 						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='forward')"></td>
 						<td>
-							<div class="btn-group btn-group-sm pull-right" role="group">
-								<button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
-									<span class="fa fa-fw fa-download"></span>
-								</button>
+							<div class="btn-group-sm pull-right" role="group">
 								<button th:if="${canManageSample}"
 								        class="btn btn-default remove-file"
 								        th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
-								        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
+								        data:ng-click="${'fileCtrl.deletePair(' + pair.id + ', &#39;'' + pair.getForwardSequenceFile().getLabel() +'&#39;',&#39;''+pair.getReverseSequenceFile().getLabel()+'&#39;')'}">
 									<span class="fa fa-fw fa-trash"></span>
+								</button>
+                                <button class="btn btn-default"
+								        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+									<span class="fa fa-fw fa-download"></span>
 								</button>
 							</div>
 						</td>
@@ -96,12 +96,6 @@
 								        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
 									<span class="fa fa-fw fa-download"></span>
 								</button>
-								<button th:if="${canManageSample}"
-								        class="btn btn-default remove-file"
-								        th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
-								        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
-									<span class="fa fa-fw fa-trash"></span>
-								</button>
 							</div>
 						</td>
 					</tr>
@@ -109,17 +103,18 @@
 				<tr class="single_end" th:each="join : ${single_end}" th:with="file=${join.getObject()}">
 					<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='single')"></td>
 					<td>
-						<div class="btn-group btn-group-sm pull-right" role="group">
-							<button class="btn btn-default"
-							        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
-								<span class="fa fa-fw fa-download"></span>
-							</button>
-							<button th:if="${canManageSample}"
+						<div class="btn-group-sm pull-right" role="group">
+                            <button th:if="${canManageSample}"
 							        class="btn btn-default remove-file"
 							        th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
 							        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
 								<span class="fa fa-fw fa-trash"></span>
 							</button>
+							<button class="btn btn-default"
+							        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+								<span class="fa fa-fw fa-download"></span>
+							</button>
+
 						</div>
 					</td>
 				</tr>
@@ -175,6 +170,22 @@
 	</script>
 	<script type="text/ng-template" id="/confirm.html">
 		<form method="post" th:action="@{/samples/{sId}/files/delete(sId=${sampleId})}">
+			<div class="modal-header">
+			<h3 class="modal-title" th:text="#{samples.files.remove.confirmation}"></h3>
+		</div>
+		<div class="modal-body">
+			<h4>{{ ::deleteCtrl.label }}</h4>
+			<input type="hidden" name="fileId" value="{{ deleteCtrl.fileId }}"/> <input type="hidden" name="returnUrl" th:value="@{${#httpServletRequest.requestURI}}"/>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
+			<button id="remove-file-confirm" type="submit" class="btn btn-warning remove-file-confirm" th:text="#{form.btn.remove}">OK</button>
+		</div>
+		</form>
+	</script>
+    
+    <script type="text/ng-template" id="/confirm_pair.html">
+		<form method="post" th:action="@{/samples/{sId}/files/delete/pair(sId=${sampleId})}">
 			<div class="modal-header">
 			<h3 class="modal-title" th:text="#{samples.files.remove.confirmation}"></h3>
 		</div>
