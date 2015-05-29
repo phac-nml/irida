@@ -68,7 +68,7 @@ public class ProjectSamplesPageIT {
 	}
 
 	@AfterClass
-	public void destroy() {
+	public static void destroy() {
 		driver.quit();
 	}
 

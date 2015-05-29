@@ -49,7 +49,7 @@ public class ProjectReferenceFilePageIT {
 	}
 
 	@AfterClass
-	public void destroy() {
+	public static void destroy() {
 		driver.quit();
 	}
 

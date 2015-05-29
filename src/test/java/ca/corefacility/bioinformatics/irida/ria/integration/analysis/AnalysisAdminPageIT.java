@@ -55,7 +55,7 @@ public class AnalysisAdminPageIT {
 	}
 
 	@AfterClass
-	public void destroy() {
+	public static void destroy() {
 		driver.quit();
 	}
 

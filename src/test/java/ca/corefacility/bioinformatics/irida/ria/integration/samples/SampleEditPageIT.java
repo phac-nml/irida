@@ -62,7 +62,7 @@ public class SampleEditPageIT {
 	}
 
 	@AfterClass
-	public void destroy() {
+	public static void destroy() {
 		driver.quit();
 	}
 

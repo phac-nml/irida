@@ -56,7 +56,7 @@ public class ClientsPageIT {
 	}
 
 	@AfterClass
-	public void destroy() {
+	public static void destroy() {
 		if (driver != null) {
 			driver.close();
 			driver.quit();
