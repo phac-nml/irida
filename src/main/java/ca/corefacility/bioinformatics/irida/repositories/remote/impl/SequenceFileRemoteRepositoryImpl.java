@@ -49,8 +49,6 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * 
 	 * @param tokenService
 	 *            The {@link TokenService} storing OAuth2 tokens
-	 * @param tempDirectory
-	 *            The temporary directory to store downloaded files
 	 */
 	@Autowired
 	public SequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
