@@ -81,10 +81,19 @@
 							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
 						</tr>
 					</th:block>
+                    <th:block th:each="pair : ${remote_paired}">
+                          <tr class="paired_end paired_end__forward">
+                              <td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
+                          </tr>
+                          <tr class="paired_end paired_end__reverse">
+                              <td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+                          </tr>
+                      </th:block>
 				</table>
 				<div class="alert alert-info" th:unless="${hasPaired}" th:text="#{analysis.input-files.no-paired-end}">
 					__NO_PAIRED_END_DATA_
 				</div>
+                      
 			</script>
 
 			<script type="text/ng-template" id="provenance.html">
