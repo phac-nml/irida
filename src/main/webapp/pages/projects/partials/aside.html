@@ -22,7 +22,7 @@
 			<div class="sidebar__item" th:if="${project.modifiedDate} != null">
 				<div class="sidebar__icon"><fa:icon type="date" fixed="" /></div>
 				<div th:text="#{project.modified}"></div>
-				<div class="sidebar__value" id="project-modified" th:text="${#calendars.format(project.modifiedDate, 'dd MMM yyyy')}"></div>
+				<div class="sidebar__value" id="project-modified" data:livestamp="*{modifiedDate}" th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"></div>
 			</div>
 		</div>
 	</div>
