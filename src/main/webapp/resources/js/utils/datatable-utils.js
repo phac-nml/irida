@@ -1,3 +1,4 @@
+/*exported datatable*/
 var datatable = (function(moment, tl, page) {
   'use strict';
   /**
@@ -48,14 +49,14 @@ var datatable = (function(moment, tl, page) {
    *    Fixes bootstrap issues
    */
   function tableDrawn() {
-    addClassesToFilters();
+    updateFilters();
     resizeTable();
   }
 
   /**
    * Updates the filters and search field to use the appropriate bootstrap classes.
    */
-  function addClassesToFilters() {
+  function updateFilters() {
     var filters = document.querySelectorAll('input.search_init, select.search_init');
     if (filters && filters.length) {
       [].forEach.call(filters, function (el) {
@@ -65,6 +66,12 @@ var datatable = (function(moment, tl, page) {
         }
         if (!classList.contains('input-sm')) {
           el.classList.add('input-sm');
+        }
+        if(el.type === 'text'){
+          el.value = '';
+        }
+        else if(el.type === 'select-one') {
+         el.options[0] = new Option('-', '', true, true);
         }
       });
     }
@@ -96,4 +103,3 @@ var datatable = (function(moment, tl, page) {
     tableDrawn: tableDrawn
   };
 })(window.moment, window.TL, window.PAGE);
-
