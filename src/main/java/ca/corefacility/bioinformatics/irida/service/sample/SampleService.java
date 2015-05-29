@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -91,6 +92,17 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link SequenceFile} that we're moving.
 	 */
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
+	
+	/**
+	 * Remove both files in a {@link SequenceFilePair} from a given
+	 * {@link Sample}
+	 * 
+	 * @param sample
+	 *            the {@link Sample} to remove from
+	 * @param pair
+	 *            the {@link SequenceFilePair} containing the files to remove
+	 */
+	public void removeSequenceFilePairFromSample(Sample sample, SequenceFilePair pair);
 
 	/**
 	 * Merge multiple samples into one. Merging samples copies the
