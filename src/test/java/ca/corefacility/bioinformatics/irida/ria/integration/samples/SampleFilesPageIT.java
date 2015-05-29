@@ -3,9 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -41,14 +39,28 @@ public class SampleFilesPageIT {
 	private final String SAMPLE_LABEL = "sample1";
 	private final Long SAMPLE_ID = 1L;
 	private final String FILE_NAME = "01-1111_S1_L001_R1_001.fastq";
-	private WebDriver driver;
+	private static WebDriver driver;
 	private SampleFilesPage page;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 		page = new SampleFilesPage(driver);
+	}
+
+	@After
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
+		driver.quit();
 	}
 
 	@Test
@@ -66,10 +78,5 @@ public class SampleFilesPageIT {
 		page.deleteFirstFile();
 		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
 		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
-	}
-
-	@After
-	public void destroy() {
-		driver.quit();
 	}
 }

@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -38,16 +36,21 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class ProjectReferenceFilePageIT {
 	private static final Long PROJECT_ID_WITH_REFERENCE_FILES = 1L;
 	private static final Long PROJECT_ID_WITHOUT_REFERENCE_FILES = 2L;
-	private WebDriver driver;
+	private static WebDriver driver;
 
-	@Before
-	public void setUp() {
-		this.driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	@BeforeClass
+	public static void setUp() {
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 	}
 
 	@After
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
 	public void destroy() {
-		this.driver.quit();
+		driver.quit();
 	}
 
 	@Test

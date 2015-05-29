@@ -49,7 +49,7 @@ public class AbstractPage {
 		driver.get(url);
 	}
 
-	public void logout(WebDriver driver) {
+	public static void logout(WebDriver driver) {
 		driver.get(BASE_URL + "logout");
 	}
 

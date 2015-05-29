@@ -3,9 +3,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -52,14 +50,31 @@ public class SequenceFilePageIT {
 	private static final String FILE_MIN_LENGTH = "184";
 	private static final String FILE_MAX_LENGTH = "251";
 	private static final String FILE_GC_CONTENT = "30";
-	private WebDriver driver;
+	private static WebDriver driver;
 	private SequenceFilePages page;
 
+	@BeforeClass
+	public static void setUp() {
+		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	}
+
 	@Before
-	public void setUp() {
-		this.driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 		page = new SequenceFilePages(driver);
+	}
+
+	@After
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
+		if (driver != null) {
+			driver.close();
+			driver.quit();
+		}
 	}
 
 	@Test
@@ -107,11 +122,4 @@ public class SequenceFilePageIT {
 		assertEquals("Displays the gc content", FILE_GC_CONTENT, page.getGCContent());
 	}
 
-	@After
-	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
-	}
 }

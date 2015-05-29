@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -39,19 +37,28 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectsPageAdminView.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectsAdminPageViewIT {
-	private WebDriver driver;
+	private static WebDriver driver;
 	private ProjectsPage projectsPage;
 
-	@Before
-	public void setup() {
+	@BeforeClass
+	public static void setup() {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 		projectsPage = new ProjectsPage(driver);
 		projectsPage.toAdminProjectsPage();
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		if (driver != null) {
 			driver.close();
 		}

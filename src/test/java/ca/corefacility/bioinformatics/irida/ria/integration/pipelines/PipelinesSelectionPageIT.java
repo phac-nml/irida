@@ -2,9 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -36,16 +34,25 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class PipelinesSelectionPageIT {
 	private PipelinesSelectionPage pipelinesSelectionPage;
-	private WebDriver driver;
+	private static WebDriver driver;
+
+	@BeforeClass
+	public static void setUp() {
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
 
 	@Before
-	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	public void setUpTest() {
 		pipelinesSelectionPage = new PipelinesSelectionPage(driver);
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		driver.quit();
 	}
 

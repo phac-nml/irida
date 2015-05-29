@@ -5,9 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -46,20 +44,29 @@ import com.google.common.collect.ImmutableList;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectMembersPageIT {
-	private WebDriver driver;
+	private static WebDriver driver;
 	private ProjectMembersPage membersPage;
 
 	private static final ImmutableList<String> COLLABORATORS_NAMES = ImmutableList.of("Mr. Manager", "test User");
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 		membersPage = new ProjectMembersPage(driver);
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		driver.quit();
 	}
 

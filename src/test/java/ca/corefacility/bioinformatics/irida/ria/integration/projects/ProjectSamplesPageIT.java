@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -51,16 +49,25 @@ import com.google.common.collect.ImmutableList;
 public class ProjectSamplesPageIT {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPageIT.class);
 
-	private WebDriver driver;
+	private static WebDriver driver;
 	private ProjectSamplesPage page;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		this.page = new ProjectSamplesPage(driver);
 	}
 
 	@After
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
 	public void destroy() {
 		driver.quit();
 	}

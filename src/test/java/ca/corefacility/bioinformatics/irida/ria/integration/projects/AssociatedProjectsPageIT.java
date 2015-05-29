@@ -5,8 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -42,15 +41,29 @@ public class AssociatedProjectsPageIT {
 	public static final ImmutableList<String> ASSOCIATED_PROJECTS_WITH_RIGHTS = ImmutableList
 			.of("project2", "project3");
 
-	AssociatedProjectPage page;
+	private AssociatedProjectPage page;
 
-	private WebDriver driver;
+	private static WebDriver driver;
+
+	@BeforeClass
+	public static void setUp() {
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
 
 	@Before
-	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsManager(driver);
+	public void setUpTest() {
 		page = new AssociatedProjectPage(driver);
+		LoginPage.loginAsManager(driver);
+	}
+
+	@After
+	public void tearTown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void tearDown() {
+		driver.quit();
 	}
 
 	@Test

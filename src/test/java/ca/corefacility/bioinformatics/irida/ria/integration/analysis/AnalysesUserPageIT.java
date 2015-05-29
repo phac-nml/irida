@@ -1,11 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -16,15 +19,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  */
@@ -36,12 +32,26 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysesUserPageIT {
-	private WebDriver driver;
+	private static WebDriver driver;
+
+	@BeforeClass
+	public static void setUp() {
+		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	}
 
 	@Before
-	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
+	}
+
+	@After
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
+		driver.quit();
 	}
 
 	@Test
@@ -90,10 +100,5 @@ public class AnalysesUserPageIT {
 		page.clearFilter();
 		page.filterByType("Phylogenomics Pipeline");
 		assertEquals("Should be 6 analyses aftering filtering by type", 6, page.getNumberOfAnalyses());
-	}
-
-	@After
-	public void destroy() {
-		driver.quit();
 	}
 }

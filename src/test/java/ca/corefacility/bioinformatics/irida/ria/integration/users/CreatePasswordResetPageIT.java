@@ -3,9 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.users;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -34,20 +32,24 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class CreatePasswordResetPageIT {
 
-	private WebDriver driver;
+	private static WebDriver driver;
 	private CreatePasswordResetPage passwordResetPage;
 
-	@Before
-	public void setup() {
+	@BeforeClass
+	public static void setup() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		// Don't do login here! should be able to go through this without
 		// logging in
 
 		passwordResetPage = new CreatePasswordResetPage(driver);
 	}
 
-	@After
-	public void destroy() {
+	@AfterClass
+	public static void destroy() {
 		if (driver != null) {
 			driver.close();
 			driver.quit();

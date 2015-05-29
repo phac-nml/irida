@@ -3,9 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.clients;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -38,18 +36,26 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/IridaClientDetailsServiceImplIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ClientsPageIT {
-	private WebDriver driver;
+	private static WebDriver driver;
 	private ClientsPage clientsPage;
 
-	@Before
-	public void setup() {
+	@BeforeClass
+	public static void setup() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsManager(driver);
+	}
 
+	@Before
+	public void setUpTest() {
+		LoginPage.loginAsManager(driver);
 		clientsPage = new ClientsPage(driver);
 	}
 
 	@After
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
 	public void destroy() {
 		if (driver != null) {
 			driver.close();

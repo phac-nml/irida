@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -53,18 +51,27 @@ public class ProjectMetadataEditPageIT {
 	private final String PROJECT_ORGANISM = "E. coli";
 	private final String PROJECT_REMOTE_URL = "http://google.ca";
 
-	private WebDriver driver;
+	private static WebDriver driver;
 	private ProjectMetadataEditPage page;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 		page = new ProjectMetadataEditPage(driver);
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		driver.quit();
 	}
 

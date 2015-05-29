@@ -5,9 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -36,19 +34,28 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/sequencingRuns/SequencingRunsPagesIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SequencingRunFilesPageIT {
-	private WebDriver driver;
+	private static WebDriver driver;
 	private SequencingRunFilesPage page;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 		page = new SequencingRunFilesPage(driver);
 		page.getFilesPage(1L);
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		driver.quit();
 	}
 

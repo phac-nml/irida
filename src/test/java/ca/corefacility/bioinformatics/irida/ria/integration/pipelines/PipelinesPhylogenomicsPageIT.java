@@ -7,9 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -49,17 +47,26 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class PipelinesPhylogenomicsPageIT {
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
-	private WebDriver driver;
+	private static WebDriver driver;
 	private PipelinesPhylogenomicsPage page;
 
-	@Before
-	public void setUp() throws IOException, URISyntaxException {
+	@BeforeClass
+	public static void setUp() throws IOException, URISyntaxException {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		page = new PipelinesPhylogenomicsPage(driver);
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		driver.quit();
 	}
 

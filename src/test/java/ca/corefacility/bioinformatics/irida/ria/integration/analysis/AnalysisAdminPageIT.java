@@ -3,9 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -38,16 +36,25 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisAdminPageIT {
-	private WebDriver driver;
+	private static WebDriver driver;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		// TODO (14-11-07 - josh): Find out why PhantomJS fails here.
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 	}
 
 	@After
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
 	public void destroy() {
 		driver.quit();
 	}

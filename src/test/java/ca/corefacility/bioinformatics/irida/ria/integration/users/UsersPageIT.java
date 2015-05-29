@@ -5,9 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -41,19 +39,28 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UsersPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UsersPageIT {
-	private WebDriver driver;
+	private static WebDriver driver;
 	private UsersPage usersPage;
 
-	@Before
-	public void setup() {
+	@BeforeClass
+	public static void setup() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 
 		usersPage = new UsersPage(driver);
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		if (driver != null) {
 			driver.close();
 			driver.quit();

@@ -5,9 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -41,16 +39,15 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisDetailsPageIT {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
-	private WebDriver driver;
+	private static WebDriver driver;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-
 	}
 
-	@After
-	public void destroy() {
+	@AfterClass
+	public static void destroy() {
 		driver.quit();
 	}
 

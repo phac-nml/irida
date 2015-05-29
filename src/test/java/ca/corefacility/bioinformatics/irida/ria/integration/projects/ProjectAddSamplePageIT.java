@@ -3,9 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -39,15 +37,15 @@ public class ProjectAddSamplePageIT {
 	private String NAME_ERROR_TOO_SHORT = "a";
 	private String NAME_WITH_INVALID_CHARACTERS = "My Sample Name";
 	private String NAME_VALID = "Sample00010-11";
-	private WebDriver driver;
+	private static WebDriver driver;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
 	}
 
-	@After
-	public void destroy() {
+	@AfterClass
+	public static void destroy() {
 		driver.quit();
 	}
 

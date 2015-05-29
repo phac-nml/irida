@@ -2,9 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -48,18 +46,27 @@ public class SampleDetailsPageIT {
 	private static final String SAMPLE_STRAIN = "O157";
 	private static final String SAMPLE_ISOLATE = "54343";
 
-	private WebDriver driver;
+	private static WebDriver driver;
 	private SampleDetailsPage page;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		LoginPage.loginAsManager(driver);
 		page = new SampleDetailsPage(driver);
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		driver.quit();
 	}
 

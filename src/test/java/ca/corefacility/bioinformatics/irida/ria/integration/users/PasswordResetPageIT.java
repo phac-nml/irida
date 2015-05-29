@@ -3,9 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.users;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -36,20 +34,24 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class PasswordResetPageIT {
 	private static final String RESET_USER = "differentUser";
 
-	private WebDriver driver;
+	private static WebDriver driver;
 	private PasswordResetPage passwordResetPage;
 
-	@Before
-	public void setup() {
+	@BeforeClass
+	public static void setup() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+	}
+
+	@Before
+	public void setUpTest() {
 		// Don't do login here! should be able to go through this without
 		// logging in
 
 		passwordResetPage = new PasswordResetPage(driver);
 	}
 
-	@After
-	public void destroy() {
+	@AfterClass
+	public static void destroy() {
 		if (driver != null) {
 			driver.close();
 			driver.quit();
@@ -92,5 +94,6 @@ public class PasswordResetPageIT {
 		// try new password
 		LoginPage.login(driver, RESET_USER, password);
 		assertTrue("The user is logged in and redirected.", driver.getCurrentUrl().contains("dashboard"));
+		LoginPage.logout(driver);
 	}
 }

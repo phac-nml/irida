@@ -5,9 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -52,19 +50,27 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_CREATED_DATE = "12 Jul 2013";
 	public static final String PROJECT_ORGANISM = "E. coli";
 
-	private WebDriver driver;
+	private static WebDriver driver;
 	private ProjectDetailsPage detailsPage;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsManager(driver);
+	}
 
+	@Before
+	public void setUpTest() {
 		detailsPage = new ProjectDetailsPage(driver);
+		LoginPage.loginAsManager(driver);
 	}
 
 	@After
-	public void destroy() {
+	public void tearDown() {
+		LoginPage.logout(driver);
+	}
+
+	@AfterClass
+	public static void destroy() {
 		if (driver != null) {
 			driver.close();
 			driver.quit();
