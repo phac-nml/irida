@@ -297,6 +297,46 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
+	 * Delete a {@link SequenceFilePair} from a {@link Sample}. This will remove
+	 * both {@link SequenceFile}s from the {@link Sample}
+	 * 
+	 * @param attributes
+	 *            the redirect attributes where we can add flash-scoped messages
+	 *            for the client.
+	 * @param sampleId
+	 *            ID of the {@link Sample} to remove from
+	 * @param pairId
+	 *            ID of the {@link SequenceFilePair} to remove
+	 * @param returnUrl
+	 *            URL to redirect back to
+	 * @param locale
+	 *            Locale of the request
+	 * @return Redirect back to the page
+	 */
+	@RequestMapping(value = "/samples/{sampleId}/files/delete/pair", method = RequestMethod.POST)
+	public String removeFilePairFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
+			@RequestParam Long pairId, @RequestParam String returnUrl, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		SequenceFilePair sequenceFilePair = sequenceFilePairService.read(pairId);
+
+		try {
+			sampleService.removeSequenceFilePairFromSample(sample, sequenceFilePair);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute(
+					"fileDeletedMessage",
+					messageSource.getMessage("samples.files.removed.message",
+							new Object[] { sequenceFilePair.getLabel() }, locale));
+		} catch (Exception e) {
+			logger.error("Could not remove sequence file pair from sample: ", e);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage("samples.files.remove.error",
+					new Object[] { sequenceFilePair.getLabel() }, locale));
+		}
+
+		return "redirect:" + returnUrl;
+	}
+
+	/**
 	 * Upload {@link SequenceFile}'s to a sample
 	 *
 	 * @param sampleId

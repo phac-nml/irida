@@ -1,144 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ddl="http://www.thymeleaf.org/dandelion"
+      xmlns:dt="http://www.thymeleaf.org/dandelion/datatables"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
 <head>
     <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-          href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
 </head>
-<body>
+<body ddl:bundle-includes="irida-datatables">
 <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
-        <h1><span th:text="#{projects.title}">Projects</span><a ng-hide="uiGalaxyCtrl.inGalaxy" th:href="@{/projects/new}" href="/projects/new" class="btn btn-default pull-right"  id="newProjectBtn"><span class="fa fa-fw fa-plus ng-cloak"></span>&nbsp;<span th:text="#{projects.btb.create-project}">Create New Project</span></a></h1>
-        <table id="projectsTable" class="table table-hover">
+        <h1 th:text="#{projects.title}"></h1>
+        <div dt:conf="projectsTable">
+            <div dt:confType="callback" dt:type="init" dt:function="iridaDatatables#datatable.tableDrawn"></div>
+        </div>
+        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="head_after" dt:dom="lti">
             <thead>
-            <tr role="row" th:inline="text">
-                <td><input type="checkbox" id="selectAll"/></td>
-                <th id="project-id">[[#{projects.table.id}]]<i class="glyphicon"></i></th>
-                <th id="project-name">[[#{projects.table.name}]]<i class="glyphicon"></i></th>
-                <th id="project-organism">[[#{projects.table.organism}]]<i class="glyphicon"></i></th>
-                <th>[[#{projects.table.role}]]<i class="glyphicon"></i></th>
-                <th>[[#{projects.table.samples}]]</th>
-                <th>[[#{projects.table.members}]]</th>
-                <th>[[#{projects.table.created}]]<i class="glyphicon"></i></th>
-                <th>[[#{projects.table.modified}]]<i class="glyphicon"></i></th>
+            <tr role="row">
+                <th id="project-id" dt:property="item.id" th:text="#{projects.table.id}"></th>
+                <th id="project-name" dt:filterable="true" dt:property="item.name" th:text="#{projects.table.name}"
+                    dt:renderFunction="iridaDatatables#datatable.createItemButton"></th>
+                <th id="project-organism" dt:filterable="true" dt:filterType="select" dt:property="item.organism" th:text="#{projects.table.organism}"></th>
+                <th dt:property="custom.role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles" th:text="#{projects.table.role}"
+                    dt:renderFunction="iridaDatatables#datatable.i18n"></th>
+                <th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
+                <th dt:property="custom.members" dt:searchable="false" th:text="#{projects.table.members}"></th>
+                <th dt:property="item.createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
+                    dt:renderFunction="iridaDatatables#datatable.formatDate"></th>
+                <th dt:property="item.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
+                    dt:renderFunction="iridaDatatables#datatable.formatDate"></th>
             </tr>
             </thead>
-            <tbody></tbody>
         </table>
     </main>
 </div>
-<div layout:fragment="page-scripts">
-    <script src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js" th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
-            src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function () {
-            var allChecked = false,
-                    selected = [],
-                    $selectAll = $("#selectAll"),
-                    $projectsTable = $('#projectsTable');
-
-            $projectsTable.DataTable({
-                'dom': "<'top'lf>rt<'bottom'ip><'clear'>",
-                'processing': true,
-                'serverSide': true,
-                'deferRender': true,
-                'ajax': {
-                    "url": /*[[@{${ajaxURL}}]]*/ '/projects/ajax/list'
-                },
-                'columns': [
-                    {
-                        "data": "id",
-                        "render": function (data) {
-                            var checked = allChecked || selected.indexOf(data) >= 0 ? "checked" : "";
-                            return '<input type="checkbox" value="' + data + '" ' + checked + '/>';
-                        },
-                        "visible": /*[[${isAdmin}]]*/ false,
-                        "sortable": false
-                    },
-                    {
-                        "data": "id"
-                    },
-                    {
-                        "data": "name",
-                        'render': function (data, type, row) {
-                            var urlBase = /*[[@{/projects/}]]*/ '/projects/';
-                            return '<a class="btn btn-default btn-xs" href="' + urlBase + row.id + '">' + data + '</a>';
-                        }
-                    },
-                    {
-                        "data": "organism",
-                        'render': function (data) {
-                            if (data != null && data !== undefined) {
-                                return '<i class="organism">' + data + '</i>';
-                            }
-                            else {
-                                return /*[[#{generic.unknown}]]*/ 'unknown';
-                            }
-                        }
-                    },
-                    {
-                        "data": "role",
-                        "visible": /*[[${not isAdmin}]]*/ true,
-                        'render': function (data) {
-                            if (data === 'PROJECT_OWNER') {
-                                return '<span class="glyphicon glyphicon-tower"></span>&nbsp;&nbsp;' + /*[[#{project.role.owner}]]*/ 'Owner';
-                            }
-                            else if (data === 'PROJECT_USER') {
-                                return '<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;' + /*[[#{project.role.collaborator}]]*/ 'Collaborator';
-                            }
-                            else {
-                                return '<span class="glyphicon glyphicon-minus"></span>';
-                            }
-                        }
-                    },
-                    {
-                        "data": "samples",
-                        'sortable': false
-                    },
-                    {
-                        "data": "members",
-                        'sortable': false,
-                    },
-                    {
-                        "data": "dateCreated"
-                    },
-                    {
-                        "data": "dateModified",
-                        'render': function (data) {
-                            return '<span data-livestamp="' + data + '" title="' + new Date(data) + '">'
-                        },
-                        "orderSequence": ["asc"]
-                    }
-                ]
-            });
-
-            $projectsTable.find('tbody').on('click', 'input', function () {
-                var id = $(this).val();
-                console.log(id);
-                var index = selected.indexOf(id);
-                if (index == -1) {
-                    selected.push(id);
+<th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script>
+        var roles = [
+                /*[[#{projectRole.PROJECT_USER}]]*/ 'Collaborator',
+                /*[[#{projectRole.PROJECT_OWNER}]]*/ 'Manager',
+                /*[[#{projectRole.PROJECT_NONE}]]*/ 'None'
+            ],
+            PAGE = {
+                lang: {
+                    'PROJECT_USER': roles[0],
+                    'PROJECT_OWNER': roles[1],
+                    'PROJECT_NONE': roles[2]
                 }
-                else {
-                    selected.splice(index, 1);
-                }
-                $selectAll.prop('indeterminate', selected.length);
-            });
-
-            $selectAll.on("click", function () {
-                console.log("clicked")
-                var $this = $(this);
-                selected = [];
-                allChecked = $this.prop("checked");
-                $projectsTable.find('input').prop('checked', allChecked);
-            });
-        });
-        /*]]>*/
+            };
     </script>
-</div>
+</th:block>
 </body>
 </html>

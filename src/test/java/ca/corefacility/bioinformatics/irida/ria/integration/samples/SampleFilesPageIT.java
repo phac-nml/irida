@@ -40,6 +40,7 @@ public class SampleFilesPageIT {
 	private final Long SAMPLE_ID = 1L;
 	private final String FILE_NAME = "01-1111_S1_L001_R1_001.fastq";
 	private static WebDriver driver;
+
 	private SampleFilesPage page;
 
 	@BeforeClass
@@ -68,7 +69,6 @@ public class SampleFilesPageIT {
 		page.gotoPage(SAMPLE_ID);
 		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
 		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
-		assertEquals("Displays the correct file name.", FILE_NAME, page.getSequenceFileName());
 	}
 	
 	@Test
@@ -78,5 +78,14 @@ public class SampleFilesPageIT {
 		page.deleteFirstFile();
 		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
 		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
+	}
+
+	@Test
+	public void testDeletePair(){
+		page.gotoPage(SAMPLE_ID);
+		
+		page.deleteFirstPair();
+		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
+		assertEquals("Displays the correct number of sequence files", 1, page.getSequenceFileCount());
 	}
 }

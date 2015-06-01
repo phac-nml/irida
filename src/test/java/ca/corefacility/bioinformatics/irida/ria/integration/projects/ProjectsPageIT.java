@@ -71,12 +71,10 @@ public class ProjectsPageIT {
 	@Test
 	public void confirmTablePopulatedByProjects() {
 		assertEquals("Projects table should be populated by 4 projects", 4, projectsPage.projectsTableSize());
-	}
 
-	@Test
-	public void setsTheIconForCollaboratorsAndOwners() {
-		assertTrue("Has the user icon", projectsPage.getCollaboratorClass().contains("user"));
-		assertTrue("Has the user icon", projectsPage.getOwnerClass().contains("tower"));
+		// Ensure buttons are created and direct to the write project.
+		projectsPage.gotoProjectPage(1);
+		assertTrue("Should be on specific project page", driver.getCurrentUrl().contains("/projects/2"));
 	}
 
 	@Test
