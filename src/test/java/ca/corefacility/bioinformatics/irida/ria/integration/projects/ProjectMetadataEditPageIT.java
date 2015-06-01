@@ -1,43 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Edit Project Metadata Integration Test
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectMetadataEditPageIT {
+public class ProjectMetadataEditPageIT extends AbstractIridaUIIT {
 	public static final String GOOD_PROJECT_NAME = "MY GOOD NAME";
 	public static final String GOOD_PROJECT_ORGANISM = "Mr. Good Bug";
 	public static final String GOOD_PROJECT_DESCRIPTION = "New project description.";
@@ -51,28 +29,12 @@ public class ProjectMetadataEditPageIT {
 	private final String PROJECT_ORGANISM = "E. coli";
 	private final String PROJECT_REMOTE_URL = "http://google.ca";
 
-	private static WebDriver driver;
 	private ProjectMetadataEditPage page;
-
-	@BeforeClass
-	public static void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-	}
 
 	@Before
 	public void setUpTest() {
-		LoginPage.loginAsManager(driver);
-		page = new ProjectMetadataEditPage(driver);
-	}
-
-	@After
-	public void tearDown() {
-		LoginPage.logout(driver);
-	}
-
-	@AfterClass
-	public static void destroy() {
-		driver.quit();
+		LoginPage.loginAsManager(driver());
+		page = new ProjectMetadataEditPage(driver());
 	}
 
 	@Test
@@ -91,9 +53,9 @@ public class ProjectMetadataEditPageIT {
 	public void canUpdateProjectInformation() {
 		page.gotoPage(PROJECT_ID_OWNER);
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, GOOD_PROJECT_REMOTEURL);
-		assertFalse("Redirects to the metadata page", driver.getCurrentUrl().contains("edit"));
+		assertFalse("Redirects to the metadata page", driver().getCurrentUrl().contains("edit"));
 
-		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver);
+		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
 		metadataPage.goTo(PROJECT_ID_OWNER);
 		assertEquals("Updated the project name", GOOD_PROJECT_NAME, metadataPage.getDataProjectName());
 		assertEquals("Updated the organism", GOOD_PROJECT_ORGANISM, metadataPage.getDataProjectOrganism());
@@ -105,6 +67,6 @@ public class ProjectMetadataEditPageIT {
 	public void errorsIfBadProjectInformation() {
 		page.gotoPage(PROJECT_ID_OWNER);
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, BAD_PROJECT_URL);
-		assertTrue("Remains on the same page", driver.getCurrentUrl().contains("edit"));
+		assertTrue("Remains on the same page", driver().getCurrentUrl().contains("edit"));
 	}
 }

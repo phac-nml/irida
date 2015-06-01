@@ -1,62 +1,26 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.sequencingRuns;
 
-import static org.junit.Assert.assertEquals;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns.SequencingRunFilesPage;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import static org.junit.Assert.assertEquals;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns.SequencingRunFilesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/sequencingRuns/SequencingRunsPagesIT.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class SequencingRunFilesPageIT {
-	private static WebDriver driver;
+public class SequencingRunFilesPageIT extends AbstractIridaUIIT {
 	private SequencingRunFilesPage page;
-
-	@BeforeClass
-	public static void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-	}
 
 	@Before
 	public void setUpTest() {
-		LoginPage.loginAsManager(driver);
-		page = new SequencingRunFilesPage(driver);
+		LoginPage.loginAsManager(driver());
+		page = new SequencingRunFilesPage(driver());
 		page.getFilesPage(1L);
-	}
-
-	@After
-	public void tearDown() {
-		LoginPage.logout(driver);
-	}
-
-	@AfterClass
-	public static void destroy() {
-		driver.quit();
 	}
 
 	@Test

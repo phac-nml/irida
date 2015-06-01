@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectReferenceFilePage;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;

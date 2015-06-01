@@ -1,31 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.*;
-import org.junit.runner.RunWith;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsNewPage;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsNewPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -33,47 +19,27 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * </p>
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectsNewPageIT {
+public class ProjectsNewPageIT extends AbstractIridaUIIT {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsNewPageIT.class);
-	private static WebDriver driver;
 	private ProjectsNewPage page;
 
-	@BeforeClass
-	public static void setUp() {
-		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+	@Override
+	public WebDriver driverToUse() {
+		return new ChromeDriver();
 	}
 
 	@Before
 	public void setUpTest() {
-		LoginPage.loginAsManager(driver);
-		page = new ProjectsNewPage(driver);
-	}
-
-	@After
-	public void tearDown() {
-		LoginPage.logout(driver);
-	}
-
-	@AfterClass
-	public static void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
+		LoginPage.loginAsManager(driver());
+		page = new ProjectsNewPage(driver());
 	}
 
 	@Test
 	public void testCreateNewProjectForm() {
 		logger.debug("Testing: CreateNewProjectFrom");
 		page.goToPage();
-		assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver.getTitle());
+		assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver().getTitle());
 
 		// Start with just submitting the empty form
 		page.submitForm("", "", "", "");
@@ -96,7 +62,7 @@ public class ProjectsNewPageIT {
 		page.goToPage();
 		page.submitForm("test project name", "", "", "");
 		page.clickSubmit();
-		assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
+		assertTrue("Redirects to the project metadata page", driver().getCurrentUrl().contains("/metadata"));
 	}
 
 	@Test

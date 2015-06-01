@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.users;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -24,38 +25,24 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/PasswordResetPageIT.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class PasswordResetPageIT {
+public class PasswordResetPageIT extends AbstractIridaUIIT {
 	private static final String RESET_USER = "differentUser";
 
-	private static WebDriver driver;
 	private PasswordResetPage passwordResetPage;
-
-	@BeforeClass
-	public static void setup() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-	}
 
 	@Before
 	public void setUpTest() {
 		// Don't do login here! should be able to go through this without
 		// logging in
 
-		passwordResetPage = new PasswordResetPage(driver);
+		passwordResetPage = new PasswordResetPage(driver());
 	}
 
-	@AfterClass
-	public static void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
+	@After
+	@Override
+	public void tearDown() {
+		// don't log out, we didn't log in!
 	}
 
 	@Test
@@ -90,10 +77,10 @@ public class PasswordResetPageIT {
 		passwordResetPage.enterPassword(password, password);
 		assertTrue(passwordResetPage.checkSuccess());
 
-		passwordResetPage.logout(driver);
+		passwordResetPage.logout(driver());
 		// try new password
-		LoginPage.login(driver, RESET_USER, password);
-		assertTrue("The user is logged in and redirected.", driver.getCurrentUrl().contains("dashboard"));
-		LoginPage.logout(driver);
+		LoginPage.login(driver(), RESET_USER, password);
+		assertTrue("The user is logged in and redirected.", driver().getCurrentUrl().contains("dashboard"));
+		LoginPage.logout(driver());
 	}
 }
