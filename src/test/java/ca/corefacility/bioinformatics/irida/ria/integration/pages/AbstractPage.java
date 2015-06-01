@@ -1,8 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import com.google.common.base.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,9 +11,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.google.common.base.Strings;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the common elements in a page within the application.
@@ -106,7 +104,7 @@ public class AbstractPage {
 	public boolean isElementOnScreen(String id) {
 		driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
 		boolean exists = driver.findElements(By.id(id)).size() != 0;
-		driver.manage().timeouts().implicitlyWait(TestUtilities.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(AbstractIridaUIITPhantomJS.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 		return exists;
 	}
 

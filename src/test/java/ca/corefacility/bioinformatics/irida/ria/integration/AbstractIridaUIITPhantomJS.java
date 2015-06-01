@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITPhantomJS {
 
-    private static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
+    public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
 
     private final WebDriver driver;
 
