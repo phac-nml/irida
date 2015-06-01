@@ -57,6 +57,12 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 		return super.readMultiple(idents);
 	}
 	
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFilePair')")
+	public SequenceFilePair read(Long id) throws EntityNotFoundException {
+		return super.read(id);
+	}
+	
 
 	/**
 	 * {@inheritDoc}

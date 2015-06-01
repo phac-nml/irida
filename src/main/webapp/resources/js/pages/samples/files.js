@@ -123,6 +123,21 @@
         }
       });
     };
+    
+    vm.deletePair = function(id, label1, label2) {
+      $modal.open({
+        templateUrl: '/confirm_pair.html',
+        controller: 'FileDeletionController as deleteCtrl',
+        resolve: {
+          id: function() {
+            return id;
+          },
+          label: function() {
+            return label1 + ", " + label2;
+          }
+        }
+      });
+    };
   }
 
   /**

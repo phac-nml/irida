@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -171,13 +172,23 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canUpdateSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
 		SampleSequenceFileJoin joinForSampleAndFile = ssfRepository.readFileForSample(sample, sequenceFile);
 		logger.trace("Removing " + joinForSampleAndFile.getObject().getId() + " from sample "
 				+ joinForSampleAndFile.getSubject().getId());
 		ssfRepository.delete(joinForSampleAndFile);
 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canUpdateSample')")
+	public void removeSequenceFilePairFromSample(Sample sample, SequenceFilePair pair) {
+		pair.getFiles().forEach((f) -> removeSequenceFileFromSample(sample, f));
 	}
 
 	/**
