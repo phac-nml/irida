@@ -63,7 +63,7 @@ The main configuration parameters you will need to change are:
   * `sequence.file.base.directory=/opt/irida/data/sequence`
   * `reference.file.base.directory=/opt/irida/data/reference`
   * `output.file.base.directory=/opt/irida/data/output`
-  * `remote.file.temporary.directory=/opt/irida/data/remote-temporary-files`
+  * `snapshot.file.base.directory=/opt/irida/data/snapshot`
 2. **Database connection information:**
   * `jdbc.url=jdbc:mysql://localhost:3306/irida_test`
   * `jdbc.username=test`
