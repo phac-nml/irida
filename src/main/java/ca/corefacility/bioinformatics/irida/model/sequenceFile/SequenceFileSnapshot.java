@@ -47,7 +47,7 @@ public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, Vers
 
 	@NotNull
 	@Column(name = "remote_uri")
-	private final String remoteURI;
+	private String remoteURI;
 
 	@Column(name = "file_path", unique = true, nullable = true)
 	private Path file;
@@ -76,6 +76,12 @@ public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, Vers
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber;
 
+	
+	private SequenceFileSnapshot(){
+		createdDate = new Date();
+		fileRevisionNumber = 0L;
+	}
+	
 	/**
 	 * Create a new {@link SequenceFileSnapshot} based on an existing remote
 	 * {@link SequenceFile}. This will copy the properties of the file along
@@ -85,8 +91,7 @@ public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, Vers
 	 *            The {@link SequenceFile} to base this copy on
 	 */
 	public SequenceFileSnapshot(SequenceFile base) {
-		createdDate = new Date();
-		fileRevisionNumber = 0L;
+		this();
 
 		remoteURI = base.getSelfHref();
 		optionalProperties = base.getOptionalProperties();

@@ -72,6 +72,9 @@ public class PathConverter implements UserType {
 	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
 			throws HibernateException, SQLException {
 		String s = StringType.INSTANCE.nullSafeGet(rs, names[0], session);
+		if(s == null){
+			return null;
+		}
 		return Paths.get(s);
 	}
 

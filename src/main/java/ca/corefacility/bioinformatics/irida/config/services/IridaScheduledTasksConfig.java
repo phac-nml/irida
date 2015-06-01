@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -76,10 +77,18 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private Double daysToCleanup;
 	
 	/**
-	 * Cycle through any newly created submissions and prepare them for
-	 * execution.
+	 * Cycle through any newly created submissions and download any required
+	 * {@link SequenceFileSnapshot}s.
 	 */
 	@Scheduled(initialDelay = 1000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	public void downloadFiles() {
+		analysisExecutionScheduledTask().downloadFiles();
+	}
+
+	/**
+	 * Cycle through any submissions and prepare them for execution.
+	 */
+	@Scheduled(initialDelay = 2000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void prepareAnalyses() {
 		analysisExecutionScheduledTask().prepareAnalyses();
 	}
@@ -87,7 +96,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any outstanding submissions and execute them.
 	 */
-	@Scheduled(initialDelay = 2000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 3000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void executeAnalyses() {
 		analysisExecutionScheduledTask().executeAnalyses();
 	}
@@ -95,7 +104,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any submissions running in Galaxy and monitor the status.
 	 */
-	@Scheduled(initialDelay = 3000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 4000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void monitorRunningAnalyses() {
 		analysisExecutionScheduledTask().monitorRunningAnalyses();
 	}
@@ -103,7 +112,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any completed submissions and transfer the results.
 	 */
-	@Scheduled(initialDelay = 4000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 5000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void transferAnalysesResults() {
 		analysisExecutionScheduledTask().transferAnalysesResults();
 	}

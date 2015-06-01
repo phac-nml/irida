@@ -5,8 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Before;
@@ -50,22 +48,5 @@ public class SequenceFileRemoteServiceImplTest {
 
 		assertEquals(filesList, sequenceFilesForSample);
 		verify(repository).list(seqFilesHref, api);
-	}
-
-	@Test
-	public void testDownloadSequenceFile() {
-		String seqFilesHref = "http://somewhere/projects/1/samples/2/sequencefiles/3";
-		RemoteAPI api = new RemoteAPI();
-		SequenceFile sequenceFile = new SequenceFile();
-		sequenceFile.setRemoteAPI(api);
-		sequenceFile.add(new Link(seqFilesHref, Link.REL_SELF));
-
-		Path returned = Paths.get("/");
-		when(repository.downloadRemoteSequenceFile(sequenceFile, api)).thenReturn(returned);
-
-		Path downloadSequenceFile = service.downloadSequenceFile(sequenceFile);
-
-		assertEquals(returned, downloadSequenceFile);
-		verify(repository).downloadRemoteSequenceFile(sequenceFile, api);
 	}
 }

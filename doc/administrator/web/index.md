@@ -60,10 +60,10 @@ If this file does not exist, the platform will use internal configuration values
 The main configuration parameters you will need to change are:
 
 1. **Directories to store files managed by IRIDA:**
-  * `sequence.file.base.directory=/opt/irida/data/sequence`
-  * `reference.file.base.directory=/opt/irida/data/reference`
-  * `output.file.base.directory=/opt/irida/data/output`
-  * `remote.file.temporary.directory=/opt/irida/data/remote-temporary-files`
+  * `sequence.file.base.directory=/opt/irida/data/sequence` - Sequence files managed by IRIDA.
+  * `reference.file.base.directory=/opt/irida/data/reference` - Reference files assigned to projects in IRIDA.
+  * `output.file.base.directory=/opt/irida/data/output` - Results of analysis pipelines.
+  * `snapshot.file.base.directory=/opt/irida/data/snapshot` - Sequence files transferred from remote IRIDA installations.
 2. **Database connection information:**
   * `jdbc.url=jdbc:mysql://localhost:3306/irida_test`
   * `jdbc.username=test`

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 
 /**
  * Service for reading {@link Sample}s
@@ -36,4 +37,13 @@ public interface SampleRemoteService extends RemoteService<Sample> {
 	 * @return A Page of {@link Sample}s
 	 */
 	public Page<Sample> searchSamplesForProject(Project project, String search, int page, int size);
+
+	/**
+	 * Get the remote {@link Sample} for a given {@link SequenceFileSnapshot}
+	 * 
+	 * @param file
+	 *            The {@link SequenceFileSnapshot} to get the {@link Sample} for
+	 * @return The remote {@link Sample}
+	 */
+	public Sample getSampleForSequenceFileSnapshot(SequenceFileSnapshot file);
 }

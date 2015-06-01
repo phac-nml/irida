@@ -5,9 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -43,8 +41,6 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 
 	// OAuth2 token storage service for making requests
 	private final RemoteAPITokenService tokenService;
-	// temporary directory for storing downloaded files
-	private final Path tempDirectory;
 
 	public static final MediaType DEFAULT_DOWNLOAD_MEDIA_TYPE = new MediaType("application", "fastq");
 
@@ -53,14 +49,10 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * 
 	 * @param tokenService
 	 *            The {@link TokenService} storing OAuth2 tokens
-	 * @param tempDirectory
-	 *            The temporary directory to store downloaded files
 	 */
 	@Autowired
-	public SequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService,
-			@Qualifier("remoteFilesTempDirectory") Path tempDirectory) {
+	public SequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
 		super(tokenService, listTypeReference, objectTypeReference);
-		this.tempDirectory = tempDirectory;
 		this.tokenService = tokenService;
 	}
 
@@ -68,17 +60,14 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI remoteAPI,
-			MediaType... mediaTypes) {
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI, MediaType... mediaTypes) {
+		SequenceFile file = read(uri, remoteAPI);
+		
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-
-		// get the resource's URI
-		Link link = sequenceFile.getLink(Link.REL_SELF);
-		String uri = link.getHref();
 
 		// add the sequence file message converter
 		List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
-		converters.add(new SequenceFileMessageConverter(tempDirectory));
+		converters.add(new SequenceFileMessageConverter(file.getFileName()));
 		restTemplate.setMessageConverters(converters);
 
 		// add the application/fastq accept header
@@ -95,8 +84,8 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI remoteAPI) {
-		return downloadRemoteSequenceFile(sequenceFile, remoteAPI, DEFAULT_DOWNLOAD_MEDIA_TYPE);
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI) {
+		return downloadRemoteSequenceFile(uri, remoteAPI, DEFAULT_DOWNLOAD_MEDIA_TYPE);
 	}
 
 }

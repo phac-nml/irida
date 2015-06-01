@@ -14,7 +14,7 @@ public class SequenceFileSnapshotRepositoryImpl extends FilesystemSupplementedRe
 
 	@Autowired
 	public SequenceFileSnapshotRepositoryImpl(EntityManager entityManager,
-			@Qualifier("sequenceFileBaseDirectory") Path baseDirectory) {
+			@Qualifier("snapshotFileBaseDirectory") Path baseDirectory) {
 		super(entityManager, baseDirectory);
 	}
 

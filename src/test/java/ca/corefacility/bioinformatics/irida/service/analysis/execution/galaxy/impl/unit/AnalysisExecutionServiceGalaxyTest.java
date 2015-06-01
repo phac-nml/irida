@@ -48,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
@@ -74,6 +75,8 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private GalaxyLibrariesService galaxyLibrariesService;
 	@Mock
 	private AnalysisWorkspaceServiceGalaxy analysisWorkspaceService;
+	@Mock
+	private SequenceFileSnapshotService sequenceFileSnapshotService;
 	@Mock
 	private Analysis analysisResults;
 	@Mock
@@ -142,7 +145,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
-				iridaWorkflowsService);
+				iridaWorkflowsService,sequenceFileSnapshotService);
 		AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync = new AnalysisExecutionServiceGalaxyCleanupAsync(
 				analysisSubmissionService, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
@@ -275,6 +278,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	@Test
 	public void testPrepareSubmissionSuccess() throws InterruptedException, ExecutionManagerException, IOException,
 			NoSuchValueException, ExecutionException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
 		AnalysisSubmission returnedSubmission = preparedAnalysisFuture.get();
 
@@ -304,6 +308,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile)).thenThrow(
 				new WorkflowUploadException(null, null));
 
+		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
 
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
@@ -328,6 +333,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		when(analysisWorkspaceService.prepareAnalysisWorkspace(any(AnalysisSubmission.class))).thenThrow(
 				new ExecutionManagerException());
 
+		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
 
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,

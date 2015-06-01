@@ -10,10 +10,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 
 import com.google.common.base.Strings;
@@ -29,11 +33,20 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 	public static final String PROJECT_SAMPLES_REL = "project/samples";
 	public static final String SAMPLES_CACHE_NAME = "samplesForProject";
 
+	public static final String FILE_SAMPLE_REL = "sample";
+
+	private final SequenceFileRemoteRepository fileRepository;
+
 	@Autowired
-	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository, RemoteAPIRepository apiRepository) {
+	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository,
+			SequenceFileRemoteRepository fileRepository, RemoteAPIRepository apiRepository) {
 		super(sampleRemoteRepository, apiRepository);
+		this.fileRepository = fileRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Sample> getSamplesForProject(Project project) {
 		Link link = project.getLink(PROJECT_SAMPLES_REL);
@@ -41,6 +54,9 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		return list(samplesHref, project.getRemoteAPI());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Page<Sample> searchSamplesForProject(Project project, String search, int page, int size) {
 		List<Sample> samplesForProject = getSamplesForProject(project);
@@ -55,6 +71,20 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 
 		List<Sample> paged = samplesForProject.subList(from, to);
 		return new PageImpl<>(paged, new PageRequest(page, size), samplesForProject.size());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Sample getSampleForSequenceFileSnapshot(SequenceFileSnapshot file) {
+		String fileURI = file.getRemoteURI();
+		RemoteAPI remoteApiForURI = getRemoteApiForURI(fileURI);
+		SequenceFile read = fileRepository.read(fileURI, remoteApiForURI);
+
+		Link sampleLink = read.getLink(FILE_SAMPLE_REL);
+
+		return read(sampleLink.getHref());
 	}
 
 }

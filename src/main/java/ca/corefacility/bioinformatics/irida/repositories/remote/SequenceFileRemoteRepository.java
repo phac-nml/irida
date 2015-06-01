@@ -18,24 +18,24 @@ public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceF
 	 * Get a local copy of a {@link SequenceFile} with a default MediaType
 	 * of application/fastq
 	 * 
-	 * @param sequenceFile
-	 *            The {@link SequenceFile} to get sequence data for
+	 * @param uri
+	 *            The URI to get sequence data for
 	 * @param api
 	 *            The {@link RemoteAPI} this file resides on
 	 * @return A temporary {@link Path} to the sequence file data
 	 */
-	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI api);
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI api);
 
 	/**
 	 * Get a local copy of a {@link SequenceFile}
 	 * 
-	 * @param sequenceFile
-	 *            The {@link SequenceFile} to get sequence data for
+	 * @param uri
+	 *            the URI of the file to download
 	 * @param api
 	 *            The {@link RemoteAPI} this file resides on
 	 * @param mediaTypes
 	 *            The media types to request from the remote API
 	 * @return A temporary {@link Path} to the sequence file data
 	 */
-	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI api, MediaType... mediaTypes);
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI api, MediaType... mediaTypes);
 }
