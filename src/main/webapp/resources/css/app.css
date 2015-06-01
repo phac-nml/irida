@@ -7653,6 +7653,12 @@ h1, h2, h3, h4, h5, h6 {
   word-wrap: break-word;
 }
 
+/* line 9, ../../styles/layouts/_all.scss */
+.dandelion_text_filter {
+  font-weight: normal;
+  font-size: 12px;
+}
+
 @-webkit-keyframes move-up-down {
   0% {
     transform: translate3d(0, -65px, 0px);

@@ -44,6 +44,8 @@ import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerIntercept
 import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
 
+import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
+import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -132,6 +134,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		// production.
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
+		registry.addResourceHandler("/dandelion-assets/**").addResourceLocations("/dandelion-assets/");
 	}
 
 	@Override
@@ -208,6 +211,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		dialects.add(new LayoutDialect());
 		dialects.add(new ConditionalCommentsDialect());
 		dialects.add(new DataAttributeDialect());
+		dialects.add(new DandelionDialect());
+		dialects.add(new DataTablesDialect());
 		dialects.add(new FontAwesomeDialect());
 		return dialects;
 	}

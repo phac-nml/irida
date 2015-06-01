@@ -10,8 +10,8 @@
           href="/resources/bower_components/select2/select2-bootstrap.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
           href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-          href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
+          href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <main layout:fragment="main">
@@ -47,8 +47,8 @@
 </main>
 
 <th:block layout:fragment="scripts">
-<script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
-        src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
+        src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 <script th:src="@{/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js}"
         src="/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
 <script th:src="@{/resources/bower_components/select2/select2.min.js}"
@@ -248,7 +248,8 @@ $(document).ready(function () {
             {
                 "data": "modifiedDate",
                 "render": function (data) {
-                    return '<span data-livestamp="' + new Date(parseInt(data)) + '"></span>';
+                    var day = new Date(data);
+                    return moment(day).format(TL.date.moment.short);
                 }
             },
             {

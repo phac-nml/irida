@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -60,27 +58,5 @@ public class ProjectsAdminPageViewIT {
 	@Test
 	public void testLayout() {
 		assertEquals("Projects table should be populated by 5 projects", 5, projectsPage.projectsTableSize());
-		assertTrue("Admin should have checkboxes to select projects",
-				projectsPage.adminShouldBeAbleToSelectViaCheckboxes());
-
-		// Should have a link to create a new project
-		projectsPage.clickCreateProjectLink();
-		assertTrue(driver.getCurrentUrl().contains("/projects/new"));
-	}
-
-	@Test
-	public void testAdminCheckboxes() {
-		assertEquals("No checkboxes should be selected by default", 0, projectsPage.adminGetSelectedCheckboxCount());
-		projectsPage.adminSelectHeaderCheckbox();
-		assertEquals("All checkboxes should be selected", 5, projectsPage.adminGetSelectedCheckboxCount());
-		projectsPage.adminSelectHeaderCheckbox();
-		assertEquals("No checkboxes should be checked when the header checkbox in unchecked", 0,
-				projectsPage.adminGetSelectedCheckboxCount());
-		projectsPage.adminSelectFirstCheckbox();
-		assertTrue("Select All checkbox should be in an indeterminate state.",
-				projectsPage.adminIsSelectAllCheckboxIntermediateState());
-		projectsPage.adminSelectFirstCheckbox();
-		assertFalse("Select All should now be in a normal state",
-				projectsPage.adminIsSelectAllCheckboxIntermediateState());
 	}
 }
