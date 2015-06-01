@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleEditPage;
@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/samples/SamplePagesIT.xml")
-public class SampleEditPageIT extends AbstractIridaUIIT {
+public class SampleEditPageIT extends AbstractIridaUIITPhantomJS {
 	private SampleEditPage page;
 	private SampleDetailsPage detailsPage;
 

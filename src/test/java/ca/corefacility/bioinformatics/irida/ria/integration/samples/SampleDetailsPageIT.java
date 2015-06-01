@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleDetailsPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/samples/SamplePagesIT.xml")
-public class SampleDetailsPageIT extends AbstractIridaUIIT {
+public class SampleDetailsPageIT extends AbstractIridaUIITPhantomJS {
 	private static final Long SAMPLE_ID = 1L;
 	private static final String SAMPLE_CREATED_DATE = "18 Jul 2013";
 	private static final String SAMPLE_ORGANISM = "E. coli";

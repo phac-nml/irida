@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.EditUserPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/EditUserPageIT.xml")
-public class EditUserPageIT extends AbstractIridaUIIT {
+public class EditUserPageIT extends AbstractIridaUIITPhantomJS {
 	private EditUserPage editPage;
 
 	@Before

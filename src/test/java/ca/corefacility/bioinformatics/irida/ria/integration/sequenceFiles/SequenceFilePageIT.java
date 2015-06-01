@@ -1,20 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.sequenceFiles;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequenceFiles.SequenceFilePages;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/sequenceFiles/SequenceFileView.xml")
-public class SequenceFilePageIT extends AbstractIridaUIIT {
+public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePageIT.class);
 	/*
 	 * FILE ATTRIBUTES
@@ -30,11 +28,6 @@ public class SequenceFilePageIT extends AbstractIridaUIIT {
 	private static final String FILE_GC_CONTENT = "30";
 
 	private SequenceFilePages page;
-
-	@Override
-	public WebDriver driverToUse() {
-		return new ChromeDriver();
-	}
 
 	@Before
 	public void setUpTest() {

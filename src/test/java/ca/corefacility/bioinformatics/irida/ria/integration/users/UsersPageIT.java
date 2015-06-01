@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UsersPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UsersPageIT.xml")
-public class UsersPageIT extends AbstractIridaUIIT {
+public class UsersPageIT extends AbstractIridaUIITPhantomJS {
 	private UsersPage usersPage;
 
 	@Before

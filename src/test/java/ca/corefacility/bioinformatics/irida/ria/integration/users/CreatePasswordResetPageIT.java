@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreatePasswordResetPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.After;
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/PasswordResetPageIT.xml")
-public class CreatePasswordResetPageIT extends AbstractIridaUIIT {
+public class CreatePasswordResetPageIT extends AbstractIridaUIITPhantomJS {
 
 	private CreatePasswordResetPage passwordResetPage;
 

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-public class ProjectDetailsPageIT extends AbstractIridaUIIT {
+public class ProjectDetailsPageIT extends AbstractIridaUIITPhantomJS {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectDetailsPageIT.class);
 	public static final Long PROJECT_ID = 1L;
 	public static final String PROJECT_NAME = "project";

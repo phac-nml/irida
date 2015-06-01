@@ -1,14 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.clients;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.EditClientPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import static org.junit.Assert.*;
 
@@ -17,13 +15,8 @@ import static org.junit.Assert.*;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/IridaClientDetailsServiceImplIT.xml")
-public class EditClientPageIT extends AbstractIridaUIIT {
+public class EditClientPageIT extends AbstractIridaUIITChromeDriver {
 	private static final String ORIGINAL_SECRET = "xxxxxxxx";
-
-	@Override
-	public WebDriver driverToUse() {
-		return new ChromeDriver();
-	}
 
 	@Before
 	public void setUpTest() {

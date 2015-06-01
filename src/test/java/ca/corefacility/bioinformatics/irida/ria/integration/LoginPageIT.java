@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/LoginPageIT.xml")
-public class LoginPageIT extends AbstractIridaUIIT {
+public class LoginPageIT extends AbstractIridaUIITPhantomJS {
 
 	private static final String EXPIRED_USERNAME = "expiredGuy";
 	private static final String EXPIRED_PASSWORD = "Password1";

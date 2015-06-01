@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
@@ -8,8 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +20,9 @@ import static org.junit.Assert.*;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
-public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIIT {
+public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
 	private PipelinesPhylogenomicsPage page;
-
-	@Override
-	public WebDriver driverToUse() {
-		return new ChromeDriver();
-	}
 
 	@Before
 	public void setUpTest() {

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/oauth/RemoteApisIT.xml")
-public class CreateRemoteAPIPageIT extends AbstractIridaUIIT {
+public class CreateRemoteAPIPageIT extends AbstractIridaUIITPhantomJS {
 	private CreateRemoteAPIPage page;
 
 	@Before

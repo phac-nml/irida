@@ -1,11 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectAddSamplePage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -14,15 +12,10 @@ import static org.junit.Assert.assertTrue;
  * Integration Test for creating a new sample.
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectsAddSampleView.xml")
-public class ProjectAddSamplePageIT extends AbstractIridaUIIT {
+public class ProjectAddSamplePageIT extends AbstractIridaUIITChromeDriver {
 	private String NAME_ERROR_TOO_SHORT = "a";
 	private String NAME_WITH_INVALID_CHARACTERS = "My Sample Name";
 	private String NAME_VALID = "Sample00010-11";
-
-	@Override
-	public WebDriver driverToUse() {
-		return new ChromeDriver();
-	}
 
 	@Test
 	public void testSampleCreation() {
