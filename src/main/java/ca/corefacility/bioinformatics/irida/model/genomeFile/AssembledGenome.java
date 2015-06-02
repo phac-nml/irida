@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.genomeFile;
 
+import java.nio.file.Path;
+
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 /**
@@ -8,4 +10,15 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  */
 public interface AssembledGenome extends IridaThing {
 
+	/**
+	 * Gets the assembly file.
+	 * @return The assembly file.
+	 */
+	public Path getFile();
+	
+	/**
+	 * Gets the length of the assembled genome.
+	 * @return The length of the assembled genome.
+	 */
+	public Long getFileLength();
 }

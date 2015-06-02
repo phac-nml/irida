@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.genomeFile;
 
+import java.nio.file.Path;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -19,6 +20,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
+import ca.corefacility.bioinformatics.irida.service.util.impl.BioJavaSequenceFileUtilitiesImpl;
 
 /**
  * An {@link AssembledGenome} that was assembled through IRIDA.
@@ -28,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class AssembledGenomeIrida implements AssembledGenome {
+
+	private static final SequenceFileUtilities sequenceFileUtilities = new BioJavaSequenceFileUtilitiesImpl();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -84,5 +89,15 @@ public class AssembledGenomeIrida implements AssembledGenome {
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	@Override
+	public Path getFile() {
+		return assembledGenomeFile.getFile();
+	}
+
+	@Override
+	public Long getFileLength() {
+		return sequenceFileUtilities.countSequenceFileLengthInBases(getFile());
 	}
 }
