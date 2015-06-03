@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisReposi
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -67,6 +68,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link SampleSequenceFileJoin}.
 	 */
 	private SampleSequenceFileJoinRepository ssfRepository;
+	
+	private final SequenceFilePairRepository sequenceFilePairRepository;
 
 	/**
 	 * Reference to {@link AnalysisRepository}.
@@ -78,24 +81,27 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * 
 	 * @param sampleRepository
 	 *            the sample repository.
-	 * @param validator
-	 *            validator.
 	 * @param psjRepository
 	 *            the project sample join repository.
 	 * @param ssfRepository
 	 *            the sample sequence file join repository.
 	 * @param analysisRepository
 	 *            the analysis repository.
+	 * @param sequenceFilePairRepository
+	 *            the {@link SequenceFilePairRepository}.
+	 * @param validator
+	 *            validator.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository,
-			Validator validator) {
+			final SequenceFilePairRepository sequenceFilePairRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.ssfRepository = ssfRepository;
 		this.analysisRepository = analysisRepository;
+		this.sequenceFilePairRepository = sequenceFilePairRepository;
 	}
 	
 	/**
@@ -350,8 +356,17 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Set<AssembledGenomeAnalysis> findAssembliesForSample(Sample sample) {
-		// TODO Auto-generated method stub
-		return null;
+		Set<AssembledGenomeAnalysis> assembledGenomesSet = new HashSet<>();
+		List<SequenceFilePair> sequenceFilePairsList = sequenceFilePairRepository.getSequenceFilePairsForSample(sample);
+		for (SequenceFilePair sequenceFilePair : sequenceFilePairsList) {
+			if (sequenceFilePair.hasAssembledGenome()) {
+				assembledGenomesSet.add(sequenceFilePair.getAssembledGenome());
+			}
+		}
+
+		return assembledGenomesSet;
 	}
 }

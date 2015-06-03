@@ -40,7 +40,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "analysis", unique = true, nullable = false)
-	private AnalysisAssemblyAnnotation assembledGenomeAnalysis;
+	private AnalysisAssemblyAnnotation analysis;
 
 	@CreatedDate
 	@NotNull
@@ -62,7 +62,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	public AssembledGenomeAnalysis(AnalysisAssemblyAnnotation assembledGenomeAnalysis) {
 		this();
-		this.assembledGenomeAnalysis = assembledGenomeAnalysis;
+		this.analysis = assembledGenomeAnalysis;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	@Override
 	public String getLabel() {
-		return assembledGenomeAnalysis.getLabel();
+		return analysis.getLabel();
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	@Override
 	public Path getFile() {
-		return assembledGenomeAnalysis.getContigsWithRepeats().getFile();
+		return analysis.getContigsWithRepeats().getFile();
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(assembledGenomeAnalysis);
+		return Objects.hash(analysis);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 
 		if (o instanceof AssembledGenomeAnalysis) {
 			AssembledGenomeAnalysis a = (AssembledGenomeAnalysis) o;
-			return Objects.equals(assembledGenomeAnalysis, a.assembledGenomeAnalysis);
+			return Objects.equals(analysis, a.analysis);
 		}
 
 		return false;

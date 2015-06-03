@@ -328,10 +328,21 @@ public class SampleServiceImplIT {
 	}
 	
 	/**
+	 * Tests being denied access to find assemblies for a sample.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testFindAssembliesForSampleDenied() {
+		Sample s = new Sample();
+		s.setId(8L);
+		sampleService.findAssembliesForSample(s);
+	}
+
+	/**
 	 * Tests finding no assemblies for a sample.
 	 */
 	@Test
-	@WithMockUser(username = "fbristow", roles = "USER")
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testFindAssembliesForSampleNoSample() {
 		Sample s = sampleService.read(5L);
 		Set<AssembledGenomeAnalysis> assembledGenomes = sampleService.findAssembliesForSample(s);
@@ -345,9 +356,21 @@ public class SampleServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testFindAssembliesForSampleWithOneAssembly() {
-		Sample s = sampleService.read(6L);
+		Sample s = sampleService.read(8L);
 		Set<AssembledGenomeAnalysis> assembledGenomes = sampleService.findAssembliesForSample(s);
 		assertEquals("Invalid size for assembledGenomes set", 1, assembledGenomes.size());
+	}
+
+	/**
+	 * Tests finding 2 assemblies for a sample with two associated assemblies
+	 * with the paired-end sequence files.
+	 */
+	@Test
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testFindAssembliesForSampleWithTwoAssemblies() {
+		Sample s = sampleService.read(9L);
+		Set<AssembledGenomeAnalysis> assembledGenomes = sampleService.findAssembliesForSample(s);
+		assertEquals("Invalid size for assembledGenomes set", 2, assembledGenomes.size());
 	}
 
 	private void assertSampleNotFound(Long id) {
