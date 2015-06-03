@@ -1,1 +1,167 @@
-@-webkit-keyframes move-up-down{0%{-webkit-transform:translate3d(0,-65px,0);transform:translate3d(0,-65px,0);-webkit-animation-timing-function:ease-in;animation-timing-function:ease-in}50%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0);-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}100%{-webkit-transform:translate3d(0,-65px,0);transform:translate3d(0,-65px,0)}}@keyframes move-up-down{0%{-webkit-transform:translate3d(0,-65px,0);transform:translate3d(0,-65px,0);-webkit-animation-timing-function:ease-in;animation-timing-function:ease-in}50%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0);-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}100%{-webkit-transform:translate3d(0,-65px,0);transform:translate3d(0,-65px,0)}}@-webkit-keyframes glow{from,to{background-color:#3092d0}50%{background-color:#83bee3}}.glow{-webkit-animation:glow .5s .2s 1;animation:glow .5s .2s 1}.fade-in{-webkit-transition:250ms cubic-bezier(.25,.25,.75,.75)all;transition:250ms cubic-bezier(.25,.25,.75,.75)all;position:relative;display:block;opacity:1;top:0}.fade-in.ng-hide{top:20px;opacity:0}.fade-in.ng-hide-add{display:none}.fade-in.ng-hide-remove-active{display:block!important}.paired_end,.single_end{background-color:#f3f3f3}.paired_end td,.single_end td{border:none!important}.paired_end .td_radio{border:1px solid #133B54!important;vertical-align:middle;text-align:center}.paired_end .td_icon{background-color:#133B54;color:#f3f3f3;vertical-align:middle;text-align:center}.paired_end__forward{border:1px solid #133B54;border-bottom:none}.paired_end__reverse{border:1px solid #133B54;border-top:none}.single_end{border:1px solid #3092d0}.single_end .td_icon{background-color:#3092d0}.sidebar-content{width:130px;white-space:normal;margin:1rem auto 0}.alert-icon-motion{-webkit-animation:move-up-down 2s infinite;animation:move-up-down 2s infinite}
+@-webkit-keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
+@-moz-keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
+@keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
+@-webkit-keyframes glow {
+  from {
+    background-color: #3092d0;
+  }
+  50% {
+    background-color: #83bee3;
+  }
+  to {
+    background-color: #3092d0;
+  }
+}
+@-moz-keyframes glow {
+  from {
+    background-color: #3092d0;
+  }
+  50% {
+    background-color: #83bee3;
+  }
+  to {
+    background-color: #3092d0;
+  }
+}
+@-webkit-keyframes glow {
+  from {
+    background-color: #3092d0;
+  }
+  50% {
+    background-color: #83bee3;
+  }
+  to {
+    background-color: #3092d0;
+  }
+}
+/* line 63, ../../../styles/animations/_animations.scss */
+.glow {
+  -webkit-animation: glow .5s .2s 1;
+  -moz-animation: glow .5s .2s 1;
+  animation: glow .5s .2s 1;
+}
+
+/*
+  Subtle fade in effect that move the element up 20px and fades it into view
+*/
+/* line 72, ../../../styles/animations/_animations.scss */
+.fade-in {
+  transition: 250ms cubic-bezier(0.25, 0.25, 0.75, 0.75) all;
+  position: relative;
+  display: block;
+  opacity: 1;
+  top: 0;
+}
+
+/* line 80, ../../../styles/animations/_animations.scss */
+.fade-in.ng-hide {
+  top: 20px;
+  opacity: 0;
+}
+
+/* line 85, ../../../styles/animations/_animations.scss */
+.fade-in.ng-hide-add {
+  display: none;
+}
+
+/* line 89, ../../../styles/animations/_animations.scss */
+.fade-in.ng-hide-remove-active {
+  display: block !important;
+}
+
+/* line 4, ../../../styles/pages/sample_files.scss */
+.paired_end, .single_end, .file_info {
+  background-color: #f3f3f3;
+}
+/* line 6, ../../../styles/pages/sample_files.scss */
+.paired_end td, .single_end td, .file_info td {
+  border: none !important;
+}
+
+/* line 12, ../../../styles/pages/sample_files.scss */
+.paired_end .td_radio {
+  border: 1px solid #133B54 !important;
+  vertical-align: middle;
+  text-align: center;
+}
+/* line 17, ../../../styles/pages/sample_files.scss */
+.paired_end .td_icon {
+  background-color: #133B54;
+  color: #f3f3f3;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* line 25, ../../../styles/pages/sample_files.scss */
+.paired_end__forward {
+  border: 1px solid #133B54;
+  border-bottom: none;
+}
+
+/* line 30, ../../../styles/pages/sample_files.scss */
+.paired_end__reverse {
+  border: 1px solid #133B54;
+  border-top: none;
+}
+
+/* line 35, ../../../styles/pages/sample_files.scss */
+.single_end {
+  border: 1px solid #3092d0;
+}
+/* line 37, ../../../styles/pages/sample_files.scss */
+.single_end .td_icon {
+  background-color: #3092d0;
+}
+
+/* line 42, ../../../styles/pages/sample_files.scss */
+.file_info {
+  border: 1px solid #133B54;
+}
+
+/* line 46, ../../../styles/pages/sample_files.scss */
+.sidebar-content {
+  width: 130px;
+  white-space: normal;
+  margin: 1rem auto 0 auto;
+}
+
+/* line 52, ../../../styles/pages/sample_files.scss */
+.alert-icon-motion {
+  animation: move-up-down 2s infinite;
+}

@@ -81,7 +81,7 @@
 							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
 						</tr>
 					</th:block>
-                    <th:block th:each="pair : ${remote_paired}">
+                    <th:block th:each="pair : ${remote_paired}" th:if="${pair.isMirrored()}">
                           <tr class="paired_end paired_end__forward">
                               <td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
                           </tr>
@@ -89,6 +89,9 @@
                               <td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
                           </tr>
                       </th:block>
+                      <tr class="file_info" th:if="${mirroringCount} > 0">
+                              <td colspan="4" th:text="#{analysis.mirroring(${mirroringCount})}">_Mirroring Files_</td>
+                          </tr>
 				</table>
 				<div class="alert alert-info" th:unless="${hasPaired}" th:text="#{analysis.input-files.no-paired-end}">
 					__NO_PAIRED_END_DATA_
