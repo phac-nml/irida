@@ -73,7 +73,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * an {@link AnalysisSubmission}.
 	 */
 	// @formatter:off
-	private static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
+	public static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
 			put(AnalysisState.NEW,                  0.0f).
 			put(AnalysisState.DOWNLOADING,          5.0f).
 			put(AnalysisState.FINISHED_DOWNLOADING, 10.0f).
