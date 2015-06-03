@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,7 +19,8 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 import ca.corefacility.bioinformatics.irida.service.util.impl.BioJavaSequenceFileUtilitiesImpl;
 
@@ -39,8 +39,8 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	private Long id;
 
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "assembled_genome_file", unique = true, nullable = false)
-	private AnalysisOutputFile assembledGenomeFile;
+	@JoinColumn(name = "analysis", unique = true, nullable = false)
+	private AnalysisAssemblyAnnotation assembledGenomeAnalysis;
 
 	@CreatedDate
 	@NotNull
@@ -52,9 +52,17 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 		this.createdDate = new Date();
 	}
 
-	public AssembledGenomeAnalysis(AnalysisOutputFile assembledGenomeFile) {
+	/**
+	 * Builds a new {@link AssembledGenomeAnalysis} with wrapping around the
+	 * analysis object.
+	 * 
+	 * @param assembledGenomeAnalysis
+	 *            The {@link AnalysisAssemblyAnnotation} object containing the
+	 *            assembly information.
+	 */
+	public AssembledGenomeAnalysis(AnalysisAssemblyAnnotation assembledGenomeAnalysis) {
 		this();
-		this.assembledGenomeFile = assembledGenomeFile;
+		this.assembledGenomeAnalysis = assembledGenomeAnalysis;
 	}
 
 	/**
@@ -62,7 +70,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	@Override
 	public String getLabel() {
-		return assembledGenomeFile.getLabel();
+		return assembledGenomeAnalysis.getLabel();
 	}
 
 	/**
@@ -78,7 +86,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	@Override
 	public void setId(Long id) {
-		throw new UnsupportedOperationException("AssembledGenomeIrida types cannot be modified.");
+		throw new UnsupportedOperationException("AssembledGenomeAnalysis types cannot be modified.");
 	}
 
 	/**
@@ -102,7 +110,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("AssembledGenomeIrida types cannot be modified.");
+		throw new UnsupportedOperationException("AssembledGenomeAnalysis types cannot be modified.");
 	}
 
 	/**
@@ -110,7 +118,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	@Override
 	public Path getFile() {
-		return assembledGenomeFile.getFile();
+		return assembledGenomeAnalysis.getContigsWithRepeats().getFile();
 	}
 
 	/**
@@ -126,7 +134,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(assembledGenomeFile);
+		return Objects.hash(assembledGenomeAnalysis);
 	}
 
 	/**
@@ -140,7 +148,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 
 		if (o instanceof AssembledGenomeAnalysis) {
 			AssembledGenomeAnalysis a = (AssembledGenomeAnalysis) o;
-			return Objects.equals(assembledGenomeFile, a.assembledGenomeFile);
+			return Objects.equals(assembledGenomeAnalysis, a.assembledGenomeAnalysis);
 		}
 
 		return false;

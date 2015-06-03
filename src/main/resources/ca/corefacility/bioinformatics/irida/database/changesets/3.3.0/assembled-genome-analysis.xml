@@ -10,10 +10,10 @@
 			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="assembled_genome_file" type="bigint(20)">
+			<column name="analysis" type="bigint(20)">
 				<constraints nullable="false" unique="true"
-					foreignKeyName="FK_ASSEMBLED_GENOME_ANALYSIS_OUTPUT_FILE"
-					referencedColumnNames="id" referencedTableName="analysis_output_file" />
+					foreignKeyName="FK_ASSEMBLED_GENOME_ANALYSIS_ANALYSIS"
+					referencedColumnNames="id" referencedTableName="analysis_assemblyannotation" />
 			</column>
 			<column name="created_date" type="datetime">
 				<constraints nullable="false" />
@@ -21,7 +21,8 @@
 		</createTable>
 		<addColumn tableName="sequence_file_pair">
 			<column name="assembled_genome" type="bigint(20)">
-				<constraints unique="true" foreignKeyName="FK_SEQUENCE_FILE_PAIR_ASSEMBLED_GENOME"
+				<constraints unique="true"
+					foreignKeyName="FK_SEQUENCE_FILE_PAIR_ASSEMBLED_GENOME"
 					referencedColumnNames="id" referencedTableName="assembled_genome_analysis" />
 			</column>
 		</addColumn>
