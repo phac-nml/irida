@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -246,7 +247,8 @@ public class SamplesControllerTest {
 		when(sequenceFileService.read(fileId)).thenReturn(file);
 
 		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
-		controller.removeFileFromSample(attributes, sampleId, fileId, "/returnURL", Locale.US);
+		HttpServletRequest request = new MockHttpServletRequest();
+		controller.removeFileFromSample(attributes, sampleId, fileId, request, Locale.US);
 
 		verify(sampleService).removeSequenceFileFromSample(sample, file);
 	}

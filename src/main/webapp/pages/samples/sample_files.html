@@ -175,7 +175,7 @@
 		</div>
 		<div class="modal-body">
 			<h4>{{ ::deleteCtrl.label }}</h4>
-			<input type="hidden" name="fileId" value="{{ deleteCtrl.fileId }}"/> <input type="hidden" name="returnUrl" th:value="@{${#httpServletRequest.requestURI}}"/>
+			<input type="hidden" name="fileId" value="{{ deleteCtrl.fileId }}"/>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
@@ -191,7 +191,7 @@
 		</div>
 		<div class="modal-body">
 			<h4>{{ ::deleteCtrl.label }}</h4>
-			<input type="hidden" name="pairId" value="{{ deleteCtrl.fileId }}"/> <input type="hidden" name="returnUrl" th:value="@{${#httpServletRequest.requestURI}}"/>
+			<input type="hidden" name="pairId" value="{{ deleteCtrl.fileId }}"/>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
