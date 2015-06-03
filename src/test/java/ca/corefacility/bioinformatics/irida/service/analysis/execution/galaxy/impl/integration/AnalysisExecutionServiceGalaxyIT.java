@@ -508,7 +508,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.prepareSubmission(downloadedSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 		float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
-		assertEquals("percent complete is incorrect", 1.0f, percentComplete, DELTA);
+		assertEquals("percent complete is incorrect", 11.0f, percentComplete, DELTA);
 
 		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);

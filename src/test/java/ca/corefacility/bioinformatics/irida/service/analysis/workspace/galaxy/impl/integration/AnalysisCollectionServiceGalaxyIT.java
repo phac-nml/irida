@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -34,6 +35,8 @@ import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCon
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -248,12 +251,12 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA));
-		Map<Sample, SequenceFile> sampleSequenceFiles = sequenceFileService
-				.getUniqueSamplesForSequenceFiles(sequenceFiles);
+		Map<Sample, IridaSequenceFile> sampleSequenceFiles = new HashMap<>(sequenceFileService
+				.getUniqueSamplesForSequenceFiles(sequenceFiles));
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(
-				null, createdHistory, createdLibrary);
+				sampleSequenceFiles, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -299,12 +302,12 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1A, pairSequenceFiles2A));
-		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
-				.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
+		Map<Sample, IridaSequenceFilePair> sampleSequenceFilePairs = new HashMap<>(sequenceFilePairService
+				.getUniqueSamplesForSequenceFilePairs(sequenceFiles));
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(
-				null, createdHistory, createdLibrary);
+				sampleSequenceFilePairs, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -387,10 +390,10 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AInvalidName, pairSequenceFiles2A));
-		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
-				.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
+		Map<Sample, IridaSequenceFilePair> sampleSequenceFilePairs = new HashMap<>(sequenceFilePairService
+				.getUniqueSamplesForSequenceFilePairs(sequenceFiles));
 
-		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(null, createdHistory,
+		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
 				createdLibrary);
 	}
 
