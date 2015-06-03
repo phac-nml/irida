@@ -172,6 +172,13 @@ public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, Vers
 		return remoteURI;
 	}
 	
+	public boolean isMirrored(){
+		if(file == null){
+			return false;
+		}
+		return true;
+	}
+	
 	@JsonIgnore
 	public String getFileSize() {
 		String size = "N/A";

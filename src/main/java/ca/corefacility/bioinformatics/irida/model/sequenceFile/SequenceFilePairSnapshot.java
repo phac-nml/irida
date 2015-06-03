@@ -120,5 +120,14 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public boolean isMirrored() {
+		for (SequenceFileSnapshot s : files) {
+			if (!s.isMirrored()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
