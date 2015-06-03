@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 /**
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-public class PipelinesSelectionPageIT extends AbstractIridaUIITPhantomJS {
+public class PipelinesSelectionPageIT extends AbstractIridaUIITChromeDriver {
 	private PipelinesSelectionPage pipelinesSelectionPage;
 
 	@Before

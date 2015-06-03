@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import com.google.common.base.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -104,7 +104,7 @@ public class AbstractPage {
 	public boolean isElementOnScreen(String id) {
 		driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
 		boolean exists = driver.findElements(By.id(id)).size() != 0;
-		driver.manage().timeouts().implicitlyWait(AbstractIridaUIITPhantomJS.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(AbstractIridaUIITChromeDriver.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 		return exists;
 	}
 

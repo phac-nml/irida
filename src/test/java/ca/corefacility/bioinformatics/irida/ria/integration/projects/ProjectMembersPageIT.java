@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-public class ProjectMembersPageIT extends AbstractIridaUIITPhantomJS {
+public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 	private ProjectMembersPage membersPage;
 
 	private static final ImmutableList<String> COLLABORATORS_NAMES = ImmutableList.of("Mr. Manager", "test User");

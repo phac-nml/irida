@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectReferenceFilePage;
 import org.junit.*;
 
@@ -15,7 +15,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 /**
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectReferenceFileIT.xml")
-public class ProjectReferenceFilePageIT extends AbstractIridaUIITPhantomJS {
+public class ProjectReferenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Long PROJECT_ID_WITH_REFERENCE_FILES = 1L;
 	private static final Long PROJECT_ID_WITHOUT_REFERENCE_FILES = 2L;
 

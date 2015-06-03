@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/samples/SamplePagesIT.xml")
-public class SampleFilesPageIT extends AbstractIridaUIITPhantomJS {
+public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	private final String SAMPLE_LABEL = "sample1";
 	private final Long SAMPLE_ID = 1L;
 	private final String FILE_NAME = "01-1111_S1_L001_R1_001.fastq";

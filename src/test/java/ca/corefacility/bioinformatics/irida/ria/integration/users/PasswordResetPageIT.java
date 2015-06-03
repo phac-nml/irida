@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.users;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import org.junit.*;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordR
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/PasswordResetPageIT.xml")
-public class PasswordResetPageIT extends AbstractIridaUIITPhantomJS {
+public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 	private static final String RESET_USER = "differentUser";
 
 	private PasswordResetPage passwordResetPage;

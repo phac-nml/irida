@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-public class ProjectsPageIT extends AbstractIridaUIITPhantomJS {
+public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 	private ProjectsPage projectsPage;
 
 	@Before

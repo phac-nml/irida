@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UserDetailsPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UserDetailsPageIT.xml")
-public class UserDetailsPageIT extends AbstractIridaUIITPhantomJS {
+public class UserDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private UserDetailsPage usersPage;
 
 	@Before

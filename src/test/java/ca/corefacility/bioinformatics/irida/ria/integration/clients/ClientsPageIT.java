@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.clients;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientsPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/IridaClientDetailsServiceImplIT.xml")
-public class ClientsPageIT extends AbstractIridaUIITPhantomJS {
+public class ClientsPageIT extends AbstractIridaUIITChromeDriver {
 	private ClientsPage clientsPage;
 
 	@Before

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/AssociatedProjectsPageIT.xml")
-public class AssociatedProjectsEditPageIT extends AbstractIridaUIITPhantomJS {
+public class AssociatedProjectsEditPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectsEditPageIT.class);
 
 	AssociatedProjectEditPage page;

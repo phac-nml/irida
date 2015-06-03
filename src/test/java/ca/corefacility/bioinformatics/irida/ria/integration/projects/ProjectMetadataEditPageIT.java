@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-public class ProjectMetadataEditPageIT extends AbstractIridaUIITPhantomJS {
+public class ProjectMetadataEditPageIT extends AbstractIridaUIITChromeDriver {
 	public static final String GOOD_PROJECT_NAME = "MY GOOD NAME";
 	public static final String GOOD_PROJECT_ORGANISM = "Mr. Good Bug";
 	public static final String GOOD_PROJECT_DESCRIPTION = "New project description.";

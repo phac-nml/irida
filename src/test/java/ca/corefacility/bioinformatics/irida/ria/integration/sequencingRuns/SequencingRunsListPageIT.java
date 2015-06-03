@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.sequencingRuns;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITPhantomJS;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns.SequencingRunsListPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/sequencingRuns/SequencingRunsPagesIT.xml")
-public class SequencingRunsListPageIT extends AbstractIridaUIITPhantomJS {
+public class SequencingRunsListPageIT extends AbstractIridaUIITChromeDriver {
 	private SequencingRunsListPage page;
 
 	@Before
