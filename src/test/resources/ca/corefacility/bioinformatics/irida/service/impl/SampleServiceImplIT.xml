@@ -34,6 +34,8 @@
 		sequencerSampleId="sample4" sampleName="sample4" />
 	<sample id="5" createdDate="2013-05-18 14:20:19.0" description="description5"
 		sequencerSampleId="sample5" sampleName="sample5" />
+	<sample id="8" createdDate="2013-05-18 14:20:19.0" description="description5"
+		sequencerSampleId="sample8" sampleName="sample8" />
 
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
@@ -45,6 +47,8 @@
 		project_id="2" sample_id="4" />
 	<project_sample id="5" createdDate="2013-07-18 14:20:19.0"
 		project_id="3" sample_id="5" />
+	<project_sample id="8" createdDate="2013-07-18 14:20:19.0"
+		project_id="3" sample_id="8" />
 
 	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
 		description="FastQC" executionManagerAnalysisId="fastqc" />
@@ -52,13 +56,31 @@
 		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
 		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
 		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
-	
+
+	<analysis id="2" createdDate="2013-07-18 14:20:19.0"
+		executionManagerAnalysisId="test" />
+	<analysis_assemblyannotation id="2" />
+
+	<assembled_genome_analysis id="1" analysis="2"
+		created_date="2013-07-18 14:20:19.0" />
+
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile1" fastqc_analysis_id="1"/>
+		file_path="/sequenceFile1" fastqc_analysis_id="1" />
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile2" />
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile3" />
+	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile4" />
+	<sequence_file id="5" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile5" />
+
+	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0"
+		assembled_genome="1" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="4" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="5" />
 
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
@@ -66,4 +88,8 @@
 		sample_id="2" sequencefile_id="2" />
 	<sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
 		sample_id="3" sequencefile_id="3" />
+	<sequencefile_sample id="4" createdDate="2013-07-18 14:20:19.0"
+		sample_id="8" sequencefile_id="4" />
+	<sequencefile_sample id="5" createdDate="2013-07-18 14:20:19.0"
+		sample_id="8" sequencefile_id="5" />
 </dataset>

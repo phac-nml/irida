@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
@@ -30,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -323,6 +325,29 @@ public class SampleServiceImplIT {
 		Sample s = sampleService.read(sampleID);
 
 		sampleService.estimateCoverageForSample(s, 500);
+	}
+	
+	/**
+	 * Tests finding no assemblies for a sample.
+	 */
+	@Test
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testFindAssembliesForSampleNoSample() {
+		Sample s = sampleService.read(5L);
+		Set<AssembledGenomeAnalysis> assembledGenomes = sampleService.findAssembliesForSample(s);
+		assertEquals("Invalid size for assembledGenomes set", 0, assembledGenomes.size());
+	}
+
+	/**
+	 * Tests finding 1 assembly for a sample with a single associated assembly
+	 * with the paired-end sequence files.
+	 */
+	@Test
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testFindAssembliesForSampleWithOneAssembly() {
+		Sample s = sampleService.read(6L);
+		Set<AssembledGenomeAnalysis> assembledGenomes = sampleService.findAssembliesForSample(s);
+		assertEquals("Invalid size for assembledGenomes set", 1, assembledGenomes.size());
 	}
 
 	private void assertSampleNotFound(Long id) {
