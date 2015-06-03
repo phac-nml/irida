@@ -40,7 +40,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "analysis", unique = true, nullable = false)
-	private AnalysisAssemblyAnnotation analysis;
+	private final AnalysisAssemblyAnnotation analysis;
 
 	@CreatedDate
 	@NotNull
@@ -48,8 +48,10 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	@Column(name = "created_date", nullable = false)
 	private final Date createdDate;
 
+	@SuppressWarnings("unused")
 	private AssembledGenomeAnalysis() {
 		this.createdDate = new Date();
+		this.analysis = null;
 	}
 
 	/**
@@ -61,7 +63,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 *            assembly information.
 	 */
 	public AssembledGenomeAnalysis(AnalysisAssemblyAnnotation assembledGenomeAnalysis) {
-		this();
+		this.createdDate = new Date();
 		this.analysis = assembledGenomeAnalysis;
 	}
 
