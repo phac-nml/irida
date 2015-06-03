@@ -151,7 +151,7 @@ public class SequenceFilePair implements IridaThing {
 	
 	/**
 	 * Whether or not this {@link SequenceFilePair} has an associated
-	 * {@link AssembledGenome}.
+	 * {@link AssembledGenomeAnalysis}.
 	 * 
 	 * @return True if there as an associated genome, false otherwise.
 	 */
