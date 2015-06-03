@@ -19,5 +19,14 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+		<addColumn tableName="sequence_file_pair">
+			<column name="assembled_genome" type="bigint(20)">
+				<constraints unique="true" foreignKeyName="FK_SEQUENCE_FILE_PAIR_ASSEMBLED_GENOME"
+					referencedColumnNames="id" referencedTableName="assembled_genome_analysis" />
+			</column>
+		</addColumn>
+		<addColumn tableName="sequence_file_pair_AUD">
+			<column name="assembled_genome" type="bigint(20)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

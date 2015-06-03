@@ -38,7 +38,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "assembled_genome_file", unique = true, nullable = false)
 	private AnalysisOutputFile assembledGenomeFile;
 
