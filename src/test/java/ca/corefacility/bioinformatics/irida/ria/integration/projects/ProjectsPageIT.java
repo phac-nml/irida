@@ -1,64 +1,32 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p> Integration test to ensure that the Projects Page. </p>
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectsPageIT {
-	private WebDriver driver;
+public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 	private ProjectsPage projectsPage;
 
 	@Before
-	public void setup() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsManager(driver);
+	public void setUpTest() {
+		LoginPage.loginAsManager(driver());
 
-		projectsPage = new ProjectsPage(driver);
+		projectsPage = new ProjectsPage(driver());
 		projectsPage.toUserProjectsPage();
-	}
-
-	@After
-	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
 	}
 
 	@Test
@@ -67,7 +35,7 @@ public class ProjectsPageIT {
 
 		// Ensure buttons are created and direct to the write project.
 		projectsPage.gotoProjectPage(1);
-		assertTrue("Should be on specific project page", driver.getCurrentUrl().contains("/projects/2"));
+		assertTrue("Should be on specific project page", driver().getCurrentUrl().contains("/projects/2"));
 	}
 
 	@Test

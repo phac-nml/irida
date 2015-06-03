@@ -1,69 +1,39 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p> Integration test to ensure that the Project Details Page. </p>
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class AnalysisAdminPageIT {
-	private WebDriver driver;
+public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Before
-	public void setUp() {
-		// TODO (14-11-07 - josh): Find out why PhantomJS fails here.
-		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsManager(driver);
-	}
-
-	@After
-	public void destroy() {
-		driver.quit();
+	public void setUpTest() {
+		LoginPage.loginAsManager(driver());
 	}
 
 	@Test
 	public void testPageSetup() {
-		AnalysesUserPage userPage = AnalysesUserPage.initializePage(driver);
+		AnalysesUserPage userPage = AnalysesUserPage.initializePage(driver());
 		assertEquals("Admin has not personal analysis", 8, userPage.getNumberOfAnalyses());
 
-		AnalysesUserPage adminPage = AnalysesUserPage.initializeAdminPage(driver);
+		AnalysesUserPage adminPage = AnalysesUserPage.initializeAdminPage(driver());
 		assertEquals("Should be 8 analyses displayed on the page", 9, adminPage.getNumberOfAnalyses());
 	}
 
 	@Test
 	public void testAdvancedFilters() {
-		AnalysesUserPage page = AnalysesUserPage.initializeAdminPage(driver);
+		AnalysesUserPage page = AnalysesUserPage.initializeAdminPage(driver());
 		assertEquals("Should be 9 analyses displayed on the page", 9, page.getNumberOfAnalyses());
 
 		page.filterByState("New");

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.integration.projects;
+package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 

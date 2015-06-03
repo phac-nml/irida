@@ -1,38 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -40,27 +19,14 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * </p>
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class PipelinesPhylogenomicsPageIT {
+public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
-	private WebDriver driver;
 	private PipelinesPhylogenomicsPage page;
 
 	@Before
-	public void setUp() throws IOException, URISyntaxException {
-		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		page = new PipelinesPhylogenomicsPage(driver);
-	}
-
-	@After
-	public void destroy() {
-		driver.quit();
+	public void setUpTest() {
+		page = new PipelinesPhylogenomicsPage(driver());
 	}
 
 	@Test
@@ -75,16 +41,16 @@ public class PipelinesPhylogenomicsPageIT {
 
 	@Test
 	public void testNoRefFileNoPermissions() {
-		LoginPage.loginAsUser(driver);
+		LoginPage.loginAsUser(driver());
 
 		// Add sample from a project that user is a "Project User" and has no
 		// reference files.
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver());
 		samplesPage.goToPage("2");
 		samplesPage.selectSampleByRow(1);
 		samplesPage.addSamplesToGlobalCart();
 
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
 		assertTrue(
@@ -97,13 +63,13 @@ public class PipelinesPhylogenomicsPageIT {
 
 	@Test
 	public void testNoRefFileWithPermissions() {
-		LoginPage.loginAsManager(driver);
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver());
 		samplesPage.goToPage("2");
 		samplesPage.selectSampleByRow(1);
 		samplesPage.selectSampleByRow(2);
 		samplesPage.addSamplesToGlobalCart();
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
 
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
@@ -131,7 +97,7 @@ public class PipelinesPhylogenomicsPageIT {
 				page.isPipelineSubmittedSuccessMessageShown());
 		page.clickSeePipeline();
 
-		assertTrue("Should be on analysis page", driver.getCurrentUrl().endsWith("/analysis/list"));
+		assertTrue("Should be on analysis page", driver().getCurrentUrl().endsWith("/analysis/list"));
 	}
 
 	@Test
@@ -143,7 +109,7 @@ public class PipelinesPhylogenomicsPageIT {
 				page.isPipelineSubmittedSuccessMessageShown());
 		page.clickClearAndFindMore();
 
-		assertTrue("Should be on projects page", driver.getCurrentUrl().endsWith("/projects"));
+		assertTrue("Should be on projects page", driver().getCurrentUrl().endsWith("/projects"));
 		assertEquals("cart should be empty", 0, page.getCartCount());
 	}
 
@@ -167,7 +133,7 @@ public class PipelinesPhylogenomicsPageIT {
 		page.removeFirstSample();
 		page.removeFirstSample();
 
-		assertTrue("user should be redirected to pipelinese page", driver.getCurrentUrl().endsWith("/pipelines"));
+		assertTrue("user should be redirected to pipelinese page", driver().getCurrentUrl().endsWith("/pipelines"));
 	}
 
 	@Test
@@ -231,12 +197,12 @@ public class PipelinesPhylogenomicsPageIT {
 	}
 
 	private void addSamplesToCart() {
-		LoginPage.loginAsUser(driver);
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		LoginPage.loginAsUser(driver());
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver());
 		samplesPage.goToPage("1");
 		samplesPage.selectSampleByRow(0);
 		samplesPage.selectSampleByRow(1);
 		samplesPage.addSamplesToGlobalCart();
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
 	}
 }
