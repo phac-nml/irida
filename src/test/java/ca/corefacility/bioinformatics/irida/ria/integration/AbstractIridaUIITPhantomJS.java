@@ -31,26 +31,21 @@ import java.util.concurrent.TimeUnit;
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class})
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-public class AbstractIridaUIITPhantomJS {
+public abstract class AbstractIridaUIITPhantomJS {
 
     public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
 
-    private final WebDriver driver;
-
-    private static AbstractIridaUIITPhantomJS instance;
-
-    protected AbstractIridaUIITPhantomJS() {
-        this.driver = driverToUse();
-    }
+    private static WebDriver driver;
 
     /**
-     * Code to execute *once* before the class. This method uses {@link PhantomJSDriver} by default. If you want to override that behaviour, override the method {@link AbstractIridaUIITPhantomJS#driver}.
+     * Code to execute *once* before the class. This method uses {@link PhantomJSDriver} by default. If you want to override that behaviour, override the method {@link AbstractIridaUIITPhantomJS#driverToUse}.
      */
     @BeforeClass
     public static void setUp() {
-        instance = new AbstractIridaUIITPhantomJS();
-        instance.driver.manage().window().setSize(new Dimension(1024, 900));
-        instance.driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+        driver = driverToUse();
+
+        driver.manage().window().setSize(new Dimension(1024, 900));
+        driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
     }
 
     /**
@@ -66,14 +61,14 @@ public class AbstractIridaUIITPhantomJS {
      */
     @AfterClass
     public static void destroy() {
-        instance.driver.quit();
+        driver.quit();
     }
 
     /**
-     * The {@link WebDriver} to use for the tests. Uses {@link PhantomJSDriver} by default. Override if you want to use a different driverToUse.
+     * The {@link WebDriver} to use for the tests. Uses {@link PhantomJSDriver} by default. Override if you want to use a different driver.
      * @return an instance of a {@link WebDriver} to use for the tests.
      */
-    public WebDriver driverToUse() {
+    public static WebDriver driverToUse() {
         return new ChromeDriver();
     }
 
