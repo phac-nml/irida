@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -38,7 +37,7 @@ public class AbstractIridaUIITChromeDriver {
     private static WebDriver driver;
 
     /**
-     * Code to execute *once* before the class. This method uses {@link PhantomJSDriver} by default. If you want to override that behaviour, override the method {@link AbstractIridaUIITChromeDriver#driver}.
+     * Code to execute *once* before the class.
      */
     @BeforeClass
     public static void setUp() {

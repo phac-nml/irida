@@ -476,12 +476,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.detro</groupId>
-			<artifactId>phantomjsdriver</artifactId>
-			<version>${phantomjsdriver.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-chrome-driver</artifactId>
 			<scope>test</scope>
@@ -910,7 +904,6 @@
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
 		<selenium-driver.version>2.42.2</selenium-driver.version>
-		<phantomjsdriver.version>1.2.0</phantomjsdriver.version>
 		<selenium-chrome-driver.version>2.42.2</selenium-chrome-driver.version>
 		<attoparser.version>1.3</attoparser.version>
 		<thymeleaf.extras.springsecurity3.version>2.1.1.RELEASE</thymeleaf.extras.springsecurity3.version>
