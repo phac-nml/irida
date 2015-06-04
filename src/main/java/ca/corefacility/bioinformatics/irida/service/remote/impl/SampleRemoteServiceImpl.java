@@ -94,6 +94,10 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		return read(sampleLink.getHref());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Map<Sample, IridaSequenceFile> getUniqueSamplesforSequenceFileSnapshots(
 			Collection<SequenceFileSnapshot> files) {
 		Map<Sample, IridaSequenceFile> map = new HashMap<>();
@@ -112,6 +116,10 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		return map;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Map<Sample, IridaSequenceFilePair> getUniqueSamplesforSequenceFilePairSnapshots(
 			Collection<SequenceFilePairSnapshot> files) {
 		Map<Sample, IridaSequenceFilePair> map = new HashMap<>();

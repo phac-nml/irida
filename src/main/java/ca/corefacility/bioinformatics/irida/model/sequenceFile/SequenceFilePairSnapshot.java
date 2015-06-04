@@ -58,10 +58,11 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 	/**
 	 * Required constructor for hibernate
 	 */
-	protected SequenceFilePairSnapshot(){
+	protected SequenceFilePairSnapshot() {
 		createdDate = new Date();
 		files = new HashSet<>(2);
 	}
+
 	/**
 	 * Construct a new {@link SequenceFilePairSnapshot} for two
 	 * {@link SequenceFileSnapshot}s.
@@ -120,7 +121,12 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+	/**
+	 * Return whether all the files in this pair have been mirrored locally.
+	 * 
+	 * @return boolean whether the files are mirrored
+	 */
 	public boolean isMirrored() {
 		for (SequenceFileSnapshot s : files) {
 			if (!s.isMirrored()) {

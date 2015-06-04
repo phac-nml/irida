@@ -95,24 +95,30 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            Histories.
 	 * @param galaxyWorkflowService
 	 *            A GalaxyWorkflowService for interacting with Galaxy workflows.
-	 * @param sequenceFileService {@link SequenceFileService}
-	 * @param sequenceFilePairService {@link SequenceFilePairService}
+	 * @param sequenceFileService
+	 *            {@link SequenceFileService}
+	 * @param sequenceFilePairService
+	 *            {@link SequenceFilePairService}
 	 * @param libraryBuilder
 	 *            An object for building libraries in Galaxy.
 	 * @param iridaWorkflowsService
 	 *            A service used for loading workflows from IRIDA.
 	 * @param analysisCollectionServiceGalaxy
 	 *            A service for constructing dataset collections of input files.
-	 * @param analysisProvenanceServiceGalaxy The service for provenance information.
+	 * @param analysisProvenanceServiceGalaxy
+	 *            The service for provenance information.
 	 * @param analysisParameterServiceGalaxy
 	 *            A service for setting up parameters in Galaxy.
+	 * @param sampleRemoteService
+	 *            A service for handling {@link Sample}s from remote services
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService, SequenceFileService sequenceFileService,
-			SequenceFilePairService sequenceFilePairService,
-			GalaxyLibraryBuilder libraryBuilder,
-			IridaWorkflowsService iridaWorkflowsService, AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
-			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy, AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService) {
+			SequenceFilePairService sequenceFilePairService, GalaxyLibraryBuilder libraryBuilder,
+			IridaWorkflowsService iridaWorkflowsService,
+			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
+			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy,
+			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sequenceFileService = sequenceFileService;

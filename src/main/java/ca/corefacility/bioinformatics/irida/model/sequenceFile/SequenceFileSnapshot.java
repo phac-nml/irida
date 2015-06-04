@@ -46,7 +46,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileSnapshot.class);
 
 	@Id
@@ -84,12 +84,11 @@ public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, Vers
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber;
 
-	
-	private SequenceFileSnapshot(){
+	private SequenceFileSnapshot() {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
 	}
-	
+
 	/**
 	 * Create a new {@link SequenceFileSnapshot} based on an existing remote
 	 * {@link SequenceFile}. This will copy the properties of the file along
@@ -167,18 +166,23 @@ public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, Vers
 	public void incrementFileRevisionNumber() {
 		fileRevisionNumber++;
 	}
-	
+
 	public String getRemoteURI() {
 		return remoteURI;
 	}
-	
-	public boolean isMirrored(){
-		if(file == null){
+
+	/**
+	 * Return whether the file has been mirrored locally
+	 * 
+	 * @return boolean whether the file has been mirrored
+	 */
+	public boolean isMirrored() {
+		if (file == null) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	@JsonIgnore
 	public String getFileSize() {
 		String size = "N/A";
