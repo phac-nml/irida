@@ -8,7 +8,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -233,6 +232,12 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		
 		// merge local and remote
 		for(Sample s : sampleSequenceFilesSingle.keySet()){
+			/*
+			 * This check is being done to ensure local and remote samples do
+			 * not have the same name. If the sample name is duplicated between
+			 * samples it will cause some pipelines that rely on the sample name
+			 * to fail.
+			 */
 			if(singleFiles.containsKey(s)){
 				throw new DuplicateSampleException("sample is duplicated between local and remote files");
 			}
