@@ -86,7 +86,7 @@ Dependency Installation
 
 The installation and setup of Galaxy requires a number of dependency software to be installed.  To install this software on CentOS (>= 6.6) please run:
 
-	yum install mercurial nginx pwgen python zlib-devel ncurses-devel tcsh
+	yum install mercurial pwgen python zlib-devel ncurses-devel tcsh
 
 The following dependencies are required for running or building some of the tools.
 
@@ -363,7 +363,6 @@ For more information please see the [Purging Histories and Datasets][] document.
 [Galaxy Database Setup]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
 [MySQL]: http://www.mysql.com/
 [PostgreSQL]: http://www.postgresql.org/
-[Galaxy nginx setup]: https://wiki.galaxyproject.org/Admin/Config/nginxProxy
 [Galaxy Cluster]: https://wiki.galaxyproject.org/Admin/Config/Performance/Cluster
 [Galaxy News Page]: https://wiki.galaxyproject.org/News
 [Bitbucket]: https://bitbucket.org/galaxy/galaxy-dist/commits/all
