@@ -79,14 +79,16 @@ public class SampleSequenceFilesControllerTest {
 		List<Join<Sample, SequenceFile>> relationships = Lists.newArrayList(r);
 
 		// mock out the service calls
+		when(projectService.read(p.getId())).thenReturn(p);
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 		when(sequenceFileService.getSequenceFilesForSample(s)).thenReturn(relationships);
-		when(sampleService.read(s.getId())).thenReturn(s);
 
 		ModelMap modelMap = controller.getSampleSequenceFiles(p.getId(), s.getId());
 
 		// verify that the service calls were used.
+		verify(projectService).read(p.getId());
+		verify(sampleService).getSampleForProject(p,s.getId());
 		verify(sequenceFileService).getSequenceFilesForSample(s);
-		verify(sampleService).read(s.getId());
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
