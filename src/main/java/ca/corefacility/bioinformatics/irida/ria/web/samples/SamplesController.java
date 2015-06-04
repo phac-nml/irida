@@ -130,8 +130,7 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @return The name of the page.
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}", "/samples/{sampleId}/details",
-			"/projects/{projectId}/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}/details" })
+	@RequestMapping(value = { "/samples/{sampleId}/details", "/projects/{projectId}/samples/{sampleId}/details" })
 	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample page for sample [" + sampleId + "]");
 		Sample sample = sampleService.read(sampleId);
@@ -220,8 +219,8 @@ public class SamplesController extends BaseController {
 	 *            a reference to the logged in user.
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
+	@RequestMapping(value = {"/samples/{sampleId}",  "/samples/{sampleId}/sequenceFiles",
+			"/projects/{projectId}/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal) {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
