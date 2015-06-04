@@ -270,14 +270,14 @@ public class SamplesController extends BaseController {
 	 *            the {@link Sample} id
 	 * @param fileId
 	 *            The {@link SequenceFile} id
-	 * @param returnUrl
-	 *            where we should send the browser after removing the file.
+	 * @param request
+	 *            {@link HttpServletRequest}
 	 * @param locale
 	 *            the locale specified by the browser.
 	 * @return map stating the request was successful
 	 */
 	@RequestMapping(value = "/samples/{sampleId}/files/delete", method = RequestMethod.POST)
-	public String removeFileFromSample(RedirectAttributes attributes, @PathVariable Long sampleId, @RequestParam Long fileId, @RequestParam String returnUrl, Locale locale) {
+	public String removeFileFromSample(RedirectAttributes attributes, @PathVariable Long sampleId, @RequestParam Long fileId, HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		SequenceFile sequenceFile = sequenceFileService.read(fileId);
 
@@ -293,7 +293,7 @@ public class SamplesController extends BaseController {
 					.getMessage("samples.files.remove.error", new Object[] { sequenceFile.getLabel() }, locale));
 		}
 
-		return "redirect:" + returnUrl;
+		return "redirect:" + request.getHeader("referer");
 	}
 
 	/**
@@ -307,15 +307,15 @@ public class SamplesController extends BaseController {
 	 *            ID of the {@link Sample} to remove from
 	 * @param pairId
 	 *            ID of the {@link SequenceFilePair} to remove
-	 * @param returnUrl
-	 *            URL to redirect back to
+	 * @param request
+	 *            {@link HttpServletRequest}
 	 * @param locale
 	 *            Locale of the request
 	 * @return Redirect back to the page
 	 */
 	@RequestMapping(value = "/samples/{sampleId}/files/delete/pair", method = RequestMethod.POST)
 	public String removeFilePairFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
-			@RequestParam Long pairId, @RequestParam String returnUrl, Locale locale) {
+			@RequestParam Long pairId, HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		SequenceFilePair sequenceFilePair = sequenceFilePairService.read(pairId);
 
@@ -333,7 +333,7 @@ public class SamplesController extends BaseController {
 					new Object[] { sequenceFilePair.getLabel() }, locale));
 		}
 
-		return "redirect:" + returnUrl;
+		return "redirect:" + request.getHeader("referer");
 	}
 
 	/**
