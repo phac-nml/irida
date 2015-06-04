@@ -149,9 +149,7 @@ public class AnalysisController {
 		model.addAttribute("remote_paired", remoteFilesPaired);
 		
 		// Get the number of files currently being mirrored
-		int mirroringCount = remoteFilesPaired.stream().mapToInt((p) -> {
-			return p.isMirrored() ? 0 : 1;
-		}).sum();
+		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
 		model.addAttribute("mirroringCount", mirroringCount);
 
 		/*
