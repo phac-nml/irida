@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
@@ -70,6 +71,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequenceFileJoinRepository ssfRepository;
 	
 	private final SequenceFilePairRepository sequenceFilePairRepository;
+	
+	private final AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
 
 	/**
 	 * Reference to {@link AnalysisRepository}.
@@ -89,19 +92,23 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the analysis repository.
 	 * @param sequenceFilePairRepository
 	 *            the {@link SequenceFilePairRepository}.
+	 * @param assembledGenomeAnalysisRepository
+	 *            the {@link AssembledGenomeAnalysisRepository}.
 	 * @param validator
 	 *            validator.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository,
-			final SequenceFilePairRepository sequenceFilePairRepository, Validator validator) {
+			final SequenceFilePairRepository sequenceFilePairRepository, AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository,
+			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.ssfRepository = ssfRepository;
 		this.analysisRepository = analysisRepository;
 		this.sequenceFilePairRepository = sequenceFilePairRepository;
+		this.assembledGenomeAnalysisRepository = assembledGenomeAnalysisRepository;
 	}
 	
 	/**
@@ -362,8 +369,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		Set<AssembledGenomeAnalysis> assembledGenomesSet = new HashSet<>();
 		List<SequenceFilePair> sequenceFilePairsList = sequenceFilePairRepository.getSequenceFilePairsForSample(sample);
 		for (SequenceFilePair sequenceFilePair : sequenceFilePairsList) {
-			if (sequenceFilePair.hasAssembledGenome()) {
-				assembledGenomesSet.add(sequenceFilePair.getAssembledGenome());
+			AssembledGenomeAnalysis assembledGenomeAnalysis = assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(sequenceFilePair);
+			if (assembledGenomeAnalysis != null) {
+				assembledGenomesSet.add(assembledGenomeAnalysis);
 			}
 		}
 

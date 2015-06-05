@@ -66,7 +66,7 @@ public class SequenceFilePair implements IridaThing {
 	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
 	private Set<SequenceFile> files;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "assembled_genome", unique = true, nullable = true)
 	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private AssembledGenomeAnalysis assembledGenome;

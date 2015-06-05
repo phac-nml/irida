@@ -48,8 +48,7 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	@Column(name = "created_date", nullable = false)
 	private final Date createdDate;
 
-	@SuppressWarnings("unused")
-	private AssembledGenomeAnalysis() {
+	public AssembledGenomeAnalysis() {
 		this.createdDate = new Date();
 		this.analysis = null;
 	}
