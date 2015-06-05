@@ -125,7 +125,8 @@ public class RESTSampleSequenceFilesController {
 		// identifiers associated with a Sample, then
 		// retrieve each of the SequenceFiles and prepare for serialization.
 		logger.debug("Reading seq files for sample " + sampleId +  " in project " + projectId);
-		Sample sample = sampleService.read(sampleId);
+		Project project = projectService.read(projectId);
+		Sample sample = sampleService.getSampleForProject(project, sampleId);
 		List<Join<Sample, SequenceFile>> relationships = sequenceFileService.getSequenceFilesForSample(sample);
 
 		ResourceCollection<SequenceFileResource> resources = new ResourceCollection<>(relationships.size());

@@ -182,5 +182,11 @@ public class SampleSequenceFilesIT {
 		assertNotNull(sampleLocation);
 		assertEquals(sampleUri, sampleLocation);
 	}
+
+	@Test
+	public void testSequenceFilePermissionInInvalidSample() {
+		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/100/samples/1/sequenceFiles";
+		asAdmin().expect().statusCode(HttpStatus.NOT_FOUND.value()).when().get(sampleUri);
+	}
 	
 }
