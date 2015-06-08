@@ -97,7 +97,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder("SequenceFilePair: ");
+		StringBuilder builder = new StringBuilder();
 		Iterator<SequenceFile> iterator = files.iterator();
 		builder.append(iterator.next().getLabel()).append(", ").append(iterator.next().getLabel());
 		return builder.toString();

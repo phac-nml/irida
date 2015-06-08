@@ -584,7 +584,7 @@
     };
     
     vm.remove = function () {
-      if (vm.count > 1 && vm.localSelected) {
+      if (vm.count > 0 && vm.localSelected) {
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/remove',
           controller : 'RemoveCtrl as rmCtrl',

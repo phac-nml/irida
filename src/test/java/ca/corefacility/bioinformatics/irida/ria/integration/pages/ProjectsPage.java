@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
-import com.google.common.base.Strings;
-
 /**
  * <p>
  * Page Object to represent the projects page.
@@ -31,10 +29,12 @@ public class ProjectsPage extends AbstractPage {
 
 	public void toUserProjectsPage() {
 		get(driver, RELATIVE_URL);
+		waitForAjax();
 	}
 
 	public void toAdminProjectsPage() {
 		get(driver, ADMIN_URL);
+		waitForAjax();
 	}
 
 	public int projectsTableSize() {
@@ -42,57 +42,23 @@ public class ProjectsPage extends AbstractPage {
 		return driver.findElements(By.cssSelector("#projectsTable tbody tr")).size();
 	}
 
-	public String getCollaboratorClass() {
-		return driver.findElement(
-				By.cssSelector("#projectsTable tbody tr:nth-child(3) td:nth-child(4) span")).getAttribute("class");
-	}
-
-	public String getOwnerClass() {
-		return driver.findElement(By.cssSelector("#projectsTable tbody tr:nth-child(1) td:nth-child(4) span")).getAttribute(
-				"class");
+	public void gotoProjectPage(int row) {
+		driver.findElements(By.cssSelector("#projectsTable .item-link")).get(row).click();
 	}
 
 	public List<WebElement> getProjectColumn() {
-		waitForAjax();
 		return driver.findElements(By.cssSelector("#projectsTable tbody td:nth-child(2)"));
 	}
 
-	public void clickProjectNameHeader(){
-		driver.findElement(By.id("project-name")).click();
+	public void clickProjectNameHeader() {
+		// Sorting row is the second one
+		WebElement headerRow = driver.findElements(By.cssSelector(".dataTables_scrollHeadInner thead tr")).get(0);
+		headerRow.findElements(By.cssSelector("th")).get(1).click();
 		waitForAjax();
 	}
-
-    public boolean adminShouldBeAbleToSelectViaCheckboxes() {
-        return driver.findElements(By.cssSelector("#projectsTable input[type=\"checkbox\"]")).size() > 0;
-    }
-
-    public int adminGetSelectedCheckboxCount() {
-        return driver.findElements(By.cssSelector("#projectsTable tbody input[type=\"checkbox\"]:checked")).size();
-    }
-
-    public void adminSelectHeaderCheckbox() {
-        driver.findElement(By.id("selectAll")).click();
-    }
-
-    public void adminSelectFirstCheckbox() {
-        List<WebElement> els = driver.findElements(By.cssSelector("#projectsTable tbody input[type=\"checkbox\"]"));
-        els.get(0).click();
-    }
-
-    public boolean adminIsSelectAllCheckboxIntermediateState() {
-        String exists = driver.findElement(By.id("selectAll")).getAttribute("indeterminate");
-        if (Strings.isNullOrEmpty(exists)) {
-            return false;
-        }
-        return true;
-    }
 
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
 		wait.until(Ajax.waitForAjax(60000));
-	}
-
-	public void clickCreateProjectLink() {
-		driver.findElement(By.id("newProjectBtn")).click();
 	}
 }

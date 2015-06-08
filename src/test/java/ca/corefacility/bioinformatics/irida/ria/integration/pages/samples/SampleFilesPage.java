@@ -44,6 +44,14 @@ public class SampleFilesPage extends AbstractPage {
 				.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
+	
+	public void deleteFirstPair(){
+		WebElement removeButton = driver.findElements(By.className("remove-pair")).iterator().next();
+		removeButton.click();
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
+				.id("remove-file-confirm")));
+		confirmRemoveButton.click();
+	}
 
 	public boolean isDeleteConfirmationMessageDisplayed() {
 		return driver.findElements(By.id("file-deleted-success")).size() > 0;

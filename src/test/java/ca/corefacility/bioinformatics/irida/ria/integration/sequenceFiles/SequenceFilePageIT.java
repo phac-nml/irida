@@ -1,44 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.sequenceFiles;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequenceFiles.SequenceFilePages;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Created by josh on 14-08-06.
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
+import static org.junit.Assert.*;
+
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/sequenceFiles/SequenceFileView.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class SequenceFilePageIT {
+public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePageIT.class);
 	/*
 	 * FILE ATTRIBUTES
@@ -52,14 +26,13 @@ public class SequenceFilePageIT {
 	private static final String FILE_MIN_LENGTH = "184";
 	private static final String FILE_MAX_LENGTH = "251";
 	private static final String FILE_GC_CONTENT = "30";
-	private WebDriver driver;
+
 	private SequenceFilePages page;
 
 	@Before
-	public void setUp() {
-		this.driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsManager(driver);
-		page = new SequenceFilePages(driver);
+	public void setUpTest() {
+		LoginPage.loginAsManager(driver());
+		page = new SequenceFilePages(driver());
 	}
 
 	@Test
@@ -107,11 +80,4 @@ public class SequenceFilePageIT {
 		assertEquals("Displays the gc content", FILE_GC_CONTENT, page.getGCContent());
 	}
 
-	@After
-	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
-	}
 }

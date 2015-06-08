@@ -4,8 +4,8 @@
       layout:decorator="clients/_base">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
-<link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-      href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
+      href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css" />
 </head>
 <body>
 <main layout:fragment="page">
@@ -29,8 +29,8 @@
     </div>
 </main>
 <th:block layout:fragment="pageScripts">
-    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
-            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+    <script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
+            src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {

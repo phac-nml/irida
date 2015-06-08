@@ -35,7 +35,7 @@ The projects list provides a high-level overview of project details, including:
 * The date that the project was created in IRIDA,
 * The time that the project was last modified.
 
-You have **read-only** permissions on projects where you have a <img src="images/collaborator-icon.png" class="inline" alt="Collaborator role icon."> **Collaborator** role. You have **modify** permissions on projects where you have a <img src="images/manager-icon.png" class="inline" alt="Manager role icon"> **Manager** role. You can view the role that you have on a project in the **Role** column.
+You have **read-only** permissions on projects where you are listed as a **Collaborator** role. You have **modify** permissions on projects where you are listed as **Manager** role. You can view the role that you have on a project in the **Role** column.
 
 Creating a new project
 ----------------------
