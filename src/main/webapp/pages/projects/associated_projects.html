@@ -18,79 +18,87 @@
                 href="projects/4/associated/edit">_Edit_</a>
         </div>
     </div>
+  <span th:if="${noAssociated}" th:text="#{project.associated.empty}">_No associated projects_</span>
+  <div class="panel-body" th:if="! ${#lists.isEmpty(associatedProjects)}" id="associated-projects">
+      <table class="table table-striped table-hover">
+          <tr>
+              <th class="associated-project-title" th:text="#{project.associated.name}">_Project Name_</th>
+              <th>_Location_</th>
+              <th th:text="#{project.associated.access}">_Access_</th>
+          </tr>
+          <tr th:each="project : ${associatedProjects}" class="associated-project">
+              <td>
+                  <a class="project-name authorized" th:if="${project.auth} == 'authorized'" 
+                      th:text="${project.name}" th:href="@{'/projects/' + ${project.id}}">_Project Name_</a>
+                  <span class="project-name unauthorized" th:if="${project.auth} != 'authorized'" 
+                      th:text="${project.name}">_Project Access_</span>
+              </td>
+              <td>_Local_</td>
+              <td>
+                  <span th:if="${project.auth} == 'authorized'"
+                      th:text="#{project.associated.authorized}"
+                      class="label label-success">_Authorized_</span>
+                  <span th:if="${project.auth} != 'authorized'"
+                      th:text="#{project.associated.unauthorized}"
+                      class="label label-danger">_Unauthorized_</span>
+              </td>
+          </tr>
+          <th:block th:each="api : ${remoteProjectsByApi}">
+                <tr th:class="'remote-project-row hidden remote-project-view-'+${api.key.id}" th:each="project : ${api.value}">
+                    <td>
+                        <span th:text="#{project.associated.remote.placeholder(${project.getId()})}"
+                            class="remote-project-name"
+                            th:attr="'data-project-id'=${project.getId()}, data-api-id=${api.key.id}"></span>
+                    </td>
+                    <td>
+                      <a href="#" th:href="@{/remote_api/{id}(id=${api.key.id})}" th:text="${api.key.name}">_API_</a>
+                    </td>
+                    <td>
+                        <span th:id="'remote-project-status-'+${project.getId()}"></span>
+                    </td>
+                </tr>
+          </th:block>
+      </table>
+  </div>
+  <div th:each="api : ${remoteProjectsByApi}" class="panel panel-default">
+      <div class="panel-heading clearfix">
+          <b class="panel-title pull-left"><a th:text="${api.key.name}" th:href="@{/remote_api/{id}(id=${api.key.id})}"></a></b>
 
-    <div tabset="">
-        <div tab="" th:attr="heading=#{project.associated.local.tab}">
-            <span th:if="${#lists.isEmpty(associatedProjects)}" th:text="#{project.associated.empty}">_No associated projects_</span>
-            <div class="panel-body" th:if="! ${#lists.isEmpty(associatedProjects)}" id="associated-projects">
-                <table class="table table-striped table-hover">
-                    <tr>
-                        <th class="associated-project-title" th:text="#{project.associated.name}">_Project Name_</th>
-                        <th th:text="#{project.associated.access}">_Access_</th>
-                    </tr>
-                    <tr th:each="project : ${associatedProjects}" class="associated-project">
-                        <td>
-                            <a class="project-name authorized" th:if="${project.auth} == 'authorized'" 
-                                th:text="${project.name}" th:href="@{'/projects/' + ${project.id}}">_Project Name_</a>
-                            <span class="project-name unauthorized" th:if="${project.auth} != 'authorized'" 
-                                th:text="${project.name}">_Project Access_</span>
-                        </td>
-                        <td>
-                            <span th:if="${project.auth} == 'authorized'"
-                                th:text="#{project.associated.authorized}"
-                                class="label label-success">_Authorized_</span>
-                            <span th:if="${project.auth} != 'authorized'"
-                                th:text="#{project.associated.unauthorized}"
-                                class="label label-danger">_Unauthorized_</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <div tab="" th:attr="heading=#{project.associated.remote.tab}">
-            <span th:if="${#maps.isEmpty(remoteProjectsByApi)}" th:text="#{project.associated.empty}">_No associated projects_</span>            
-            <div th:each="api : ${remoteProjectsByApi}" class="panel panel-default">
-                <div class="panel-heading clearfix">
-                    <b class="panel-title pull-left"><a th:text="${api.key.name}" th:href="@{/remote_api/{id}(id=${api.key.id})}"></a></b>
-                    
-                    <div class="pull-right">
-                        <span id="api-status-x" th:id="'api-status-'+${api.key.id}" class="api-status" th:attr="data-api-id=${api.key.id}">
-                            <i class="fa fa-spinner fa-spin"></i>
-                        </span>
-                        
-                        <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button-x" th:id="'connect-button-' + ${api.key.id}"
-                            th:attr="data-api-id=${api.key.id}" th:text="#{remoteapi.status.connect.button}">_Connect_</button>
-                        
-                    </div>
-                </div>
-                <div  class="panel-body">
-                    <table th:id="'remote-project-view-'+${api.key.id}" class="table table-striped table-hover hidden">
-                        <tr>
-                            <th class="associated-project-title" th:text="#{project.associated.name}">_Project Name_</th>
-                            <th th:text="#{project.associated.access}">_Access_</th>
-                        </tr>
-                        <tr class="remote-project-row" th:each="project : ${api.value}">
-                            <td>
-                                <span th:text="#{project.associated.remote.placeholder(${project.getId()})}"
-                                    class="remote-project-name"
-                                    th:attr="'data-project-id'=${project.getId()}, data-api-id=${api.key.id}"></span>
-                            </td>
-                            <td>
-                                <span th:id="'remote-project-status-'+${project.getId()}"></span>
-                            </td>
-                        </tr>
-                    </table>
-                    
-                    <span class="hidden unauthorized-project-display" th:id="'unauthorized-project-display-' + ${api.key.id}">
-                        <span th:text="#{project.associated.remote.unavailable}">_Unavailable projects: _</span>
-                        <span class="unauthorized-count"></span>
-                        <i class="glyphicon glyphicon-question-sign"></i>
-                    </span>
-                </div>
-            </div>
-        </div> 
-        
-    </div>
+          <div class="pull-right">
+              <span id="api-status-x" th:id="'api-status-'+${api.key.id}" class="api-status" th:attr="data-api-id=${api.key.id}">
+                  <i class="fa fa-spinner fa-spin"></i>
+              </span>
+
+              <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button-x" th:id="'connect-button-' + ${api.key.id}"
+                  th:attr="data-api-id=${api.key.id}" th:text="#{remoteapi.status.connect.button}">_Connect_</button>
+
+          </div>
+      </div>
+      <div  class="panel-body">
+          <table  class="table table-striped table-hover hidden">
+              <tr>
+                  <th class="associated-project-title" th:text="#{project.associated.name}">_Project Name_</th>
+                  <th th:text="#{project.associated.access}">_Access_</th>
+              </tr>
+              <tr class="remote-project-row" th:each="project : ${api.value}">
+                  <td>
+                      <span th:text="#{project.associated.remote.placeholder(${project.getId()})}"
+                          class="remote-project-name"
+                          th:attr="'data-project-id'=${project.getId()}, data-api-id=${api.key.id}"></span>
+                  </td>
+                  <td>
+                      <span th:id="'remote-project-status-'+${project.getId()}"></span>
+                  </td>
+              </tr>
+          </table>
+
+          <span class="hidden unauthorized-project-display" th:id="'unauthorized-project-display-' + ${api.key.id}">
+              <span th:text="#{project.associated.remote.unavailable}">_Unavailable projects: _</span>
+              <span class="unauthorized-count"></span>
+              <i class="glyphicon glyphicon-question-sign"></i>
+          </span>
+      </div>
+  </div>
 </main>
 
 <th:block layout:fragment="scripts">
@@ -110,7 +118,7 @@
     		
     		getApiStatus(apiId,resultDiv,connectButtonId, function(){
     			//display the projects if the GET is successful
-    			$("#remote-project-view-"+apiId).removeClass("hidden");
+    			$(".remote-project-view-"+apiId).removeClass("hidden");
     		});
     		
     		$(".unauthorized-project-display").qtip({
