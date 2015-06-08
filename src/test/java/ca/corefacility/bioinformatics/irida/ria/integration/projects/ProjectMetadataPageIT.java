@@ -1,31 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -33,14 +15,8 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * </p>
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectMetadataPageIT {
+public class ProjectMetadataPageIT extends AbstractIridaUIITChromeDriver {
 	private final String PAGE_TITLE = "IRIDA Platform - project2 - Metadata";
 	private final Long PROJECT_ID_AS_OWNER = 2L;
 	private final Long PROJECT_ID_AS_COLLABORATOR = 1L;
@@ -49,28 +25,18 @@ public class ProjectMetadataPageIT {
 	private final String PROJECT_ORGANISM = "Salmonella";
 	private final String PROJECT_REMOTE_URL = "http://salmonella-wiki.ca";
 
-	private WebDriver driver;
 	private ProjectMetadataPage page;
 
 	@Before
-	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		page = new ProjectMetadataPage(driver);
-	}
-
-	@After
-	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
+	public void setUpTest() {
+		page = new ProjectMetadataPage(driver());
 	}
 
 	@Test
 	public void displaysTheProjectMetaData() {
-		LoginPage.loginAsUser(driver);
+		LoginPage.loginAsUser(driver());
 		page.goTo(PROJECT_ID_AS_OWNER);
-		assertEquals("Displays the correct page title", PAGE_TITLE, driver.getTitle());
+		assertEquals("Displays the correct page title", PAGE_TITLE, driver().getTitle());
 		assertEquals("Displays the correct project name", PROJECT_NAME, page.getDataProjectName());
 		assertEquals("Displays the correct description", PROJECT_DESCRIPTION, page.getDataProjectDescription());
 		assertEquals("Displays the correct organism", PROJECT_ORGANISM, page.getDataProjectOrganism());

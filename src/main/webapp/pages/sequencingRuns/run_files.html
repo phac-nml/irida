@@ -5,8 +5,8 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title th:text="#{sequencingruns.details.title(${run.id})}">_Run_</title>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-	      href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
+	      href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <main layout:fragment="main">
@@ -53,8 +53,8 @@
 	</div>
 </main>
 <th:block layout:fragment="pageScripts" th:inline="javascript">
-	<script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
-	        src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+	<script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
+	        src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 	<script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
 	        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
 	<script>

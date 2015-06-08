@@ -1,0 +1,13 @@
+{
+  "bundle": "bootstrap",
+  "assets": [
+    {
+      "name": "bootstrap",
+      "version": "1.10.7",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/bootstrap/dist/css/bootstrap.css"
+      }
+    }
+  ]
+}
