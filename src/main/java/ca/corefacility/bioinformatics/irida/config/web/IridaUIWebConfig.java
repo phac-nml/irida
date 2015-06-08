@@ -43,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConf
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
+import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
@@ -127,6 +128,11 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		return source;
 	}
 
+	@Bean
+	public BreadCrumbInterceptor breadCrumbInterceptor() {
+		return new BreadCrumbInterceptor(messageSource());
+	}
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		logger.debug("Configuring Resource Handlers");
@@ -198,6 +204,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(analyticsHandlerInterceptor());
+		registry.addInterceptor(breadCrumbInterceptor());
 	}
 
 	/**
