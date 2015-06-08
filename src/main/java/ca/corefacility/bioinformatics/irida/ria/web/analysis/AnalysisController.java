@@ -80,7 +80,7 @@ public class AnalysisController {
 	// PAGES
 	// ************************************************************************************************
 
-	@RequestMapping("/list")
+	@RequestMapping()
 	public String getUserAnalysesPage(Model model, Locale locale) {
 		String response = PAGE_USER_ANALYSIS;
 		try {
@@ -92,7 +92,7 @@ public class AnalysisController {
 		return response;
 	}
 
-	@RequestMapping("/list/all")
+	@RequestMapping("/all")
 	public String getAdminAnalysesPage(Model model, Locale locale) {
 		String response = PAGE_USER_ANALYSIS;
 		try {

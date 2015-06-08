@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -13,7 +12,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -27,6 +25,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 			"samples", true,
 			"sequenceFiles", true
 	);
+
 
 	public BreadCrumbInterceptor(MessageSource messageSource) {
 		this.messageSource = messageSource;
