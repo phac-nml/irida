@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Strings;
 import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -20,10 +21,8 @@ import com.google.common.collect.ImmutableMap;
 public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private final MessageSource messageSource;
 	private Map<String, Boolean> BASE = ImmutableMap.of(
-			"dashboard", true,
 			"projects", true,
-			"samples", true,
-			"sequenceFiles", true
+			"samples", true
 	);
 
 
@@ -36,22 +35,22 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 			ModelAndView modelAndView) throws Exception {
 		super.postHandle(request, response, handler, modelAndView);
 
-		Locale locale = request.getLocale();
-		List<Map<String, String>> crumbs = new ArrayList<>();
-
 		String servletPath = request.getServletPath();
 		String[] parts = servletPath.split("/");
+		int counter = Strings.isNullOrEmpty(parts[0]) ? 1 : 0;
 
-		if (!servletPath.contains("ajax") && BASE.containsKey(parts[1])) {
+		if (modelAndView != null && !servletPath.contains("template") && BASE.containsKey(parts[counter])) {
+			Locale locale = request.getLocale();
+			List<Map<String, String>> crumbs = new ArrayList<>();
 
 			// Check to ensure that there is some sort of context path.
 			String contextPath = request.getContextPath();
 
 			StringBuilder url = new StringBuilder(contextPath);
 
-			for (int i = 1; i < parts.length; i++) {
+			for (; counter < parts.length; counter++) {
 				// Should be a noun
-				String noun = parts[i];
+				String noun = parts[counter];
 				url.append("/");
 				url.append(noun);
 
@@ -62,8 +61,8 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 				);
 
 				// Check to see if there is a next part, if there is it is expected to be an id.
-				if (parts.length > ++i) {
-					String id = parts[i];
+				if (parts.length > ++counter) {
+					String id = parts[counter];
 					url.append("/");
 					url.append(id);
 					crumbs.add(
@@ -75,6 +74,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 				}
 			}
 
+			// Add the breadcrumbs to the model
 			modelAndView.getModelMap().put("crumbs", crumbs);
 		}
 	}
