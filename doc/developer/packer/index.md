@@ -60,3 +60,17 @@ ssh -p 42222 vagrant@localhost
 The default password is `vagrant`.
 
 You may also change the machine to use bridged networking instead of NAT so that you can connect to the machine using an external IP address. Tomcat is configured to respond on port 80, so if you use bridged networking, you can navigate to <http://{bridged-ip}/irida>.
+
+### Log files
+
+We've configured packer to build us an image of CentOS 7.1, which has migrated to [systemd](http://www.freedesktop.org/wiki/Software/systemd/). Traditionally, tomcat logs are found at `/var/log/tomcat/catalina.out`, but you can't find them there with systemd. Instead, you must use `journalctl` to inspect the logs of a service. To view tomcat logs, run:
+
+```bash
+sudo journalctl -u tomcat
+```
+
+To tail the logs, run:
+
+```bash
+sudo journalctl -u tomcat -f
+```
