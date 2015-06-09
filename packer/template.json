@@ -50,7 +50,7 @@
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--memory", "4096" ],
         [ "modifyvm", "{{.Name}}", "--cpus", "4" ],
-	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_tomcat,tcp,,48888,,80" ]
+	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_tomcat,tcp,,48888,,80" ],
 	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_ssh,tcp,,42222,,22" ]
       ]
     }
