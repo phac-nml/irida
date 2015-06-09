@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -88,6 +89,9 @@ public class ProjectsController {
 	private final UserService userService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
+
+	@Value("${file.upload.max_size}")
+	private final Long MAX_UPLOAD_SIZE = -1L;
 
 	/*
 	 * Converters
@@ -262,8 +266,12 @@ public class ProjectsController {
 			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 			model.addAttribute("project", project);
-			model.addAttribute("maxFileSize", IridaUIWebConfig.MAX_UPLOAD_SIZE);
-			model.addAttribute("maxFileSizeString", fileSizeConverter.convert(IridaUIWebConfig.MAX_UPLOAD_SIZE));
+			model.addAttribute("maxFileSize", MAX_UPLOAD_SIZE);
+			if (MAX_UPLOAD_SIZE > 0) {
+				model.addAttribute("maxFileSizeString", fileSizeConverter.convert(MAX_UPLOAD_SIZE));
+			} else {
+				model.addAttribute("maxFileSizeString", "∞");
+			}
 			model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 			return PROJECT_METADATA_EDIT_PAGE;
 		} else {
