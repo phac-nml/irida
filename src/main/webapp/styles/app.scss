@@ -20,3 +20,8 @@
 @import "components/sidenav";
 @import "components/tables";
 @import "components/typography";
+
+// Bootstrap override
+.form-group .alert {
+  font-weight: normal;
+}

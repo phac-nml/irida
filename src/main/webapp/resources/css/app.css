@@ -8341,3 +8341,8 @@ input {
 .description-detail {
   color: #232323;
 }
+
+/* line 25, ../../styles/app.scss */
+.form-group .alert {
+  font-weight: normal;
+}
