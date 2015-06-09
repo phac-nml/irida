@@ -39,7 +39,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 		String[] parts = servletPath.split("/");
 		int counter = Strings.isNullOrEmpty(parts[0]) ? 1 : 0;
 
-		if (modelAndView != null && !servletPath.contains("template") && BASE.containsKey(parts[counter])) {
+		if (modelAndView != null && !modelAndView.getViewName().contains("redirect:") && !servletPath.contains("template") && BASE.containsKey(parts[counter])) {
 			Locale locale = request.getLocale();
 			List<Map<String, String>> crumbs = new ArrayList<>();
 
