@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class ProjectsController {
 	private final TaxonomyService taxonomyService;
 
 	@Value("${file.upload.max_size}")
-	private final Long MAX_UPLOAD_SIZE = -1L;
+	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 
 	/*
 	 * Converters

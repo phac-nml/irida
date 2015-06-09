@@ -50,8 +50,11 @@ import com.google.common.collect.ImmutableMap;
 @Import(IridaScheduledTasksConfig.class)
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
+	/** named constant for allowing unlimited upload sizes. */
+	public static final Long UNLIMITED_UPLOAD_SIZE = -1L;
+
 	@Value("${file.upload.max_size}")
-	private Long MAX_UPLOAD_SIZE = -1L;
+	private Long MAX_UPLOAD_SIZE = UNLIMITED_UPLOAD_SIZE;
 
 	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
 
