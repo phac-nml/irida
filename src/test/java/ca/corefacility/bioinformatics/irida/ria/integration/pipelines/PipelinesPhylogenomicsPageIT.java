@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
 public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
-	private WebDriver driver;
 	private PipelinesPhylogenomicsPage page;
 
 	@Before
@@ -206,19 +204,19 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	
 	@Test
 	public void testRemoteSample() throws InterruptedException{
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsAdmin(driver());
 		// add the api
-		RemoteApiUtilities.addRemoteApi(driver);
+		RemoteApiUtilities.addRemoteApi(driver());
 
 		// associate a project from that api
-		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver);
+		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
 		apEditPage.goTo(1L);
 		apEditPage.viewRemoteTab();
 		apEditPage.clickAssociatedButton(1L);
 		assertTrue(apEditPage.checkNotyStatus("success"));
 		
 		
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver());
 		samplesPage.goToPage("1");
 		
 		samplesPage.selectSampleByRow(0);
@@ -229,7 +227,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		samplesPage.selectSampleByClass("remote-sample");
 		samplesPage.addSamplesToGlobalCart();
 		
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
 		
 		assertTrue(page.isRemoteSampleDisplayed());
 

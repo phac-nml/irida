@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,6 @@ public class AssociatedProjectsEditPageIT extends AbstractIridaUIITChromeDriver 
 
 	private static final Long projectId = 1L;
 
-	private WebDriver driver;
 	private static final List<Long> ASSOCIATED_PROJECTS = Lists.newArrayList(2L, 3L, 5L);
 
 	@Before
@@ -78,7 +76,7 @@ public class AssociatedProjectsEditPageIT extends AbstractIridaUIITChromeDriver 
 
 	@Test
 	public void testAddRemoteAssociatedProject() {
-		RemoteApiUtilities.addRemoteApi(driver);
+		RemoteApiUtilities.addRemoteApi(driver());
 		page.goTo(projectId);
 		page.viewRemoteTab();
 		page.clickAssociatedButton(4L);
