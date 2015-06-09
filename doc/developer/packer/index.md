@@ -43,7 +43,7 @@ Using the VM
 You can import the `.ovf` file in `packer/output-virtualbox-iso` into VirtualBox by double clicking it, or running something like:
 
 ```bash
-cd packer/
+cd output-virtualbox-iso
 xdg-open packer-virtualbox-iso*.ovf
 ```
 
