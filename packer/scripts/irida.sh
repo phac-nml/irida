@@ -4,6 +4,8 @@ yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-cli
 mkdir -p /opt/irida/data/{sequencing,reference,analysis,remote}
 mkdir -p /etc/irida/analytics
 
+chown -R tomcat:tomcat /opt/irida/
+
 cd /opt/irida
 curl -O https://irida.corefacility.ca/distributables/irida-latest.war
 ln -s /opt/irida/irida-latest.war /var/lib/tomcat/webapps/irida.war
