@@ -64,7 +64,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String DEFAULT_ENCODING = "UTF-8";
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
-	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Autowired
