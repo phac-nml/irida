@@ -9,7 +9,7 @@
             "scripts/base.sh",
             "scripts/vagrant.sh",
             "scripts/virtualbox.sh",
-            "scripts/irida.sh",
+            "scripts/irida-web.sh",
             "scripts/cleanup.sh"
           ]
         }
