@@ -52,6 +52,7 @@ public class BreadCrumbInterceptorTest {
 		ModelMap modelMap = modelAndView.getModelMap();
 		assertTrue("Model should have crumbs key", modelMap.containsKey("crumbs"));
 
+		@SuppressWarnings(value="unchecked")
 		List<Map<String, String>> crumbs = (List<Map<String, String>>) modelMap.get("crumbs");
 		assertEquals("Should be 4 links in the crumbs", 4, crumbs.size());
 	}
