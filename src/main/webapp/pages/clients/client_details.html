@@ -16,7 +16,7 @@
                 	<h2 class="pull-left" th:text="#{client.details.title}">_Client Details_</h2>
 					        <div class="btn-group-xs pull-right">
 				            <div id="remove-btn" class="btn btn-danger" th:text="#{client.remove.button}">Remove</div>
-                        <a href="#" th:href="@{/clients/{id}/edit(id=${client.id})}" id="edit-btn" class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
+                        <a href="#" th:href="@{/clients/{id}/edit(id=${client.getId()})}" id="edit-btn" class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
                 	</div>
                 </div>
                 <div class="sidebar__body">
@@ -25,7 +25,7 @@
                       <i class="glyphicon glyphicon-barcode"></i>
                     </div>
                     <div th:text="#{iridaThing.id}">_ID_</div>
-                    <div class="sidebar__value" id="client-id" th:text="${client.id}">_ID_</div>
+                    <div class="sidebar__value" id="client-id" th:text="${client.getId()}">_ID_</div>
                   </div>
 
                   <div class="sidebar__item">
@@ -91,7 +91,7 @@
        </div>
        <section>
            <form id="removeForm" action="/clients/remove" th:action="@{/clients/remove}" method="POST">
-               <input type="hidden" th:value="${client.id}" name="id"/>
+               <input type="hidden" th:value="${client.getId()}" name="id"/>
            </form>
        </section>
 </main>
