@@ -8,11 +8,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.Strings;
 import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -25,11 +25,17 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 			"samples", true
 	);
 
-
+	/**
+	 * Constructor
+	 * @param messageSource {@link MessageSource} for internationalization of breadcrumb
+	 */
 	public BreadCrumbInterceptor(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
