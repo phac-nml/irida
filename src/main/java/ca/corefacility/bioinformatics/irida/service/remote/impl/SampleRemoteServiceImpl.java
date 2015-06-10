@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +13,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
@@ -85,6 +92,50 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		Link sampleLink = read.getLink(FILE_SAMPLE_REL);
 
 		return read(sampleLink.getHref());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<Sample, IridaSequenceFile> getUniqueSamplesforSequenceFileSnapshots(
+			Collection<SequenceFileSnapshot> files) {
+		Map<Sample, IridaSequenceFile> map = new HashMap<>();
+
+		for (SequenceFileSnapshot file : files) {
+			Sample sample = getSampleForSequenceFileSnapshot(file);
+			if (map.containsKey(sample)) {
+				IridaSequenceFile original = map.get(sample);
+				throw new DuplicateSampleException("Files " + file + ", " + original + " have the same sample "
+						+ sample);
+			} else {
+				map.put(sample, file);
+			}
+		}
+
+		return map;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<Sample, IridaSequenceFilePair> getUniqueSamplesforSequenceFilePairSnapshots(
+			Collection<SequenceFilePairSnapshot> files) {
+		Map<Sample, IridaSequenceFilePair> map = new HashMap<>();
+
+		for (SequenceFilePairSnapshot file : files) {
+			Sample sample = getSampleForSequenceFileSnapshot(file.getFiles().iterator().next());
+			if (map.containsKey(sample)) {
+				IridaSequenceFilePair original = map.get(sample);
+				throw new DuplicateSampleException("Files " + file + ", " + original + " have the same sample "
+						+ sample);
+			} else {
+				map.put(sample, file);
+			}
+		}
+
+		return map;
 	}
 
 }

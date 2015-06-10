@@ -73,15 +73,17 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * an {@link AnalysisSubmission}.
 	 */
 	// @formatter:off
-	private static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
-			put(AnalysisState.NEW,              0.0f).
-			put(AnalysisState.PREPARING,        0.0f).
-			put(AnalysisState.PREPARED,         1.0f).
-			put(AnalysisState.SUBMITTING,       5.0f).
-			put(AnalysisState.RUNNING,          10.0f).
-			put(AnalysisState.FINISHED_RUNNING, 90.0f).
-			put(AnalysisState.COMPLETING,       95.0f).
-			put(AnalysisState.COMPLETED,        100.0f).
+	public static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
+			put(AnalysisState.NEW,                  0.0f).
+			put(AnalysisState.DOWNLOADING,          5.0f).
+			put(AnalysisState.FINISHED_DOWNLOADING, 10.0f).
+			put(AnalysisState.PREPARING,            10.0f).
+			put(AnalysisState.PREPARED,             11.0f).
+			put(AnalysisState.SUBMITTING,           15.0f).
+			put(AnalysisState.RUNNING,              20.0f).
+			put(AnalysisState.FINISHED_RUNNING,     90.0f).
+			put(AnalysisState.COMPLETING,           95.0f).
+			put(AnalysisState.COMPLETED,            100.0f).
 			build();
 	// @formatter:on
 	
@@ -532,6 +534,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		switch (analysisState) {
 		case NEW:
+		case DOWNLOADING:
+		case FINISHED_DOWNLOADING:
 		case PREPARING:
 		case PREPARED:
 		case SUBMITTING:

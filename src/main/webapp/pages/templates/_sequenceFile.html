@@ -44,8 +44,8 @@
 		<i th:case="'single'" class="fa fa-fw fa-minus" data:tooltip="#{sf.tooltip.single}"></i>
 	</td>
 	<td>
-		<span class="file-name"
-		   th:text="${file.getLabel()}"></span>
+		<a href="#" class="btn btn-default btn-sm file-name" disabled="disabled"
+		   th:text="${file.getLabel()}"></a>
 	</td>
 	<td>
 		<div class="td_info">

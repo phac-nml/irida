@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,6 @@ import com.google.common.collect.ImmutableList;
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPageIT.class);
 
-	private WebDriver driver;
 	private ProjectSamplesPage page;
 
 	@Before
@@ -602,12 +600,12 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testShowRemoteSamples() throws InterruptedException {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsAdmin(driver());
 		// add the api
-		RemoteApiUtilities.addRemoteApi(driver);
+		RemoteApiUtilities.addRemoteApi(driver());
 
 		// associate a project from that api
-		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver);
+		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
 		apEditPage.goTo(2L);
 		apEditPage.viewRemoteTab();
 		apEditPage.clickAssociatedButton(6L);

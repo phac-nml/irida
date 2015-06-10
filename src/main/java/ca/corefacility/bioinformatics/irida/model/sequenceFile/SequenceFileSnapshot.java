@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Map;
@@ -22,6 +24,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,6 +34,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.RemoteFileNotCachedExcept
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Remote representation of an {@link IridaSequenceFile}. This object will point
@@ -40,6 +46,8 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
+
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFileSnapshot.class);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -76,12 +84,11 @@ public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, Vers
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber;
 
-	
-	private SequenceFileSnapshot(){
+	private SequenceFileSnapshot() {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
 	}
-	
+
 	/**
 	 * Create a new {@link SequenceFileSnapshot} based on an existing remote
 	 * {@link SequenceFile}. This will copy the properties of the file along
@@ -159,9 +166,32 @@ public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, Vers
 	public void incrementFileRevisionNumber() {
 		fileRevisionNumber++;
 	}
-	
+
 	public String getRemoteURI() {
 		return remoteURI;
+	}
+
+	/**
+	 * Return whether the file has been mirrored locally
+	 * 
+	 * @return boolean whether the file has been mirrored
+	 */
+	public boolean isMirrored() {
+		if (file == null) {
+			return false;
+		}
+		return true;
+	}
+
+	@JsonIgnore
+	public String getFileSize() {
+		String size = "N/A";
+		try {
+			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
+		} catch (IOException e) {
+			logger.error("Could not calculate file size: ", e);
+		}
+		return size;
 	}
 
 }

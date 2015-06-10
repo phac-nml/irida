@@ -237,7 +237,7 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	public String getFileSize() {
 		String size = "N/A";
 		try {
-			size = humanReadableByteCount(Files.size(file), true);
+			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
 		} catch (IOException e) {
 			logger.error("Could not calculate file size: ", e);
 		}
@@ -286,26 +286,5 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 			throw new AnalysisAlreadySetException(
 					"The FastQC Analysis can only be applied to a sequence file one time.");
 		}
-	}
-
-	/**
-	 * From
-	 * (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
-	 * into-human-readable-format-in-java)
-	 *
-	 * @param bytes
-	 *            The {@link Long} size of the file in bytes.
-	 * @param si
-	 *            {@link Boolean} true to use si units
-	 *
-	 * @return A human readable {@link String} representation of the file size.
-	 */
-	public static String humanReadableByteCount(long bytes, boolean si) {
-		int unit = si ? 1000 : 1024;
-		if (bytes < unit)
-			return bytes + " B";
-		int exp = (int) (Math.log(bytes) / Math.log(unit));
-		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }

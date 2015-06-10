@@ -570,7 +570,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetPercentageCompleteAlternativeState() throws EntityNotFoundException, ExecutionManagerException {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(3L);
-		assertEquals("submission was not properly returned", 5.0f, percentageComplete, DELTA);
+		assertEquals("submission was not properly returned", 15.0f, percentageComplete, DELTA);
 	}
 	
 	/**

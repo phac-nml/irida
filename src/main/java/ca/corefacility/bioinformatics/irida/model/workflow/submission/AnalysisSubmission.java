@@ -205,8 +205,8 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 		this.referenceFile = builder.referenceFile;
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
-		this.remoteFilesSingle = builder.remoteFilesSingle;
-		this.remoteFilesPaired = builder.remoteFilesPaired;
+		this.remoteFilesSingle = (builder.remoteFilesSingle != null) ? builder.remoteFilesSingle : Sets.newHashSet();
+		this.remoteFilesPaired = (builder.remoteFilesPaired != null) ? builder.remoteFilesPaired : Sets.newHashSet();
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public Set<SequenceFilePair> getPairedInputFiles() {
 		return inputFilesPaired;
 	}
-	
+
 	/**
 	 * Gets the set of {@link SequenceFilePairSnapshot} submitted for this
 	 * analysis
@@ -277,7 +277,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements IridaThi
 	public Set<SequenceFileSnapshot> getRemoteFilesSingle() {
 		return remoteFilesSingle;
 	}
-
 
 	/**
 	 * Gets the id of a remote location to store input files.
