@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
             <form role="form" action="/users/1/edit"
-                  th:action="@{/users/{id}/edit(id=${user.id})}" method="post">
+                  th:action="@{/users/{id}/edit(id=${user.getId()})}" method="post">
                 <section class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title" th:text="#{user.edit.details(${user.label})}">_Edit User Details For
