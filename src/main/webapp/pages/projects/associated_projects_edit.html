@@ -159,10 +159,14 @@
 						<td>{{project.organism}}</td>
                         <td>{{project.createdDate}}</td>
 						<td>
-                            <button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
-							        ng-class="{'btn-success': project.associated}"
-							        th:text="#{project.associated.edit.button}">Hello
-							</button>
+                            <input
+                              bs-switch="bs-switch"
+                              ng-model="project.associated"
+                              ng-change="updateAssociated(project)"
+                              switch-size="mini"
+                              type="checkbox"
+                              ng-true-value="'associated'"
+                              ng-false-value="false"/>
                         </td>
 					</tr>
 					</tbody>
@@ -337,7 +341,6 @@
 			if (project.associated) {
                 AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function (data) {
 					if (data.result === 'success') {
-						project.associated = 'associated';
 						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
 						titleElem.html(++titleVal);
 					}
@@ -350,13 +353,12 @@
 			else {
 				AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function (data) {
 					if (data.result === 'success') {
-						delete project.associated;
 						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
 						titleElem.html(--titleVal);
 					}
 					else{
 						notyError();
-                      project.associated=false;
+                        project.associated=false;
                     }
 				});
 			}
@@ -400,25 +402,28 @@
 		$scope.updateAssociated = function (project) {
 			var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
-			if (project.associated) {
-				AssociatedService.removeRemoteAssociatedStatus({projectUrl: project.selfRel}).then(function (data) {
+			if (project.associated) {				
+                AssociatedService.addRemoteAssociatedProject({projectUrl: project.selfRel}).then(function (data) {
 					if (data.result === 'success') {
-						delete project.associated;
-						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
-						titleElem.html(--titleVal);
-					}
-					else
-						notyError();
-				});
-			}
-			else {
-				AssociatedService.addRemoteAssociatedProject({projectUrl: project.selfRel}).then(function (data) {
-					if (data.result === 'success') {
-						project.associated = 'associated';
 						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
 						titleElem.html(++titleVal);
 					}
-					else notyError();
+					else {
+                      notyError();
+                      project.associated = false;
+                    }
+				});
+			}
+			else {
+				AssociatedService.removeRemoteAssociatedStatus({projectUrl: project.selfRel}).then(function (data) {
+					if (data.result === 'success') {
+						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+						titleElem.html(--titleVal);
+					}
+					else {
+                        project.associated = 'associated';
+						notyError();
+                    }
 				});
 			}
 		};

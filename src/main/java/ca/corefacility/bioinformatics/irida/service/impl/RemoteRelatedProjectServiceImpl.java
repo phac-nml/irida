@@ -74,5 +74,11 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 	public RemoteRelatedProject read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
+	
+	@Override
+	@PreAuthorize("permitAll()")
+	public void delete(Long id) throws EntityNotFoundException {
+		super.delete(id);
+	}
 
 }
