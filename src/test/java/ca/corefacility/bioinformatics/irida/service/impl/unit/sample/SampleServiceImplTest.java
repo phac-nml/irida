@@ -19,19 +19,25 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -46,7 +52,12 @@ public class SampleServiceImplTest {
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private AnalysisRepository analysisRepository;
+	private SequenceFilePairRepository sequenceFilePairRepository;
+	private AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
 	private Validator validator;
+	
+	private AssembledGenomeAnalysis assembledGenome1;
+	private AssembledGenomeAnalysis assembledGenome2;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -59,10 +70,57 @@ public class SampleServiceImplTest {
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		analysisRepository = mock(AnalysisRepository.class);
+		sequenceFilePairRepository = mock(SequenceFilePairRepository.class);
+		assembledGenomeAnalysisRepository = mock(AssembledGenomeAnalysisRepository.class);
+		assembledGenome1 = mock(AssembledGenomeAnalysis.class);
+		assembledGenome2 = mock(AssembledGenomeAnalysis.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, analysisRepository,
-				validator);
+				sequenceFilePairRepository, assembledGenomeAnalysisRepository, validator);
+	}
+	
+	@Test
+	public void testFindAssembliesForSampleNoAssemblies() {
+		Sample s = new Sample();
+		s.setId(1L);
+		SequenceFilePair pair = new SequenceFilePair();
+
+		when(sequenceFilePairRepository.getSequenceFilePairsForSample(s)).thenReturn(Lists.newArrayList(pair));
+
+		assertEquals("Invalid number of assemblies found", 0, sampleService.findAssembliesForSample(s).size());
+	}
+
+	@Test
+	public void testFindAssembliesForSampleOneAssemblies() {
+		Sample s = new Sample();
+		s.setId(1L);
+		SequenceFilePair pair = new SequenceFilePair();
+		pair.setAssembledGenome(assembledGenome1);
+		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair))
+				.thenReturn(assembledGenome1);
+
+		when(sequenceFilePairRepository.getSequenceFilePairsForSample(s)).thenReturn(Lists.newArrayList(pair));
+
+		assertEquals("Invalid number of assemblies found", 1, sampleService.findAssembliesForSample(s).size());
+	}
+
+	@Test
+	public void testFindAssembliesForSampleTwoAssemblies() {
+		Sample s = new Sample();
+		s.setId(1L);
+		SequenceFilePair pair1 = new SequenceFilePair();
+		pair1.setAssembledGenome(assembledGenome1);
+		SequenceFilePair pair2 = new SequenceFilePair();
+		pair2.setAssembledGenome(assembledGenome2);
+
+		when(sequenceFilePairRepository.getSequenceFilePairsForSample(s)).thenReturn(Lists.newArrayList(pair1, pair2));
+		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair1)).thenReturn(
+				assembledGenome1);
+		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair2)).thenReturn(
+				assembledGenome2);
+
+		assertEquals("Invalid number of assemblies found", 2, sampleService.findAssembliesForSample(s).size());
 	}
 
 	@Test

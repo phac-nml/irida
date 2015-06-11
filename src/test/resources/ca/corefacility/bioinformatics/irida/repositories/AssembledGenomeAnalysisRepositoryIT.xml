@@ -7,59 +7,21 @@
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
 		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_MANAGER"
 		credentialsNonExpired="true" />
-	<user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="dr@evil.com" firstName="Dr." lastName="Evil"
-		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
-		phoneNumber="867-5309" username="dr-evil" enabled="true" system_role="ROLE_MANAGER"
-		credentialsNonExpired="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
 		projectDescription="description" remoteURL="somewhere" />
-	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-		projectDescription="description2" remoteURL="somewhere" />
-	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
-		projectDescription="description3" remoteURL="somewhere" />
 	<project_user id="1" createdDate="2013-07-18 14:20:19.0"
 		projectRole="PROJECT_OWNER" project_id="1" user_id="1" />
-	<project_user id="2" createdDate="2013-07-18 14:20:19.0"
-		projectRole="PROJECT_OWNER" project_id="2" user_id="1" />
 
-	<sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
-		sequencerSampleId="sample1" sampleName="sample1" />
-	<sample id="2" createdDate="2013-02-18 14:20:19.0" description="description2"
-		sequencerSampleId="sample2" sampleName="sample2" />
-	<sample id="3" createdDate="2013-03-18 14:20:19.0" description="description3"
-		sequencerSampleId="sample3" sampleName="sample3" />
-	<sample id="4" createdDate="2013-04-18 14:20:19.0" description="description4"
-		sequencerSampleId="sample4" sampleName="sample4" />
-	<sample id="5" createdDate="2013-05-18 14:20:19.0" description="description5"
-		sequencerSampleId="sample5" sampleName="sample5" />
 	<sample id="8" createdDate="2013-05-18 14:20:19.0" description="description5"
 		sequencerSampleId="sample8" sampleName="sample8" />
 	<sample id="9" createdDate="2013-05-18 14:20:19.0" description="description5"
 		sequencerSampleId="sample9" sampleName="sample9" />
 
-	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
-		project_id="1" sample_id="1" />
-	<project_sample id="2" createdDate="2013-07-18 14:20:19.0"
-		project_id="1" sample_id="2" />
-	<project_sample id="3" createdDate="2013-07-18 14:20:19.0"
-		project_id="1" sample_id="3" />
-	<project_sample id="4" createdDate="2013-07-18 14:20:19.0"
-		project_id="2" sample_id="4" />
-	<project_sample id="5" createdDate="2013-07-18 14:20:19.0"
-		project_id="3" sample_id="5" />
 	<project_sample id="8" createdDate="2013-07-18 14:20:19.0"
-		project_id="2" sample_id="8" />
+		project_id="1" sample_id="8" />
 	<project_sample id="9" createdDate="2013-07-18 14:20:19.0"
-		project_id="2" sample_id="9" />
-
-	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
-		description="FastQC" executionManagerAnalysisId="fastqc" />
-	<analysis_fastqc id="1" duplicationLevelChart="x"
-		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
-		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
-		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
+		project_id="1" sample_id="9" />
 
 	<analysis id="2" createdDate="2013-07-18 14:20:19.0"
 		executionManagerAnalysisId="test1" />
@@ -82,12 +44,6 @@
 	<assembled_genome_analysis id="3" analysis="4"
 		created_date="2013-07-18 14:20:19.0" />
 
-	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile1" fastqc_analysis_id="1" />
-	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2" />
-	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile3" />
 	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile4" />
 	<sequence_file id="5" created_date="2013-07-18 14:20:19.0"
@@ -107,25 +63,20 @@
 		files_id="4" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="5" />
-	<sequence_file_pair id="2" created_date="2013-07-18 14:20:19.0"
-		assembled_genome="2" />
+
+	<sequence_file_pair id="2" created_date="2013-07-18 14:20:19.0" />
 	<sequence_file_pair_files pair_id="2"
 		files_id="6" />
 	<sequence_file_pair_files pair_id="2"
 		files_id="7" />
+
 	<sequence_file_pair id="3" created_date="2013-07-18 14:20:19.0"
-		assembled_genome="3" />
+		assembled_genome="2" />
 	<sequence_file_pair_files pair_id="3"
 		files_id="8" />
 	<sequence_file_pair_files pair_id="3"
 		files_id="9" />
 
-	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
-		sample_id="1" sequencefile_id="1" />
-	<sequencefile_sample id="2" createdDate="2013-07-18 14:20:19.0"
-		sample_id="2" sequencefile_id="2" />
-	<sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
-		sample_id="3" sequencefile_id="3" />
 	<sequencefile_sample id="4" createdDate="2013-07-18 14:20:19.0"
 		sample_id="8" sequencefile_id="4" />
 	<sequencefile_sample id="5" createdDate="2013-07-18 14:20:19.0"
