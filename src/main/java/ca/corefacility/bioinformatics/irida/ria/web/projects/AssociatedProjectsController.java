@@ -130,6 +130,8 @@ public class AssociatedProjectsController {
 
 		Map<RemoteAPI, List<RemoteRelatedProject>> remoteRelatedProjectsByApi = getRemoteRelatedProjectsByApi(project);
 		model.addAttribute("remoteProjectsByApi", remoteRelatedProjectsByApi);
+		
+		model.addAttribute("noAssociated", associatedProjects.isEmpty() && remoteRelatedProjectsByApi.isEmpty());
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ASSOCIATED_PROJECTS);
 

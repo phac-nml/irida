@@ -5,8 +5,10 @@
 <head>
 	<title th:text="#{project.associated.heading(${project.label})}"></title>
 	<script>
-		window.dependencies = ['irida.datatables', 'restangular'];
+		window.dependencies = ['irida.datatables', 'restangular', 'frapontillo.bootstrap-switch'];
 	</script>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css}"
+	      href="/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css"/>
 </head>
 <body>
 
@@ -59,7 +61,7 @@
 						    sortedby="filterCriteria.sortedBy"
 						    sortValue="createdDate" th:text="#{project.created}">_Created_
 						</th>
-						<th></th>
+						<th th:text="#{project.associated.table.associated}">_Associated_</th>
 					</tr>
 					<tr>
 						<td id="table-filter" colspan="5">
@@ -82,10 +84,15 @@
 						<td>{{project.organism}}</td>
 						<td>{{project.createdDate}}</td>
 						<td>
-							<button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
-							        ng-class="{'btn-success': project.associated}"
-							        th:text="#{project.associated.edit.button}">Hello
-							</button>
+                            <input
+                              bs-switch="bs-switch"
+                              class="associated-switch"
+                              ng-model="project.associated"
+                              ng-change="updateAssociated(project)"
+                              switch-size="mini"
+                              type="checkbox"
+                              ng-true-value="'associated'"
+                              ng-false-value="false"/>
 						</td>
 					</tr>
 					</tbody>
@@ -142,7 +149,7 @@
     						<th th:text="#{projects.table.name}">_Name_</th>
     						<th th:text="#{projects.table.organism}">_State_</th>
                             <th th:text="#{project.created}">_Created_</th>
-    						<th></th>
+    						<th th:text="#{project.associated.table.associated}"></th>
     					</tr>
 					</thead>
 					<tbody cg-busy="filterPromise">
@@ -152,10 +159,15 @@
 						<td>{{project.organism}}</td>
                         <td>{{project.createdDate}}</td>
 						<td>
-                            <button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
-							        ng-class="{'btn-success': project.associated}"
-							        th:text="#{project.associated.edit.button}">Hello
-							</button>
+                            <input
+                              bs-switch="bs-switch"
+                              ng-model="project.associated"
+                              ng-change="updateAssociated(project)"
+                              class="associated-switch"
+                              switch-size="mini"
+                              type="checkbox"
+                              ng-true-value="'associated'"
+                              ng-false-value="false"/>
                         </td>
 					</tr>
 					</tbody>
@@ -173,6 +185,10 @@
         src="/resources/js/directives/datatables/irida-datatable-min.js"></script>
 <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
         src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
+<script th:src="@{/resources/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js}" 
+        src="/resources/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
+<script th:src="@{/resources/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js}"
+        src="/resources/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
 <script th:replace="remote_apis/remote_api_connect"></script>
 <script th:inline="javascript">
 	var app = angular.module('irida');
@@ -324,24 +340,27 @@
 			var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
 			if (project.associated) {
-				AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function (data) {
+                AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function (data) {
 					if (data.result === 'success') {
-						delete project.associated;
-						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
-						titleElem.html(--titleVal);
-					}
-					else
-						notyError();
-				});
-			}
-			else {
-				AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function (data) {
-					if (data.result === 'success') {
-						project.associated = 'associated';
 						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
 						titleElem.html(++titleVal);
 					}
-					else notyError();
+					else{
+                      notyError();
+                      project.associated='associated';
+                    }
+				});
+			}
+			else {
+				AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function (data) {
+					if (data.result === 'success') {
+						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+						titleElem.html(--titleVal);
+					}
+					else{
+						notyError();
+                        project.associated=false;
+                    }
 				});
 			}
 		};
@@ -384,25 +403,28 @@
 		$scope.updateAssociated = function (project) {
 			var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
-			if (project.associated) {
-				AssociatedService.removeRemoteAssociatedStatus({projectUrl: project.selfRel}).then(function (data) {
+			if (project.associated) {				
+                AssociatedService.addRemoteAssociatedProject({projectUrl: project.selfRel}).then(function (data) {
 					if (data.result === 'success') {
-						delete project.associated;
-						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
-						titleElem.html(--titleVal);
-					}
-					else
-						notyError();
-				});
-			}
-			else {
-				AssociatedService.addRemoteAssociatedProject({projectUrl: project.selfRel}).then(function (data) {
-					if (data.result === 'success') {
-						project.associated = 'associated';
 						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
 						titleElem.html(++titleVal);
 					}
-					else notyError();
+					else {
+                      notyError();
+                      project.associated = false;
+                    }
+				});
+			}
+			else {
+				AssociatedService.removeRemoteAssociatedStatus({projectUrl: project.selfRel}).then(function (data) {
+					if (data.result === 'success') {
+						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+						titleElem.html(--titleVal);
+					}
+					else {
+                        project.associated = 'associated';
+						notyError();
+                    }
 				});
 			}
 		};

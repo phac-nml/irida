@@ -46,7 +46,7 @@ public class AssociatedProjectEditPage extends AbstractPage {
 		List<String> names = new ArrayList<>();
 		// get only the rows that have a btn-success
 		for (WebElement ele : rows) {
-			if (ele.findElements(By.className("btn-success")).size() > 0) {
+			if (ele.findElement(By.className("associated-switch")).isSelected()) {
 				WebElement findElement = ele.findElement(By.className("project-id"));
 				names.add(findElement.getText());
 			}
@@ -69,7 +69,7 @@ public class AssociatedProjectEditPage extends AbstractPage {
 			throw new IllegalArgumentException("No row with given project ID");
 		}
 
-		foundRow.findElement(By.cssSelector("button")).click();
+		foundRow.findElement(By.className("bootstrap-switch-label")).click();
 		waitForAjax();
 	}
 
