@@ -190,6 +190,42 @@ Click "OK" to confirm, or "Cancel" to decline the deletion.
 
 After deleting a client, you will be returned to the list of clients.
 
+Managing Remote APIs
+====================
+Remote IRIDA installations can be used as data sources for associated projects and worklows.  Administrators can create connections to Remote APIs using OAuth2 similar to how external tool developers can connect to the REST API.
+
+Adding a Remote API
+-------------------
+An administrator for the remote installation must first create an OAuth2 client to connect.  The client must have the following specifications:
+
+* Token Validity: 12 hours recommended.  A short token validity will require users to reauthorize the API more often.
+* Grant Type: `authorization_code`
+* Scopes: `read`
+
+The administrator should also give you the REST API root of their installation.  After being given the client credentials, go to the "Remote API" page.
+
+(Screenshot)
+
+The Remote APIs page will display all currently available Remote APIs and your connection status with the API.
+
+To add a new API, click the "Add Remote API" button:
+ 
+(Screenshot)
+ 
+Enter a suitable name for the remote installation.  This name will be visible to users connecting and accessing data from that api.  Also enter the "Client ID", "Client Secret", and "Service URL" of the remote API as given by the remote administrator.
+
+(Screenshot)
+
+After adding the remote API you should be directed to the details page for that API.
+
+(screenshot)
+
+Removing a Remote API
+---------------------
+From the Remote API list page, click on the name of the API you wish to delete.  This will bring you to the API details page.  Click the "Remove" button on that page and confirm.
+
+(Screenshot)
+
 Viewing Sequencing Runs
 =======================
 Start by clicking on the "Admin" menu (in the top, right-hand corner of the screen) and selecting "Sequencing Runs":
