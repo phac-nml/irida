@@ -7,11 +7,14 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetails
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,6 +31,21 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 	private static final ImmutableList<String> COLLABORATORS_NAMES = ImmutableList.of("Mr. Manager", "test User");
 
+	private List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
+			ImmutableMap.of(
+					"href", "/projects",
+					"text", "Projects"
+			),
+			ImmutableMap.of(
+					"href", "/projects/" + 1,
+					"text", "1"
+			),
+			ImmutableMap.of(
+					"href", "/projects/1/members",
+					"text", "Members"
+			)
+	);
+
 	@Before
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
@@ -41,6 +59,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		for (String name : names) {
 			assertTrue("Has the correct members names", COLLABORATORS_NAMES.contains(name));
 		}
+		membersPage.checkBreadCrumbs(BREADCRUMBS);
 	}
 
 	@Test

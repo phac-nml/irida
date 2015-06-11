@@ -21,11 +21,11 @@
 			<div class="st-content">
 				<div class="st-content-inner">
 					<nav th:replace="template/bootstrap :: #topnav"></nav>
-					<div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
-						<div class="container ng-cloak">
+					<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
+						<div class="container">
 							<ol>
-								<li ng-repeat="crumb in breadcrumb.crumbs">
-									<a href="{{ crumb.url }}">{{ crumb.text }}</a>
+								<li th:each="crumb : ${crumbs} ">
+									<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
 								</li>
 							</ol>
 						</div>
@@ -123,12 +123,6 @@
 			BASE_URL      : /*[[@{/}]]*/ '/',
 			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
 			lang          : {
-				crumbs: {
-					"projects"      : /*[[#{bc.projects}]]*/ "Projects",
-					"samples"       : /*[[#{bc.samples}]]*/ "Samples",
-					"sequencingRuns": /*[[#{bc.sequencingRuns}]]*/  "Sequencing Runs",
-					"sequenceFiles" : /*[[#{bc.sequenceFiles}]]*/ "Sequence Files"
-				},
 				page  : {
 					"first": /*[[#{table.first}]]*/ 'First',
 					"prev" : /*[[#{table.previous}]]*/ 'Previous',
@@ -180,9 +174,6 @@
 	<script src="/resources/js/modules/cart/irida.cart.js"
 	        th:src="@{/resources/js/modules/cart/irida.cart.js}"></script>
 	<script src="/resources/js/app.js" th:src="@{/resources/js/app.js}"></script>
-	<!-- Controllers -->
-	<script src="/resources/js/controllers/breadcrumbs/breadcrumbController.js"
-	        th:src="@{/resources/js/controllers/breadcrumbs/breadcrumbController.js}"></script>
 
 	<th:block layout:fragment="theme-scripts">
 		<!--/* This is where the main for the theme template are loaded. */-->

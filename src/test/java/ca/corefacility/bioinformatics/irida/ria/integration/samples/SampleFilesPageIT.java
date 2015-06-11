@@ -4,11 +4,17 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p> Integration test to ensure that the Sample Details Page. </p>
@@ -21,6 +27,21 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	private final String FILE_NAME = "01-1111_S1_L001_R1_001.fastq";
 	private SampleFilesPage page;
 
+	private List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
+			ImmutableMap.of(
+					"href", "/samples",
+					"text", "Samples"
+			),
+			ImmutableMap.of(
+					"href", "/samples/" + SAMPLE_ID,
+					"text", String.valueOf(SAMPLE_ID)
+			),
+			ImmutableMap.of(
+					"href", "/samples/" + SAMPLE_ID + "/sequenceFiles",
+					"text", "Sequence Files"
+			)
+	);
+
 	@Before
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
@@ -32,6 +53,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
 		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
+		page.checkBreadCrumbs(BREADCRUMBS);
 	}
 	
 	@Test

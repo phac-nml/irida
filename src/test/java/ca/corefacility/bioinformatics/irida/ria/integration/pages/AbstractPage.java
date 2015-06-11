@@ -1,4 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import com.google.common.base.Strings;
@@ -12,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -142,6 +145,25 @@ public class AbstractPage {
 
 	public int getCartProjectCount() {
 		return driver.findElements(By.cssSelector("#cart-project-list > li")).size();
+	}
+
+	/**
+	 * Test for breadcrumbs on any given page.
+	 * @param expected {@link List} containing {@link Map} of expected crumbs
+	 *                             - href: expected href
+	 *                             - text: expected text displayed
+	 */
+	public void checkBreadCrumbs(List<Map<String, String>> expected) {
+		List<WebElement> crumbs = driver.findElement(By.className("breadcrumbs")).findElements(By.tagName("a"));
+		assertEquals("Should have the correct number of breadcrumbs", expected.size(), crumbs.size());
+		for (int i = 0; i < crumbs.size(); i++) {
+			WebElement crumb = crumbs.get(i);
+			String href = crumb.getAttribute("href");
+			String text = crumb.getText();
+			assertTrue("Should have the epected url in the breadcrumb", href.contains(expected.get(i).get("href")));
+			assertTrue("Should have the epected url in the breadcrumb", href.contains(expected.get(i).get("href")));
+			assertEquals("Should have the epected text in the breadcrumb", expected.get(i).get("text"), text);
+		}
 	}
 
 	/**
