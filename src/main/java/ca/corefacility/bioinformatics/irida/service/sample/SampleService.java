@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -69,6 +71,18 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
 			Direction order, String... sortProperties);
+	
+	/**
+	 * Gets a {@link Set} of {@link AssembledGenomeAnalysis} objects containing
+	 * assemblies from any sequence files in this sample.
+	 * 
+	 * @param sample
+	 *            The {@link Sample} to search through.
+	 * 
+	 * @return A {@link Set} of assemblies associated with any sequence files in
+	 *         this sample.
+	 */
+	public Set<AssembledGenomeAnalysis> findAssembliesForSample(Sample sample);
 
 	/**
 	 * Get the {@link Sample} for the given ID
