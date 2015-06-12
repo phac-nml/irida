@@ -39,6 +39,7 @@ public interface IridaThing extends Timestamped {
 	 * 
 	 * @return the numerical identifier for the object
 	 */
+	@JsonProperty("identifier")
 	public Long getId();
 
 	/**
@@ -47,6 +48,7 @@ public interface IridaThing extends Timestamped {
 	 * @param id
 	 *            The ID to set
 	 */
+	@JsonProperty("identifier")
 	public void setId(Long id);
 
 }

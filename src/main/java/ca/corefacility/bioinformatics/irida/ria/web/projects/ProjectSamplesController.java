@@ -253,7 +253,7 @@ public class ProjectSamplesController {
 					pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
 			for (Project p : projects) {
 				Map<String, String> map = new HashMap<>();
-				map.put("id", p.getId().toString());
+				map.put("identifier", p.getId().toString());
 				map.put("text", p.getName());
 				projectMap.add(map);
 			}
@@ -267,7 +267,7 @@ public class ProjectSamplesController {
 			for (ProjectUserJoin projectUserJoin : projects) {
 				Project p = projectUserJoin.getSubject();
 				Map<String, String> map = new HashMap<>();
-				map.put("id", p.getId().toString());
+				map.put("identifier", p.getId().toString());
 				map.put("text", p.getName());
 				projectMap.add(map);
 			}
@@ -600,7 +600,7 @@ public class ProjectSamplesController {
 		sampleMap.put("sample", sample);
 		sampleMap.put("project", project);
 		sampleMap.put("sampleType", type);
-		sampleMap.put("id", identifier);
+		sampleMap.put("identifier", identifier);
 
 		return sampleMap;
 	}

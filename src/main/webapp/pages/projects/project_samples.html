@@ -239,7 +239,7 @@
                 </button>
                 <ul class="dropdown-menu" role="menu">
                     <li ng-repeat="api in warnings.notConnected">
-                        <a th:href="@{/remote_api/{{api.id}}}" th:text="#{project.samples.warning.notConnected}"></a>
+                        <a th:href="@{/remote_api/{{api.identifier}}}" th:text="#{project.samples.warning.notConnected}"></a>
                     </li>
                 </ul>
             </div>
@@ -278,15 +278,15 @@
 				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
 						<div class="large-checkbox">
-							<input class="sample-select" id="s-{{entry.id}}" name="s-{{entry.id}}"
+							<input class="sample-select" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}"
 							       type="checkbox"
 							       ng-model="entry.selected"
-							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.id}}"></label>
+							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.identifier}}"></label>
 						</div>
 					</td>
 					<td class="sample-name">
 						<a class="btn btn-default btn-xs" ng-if="entry.sampleType!='REMOTE'"
-						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.id}}/sequenceFiles'}"
+						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
 						   href="#">{{entry.sample.sampleName}}
 						</a>
                         <span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>

@@ -72,7 +72,7 @@
     var storage = {};
 
     function addSample(sample) {
-      storage[sample.id] = sample;
+      storage[sample.identifier] = sample;
     }
 
     function removeSample(id) {
@@ -90,8 +90,8 @@
     function removeUnavailableSamples(available) {
       var newStorage = {};
       _.forEach(available, function (sample) {
-        if (storage[sample.id] != null) {
-          newStorage[sample.id] = storage[sample.id];
+        if (storage[sample.identifier] != null) {
+          newStorage[sample.identifier] = storage[sample.identifier];
         }
       });
 
@@ -146,7 +146,7 @@
         storage.addSample(s);
       }
       else {
-        storage.removeSample(s.id);
+        storage.removeSample(s.identifier);
       }
       updateSelectedCount()
     };
@@ -220,7 +220,7 @@
         return "ids=" + id
       });
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "projects/" + project.id + "/download/files?" + mapped.join("&");
+      iframe.src = TL.BASE_URL + "projects/" + project.identifier + "/download/files?" + mapped.join("&");
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
@@ -238,7 +238,7 @@
       updateSelectedCount();
 
       _.each(svc.samples, function (s) {
-        if (_.contains(selectedKeys, s.id + "")) {
+        if (_.contains(selectedKeys, s.identifier + "")) {
           s.selected = true;
         }
       });
@@ -313,8 +313,8 @@
         if (move) {
           // remove the samples which were successfully moved 
           angular.copy(_.filter(svc.samples, function (s) {
-            if (_.indexOf(data.successful, s.id) != -1) {
-              storage.removeSample(s.id);
+            if (_.indexOf(data.successful, s.identifier) != -1) {
+              storage.removeSample(s.identifier);
               return false;
             }
             return true;
@@ -538,7 +538,7 @@
       galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.id,
+          templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.identifier,
           controller : 'GalaxyDialogCtrl as gCtrl',
           resolve    : {
             openedByCart: function () {
@@ -657,7 +657,7 @@
     vm.remove = function () {
       var sampleIds = [];
       _.forEach(vm.samples, function(s){
-        sampleIds.push(s.id);
+        sampleIds.push(s.identifier);
       });
       SamplesService.removeSamples(sampleIds).then(function(){
         vm.close();
@@ -704,9 +704,9 @@
           var more = (page * 10) < data.total;
 
           _.forEach(data.projects, function (p) {
-            if ($rootScope.projectId !== parseInt(p.id)) {
+            if ($rootScope.projectId !== parseInt(p.identifier)) {
               results.push({
-                id  : p.id,
+                id  : p.identifier,
                 text: p.text || p.name
               });
             }
@@ -732,7 +732,7 @@
     "use strict";
     var vm = this;
     vm.samples = SamplesService.getSelectedSampleNames();
-    vm.projectId = project.id;
+    vm.projectId = project.identifier;
     vm.total = SamplesService.samples.length;
 
     vm.close = function () {
@@ -800,7 +800,7 @@
     vm.add = function () {
       var samples = [];
       _.forEach(storage.getSamples(), function (s) {
-        samples.push({"sample": s.id, "project": s.project.id, "type" : s.sampleType});
+        samples.push({"sample": s.identifier, "project": s.project.identifier, "type" : s.sampleType});
       });
 
       cart.add(samples);
