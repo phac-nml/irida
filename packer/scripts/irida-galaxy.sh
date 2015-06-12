@@ -116,9 +116,9 @@ MASTER_API_KEY=$(grep master_api_key /opt/irida/galaxy/galaxy-dist/config/galaxy
 cd /opt/irida/galaxy/install
 python install-workflow-tools.py --pipeline-xml-dir workflows/ --master-api-key $MASTER_API_KEY --master-api-url http://localhost:9090/api --galaxy-admin-user admin@localhost.localdomain --galaxy-admin-pass adminpassword --galaxy-workflow-user workflow@localhost.localdomain --galaxy-workflow-pass workflowpassword | tee install-workflow-tools.log
 
-API_KEY=$(grep 'Galaxy API key createdfor user' install-workflow-tools.log | perl -pe 's/.*\[([^\]]+)\].*/')
+API_KEY=$(grep 'Galaxy API key created for user' install-workflow-tools.log | perl -pe 's/.*\[([^\]]+)\].*/\1/')
 
-sed -i 's_galaxy.execution.url=.*_galaxy.execution.url=http://localhost:9090/api_' /etc/irida/irida.conf
+sed -i 's_galaxy.execution.url=.*_galaxy.execution.url=http://localhost:9090/_' /etc/irida/irida.conf
 sed -i "s@galaxy.execution.apiKey=.*@galaxy.execution.apiKey=$API_KEY@" /etc/irida/irida.conf
 sed -i 's_galaxy.execution.email=.*_galaxy.execution.email=workflow@localhost.localdomain_' /etc/irida/irida.conf
 
