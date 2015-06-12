@@ -31,7 +31,7 @@ function config_galaxy () {
 	make
 
 	cat >> /opt/irida/galaxy/env.sh <<EOF
-	PATH=/opt/irida/galaxy/install/MUMmer3.23:\$PATH
+PATH=/opt/irida/galaxy/install/MUMmer3.23:\$PATH
 EOF
 
 	cd /opt/irida/galaxy/install/
@@ -41,7 +41,7 @@ EOF
 	make
 
 	cat >> /opt/irida/galaxy/env.sh <<EOF
-	PATH=/opt/irida/galaxy/install/samtools-0.1.18:\$PATH
+PATH=/opt/irida/galaxy/install/samtools-0.1.18:/opt/irida/galaxy/install/samtools-0.1.18/bcftools:\$PATH
 EOF
 
 	cd /opt/irida/galaxy/
