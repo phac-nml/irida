@@ -152,6 +152,45 @@ When you click the "Remove" button, you will be asked to confirm the project mem
 
 To confirm, click the "Ok" button.
 
+Associated Projects
+-------------------
+
+Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.  Associated projects can also be added from projects from remote IRIDA installations.
+
+### Viewing associated projects
+
+Click the "Asssociated Projects" tab at the top of the project page.
+
+![Associated projects tab](images/associated-tab.png)
+
+The "Projects" list will display the projects associated with this project.  It will also display whether the project is on the local installation or if it exists on a remote IRIDA installation.
+
+The "Remote APIs" section displays your connection status to remote IRIDA installations which have projects associated to this project.
+
+![Associated projects list](images/associated-list.png)
+
+### Adding or removing associated projects
+
+Project Managers can add or remove associated projects for a project.  From the "Associated Projects" page, click the "Edit" button.
+
+**Note**: To add or remove an associated project the manager must also have access to that project.
+
+#### Local Projects
+
+Click the "Local" tab on the edit associated projects page.  You will be presented with a list of all projects you have access to in the local installation.  To add or remove an associated project, click the "On/Off" switch.
+
+![Edit local associated projects](images/associated-local.png)
+
+#### Remote Projects
+
+To add or remove remote associated projects, click the "Remote" tab.  The panel header will show the name of the remote API projects are currently being displayed for and your connection status.  Change the current API by selecting a new one in the dropdown menu.  If you are not connected to the API, click the "Connect" button.
+
+![Disconnected remote api](images/associated-remote-disconnected.png)
+
+To add or remove an associated project from the API, click the "On/Off" switch next to the project name.
+
+![Remote api projects](images/associated-remote.png)
+
 Adding reference files to a project
 -----------------------------------
 
