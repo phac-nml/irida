@@ -44,12 +44,12 @@ public class SequenceFilePair implements IridaThing {
 	/**
 	 * Pattern for matching forward {@link SequenceFile}s from a file name.
 	 */
-	private static final Pattern FORWARD_PATTERN = Pattern.compile(".*_R1_\\d\\d\\d.*");
+	private static final Pattern FORWARD_PATTERN = Pattern.compile(".*_R1_.*");
 	
 	/**
 	 * Pattern for matching reverse {@link SequenceFile}s from a file name.
 	 */
-	private static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_\\d\\d\\d.*");
+	private static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_.*");
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
