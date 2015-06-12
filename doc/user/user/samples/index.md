@@ -131,6 +131,27 @@ The filters work by only showing samples that have the search string *anywhere* 
 
 To remove a filter from your view, either click the <img src="images/clear-filter-button.png" class="inline" alt="Clear filter button."> icon, or delete the text in your filter.
 
+Viewing associated samples
+--------------------------
+
+Samples from associated projects can be viewed in addition to local samples.  To view associated samples, click the "Display" button.  To modify associated samples, see the [project management documentation](../../user/project/#associated-projects).
+
+![Sample type selector](images/display-sample-type.png)
+
+Select which sources should be displayed in the table.
+
+* ![Local sample color](images/local-color.png) (Project Name) Samples - Samples belonging to the project.  Displayed in dark blue.
+* ![Associated sample color](images/associated-color.png) Associated Project Samples - Samples from associated projects on the local IRIDA installation.  Displayed in green
+* ![Remote sample color](images/remote-color.png) Remote Project Samples - Samples from associated projects on remote IRIDA installations.  Displayed in gold.
+
+Associated samples will be displayed in the project samples table designated with the same colours.
+
+![Sample table with associated and remote samples](images/associated-display.png)
+
+If a remote API connection is required, a warning box will be displayed to help connect you to the required API.
+
+![Warning to connect to API](images/remote-warning.png)
+
 Modifying samples
 -----------------
 
