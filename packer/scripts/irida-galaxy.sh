@@ -30,10 +30,6 @@ function config_galaxy () {
 	cd MUMmer3.23
 	make
 
-	cat >> /opt/irida/galaxy/env.sh <<EOF
-PATH=/opt/irida/galaxy/install/MUMmer3.23:\$PATH
-EOF
-
 	cd /opt/irida/galaxy/install/
 	curl -L -O http://downloads.sourceforge.net/project/samtools/samtools/0.1.18/samtools-0.1.18.tar.bz2
 	tar xf samtools-0.1.18.tar.bz2
@@ -41,7 +37,7 @@ EOF
 	make
 
 	cat >> /opt/irida/galaxy/env.sh <<EOF
-PATH=/opt/irida/galaxy/install/samtools-0.1.18:/opt/irida/galaxy/install/samtools-0.1.18/bcftools:\$PATH
+PATH=/opt/irida/galaxy/install/MUMmer3.23:/opt/irida/galaxy/install/samtools-0.1.18:/opt/irida/galaxy/install/samtools-0.1.18/bcftools:/bin:/usr/bin
 EOF
 
 	cd /opt/irida/galaxy/
@@ -92,12 +88,12 @@ cat > /etc/systemd/system/galaxy.service <<EOF
 Description=Galaxy workflow execution manager
 Requires=mariadb.service
 After=mariadb.service
-EnvironmentFile=/opt/irida/galaxy/env.sh
 
 [Service]
-ExecStart=/opt/irida/galaxy/galaxy-dist/run.sh
-Type=Simple
+ExecStart=/opt/irida/galaxy/galaxy-dist/run.sh --daemon
+Type=forking
 User=galaxy-irida
+EnvironmentFile=/opt/irida/galaxy/env.sh
 
 [Install]
 WantedBy=multi-user.target

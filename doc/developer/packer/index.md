@@ -77,14 +77,8 @@ To tail the logs, run:
 sudo journalctl -u tomcat -f
 ```
 
-You may view Galaxy log files by running:
+The Galaxy log files are not managed or configured by systemd, rather Galaxy manages them itself. You may view Galaxy log files by running:
 
 ```bash
-sudo journalctl -u galaxy
-```
-
-To tail the logs, run:
-
-```bash
-sudo journalctl -u galaxy -f
+sudo tailf /opt/irida/galaxy/galaxy-dist/paster.log
 ```
