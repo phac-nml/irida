@@ -14,7 +14,7 @@ yum -y install mercurial pwgen python zlib-devel ncurses-devel tcsh db4-devel ex
 yum -y groupinstall "Development Tools"
 
 # install perl dependencies (force because bioperl fails spuriously)
-cpanm --force Clone Parallel::ForkManager http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz Time::Piece XML::Simple Data::Dumper
+cpanm --force Clone Parallel::ForkManager http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz Time::Piece XML::Simple Data::Dumper autodie
 pip install bioblend
 
 # prepare the directories and check out galaxy
