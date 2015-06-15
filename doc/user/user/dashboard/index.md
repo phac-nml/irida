@@ -66,7 +66,9 @@ For more information about using the cart, please see the [launching pipelines](
 
 Remote APIs
 -----------
-Remote IRIDA installations can be used as data sources for associated projects and worklows.  The "Remote APIs" section allows users to connect to remote IRIDA installations.
+Remote IRIDA installations can be used as data sources for associated projects and worklows.  The "Remote APIs" section allows users to connect to remote IRIDA installations.  
+
+**Note**: You must have been provided with a username and password for a remote instance of IRIDA before you can use the data located on that instance.
 
 ![Remote API button](images/remote-api-dash.png)
 
@@ -78,7 +80,7 @@ The Remote APIs list will show you all configured Remote APIs.  To connect, clic
 
 ![Remote API list](images/api-list.png)
 
-You may be shown a login window for the remote site.  Enter your login credentials for that site (these should be different than your local IRIDA credentials).
+You may be shown a login window for the remote site.  Enter your login credentials for that site.  The username and password that you use to connect to a remote instance of IRIDA are different than the username and password that you used to log in to the local site.
 
 ![Remote API login page](images/remote-login.png)
 
@@ -87,8 +89,6 @@ You will be shown an authorization page.  Read the details and click "Authorize"
 ![OAuth2 approval](images/oauth-approval.png)
 
 You will be shown a confirmation and your browser will reload the current page.  You should now be connected to the remote installation.
-
-**Note**: In order to connect to a remote API, you must first have a user account on that remote site.  
 
 Settings
 --------
