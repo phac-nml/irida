@@ -44,12 +44,12 @@ import com.google.common.collect.ImmutableSet;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 public class SequenceFilePair extends IridaResourceSupport implements IridaThing, IridaSequenceFilePair {
-	
+
 	/**
 	 * Pattern for matching forward {@link SequenceFile}s from a file name.
 	 */
 	private static final Pattern FORWARD_PATTERN = Pattern.compile(".*_R1_.*");
-	
+
 	/**
 	 * Pattern for matching reverse {@link SequenceFile}s from a file name.
 	 */
@@ -92,8 +92,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 	 * @return The forward {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getForwardSequenceFile() {
-		return files.stream()
-				.filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
+		return files.stream().filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
 				.findFirst().get();
 	}
 
@@ -103,8 +102,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 	 * @return The reverse {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getReverseSequenceFile() {
-		return files.stream()
-				.filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
+		return files.stream().filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
 				.findFirst().get();
 	}
 
@@ -153,7 +151,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 	public void setAssembledGenome(AssembledGenomeAnalysis assembledGenome) {
 		this.assembledGenome = assembledGenome;
 	}
-	
+
 	/**
 	 * Whether or not this {@link SequenceFilePair} has an associated
 	 * {@link AssembledGenomeAnalysis}.
@@ -198,7 +196,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(files);
+		return Objects.hash(files, assembledGenome);
 	}
 
 	@Override
@@ -206,7 +204,7 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 		if (obj instanceof SequenceFilePair) {
 			SequenceFilePair pair = (SequenceFilePair) obj;
 
-			return Objects.equals(files, pair.files);
+			return Objects.equals(files, pair.files) && Objects.equals(assembledGenome, pair.assembledGenome);
 		}
 
 		return false;
