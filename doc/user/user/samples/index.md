@@ -134,15 +134,15 @@ To remove a filter from your view, either click the <img src="images/clear-filte
 Viewing associated samples
 --------------------------
 
-Samples from associated projects can be viewed in addition to local samples.  To view associated samples, click the "Display" button.  To modify associated samples, see the [project management documentation](../../user/project/#associated-projects).
+You can quickly create an aggregated view of all of the samples in this project with all of the samples from both local and remote associated projects. To view associated samples, click the "Display" button and select which samples you would also like to see in the view by clicking on "Associated Project Samples" or "Remote Project Samples". Project managers may choose which samples will appear here by [adding or removing associated projects](../../user/project/#associated-projects).
 
 ![Sample type selector](images/display-sample-type.png)
 
 Select which sources should be displayed in the table.
 
-* ![Local sample color](images/local-color.png) (Project Name) Samples - Samples belonging to the project.  Displayed in dark blue.
-* ![Associated sample color](images/associated-color.png) Associated Project Samples - Samples from associated projects on the local IRIDA installation.  Displayed in green
-* ![Remote sample color](images/remote-color.png) Remote Project Samples - Samples from associated projects on remote IRIDA installations.  Displayed in gold.
+* <img src="images/local-color.png" class="inline"/> (Project Name) Samples - Samples belonging to the project.  Displayed in dark blue.
+* <img src="images/associated-color.png" class="inline"/> Associated Project Samples - Samples from associated projects on the local IRIDA installation.  Displayed in green.
+* <img src="images/remote-color.png" class="inline"/> Remote Project Samples - Samples from associated projects on remote IRIDA installations.  Displayed in gold.
 
 Associated samples will be displayed in the project samples table designated with the same colours.
 
