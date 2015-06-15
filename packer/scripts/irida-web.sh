@@ -1,5 +1,6 @@
 # install java and apr
-yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-client
+yum -y install epel-release
+yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-client tomcat-native
 
 mkdir -p /opt/irida/data/{sequencing,reference,analysis,remote}
 mkdir -p /etc/irida/analytics
@@ -32,6 +33,10 @@ echo "create database irida;" | mysql -u root
 sed -i 's_jdbc.url=.*_jdbc.url=jdbc:mysql://localhost:3306/irida_' /etc/irida/irida.conf
 sed -i 's_jdbc.username=.*_jdbc.username=irida_' /etc/irida/irida.conf
 sed -i 's_jdbc.password=.*_jdbc.password=irida_' /etc/irida/irida.conf
+
+cat >> /etc/tomcat/tomcat.conf <<EOF
+JAVA_OPTS="-Dspring.profiles.active=prod"
+EOF
 
 systemctl enable tomcat
 systemctl start tomcat
