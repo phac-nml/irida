@@ -237,6 +237,8 @@ Enter a suitable name for the remote installation.  This name will be visible to
 
 After adding the remote API you should be directed to the details page for that API.
 
+To test the remote API, click the "Connect" button.  You should be directed to a login page for the remote API's REST API.  To connect to the remote API you must have been given a username and password for the remote installation.  See [remote APIs](../user/dashboard/#remote-apis) for more details.
+
 ![API Details](images/api-details.png)
 
 Removing a Remote API
