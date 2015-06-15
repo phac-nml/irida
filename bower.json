@@ -19,17 +19,17 @@
     "lodash": "2.4.1",
     "raphael": "2.1.2",
     "bower": "*",
-    "angular": "1.3.5",
+    "angular": "1.4.0",
     "json2": "*",
     "html5shiv": "3.7.2",
     "respondJs": "1.4.2",
-    "angular-resource": "1.3.5",
+    "angular-resource": "1.4.0",
     "angular-ui-select": "0.8.3",
-    "angular-animate": "1.3.5",
+    "angular-animate": "1.4.0",
     "angular-busy": "4.1.1",
     "AngularJS-Toaster": "0.4.9",
-    "angular-aria": "1.3.5",
-    "angular-messages": "1.3.5",
+    "angular-aria": "1.4.0",
+    "angular-messages": "1.4.0",
     "bootstrap-sass-official": "3.3.1",
     "angular-bootstrap": "~0.12.0",
     "ng-table": "0.5.2",
@@ -43,8 +43,7 @@
   },
   "devDependencies": {},
   "resolutions": {
-    "angular": "1.3.5",
-    "angular-animate": "1.3.5",
-    "bootstrap": "3.3.1"
+    "angular": "~1.4.0",
+    "angular-animate": "1.4.0",
   }
 }
