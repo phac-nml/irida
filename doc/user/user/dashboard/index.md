@@ -80,7 +80,7 @@ The Remote APIs list will show you all configured Remote APIs.  To connect, clic
 
 ![Remote API list](images/api-list.png)
 
-You may be shown a login window for the remote site.  Enter your login credentials for that site.  The username and password that you use to connect to a remote instance of IRIDA are different than the username and password that you used to log in to the local site.
+If you have never connected to the remote API before, or your login has expired, you will be shown a login window for the remote site.  Enter your login credentials for that site.  The username and password that you use to connect to a remote instance of IRIDA are different than the username and password that you used to log in to the local site.
 
 ![Remote API login page](images/remote-login.png)
 
