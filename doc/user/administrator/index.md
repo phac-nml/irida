@@ -192,19 +192,36 @@ After deleting a client, you will be returned to the list of clients.
 
 Managing Remote APIs
 ====================
-Remote IRIDA installations can be used as data sources for associated projects and worklows.  Administrators can create connections to Remote APIs using OAuth2 similar to how external tool developers can connect to the REST API.
+Remote IRIDA installations can be used as data sources for associated projects and workflows.  Users will be able to view an aggregated view of samples from the local project along with all local and associated projects.  Administrators can create connections to Remote APIs using OAuth2 similar to how external tool developers can connect to the REST API.
+
+![Remote API connection](images/api-diagram.png)
 
 See the [user guide](../../user/user/dashboard#remote-apis) for information on connecting to remote APIs.
 
-Adding a Remote API
--------------------
-An administrator for the remote installation must first create an OAuth2 client to connect.  The client must have the following specifications:
+
+Allowing access to your API
+---------------------------
+
+Remote API access is granted with the same process as remote clients.  To allow a remote installation to access your API, an OAuth2 client must be created with the following specifications:
 
 * Token Validity: 12 hours recommended.  A short token validity will require users to reauthorize the API more often.
 * Grant Type: `authorization_code`
 * Scopes: `read`
 
-The administrator should also give you the REST API root of their installation.  After being given the client credentials, go to the "Remote API" page.
+**Note:** In order for a remote client to communicate with the REST API, the client must be able to access the REST API via HTTP.  This may involve opening access in a firewall or setting up a VPN connection between sites.
+
+For more information about creating OAuth2 clents see the [managing system clients](#managing-system-clients) section.
+
+Adding a Remote API
+-------------------
+
+Before a user can use a remote instance of IRIDA as a data source for associated projects and workflows, an administrator must create a connection to that remote instance (similar to how external tool developers can connect to the REST API).  To add a Remote API, an administrator will need the following information from the remote installation:
+
+* An OAuth2 client ID which has been set up on the remote installation.
+* An OAuth2 client secret.
+* The root address of the REST API of the remote installation.
+
+After being given the client credentials, go to the "Remote API" page.
 
 ![Remote API page](images/remote-api-dash.png)
 
