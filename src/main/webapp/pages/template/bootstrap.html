@@ -57,10 +57,10 @@
 						<li>
 							<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
 						<li>
-							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-admin-user}">Your Analysis</a>
+							<a th:href="@{/analysis}" href="/analysis" th:text="#{nav.main.analysis-admin-user}">Your Analysis</a>
 						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
-							<a th:href="@{/analysis/list/all}" href="/analysis/list/all"
+							<a th:href="@{/analysis/all}" href="/analysis/all"
 							   th:text="#{nav.main.analysis-admin-all}">List All Analysis
 							</a>
 						</li>

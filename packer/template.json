@@ -1,0 +1,70 @@
+{
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "python/install-workflow-tools.py",
+      "destination": "/tmp/install-workflow-tools.py"
+    },
+    {
+      "type": "file",
+      "source": "../src/main/resources/ca/corefacility/bioinformatics/irida/model/enums/workflows",
+      "destination": "/tmp"
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
+      "override": {
+        "virtualbox-iso": {
+          "scripts": [
+            "scripts/base.sh",
+            "scripts/vagrant.sh",
+            "scripts/virtualbox.sh",
+            "scripts/irida-web.sh",
+            "scripts/irida-galaxy.sh",
+            "scripts/cleanup.sh"
+          ]
+        }
+      }
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": true,
+      "override": {
+        "virtualbox": {
+          "output": "centos-7-1-x64-virtualbox.box"
+        }
+      }
+    }
+  ],
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": 1000000,
+      "guest_os_type": "RedHat_64",
+      "http_directory": "http",
+      "iso_checksum": "4c70b38a58050256267f0627a4758a9543a03b38",
+      "iso_checksum_type": "sha1",
+      "iso_url": "http://muug.mb.ca/mirror/centos/7/isos/x86_64/CentOS-7-x86_64-Everything-1503-01.iso",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo '/sbin/halt -h -p' > /tmp/shutdown.sh; echo 'vagrant'|sudo -S sh '/tmp/shutdown.sh'",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "8192" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "8" ],
+	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_tomcat,tcp,,48888,,80" ],
+	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_ssh,tcp,,42222,,22" ],
+	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_galaxy,tcp,,49999,,9090" ]
+      ]
+    }
+  ]
+}

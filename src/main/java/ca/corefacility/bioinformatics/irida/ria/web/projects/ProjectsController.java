@@ -14,9 +14,14 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -41,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -82,6 +86,9 @@ public class ProjectsController {
 	private final UserService userService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
+
+	@Value("${file.upload.max_size}")
+	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 
 	/*
 	 * Converters
@@ -262,8 +269,12 @@ public class ProjectsController {
 			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 			model.addAttribute("project", project);
-			model.addAttribute("maxFileSize", IridaUIWebConfig.MAX_UPLOAD_SIZE);
-			model.addAttribute("maxFileSizeString", fileSizeConverter.convert(IridaUIWebConfig.MAX_UPLOAD_SIZE));
+			model.addAttribute("maxFileSize", MAX_UPLOAD_SIZE);
+			if (MAX_UPLOAD_SIZE > 0) {
+				model.addAttribute("maxFileSizeString", fileSizeConverter.convert(MAX_UPLOAD_SIZE));
+			} else {
+				model.addAttribute("maxFileSizeString", "∞");
+			}
 			model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 			return PROJECT_METADATA_EDIT_PAGE;
 		} else {
@@ -375,9 +386,9 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Generates a map of project information for the {@link ProjectsDataTable}
+	 * Generates a map of project information for the projects table
 	 *
-	 * @return Map containing the information to put into the {@link ProjectsDataTable}
+	 * @return Map containing the information on projects and users role.
 	 */
 	public List<Map<String, Object>> getProjectsDataMap(List<Join<Project, User>> projectList) {
 		// Create the format required by DataTable

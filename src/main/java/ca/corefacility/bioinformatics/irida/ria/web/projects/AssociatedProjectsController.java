@@ -49,7 +49,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
@@ -536,14 +535,11 @@ public class AssociatedProjectsController {
 	}
 
 	/**
-	 * Generates a map of project information for the {@link ProjectsDataTable}
+	 * Generates a map of project information.
 	 *
 	 * @param projectList
 	 *            a List of {@link ProjectUserJoin} for the current user.
-	 * @param relatedProjectJoins
-	 *            The current related projects
-	 * @return Map containing the information to put into the
-	 *         {@link ProjectsDataTable}
+	 * @return Map containing the information to put the projects table
 	 */
 	private Map<String, Object> getProjectsDataMap(Iterable<Project> projectList,
 			List<RelatedProjectJoin> relatedProjectJoins) {

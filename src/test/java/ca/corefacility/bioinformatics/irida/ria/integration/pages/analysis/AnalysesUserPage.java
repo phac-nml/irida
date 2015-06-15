@@ -52,12 +52,12 @@ public class AnalysesUserPage extends AbstractPage {
 	}
 
 	public static AnalysesUserPage initializePage(WebDriver driver) {
-		get(driver, "analysis/list");
+		get(driver, "analysis");
 		return PageFactory.initElements(driver, AnalysesUserPage.class);
 	}
 
 	public static AnalysesUserPage initializeAdminPage(WebDriver driver) {
-		get(driver, "analysis/list/all");
+		get(driver, "analysis/all");
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("table tbody tr")));
 		return PageFactory.initElements(driver, AnalysesUserPage.class);
