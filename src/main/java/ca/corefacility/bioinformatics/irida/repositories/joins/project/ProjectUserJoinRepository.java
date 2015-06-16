@@ -29,6 +29,16 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 */
 	@Query("select j from ProjectUserJoin j where j.project = ?1")
 	public List<Join<Project, User>> getUsersForProject(Project project);
+	
+	/**
+	 * Get the number of {@link User}s in a given {@link Project}
+	 * 
+	 * @param project
+	 *            Project to get users for
+	 * @return Long count of users in a project
+	 */
+	@Query("select count(j.id) from ProjectUserJoin j where j.project = ?1")
+	public Long countUsersForProject(Project project);
 
 	/**
 	 * Get {@link User}s for a {@link Project} that have a particular role
