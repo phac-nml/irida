@@ -49,46 +49,49 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 		String[] parts = servletPath.split("/");
 		int counter = Strings.isNullOrEmpty(parts[0]) ? 1 : 0;
 
-		if (modelAndView != null && !modelAndView.getViewName().contains("redirect:") && !servletPath.contains("template") && BASE.containsKey(parts[counter])) {
-			Locale locale = request.getLocale();
-			List<Map<String, String>> crumbs = new ArrayList<>();
+		if (!Strings.isNullOrEmpty(servletPath) && !servletPath.equals("/")) {
+			if (modelAndView != null && !modelAndView.getViewName().contains("redirect:") && !servletPath.contains(
+					"template") && BASE.containsKey(parts[counter])) {
+				Locale locale = request.getLocale();
+				List<Map<String, String>> crumbs = new ArrayList<>();
 
-			// Check to ensure that there is some sort of context path.
-			String contextPath = request.getContextPath();
+				// Check to ensure that there is some sort of context path.
+				String contextPath = request.getContextPath();
 
-			StringBuilder url = new StringBuilder(contextPath);
+				StringBuilder url = new StringBuilder(contextPath);
 
-			try {
-				for (; counter < parts.length; counter++) {
-					// Should be a noun
-					String noun = parts[counter];
-					url.append("/");
-					url.append(noun);
-
-					crumbs.add(
-							ImmutableMap.of(
-									"text", messageSource.getMessage("bc." + noun, null, locale),
-									"url", url.toString())
-					);
-
-					// Check to see if there is a next part, if there is it is expected to be an id.
-					if (parts.length > ++counter) {
-						String id = parts[counter];
+				try {
+					for (; counter < parts.length; counter++) {
+						// Should be a noun
+						String noun = parts[counter];
 						url.append("/");
-						url.append(id);
+						url.append(noun);
+
 						crumbs.add(
 								ImmutableMap.of(
-										"text", id,
-										"url", url.toString()
-								)
+										"text", messageSource.getMessage("bc." + noun, null, locale),
+										"url", url.toString())
 						);
-					}
-				}
 
-				// Add the breadcrumbs to the model
-				modelAndView.getModelMap().put("crumbs", crumbs);
-			} catch (NoSuchMessageException e) {
-				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
+						// Check to see if there is a next part, if there is it is expected to be an id.
+						if (parts.length > ++counter) {
+							String id = parts[counter];
+							url.append("/");
+							url.append(id);
+							crumbs.add(
+									ImmutableMap.of(
+											"text", id,
+											"url", url.toString()
+									)
+							);
+						}
+					}
+
+					// Add the breadcrumbs to the model
+					modelAndView.getModelMap().put("crumbs", crumbs);
+				} catch (NoSuchMessageException e) {
+					logger.debug("Missing internationalization for breadcrumb", e.getMessage());
+				}
 			}
 		}
 	}
