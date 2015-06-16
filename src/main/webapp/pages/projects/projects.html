@@ -14,7 +14,7 @@
         <div dt:conf="projectsTable">
             <div dt:confType="callback" dt:type="init" dt:function="iridaDatatables#datatable.tableDrawn"></div>
         </div>
-        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="head_after" dt:dom="lti">
+        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}">
             <thead>
             <tr role="row">
                 <th id="project-id" dt:property="item.id" th:text="#{projects.table.id}"></th>
