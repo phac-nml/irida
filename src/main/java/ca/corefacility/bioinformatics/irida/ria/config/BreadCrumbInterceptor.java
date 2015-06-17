@@ -94,6 +94,14 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 		}
 	}
 
+	/**
+	 * Check to ensure that the servlet path is valid for breadcrumbs
+	 *
+	 * @param path
+	 * 		Servlet Path
+	 *
+	 * @return true if the path is valid to get breadcrumbs added.
+	 */
 	private boolean hasGoodPath(String path) {
 		if (Strings.isNullOrEmpty(path)) {
 			return false;
@@ -106,6 +114,14 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 		return goodPath;
 	}
 
+	/**
+	 * Check to ensure that the {@link ModelAndView} exists and is not in a redirect
+	 *
+	 * @param modelAndView
+	 * 		{@link ModelAndView}
+	 *
+	 * @return true if the {@link ModelAndView} is good for breadcrumbs
+	 */
 	private boolean hasGoodModelAndView(ModelAndView modelAndView) {
 		return modelAndView != null && !modelAndView.getViewName().contains("redirect:");
 	}
