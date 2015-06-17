@@ -1,0 +1,13 @@
+{
+  "bundle": "font-awesome",
+  "assets": [
+    {
+      "name": "font-awesome",
+      "version": "4.3.0",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/font-awesome/css/font-awesome.css"
+      }
+    }
+  ]
+}
