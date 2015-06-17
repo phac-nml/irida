@@ -42,7 +42,6 @@
     "angular-bootstrap-switch": "0.4.0",
     "font-awesome": "4.3.0",
     "angular-material": "0.10.0",
-    "angular-material": "0.10.0",
     "datatables-bootstrap3-plugin": "0.4.0"
   },
   "devDependencies": {},
