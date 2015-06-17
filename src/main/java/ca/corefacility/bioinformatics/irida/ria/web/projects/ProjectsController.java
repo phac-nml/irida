@@ -438,8 +438,8 @@ public class ProjectsController {
 		map.put("item", project);
 		map.put("link", "projects/" + project.getId());
 		map.put("custom", ImmutableMap.of(
-				"samples", String.valueOf(sampleService.getSamplesForProject(project).size()),
-				"members", String.valueOf(userService.getUsersForProject(project).size()),
+				"samples", String.valueOf(sampleService.getNumberOfSamplesForProject(project)),
+				"members", String.valueOf(userService.countUsersForProject(project)),
 				"role", role
 		));
 		return map;

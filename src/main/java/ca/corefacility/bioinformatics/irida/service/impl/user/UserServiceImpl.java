@@ -257,6 +257,16 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	public Collection<Join<Project, User>> getUsersForProject(Project project) {
 		return pujRepository.getUsersForProject(project);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional(readOnly = true)
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Long countUsersForProject(Project project) {
+		return pujRepository.countUsersForProject(project);
+	}
 
 	/**
 	 * {@inheritDoc}
