@@ -95,8 +95,6 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	private boolean hasGoodPath(String path) {
-		//		return !Strings.isNullOrEmpty(path) && !path.equals("/");
-
 		if (Strings.isNullOrEmpty(path)) {
 			return false;
 		}
