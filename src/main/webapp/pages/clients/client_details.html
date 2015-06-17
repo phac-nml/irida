@@ -7,10 +7,10 @@
 </head>
 <body>
 <main layout:fragment="main">
+    <h1 th:text="${client.clientId}">_Name_</h1>
     <div class="row mrgn-tp-lg">
     	<!-- User details -->
-    	<div class="col-md-8 col-md-offset-2">
-            <h1 th:text="${client.clientId}">_Name_</h1>
+    	<div class="col-md-8">
             <div class="sidebar">
                 <div class="sidebar__heading clearfix">
                 	<h2 class="pull-left" th:text="#{client.details.title}">_Client Details_</h2>
@@ -87,6 +87,28 @@
                   </div>
                 </div>
             </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+              <h3 class="panel-title pull-left" th:text="#{client.details.token.title}">_Tokens_</h3>
+              <div class="btn-group-xs pull-right">
+                <a class="btn btn-default btn-xs" href="#" th:text="#{client.details.token.revoke}" th:href="@{/clients/{id}/revoke(id=${client.getId()})}">_Revoke Tokens_</a>
+              </div>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tr> 
+                  <td th:text="#{client.details.token.active}">_Active Tokens_</td>
+                  <td th:text="${activeTokens}"></td>
+                </tr>
+                <tr> 
+                  <td th:text="#{client.details.token.expired}">_Expired Tokens_</td>
+                  <td th:text="${expiredTokens}"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </div>
        </div>
        <section>

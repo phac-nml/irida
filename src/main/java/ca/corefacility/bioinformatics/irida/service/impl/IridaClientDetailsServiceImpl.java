@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
@@ -10,10 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.security.oauth2.provider.NoSuchClientException;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -30,23 +33,27 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
  *
  */
 @Service("clientDetails")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaClientDetails> implements
 		IridaClientDetailsService {
 	private IridaClientDetailsRepository clientDetailsRepository;
 
+	private TokenStore tokenStore;
+
 	@Autowired
-	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository, Validator validator) {
+	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository, TokenStore tokenStore,
+			Validator validator) {
 		super(repository, validator, IridaClientDetails.class);
 		this.clientDetailsRepository = repository;
+		this.tokenStore = tokenStore;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<IridaClientDetails> search(Specification<IridaClientDetails> specification, int page, int size, Direction order,
-			String... sortProperties) {
+	public Page<IridaClientDetails> search(Specification<IridaClientDetails> specification, int page, int size,
+			Direction order, String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);
 	}
 
@@ -67,17 +74,15 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public IridaClientDetails create(IridaClientDetails object) throws ConstraintViolationException,
 			EntityExistsException {
 		return super.create(object);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public IridaClientDetails read(Long object) {
 		return super.read(object);
 	}
@@ -86,7 +91,6 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public IridaClientDetails update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
 			EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
@@ -96,9 +100,25 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void delete(Long id) throws EntityNotFoundException {
 		super.delete(id);
+	}
+
+	public int countActiveTokensForClient(IridaClientDetails client) {
+		Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
+		int active = findTokensByClientId.stream().mapToInt((t) -> {
+			return t.isExpired() ? 0 : 1;
+		}).sum();
+		return active;
+	}
+
+	public int countTokensForClient(IridaClientDetails client) {
+		return tokenStore.findTokensByClientId(client.getClientId()).size();
+	}
+
+	public void revokeTokensForClient(IridaClientDetails client) {
+		Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
+		findTokensByClientId.forEach(tokenStore::removeAccessToken);
 	}
 
 }

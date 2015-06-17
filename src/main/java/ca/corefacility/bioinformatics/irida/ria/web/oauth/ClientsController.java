@@ -108,7 +108,20 @@ public class ClientsController extends BaseController {
 		model.addAttribute("grants", grants);
 		model.addAttribute("scopes", scopes);
 		model.addAttribute("autoApproveScopes", autoApproveScopes);
+		int allTokensForClient = clientDetailsService.countTokensForClient(client);
+		int activeTokensForClient = clientDetailsService.countActiveTokensForClient(client);
+		
+		model.addAttribute("activeTokens",activeTokensForClient);
+		model.addAttribute("expiredTokens",allTokensForClient - activeTokensForClient);
+		
 		return CLIENT_DETAILS_PAGE;
+	}
+	
+	@RequestMapping("/{clientId}/revoke")
+	public String revokeTokens(@PathVariable Long clientId, Model model){
+		IridaClientDetails read = clientDetailsService.read(clientId);
+		clientDetailsService.revokeTokensForClient(read);
+		return "redirect:/clients/"+clientId;
 	}
 
 	/**
