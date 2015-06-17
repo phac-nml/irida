@@ -1,12 +1,21 @@
 {
   "bundle": "bootstrap",
+  "dependencies" : [ "jquery" ],
   "assets": [
     {
-      "name": "bootstrap",
-      "version": "1.10.7",
+      "name": "bootstrap3",
+      "version": "3.3.1",
       "type": "css",
       "locations": {
         "webapp": "/resources/bower_components/bootstrap/dist/css/bootstrap.css"
+      }
+    },
+    {
+      "name": "bootstrap3",
+      "version": "3.3.1",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/bootstrap/dist/js/bootstrap.js"
       }
     }
   ]

@@ -40,7 +40,8 @@
     "moment": "2.7.0",
     "datatables": "1.10.7",
     "datatables-colvis": "1.1.2",
-    "angular-material": "0.10.0"
+    "angular-material": "0.10.0",
+    "datatables-bootstrap3-plugin": "0.4.0"
   },
   "devDependencies": {},
   "resolutions": {
