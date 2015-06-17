@@ -93,7 +93,7 @@
             <div class="panel-heading clearfix">
               <h3 class="panel-title pull-left" th:text="#{client.details.token.title}">_Tokens_</h3>
               <div class="btn-group-xs pull-right">
-                <a class="btn btn-default btn-xs" href="#" th:text="#{client.details.token.revoke}" th:href="@{/clients/{id}/revoke(id=${client.getId()})}">_Revoke Tokens_</a>
+                <button class="btn btn-default btn-xs" id="revoke-btn" th:text="#{client.details.token.revoke}">_Revoke Tokens_</button>
               </div>
             </div>
             <div class="panel-body">
@@ -116,6 +116,12 @@
                <input type="hidden" th:value="${client.id}" name="id"/>
            </form>
        </section>
+  
+       <section>
+           <form id="revokeForm" action="/clients/revoke" th:action="@{/clients/revoke(id=${client.getId()})}" method="POST">
+               <input type="hidden" th:value="${client.id}" name="id"/>
+           </form>
+       </section>
 </main>
 <th:block layout:fragment="pageScripts">
     <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
@@ -134,6 +140,32 @@
     	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
     	                    onClick: function ($noty) {
     	                        $("#removeForm").submit();
+    	                    }
+    	                },
+    	                {
+    	                    addClass: 'btn btn-default btn-sm',
+    	                    text: /*[[#{form.btn.cancel}]]*/ 'Cancel',
+    	                    onClick: function ($noty) {
+    	                        $noty.close();
+    	                    }
+    	                }
+    	            ],
+    			});
+
+    		});
+          
+          $("#revoke-btn").click(function(){
+    			noty({
+    				layout: "center",
+    	            type: "default",
+    	            text: /*[[#{client.revoke.confirm(${client.clientId})}]]*/ "Revoke tokens?",
+    	            modal: true,
+    	            buttons: [
+    	                {
+    	                    addClass: 'btn btn-primary btn-sm confirm-delete',
+    	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
+    	                    onClick: function ($noty) {
+    	                        $("#revokeForm").submit();
     	                    }
     	                },
     	                {

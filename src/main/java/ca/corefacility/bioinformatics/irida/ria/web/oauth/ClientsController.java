@@ -117,11 +117,11 @@ public class ClientsController extends BaseController {
 		return CLIENT_DETAILS_PAGE;
 	}
 	
-	@RequestMapping("/{clientId}/revoke")
-	public String revokeTokens(@PathVariable Long clientId, Model model){
-		IridaClientDetails read = clientDetailsService.read(clientId);
+	@RequestMapping("/revoke")
+	public String revokeTokens(@RequestParam Long id, Model model){
+		IridaClientDetails read = clientDetailsService.read(id);
 		clientDetailsService.revokeTokensForClient(read);
-		return "redirect:/clients/"+clientId;
+		return "redirect:/clients/"+id;
 	}
 
 	/**
