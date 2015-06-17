@@ -39,7 +39,7 @@ public interface IridaThing extends Timestamped {
 	 * 
 	 * @return the numerical identifier for the object
 	 */
-	@JsonProperty("identifier")
+	@JsonIgnore
 	public Long getId();
 
 	/**
@@ -50,5 +50,17 @@ public interface IridaThing extends Timestamped {
 	 */
 	@JsonProperty("identifier")
 	public void setId(Long id);
+
+	/**
+	 * Get the id parameter as a string. This method is here to ensure
+	 * compatibility with previous clients which use the IRIDA REST API. It may
+	 * be removed once APIv2 is released.
+	 * 
+	 * @return
+	 */
+	@JsonProperty("identifier")
+	public default String getIdentifier() {
+		return getId().toString();
+	}
 
 }
