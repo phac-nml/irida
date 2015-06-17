@@ -54,6 +54,15 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @return the users associated with the project.
 	 */
 	public Collection<Join<Project, User>> getUsersForProject(Project project);
+	
+	/**
+	 * Count the number of {@link User}s in a given {@link Project}
+	 * 
+	 * @param project
+	 *            The {@link Project} to count {@link User}s for.
+	 * @return Long number of {@link User}s in a {@link Project}
+	 */
+	public Long countUsersForProject(Project project);
 
 	/**
 	 * Get the list of {@link User}s that are not associated with the current
