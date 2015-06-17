@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -24,9 +25,9 @@ import com.google.common.collect.ImmutableMap;
 public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(BreadCrumbInterceptor.class);
 	private final MessageSource messageSource;
-	private Map<String, Boolean> BASE = ImmutableMap.of(
-			"projects", true,
-			"samples", true
+	private List<String> BASE_CRUMBS = ImmutableList.of(
+			"/projects",
+			"/samples"
 	);
 
 	/**
@@ -46,53 +47,68 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 		super.postHandle(request, response, handler, modelAndView);
 
 		String servletPath = request.getServletPath();
-		String[] parts = servletPath.split("/");
-		int counter = Strings.isNullOrEmpty(parts[0]) ? 1 : 0;
 
-		if (!Strings.isNullOrEmpty(servletPath) && !servletPath.equals("/")) {
-			if (modelAndView != null && !modelAndView.getViewName().contains("redirect:") && !servletPath.contains(
-					"template") && BASE.containsKey(parts[counter])) {
-				Locale locale = request.getLocale();
-				List<Map<String, String>> crumbs = new ArrayList<>();
+		if (hasGoodPath(servletPath) && hasGoodModelAndView(modelAndView)) {
+			String[] parts = servletPath.split("/");
+			int counter = Strings.isNullOrEmpty(parts[0]) ? 1 : 0;
+			Locale locale = request.getLocale();
+			List<Map<String, String>> crumbs = new ArrayList<>();
 
-				// Check to ensure that there is some sort of context path.
-				String contextPath = request.getContextPath();
+			// Check to ensure that there is some sort of context path.
+			String contextPath = request.getContextPath();
 
-				StringBuilder url = new StringBuilder(contextPath);
+			StringBuilder url = new StringBuilder(contextPath);
 
-				try {
-					for (; counter < parts.length; counter++) {
-						// Should be a noun
-						String noun = parts[counter];
+			try {
+				for (; counter < parts.length; counter++) {
+					// Should be a noun
+					String noun = parts[counter];
+					url.append("/");
+					url.append(noun);
+
+					crumbs.add(
+							ImmutableMap.of(
+									"text", messageSource.getMessage("bc." + noun, null, locale),
+									"url", url.toString())
+					);
+
+					// Check to see if there is a next part, if there is it is expected to be an id.
+					if (parts.length > ++counter) {
+						String id = parts[counter];
 						url.append("/");
-						url.append(noun);
-
+						url.append(id);
 						crumbs.add(
 								ImmutableMap.of(
-										"text", messageSource.getMessage("bc." + noun, null, locale),
-										"url", url.toString())
+										"text", id,
+										"url", url.toString()
+								)
 						);
-
-						// Check to see if there is a next part, if there is it is expected to be an id.
-						if (parts.length > ++counter) {
-							String id = parts[counter];
-							url.append("/");
-							url.append(id);
-							crumbs.add(
-									ImmutableMap.of(
-											"text", id,
-											"url", url.toString()
-									)
-							);
-						}
 					}
-
-					// Add the breadcrumbs to the model
-					modelAndView.getModelMap().put("crumbs", crumbs);
-				} catch (NoSuchMessageException e) {
-					logger.debug("Missing internationalization for breadcrumb", e.getMessage());
 				}
+
+				// Add the breadcrumbs to the model
+				modelAndView.getModelMap().put("crumbs", crumbs);
+			} catch (NoSuchMessageException e) {
+				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
 			}
 		}
+	}
+
+	private boolean hasGoodPath(String path) {
+		//		return !Strings.isNullOrEmpty(path) && !path.equals("/");
+
+		if (Strings.isNullOrEmpty(path)) {
+			return false;
+		}
+
+		boolean goodPath = false;
+		for (String crumb : BASE_CRUMBS) {
+			goodPath = goodPath || path.startsWith(crumb);
+		}
+		return goodPath;
+	}
+
+	private boolean hasGoodModelAndView(ModelAndView modelAndView) {
+		return modelAndView != null && !modelAndView.getViewName().contains("redirect:");
 	}
 }
