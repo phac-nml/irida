@@ -1,8 +1,7 @@
 {
-  "bundle": "iridaDatatables",
+  "bundle": "datatables",
   "dependencies": [
-    "jquery",
-    "momentjs"
+    "jquery"
   ],
   "assets": [
     {
@@ -19,14 +18,6 @@
       "type": "css",
       "locations": {
         "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"
-      }
-    },
-    {
-      "name": "iridaDatatables",
-      "version": "1.0.0",
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/utils/datatable-utils.js"
       }
     }
   ]

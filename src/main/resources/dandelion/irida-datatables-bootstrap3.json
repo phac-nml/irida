@@ -1,0 +1,24 @@
+{
+  "bundle": "ddl-dt-theme-bootstrap3",
+  "dependencies": [
+    "datatables"
+  ],
+  "assets": [
+    {
+      "name": "bootstrap3-theme-js",
+      "version": "0.4.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables-bootstrap3-plugin/media/js/datatables-bootstrap3.js"
+      }
+    },
+    {
+      "name": "bootstrap3-theme-css",
+      "version": "0.4.0",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css"
+      }
+    }
+  ]
+}
