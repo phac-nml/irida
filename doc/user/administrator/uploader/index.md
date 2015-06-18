@@ -11,7 +11,7 @@ This document describes how the IRIDA data uploader for the Illumina MiSeq instr
 
 Overview
 ========
-The IRIDA MiSeq Uploader is to be used in conjunction with an IRIDA REST API to store newly run MiSeq sequencing runs in a repository.  The uploader will scan a directory of MiSeq runs, scan the `SampleSheet.csv` file to collection information about the run, then upload the files to the REST API.
+The IRIDA MiSeq Uploader is to be used in conjunction with an IRIDA REST API to store newly run MiSeq sequencing runs in a repository.  The uploader will scan a directory of MiSeq runs, scan the `SampleSheet.csv` file to collect information about the run, then upload the files to the REST API.
 
 The uploader can be run in a single directory mode which will upload individual MiSeq run directories, or in a scanning mode which will look for directories that have not been previously uploaded then send them to the API.
 
@@ -30,7 +30,7 @@ Arguments
   Username for IRIDA REST API
 
 * `-p,--password [ARG]`
-  Password for IRIDA REST API
+  Password for IRIDA REST API (optional, if not specified you will be interactively prompted to enter your password)
 
 * `--project [ARG]`
   Project ID to upload a directory of files to.  This option will override the
