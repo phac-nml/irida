@@ -24,6 +24,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Description of a remote Irida API that this API can communicate with via
  * OAuth2
@@ -108,6 +110,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	 * 
 	 * @return the base URI for the remote API
 	 */
+	@JsonIgnore
 	public String getServiceURI() {
 		return serviceURI;
 	}
@@ -160,6 +163,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	/**
 	 * @return the clientId
 	 */
+	@JsonIgnore
 	public String getClientId() {
 		return clientId;
 	}
@@ -175,6 +179,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	/**
 	 * @return the clientSecret
 	 */
+	@JsonIgnore
 	public String getClientSecret() {
 		return clientSecret;
 	}
@@ -221,7 +226,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 
 	@Override
 	public String getLabel() {
-		return "RemoteApi[ " + clientId + " ]";
+		return getName();
 	}
 
 	@Override

@@ -1,20 +1,27 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
 
 /**
  * <p>
@@ -589,6 +596,33 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		int laterNumber = page.getNumberOfSamplesDisplayed();
 
 		assertNotEquals("page should have associated samples displayed", initialNumber, laterNumber);
+	}
+
+	@Test
+	public void testShowRemoteSamples() throws InterruptedException {
+		LoginPage.loginAsAdmin(driver());
+		// add the api
+		RemoteApiUtilities.addRemoteApi(driver());
+
+		// associate a project from that api
+		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
+		apEditPage.goTo(2L);
+		apEditPage.viewRemoteTab();
+		apEditPage.clickAssociatedButton(6L);
+		apEditPage.checkNotyStatus("success");
+
+		// go to project
+		page.goToPage("2");
+
+		assertEquals("no remote samples should be displayed", 0, page.getNumberOfRemoteSamplesDisplayed());
+
+		page.enableRemoteProjects();
+
+		assertEquals("1 remote sample sould be displayed", 1, page.getNumberOfRemoteSamplesDisplayed());
+
+		page.selectSampleByClass("remote-sample");
+		page.addSamplesToGlobalCart();
+		assertEquals(1, page.getCartCount());
 	}
 
 	private int getSampleFlagCount(String command) {

@@ -1,7 +1,7 @@
 @import "../helpers/variables";
 @import "../animations/animations";
 
-.paired_end, .single_end {
+.paired_end, .single_end, .file_info {
   background-color: $color-grey-light;
   td {
     border: none !important;
@@ -37,6 +37,10 @@
   .td_icon {
     background-color: $colour-single-end;
   }
+}
+
+.file_info {
+  border: 1px solid $colour-paired-end;
 }
 
 .sidebar-content {

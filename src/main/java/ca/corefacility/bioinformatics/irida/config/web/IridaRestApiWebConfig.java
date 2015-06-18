@@ -33,10 +33,13 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaScheduledTasksConfig;
+import ca.corefacility.bioinformatics.irida.web.spring.view.CSVView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;
+import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 
+import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -85,6 +88,10 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		List<View> views = new ArrayList<>();
 		MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
 		jsonView.setPrettyPrint(true);
+		
+		// add support for serializing Path data
+		jsonView.getObjectMapper().registerModule(new Jdk7Module());
+		
 		views.add(jsonView);
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
 		jaxb2marshaller
@@ -94,6 +101,8 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		views.add(new FastaView());
 		views.add(new FastqView());
 		views.add(new GenbankView());
+		views.add(new NewickFileView());
+		views.add(new CSVView());
 		return views;
 	}
 

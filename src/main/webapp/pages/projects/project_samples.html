@@ -9,6 +9,7 @@
 	      href="/resources/bower_components/select2/select2.css"/>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
 	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="/resources/css/pages/project_samples.css" th:href="@{/resources/css/pages/project_samples.css}"/>
 	<script>window.dependencies = ['Samples'];</script>
 </head>
 <body>
@@ -65,7 +66,7 @@
 	</div>
 	<div class="row mrgn-bttm-md">
 		<div class="col-md-12" ng-controller="SubNavCtrl as subnav">
-			<div class="btn-toolbar">
+			<div class="btn-toolbar pull-left">
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
 					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle"
@@ -106,20 +107,27 @@
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu noclose ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
-						<li>
+						<li class="sample-type-selector local-sample">
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
 								<span th:text="#{project.samples.display.local(${project.label})}">_Local Samples_</span>
 							</label>
 
 						</li>
-						<li>
+						<li class="sample-type-selector associated-sample">
 							<label> <input id="displayAssociated" type="checkbox"
 							               ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayAssociated"/>
 								<span th:text="#{project.samples.display.associated}">_Associated Samples_</span>
 							</label>
 						</li>
+                        <li class="sample-type-selector remote-sample">
+                            <label> <input id="displayRemote" type="checkbox"
+                                           ng-change="displayCtrl.displaySamples()"
+                                           ng-model="displayCtrl.displayRemote"/>
+                                <span th:text="#{project.samples.display.remote}">_Remote Samples_</span>
+                            </label>
+                        </li>
 					</ul>
 				</div>
 
@@ -213,12 +221,28 @@
 					</ul>
 				</div>
 
-				<button id="cart-add-btn" ng-controller="CartController as cart" ng-click="cart.add()" type="button"
-				        class="btn btn-info btn-sm" ng-disabled="subnav.count&lt;1">
-					<i class="fa fa-fw fa-cart-plus"></i>
-					<span th:text="#{project.samples.nav.add-to-cart}">Add to Cart></span>
-				</button>
+                <div class="btn-group">
+    				<button id="cart-add-btn" ng-controller="CartController as cart" ng-click="cart.add()" type="button"
+    				        class="btn btn-info btn-sm" ng-disabled="subnav.count&lt;1">
+    					<i class="fa fa-fw fa-cart-plus"></i>
+    					<span th:text="#{project.samples.nav.add-to-cart}">Add to Cart></span>
+    				</button>
+                </div>
 			</div>
+      
+            <div class="btn-group pull-right" dropdown="" ng-controller="ConnectionWarningCtrl as warnings" ng-show="warnings.notConnected.length > 0">
+                <button class="btn btn-warning btn-sm dropdown-toggle" dropdown-toggle="">
+                    <span class="label label-default" ng-bind="warnings.notConnected.length">0</span>
+                    <span>Warnings</span>
+                    &nbsp;
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="api in warnings.notConnected">
+                        <a th:href="@{/remote_api/{{api.identifier}}}" th:text="#{project.samples.warning.notConnected}"></a>
+                    </li>
+                </ul>
+            </div>
 		</div>
 	</div>
 	<div class="row"
@@ -241,7 +265,7 @@
 					    sortedBy="sCtrl.filter.sortedBy" sortValue="sample.collectedBy">Collected By
 					</th>
 					<th id="sortProject" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
-					    sortedBy="sCtrl.filter.sortedBy" sortValue="project.label">Project
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="project.label" ng-show="table.requested.associated || table.requested.remote">Project
 					</th>
 					<th id="sortCreatedDate" th:text="#{project.samples.table.created}" sort-by="" onsort="sCtrl.onSort"
 					    sortdir="sCtrl.filter.sortDir"
@@ -250,30 +274,29 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': entry.selected}"
+				<tr class="sample-row" ng-class="{'selected': entry.selected, 'local-sample' : entry.sampleType=='LOCAL', 'associated-sample' : entry.sampleType=='ASSOCIATED', 'remote-sample' : entry.sampleType=='REMOTE'}"
 				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
 						<div class="large-checkbox">
-							<input class="sample-select" id="s-{{entry.sample.id}}" name="s-{{entry.sample.id}}"
+							<input class="sample-select" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}"
 							       type="checkbox"
 							       ng-model="entry.selected"
-							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.sample.id}}"></label>
+							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.identifier}}"></label>
 						</div>
 					</td>
 					<td class="sample-name">
-						<a class="btn btn-default btn-xs"
-						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.id}}/sequenceFiles'}"
+						<a class="btn btn-default btn-xs" ng-if="entry.sampleType!='REMOTE'"
+						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
 						   href="#">{{entry.sample.sampleName}}
 						</a>
+                        <span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
 					</td>
 					<td>{{entry.sample.organism}}</td>
 					<td>{{entry.sample.collectedBy}}</td>
-					<td>
-						<a class="btn btn-default btn-xs"
-						   data:ng-href="@{'/projects/{{entry.project.id}}'}"
-						   ng-if="entry.sampleType != 'LOCAL'"
-						   href="#">{{entry.project.label}}
-						</a>
+					<td ng-show="table.requested.associated || table.requested.remote">
+					   <span ng-if="entry.sampleType != 'LOCAL'">
+                            {{entry.project.label}}
+						</span>
 					</td>
 					<td class="createdDate" data-date="{{entry.sample.createdDate}}" tooltip-popup-delay='500'
 					    tooltip-placement="left" tooltip="{{entry.sample.createdDate | date:'medium'}}">

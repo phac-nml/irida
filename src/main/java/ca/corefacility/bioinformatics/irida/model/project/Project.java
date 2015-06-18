@@ -24,6 +24,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -40,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Organization;
 @Table(name = "project")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Project implements IridaThing, IridaProject, Comparable<Project> {
+public class Project extends IridaResourceSupport implements IridaThing, IridaProject, Comparable<Project> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

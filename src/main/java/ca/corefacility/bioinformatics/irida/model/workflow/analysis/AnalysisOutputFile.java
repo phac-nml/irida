@@ -18,8 +18,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
@@ -32,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  */
 @Entity
 @Table(name = "analysis_output_file")
-public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long> {
+public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -148,6 +149,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 		throw new UnsupportedOperationException("AnalysisOutputFile is immutable.");
 	}
 
+	@JsonIgnore
 	public final ToolExecution getCreatedByTool() {
 		return createdByTool;
 	}

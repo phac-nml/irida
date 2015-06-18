@@ -18,11 +18,12 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 public class AssociatedProjectEditPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectEditPage.class);
 
-	private static final String RELATIVE_URL = "/projects/1/associated/edit";
-
 	public AssociatedProjectEditPage(WebDriver driver) {
 		super(driver);
-		get(driver, RELATIVE_URL);
+	}
+
+	public void goTo(Long projectId) {
+		get(driver, "/projects/" + projectId + "/associated/edit");
 	}
 
 	public List<String> getProjects() {
@@ -45,7 +46,7 @@ public class AssociatedProjectEditPage extends AbstractPage {
 		List<String> names = new ArrayList<>();
 		// get only the rows that have a btn-success
 		for (WebElement ele : rows) {
-			if (ele.findElements(By.className("btn-success")).size() > 0) {
+			if (ele.findElement(By.className("associated-switch")).isSelected()) {
 				WebElement findElement = ele.findElement(By.className("project-id"));
 				names.add(findElement.getText());
 			}
@@ -68,7 +69,7 @@ public class AssociatedProjectEditPage extends AbstractPage {
 			throw new IllegalArgumentException("No row with given project ID");
 		}
 
-		foundRow.findElement(By.cssSelector("button")).click();
+		foundRow.findElement(By.className("bootstrap-switch-label")).click();
 		waitForAjax();
 	}
 
@@ -76,6 +77,11 @@ public class AssociatedProjectEditPage extends AbstractPage {
 		WebElement noty = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
 				.className("noty_type_" + status)));
 		return noty.isDisplayed();
+	}
+
+	public void viewRemoteTab() {
+		driver.findElement(By.id("remote-tab")).click();
+		waitForTime(1000);
 	}
 
 	// ************************************************************************************************

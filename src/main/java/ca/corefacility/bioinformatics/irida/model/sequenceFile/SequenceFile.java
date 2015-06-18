@@ -37,6 +37,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -44,6 +45,10 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -53,7 +58,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class SequenceFile implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long>, IridaSequenceFile {
+public class SequenceFile extends IridaResourceSupport implements IridaThing, Comparable<SequenceFile>,
+		VersionedFileFields<Long>, IridaSequenceFile {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
 
@@ -61,6 +67,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@NotNull(message = "{sequencefile.file.notnull}")
 	@Column(name = "file_path", unique = true)
 	private Path file;
 
@@ -172,14 +179,17 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 		this.modifiedDate = modifiedDate;
 	}
 
+	@JsonIgnore
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
 	}
 
+	@JsonIgnore
 	public SequencingRun getSequencingRun() {
 		return sequencingRun;
 	}
 
+	@JsonIgnore
 	public void setSequencingRun(SequencingRun sequencingRun) {
 		this.sequencingRun = sequencingRun;
 	}
@@ -192,6 +202,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	 * @param value
 	 *            The value of the property to add
 	 */
+	@JsonAnySetter
 	public void addOptionalProperty(String key, String value) {
 		optionalProperties.put(key, value);
 	}
@@ -201,6 +212,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	 * 
 	 * @return A {@code Map<String,String>} of all the optional propertie
 	 */
+	@JsonAnyGetter
 	public Map<String, String> getOptionalProperties() {
 		return optionalProperties;
 	}
@@ -221,10 +233,11 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	 *
 	 * @return The String representation of the file size
 	 */
+	@JsonIgnore
 	public String getFileSize() {
 		String size = "N/A";
 		try {
-			size = humanReadableByteCount(Files.size(file), true);
+			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
 		} catch (IOException e) {
 			logger.error("Could not calculate file size: ", e);
 		}
@@ -247,6 +260,15 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 		this.fileRevisionNumber++;
 	}
 
+	public String getFileName() {
+		return getFile().getFileName().toString();
+	}
+
+	@JsonIgnore
+	public AnalysisFastQC getFastQCAnalysis() {
+		return this.fastqcAnalysis;
+	}
+
 	/**
 	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
 	 * 
@@ -256,6 +278,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	 *             if the analysis has already been set for this
 	 *             {@link SequenceFile}.
 	 */
+	@JsonIgnore
 	public void setFastQCAnalysis(final AnalysisFastQC fastqcAnalysis) throws AnalysisAlreadySetException {
 		if (this.fastqcAnalysis == null) {
 			this.fastqcAnalysis = fastqcAnalysis;
@@ -263,26 +286,5 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 			throw new AnalysisAlreadySetException(
 					"The FastQC Analysis can only be applied to a sequence file one time.");
 		}
-	}
-
-	/**
-	 * From
-	 * (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
-	 * into-human-readable-format-in-java)
-	 *
-	 * @param bytes
-	 *            The {@link Long} size of the file in bytes.
-	 * @param si
-	 *            {@link Boolean} true to use si units
-	 *
-	 * @return A human readable {@link String} representation of the file size.
-	 */
-	public static String humanReadableByteCount(long bytes, boolean si) {
-		int unit = si ? 1000 : 1024;
-		if (bytes < unit)
-			return bytes + " B";
-		int exp = (int) (Math.log(bytes) / Math.log(unit));
-		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }

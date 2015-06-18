@@ -31,7 +31,7 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${output.file.base.directory}") String outputFileBaseDirectory;
 
-	private @Value("${remote.file.temporary.directory}") String remoteFilesTempDirectory;
+	private @Value("${snapshot.file.base.directory}") String snapshotFileBaseDirectory;
 
 	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
 
@@ -61,15 +61,15 @@ public class IridaApiFilesystemRepositoryConfig {
 	}
 
 	@Profile("prod")
-	@Bean(name = "remoteFilesTempDirectory")
-	public Path remoteFilesTempDirectoryProd() {
-		return getExistingPathOrThrow(remoteFilesTempDirectory);
-	}
-
-	@Profile("prod")
 	@Bean(name = "outputFileBaseDirectory")
 	public Path outputFileBaseDirectoryProd() {
 		return getExistingPathOrThrow(outputFileBaseDirectory);
+	}
+
+	@Profile("prod")
+	@Bean(name = "snapshotFileBaseDirectory")
+	public Path snapshotFileBaseDirectoryProd() {
+		return getExistingPathOrThrow(snapshotFileBaseDirectory);
 	}
 
 	@Profile({ "dev", "it", "test" })
@@ -91,9 +91,9 @@ public class IridaApiFilesystemRepositoryConfig {
 	}
 
 	@Profile({ "dev", "it", "test" })
-	@Bean(name = "remoteFilesTempDirectory")
-	public Path remoteFilesTempDirectory() throws IOException {
-		return configureDirectory(remoteFilesTempDirectory, "remote-temp-file-dev");
+	@Bean(name = "snapshotFileBaseDirectory")
+	public Path snapshotFileBaseDirectory() throws IOException {
+		return configureDirectory(snapshotFileBaseDirectory, "snapshot-file-dev");
 	}
 
 	private Path getExistingPathOrThrow(String directory) {

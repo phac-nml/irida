@@ -8,6 +8,8 @@ import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -65,7 +67,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @throws ExecutionManagerException
 	 *             If there was an error uploading the files.
 	 */
-	public CollectionResponse uploadSequenceFilesSingle(Map<Sample, SequenceFile> sampleSequenceFiles,
+	public CollectionResponse uploadSequenceFilesSingle(Map<Sample, IridaSequenceFile> sampleSequenceFiles,
 			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
 
 		CollectionDescription description = new CollectionDescription();
@@ -74,7 +76,7 @@ public class AnalysisCollectionServiceGalaxy {
 
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Sample sample : sampleSequenceFiles.keySet()) {
-			SequenceFile sequenceFile = sampleSequenceFiles.get(sample);
+			IridaSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
 			samplesMap.put(sequenceFile.getFile(), sample);
 		}
 
@@ -116,7 +118,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @throws ExecutionManagerException
 	 *             If there was an error uploading the files.
 	 */
-	public CollectionResponse uploadSequenceFilesPaired(Map<Sample, SequenceFilePair> sampleSequenceFilesPaired,
+	public CollectionResponse uploadSequenceFilesPaired(Map<Sample, IridaSequenceFilePair> sampleSequenceFilesPaired,
 			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
 
 		CollectionDescription description = new CollectionDescription();
@@ -127,9 +129,9 @@ public class AnalysisCollectionServiceGalaxy {
 		Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
 		Set<Path> pathsToUpload = new HashSet<>();
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
-			SequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
-			SequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
-			SequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
+			IridaSequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
+			IridaSequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
+			IridaSequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
 
 			samplesMapPairForward.put(sample, fileForward.getFile());
 			samplesMapPairReverse.put(sample, fileReverse.getFile());

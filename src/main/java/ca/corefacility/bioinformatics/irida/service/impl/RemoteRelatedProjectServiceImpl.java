@@ -33,13 +33,14 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 		super(repository, validator, RemoteRelatedProject.class);
 		this.repository = repository;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public RemoteRelatedProject create(@Valid RemoteRelatedProject object) throws EntityExistsException, ConstraintViolationException {
+	@PreAuthorize("hasPermission(#object, 'canManageRemoteRelatedProject')")
+	public RemoteRelatedProject create(@Valid RemoteRelatedProject object) throws EntityExistsException,
+			ConstraintViolationException {
 		return super.create(object);
 	}
 
@@ -64,6 +65,21 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 			throw new EntityNotFoundException("No RemoteRelatedProject exists for this project and URI");
 		}
 		return remoteRelatedProjectForProjectAndURI;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("permitAll()")
+	public RemoteRelatedProject read(Long id) throws EntityNotFoundException {
+		return super.read(id);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#id, 'canManageRemoteRelatedProject')")
+	public void delete(Long id) throws EntityNotFoundException {
+		super.delete(id);
 	}
 
 }

@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun.MiseqRunResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunSequenceFilesController;
@@ -67,8 +66,8 @@ public class SequencingRunSequenceFilesControllerTest {
 		
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull("Object should not be null",o);
-		assertTrue("Object should be an instance of MiseqRunResource",o instanceof MiseqRunResource);
-		MiseqRunResource res = (MiseqRunResource)o;
+		assertTrue("Object should be an instance of MiseqRunResource",o instanceof MiseqRun);
+		MiseqRun res = (MiseqRun)o;
 		String seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
 		assertEquals("Sequence file location should be correct",seqFileLocation,res.getLink(Link.REL_SELF).getHref());
 		assertEquals("Sequence file location should be correct",seqFileLocation,response.getHeader(HttpHeaders.LOCATION));

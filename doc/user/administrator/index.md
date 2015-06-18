@@ -190,6 +190,63 @@ Click "OK" to confirm, or "Cancel" to decline the deletion.
 
 After deleting a client, you will be returned to the list of clients.
 
+Managing Remote APIs
+====================
+Remote IRIDA installations can be used as data sources for associated projects and workflows.  Users will be able to view an aggregated view of samples from the local project along with all local and associated projects.  Administrators can create connections to Remote APIs using OAuth2 similar to how external tool developers can connect to the REST API.
+
+![Remote API connection](images/api-diagram.png)
+
+See the [user guide](../../user/user/dashboard#remote-apis) for information on connecting to remote APIs.
+
+
+Allowing access to your API
+---------------------------
+
+Remote API access is granted with the same process as remote clients.  To allow a remote installation to access your API, an OAuth2 client must be created with the following specifications:
+
+* Token Validity: 12 hours recommended.  A short token validity will require users to reauthorize the API more often.
+* Grant Type: `authorization_code`
+* Scopes: `read`
+
+**Note:** In order for a remote client to communicate with the REST API, the client must be able to access the REST API via HTTP.  This may involve opening access in a firewall or setting up a VPN connection between sites.
+
+For more information about creating OAuth2 clents see the [managing system clients](#managing-system-clients) section.
+
+Adding a Remote API
+-------------------
+
+Before a user can use a remote instance of IRIDA as a data source for associated projects and workflows, an administrator must create a connection to that remote instance (similar to how external tool developers can connect to the REST API).  To add a Remote API, an administrator will need the following information from the remote installation:
+
+* An OAuth2 client ID which has been set up on the remote installation.
+* An OAuth2 client secret.
+* The root address of the REST API of the remote installation.
+
+After being given the client credentials, go to the "Remote API" page.
+
+![Remote API page](images/remote-api-dash.png)
+
+The Remote APIs page will display all currently available Remote APIs and your connection status with the API.
+
+To add a new API, click the "Add Remote API" button:
+ 
+![Add api](images/add-api.png)
+ 
+Enter a suitable name for the remote installation.  This name will be visible to users connecting and accessing data from that api.  Also enter the "Client ID", "Client Secret", and "Service URL" of the remote API as given by the remote administrator.
+
+![Create API](images/create-api-details.png)
+
+After adding the remote API you should be directed to the details page for that API.
+
+To test the remote API, click the "Connect" button.  You should be directed to a login page for the remote API's REST API.  To connect to the remote API you must have been given a username and password for the remote installation.  See [remote APIs](../user/dashboard/#remote-apis) for more details.
+
+![API Details](images/api-details.png)
+
+Removing a Remote API
+---------------------
+From the Remote API list page, click on the name of the API you wish to delete.  This will bring you to the API details page.  Click the "Remove" button on that page and confirm.
+
+![Remove API](images/remove-api.png)
+
 Viewing Sequencing Runs
 =======================
 Start by clicking on the "Admin" menu (in the top, right-hand corner of the screen) and selecting "Sequencing Runs":
