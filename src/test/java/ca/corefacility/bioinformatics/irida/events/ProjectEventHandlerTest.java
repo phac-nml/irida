@@ -20,15 +20,17 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 
 public class ProjectEventHandlerTest {
 	private ProjectEventHandler handler;
 	private ProjectEventRepository eventRepository;
+	private ProjectSampleJoinRepository psjRepository;
 
 	@Before
 	public void setup() {
 		eventRepository = mock(ProjectEventRepository.class);
-		handler = new ProjectEventHandler(eventRepository);
+		handler = new ProjectEventHandler(eventRepository,psjRepository);
 	}
 
 	@Test

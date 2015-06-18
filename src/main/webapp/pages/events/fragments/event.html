@@ -39,3 +39,13 @@ can be internationalized.
             projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
             th:utext="#{event.sample_added(${sampleLink},${projectLink})}"></span>
 </span>
+
+<span th:fragment="data-added-event (event)">
+    <i class="fa fa-flask"></i>
+    <span class="event-content data-added-event"
+            th:with="sampleHref=@{/projects/{pid}/samples/{sid}/details(sid=${event.sample.getId()}, pid=${event.project.getId()})},
+            sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
+            projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+            projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
+            th:utext="#{event.data_added(${sampleLink},${projectLink})}"></span>
+</span>
