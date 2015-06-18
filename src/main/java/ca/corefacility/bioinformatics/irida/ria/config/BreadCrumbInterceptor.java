@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -24,9 +25,9 @@ import com.google.common.collect.ImmutableMap;
 public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(BreadCrumbInterceptor.class);
 	private final MessageSource messageSource;
-	private Map<String, Boolean> BASE = ImmutableMap.of(
-			"projects", true,
-			"samples", true
+	private List<String> BASE_CRUMBS = ImmutableList.of(
+			"/projects",
+			"/samples"
 	);
 
 	/**
@@ -46,10 +47,10 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 		super.postHandle(request, response, handler, modelAndView);
 
 		String servletPath = request.getServletPath();
-		String[] parts = servletPath.split("/");
-		int counter = Strings.isNullOrEmpty(parts[0]) ? 1 : 0;
 
-		if (modelAndView != null && !modelAndView.getViewName().contains("redirect:") && !servletPath.contains("template") && BASE.containsKey(parts[counter])) {
+		if (hasGoodPath(servletPath) && hasGoodModelAndView(modelAndView)) {
+			String[] parts = servletPath.split("/");
+			int counter = Strings.isNullOrEmpty(parts[0]) ? 1 : 0;
 			Locale locale = request.getLocale();
 			List<Map<String, String>> crumbs = new ArrayList<>();
 
@@ -91,5 +92,37 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
 			}
 		}
+	}
+
+	/**
+	 * Check to ensure that the servlet path is valid for breadcrumbs
+	 *
+	 * @param path
+	 * 		Servlet Path
+	 *
+	 * @return true if the path is valid to get breadcrumbs added.
+	 */
+	private boolean hasGoodPath(String path) {
+		if (Strings.isNullOrEmpty(path)) {
+			return false;
+		}
+
+		boolean goodPath = false;
+		for (String crumb : BASE_CRUMBS) {
+			goodPath = goodPath || path.startsWith(crumb);
+		}
+		return goodPath;
+	}
+
+	/**
+	 * Check to ensure that the {@link ModelAndView} exists and is not in a redirect
+	 *
+	 * @param modelAndView
+	 * 		{@link ModelAndView}
+	 *
+	 * @return true if the {@link ModelAndView} is good for breadcrumbs
+	 */
+	private boolean hasGoodModelAndView(ModelAndView modelAndView) {
+		return modelAndView != null && !modelAndView.getViewName().contains("redirect:");
 	}
 }

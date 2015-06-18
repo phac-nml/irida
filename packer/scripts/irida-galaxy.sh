@@ -91,6 +91,7 @@ After=mariadb.service
 
 [Service]
 ExecStart=/opt/irida/galaxy/galaxy-dist/run.sh --daemon
+ExecStop=/opt/irida/galaxy/galaxy-dist/run.sh --stop-daemon
 Type=forking
 User=galaxy-irida
 EnvironmentFile=/opt/irida/galaxy/env.sh
