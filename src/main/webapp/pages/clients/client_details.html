@@ -7,10 +7,10 @@
 </head>
 <body>
 <main layout:fragment="main">
+    <h1 th:text="${client.clientId}">_Name_</h1>
     <div class="row mrgn-tp-lg">
     	<!-- User details -->
-    	<div class="col-md-8 col-md-offset-2">
-            <h1 th:text="${client.clientId}">_Name_</h1>
+    	<div class="col-md-8">
             <div class="sidebar">
                 <div class="sidebar__heading clearfix">
                 	<h2 class="pull-left" th:text="#{client.details.title}">_Client Details_</h2>
@@ -88,10 +88,38 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+              <h3 class="panel-title pull-left" th:text="#{client.details.token.title}">_Tokens_</h3>
+              <div class="btn-group-xs pull-right">
+                <button class="btn btn-default btn-xs" id="revoke-btn" th:text="#{client.details.token.revoke}">_Revoke Tokens_</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tr> 
+                  <td th:text="#{client.details.token.active}">_Active Tokens_</td>
+                  <td th:text="${activeTokens}"></td>
+                </tr>
+                <tr> 
+                  <td th:text="#{client.details.token.expired}">_Expired Tokens_</td>
+                  <td th:text="${expiredTokens}"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
        </div>
        <section>
            <form id="removeForm" action="/clients/remove" th:action="@{/clients/remove}" method="POST">
                <input type="hidden" th:value="${client.getId()}" name="id"/>
+           </form>
+       </section>
+  
+       <section>
+           <form id="revokeForm" action="/clients/revoke" th:action="@{/clients/revoke(id=${client.getId()})}" method="POST">
+               <input type="hidden" th:value="${client.id}" name="id"/>
            </form>
        </section>
 </main>
@@ -112,6 +140,32 @@
     	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
     	                    onClick: function ($noty) {
     	                        $("#removeForm").submit();
+    	                    }
+    	                },
+    	                {
+    	                    addClass: 'btn btn-default btn-sm',
+    	                    text: /*[[#{form.btn.cancel}]]*/ 'Cancel',
+    	                    onClick: function ($noty) {
+    	                        $noty.close();
+    	                    }
+    	                }
+    	            ],
+    			});
+
+    		});
+          
+          $("#revoke-btn").click(function(){
+    			noty({
+    				layout: "center",
+    	            type: "default",
+    	            text: /*[[#{client.revoke.confirm(${client.clientId})}]]*/ "Revoke tokens?",
+    	            modal: true,
+    	            buttons: [
+    	                {
+    	                    addClass: 'btn btn-primary btn-sm confirm-revoke',
+    	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
+    	                    onClick: function ($noty) {
+    	                        $("#revokeForm").submit();
     	                    }
     	                },
     	                {
