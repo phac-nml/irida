@@ -1,243 +1,236 @@
-(function () {
-    "use strict";
+(function (angular, _, TL) {
+  'use strict';
 
-    function CartController($scope, $timeout, cart) {
-        "use strict";
-        var vm = this,
-          initialized = false;
-        vm.show = false;
-        vm.projects = [];
-        vm.remote = [];
-        vm.count = 0;
-        vm.collapsed = {};
-      vm.term = "";
+  function CartController($scope, $timeout, cart) {
+    var vm = this,
+      initialized = false;
+    vm.show = false;
+    vm.projects = [];
+    vm.remote = [];
+    vm.count = 0;
+    vm.collapsed = {};
+    vm.term = '';
 
-        $scope.$on('cart.update', function () {
-            getCart(false);
+    $scope.$on('cart.update', function () {
+      getCart(false);
+    });
+
+    function getCart(collapse) {
+      cart.all()
+        .then(function (data) {
+          var prev = vm.count;
+          vm.count = 0;
+          vm.projects = data.projects;
+          vm.remote = data.remote;
+          _.each(vm.projects, function (p) {
+            vm.count += p.samples.length;
+            if (collapse) {
+              vm.collapsed[p.id] = true;
+            }
+          });
+          vm.count += vm.getRemoteCount();
+          if (collapse) {
+            vm.collapsed.remote = true;
+          }
+          if (initialized && prev !== vm.count) {
+            vm.animation = 'glow';
+            $timeout(function () {
+              vm.animation = '';
+            }, 3000);
+          } else {
+            // This is just to prevent animation on page load.
+            initialized = true;
+          }
         });
-      
-        function getCart (collapse) {
-            cart.all()
-              .then(function (data) {
-                var prev = vm.count;
-                vm.count = 0;
-                  vm.projects = data.projects;
-                  vm.remote = data.remote;
-                  _.each(vm.projects, function(p) {
-                      vm.count += p.samples.length;
-                      if(collapse){
-                        vm.collapsed[p.id] = true;
-                      }
-                  });
-                  vm.count += vm.getRemoteCount();
-                  if(collapse){
-                      vm.collapsed['remote'] = true;
-                  }
-                if (initialized && prev !== vm.count) {
-                  vm.animation = 'glow';
-                  $timeout(function () {
-                    vm.animation = '';
-                  }, 3000);
-                } else {
-                  // This is just to prevent animation on page load.
-                  initialized = true;
-                }
-              });
-        }
-        
-        vm.getRemoteCount = function(){
-            return Object.keys(vm.remote).length;
-        }
-
-        getCart(true);
     }
+
+    vm.getRemoteCount = function () {
+      return Object.keys(vm.remote).length;
+    };
+
+    getCart(true);
+  }
 
   /**
    * Controller for functions on the cart slider
    * @param CartService The cart service to communicate with the server
    */
-    function CartSliderController(CartService, $modal) {
-      "use strict";
+  function CartSliderController(CartService, $modal) {
+    var vm = this;
 
-      var vm = this;
+    vm.clear = function () {
+      CartService.clear();
+    };
 
-      vm.clear = function(){
-        CartService.clear();
-      };
+    vm.removeProject = function (projectId) {
+      CartService.removeProject(projectId);
+    };
 
-      vm.removeProject = function(projectId){
-        CartService.removeProject(projectId);
-      }
-      
-      vm.removeRemoteSamples = function(){
-        CartService.removeRemoteSamples();
-      }
-      
-      vm.removeRemoteSample = function(sampleUrl){
-        CartService.removeRemoteSample(sampleUrl);
-      }
+    vm.removeRemoteSamples = function () {
+      CartService.removeRemoteSamples();
+    };
 
-      vm.removeSample = function(projectId,sampleId){
-        CartService.removeSample(projectId,sampleId);
-      }
+    vm.removeRemoteSample = function (sampleUrl) {
+      CartService.removeRemoteSample(sampleUrl);
+    };
+
+    vm.removeSample = function (projectId, sampleId) {
+      CartService.removeSample(projectId, sampleId);
+    };
 
     vm.exportToGalaxy = function () {
       CartService.all()
         .then(function (data) {
-          if (data != null) {
-            var firstProjID = data[0].id
+          if (data !== null) {
+            var firstProjID = data[0].id;
 
             $modal.open({
               templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + firstProjID,
-              controller : 'GalaxyDialogCtrl as gCtrl',
-              resolve    : {
+              controller: 'GalaxyDialogCtrl as gCtrl',
+              resolve: {
                 openedByCart: function () {
                   return true;
                 },
                 multiProject: function () {
-                  return (data.length > 1)
+                  return (data.length > 1);
                 }
               }
             });
           }
         });
-    }
-    }
+    };
+  }
 
-    function CartDirective() {
-        return {
-            restrict    : "E",
-            templateUrl : "/cart.html",
-            replace: true,
-            controllerAs: "cart",
-            controller  : ['$scope', '$timeout', 'CartService', CartController]
-        }
-    }
+  function CartDirective() {
+    return {
+      restrict: 'E',
+      templateUrl: '/cart.html',
+      replace: true,
+      controllerAs: 'cart',
+      controller: ['$scope', '$timeout', 'CartService', CartController]
+    };
+  }
 
-    function CartService(scope, $http, $q) {
-        var svc = this,
-            urls = {
-                all: TL.BASE_URL + "cart",
-                add: TL.BASE_URL + "cart/add/samples",
-                addRemote: TL.BASE_URL + "cart/add/samples/remote",
-                removeRemote: TL.BASE_URL + "cart/remove/samples/remote",
-                project: TL.BASE_URL + "cart/project/"
-            };
+  function CartService(scope, $http, $q) {
+    var svc = this,
+      urls = {
+        all: TL.BASE_URL + 'cart',
+        add: TL.BASE_URL + 'cart/add/samples',
+        addRemote: TL.BASE_URL + 'cart/add/samples/remote',
+        removeRemote: TL.BASE_URL + 'cart/remove/samples/remote',
+        project: TL.BASE_URL + 'cart/project/'
+      };
 
-        svc.all = function () {
-            return $http.get(urls.all)
-              .then(function (response) {
-                  if (response.data) {
-                      return {projects: response.data.projects, remote: response.data.remote};
-                  }
-                  else {
-                      return [];
-                  }
-              });
-        };
-
-        svc.add = function (samples) {
-          var promises = [];
-
-          _.forEach(samples, function(s) {
-            if(s.type == "LOCAL" || s.type == "ASSOCAITED"){
-              promises.push($http.post(urls.add, {projectId: s.project, sampleIds: [s.sample]}));
-            }
-            else if(s.type == "REMOTE"){
-              promises.push($http.post(urls.addRemote, {sampleURL: s.sample}));
-            }
-          });
-
-          $q.all(promises).then(function(){
-            scope.$broadcast("cart.update", {});
-          });
-        };
-
-      svc.clear = function () {
-        //fire a DELETE to the server on the cart then broadcast the cart update event
-        return $http.delete(urls.all).then(function () {
-          scope.$broadcast("cart.update", {});
+    svc.all = function () {
+      return $http.get(urls.all)
+        .then(function (response) {
+          if (response.data) {
+            return {projects: response.data.projects, remote: response.data.remote};
+          } else {
+            return [];
+          }
         });
-      };
+    };
 
-      svc.removeProject = function(projectId){
-        return $http.delete(urls.project+projectId).then(function () {
-          scope.$broadcast("cart.update", {});
-        })
-      };
+    svc.add = function (samples) {
+      var promises = [];
 
-      svc.removeSample = function(projectId,sampleId){
-        return $http.delete(urls.project+projectId+"/samples/"+sampleId).then(function () {
-          scope.$broadcast("cart.update", {});
-        })
-      }
-      
-      svc.removeRemoteSamples = function(){
-	  return $http.delete(urls.removeRemote).then(function () {
-            scope.$broadcast("cart.update", {});
-          })
-      }
-      
-      svc.removeRemoteSample = function(sampleURL){
-	  return $http.post(urls.removeRemote, {sampleURL : sampleURL}).then(function () {
-            scope.$broadcast("cart.update", {});
-          })
-      }      
+      _.forEach(samples, function (s) {
+        if (s.type === 'LOCAL' || s.type === 'ASSOCAITED') {
+          promises.push($http.post(urls.add, {projectId: s.project, sampleIds: [s.sample]}));
+        } else if (s.type === 'REMOTE') {
+          promises.push($http.post(urls.addRemote, {sampleURL: s.sample}));
+        }
+      });
 
-    }
+      $q.all(promises).then(function () {
+        scope.$broadcast('cart.update', {});
+      });
+    };
+
+    svc.clear = function () {
+      //fire a DELETE to the server on the cart then broadcast the cart update event
+      return $http.delete(urls.all).then(function () {
+        scope.$broadcast('cart.update', {});
+      });
+    };
+
+    svc.removeProject = function (projectId) {
+      return $http.delete(urls.project + projectId).then(function () {
+        scope.$broadcast('cart.update', {});
+      });
+    };
+
+    svc.removeSample = function (projectId, sampleId) {
+      return $http.delete(urls.project + projectId + '/samples/' + sampleId).then(function () {
+        scope.$broadcast('cart.update', {});
+      });
+    };
+
+    svc.removeRemoteSamples = function () {
+      return $http.delete(urls.removeRemote).then(function () {
+        scope.$broadcast('cart.update', {});
+      });
+    };
+
+    svc.removeRemoteSample = function (sampleURL) {
+      return $http.post(urls.removeRemote, {sampleURL: sampleURL}).then(function () {
+        scope.$broadcast('cart.update', {});
+      });
+    };
+
+  }
 
   function GalaxyExportService(CartService, StorageService) {
-    "use strict";
-    var svc = this;
-    var params = {};
-    var samples = [];
-
+    var svc = this,
+      params = {},
+      samples = [];
 
     function initialize(libraryName, email, authCode, redirectURI) {
       params = {
-        "_embedded": {
-          "library": {"name": libraryName},
-          "user"   : {"email": email},
-          "oauth2" : {
-            "code"    : authCode,
-            "redirect": redirectURI
+        '_embedded': {
+          'library': {'name': libraryName},
+          'user': {'email': email},
+          'oauth2': {
+            'code': authCode,
+            'redirect': redirectURI
           },
-          "samples": samples
+          'samples': samples
         }
       };
-    };
+    }
 
     function addSampleFile(sampleName, sampleFilePath) {
       var sample = _.find(samples, function (sampleItr) {
-        return (sampleItr.name == sampleName)
+        return (sampleItr.name === sampleName);
       });
-      if (sample == null) {
+      if (sample === null) {
         sample = {
-          "name"     : sampleName,
-          "_links"   : {"self": {"href": ""}}, //expected by the tool
-          "_embedded": {"sample_files": []}
+          'name': sampleName,
+          '_links': {'self': {'href': ''}}, //expected by the tool
+          '_embedded': {'sample_files': []}
         };
         samples.push(sample);
       }
       sample._embedded.sample_files.push({'_links': {'self': {'href': sampleFilePath}}});
-    };
+    }
 
     function getSampleFormEntities() {
       var sampleFormEntity = {
-        "name" : "json_params",
-        "value": JSON.stringify(params)
+        'name': 'json_params',
+        'value': JSON.stringify(params)
       };
       return [sampleFormEntity];
-    };
+    }
 
     svc.exportFromProjSampPage = function (libraryName, email, authCode, redirectURI) {
       initialize(libraryName, email, authCode, redirectURI);
 
-      var samples = StorageService.getSamples()
+      var samples = StorageService.getSamples();
       _.each(samples, function (sample) {
         _.each(sample.embedded.sample_files, function (sequenceFile) {
-          addSampleFile(sample.sample.label, sequenceFile._links.self.href)
-        })
+          addSampleFile(sample.sample.label, sequenceFile._links.self.href);
+        });
       });
       return getSampleFormEntities();
     };
@@ -250,11 +243,11 @@
           _.each(projects, function (project) {
             var samples = project.samples;
             _.each(samples, function (sample) {
-              var sequenceFiles = sample.sequenceFiles
+              var sequenceFiles = sample.sequenceFiles;
               _.each(sequenceFiles, function (sequenceFile) {
                 addSampleFile(sample.label, sequenceFile.selfRef);
-              })
-            })
+              });
+            });
           });
           return getSampleFormEntities();
         });
@@ -262,11 +255,10 @@
   }
 
   function GalaxyDialogCtrl($modalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
-    "use strict";
     var vm = this;
     vm.showOauthIframe = false;
     vm.showEmailLibInput = true;
-    vm.redirectURI = TL.BASE_URL + "galaxy/auth_code";
+    vm.redirectURI = TL.BASE_URL + 'galaxy/auth_code';
 
     vm.upload = function () {
       vm.makeOauth2AuthRequest(TL.galaxyClientID);
@@ -275,15 +267,15 @@
     };
 
     vm.makeOauth2AuthRequest = function (clientID) {
-      var request = buildOauth2Request(clientID, "code", "read", vm.redirectURI);
-      vm.iframeSrc = TL.BASE_URL + "api/oauth/authorize" + request;
-    }
+      var request = buildOauth2Request(clientID, 'code', 'read', vm.redirectURI);
+      vm.iframeSrc = TL.BASE_URL + 'api/oauth/authorize' + request;
+    };
 
     function buildOauth2Request(clientID, responseType, scope, redirectURI) {
-      return "?&client_id=" + clientID + "&response_type=" + responseType + "&scope=" + scope + "&redirect_uri=" + redirectURI;
+      return '?&client_id=' + clientID + '&response_type=' + responseType + '&scope=' + scope + '&redirect_uri=' + redirectURI;
     }
 
-    $scope.$on("galaxyAuthCode", function (e, authToken) {
+    $scope.$on('galaxyAuthCode', function (e, authToken) {
 
       if (authToken) {
         vm.uploading = true;
@@ -293,8 +285,7 @@
 
         if (openedByCart) {
           GalaxyExportService.exportFromCart(vm.name, vm.email, authToken, vm.redirectURI).then(sendSampleForm);
-        }
-        else {
+        } else {
           sendSampleForm(GalaxyExportService.exportFromProjSampPage(vm.name, vm.email, authToken, vm.redirectURI));
         }
       }
@@ -303,7 +294,7 @@
     function sendSampleForm(sampleFormEntities) {
       vm.sampleFormEntities = sampleFormEntities;
 
-      if(openedByCart) {
+      if (openedByCart) {
         CartService.clear();
       }
 
@@ -313,7 +304,7 @@
       //Two timeouts are required now--this is starting to look like a real hack.
       $timeout(function () {
         $timeout(function () {
-          document.getElementById("galSubFrm").submit();
+          document.getElementById('galSubFrm').submit();
           vm.close();
         });
       });
@@ -322,8 +313,7 @@
     vm.setName = function (name, orgName) {
       if (multiProject) {
         vm.name = orgName;
-      }
-      else {
+      } else {
         vm.name = name;
       }
     };
@@ -346,39 +336,39 @@
      * @param list - list to filter
      * @param term - search term to use to filter the list.
      */
-    return function(list, term) {
+    return function (list, term) {
       //filter each element in the collection
-      return _.filter(list,function(item) {
+      return _.filter(list, function (item) {
         //if we have a project, check for how many samples we have left
-        if(item.samples) {
-          return filterList(item.samples,term).length > 0;
+        if (item.samples) {
+          return filterList(item.samples, term).length > 0;
         }
         //if we have an individual sample, filter it
-        return filterSample(item,term);
-        
+        return filterSample(item, term);
+
       });
     };
-    
-    function filterList(samples, term){
-      return _.filter(samples,function(s){
-        return filterSample(s,term);
+
+    function filterList(samples, term) {
+      return _.filter(samples, function (s) {
+        return filterSample(s, term);
       });
     }
-    
-    function filterSample(item, term){
+
+    function filterSample(item, term) {
       term = term.toLowerCase();
       return item.label.toLowerCase().indexOf(term) > -1;
     }
-    
+
   }
 
   angular
-      .module('irida.cart', [])
-      .service('CartService', ['$rootScope', '$http', '$q', CartService])
+    .module('irida.cart', [])
+    .service('CartService', ['$rootScope', '$http', '$q', CartService])
     .controller('CartSliderController', ['CartService', '$modal', CartSliderController])
-    .controller('GalaxyDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService','GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
+    .controller('GalaxyDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
-      .directive('cart', [CartDirective])
-    .filter('cartFilter',[CartFilter])
-    ;
-})();
+    .directive('cart', [CartDirective])
+    .filter('cartFilter', [CartFilter])
+  ;
+})(window.angular, window._, window.TL);
