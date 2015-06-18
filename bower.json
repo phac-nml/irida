@@ -33,14 +33,14 @@
     "bootstrap-sass-official": "3.3.1",
     "angular-bootstrap": "~0.12.0",
     "ng-table": "0.5.2",
-    "Font-Awesome": "4.3.0",
     "PhyloCanvas": "1.2.26",
     "angular-ui-router": "0.2.13",
     "ng-file-upload": "4.2.0",
     "moment": "2.7.0",
     "datatables": "1.10.7",
     "datatables-colvis": "1.1.2",
-    "datatables-bootstrap3-plugin": "0.4.0"
+    "datatables-bootstrap3-plugin": "0.4.0",
+    "font-awesome": "4.3.0"
   },
   "devDependencies": {},
   "resolutions": {
