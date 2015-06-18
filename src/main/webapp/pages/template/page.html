@@ -3,8 +3,6 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/base">
 <head lang="en">
-	<link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
-	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/AngularJS-Toaster/toaster.css}"
 	      href="/resources/bower_components/AngularJS-Toaster/toaster.css"/>
 	<style>
@@ -15,7 +13,7 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-	<div style="height: 100%;">
+	<div style="height: 100%;" ddl:bundle-includes="app">
 		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}"
 		     ng-controller="UIGalaxyController as uiGalaxyCtrl">
 			<div class="st-content">
