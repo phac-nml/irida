@@ -103,7 +103,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 				page.isPipelineSubmittedSuccessMessageShown());
 		page.clickSeePipeline();
 
-		assertTrue("Should be on analysis page", driver().getCurrentUrl().endsWith("/analysis/list"));
+		assertTrue("Should be on analysis page", driver().getCurrentUrl().endsWith("/analysis"));
 	}
 
 	@Test
