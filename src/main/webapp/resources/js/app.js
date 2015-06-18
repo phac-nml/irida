@@ -2,7 +2,6 @@
   'use strict';
   var deps = _.union(window.dependencies || [], [
     'ngAria',
-    'ngResource',
     'ngAnimate',
     'ngMessages',
     'ui.bootstrap',

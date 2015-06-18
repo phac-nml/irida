@@ -1,0 +1,38 @@
+{
+  "bundle": "angular",
+  "dependencies": [],
+  "assets": [
+    {
+      "name": "angular-animate",
+      "version": "1.4.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-animate/angular-animate.js"
+      }
+    },
+    {
+      "name": "angular-aria",
+      "version": "1.4.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-aria/angular-aria.js"
+      }
+    },
+    {
+      "name": "angular-bootstrap",
+      "version": "0.12.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"
+      }
+    },
+    {
+      "name": "angular-messages",
+      "version": "1.4.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-messages/angular-messages.js"
+      }
+    }
+  ]
+}
