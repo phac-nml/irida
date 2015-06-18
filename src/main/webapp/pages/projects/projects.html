@@ -17,7 +17,7 @@
         <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}">
             <thead>
             <tr role="row">
-                <th id="project-id" dt:property="item.id" th:text="#{projects.table.id}"></th>
+                <th id="project-id" dt:property="item.identifier" th:text="#{projects.table.id}"></th>
                 <th id="project-name" dt:filterable="true" dt:property="item.name" th:text="#{projects.table.name}"
                     dt:renderFunction="iridaDatatables#datatable.createItemButton"></th>
                 <th id="project-organism" dt:filterable="true" dt:filterType="select" dt:property="item.organism" th:text="#{projects.table.organism}"></th>

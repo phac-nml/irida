@@ -7,7 +7,7 @@
 </head>
 <body>
 <main layout:fragment="page">
-	<input id="userId" type="hidden" th:value="${user.id}"/>
+	<input id="userId" type="hidden" th:value="${user.getId()}"/>
 	<div class="col-md-12">
 		<div class="row">
 			<div class="col-md-12">
@@ -27,7 +27,7 @@
 							        th:text="#{user.passwordReset}">_Password Reset_
 							</button>
 							<a id="editUser" class="btn btn-default " th:if="${canEditUser}"
-							   th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit"
+							   th:href="@{/users/{id}/edit(id=${user.getId()})}" href="/users/1/edit"
 							   th:text="#{user.edit}"></a>
 						</div>
 					</div>
@@ -39,7 +39,7 @@
 								  <i class="glyphicon glyphicon-barcode"></i>
                 </div>
                 <div th:text="#{users.id}">_ID_</div>
-                <div class="sidebar__value" id="user-id" th:text="${user.id}">_USER_ID_</div>
+                <div class="sidebar__value" id="user-id" th:text="${user.getId()}">_USER_ID_</div>
 							</div>
 
               <div class="sidebar__item">
@@ -136,8 +136,8 @@
 							</thead>
 							<tbody>
 							<tr th:each="project : ${projects}">
-								<td class="user-project-id" th:text="${project.id}">_PROJECT_ID_</td>
-								<td class="user-project-name"><a th:href="@{'/projects/'+${project.id}}"><span
+								<td class="user-project-id" th:text="${project.identifier}">_PROJECT_ID_</td>
+								<td class="user-project-name"><a th:href="@{'/projects/'+${project.identifier}}"><span
 										th:text="${project.name}">_PROJECT_NAME_</span></a></td>
 								<td class="user-project-role">
 									<span class="project-role-icon glyphicon"

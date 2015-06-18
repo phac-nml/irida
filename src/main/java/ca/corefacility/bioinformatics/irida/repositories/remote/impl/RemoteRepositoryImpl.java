@@ -8,9 +8,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
@@ -23,9 +23,9 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  *
  * @param <Type>
  *            The type of object to be stored in this repository (extends
- *            {@link RemoteResource})
+ *            {@link IridaResourceSupport})
  */
-public abstract class RemoteRepositoryImpl<Type extends RemoteResource> implements RemoteRepository<Type> {
+public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> implements RemoteRepository<Type> {
 
 	// service storing api tokens for communication with the remote services
 	private RemoteAPITokenService tokenService;

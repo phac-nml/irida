@@ -20,27 +20,30 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.ExtendedModelMap;
+import org.springframework.web.client.HttpClientErrorException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -58,7 +61,7 @@ public class AssociatedProjectControllerTest {
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
 	private SampleService sampleService;
-	private RemoteObjectCache<RemoteProject> remoteProjectCache;
+	private SampleRemoteService sampleRemoteService;
 
 	@Before
 	public void setUp() {
@@ -69,9 +72,9 @@ public class AssociatedProjectControllerTest {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		sampleService = mock(SampleService.class);
-		remoteProjectCache = new RemoteObjectCache<>();
+		sampleRemoteService = mock(SampleRemoteService.class);
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService, projectRemoteService, sampleService, remoteProjectCache);
+				userService, apiService, projectRemoteService, sampleService, sampleRemoteService);
 	}
 
 	@Test
@@ -269,16 +272,14 @@ public class AssociatedProjectControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(apiService.read(apiId)).thenReturn(api);
 
-		RESTLinks links = new RESTLinks(ImmutableMap.of("self", "http://somewhere"));
-		RemoteProject rp1 = new RemoteProject();
+		Project rp1 = new Project();
 		rp1.setId(3L);
-		rp1.setLinks(links);
+		rp1.add(new Link("http://somewhere", Link.REL_SELF));
 
 		String selfRel2 = "http://somewhere-else";
-		RESTLinks links2 = new RESTLinks(ImmutableMap.of("self", selfRel2));
-		RemoteProject rp2 = new RemoteProject();
+		Project rp2 = new Project();
 		rp2.setId(4L);
-		rp2.setLinks(links2);
+		rp2.add(new Link("http://somewhere-else", Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject(project, api, selfRel2);
 
@@ -304,25 +305,21 @@ public class AssociatedProjectControllerTest {
 	@Test
 	public void testAddRemoteAssociatedProject() {
 		Long projectId = 1L;
-		Long apiId = 2L;
 
 		String projectLink = "http://somewhere/projects/1";
-		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
-		RemoteProject rp1 = new RemoteProject();
+		Project rp1 = new Project();
 		rp1.setId(3L);
-		rp1.setLinks(links);
+		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteAPI api = new RemoteAPI();
-
-		Integer associatedProjectId = remoteProjectCache.addResource(rp1, api);
+		rp1.setRemoteAPI(api);
 
 		Project project = new Project();
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(apiService.read(apiId)).thenReturn(api);
+		when(projectRemoteService.read(projectLink)).thenReturn(rp1);
 
-		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId,
-				associatedProjectId, apiId);
+		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId, projectLink);
 
 		assertEquals("success", addRemoteAssociatedProject.get("result"));
 
@@ -339,22 +336,18 @@ public class AssociatedProjectControllerTest {
 	public void testRemoveRemoteAssociatedProject() {
 		Long projectId = 1L;
 		Project project = new Project();
-		RemoteAPI api = new RemoteAPI();
 
 		String projectLink = "http://somewhere/projects/1";
-		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
-		RemoteProject rp1 = new RemoteProject();
+		Project rp1 = new Project();
 		rp1.setId(3L);
-		rp1.setLinks(links);
+		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject();
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(remoteRelatedProjectService.getRemoteRelatedProjectForProjectAndURI(project, projectLink)).thenReturn(rrp);
 
-		Integer associatedProjectId = remoteProjectCache.addResource(rp1, api);
-
-		controller.removeRemoteAssociatedProject(projectId, associatedProjectId);
+		controller.removeRemoteAssociatedProject(projectId, projectLink);
 
 		verify(remoteRelatedProjectService).delete(rrp.getId());
 	}
@@ -388,5 +381,50 @@ public class AssociatedProjectControllerTest {
 		Map<String, Object> sampleMap = (Map<String, Object>) object.iterator().next();
 		assertEquals("sample should be equal", sample, sampleMap.get("sample"));
 		assertEquals("project should be equal", allowedProject, sampleMap.get("project"));
+	}
+
+	@Test
+	public void testGetRemoteAssociatedSamplesForProject() {
+		Long projectId = 1L;
+		Project project = new Project();
+
+		RemoteRelatedProject goodProject = new RemoteRelatedProject(project, null, "http://good");
+		RemoteRelatedProject noTokenProject = new RemoteRelatedProject(project, null, "http://notoken");
+		RemoteRelatedProject forbiddenProject = new RemoteRelatedProject(project, null, "http://forbidden");
+		List<RemoteRelatedProject> remoteRelatedProjects = Lists.newArrayList(goodProject, noTokenProject,
+				forbiddenProject);
+
+		Sample sample1 = new Sample("sample1");
+		sample1.add(new Link("http://sample1",Link.REL_SELF));
+		Sample sample2 = new Sample("sample2");
+		sample2.add(new Link("http://sample2",Link.REL_SELF));
+		List<Sample> samples = Lists.newArrayList(sample1, sample2);
+
+		Project remoteProject = new Project("remote project");
+
+		when(projectService.read(projectId)).thenReturn(project);
+
+		when(remoteRelatedProjectService.getRemoteProjectsForProject(project)).thenReturn(remoteRelatedProjects);
+
+		when(projectRemoteService.read(goodProject)).thenReturn(remoteProject);
+		when(projectRemoteService.read(noTokenProject)).thenThrow(new IridaOAuthException("bad token", null));
+		when(projectRemoteService.read(forbiddenProject)).thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN));
+
+		when(sampleRemoteService.getSamplesForProject(remoteProject)).thenReturn(samples);
+
+		Map<String, Object> remoteAssociatedSamplesForProject = controller
+				.getRemoteAssociatedSamplesForProject(projectId);
+
+		assertTrue(remoteAssociatedSamplesForProject.containsKey("samples"));
+
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> sampleMap = (List<Map<String, Object>>) remoteAssociatedSamplesForProject
+				.get("samples");
+
+		for (Map<String, Object> sample : sampleMap) {
+			assertEquals(ProjectSamplesController.SampleType.REMOTE, sample.get("sampleType"));
+			assertEquals(remoteProject, sample.get("project"));
+		}
+
 	}
 }

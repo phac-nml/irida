@@ -26,6 +26,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.JobsClient;
@@ -81,7 +83,13 @@ public class AnalysisExecutionServiceConfig {
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	@Autowired
+	private SequenceFileSnapshotService sequenceFileSnapshotService;
+	
+	@Autowired
 	private GalaxyLibraryBuilder galaxyLibraryBuilder;
+	
+	@Autowired
+	SampleRemoteService sampleRemoteService;
 	
 	@Autowired
 	private ToolsClient toolsClient;
@@ -100,7 +108,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, sequenceFileSnapshotService);
 	}
 	
 	@Lazy
@@ -115,7 +123,7 @@ public class AnalysisExecutionServiceConfig {
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder, iridaWorkflowsService,
-				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy);
+				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy, sampleRemoteService);
 	}
 
 	@Lazy

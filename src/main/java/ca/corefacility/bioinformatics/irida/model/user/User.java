@@ -33,9 +33,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A user object.
@@ -47,7 +51,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class User implements IridaThing, Comparable<User>, UserDetails {
+public class User extends IridaResourceSupport implements IridaThing, Comparable<User>, UserDetails {
 
 	private static final long serialVersionUID = -7516211470008791995L;
 
@@ -249,11 +253,16 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		this.email = email;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getPassword() {
 		return password;
 	}
 
+	/*
+	 * JsonProperty must be here to enable user to set password via REST API
+	 */
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -287,6 +296,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return firstName + " " + lastName;
 	}
 
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		ArrayList<Role> roles = new ArrayList<>();
@@ -294,16 +304,19 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return roles;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonLocked() {
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;

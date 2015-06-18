@@ -9,17 +9,20 @@ import org.junit.Test;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 public class ProjectRemoteServiceImplTest {
 	ProjectRemoteService service;
 	ProjectRemoteRepository repository;
+	RemoteAPIRepository apiRepo;
 
 	@Before
 	public void setUp() {
 		repository = mock(ProjectRemoteRepository.class);
-		service = new ProjectRemoteServiceImpl(repository);
+		apiRepo = mock(RemoteAPIRepository.class);
+		service = new ProjectRemoteServiceImpl(repository, apiRepo);
 	}
 
 	@Test

@@ -93,7 +93,7 @@ public class SampleSequenceFilesControllerTest {
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
 		@SuppressWarnings("unchecked")
-		ResourceCollection<SequenceFileResource> resources = (ResourceCollection<SequenceFileResource>) o;
+		ResourceCollection<SequenceFile> resources = (ResourceCollection<SequenceFile>) o;
 		assertNotNull(resources);
 		assertEquals(1, resources.size());
 
@@ -106,10 +106,10 @@ public class SampleSequenceFilesControllerTest {
 		assertEquals(sampleLocation, sample.getHref());
 
 		// confirm that the self rel for an individual sequence file exists
-		SequenceFileResource sfr = resources.iterator().next();
+		SequenceFile sfr = resources.iterator().next();
 		Link self = sfr.getLink(Link.REL_SELF);
 		assertEquals(sequenceFileLocation, self.getHref());
-		assertEquals(sf.getFile().toString(), sfr.getFile());
+		assertEquals(sf.getFile(), sfr.getFile());
 	}
 
 	@Test
@@ -169,9 +169,9 @@ public class SampleSequenceFilesControllerTest {
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);
-		assertTrue(o instanceof SequenceFileResource);
-		SequenceFileResource sfr = (SequenceFileResource) o;
-		assertEquals(sf.getFile().toString(), sfr.getFile());
+		assertTrue(o instanceof SequenceFile);
+		SequenceFile sfr = (SequenceFile) o;
+		assertEquals(sf.getFile(), sfr.getFile());
 
 		Link self = sfr.getLink(Link.REL_SELF);
 		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
@@ -230,8 +230,8 @@ public class SampleSequenceFilesControllerTest {
 		
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull("object must not be null",o);
-		assertTrue("object must be a SequenceFileResource",o instanceof SequenceFileResource);
-		SequenceFileResource sfr = (SequenceFileResource) o;
+		assertTrue("object must be a SequenceFile",o instanceof SequenceFile);
+		SequenceFile sfr = (SequenceFile) o;
 
 		assertEquals("response must have CREATED status",HttpStatus.CREATED.value(), response.getStatus());
 		Link self = sfr.getLink(Link.REL_SELF);
@@ -293,7 +293,7 @@ public class SampleSequenceFilesControllerTest {
 		Link selfCollection = rc.getLink(Link.REL_SELF);
 		Link sampleRC = rc.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
-		String sequenceFilesLocation = sampleLocation + "/sequenceFilePairs";
+		String sequenceFilesLocation = sampleLocation + "/sequenceFiles/pairs";
 		assertEquals("Collection location should be correct",sequenceFilesLocation, selfCollection.getHref());
 		assertEquals("Sample location should be correct",sampleLocation,sampleRC.getHref());
 		
@@ -353,6 +353,7 @@ public class SampleSequenceFilesControllerTest {
 				any(SequenceFile.class),any(Sample.class))).thenReturn(relationships);
 		controller.addNewSequenceFilePairToSample(p.getId(), s.getId(),
 				mmf1, resource1, mmf2, resource2, response);
+				
 	}
 
 }

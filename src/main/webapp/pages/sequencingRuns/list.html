@@ -32,7 +32,7 @@
                 <tr class="run-row"
                     ng-repeat="run in table.runs | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
                     <td class="run-id"><a class="btn btn-default btn-xs"
-                        data:ng-href="@{'/sequencingRuns/{{run.id}}'}" href="#">{{run.id}}</a></td>
+                        data:ng-href="@{'/sequencingRuns/{{run.identifier}}'}" href="#">{{run.identifier}}</a></td>
                     <td>{{run.sequencerType}}</td>
                     <td>{{run.uploadStatus}}</td>
                     <td class="createdDate" data-date="{{run.createdDate}}" tooltip-popup-delay='500'

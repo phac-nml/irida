@@ -152,7 +152,7 @@ public class UsersController {
 			ProjectUserJoin pujoin = (ProjectUserJoin) join;
 			Project project = join.getSubject();
 			Map<String, Object> map = new HashMap<>();
-			map.put("id", project.getId());
+			map.put("identifier", project.getId());
 			map.put("name", project.getName());
 			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER) ? true : false);
 

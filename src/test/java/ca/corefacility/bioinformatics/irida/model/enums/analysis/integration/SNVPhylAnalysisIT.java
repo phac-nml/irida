@@ -183,6 +183,7 @@ public class SNVPhylAnalysisIT {
 	}
 
 	private void completeSubmittedAnalyses(Long submissionId) throws Exception {
+		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.downloadFiles());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.prepareAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.executeAnalyses());
 

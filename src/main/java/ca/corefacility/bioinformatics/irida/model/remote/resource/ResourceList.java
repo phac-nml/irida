@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
 import java.util.List;
-import java.util.Map;
+
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 
 /**
  * Class to hold a list of resources when being read from a remote Irida API
@@ -9,9 +10,8 @@ import java.util.Map;
  * @param <Type>
  *            The type of object being held in this list
  */
-public class ResourceList<Type extends RemoteResource> {
+public class ResourceList<Type extends IridaResourceSupport> extends IridaResourceSupport{
 
-	protected List<Map<String, String>> links;
 	private List<Type> resources;
 	private Long totalResources;
 
@@ -20,7 +20,7 @@ public class ResourceList<Type extends RemoteResource> {
 
 	/**
 	 * Get the list of resources
-	 * @return the {@link RemoteResource} collection.
+	 * @return the {@link IridaResourceSupport} collection.
 	 */
 	public List<Type> getResources() {
 		return resources;
@@ -28,31 +28,15 @@ public class ResourceList<Type extends RemoteResource> {
 
 	/**
 	 * Set the list of resources
-	 * @param resources the {@link RemoteResource} collection.
+	 * @param resources the {@link IridaResourceSupport} collection.
 	 */
 	public void setResources(List<Type> resources) {
 		this.resources = resources;
 	}
 
 	/**
-	 * Get the links referenced by this list
-	 * @return the collection of links for each {@link RemoteResource}.
-	 */
-	public List<Map<String, String>> getLinks() {
-		return links;
-	}
-
-	/**
-	 * Set the links referenced by this list
-	 * @param links the collection of links for each {@link RemoteResource}.
-	 */
-	public void setLinks(List<Map<String, String>> links) {
-		this.links = links;
-	}
-
-	/**
 	 * Get the total number of resources in this list
-	 * @return the total number of {@link RemoteResource} in the collection.
+	 * @return the total number of {@link IridaResourceSupport} in the collection.
 	 */
 	public Long getTotalResources() {
 		return totalResources;
@@ -60,7 +44,7 @@ public class ResourceList<Type extends RemoteResource> {
 
 	/**
 	 * Set the total number of resources
-	 * @param totalResources the total number of {@link RemoteResource} in the collection.
+	 * @param totalResources the total number of {@link IridaResourceSupport} in the collection.
 	 */
 	public void setTotalResources(Long totalResources) {
 		this.totalResources = totalResources;

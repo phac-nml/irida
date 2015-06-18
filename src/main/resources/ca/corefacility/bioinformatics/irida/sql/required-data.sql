@@ -265,6 +265,7 @@ INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:25:59', 4, 51);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:26:59', 4, 52);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:27:59', 4, 53);
+INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:26:59', 5, 52);
 
 -- related projects
 insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (1,2,now());
@@ -584,3 +585,5 @@ INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parame
 
 -- analysis_submission_sequence_file_pair
 INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13 ,1);
+
+INSERT INTO `remote_related_project`(id, created_date, remote_project_uri, project_id, remote_api_id) VALUES ('1','2015-03-27 11:13:39','http://localhost:8080/api/projects/5','4','1'); 

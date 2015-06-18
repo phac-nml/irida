@@ -1,17 +1,23 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
  * <p>
@@ -194,6 +200,41 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		page.clickUseParametersButton();
 		assertEquals("Selected parameter set should be the saved one.", savedParametersName,
 				page.getSelectedParameterSet());
+	}
+	
+	@Test
+	public void testRemoteSample() throws InterruptedException{
+		LoginPage.loginAsAdmin(driver());
+		// add the api
+		RemoteApiUtilities.addRemoteApi(driver());
+
+		// associate a project from that api
+		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
+		apEditPage.goTo(1L);
+		apEditPage.viewRemoteTab();
+		apEditPage.clickAssociatedButton(1L);
+		assertTrue(apEditPage.checkNotyStatus("success"));
+		
+		
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver());
+		samplesPage.goToPage("1");
+		
+		samplesPage.selectSampleByRow(0);
+		samplesPage.addSamplesToGlobalCart();
+		
+		samplesPage.enableRemoteProjects();
+		
+		samplesPage.selectSampleByClass("remote-sample");
+		samplesPage.addSamplesToGlobalCart();
+		
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
+		
+		assertTrue(page.isRemoteSampleDisplayed());
+
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
 	}
 
 	private void addSamplesToCart() {

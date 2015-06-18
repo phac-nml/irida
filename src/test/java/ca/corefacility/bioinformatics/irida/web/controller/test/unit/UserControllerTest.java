@@ -27,8 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTUsersController;
 
@@ -71,11 +69,11 @@ public class UserControllerTest {
         // run the test
         ModelMap output = controller.getUserProjects(username);
         @SuppressWarnings("unchecked")
-        ResourceCollection<ProjectResource> pulledProjects = (ResourceCollection<ProjectResource>) output
+        ResourceCollection<Project> pulledProjects = (ResourceCollection<Project>) output
                 .get("projectResources");
-        List<ProjectResource> projectResources = pulledProjects.getResources();
+        List<Project> projectResources = pulledProjects.getResources();
         assertEquals(1, projectResources.size());
-        ProjectResource resource = projectResources.get(0);
+        Project resource = projectResources.get(0);
         assertEquals(p.getName(), resource.getName());
         assertEquals(1, resource.getLinks().size());
         Link link = resource.getLinks().get(0);
@@ -109,10 +107,10 @@ public class UserControllerTest {
         ModelMap output = controller.listAllResources();
 
         @SuppressWarnings("unchecked")
-		ResourceCollection<UserResource> usersCollection = (ResourceCollection<UserResource>) output.get(
+		ResourceCollection<User> usersCollection = (ResourceCollection<User>) output.get(
                 RESTGenericController.RESOURCE_NAME);
         assertEquals("users collection is the wrong size.", 1, usersCollection.size());
-        UserResource userResource = usersCollection.iterator().next();
+        User userResource = usersCollection.iterator().next();
         assertEquals("username is not correct.", username, userResource.getUsername());
     }
 }

@@ -41,11 +41,11 @@
 	<div toaster-container=""></div>
 	<script type="text/ng-template" id="/cart.html">
 		<aside class="cart">
-			<section ng-hide="cart.projects.length">
+			<section ng-hide="cart.count">
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
 				<p class="lead" th:text="#{cart.empty-text}"></p>
 			</section>
-			<section ng-show="cart.projects.length > 0" ng-controller="CartSliderController as cartCtrl">
+			<section ng-show="cart.count > 0" ng-controller="CartSliderController as cartCtrl">
 				<div class="cart-control-buttons">
 					<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close
 					</button>
@@ -60,7 +60,7 @@
 					</div>
 				</div>
 				<ul id="cart-project-list" class="list-group">
-					<li class="list-group-item" ng-repeat="p in cart.projects | cartFilter:cart.term" ng-attr-id="{{'cart-project-'+p.id}}">
+					<li class="list-group-item local-project" ng-repeat="p in cart.projects | cartFilter:cart.term" ng-attr-id="{{'cart-project-'+p.id}}">
 						<div class="cart-project-header" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
 							<div><i class="fa fa-fw"  ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></i></div>
 							<div class="cart-item__label">
@@ -86,6 +86,31 @@
 							</li>
 						</ul>
 					</li>
+                    <li class="list-group-item remote-samples" ng-show="r.filteredSamples.length > 0">
+                        <div class="cart-project-header" ng-click="cart.collapsed['remote'] = !cart.collapsed['remote' ]">
+                            <span class="fa fa-fw"
+                                      ng-class="cart.collapsed['remote'] ? 'fa-caret-right' : 'fa-caret-down'"></span>
+                            <span th:text="#{cart.remoteSamples.title}">_REMOTE_</span>
+                            <div class="pull-right">
+                                <span class="label label-info">{{r.filteredSamples.length}} / {{ cart.getRemoteCount() }}</span>
+                                <button class="btn-icon" ng-click="cartCtrl.removeRemoteSamples()"
+                                    id="remove-remote"
+                                    th:title="#{cart.tooltip.remoteRemote}">
+                                    <i class="fa fa-remove remove-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <ul collapse="cart.collapsed['remote']">
+                            <li ng-repeat="(id,s) in r.filteredSamples = (cart.remote | cartFilter:cart.term)">
+                                <span>{{ s.label }}</span>
+                                <button class="btn-icon pull-right remove-sample-btn"
+                                    ng-click="cartCtrl.removeRemoteSample(id)"
+                                    th:title="#{cart.tooltip.removeSample}">
+                                    <i class="fa fa-remove remove-icon"></i>
+                                </button>
+                                </li>
+                        </ul>
+                    </li>
 				</ul>
 				<div class="cart-control-bottom">
 					<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"

@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -25,8 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
  * 
  *
  */
-public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long> & IridaThing> implements
-		FilesystemSupplementedRepository<Type> {
+public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long> & IridaThing>
+		implements FilesystemSupplementedRepository<Type> {
 
 	private static final Logger logger = LoggerFactory.getLogger(FilesystemSupplementedRepository.class);
 
@@ -65,8 +66,9 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 	/**
 	 * Persist an entity to disk and database. Implementors of this method are
-	 * recommended to call {@link FilesystemSupplementedRepositoryImpl#saveInternal}
-	 * to avoid repeated boilerplate code.
+	 * recommended to call
+	 * {@link FilesystemSupplementedRepositoryImpl#saveInternal} to avoid
+	 * repeated boilerplate code.
 	 * 
 	 * @param entity
 	 *            the entity to persist.
@@ -87,39 +89,53 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		if (objectToWrite.getId() == null) {
 			throw new IllegalArgumentException("Identifier is required.");
 		}
-		objectToWrite.incrementFileRevisionNumber();
 
 		Path sequenceFileDir = baseDirectory.resolve(objectToWrite.getId().toString());
-		Path sequenceFileDirWithRevision = sequenceFileDir.resolve(objectToWrite.getFileRevisionNumber().toString());
 
 		Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
 		// now find any members that are of type Path and shuffle them around:
 		Set<Field> pathFields = Arrays.stream(objectToWrite.getClass().getDeclaredFields()).filter(pathFilter)
 				.collect(Collectors.toSet());
 
+		Set<Field> fieldsToUpdate = new HashSet<>();
 		for (Field field : pathFields) {
 			ReflectionUtils.makeAccessible(field);
 			Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
-			Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
-			try {
-				if (!Files.exists(sequenceFileDir)) {
-					Files.createDirectory(sequenceFileDir);
-					logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
-				}
-
-				if (!Files.exists(sequenceFileDirWithRevision)) {
-					Files.createDirectory(sequenceFileDirWithRevision);
-					logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
-				}
-
-				Files.move(source, target);
-				logger.trace("Moved file " + source + " to " + target);
-			} catch (IOException e) {
-				logger.error("Unable to move file into new directory", e);
-				throw new StorageException("Failed to move file into new directory.", e);
+			if (source != null) {
+				fieldsToUpdate.add(field);
 			}
+		}
 
-			ReflectionUtils.setField(field, objectToWrite, target);
+		// if there are non-null fields, increment the revision number and
+		// update the objects
+		if (!fieldsToUpdate.isEmpty()) {
+			objectToWrite.incrementFileRevisionNumber();
+			Path sequenceFileDirWithRevision = sequenceFileDir
+					.resolve(objectToWrite.getFileRevisionNumber().toString());
+
+			for (Field field : fieldsToUpdate) {
+				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
+				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
+				try {
+					if (!Files.exists(sequenceFileDir)) {
+						Files.createDirectory(sequenceFileDir);
+						logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
+					}
+
+					if (!Files.exists(sequenceFileDirWithRevision)) {
+						Files.createDirectory(sequenceFileDirWithRevision);
+						logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+					}
+
+					Files.move(source, target);
+					logger.trace("Moved file " + source + " to " + target);
+				} catch (IOException e) {
+					logger.error("Unable to move file into new directory", e);
+					throw new StorageException("Failed to move file into new directory.", e);
+				}
+
+				ReflectionUtils.setField(field, objectToWrite, target);
+			}
 		}
 
 		return objectToWrite;

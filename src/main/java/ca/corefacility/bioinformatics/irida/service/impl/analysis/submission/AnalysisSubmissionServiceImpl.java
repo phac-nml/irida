@@ -40,6 +40,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteExcep
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -71,15 +73,17 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * an {@link AnalysisSubmission}.
 	 */
 	// @formatter:off
-	private static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
-			put(AnalysisState.NEW,              0.0f).
-			put(AnalysisState.PREPARING,        0.0f).
-			put(AnalysisState.PREPARED,         1.0f).
-			put(AnalysisState.SUBMITTING,       5.0f).
-			put(AnalysisState.RUNNING,          10.0f).
-			put(AnalysisState.FINISHED_RUNNING, 90.0f).
-			put(AnalysisState.COMPLETING,       95.0f).
-			put(AnalysisState.COMPLETED,        100.0f).
+	public static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
+			put(AnalysisState.NEW,                  0.0f).
+			put(AnalysisState.DOWNLOADING,          5.0f).
+			put(AnalysisState.FINISHED_DOWNLOADING, 10.0f).
+			put(AnalysisState.PREPARING,            10.0f).
+			put(AnalysisState.PREPARED,             11.0f).
+			put(AnalysisState.SUBMITTING,           15.0f).
+			put(AnalysisState.RUNNING,              20.0f).
+			put(AnalysisState.FINISHED_RUNNING,     90.0f).
+			put(AnalysisState.COMPLETING,           95.0f).
+			put(AnalysisState.COMPLETED,            100.0f).
 			build();
 	// @formatter:on
 	
@@ -312,11 +316,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
+			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
+			List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
 			IridaWorkflowNamedParameters namedParameters, String name) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
+		
+		
+		
 		if (description.acceptsSingleSequenceFiles()) {
 			final Map<Sample, SequenceFile> samplesMap = sequenceFileService.getUniqueSamplesForSequenceFiles(Sets
 					.newHashSet(sequenceFiles));
@@ -349,6 +357,40 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
 			}
+
+			if (!remoteFiles.isEmpty()) {
+				for (SequenceFileSnapshot file : remoteFiles) {
+					AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+					builder.name(name + "_" + file.getId());
+					builder.remoteFilesSingle(ImmutableSet.of(file));
+
+					// Add reference file
+					if (ref != null && description.requiresReference()) {
+						// Note: This cannot be empty if through the UI if the
+						// pipeline required a reference file.
+						ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+						builder.referenceFile(referenceFile);
+					}
+
+					if (description.acceptsParameters()) {
+						if (namedParameters != null) {
+							builder.withNamedParameters(namedParameters);
+						} else {
+							if (!params.isEmpty()) {
+								// Note: This cannot be empty if through the UI
+								// if
+								// the pipeline required params.
+								builder.inputParameters(params);
+							}
+						}
+					}
+
+					// Create the submission
+					createdSubmissions.add(create(builder.build()));
+				}
+
+			}
+			
 		}
 
 		// Paired end reads
@@ -382,6 +424,39 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
 			}
+			
+			if (!remotePairs.isEmpty()) {
+				for (SequenceFilePairSnapshot pair : remotePairs) {
+					AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+					builder.name(name + "_" + pair.getId());
+					builder.remoteFilesPaired(ImmutableSet.of(pair));
+
+					// Add reference file
+					if (ref != null && description.requiresReference()) {
+						// Note: This cannot be empty if through the UI if the
+						// pipeline required a reference file.
+						ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+						builder.referenceFile(referenceFile);
+					}
+
+					if (description.acceptsParameters()) {
+						if (namedParameters != null) {
+							builder.withNamedParameters(namedParameters);
+						} else {
+							if (!params.isEmpty()) {
+								// Note: This cannot be empty if through the UI
+								// if
+								// the pipeline required params.
+								builder.inputParameters(params);
+							}
+						}
+					}
+
+					// Create the submission
+					createdSubmissions.add(create(builder.build()));
+				}
+
+			}
 		}
 		
 		return createdSubmissions;
@@ -393,7 +468,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
+			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
 			IridaWorkflowNamedParameters namedParameters, String name) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
@@ -406,13 +481,29 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		}
 
 		// Add any single end sequencing files.
-		if (!sequenceFiles.isEmpty() && description.acceptsSingleSequenceFiles()) {
-			builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+		if (description.acceptsSingleSequenceFiles()) {
+			if (!sequenceFiles.isEmpty()) {
+				builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+			}
+
+			// add remote files
+			if (!remoteFiles.isEmpty()) {
+				builder.remoteFilesSingle(new HashSet<>(remoteFiles));
+			}
 		}
 
 		// Add any paired end sequencing files.
-		if (!sequenceFilePairs.isEmpty() && description.acceptsPairedSequenceFiles()) {
-			builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+		if (description.acceptsPairedSequenceFiles()) {
+			if (!sequenceFilePairs.isEmpty())
+			{
+				builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+			}
+			
+			// add remote files
+			if (!remotePairs.isEmpty()) {
+				builder.remoteFilesPaired(new HashSet<>(remotePairs));
+			}
+
 		}
 
 		if (description.acceptsParameters()) {
@@ -443,6 +534,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		switch (analysisState) {
 		case NEW:
+		case DOWNLOADING:
+		case FINISHED_DOWNLOADING:
 		case PREPARING:
 		case PREPARED:
 		case SUBMITTING:

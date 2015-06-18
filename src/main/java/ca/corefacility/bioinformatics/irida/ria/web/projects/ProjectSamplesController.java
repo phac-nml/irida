@@ -253,7 +253,7 @@ public class ProjectSamplesController {
 					pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
 			for (Project p : projects) {
 				Map<String, String> map = new HashMap<>();
-				map.put("id", p.getId().toString());
+				map.put("identifier", p.getId().toString());
 				map.put("text", p.getName());
 				projectMap.add(map);
 			}
@@ -267,7 +267,7 @@ public class ProjectSamplesController {
 			for (ProjectUserJoin projectUserJoin : projects) {
 				Project p = projectUserJoin.getSubject();
 				Map<String, String> map = new HashMap<>();
-				map.put("id", p.getId().toString());
+				map.put("identifier", p.getId().toString());
 				map.put("text", p.getName());
 				projectMap.add(map);
 			}
@@ -591,16 +591,16 @@ public class ProjectSamplesController {
 	 * @param type
 	 * 		The {@link SampleType} of the sample (LOCAL, ASSOCIATED)
 	 * @param identifier
-	 * 		Number to identify the {@link Sample}. NOTE: This will be different for remote samples
-	 *
+	 *            Object to identify the {@link Sample}. Local samples will be
+	 *            the sample id, remote may be a URL
 	 * @return a formatted map of {@link Sample} objects.
 	 */
-	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Number identifier) {
+	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Object identifier) {
 		Map<String, Object> sampleMap = new HashMap<>();
 		sampleMap.put("sample", sample);
 		sampleMap.put("project", project);
 		sampleMap.put("sampleType", type);
-		sampleMap.put("id", identifier);
+		sampleMap.put("identifier", identifier);
 
 		return sampleMap;
 	}
@@ -631,6 +631,9 @@ public class ProjectSamplesController {
 		// samples in the local project
 		LOCAL,
 		// samples in associated projects
-		ASSOCIATED;
+		ASSOCIATED,
+		// samples in remote projects
+		REMOTE;
+		
 	}
 }
