@@ -104,6 +104,9 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 		super.delete(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int countActiveTokensForClient(IridaClientDetails client) {
 		Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
 		int active = findTokensByClientId.stream().mapToInt((t) -> {
@@ -112,10 +115,16 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 		return active;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int countTokensForClient(IridaClientDetails client) {
 		return tokenStore.findTokensByClientId(client.getClientId()).size();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void revokeTokensForClient(IridaClientDetails client) {
 		Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
 		findTokensByClientId.forEach(tokenStore::removeAccessToken);

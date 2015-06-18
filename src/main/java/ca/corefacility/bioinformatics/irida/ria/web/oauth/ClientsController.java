@@ -116,12 +116,20 @@ public class ClientsController extends BaseController {
 		
 		return CLIENT_DETAILS_PAGE;
 	}
-	
+
+	/**
+	 * Delete all tokens for a given {@link IridaClientDetails}
+	 * 
+	 * @param id
+	 *            The database id of the {@link IridaClientDetails} to revoke
+	 *            tokens for
+	 * @return redirect back to the client page
+	 */
 	@RequestMapping("/revoke")
-	public String revokeTokens(@RequestParam Long id, Model model){
+	public String revokeTokens(@RequestParam Long id) {
 		IridaClientDetails read = clientDetailsService.read(id);
 		clientDetailsService.revokeTokensForClient(read);
-		return "redirect:/clients/"+id;
+		return "redirect:/clients/" + id;
 	}
 
 	/**
