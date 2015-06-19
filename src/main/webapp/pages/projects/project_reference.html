@@ -6,7 +6,7 @@
 	<script>window.dependencies = ['References'];</script>
 </head>
 <body>
-<main layout:fragment="main">
+<main layout:fragment="main" ddl:bundle-includes="project-reference-files">
 	<div class="row">
 		<div class="col-md-12">
 			<h1 th:text="#{project.nav.referenceFiles}">Hello</h1>
@@ -30,6 +30,8 @@
 				</button>
 			</div>
 		</section>
+		<upload-error></upload-error>
+		<file-upload-progress></file-upload-progress>
 		<section id="rf-files" class="col-md-12" ng-show="table.files.length > 0">
 			<table id="files-table" class="table">
 				<thead>
@@ -43,7 +45,7 @@
 				<tbody>
 				<tr class="ref-file-row" ng-repeat="file in table.files | orderBy:file.createdDate" ng-class="table.getRowClass(file)">
 					<td>{{file.label}}</td>
-					<td>{{file.size | bytes:2}}</td>
+					<td>{{file.size | humanReadableBytes}}</td>
 					<td>{{file.createdDate | date:'mediumDate'}}</td>
 					<td>
 						<div class="btn-toolbar pull-right">
@@ -62,8 +64,8 @@
 	</div>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
-	<script src="/resources/bower_components/ng-file-upload/ng-file-upload.min.js" th:src="@{/resources/bower_components/ng-file-upload/ng-file-upload.min.js}"></script>
-	<script th:src="@{/resources/js/pages/projects/reference.js}" src="/resources/js/pages/projects/reference.js"></script>
+	<div th:replace="templates/_file.utils :: upload-progress"></div>
+	<div th:replace="templates/_file.utils :: upload-error"></div>
 </th:block>
 </body>
 </html>

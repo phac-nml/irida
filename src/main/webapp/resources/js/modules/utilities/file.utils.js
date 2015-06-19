@@ -101,6 +101,7 @@
    */
   function humanReadableBytes() {
     return function(bytes) {
+      if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {return bytes;}
       var thresh = 1024;
       if (Math.abs(bytes) < thresh) {
         return bytes + ' B';

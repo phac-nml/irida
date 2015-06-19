@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -92,51 +93,30 @@ public class ReferenceFileController {
 	 *             if we fail to write the reference file to disk.
 	 */
 	@RequestMapping("/project/{projectId}/new")
-	public @ResponseBody Map<String, Object> createNewReferenceFile(@PathVariable Long projectId,
-			@RequestParam("file") MultipartFile file, Locale locale) throws IOException {
-		Map<String, Object> response;
-
-		logger.debug("Adding reference file to project " + projectId);
-		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
-
+	public void createNewReferenceFile(@PathVariable Long projectId,
+			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) {
 		Project project = projectService.read(projectId);
-		logger.trace("Read project " + projectId);
+		logger.debug("Adding reference file to project " + projectId);
 
-		// Prepare a new reference file using the multipart file supplied by the caller
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-
-		file.transferTo(target.toFile());
-		logger.debug("Wrote temp file to " + target);
-
-		ReferenceFile referenceFile = new ReferenceFile(target);
 		try {
-			Join<Project, ReferenceFile> projectReferenceFileJoin = projectService
-					.addReferenceFileToProject(project, referenceFile);
-			logger.debug("Created reference file in project " + projectId);
+			for (MultipartFile file : files) {
+				// Prepare a new reference file using the multipart file supplied by the caller
+				Path temp = Files.createTempDirectory(null);
 
-			ReferenceFile refFile = projectReferenceFileJoin.getObject();
-			Map<String, Object> result = new HashMap<>();
-			Path path = refFile.getFile();
-			if (Files.exists(path)) {
-				result.put("size", Files.size(path));
-			} else {
-				result.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[]{}, locale));
+				Path target = temp.resolve(file.getOriginalFilename());
+				file.transferTo(target.toFile());
+
+				ReferenceFile referenceFile = new ReferenceFile(target);
+				projectService.addReferenceFileToProject(project, referenceFile);
+
+				// Clean up temporary files
+				Files.deleteIfExists(target);
+				Files.deleteIfExists(temp);
 			}
-			result.put("id", refFile.getId().toString());
-			result.put("label", refFile.getLabel());
-			result.put("createdDate", refFile.getCreatedDate());
-
-			// Clean up temporary files
-			Files.deleteIfExists(target);
-			Files.deleteIfExists(temp);
-			response = ImmutableMap.of("result", result);
-		} catch (IllegalArgumentException e) {
-			response = ImmutableMap.of("error",
-					messageSource.getMessage("referenceFile.upload-error", new Object[] { file.getName() }, locale));
+		} catch (IOException e) {
+			logger.error("Error writing sequence file", e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
-
-		return response;
 	}
 
 	/**
