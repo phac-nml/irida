@@ -9,9 +9,9 @@ internationalization message.  4 variables are created:
 These created variables are then used as parameters to a message so that they 
 can be internationalized.
 */-->
-        
+
 <span th:fragment="user-role-event (event)">  
-    <i class="glyphicon glyphicon-user"></i>
+    <fa:icon type="user" fixed="" />
     <span class="event-content user-role-event"
         th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
         userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt;'},
@@ -21,7 +21,7 @@ can be internationalized.
 </span>
 
 <span th:fragment="user-removed-event (event)">
-    <i class="glyphicon glyphicon-ban-circle"></i>
+    <fa:icon type="ban" fixed=""/>
     <span class="event-content user-removed-event" 
             th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
             userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
@@ -31,7 +31,7 @@ can be internationalized.
 </span>
 
 <span th:fragment="sample-added-event (event)">
-    <i class="fa fa-flask"></i>
+    <fa:icon type="sample" fixed=""/>
     <span class="event-content sample-added-event"
             th:with="sampleHref=@{/projects/{pid}/samples/{sid}/details(sid=${event.sample.getId()}, pid=${event.project.getId()})},
             sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
@@ -41,7 +41,7 @@ can be internationalized.
 </span>
 
 <span th:fragment="data-added-event (event)">
-    <i class="fa fa-flask"></i>
+    <fa:icon type="file" fixed=""/>
     <span class="event-content data-added-event"
             th:with="sampleHref=@{/projects/{pid}/samples/{sid}/details(sid=${event.sample.getId()}, pid=${event.project.getId()})},
             sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
