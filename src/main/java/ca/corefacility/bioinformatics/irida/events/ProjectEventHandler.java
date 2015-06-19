@@ -135,9 +135,20 @@ public class ProjectEventHandler {
 		Object returnValue = event.getReturnValue();
 		if (Collection.class.isAssignableFrom(returnValue.getClass())) {
 			Collection<?> collection = (Collection<?>) returnValue;
-			handleIndividualSequenceFileAddedEvent(collection.iterator().next());
+
+			Object singleElement = collection.iterator().next();
+			if (!(singleElement instanceof SampleSequenceFileJoin)) {
+				throw new IllegalArgumentException(
+						"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
+			}
+
+			handleIndividualSequenceFileAddedEvent((SampleSequenceFileJoin) singleElement);
 		} else {
-			handleIndividualSequenceFileAddedEvent(returnValue);
+			if (!(returnValue instanceof SampleSequenceFileJoin)) {
+				throw new IllegalArgumentException(
+						"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
+			}
+			handleIndividualSequenceFileAddedEvent((SampleSequenceFileJoin) returnValue);
 		}
 	}
 
@@ -145,16 +156,11 @@ public class ProjectEventHandler {
 	 * Create {@link DataAddedToSampleProjectEvent} for all {@link Project}s a
 	 * {@link Sample} belongs to
 	 * 
-	 * @param returnValue
-	 *            Return value from a method which should be a
-	 *            {@link SampleSequenceFileJoin}
+	 * @param join
+	 *            a {@link SampleSequenceFileJoin} to turn into a
+	 *            {@link DataAddedToSampleProjectEvent}
 	 */
-	private void handleIndividualSequenceFileAddedEvent(Object returnValue) {
-		if (!(returnValue instanceof SampleSequenceFileJoin)) {
-			throw new IllegalArgumentException(
-					"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
-		}
-		SampleSequenceFileJoin join = (SampleSequenceFileJoin) returnValue;
+	private void handleIndividualSequenceFileAddedEvent(SampleSequenceFileJoin join) {
 		Sample subject = join.getSubject();
 
 		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(subject);
