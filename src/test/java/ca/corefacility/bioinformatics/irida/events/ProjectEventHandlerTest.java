@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.util.List;
@@ -44,7 +45,8 @@ public class ProjectEventHandlerTest {
 	public void setup() {
 		eventRepository = mock(ProjectEventRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
-		handler = new ProjectEventHandler(eventRepository, psjRepository,projectRepository);
+		projectRepository = mock(ProjectRepository.class);
+		handler = new ProjectEventHandler(eventRepository, psjRepository, projectRepository);
 	}
 
 	@Test
@@ -56,12 +58,16 @@ public class ProjectEventHandlerTest {
 		Object[] args = { project, sample };
 		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
 
+		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(new SampleAddedProjectEvent(returnValue));
+
 		handler.delegate(methodEvent);
 
 		ArgumentCaptor<ProjectEvent> captor = ArgumentCaptor.forClass(ProjectEvent.class);
 		verify(eventRepository).save(captor.capture());
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof SampleAddedProjectEvent);
+
+		verify(projectRepository).save(any(Project.class));
 	}
 
 	@Test
@@ -73,12 +79,16 @@ public class ProjectEventHandlerTest {
 		Object[] args = { project, user, ProjectRole.PROJECT_USER };
 		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
 
+		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(new UserRoleSetProjectEvent(returnValue));
+
 		handler.delegate(methodEvent);
 
 		ArgumentCaptor<ProjectEvent> captor = ArgumentCaptor.forClass(ProjectEvent.class);
 		verify(eventRepository).save(captor.capture());
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof UserRoleSetProjectEvent);
+
+		verify(projectRepository).save(any(Project.class));
 	}
 
 	@Test
@@ -89,12 +99,16 @@ public class ProjectEventHandlerTest {
 		Object[] args = { project, user };
 		MethodEvent methodEvent = new MethodEvent(clazz, null, args);
 
+		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(new UserRemovedProjectEvent(project, user));
+
 		handler.delegate(methodEvent);
 
 		ArgumentCaptor<ProjectEvent> captor = ArgumentCaptor.forClass(ProjectEvent.class);
 		verify(eventRepository).save(captor.capture());
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof UserRemovedProjectEvent);
+
+		verify(projectRepository).save(any(Project.class));
 	}
 
 	@Test
@@ -108,6 +122,9 @@ public class ProjectEventHandlerTest {
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
 
+		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
+				new DataAddedToSampleProjectEvent(project, sample));
+
 		Object[] args = {};
 		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
 
@@ -117,6 +134,8 @@ public class ProjectEventHandlerTest {
 		verify(eventRepository).save(captor.capture());
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
+
+		verify(projectRepository).save(any(Project.class));
 	}
 
 	@Test
@@ -132,6 +151,9 @@ public class ProjectEventHandlerTest {
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
 
+		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
+				new DataAddedToSampleProjectEvent(project, sample));
+
 		Object[] args = {};
 		MethodEvent methodEvent = new MethodEvent(clazz, Lists.newArrayList(returnValue1, returnValue2), args);
 
@@ -141,10 +163,12 @@ public class ProjectEventHandlerTest {
 		verify(eventRepository).save(captor.capture());
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
+
+		verify(projectRepository).save(any(Project.class));
 	}
 
 	@Test
-	public void testHandleSequenceFileAddedEventMultipleProejcts() {
+	public void testHandleSequenceFileAddedEventMultipleProjects() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
 		Project project = new Project("p1");
 		Project project2 = new Project("p2");
@@ -154,6 +178,9 @@ public class ProjectEventHandlerTest {
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample), new ProjectSampleJoin(project2, sample)));
+
+		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
+				new DataAddedToSampleProjectEvent(project, sample));
 
 		Object[] args = {};
 		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
@@ -172,6 +199,7 @@ public class ProjectEventHandlerTest {
 			projects.remove(eventProject);
 		}
 
+		verify(projectRepository, times(2)).save(project);
 	}
 
 	@Test
