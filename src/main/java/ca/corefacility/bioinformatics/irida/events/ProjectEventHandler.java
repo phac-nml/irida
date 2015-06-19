@@ -141,6 +141,14 @@ public class ProjectEventHandler {
 		}
 	}
 
+	/**
+	 * Create {@link DataAddedToSampleProjectEvent} for all {@link Project}s a
+	 * {@link Sample} belongs to
+	 * 
+	 * @param returnValue
+	 *            Return value from a method which should be a
+	 *            {@link SampleSequenceFileJoin}
+	 */
 	private void handleIndividualSequenceFileAddedEvent(Object returnValue) {
 		if (!(returnValue instanceof SampleSequenceFileJoin)) {
 			throw new IllegalArgumentException(
