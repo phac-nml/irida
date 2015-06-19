@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.events;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 
 /**
@@ -35,10 +37,13 @@ public class ProjectEventHandler {
 
 	private final ProjectEventRepository eventRepository;
 	private final ProjectSampleJoinRepository psjRepository;
+	private final ProjectRepository projectRepository;
 
-	public ProjectEventHandler(ProjectEventRepository eventRepository, ProjectSampleJoinRepository psjRepository) {
+	public ProjectEventHandler(ProjectEventRepository eventRepository, ProjectSampleJoinRepository psjRepository,
+			ProjectRepository projectRepository) {
 		this.eventRepository = eventRepository;
 		this.psjRepository = psjRepository;
+		this.projectRepository = projectRepository;
 	}
 
 	/**
@@ -52,16 +57,24 @@ public class ProjectEventHandler {
 	public void delegate(MethodEvent methodEvent) {
 		Class<? extends ProjectEvent> eventClass = methodEvent.getEventClass();
 
+		Collection<ProjectEvent> events = new ArrayList<>();
+		
 		if (eventClass.equals(SampleAddedProjectEvent.class)) {
-			handleSampleAddedProjectEvent(methodEvent);
+			events.add(handleSampleAddedProjectEvent(methodEvent));
 		} else if (eventClass.equals(UserRemovedProjectEvent.class)) {
-			handleUserRemovedEvent(methodEvent);
+			events.add(handleUserRemovedEvent(methodEvent));
 		} else if (eventClass.equals(UserRoleSetProjectEvent.class)) {
-			handleUserRoleSetProjectEvent(methodEvent);
+			events.add(handleUserRoleSetProjectEvent(methodEvent));
 		} else if (eventClass.equals(DataAddedToSampleProjectEvent.class)) {
-			handleSequenceFileAddedEvent(methodEvent);
+			events.addAll(handleSequenceFileAddedEvent(methodEvent));
 		} else {
 			logger.warn("No handler found for event class " + eventClass.getName());
+		}
+		
+		for(ProjectEvent event : events){
+			Project project = event.getProject();
+			project.setModifiedDate(event.getCreatedDate());
+			projectRepository.save(project);
 		}
 	}
 
@@ -72,14 +85,14 @@ public class ProjectEventHandler {
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
 	 */
-	private void handleSampleAddedProjectEvent(MethodEvent event) {
+	private ProjectEvent handleSampleAddedProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
 		if (!(returnValue instanceof ProjectSampleJoin)) {
 			throw new IllegalArgumentException(
 					"Method annotated with @LaunchesProjectEvent(SampleAddedProjectEvent.class) method must return ProjectSampleJoin");
 		}
 		ProjectSampleJoin join = (ProjectSampleJoin) returnValue;
-		eventRepository.save(new SampleAddedProjectEvent(join));
+		return eventRepository.save(new SampleAddedProjectEvent(join));
 	}
 
 	/**
@@ -89,7 +102,7 @@ public class ProjectEventHandler {
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
 	 */
-	private void handleUserRemovedEvent(MethodEvent event) {
+	private ProjectEvent handleUserRemovedEvent(MethodEvent event) {
 		Object[] args = event.getArgs();
 		User user = null;
 		Project project = null;
@@ -104,7 +117,7 @@ public class ProjectEventHandler {
 			throw new IllegalArgumentException(
 					"Project or user cannot be found on method annotated with @LaunchesProjectEvent(UserRemovedProjectEvent.class)");
 		}
-		eventRepository.save(new UserRemovedProjectEvent(project, user));
+		return eventRepository.save(new UserRemovedProjectEvent(project, user));
 	}
 
 	/**
@@ -114,14 +127,14 @@ public class ProjectEventHandler {
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
 	 */
-	private void handleUserRoleSetProjectEvent(MethodEvent event) {
+	private ProjectEvent handleUserRoleSetProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
 		if (!(returnValue instanceof ProjectUserJoin)) {
 			throw new IllegalArgumentException(
 					"Method annotated with @LaunchesProjectEvent(SampleAddedProjectEvent.class) method must return ProjectSampleJoin");
 		}
 		ProjectUserJoin join = (ProjectUserJoin) returnValue;
-		eventRepository.save(new UserRoleSetProjectEvent(join));
+		return eventRepository.save(new UserRoleSetProjectEvent(join));
 
 	}
 
@@ -131,13 +144,13 @@ public class ProjectEventHandler {
 	 * 
 	 * @param event
 	 */
-	private void handleSequenceFileAddedEvent(MethodEvent event) {
+	private Collection<ProjectEvent> handleSequenceFileAddedEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
 		if (Collection.class.isAssignableFrom(returnValue.getClass())) {
 			Collection<?> collection = (Collection<?>) returnValue;
-			handleIndividualSequenceFileAddedEvent(collection.iterator().next());
+			return handleIndividualSequenceFileAddedEvent(collection.iterator().next());
 		} else {
-			handleIndividualSequenceFileAddedEvent(returnValue);
+			return handleIndividualSequenceFileAddedEvent(returnValue);
 		}
 	}
 
@@ -149,18 +162,22 @@ public class ProjectEventHandler {
 	 *            Return value from a method which should be a
 	 *            {@link SampleSequenceFileJoin}
 	 */
-	private void handleIndividualSequenceFileAddedEvent(Object returnValue) {
+	private Collection<ProjectEvent> handleIndividualSequenceFileAddedEvent(Object returnValue) {
 		if (!(returnValue instanceof SampleSequenceFileJoin)) {
 			throw new IllegalArgumentException(
 					"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
 		}
 		SampleSequenceFileJoin join = (SampleSequenceFileJoin) returnValue;
 		Sample subject = join.getSubject();
+		
+		Collection<ProjectEvent> events = new ArrayList<>();
 
 		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(subject);
 		for (Join<Project, Sample> psj : projectForSample) {
-			eventRepository.save(new DataAddedToSampleProjectEvent(psj.getSubject(), subject));
+			events.add(eventRepository.save(new DataAddedToSampleProjectEvent(psj.getSubject(), subject)));
 		}
+		
+		return events;
 
 	}
 }
