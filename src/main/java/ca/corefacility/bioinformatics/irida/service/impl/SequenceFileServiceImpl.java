@@ -158,6 +158,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
+	@LaunchesProjectEvent(DataAddedToSampleProjectEvent.class)
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		// check for consistency with the sequencing run
 		SequencingRun sequencingRun = sequenceFile.getSequencingRun();
