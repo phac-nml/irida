@@ -40,7 +40,8 @@ public class ProjectEventsController {
 
 	public static final Map<Class<? extends ProjectEvent>, String> FRAGMENT_NAMES = ImmutableMap.of(
 			UserRoleSetProjectEvent.class, "user-role-event", UserRemovedProjectEvent.class, "user-removed-event",
-			SampleAddedProjectEvent.class, "sample-added-event", DataAddedToSampleProjectEvent.class, "data-added-event");
+			SampleAddedProjectEvent.class, "sample-added-event", DataAddedToSampleProjectEvent.class,
+			"data-added-event");
 	private static final int PAGE_SIZE = 10;
 
 	private final ProjectEventService eventService;

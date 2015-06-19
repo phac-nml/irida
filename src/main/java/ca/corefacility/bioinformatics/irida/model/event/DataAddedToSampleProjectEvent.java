@@ -9,7 +9,12 @@ import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
+/**
+ * Event shown when {@link SequenceFile} data is added to a {@link Sample} for a
+ * {@link Project}
+ */
 @Entity
 public class DataAddedToSampleProjectEvent extends ProjectEvent {
 

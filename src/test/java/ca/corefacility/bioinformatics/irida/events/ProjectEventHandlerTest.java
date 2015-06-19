@@ -30,7 +30,7 @@ public class ProjectEventHandlerTest {
 	@Before
 	public void setup() {
 		eventRepository = mock(ProjectEventRepository.class);
-		handler = new ProjectEventHandler(eventRepository,psjRepository);
+		handler = new ProjectEventHandler(eventRepository, psjRepository);
 	}
 
 	@Test

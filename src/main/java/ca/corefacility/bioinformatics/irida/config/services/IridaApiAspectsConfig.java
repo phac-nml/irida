@@ -28,8 +28,9 @@ public class IridaApiAspectsConfig {
 	}
 
 	@Bean
-	public ProjectEventAspect projectEventAspect(ProjectEventRepository eventRepository, ProjectSampleJoinRepository psjRepository) {
-		return new ProjectEventAspect(new ProjectEventHandler(eventRepository,psjRepository));
+	public ProjectEventAspect projectEventAspect(ProjectEventRepository eventRepository,
+			ProjectSampleJoinRepository psjRepository) {
+		return new ProjectEventAspect(new ProjectEventHandler(eventRepository, psjRepository));
 	}
 
 	@Bean

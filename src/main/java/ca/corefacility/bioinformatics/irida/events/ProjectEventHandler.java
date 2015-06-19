@@ -60,7 +60,7 @@ public class ProjectEventHandler {
 			createdEvent = handleUserRemovedEvent(methodEvent);
 		} else if (eventClass.equals(UserRoleSetProjectEvent.class)) {
 			createdEvent = handleUserRoleSetProjectEvent(methodEvent);
-		} else if (eventClass.equals(DataAddedToSampleProjectEvent.class)){
+		} else if (eventClass.equals(DataAddedToSampleProjectEvent.class)) {
 			createdEvent = handleSequenceFileAddedEvent(methodEvent);
 		} else {
 			logger.warn("No handler found for event class " + eventClass.getName());
@@ -152,12 +152,11 @@ public class ProjectEventHandler {
 		Sample subject = join.getSubject();
 
 		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(subject);
-		for(Join<Project,Sample> psj : projectForSample){
+		for (Join<Project, Sample> psj : projectForSample) {
 			eventRepository.save(new DataAddedToSampleProjectEvent(psj.getSubject(), subject));
 		}
-		
-		
+
 		return null;
-		
+
 	}
 }
