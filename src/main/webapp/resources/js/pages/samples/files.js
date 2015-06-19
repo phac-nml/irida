@@ -101,7 +101,9 @@
             })
             .result.then(function(files) {
               var url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
-              fileService.upload(url, files);
+              fileService.upload(url, files).success(function() {
+                window.location.href = window.location.href;
+              });
             });
         };
       }]

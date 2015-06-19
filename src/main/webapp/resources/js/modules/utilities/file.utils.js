@@ -44,10 +44,7 @@
           url: url,
           file: files
         })
-          .success(function() {
-            window.location.href = window.location.href;
-          })
-          .error(function() {
+          .error(function () {
             $rootScope.$broadcast(UPLOAD_ERROR);
           });
         $rootScope.$broadcast(UPLOAD_EVENT, {
@@ -55,6 +52,7 @@
           progress: currentUpload.progress
         });
       }
+      return currentUpload;
     }
   }
 
