@@ -73,6 +73,10 @@
     };
   }
 
+  /**
+   * Directive to show the percent complete of a list of files being uploaded.
+   * @returns {{restrict: string, require: string, templateUrl: string, controller: *[]}}
+   */
   function fileUploadProgress() {
     return {
       restrict: 'E',
