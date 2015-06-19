@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<script th:fragment="upload-progress" type="text/ng-template" id="/files-upload-progress.html">
+	<div class="row" ng-show="uploading">
+		<div class="col-md-12">
+			<h3><fa:icon type="upload" fixed=""/>
+				<ng-pluralize count="count" data:when="'{\'1\': \'' + #{files.upload.message.singular} + '\', \'other\': \'' + #{files.upload.message.plural} + '\'}'"></ng-pluralize>
+			</h3>
+			<progressbar value="progress" type="success"><b>{{progress}}%</b></progressbar>
+		</div>
+	</div>
+</script>
+
+<script th:fragment="upload-error" type="text/ng-template" id="/upload-error.html">
+	<div class="alert alert-warning" ng-show="hasError">
+		<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
+
+		<p th:text="#{project.samples.files.upload.error.body}">__Upload_error_message__</p>
+	</div>
+</script>
+</body>
+</html>

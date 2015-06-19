@@ -66,6 +66,7 @@
 		</div>
 	</div>
 	<upload-error></upload-error>
+	<file-upload-progress></file-upload-progress>
 	<div class="row">
 		<div class="col-md-12">
 			<table class="table" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
@@ -124,13 +125,8 @@
 
 </main>
 <th:block layout:fragment="page-scripts" th:inline="javascript">
-	<script type="text/ng-template" id="/upload-error.html">
-		<div class="alert alert-warning" ng-show="errorCtrl.showError">
-			<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
-
-			<p th:text="#{project.samples.files.upload.error.body}">__Upload_error_message__</p>
-		</div>
-	</script>
+	<div th:replace="templates/_file.utils :: upload-progress"></div>
+	<div th:replace="templates/_file.utils :: upload-error"></div>
 	<script type="text/ng-template" id="/upload-btn.html">
 		<button class="btn btn-default pull-right" ng-click="uploadCtrl.open()">
 			<span class="fa fa-fw fa-upload"></span>
@@ -183,7 +179,7 @@
 		</div>
 		</form>
 	</script>
-    
+
     <script type="text/ng-template" id="/confirm_pair.html">
 		<form method="post" th:action="@{/samples/{sId}/files/delete/pair(sId=${sampleId})}">
 			<div class="modal-header">
@@ -208,6 +204,8 @@
 	</script>
 	<script src="/resources/bower_components/ng-file-upload/ng-file-upload.min.js"
 	        th:src="@{/resources/bower_components/ng-file-upload/ng-file-upload.min.js}"></script>
+	<script src="/resources/js/modules/utilities/file.utils.js"
+	        th:src="@{/resources/js/modules/utilities/file.utils.js}"></script>
 	<script src="/resources/js/pages/samples/files.js" th:src="@{/resources/js/pages/samples/files.js}"></script>
 </th:block>
 </body>
