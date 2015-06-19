@@ -35,6 +35,8 @@ Once you start the virtual appliance, you can connect to IRIDA in several ways: 
 
 You can connect to the IRIDA web interface by opening your web browser and navigating to <http://localhost:48888/irida/>. The virtual appliance is configured to proxy traffic on port `48888` to port `80` in the virtual environment.
 
+You can log into the web interface for the first time using the username `admin` and the password `password1`. You will be prompted to change the password the first time you log in.
+
 You can see the Galaxy web interface by opening your web browser and navigating to <http://localhost:49999/>. The virtual appliance is configured to proxy traffic on port `49999` to port `9090` in the virtual environment. We encourage you to take a look around with Galaxy, but do not change any tools or configuration settings -- this instance of Galaxy is configured for internal workflow execution in IRIDA.
 
 #### Connecting with an uploader tool
