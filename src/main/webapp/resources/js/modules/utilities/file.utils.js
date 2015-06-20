@@ -91,6 +91,10 @@
             $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
           });
         });
+
+        $scope.$on(UPLOAD_ERROR, function() {
+          $scope.uploading = false;
+        });
       }]
     };
   }
