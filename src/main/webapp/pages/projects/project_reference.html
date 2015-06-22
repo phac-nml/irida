@@ -6,13 +6,21 @@
 	<script>window.dependencies = ['References'];</script>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="project-reference-files">
+<main layout:fragment="main" ddl:bundle-includes="project-reference-files" th:with="owner=(${isOwner} or ${isAdmin})">
 	<div class="row">
 		<div class="col-md-12">
-			<h1 th:text="#{project.nav.referenceFiles}">Hello</h1>
+			<h1>
+				<th:block th:text="#{project.nav.referenceFiles}">TITLE</th:block>
+				<span class="pull-right" th:if="${owner}" ng-controller="FileUploadCtrl as upload">
+					<button class="btn btn-default uploadRefBtn" ngf-select="upload.onFileSelect($files)">
+						<span class="fa fa-fw fa-upload"></span>
+						<span th:text="#{referenceFile.upload-btn}"></span>
+					</button>
+				</span>
+			</h1>
 		</div>
 	</div>
-	<div class="ng-cloak row" ng-controller="FilesCtrl as table" th:with="owner=(${isOwner} or ${isAdmin})">
+	<div class="ng-cloak row" ng-controller="FilesCtrl as table">
 		<section class="col-md-12 alert alert-info" ng-show="table.files.length===0">
 			<strong th:text="#{referenceFile.no-files.heading}">__No reference files available for this project.</strong>
 
@@ -22,16 +30,10 @@
 			<p id="rf-notice" th:if="${owner}" class="rf-owner" th:text="#{referenceFile.no-files.body-owner}">__Click the add
 				button to upload a new reference file to this project.</p>
 		</section>
-		<section th:if="${owner}" class="row" ng-controller="FileUploadCtrl as upload">
-			<div class="col-md-12">
-				<button class="btn btn-default uploadRefBtn" ngf-select="upload.onFileSelect($files)">
-					<span class="fa fa-fw fa-upload"></span>
-					<span th:text="#{referenceFile.upload-btn}"></span>
-				</button>
-			</div>
-		</section>
-		<upload-error></upload-error>
-		<file-upload-progress></file-upload-progress>
+		<div class="col-md-12" style="margin-top: 1rem;">
+			<upload-error></upload-error>
+			<file-upload-progress></file-upload-progress>
+		</div>
 		<section id="rf-files" class="col-md-12" ng-show="table.files.length > 0">
 			<table id="files-table" class="table">
 				<thead>

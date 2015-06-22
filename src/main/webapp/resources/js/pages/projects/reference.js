@@ -101,14 +101,16 @@
     });
   }
 
-  function FileUploadCtrl(fileService) {
+  function FileUploadCtrl($timeout, fileService) {
     var vm = this,
       url = TL.BASE_URL + 'referenceFiles/project/' + project.id + '/new';
 
     vm.onFileSelect = function ($files) {
       if ($files && $files.length) {
-        fileService.upload(url, $files).success(function () {
-          window.location.href = window.location.href;
+        fileService.upload(url, $files).then(function () {
+          $timeout(function () {
+            window.location.href = window.location.href;
+          }, 500);
         });
       }
     };
@@ -119,6 +121,6 @@
     .service('ReferenceFileService', ['$rootScope', '$modal', 'Restangular', 'notifications', ReferenceFileService])
     .controller('FilesCtrl', ['ProjectFileService', 'ReferenceFileService', FilesCtrl])
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
-    .controller('FileUploadCtrl', ['FileService', FileUploadCtrl])
+    .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl])
   ;
 })(window.angular, window.jQuery, window._, window.TL, window.project);
