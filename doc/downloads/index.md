@@ -21,7 +21,7 @@ You can find individual download links, and links to corresponding documentation
 IRIDA Virtual Appliance
 -----------------------
 
-The IRIDA install procedure is well documented, but is time consuming and must be adjusted to the quirks of your environment. We provide a fully-configured virtual appliance that can be opened with [Oracle VirtualBox](https://www.virtualbox.org/) for demonstration purposes. You can download the complete package at:
+Documentation for installing IRIDA can be found [here](../administrator/), but is time consuming and must be adjusted to the quirks of your environment. We provide a fully-configured virtual appliance that can be opened with [Oracle VirtualBox](https://www.virtualbox.org/) for demonstration purposes. You can download the complete package at:
 
 <https://irida.corefacility.ca/downloads/virtual/irida-vm-virtualbox-latest.zip>
 
