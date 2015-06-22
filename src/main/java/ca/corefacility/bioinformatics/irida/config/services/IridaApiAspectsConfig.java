@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.events.ProjectEventAspect;
 import ca.corefacility.bioinformatics.irida.events.ProjectEventHandler;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.validators.ValidMethodParametersAspect;
 
@@ -27,8 +28,9 @@ public class IridaApiAspectsConfig {
 	}
 
 	@Bean
-	public ProjectEventAspect projectEventAspect(ProjectEventRepository eventRepository) {
-		return new ProjectEventAspect(new ProjectEventHandler(eventRepository));
+	public ProjectEventAspect projectEventAspect(ProjectEventRepository eventRepository,
+			ProjectSampleJoinRepository psjRepository) {
+		return new ProjectEventAspect(new ProjectEventHandler(eventRepository, psjRepository));
 	}
 
 	@Bean

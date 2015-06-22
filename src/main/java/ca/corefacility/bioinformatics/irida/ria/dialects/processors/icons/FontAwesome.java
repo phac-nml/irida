@@ -105,6 +105,24 @@ public class FontAwesome {
 	private static final String COLLAPSE_SHOW_ICON = "chevron-right";
 	private static final String COLLAPSE_CLOSE_ATTRIBUTE = "hide";
 	private static final String COLLAPSE_CLOSE_ICON = "chevron-down";
+	
+	/*
+	 * Attribute to display a sample flask
+	 */
+	private static final String SAMPLE_ATTRIBUTE = "sample";
+	private static final String SAMPLE_ICON = "flask";
+	
+	/*
+	 * Attribute for a user icon
+	 */
+	private static final String USER_ATTRIBUTE = "user";
+	private static final String USER_ICON = "user";
+	
+	/*
+	 * Attribute for a banned icon
+	 */
+	private static final String BAN_ATTRIBUTE = "ban";
+	private static final String BAN_ICON = "ban";
 
 	/*
 	If using multiple icons in a list (such as a side bar) add the 'fixed=""' attribute to append this class.
@@ -134,6 +152,9 @@ public class FontAwesome {
 			.put(TERMINAL_ATTRIBUTE, TERMINAL_ICON)
 			.put(COLLAPSE_SHOW_ATTRIBUTE, COLLAPSE_SHOW_ICON)
 			.put(COLLAPSE_CLOSE_ATTRIBUTE, COLLAPSE_CLOSE_ICON)
+			.put(SAMPLE_ATTRIBUTE,SAMPLE_ICON)
+			.put(USER_ATTRIBUTE,USER_ICON)
+			.put(BAN_ATTRIBUTE,BAN_ICON)
 			.build();
 
 	/*
