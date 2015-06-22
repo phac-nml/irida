@@ -7,7 +7,6 @@
 			<h3 class="pull-left" style="margin: 0;"><fa:icon type="upload" fixed=""/>
 				<ng-pluralize count="count" data:when="'{\'1\': \'' + #{files.upload.message.singular} + '\', \'other\': \'' + #{files.upload.message.plural} + '\'}'"></ng-pluralize>
 			</h3>
-			<button ng-click="closeProgress()" class="btn btn-default btn-sm pull-right" th:text="#{form.btn.close}">Close</button>
 		</div>
 		<md-list>
 			<md-list-item class="md-2-line" ng-repeat="file in files">
