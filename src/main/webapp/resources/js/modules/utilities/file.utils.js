@@ -61,18 +61,6 @@
       $q.all(promises);
 
       return defer.promise;
-
-      //return $q(function (resolve, reject) {
-      //  if (files) {
-      //
-      //  } else {
-      //    if (typeof reject === 'function') {
-      //      reject('No files');
-      //    } else {
-      //      $log.error('No files passed to file.utils#upload');
-      //    }
-      //  }
-      //});
     }
   }
 
