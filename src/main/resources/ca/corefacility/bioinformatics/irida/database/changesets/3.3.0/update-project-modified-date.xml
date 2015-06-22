@@ -6,6 +6,8 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet id="update-project-modified-date" author="tom">
+		<dropColumn columnName="modifiedDate" tableName="project_AUD" />
+
 		<sql>
 			UPDATE project p SET modifiedDate=(SELECT created_date FROM
 			project_event e

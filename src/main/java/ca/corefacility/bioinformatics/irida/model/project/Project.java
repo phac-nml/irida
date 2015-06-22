@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -56,6 +57,7 @@ public class Project extends IridaResourceSupport implements IridaThing, IridaPr
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@NotAudited
 	private Date modifiedDate;
 
 	@Lob
