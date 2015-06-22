@@ -48,6 +48,9 @@
           file: file
         }).success(function () {
           defer.resolve();
+        }).error(function(){
+          $rootScope.$broadcast(UPLOAD_ERROR);
+          defer.reject("Error uploading file");
         });
         $rootScope.$broadcast(UPLOAD_EVENT, {
           file: file,
