@@ -2,13 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <script th:fragment="upload-progress" type="text/ng-template" id="/files-upload-progress.html">
-	<div class="row" ng-show="uploading">
-		<div class="col-md-12">
-			<h3><fa:icon type="upload" fixed=""/>
+	<div class="row md-whiteframe-z1" layout-padding="" ng-show="uploading" style="margin-bottom: 1rem;">
+		<div class="col-md-12 clear-fix">
+			<h3 class="pull-left" style="margin: 0;"><fa:icon type="upload" fixed=""/>
 				<ng-pluralize count="count" data:when="'{\'1\': \'' + #{files.upload.message.singular} + '\', \'other\': \'' + #{files.upload.message.plural} + '\'}'"></ng-pluralize>
 			</h3>
-			<progressbar value="progress" type="success"><b>{{progress}}%</b></progressbar>
+			<button ng-click="closeProgress()" class="btn btn-default btn-sm pull-right" th:text="#{form.btn.close}">Close</button>
 		</div>
+		<md-list>
+			<md-list-item class="md-2-line" ng-repeat="file in files">
+				<div class="md-list-item-text">
+					<h4>Uploading {{ file.filename }} [{{file.progress}}%]</h4>
+					<md-progress-linear md-mode="determinate" ng-value="file.progress"></md-progress-linear>
+				</div>
+			</md-list-item>
+		</md-list>
 	</div>
 </script>
 

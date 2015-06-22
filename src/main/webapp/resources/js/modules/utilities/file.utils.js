@@ -16,7 +16,7 @@
    * @returns {{download: download, upload: uploadFiles}}
    * @constructor
    */
-  function FileService($rootScope, upload) {
+  function FileService($rootScope, $q, $log, upload) {
     return {
       download: download,
       upload: uploadFiles
@@ -39,20 +39,40 @@
      * @param files Array of files.
      */
     function uploadFiles(url, files) {
-      if (files && files.length) {
+      var defer = $q.defer();
+      var promises = [];
+
+      files.forEach(function (file) {
         var currentUpload = upload.upload({
           url: url,
-          file: files
-        })
-          .error(function () {
-            $rootScope.$broadcast(UPLOAD_ERROR);
-          });
-        $rootScope.$broadcast(UPLOAD_EVENT, {
-          files: files,
-          progress: currentUpload.progress
+          file: file
+        }).success(function () {
+          defer.resolve();
         });
-      }
-      return currentUpload;
+        $rootScope.$broadcast(UPLOAD_EVENT, {
+          file: file,
+          progress: currentUpload.progress,
+          count: files.length
+        });
+
+        promises.push(currentUpload);
+      });
+
+      $q.all(promises);
+
+      return defer.promise;
+
+      //return $q(function (resolve, reject) {
+      //  if (files) {
+      //
+      //  } else {
+      //    if (typeof reject === 'function') {
+      //      reject('No files');
+      //    } else {
+      //      $log.error('No files passed to file.utils#upload');
+      //    }
+      //  }
+      //});
     }
   }
 
@@ -83,14 +103,29 @@
       require: '^filesUploading',
       templateUrl: '/files-upload-progress.html',
       controller: ['$scope', function($scope) {
+        $scope.files = [];
         $scope.upload = null;
-        $scope.$on(UPLOAD_EVENT, function (evt, args) {
-          $scope.uploading = true;
-          $scope.count = args.files.length;
-          args.progress(function (evt) {
-            $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
-          });
+
+        $scope.$on('NEW_UPLOAD', function (evt, args) {
+          console.log('new Upload');
+          $scope.closeProgress();
         });
+
+        $scope.$on(UPLOAD_EVENT, function (evt, args) {
+          var file = {};
+          $scope.count = args.count;
+          args.progress(function (evt) {
+            file.progress = parseInt(100.0 * evt.loaded / evt.total);
+            file.filename = evt.config.file.name;
+          });
+          $scope.files.push(file);
+          $scope.uploading = true;
+        });
+
+        $scope.closeProgress = function () {
+          $scope.files = [];
+          $scope.uploading = false;
+        };
       }]
     };
   }
@@ -116,7 +151,7 @@
   }
 
   angular.module('file.utils', ['ngFileUpload'])
-    .factory('FileService', ['$rootScope', 'Upload', FileService])
+    .factory('FileService', ['$rootScope', '$q', '$log', 'Upload', FileService])
     .filter('humanReadableBytes', [humanReadableBytes])
     .directive('fileUploadProgress', [fileUploadProgress])
     .directive('uploadError', [uploadError])

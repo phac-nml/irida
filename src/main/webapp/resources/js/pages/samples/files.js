@@ -86,13 +86,15 @@
       'restrict': 'E',
       'templateUrl': '/upload-btn.html',
       'controllerAs': 'uploadCtrl',
-      'controller': ['$modal', 'FileService', function($modal, fileService) {
+      'controller': ['$scope', '$timeout', '$modal', 'FileService', function($scope, $timeout, $modal, fileService) {
         var vm = this;
         vm.files = [];
         /**
          * Open the modal for file selection
          */
         vm.open = function() {
+          $scope.$broadcast('NEW_UPLOAD');
+
           $modal.open({
               animation: true,
               templateUrl: '/upload.html',
@@ -101,8 +103,10 @@
             })
             .result.then(function(files) {
               var url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
-              fileService.upload(url, files).success(function() {
-                window.location.href = window.location.href;
+              fileService.upload(url, files).then(function() {
+                $timeout(function () {
+                  //window.location.href = window.location.href;
+                }, 500);
               });
             });
         };

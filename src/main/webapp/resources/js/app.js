@@ -4,6 +4,7 @@
     'ngAria',
     'ngResource',
     'ngAnimate',
+    'ngMaterial',
     'ngMessages',
     'ui.bootstrap',
     'restangular',
