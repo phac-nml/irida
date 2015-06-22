@@ -58,7 +58,7 @@ public class ProjectEventHandler {
 		Class<? extends ProjectEvent> eventClass = methodEvent.getEventClass();
 
 		Collection<ProjectEvent> events = new ArrayList<>();
-		
+
 		if (eventClass.equals(SampleAddedProjectEvent.class)) {
 			events.add(handleSampleAddedProjectEvent(methodEvent));
 		} else if (eventClass.equals(UserRemovedProjectEvent.class)) {
@@ -70,8 +70,8 @@ public class ProjectEventHandler {
 		} else {
 			logger.warn("No handler found for event class " + eventClass.getName());
 		}
-		
-		for(ProjectEvent event : events){
+
+		for (ProjectEvent event : events) {
 			Project project = event.getProject();
 			project.setModifiedDate(event.getCreatedDate());
 			projectRepository.save(project);
@@ -84,6 +84,7 @@ public class ProjectEventHandler {
 	 * 
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
+	 * @return the newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleSampleAddedProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -101,6 +102,7 @@ public class ProjectEventHandler {
 	 * 
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
+	 * @return the newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleUserRemovedEvent(MethodEvent event) {
 		Object[] args = event.getArgs();
@@ -126,6 +128,7 @@ public class ProjectEventHandler {
 	 * 
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
+	 * @return the newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleUserRoleSetProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -143,6 +146,8 @@ public class ProjectEventHandler {
 	 * methods which return a {@link SampleSequenceFileJoin}.
 	 * 
 	 * @param event
+	 *            the {@link MethodEvent} of the added sequence file
+	 * @return A collection of the the newly created {@link ProjectEvent}s
 	 */
 	private Collection<ProjectEvent> handleSequenceFileAddedEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -161,6 +166,7 @@ public class ProjectEventHandler {
 	 * @param returnValue
 	 *            Return value from a method which should be a
 	 *            {@link SampleSequenceFileJoin}
+	 * @return a Collection of the newly created {@link ProjectEvent}s
 	 */
 	private Collection<ProjectEvent> handleIndividualSequenceFileAddedEvent(Object returnValue) {
 		if (!(returnValue instanceof SampleSequenceFileJoin)) {
@@ -169,14 +175,14 @@ public class ProjectEventHandler {
 		}
 		SampleSequenceFileJoin join = (SampleSequenceFileJoin) returnValue;
 		Sample subject = join.getSubject();
-		
+
 		Collection<ProjectEvent> events = new ArrayList<>();
 
 		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(subject);
 		for (Join<Project, Sample> psj : projectForSample) {
 			events.add(eventRepository.save(new DataAddedToSampleProjectEvent(psj.getSubject(), subject)));
 		}
-		
+
 		return events;
 
 	}
