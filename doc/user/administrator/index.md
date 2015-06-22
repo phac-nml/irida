@@ -284,3 +284,7 @@ You can also view the overrepresented sequences detected by FastQC by clicking o
 The overrepresented sequences page displays all of the overrepresented sequences detected by FastQC:
 
 ![Sequencing run file overrepresented sequences page.](images/sequencing-run-overrepresented-sequences.png)
+
+Uploading Data to IRIDA
+=======================
+IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to IRIDA using the REST API. Please see the [uploading data guide](uploader/) for more information on how to upload data.
