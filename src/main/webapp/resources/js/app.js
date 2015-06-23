@@ -27,10 +27,6 @@
   }
 
   angular.module('irida', deps)
-    // This configures the base url globally for all restangular calls.
-    .config(function(RestangularProvider) {
-      RestangularProvider.setBaseUrl(TL.BASE_URL);
-    })
     .config(function($httpProvider) {
       $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
