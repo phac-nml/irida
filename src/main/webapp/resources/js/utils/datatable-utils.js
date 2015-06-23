@@ -37,7 +37,7 @@ var datatable = (function(moment, tl, page) {
    */
   function createItemButton(data, type, full) {
     if (tl && full.link && tl.BASE_URL) {
-      return '<a class="item-link btn btn-default btn-xs" href="' + tl.BASE_URL + full.link + '">' + data + '</a>';
+      return '<a class="item-link btn btn-default table-cell-override btn-xs" title="' + data + '" href="' + tl.BASE_URL + full.link + '">' + data + '</a>';
     } else {
       return data;
     }
