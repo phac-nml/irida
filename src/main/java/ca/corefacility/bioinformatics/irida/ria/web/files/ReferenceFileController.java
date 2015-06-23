@@ -83,10 +83,8 @@ public class ReferenceFileController {
 	 *
 	 * @param projectId
 	 *            The id of the project to add the file to.
-	 * @param file
-	 *            {@link MultipartFile} file being uploaded.
-	 * @param locale
-	 *            the locale specified by the browser.
+	 * @param files
+	 *            {@link List} of {@link MultipartFile} file being uploaded.
 	 * @param response
 	 *            {@link HttpServletResponse}
 	 *
