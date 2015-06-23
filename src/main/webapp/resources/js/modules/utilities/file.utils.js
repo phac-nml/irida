@@ -48,6 +48,9 @@
           file: file
         }).success(function () {
           defer.resolve();
+        }).error(function(){
+          $rootScope.$broadcast(UPLOAD_ERROR);
+          defer.reject("Error uploading file");
         });
         $rootScope.$broadcast(UPLOAD_EVENT, {
           file: file,
@@ -110,6 +113,10 @@
           $scope.uploading = true;
         });
 
+        $scope.$on(UPLOAD_ERROR, function() {
+          $scope.uploading = false;
+        });
+
         $scope.closeProgress = function () {
           $scope.files = [];
           $scope.uploading = false;
@@ -124,6 +131,7 @@
    */
   function humanReadableBytes() {
     return function(bytes) {
+      if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {return bytes;}
       var thresh = 1024;
       if (Math.abs(bytes) < thresh) {
         return bytes + ' B';

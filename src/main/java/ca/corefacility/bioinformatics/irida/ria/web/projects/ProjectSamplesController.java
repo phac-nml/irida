@@ -553,6 +553,8 @@ public class ProjectSamplesController {
 	 * 		the ID of the {@link Project} to add to
 	 * @param sample
 	 * 		The {@link Sample} to create
+	 * @param response
+	 * 		{@link HttpServletResponse}
 	 *
 	 * @return Success status and id if successful, errors if not
 	 */
