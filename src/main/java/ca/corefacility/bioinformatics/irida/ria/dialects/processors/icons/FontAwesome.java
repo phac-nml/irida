@@ -99,25 +99,25 @@ public class FontAwesome {
 	private static final String TERMINAL_ATTRIBUTE = "terminal";
 	private static final String TERMINAL_ICON = "terminal";
 	/*
-	Attribute be used to indicate for collapsible panels
-	*/
+	 * Attribute be used to indicate for collapsible panels
+	 */
 	private static final String COLLAPSE_SHOW_ATTRIBUTE = "show";
 	private static final String COLLAPSE_SHOW_ICON = "chevron-right";
 	private static final String COLLAPSE_CLOSE_ATTRIBUTE = "hide";
 	private static final String COLLAPSE_CLOSE_ICON = "chevron-down";
-	
+
 	/*
 	 * Attribute to display a sample flask
 	 */
 	private static final String SAMPLE_ATTRIBUTE = "sample";
 	private static final String SAMPLE_ICON = "flask";
-	
+
 	/*
 	 * Attribute for a user icon
 	 */
 	private static final String USER_ATTRIBUTE = "user";
 	private static final String USER_ICON = "user";
-	
+
 	/*
 	 * Attribute for a banned icon
 	 */
@@ -125,14 +125,15 @@ public class FontAwesome {
 	private static final String BAN_ICON = "ban";
 
 	/*
-	If using multiple icons in a list (such as a side bar) add the 'fixed=""' attribute to append this class.
-	This will line up the icons properly.
+	 * If using multiple icons in a list (such as a side bar) add the 'fixed=""'
+	 * attribute to append this class. This will line up the icons properly.
 	 */
 	private static final String FIXED_WIDTH_CLASS = "fa-fw";
 
 	/*
-	Map to convert the attribute to the icon name
+	 * Map to convert the attribute to the icon name
 	 */
+	// @formatter:off
 	private static final Map<String, String> FA_ATTRIBUTE_TO_CLASS_MAP = new ImmutableMap.Builder<String, String>()
 			.put(REMOVE_ATTRIBUTE, REMOVE_ICON)
 			.put(DELETE_ATTRIBUTE, DELETE_ICON)
@@ -156,10 +157,12 @@ public class FontAwesome {
 			.put(USER_ATTRIBUTE,USER_ICON)
 			.put(BAN_ATTRIBUTE,BAN_ICON)
 			.build();
+	// @formatter:on
 
 	/*
 	Map to convert the size attribute to an icon size.
 	 */
+	// @formatter:off
 	private static final Map<String, String> ICON_SIZE = ImmutableMap.of(
 			"lg", "fa-lg",
 			"2x", "fa-2x",
@@ -167,6 +170,7 @@ public class FontAwesome {
 			"4x", "fa-4x",
 			"5x", "fa-5x"
 	);
+	// @formatter:on
 
 	private List<String> classes;
 
@@ -179,7 +183,7 @@ public class FontAwesome {
 		/**
 		 * Creates a {@link Builder} with the type of icon to create
 		 * @param type {@link String} type of icon to use.
-		 * @throws IconNotFoundException
+		 * @throws IconNotFoundException if the icon type doesn't exist
 		 */
 		public Builder(String type) throws IconNotFoundException {
 			if (FA_ATTRIBUTE_TO_CLASS_MAP.containsKey(type)) {
@@ -212,7 +216,7 @@ public class FontAwesome {
 		 * 		{@link String} desired icon size or null
 		 *
 		 * @return {@link Builder}
-		 * @throws IconNotFoundException
+		 * @throws IconNotFoundException if the icon size isn't available
 		 */
 		public Builder setIconSize(String size) throws IconNotFoundException {
 			if (!Strings.isNullOrEmpty(size)) {
@@ -256,7 +260,7 @@ public class FontAwesome {
 	 * 		{@link String} type of icon to create.
 	 *
 	 * @return {@link Builder} for icons
-	 * @throws IconNotFoundException
+	 * @throws IconNotFoundException if the icon type doesn't exist
 	 */
 	public static Builder builder(String type) throws IconNotFoundException {
 		return new FontAwesome.Builder(type);

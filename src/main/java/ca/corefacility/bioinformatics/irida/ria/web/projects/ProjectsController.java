@@ -14,14 +14,10 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -37,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.config.web.IridaUIWebConfig;
+import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -96,7 +92,6 @@ public class ProjectsController {
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
 
-
 	// HTTP session variable name for Galaxy callback variable
 	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
 	public static final String GALAXY_CLIENT_ID_NAME = "galaxyExportToolClientID";
@@ -129,13 +124,12 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/projects")
 	public String getProjectsPage(Model model,
-			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
-			@RequestParam(value="galaxyClientID",required=false) String galaxyClientID,
-			HttpSession httpSession) {
+			@RequestParam(value = "galaxyCallbackUrl", required = false) String galaxyCallbackURL,
+			@RequestParam(value = "galaxyClientID", required = false) String galaxyClientID, HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 
-		//External exporting functionality
-		if(galaxyCallbackURL != null && galaxyClientID != null) {
+		// External exporting functionality
+		if (galaxyCallbackURL != null && galaxyClientID != null) {
 			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
 			httpSession.setAttribute(GALAXY_CLIENT_ID_NAME, galaxyClientID);
 		}
@@ -147,7 +141,7 @@ public class ProjectsController {
 	 * Get the admin projects page.
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 *
 	 * @return The name of the page
 	 */
@@ -184,7 +178,7 @@ public class ProjectsController {
 	 * Gets the name of the template for the new project page
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 *
 	 * @return The name of the create new project page
 	 */
@@ -197,18 +191,19 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Creates a new project and displays a list of users for the user to add to the project
+	 * Creates a new project and displays a list of users for the user to add to
+	 * the project
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 * @param name
-	 * 		String name of the project
+	 *            String name of the project
 	 * @param organism
-	 * 		Organism name
+	 *            Organism name
 	 * @param projectDescription
-	 * 		Brief description of the project
+	 *            Brief description of the project
 	 * @param remoteURL
-	 * 		URL for the project wiki
+	 *            URL for the project wiki
 	 *
 	 * @return The name of the add users to project page
 	 */
@@ -257,12 +252,12 @@ public class ProjectsController {
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.GET)
-	public String getProjectMetadataEditPage(final Model model, final Principal principal,
-			@PathVariable long projectId) throws IOException {
+	public String getProjectMetadataEditPage(final Model model, final Principal principal, @PathVariable long projectId)
+			throws IOException {
 		Project project = projectService.read(projectId);
 		User user = userService.getUserByUsername(principal.getName());
-		if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService
-				.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
+		if (user.getSystemRole().equals(Role.ROLE_ADMIN)
+				|| projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
 			if (!model.containsAttribute("errors")) {
 				model.addAttribute("errors", new HashMap<>());
 			}
@@ -325,14 +320,17 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
+	 * Search for taxonomy terms. This method will return a map of found
+	 * taxonomy terms and their child nodes.
 	 * <p>
-	 * Note: If the search term was not included in the results, it will be added as an option
+	 * Note: If the search term was not included in the results, it will be
+	 * added as an option
 	 *
 	 * @param searchTerm
-	 * 		The term to find taxa for
+	 *            The term to find taxa for
 	 *
-	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
+	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic
+	 *         tree of matching terms
 	 */
 	@RequestMapping("/projects/ajax/taxonomy/search")
 	@ResponseBody
@@ -359,7 +357,9 @@ public class ProjectsController {
 
 	/**
 	 * User mapping to get a list of all project they are on.
-	 * @param principal {@link Principal} currently logged in user.
+	 * 
+	 * @param principal
+	 *            {@link Principal} currently logged in user.
 	 * @return {@link List} of project {@link Map}
 	 */
 	@RequestMapping("/projects/ajax/list")
@@ -374,7 +374,7 @@ public class ProjectsController {
 	 * Admin mapping to get a list of all project they are on.
 	 *
 	 * @param principal
-	 * 		{@link Principal} currently logged in user.
+	 *            {@link Principal} currently logged in user.
 	 *
 	 * @return {@link List} of project {@link Map}
 	 */
@@ -387,7 +387,9 @@ public class ProjectsController {
 
 	/**
 	 * Generates a map of project information for the projects table
-	 * @param projectList {@link List} of {@link ProjectUserJoin}
+	 * 
+	 * @param projectList
+	 *            {@link List} of {@link ProjectUserJoin}
 	 * @return A list of information about a project.
 	 */
 	public List<Map<String, Object>> getProjectsDataMap(List<Join<Project, User>> projectList) {
@@ -395,9 +397,8 @@ public class ProjectsController {
 		List<Map<String, Object>> projectsData = new ArrayList<>(projectList.size());
 		for (Join<Project, User> join : projectList) {
 			Project p = join.getSubject();
-			String role = ((ProjectUserJoin) join).getProjectRole() != null ?
-					((ProjectUserJoin) join).getProjectRole().toString() :
-					"";
+			String role = ((ProjectUserJoin) join).getProjectRole() != null ? ((ProjectUserJoin) join).getProjectRole()
+					.toString() : "";
 			projectsData.add(createProjectDetailsMap(p, role));
 		}
 		return projectsData;
@@ -405,31 +406,33 @@ public class ProjectsController {
 
 	/**
 	 * Generates a map of projects for an admin user.
-	 * @param user {@link User} currently logged in user.
-	 * @param projects {@link List} of {@link Project}
+	 * 
+	 * @param user
+	 *            {@link User} currently logged in user.
+	 * @param projects
+	 *            {@link List} of {@link Project}
 	 * @return {@link List} of {@link Map} of project data.
 	 */
 	private List<Map<String, Object>> generateAdminProjectMap(User user, List<Project> projects) {
 		List<Map<String, Object>> result = new ArrayList<>(projects.size());
 		for (Project project : projects) {
-			String role = projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER) ?
-					ProjectRole.PROJECT_OWNER.toString() :
-					projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_USER) ?
-							ProjectRole.PROJECT_USER.toString() :
-							"PROJECT_NONE";
+			String role = projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER) ? ProjectRole.PROJECT_OWNER
+					.toString()
+					: projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_USER) ? ProjectRole.PROJECT_USER
+							.toString() : "PROJECT_NONE";
 			result.add(createProjectDetailsMap(project, role));
 		}
 		return result;
 	}
 
 	/**
-	 * Generates a map of the project data.  This is required for specific fields such as 'role', 'samples' and
-	 * 'members'
+	 * Generates a map of the project data. This is required for specific fields
+	 * such as 'role', 'samples' and 'members'
 	 *
 	 * @param project
-	 * 		{@link Project}
+	 *            {@link Project}
 	 * @param role
-	 * 		{@link String} user's role on the project.
+	 *            {@link String} user's role on the project.
 	 *
 	 * @return
 	 */
@@ -437,19 +440,18 @@ public class ProjectsController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("item", project);
 		map.put("link", "projects/" + project.getId());
-		map.put("custom", ImmutableMap.of(
-				"samples", String.valueOf(sampleService.getNumberOfSamplesForProject(project)),
-				"members", String.valueOf(userService.countUsersForProject(project)),
-				"role", role
-		));
+		map.put("custom", ImmutableMap.of("samples",
+				String.valueOf(sampleService.getNumberOfSamplesForProject(project)), "members",
+				String.valueOf(userService.countUsersForProject(project)), "role", role));
 		return map;
 	}
 
 	/**
-	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings
+	 * for displaing in the UI.
 	 *
 	 * @param e
-	 * 		{@link ConstraintViolationException} for the form submitted.
+	 *            {@link ConstraintViolationException} for the form submitted.
 	 *
 	 * @return Map of string {fieldName, error}
 	 */
@@ -472,10 +474,11 @@ public class ProjectsController {
 	/**
 	 * }
 	 * <p>
-	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
+	 * /** Recursively transform a {@link TreeNode} into a json parsable map
+	 * object
 	 *
 	 * @param node
-	 * 		The node to transform
+	 *            The node to transform
 	 *
 	 * @return A Map<String,Object> which may contain more children
 	 */
