@@ -915,7 +915,7 @@ Each analysis submission corresponds to a collection of inputs (files and parame
 
 ### Analysis
 
-An analysis is the final resulting outputs of an [analysis submission](#analysis-submission). You must follow the `analysis` link from an analysis submission, once it's completed.
+An analysis is the final resulting outputs of an [analysis submission](#analysis-submissions). You must follow the `analysis` link from an analysis submission, once it's completed.
 
 #### Links
 {:.no_toc}
