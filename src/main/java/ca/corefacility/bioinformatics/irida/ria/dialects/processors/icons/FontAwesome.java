@@ -74,6 +74,11 @@ public class FontAwesome {
 	private static final String DOWNLOAD_ATTRIBUTE = "download";
 	private static final String DOWNLOAD_ICON = "download";
 	/*
+	Attribute to be used for uploading
+	 */
+	private static final String UPLOAD_ATTRIBUTE = "upload";
+	private static final String UPLOAD_ICON = "upload";
+	/*
 	Attribute for pipeline types
 	 */
 	private static final String PIPELINE_TYPE_ATTRIBUTE = "pipelineType";
@@ -139,6 +144,7 @@ public class FontAwesome {
 			.put(CALENDAR_ATTRIBUTE, CALENDAR_ICON)
 			.put(LOADING_ATTRIBUTE, LOADING_ICON)
 			.put(DOWNLOAD_ATTRIBUTE, DOWNLOAD_ICON)
+			.put(UPLOAD_ATTRIBUTE, UPLOAD_ICON)
 			.put(PIPELINE_TYPE_ATTRIBUTE, PIPELINE_TYPE_ICON)
 			.put(PIPELINE_STATE_ATTRIBUTE, PIPELINE_STATE_ICON)
 			.put(FILE_ATTRIBUTE, FILE_ICON)

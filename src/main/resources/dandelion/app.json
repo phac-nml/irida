@@ -1,5 +1,5 @@
 {
   "bundle": "app",
-  "dependencies": [ "font-awesome" ],
+  "dependencies": [ "font-awesome", 'angular' ],
   "assets": []
 }
