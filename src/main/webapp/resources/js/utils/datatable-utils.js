@@ -43,6 +43,10 @@ var datatable = (function(moment, tl, page) {
     }
   }
 
+  function forceContentSize(data, type, full) {
+    return '<div class="table-cell-override" title="' + data + '">' + data + '</div>';
+  }
+
   /**
    * Called when the datatable is drawn.
    *    Resizes the table
@@ -57,9 +61,10 @@ var datatable = (function(moment, tl, page) {
    * Updates the filters and search field to use the appropriate bootstrap classes.
    */
   function updateFilters() {
-    var filters = document.querySelectorAll('input.search_init, select.search_init');
+    var filters = document.querySelectorAll('input.dandelion_column_filter, select.dandelion_column_filter');
     if (filters && filters.length) {
       [].forEach.call(filters, function (el) {
+        el.setAttribute('style','width:200px');
         var classList = el.classList;
         if (!classList.contains('form-control')) {
           el.classList.add('form-control');
@@ -100,6 +105,7 @@ var datatable = (function(moment, tl, page) {
     formatDate: formatDate,
     i18n: i18n,
     createItemButton: createItemButton,
+    forceContentSize: forceContentSize,
     tableDrawn: tableDrawn
   };
 })(window.moment, window.TL, window.PAGE);

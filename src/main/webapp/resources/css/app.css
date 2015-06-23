@@ -8352,3 +8352,13 @@ input {
 .form-group .alert {
   font-weight: normal;
 }
+
+/* line 29, ../../styles/app.scss */
+.container {
+  width: 1300px !important;
+}
+
+/* line 34, ../../styles/app.scss */
+input[type="search"] {
+  box-sizing: inherit !important;
+}
