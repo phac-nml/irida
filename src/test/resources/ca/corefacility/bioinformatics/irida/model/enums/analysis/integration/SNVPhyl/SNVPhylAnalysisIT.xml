@@ -3,7 +3,7 @@
 	<system_role description="A basic user in the system" name="ROLE_USER" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" remoteURL="somewhere" />
+		projectDescription="description" />
 
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
 		sequencerSampleId="sample1" sampleName="SampleA" />

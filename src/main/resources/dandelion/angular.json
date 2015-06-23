@@ -33,6 +33,22 @@
       "locations": {
         "webapp": "/resources/bower_components/angular-messages/angular-messages.js"
       }
+    },
+    {
+      "name": "angular-material",
+      "version": "0.10.0",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-material/angular-material.css"
+      }
+    },
+    {
+      "name": "angular-material",
+      "version": "0.10.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-material/angular-material.js"
+      }
     }
   ]
 }

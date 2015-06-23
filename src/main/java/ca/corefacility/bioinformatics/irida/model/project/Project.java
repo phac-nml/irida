@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -56,6 +57,7 @@ public class Project extends IridaResourceSupport implements IridaThing, IridaPr
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@NotAudited
 	private Date modifiedDate;
 
 	@Lob
@@ -74,10 +76,10 @@ public class Project extends IridaResourceSupport implements IridaThing, IridaPr
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
 	private List<RelatedProjectJoin> projectsRelatedTo;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectReferenceFileJoin> referenceFiles;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "localProject")
 	private List<RemoteRelatedProject> remoteRelatedProjects;
 
@@ -114,8 +116,8 @@ public class Project extends IridaResourceSupport implements IridaThing, IridaPr
 	public boolean equals(Object other) {
 		if (other instanceof Project) {
 			Project p = (Project) other;
-			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, p.modifiedDate)
-					&& Objects.equals(name, p.name) && Objects.equals(organization, p.organization);
+			return Objects.equals(createdDate, p.createdDate) && Objects.equals(name, p.name)
+					&& Objects.equals(organization, p.organization);
 		}
 
 		return false;

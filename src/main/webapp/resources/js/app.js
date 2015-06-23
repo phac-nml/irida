@@ -3,6 +3,7 @@
   var deps = _.union(window.dependencies || [], [
     'ngAria',
     'ngAnimate',
+    'ngMaterial',
     'ngMessages',
     'ui.bootstrap',
     'restangular',
