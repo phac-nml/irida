@@ -87,10 +87,9 @@ public class ReferenceFileController {
 	 *            {@link MultipartFile} file being uploaded.
 	 * @param locale
 	 *            the locale specified by the browser.
+	 * @param response
+	 *            {@link HttpServletResponse}
 	 *
-	 * @return a Map representation of the status of the creation.
-	 * @throws IOException
-	 *             if we fail to write the reference file to disk.
 	 */
 	@RequestMapping("/project/{projectId}/new")
 	public void createNewReferenceFile(@PathVariable Long projectId,
