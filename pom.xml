@@ -677,6 +677,7 @@
 				<configuration>
 					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
 					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
+					<quiet>true</quiet>
 				</configuration>
 			</plugin>
 			<plugin>
