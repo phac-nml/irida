@@ -569,8 +569,7 @@ public class ProjectSamplesController {
 	 * @param sample
 	 *            The {@link Sample} to create
 	 * @param response
-	 *            HTTP response object to set response status for successful
-	 *            upload or error.
+	 *            {@link HttpServletResponse}
 	 *
 	 * @return Success status and id if successful, errors if not
 	 */

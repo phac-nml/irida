@@ -12,10 +12,12 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.core.io.FileSystemResource;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
@@ -29,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 
 import com.google.common.collect.ImmutableMap;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * REST controller to manage sharing of {@link AnalysisSubmission},
@@ -170,6 +173,29 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		model.addAttribute(RESOURCE_NAME, analysisOutputFile);
 
 		return model;
+	}
+
+	/**
+	 * Get the actual file contents for an analysis output file.
+	 *
+	 * @param submissionId
+	 *            The {@link AnalysisSubmission} id
+	 * @param fileType
+	 *            The {@link AnalysisOutputFile} type as defined in the
+	 *            {@link Analysis} subclass
+	 * @return a {@link FileSystemResource} containing the contents of the {@link AnalysisOutputFile}.
+	 */
+	@RequestMapping(value = "/{submissionId}/analysis/file/{fileType}", produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId, @PathVariable String fileType) {
+		AnalysisSubmission read = analysisSubmissionService.read(submissionId);
+
+		if (read.getAnalysisState() != AnalysisState.COMPLETED) {
+			throw new EntityNotFoundException("Analysis is not completed");
+		}
+
+		AnalysisOutputFile analysisOutputFile = read.getAnalysis().getAnalysisOutputFile(fileType);
+		return new FileSystemResource(analysisOutputFile.getFile().toFile());
 	}
 
 	/**
