@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -40,7 +39,8 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 
 	@Column(name = "file_path", unique = true)
 	@NotNull(message = "{analysis.output.file.file.notnull}")
-	@JsonIgnore
+	@com.fasterxml.jackson.annotation.JsonIgnore
+	@org.codehaus.jackson.annotate.JsonIgnore
 	private final Path file;
 
 	@NotNull
@@ -148,7 +148,8 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		throw new UnsupportedOperationException("AnalysisOutputFile is immutable.");
 	}
 
-	@JsonIgnore
+	@com.fasterxml.jackson.annotation.JsonIgnore
+	@org.codehaus.jackson.annotate.JsonIgnore
 	public final ToolExecution getCreatedByTool() {
 		return createdByTool;
 	}
