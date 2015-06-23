@@ -387,8 +387,8 @@ public class ProjectsController {
 
 	/**
 	 * Generates a map of project information for the projects table
-	 *
-	 * @return Map containing the information on projects and users role.
+	 * @param projectList {@link List} of {@link ProjectUserJoin}
+	 * @return A list of information about a project.
 	 */
 	public List<Map<String, Object>> getProjectsDataMap(List<Join<Project, User>> projectList) {
 		// Create the format required by DataTable
