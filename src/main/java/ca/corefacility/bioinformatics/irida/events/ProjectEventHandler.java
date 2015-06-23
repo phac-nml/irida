@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.events;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -39,8 +40,7 @@ public class ProjectEventHandler {
 	private final ProjectSampleJoinRepository psjRepository;
 	private final ProjectRepository projectRepository;
 
-	public ProjectEventHandler(ProjectEventRepository eventRepository, ProjectSampleJoinRepository psjRepository,
-			ProjectRepository projectRepository) {
+	public ProjectEventHandler(ProjectEventRepository eventRepository, ProjectSampleJoinRepository psjRepository, ProjectRepository projectRepository) {
 		this.eventRepository = eventRepository;
 		this.psjRepository = psjRepository;
 		this.projectRepository = projectRepository;
@@ -58,7 +58,7 @@ public class ProjectEventHandler {
 		Class<? extends ProjectEvent> eventClass = methodEvent.getEventClass();
 
 		Collection<ProjectEvent> events = new ArrayList<>();
-
+		
 		if (eventClass.equals(SampleAddedProjectEvent.class)) {
 			events.add(handleSampleAddedProjectEvent(methodEvent));
 		} else if (eventClass.equals(UserRemovedProjectEvent.class)) {
@@ -70,10 +70,10 @@ public class ProjectEventHandler {
 		} else {
 			logger.warn("No handler found for event class " + eventClass.getName());
 		}
-
-		for (ProjectEvent event : events) {
-			Project project = event.getProject();
-			project.setModifiedDate(event.getCreatedDate());
+		
+		for(ProjectEvent e : events){
+			Project project = e.getProject();
+			project.setModifiedDate(new Date());
 			projectRepository.save(project);
 		}
 	}
@@ -84,7 +84,6 @@ public class ProjectEventHandler {
 	 * 
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
-	 * @return the newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleSampleAddedProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -102,7 +101,6 @@ public class ProjectEventHandler {
 	 * 
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
-	 * @return the newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleUserRemovedEvent(MethodEvent event) {
 		Object[] args = event.getArgs();
@@ -128,7 +126,6 @@ public class ProjectEventHandler {
 	 * 
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
-	 * @return the newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleUserRoleSetProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -146,34 +143,41 @@ public class ProjectEventHandler {
 	 * methods which return a {@link SampleSequenceFileJoin}.
 	 * 
 	 * @param event
-	 *            the {@link MethodEvent} of the added sequence file
-	 * @return A collection of the the newly created {@link ProjectEvent}s
 	 */
 	private Collection<ProjectEvent> handleSequenceFileAddedEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
+		Collection<ProjectEvent> events = new ArrayList<>();
+		
 		if (Collection.class.isAssignableFrom(returnValue.getClass())) {
 			Collection<?> collection = (Collection<?>) returnValue;
-			return handleIndividualSequenceFileAddedEvent(collection.iterator().next());
+
+			Object singleElement = collection.iterator().next();
+			if (!(singleElement instanceof SampleSequenceFileJoin)) {
+				throw new IllegalArgumentException(
+						"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
+			}
+
+			events.addAll(handleIndividualSequenceFileAddedEvent((SampleSequenceFileJoin) singleElement));
 		} else {
-			return handleIndividualSequenceFileAddedEvent(returnValue);
+			if (!(returnValue instanceof SampleSequenceFileJoin)) {
+				throw new IllegalArgumentException(
+						"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
+			}
+			events.addAll(handleIndividualSequenceFileAddedEvent((SampleSequenceFileJoin) returnValue));
 		}
+		
+		return events;
 	}
 
 	/**
 	 * Create {@link DataAddedToSampleProjectEvent} for all {@link Project}s a
 	 * {@link Sample} belongs to
 	 * 
-	 * @param returnValue
-	 *            Return value from a method which should be a
-	 *            {@link SampleSequenceFileJoin}
-	 * @return a Collection of the newly created {@link ProjectEvent}s
+	 * @param join
+	 *            a {@link SampleSequenceFileJoin} to turn into a
+	 *            {@link DataAddedToSampleProjectEvent}
 	 */
-	private Collection<ProjectEvent> handleIndividualSequenceFileAddedEvent(Object returnValue) {
-		if (!(returnValue instanceof SampleSequenceFileJoin)) {
-			throw new IllegalArgumentException(
-					"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
-		}
-		SampleSequenceFileJoin join = (SampleSequenceFileJoin) returnValue;
+	private Collection<ProjectEvent> handleIndividualSequenceFileAddedEvent(SampleSequenceFileJoin join) {
 		Sample subject = join.getSubject();
 
 		Collection<ProjectEvent> events = new ArrayList<>();
@@ -182,8 +186,6 @@ public class ProjectEventHandler {
 		for (Join<Project, Sample> psj : projectForSample) {
 			events.add(eventRepository.save(new DataAddedToSampleProjectEvent(psj.getSubject(), subject)));
 		}
-
 		return events;
-
 	}
 }
