@@ -205,12 +205,13 @@ Resources
 
 IRIDA has several major resources:
 
-1. Users,
-2. Projects,
-  * Samples
-  * Sequence files
-3. Sequencing Runs
-4. Analysis Submissions
+1. [Users](#users),
+2. [Projects](#projects),
+  * [Samples](#samples)
+  * [Sequence files](#sequence-files)
+3. [Sequencing Runs](#sequencing-runs)
+4. [Analysis Submissions](#analysis-submissions)
+5. [Analysis](#analysis)
 
 ### Users
 
