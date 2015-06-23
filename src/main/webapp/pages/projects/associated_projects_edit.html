@@ -193,16 +193,13 @@
 <script th:inline="javascript">
 	var PAGE = {
 			urls: {
-				local: {
-					get: /*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/ajax/available'
-				},
-				remoate:{}
+				base: /*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
 			}
 		},
 		app = angular.module('associated.edit', ['irida.datatables', 'restangular', 'frapontillo.bootstrap-switch']);
 
 	app.config(function (RestangularProvider) {
-		RestangularProvider.setBaseUrl(/*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/');
+		RestangularProvider.setBaseUrl(PAGE.urls.base);
 	});
 
 	app.factory('AssociatedService', function (Restangular) {
@@ -212,7 +209,7 @@
 		function AssociatedService() {
 			var self = this;
 			self.getAssociated = function (params) {
-				return base.customGET(PAGE.urls.local.get, params);
+				return base.customGET("ajax/available", params);
 			};
 			
 			self.getRemoteAssociated = function (apiId) {
