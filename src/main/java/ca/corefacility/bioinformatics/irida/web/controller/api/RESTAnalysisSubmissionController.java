@@ -183,12 +183,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * @param fileType
 	 *            The {@link AnalysisOutputFile} type as defined in the
 	 *            {@link Analysis} subclass
-	 * @return {@link ModelMap} containing the {@link AnalysisOutputFile}
+	 * @return a {@link FileSystemResource} containing the contents of the {@link AnalysisOutputFile}.
 	 */
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileType}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
 	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId, @PathVariable String fileType) {
-		ModelMap model = new ModelMap();
 		AnalysisSubmission read = analysisSubmissionService.read(submissionId);
 
 		if (read.getAnalysisState() != AnalysisState.COMPLETED) {
