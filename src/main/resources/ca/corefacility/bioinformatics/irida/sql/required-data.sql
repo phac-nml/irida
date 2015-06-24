@@ -13,7 +13,7 @@ INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'manager@nowhere.ca', 'Mr.', 'Manager', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'manager', 1, 'ROLE_MANAGER', 1);
 
 -- projects required for integration tests
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES (now(), now() , 'Project 1', 'E. coli');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES (now(), now() , 'Project 1', 'E. coli O157 I am a very long that is out fo control, this should be even longer');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES (now(), now() , 'Project 3', 'E. coli');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES (now(), now() , 'Project 2', 'E. coli');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES (now(), now() , 'Project 5', 'E. coli');
