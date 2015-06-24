@@ -43,9 +43,9 @@
                     dt:renderFunction="iridaDatatables#datatable.i18n"></th>
                 <th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
                 <th dt:property="custom.members" dt:searchable="false" th:text="#{projects.table.members}"></th>
-                <th dt:property="item.createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
+                <th dt:property="item.createdDate" th:text="#{projects.table.created}"
                     dt:renderFunction="iridaDatatables#datatable.formatDate"></th>
-                <th dt:property="item.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
+                <th dt:property="item.modifiedDate" dt:sortInitDirection="asc" th:text="#{projects.table.modified}"
                     dt:renderFunction="iridaDatatables#datatable.formatDate"></th>
             </tr>
             </thead>
