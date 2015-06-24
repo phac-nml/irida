@@ -42,7 +42,7 @@ public class AbstractIridaUIITChromeDriver {
     @BeforeClass
     public static void setUp() {
         driver = new ChromeDriver();
-        driver.manage().window().setSize(new Dimension(1024, 900));
+        driver.manage().window().setSize(new Dimension(1400, 900));
         driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
     }
 

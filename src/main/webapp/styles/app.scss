@@ -25,3 +25,12 @@
 .form-group .alert {
   font-weight: normal;
 }
+
+.container {
+  width: 1300px!important;
+}
+
+// Material overide, conflicts with bootstrap.
+input[type="search"] {
+  box-sizing: inherit!important;
+}

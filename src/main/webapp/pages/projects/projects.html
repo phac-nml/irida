@@ -6,6 +6,23 @@
       layout:decorator="template/page">
 <head>
     <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
+    <style>
+        #projectsTable_wrapper th:nth-child(3), #projectsTable_wrapper td:nth-child(3),
+        #projectsTable th:nth-child(3), #projectsTable td:nth-child(3) {
+            width: 200px!important;
+            wrap:nowrap;
+            white-space:nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .table-cell-override {
+            width: 200px!important;
+            wrap:nowrap;
+            white-space:nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 </head>
 <body ddl:bundle-includes="projects">
 <div layout:fragment="page">
@@ -20,7 +37,8 @@
                 <th id="project-id" dt:property="item.identifier" th:text="#{projects.table.id}"></th>
                 <th id="project-name" dt:filterable="true" dt:property="item.name" th:text="#{projects.table.name}"
                     dt:renderFunction="iridaDatatables#datatable.createItemButton"></th>
-                <th id="project-organism" dt:filterable="true" dt:filterType="select" dt:property="item.organism" th:text="#{projects.table.organism}"></th>
+                <th id="project-organism" class="table-cell-override" dt:filterable="true" dt:filterType="select" dt:property="item.organism"
+                    th:text="#{projects.table.organism}" dt:renderFunction="iridaDatatables#datatable.forceContentSize"></th>
                 <th dt:property="custom.role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles" th:text="#{projects.table.role}"
                     dt:renderFunction="iridaDatatables#datatable.i18n"></th>
                 <th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
