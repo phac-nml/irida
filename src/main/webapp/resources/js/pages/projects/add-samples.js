@@ -130,7 +130,7 @@
 
     function sampleCreatedSuccess(response) {
       vm.sample = response.sample;
-      window.location = URL_BASE + '/' + response.sample.id + '/sequenceFiles';
+      window.location = URL_BASE + '/' + response.sampleId + '/sequenceFiles';
     }
 
     function sampleCreatedError(response) {
