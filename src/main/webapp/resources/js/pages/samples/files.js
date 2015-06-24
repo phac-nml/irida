@@ -103,7 +103,7 @@
             })
             .result.then(function(files) {
               var url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
-              fileService.upload(url, files).then(function() {
+              fileService.uploadBulk(url, files).then(function() {
                 $timeout(function () {
                   window.location.href = window.location.href;
                 }, 500);

@@ -19,7 +19,8 @@
   function FileService($rootScope, $q, $log, upload) {
     return {
       download: download,
-      upload: uploadFiles
+      upload: uploadFiles,
+      uploadBulk: uploadBulkFiles
     };
 
     /**
@@ -62,6 +63,27 @@
       });
 
       $q.all(promises);
+
+      return defer.promise;
+    }
+
+    /**
+     * Uploads list of files in one request
+     * @param url Url to upload files to.
+     * @param files Array of files.
+     */
+    function uploadBulkFiles(url, files) {
+      var defer = $q.defer()
+
+      upload.upload({
+        url: url,
+        file: files
+      }).success(function () {
+        defer.resolve();
+      }).error(function () {
+        $rootScope.$broadcast(UPLOAD_ERROR);
+        defer.reject("Error uploading file");
+      });
 
       return defer.promise;
     }
