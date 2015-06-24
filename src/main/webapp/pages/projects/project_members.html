@@ -88,7 +88,7 @@
         </form>
     </div>
     <div class="panel-footer text-right">
-        <button class="btn btn-default popup-modal-dismiss" th:text="#{project.members.add.cancel}">_Cancel_</button>
+        <button id="closeAddMemer" class="btn btn-default popup-modal-dismiss" th:text="#{project.members.add.cancel}">_Cancel_</button>
         <button id="submitAddMember" class="btn btn-primary" th:text="#{project.members.add.submit}">_Submit_</button>
     </div>
 </section>
@@ -298,6 +298,10 @@ $(document).ready(function () {
                 $("#add-user-role").select2("val", "PROJECT_USER");
             }
         }
+    });
+
+    $("#closeAddMemer").on('click', function() {
+        $.magnificPopup.close();
     });
 
     $("#submitAddMember").click(function () {
