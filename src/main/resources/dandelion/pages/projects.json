@@ -1,0 +1,8 @@
+{
+  "bundle": "projects",
+  "dependencies": [
+    "momentjs",
+    "irida-datatables"
+  ],
+  "assets": []
+}

@@ -1,5 +1,36 @@
 {
   "bundle": "app",
-  "dependencies": [ "font-awesome", 'angular' ],
-  "assets": []
+  "dependencies": [
+    "font-awesome",
+    "utilities",
+    "cart",
+    "angular",
+    "notifications"
+  ],
+  "assets": [
+    {
+      "name": "httpInterceptor",
+      "version": "0.0.1",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/services/httpInterceptor.js"
+      }
+    },
+    {
+      "name": "irida-utilities",
+      "version": "0.0.1",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/modules/utilities/irida.utilities.js"
+      }
+    },
+    {
+      "name": "app",
+      "version": "0.0.1",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/app.js"
+      }
+    }
+  ]
 }
