@@ -3,6 +3,7 @@
   "dependencies": [
     "font-awesome",
     "utilities",
+    "cart",
     "angular",
     "notifications"
   ],
@@ -21,14 +22,6 @@
       "type": "js",
       "locations": {
         "webapp": "/resources/js/modules/utilities/irida.utilities.js"
-      }
-    },
-    {
-      "name": "cart",
-      "version": "0.0.1",
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/modules/cart/irida.cart.js"
       }
     },
     {
