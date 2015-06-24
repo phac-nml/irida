@@ -200,6 +200,10 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		page.clickUseParametersButton();
 		assertEquals("Selected parameter set should be the saved one.", savedParametersName,
 				page.getSelectedParameterSet());
+		// now test that we can run the pipeline
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
 	}
 	
 	@Test

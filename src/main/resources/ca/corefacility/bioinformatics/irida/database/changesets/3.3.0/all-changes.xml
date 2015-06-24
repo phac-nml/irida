@@ -9,4 +9,6 @@
 		relativeToChangelogFile="true" />
 	<include file="update-project-modified-date.xml"
 		relativeToChangelogFile="true" />
+	<include file="fix-workflow-id-column-type.xml"
+			 relativeToChangelogFile="true" />
 </databaseChangeLog>
