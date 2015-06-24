@@ -44,7 +44,11 @@ var datatable = (function(moment, tl, page) {
   }
 
   function forceContentSize(data, type, full) {
-    return '<div class="table-cell-override" title="' + data + '">' + data + '</div>';
+    if (data && data.length > 0) {
+      return '<div class="table-cell-override" title="' + data + '">' + data + '</div>';
+    } else {
+      return data;
+    }
   }
 
   /**
