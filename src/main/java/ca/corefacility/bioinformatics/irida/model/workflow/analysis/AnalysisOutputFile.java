@@ -18,8 +18,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
@@ -41,7 +39,8 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 
 	@Column(name = "file_path", unique = true)
 	@NotNull(message = "{analysis.output.file.file.notnull}")
-	@JsonIgnore
+	@com.fasterxml.jackson.annotation.JsonIgnore
+	@org.codehaus.jackson.annotate.JsonIgnore
 	private final Path file;
 
 	@NotNull
@@ -149,7 +148,8 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		throw new UnsupportedOperationException("AnalysisOutputFile is immutable.");
 	}
 
-	@JsonIgnore
+	@com.fasterxml.jackson.annotation.JsonIgnore
+	@org.codehaus.jackson.annotate.JsonIgnore
 	public final ToolExecution getCreatedByTool() {
 		return createdByTool;
 	}

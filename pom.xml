@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-alpha3-SNAPSHOT</version>
+	<version>1.0.0-alpha3-rc1</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -677,6 +677,7 @@
 				<configuration>
 					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
 					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
+					<quiet>true</quiet>
 				</configuration>
 			</plugin>
 			<plugin>

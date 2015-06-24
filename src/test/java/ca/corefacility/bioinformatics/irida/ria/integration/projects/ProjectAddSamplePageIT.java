@@ -2,9 +2,13 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectAddSamplePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -42,5 +46,7 @@ public class ProjectAddSamplePageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Create button should be enabled", page.isCreateButtonEnabled());
 		page.createSample();
 		assertTrue("Should redirect to sample files page.", driver().getCurrentUrl().contains("/sequenceFiles"));
+		SampleFilesPage filesPage = new SampleFilesPage(driver());
+		assertEquals("sample name should be equal", NAME_VALID, filesPage.getSampleName());
 	}
 }

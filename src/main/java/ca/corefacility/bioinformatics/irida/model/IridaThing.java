@@ -56,7 +56,7 @@ public interface IridaThing extends Timestamped {
 	 * compatibility with previous clients which use the IRIDA REST API. It may
 	 * be removed once APIv2 is released.
 	 * 
-	 * @return
+	 * @return A String version of the identifier
 	 */
 	@JsonProperty("identifier")
 	public default String getIdentifier() {
