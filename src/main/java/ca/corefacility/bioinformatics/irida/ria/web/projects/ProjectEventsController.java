@@ -107,6 +107,22 @@ public class ProjectEventsController {
 		return EVENTS_VIEW;
 	}
 
+	@RequestMapping("/all")
+	public String getAllRecentEvents(Model model) {
+		Page<ProjectEvent> list = eventService.list(0, PAGE_SIZE, Direction.DESC, "createdDate");
+
+		List<Map<String, Object>> eventInfo = buildEventsListFromPage(list);
+
+		model.addAttribute("events", eventInfo);
+
+		return EVENTS_VIEW;
+	}
+	
+	@RequestMapping("/admin")
+	public String getAdminEventsPage(){
+		return "events/admin";
+	}
+
 	/**
 	 * Convert the Page of events to the list expected in the model
 	 * 

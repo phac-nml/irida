@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
+
+<head>
+  <title th:text="#{event.admin.title}">_ALL EVENTS_</title>
+
+</head>
+
+<body>
+  <div class="row" layout:fragment="page">
+    <main class="container" role="main" property="mainContentOfPage">
+      <h1 th:text="#{event.admin.title}">_Recent Activities_</h1>
+      <div id="events"></div>
+    </main>
+  </div>
+  <th:block layout:fragment="page-scripts">
+    <script>
+      $(function() {
+        var eventUrl = /*[[@{/events/all}]]*/ '/events/all/'
+        $.ajax({
+          method: "GET",
+          url: eventUrl,
+          headers: {
+            Accept: 'text/html'
+          },
+          success: function(data, textStatus, jqXHR) {
+            $("#events").html(data);
+          }
+        })
+      });
+    </script>
+    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+  </th:block>
+</body>
+
+</html>
