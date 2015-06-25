@@ -800,7 +800,7 @@
     vm.add = function () {
       var samples = [];
       _.forEach(storage.getSamples(), function (s) {
-        samples.push({"sample": s.identifier, "project": s.project.id, "type" : s.sampleType});
+        samples.push({"sample": s.identifier, "project": s.project.identifier, "type" : s.sampleType});
       });
 
       cart.add(samples);
