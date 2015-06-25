@@ -7,13 +7,12 @@
 
 <body>
   <main layout:fragment="main">
-    <h1 th:text="${project.label}"></h1>
+    <h1 th:text="#{project.activities.title(${project.label})}"></h1>
 
-    <h3 th:text="#{event.title}">_Recent Activities_</h3>
     <div class="row">
       <div class="col-xs-3">
         <label for="size" th:text="#{event.size}">_Activities to show:_</label>
-        <select id="size" class="form-control">
+        <select id="size" class="form-control event-count">
           <option value="10">10</option>
           <option value="20">20</option>
           <option value="50">50</option>
