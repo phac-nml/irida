@@ -68,6 +68,8 @@ public class ProjectEventsController {
 	 *            be a map which will contain "name" which is the name of the
 	 *            view fragment to use, and "event" which is a reference to the
 	 *            event itself
+	 * @param size
+	 *            Number of events to show
 	 * @return The name of the events view
 	 */
 	@RequestMapping("/project/{projectId}")
@@ -94,6 +96,8 @@ public class ProjectEventsController {
 	 *            event itself
 	 * @param principal
 	 *            currently logged in principal
+	 * @param size
+	 *            Number of events to show
 	 * @return The name of the events view
 	 */
 	@RequestMapping("/current_user")
@@ -116,6 +120,8 @@ public class ProjectEventsController {
 	 * 
 	 * @param model
 	 *            Model attribute for returned view
+	 * @param size
+	 *            Number of events to show
 	 * @return Name of the events view
 	 */
 	@RequestMapping("/all")
