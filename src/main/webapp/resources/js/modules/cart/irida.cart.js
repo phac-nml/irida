@@ -204,7 +204,7 @@
       var sample = _.find(samples, function (sampleItr) {
         return (sampleItr.name === sampleName);
       });
-      if (sample === null) {
+      if (sample === undefined) {
         sample = {
           'name': sampleName,
           '_links': {'self': {'href': ''}}, //expected by the tool
