@@ -44,7 +44,7 @@ public class ProjectEventsController {
 			UserRoleSetProjectEvent.class, "user-role-event", UserRemovedProjectEvent.class, "user-removed-event",
 			SampleAddedProjectEvent.class, "sample-added-event", DataAddedToSampleProjectEvent.class,
 			"data-added-event");
-	private static final Integer PAGE_SIZE = 10;
+	private static final String DEFAULT_PAGE_SIZE = "10";
 
 	private final ProjectEventService eventService;
 	private final ProjectService projectService;
@@ -71,11 +71,12 @@ public class ProjectEventsController {
 	 * @return The name of the events view
 	 */
 	@RequestMapping("/project/{projectId}")
-	public String getRecentEventsForProject(@PathVariable Long projectId, Model model) {
+	public String getRecentEventsForProject(@PathVariable Long projectId, Model model,
+			@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
 		Project project = projectService.read(projectId);
 
-		Page<ProjectEvent> events = eventService.getEventsForProject(project, new PageRequest(0, PAGE_SIZE,
-				Direction.DESC, "createdDate"));
+		Page<ProjectEvent> events = eventService.getEventsForProject(project, new PageRequest(0, size, Direction.DESC,
+				"createdDate"));
 		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
 
 		model.addAttribute("events", eventInfo);
@@ -96,11 +97,12 @@ public class ProjectEventsController {
 	 * @return The name of the events view
 	 */
 	@RequestMapping("/current_user")
-	public String getRecentEventsForUser(Model model, Principal principal) {
+	public String getRecentEventsForUser(Model model, Principal principal,
+			@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
 		String userName = principal.getName();
 		User user = userService.getUserByUsername(userName);
 
-		Page<ProjectEvent> events = eventService.getEventsForUser(user, new PageRequest(0, PAGE_SIZE, Direction.DESC,
+		Page<ProjectEvent> events = eventService.getEventsForUser(user, new PageRequest(0, size, Direction.DESC,
 				"createdDate"));
 		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
 
@@ -117,7 +119,8 @@ public class ProjectEventsController {
 	 * @return Name of the events view
 	 */
 	@RequestMapping("/all")
-	public String getAllRecentEvents(Model model, @RequestParam(required=false, defaultValue="10") Integer size) {
+	public String getAllRecentEvents(Model model,
+			@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
 		Page<ProjectEvent> list = eventService.list(0, size, Direction.DESC, "createdDate");
 
 		List<Map<String, Object>> eventInfo = buildEventsListFromPage(list);

@@ -1,33 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/_base">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="projects/_base">
+
 <head>
-    <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
+  <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
 </head>
+
 <body>
-<main layout:fragment="main">
+  <main layout:fragment="main">
     <h1 th:text="${project.label}"></h1>
 
     <h3 th:text="#{event.title}">_Recent Activities_</h3>
+    <div class="row">
+      <div class="col-xs-3">
+        <label for="size" th:text="#{event.size}">_Activities to show:_</label>
+        <select id="size" class="form-control">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+    </div>
     <div id="events"></div>
-</main>
-<th:block layout:fragment="scripts" th:inline="javascript">
+  </main>
+  <th:block layout:fragment="scripts" th:inline="javascript">
     <script>
-        $(function () {
-            var eventUrl = /*[[@{/events/project/{id}(id=${project.getId()})}]]*/ '/events/project/'
-            $.ajax({
-            	method: "GET",
-            	url: eventUrl,
-            	headers: {
-            		Accept: 'text/html'
-            	},
-            	success: function(data, textStatus, jqXHR){
-            		$("#events").html(data);
-            	}
-            })
+      $(function() {
+        getEvents($("#size").val());
+
+        $("#size").change(function() {
+          getEvents($(this).val());
         });
+      });
+
+      function getEvents(size) {
+        var eventUrl = /*[[@{/events/project/{id}(id=${project.getId()})}]]*/ '/events/project/'
+        $.ajax({
+          method: 'GET',
+          url: eventUrl,
+          data: {
+            size: size
+          },
+          headers: {
+            Accept: 'text/html'
+          },
+          success: function(data, textStatus, jqXHR) {
+            $("#events").html(data);
+          }
+        });
+      }
     </script>
-</th:block>
+  </th:block>
 </body>
+
 </html>

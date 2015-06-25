@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
+
 <head>
-    <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
+  <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
 
 </head>
+
 <body>
-<div class="row" layout:fragment="page">
+  <div class="row" layout:fragment="page">
     <main class="container" role="main" property="mainContentOfPage" ddl:bundle-includes="dashboard">
-        <h1 th:text="#{event.title}">_Recent Activities_</h1>
-        <a th:href="@{/events/admin}" href="/events/admin" sec:authorize="hasRole('ROLE_ADMIN')" th:text="#{event.admin.link}">_View All Events_</a>
-        <div id="events"></div>
+      <h1 th:text="#{event.title}">_Recent Activities_</h1>
+      <a th:href="@{/events/admin}" href="/events/admin" sec:authorize="hasRole('ROLE_ADMIN')" th:text="#{event.admin.link}">_View All Events_</a>
+      <div class="row">
+        <div class="col-xs-2">
+          <label for="size" th:text="#{event.size}">_Activities to show:_</label>
+          <select id="size" class="form-control">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </div>
+      <div id="events"></div>
     </main>
-</div>
+  </div>
 </body>
+
 </html>
