@@ -56,7 +56,7 @@ public class ProjectEventsControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(eventService.getEventsForProject(eq(project), any(Pageable.class))).thenReturn(page);
 
-		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model);
+		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model, 10);
 
 		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
 		assertTrue(model.containsAttribute("events"));
@@ -81,7 +81,7 @@ public class ProjectEventsControllerTest {
 		when(userService.getUserByUsername(principal.getName())).thenReturn(user);
 		when(eventService.getEventsForUser(eq(user), any(Pageable.class))).thenReturn(page);
 
-		String recentEventsForProject = controller.getRecentEventsForUser(model, principal);
+		String recentEventsForProject = controller.getRecentEventsForUser(model, principal, 10);
 
 		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
 		assertTrue(model.containsAttribute("events"));
@@ -113,7 +113,7 @@ public class ProjectEventsControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(eventService.getEventsForProject(eq(project), any(Pageable.class))).thenReturn(page);
 
-		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model);
+		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model, 10);
 
 		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
 		assertTrue(model.containsAttribute("events"));
