@@ -37,6 +37,7 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("/events")
 public class ProjectEventsController {
 	public static final String EVENTS_VIEW = "events/events";
+	public static final String ADMIN_EVENTS_VIEW = "events/admin";
 
 	public static final Map<Class<? extends ProjectEvent>, String> FRAGMENT_NAMES = ImmutableMap.of(
 			UserRoleSetProjectEvent.class, "user-role-event", UserRemovedProjectEvent.class, "user-removed-event",
@@ -107,6 +108,13 @@ public class ProjectEventsController {
 		return EVENTS_VIEW;
 	}
 
+	/**
+	 * Return a list of events for all projects
+	 * 
+	 * @param model
+	 *            Model attribute for returned view
+	 * @return Name of the events view
+	 */
 	@RequestMapping("/all")
 	public String getAllRecentEvents(Model model) {
 		Page<ProjectEvent> list = eventService.list(0, PAGE_SIZE, Direction.DESC, "createdDate");
@@ -117,9 +125,14 @@ public class ProjectEventsController {
 
 		return EVENTS_VIEW;
 	}
-	
+
+	/**
+	 * Get the view name of the admin events page
+	 * 
+	 * @return View name of the admin events page
+	 */
 	@RequestMapping("/admin")
-	public String getAdminEventsPage(){
+	public String getAdminEventsPage() {
 		return "events/admin";
 	}
 

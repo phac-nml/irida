@@ -48,6 +48,9 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 		return repository.getEventsForUser(user, pageable);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Override
 	public Page<ProjectEvent> list(int page, int size, Direction order, String... sortProperties)
