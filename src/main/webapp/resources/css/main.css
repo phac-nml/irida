@@ -1,1 +1,310 @@
-.form-popup,.sidebar__body{position:relative}.btn-xs.glyphicon{font-size:10px;padding:3px 6px}.btn-xl{padding:20px 35px!important;font-size:5rem!important;line-height:3}.btn-action{border:1rem solid #dfdfdf!important}.btn-affixed{width:100%;white-space:normal!important}.btn-icon{border:none;padding:0;margin:0;background-color:transparent}.dataTables_filter input[type=search]{background-color:#f3f3f3;border:1px solid #ccc;border-radius:4px;box-shadow:none;color:#555;padding:5px;font-weight:400;outline:0}.mfp-no-margins .mfp-container,.mfp-no-margins img.mfp-img{padding:0}.dataTables_filter input[type=search]:focus{background-color:#fff;box-shadow:inset 0 1px 1px rgba(0,0,0,.075);transition:background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .5s ease-in-out}.image-link{cursor:-webkit-zoom-in;cursor:zoom-in}.carousel,.clickable,.nav,.nav-tabs li,.pagination,.panel-title a{cursor:pointer}.mfp-with-zoom .mfp-container,.mfp-with-zoom.mfp-bg{opacity:0;-webkit-backface-visibility:hidden;transition:all .3s ease-out}.mfp-with-zoom.mfp-ready .mfp-container{opacity:1}.mfp-with-zoom.mfp-ready.mfp-bg{opacity:.8}.mfp-with-zoom.mfp-removing .mfp-container,.mfp-with-zoom.mfp-removing.mfp-bg{opacity:0}.mfp-no-margins .mfp-figure:after{top:0;bottom:0}.form-popup{background:#fff;width:auto;max-width:500px;margin:20px auto;border-radius:4px}.form-popup .modal-header{background-color:#133B54;color:#fff;border-radius:4px 4px 0 0}.form-popup .mfp-close{color:#fff}.noty_message h2{margin-top:5px;font-size:1.4em}.project-details li{border-bottom:1px solid #f3f3f3;line-height:2em}.project-details i.glyphicon{color:#939393;margin-right:.5em}.project-details em{font-style:normal}.project-details span{float:right}.panel.associated-projects div.panel-body{padding:0!important}.panel.associated-projects .list-group-item{border-radius:0!important}.sidebar{background-color:#FFF;border:1px solid #dfdfdf;border-bottom-color:#939393;border-radius:4px;margin-bottom:1rem}.sidebar__heading{padding:1rem}.sidebar__heading h2{font-weight:300;margin:0;padding:0}.sidebar__body .form-group{border-top:1px solid #f3f3f3;padding:4px 8px}.sidebar__body label{font-weight:300}.sidebar__body input[type=text].form-control{border:1px solid #939393;border-right:none}.sidebar__body .input-group-btn button{border:1px solid #939393!important;border-left:none;color:#939393}.sidebar__item{border-top:1px solid #f3f3f3;padding:.3em .5em;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-ms-flex-align:center;align-items:center}.sidebar__item>div{padding:0 .3em}.sidebar__icon{width:2.6rem;color:#939393}.sidebar__value{color:#232323;text-align:right;-webkit-flex-grow:2;-ms-flex-positive:2;flex-grow:2}.sequenceFile main>div{margin-top:10px}.sequenceFile .col-md-8 h2{font-size:18px;margin:0}.sequenceFile a img{border:4px solid #d9edf7;border-radius:4px}.sequenceFile .col-md-4 img{width:100%}iframe.remote-api-frame{border:none;width:100%;height:450px}.login__links a{margin-top:10px;display:block}.clickable{display:block}.clickable span{display:inline-block}#table-filter{padding:0}#table-filter>div{padding:20px}#table-filter .filter-btns>button{margin-top:33px}.selected__counts{color:#fff!important;border-radius:4px;padding:4px 8px 6px;margin:5px;background-color:rgba(0,0,0,.5);border-top:1px solid rgba(0,0,0,.4)}
+/* line 1, ../../styles/components/_buttons.scss */
+.btn-xs.glyphicon {
+  font-size: 10px;
+  padding: 3px 6px;
+}
+
+/* line 6, ../../styles/components/_buttons.scss */
+.btn-xl {
+  padding: 20px 35px !important;
+  font-size: 5rem !important;
+  line-height: 3;
+}
+
+/* line 12, ../../styles/components/_buttons.scss */
+.btn-action {
+  border: 1rem solid #dfdfdf !important;
+}
+
+/* line 16, ../../styles/components/_buttons.scss */
+.btn-affixed {
+  width: 100%;
+  white-space: normal !important;
+}
+
+/* line 21, ../../styles/components/_buttons.scss */
+.btn-icon {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+/* line 3, ../../styles/components/_datatables.scss */
+.dataTables_filter input[type='search'] {
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #555;
+  padding: 5px;
+  font-weight: normal;
+  outline: none;
+}
+/* line 12, ../../styles/components/_datatables.scss */
+.dataTables_filter input[type='search']:focus {
+  background-color: white;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+  -o-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+  -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+}
+
+/* line 1, ../../styles/components/_magnific-popup.scss */
+.image-link {
+  cursor: -webkit-zoom-in;
+  cursor: -moz-zoom-in;
+  cursor: zoom-in;
+}
+
+/* This block of CSS adds opacity transition to background */
+/* line 8, ../../styles/components/_magnific-popup.scss */
+.mfp-with-zoom .mfp-container,
+.mfp-with-zoom.mfp-bg {
+  opacity: 0;
+  -webkit-backface-visibility: hidden;
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+}
+
+/* line 18, ../../styles/components/_magnific-popup.scss */
+.mfp-with-zoom.mfp-ready .mfp-container {
+  opacity: 1;
+}
+
+/* line 21, ../../styles/components/_magnific-popup.scss */
+.mfp-with-zoom.mfp-ready.mfp-bg {
+  opacity: 0.8;
+}
+
+/* line 25, ../../styles/components/_magnific-popup.scss */
+.mfp-with-zoom.mfp-removing .mfp-container,
+.mfp-with-zoom.mfp-removing.mfp-bg {
+  opacity: 0;
+}
+
+/* padding-bottom and top for image */
+/* line 31, ../../styles/components/_magnific-popup.scss */
+.mfp-no-margins img.mfp-img {
+  padding: 0;
+}
+
+/* position of shadow behind the image */
+/* line 35, ../../styles/components/_magnific-popup.scss */
+.mfp-no-margins .mfp-figure:after {
+  top: 0;
+  bottom: 0;
+}
+
+/* padding for main container */
+/* line 40, ../../styles/components/_magnific-popup.scss */
+.mfp-no-margins .mfp-container {
+  padding: 0;
+}
+
+/* line 44, ../../styles/components/_magnific-popup.scss */
+.form-popup {
+  position: relative;
+  background: #ffffff;
+  width: auto;
+  max-width: 500px;
+  margin: 20px auto;
+  border-radius: 4px;
+}
+/* line 51, ../../styles/components/_magnific-popup.scss */
+.form-popup .modal-header {
+  background-color: #133B54;
+  color: #ffffff;
+  border-radius: 4px 4px 0 0;
+}
+/* line 56, ../../styles/components/_magnific-popup.scss */
+.form-popup .mfp-close {
+  color: #ffffff;
+}
+
+/* line 1, ../../styles/components/_noty.scss */
+.noty_message h2 {
+  margin-top: 5px;
+  font-size: 1.4em;
+}
+
+/* line 4, ../../styles/components/_panels.scss */
+.project-details li {
+  border-bottom: 1px solid #f3f3f3;
+  line-height: 2em;
+}
+/* line 8, ../../styles/components/_panels.scss */
+.project-details i.glyphicon {
+  color: #939393;
+  margin-right: .5em;
+}
+/* line 12, ../../styles/components/_panels.scss */
+.project-details em {
+  font-style: normal;
+}
+/* line 15, ../../styles/components/_panels.scss */
+.project-details span {
+  float: right;
+}
+
+/* line 21, ../../styles/components/_panels.scss */
+.panel.associated-projects div.panel-body {
+  padding: 0 !important;
+}
+/* line 24, ../../styles/components/_panels.scss */
+.panel.associated-projects .list-group-item {
+  border-radius: 0 !important;
+}
+
+/* line 29, ../../styles/components/_panels.scss */
+.sidebar {
+  background-color: #FFFFFF;
+  border: 1px solid #dfdfdf;
+  border-bottom-color: #939393;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+/* line 37, ../../styles/components/_panels.scss */
+.sidebar__heading {
+  padding: 1rem;
+}
+/* line 39, ../../styles/components/_panels.scss */
+.sidebar__heading h2 {
+  font-weight: 300;
+  margin: 0;
+  padding: 0;
+}
+
+/* line 46, ../../styles/components/_panels.scss */
+.sidebar__body {
+  position: relative;
+}
+/* line 49, ../../styles/components/_panels.scss */
+.sidebar__body .form-group {
+  border-top: 1px solid #f3f3f3;
+  padding: 4px 8px;
+}
+/* line 53, ../../styles/components/_panels.scss */
+.sidebar__body label {
+  font-weight: 300;
+}
+/* line 56, ../../styles/components/_panels.scss */
+.sidebar__body input[type="text"].form-control {
+  border: 1px solid #939393;
+  border-right: none;
+}
+/* line 60, ../../styles/components/_panels.scss */
+.sidebar__body .input-group-btn button {
+  border: 1px solid #939393 !important;
+  border-left: none;
+  color: #939393;
+}
+
+/* line 67, ../../styles/components/_panels.scss */
+.sidebar__item {
+  border-top: 1px solid #f3f3f3;
+  padding: .3em 0.5em;
+  display: flex;
+  align-items: center;
+}
+/* line 73, ../../styles/components/_panels.scss */
+.sidebar__item > div {
+  padding: 0 .3em;
+}
+
+/* line 78, ../../styles/components/_panels.scss */
+.sidebar__icon {
+  width: 2.6rem;
+  color: #939393;
+}
+
+/* line 83, ../../styles/components/_panels.scss */
+.sidebar__value {
+  color: #232323;
+  text-align: right;
+  flex-grow: 2;
+}
+
+/* line 1, ../../styles/components/_events.scss */
+.event-count {
+  margin-bottom: 1rem;
+}
+
+/* line 2, ../../styles/pages/_sequenceFile.scss */
+.sequenceFile main > div {
+  margin-top: 10px;
+}
+/* line 5, ../../styles/pages/_sequenceFile.scss */
+.sequenceFile .col-md-8 h2 {
+  font-size: 18px;
+  margin: 0;
+}
+/* line 9, ../../styles/pages/_sequenceFile.scss */
+.sequenceFile a img {
+  border: 4px solid #d9edf7;
+  border-radius: 4px;
+}
+/* line 13, ../../styles/pages/_sequenceFile.scss */
+.sequenceFile .col-md-4 img {
+  width: 100%;
+}
+
+/* line 1, ../../styles/pages/_remoteApi.scss */
+iframe.remote-api-frame {
+  border: none;
+  width: 100%;
+  height: 450px;
+}
+
+/* line 17, ../../styles/main.scss */
+.login__links a {
+  margin-top: 10px;
+  display: block;
+}
+
+/* line 23, ../../styles/main.scss */
+.clickable {
+  display: block;
+  cursor: pointer;
+}
+/* line 26, ../../styles/main.scss */
+.clickable span {
+  display: inline-block;
+}
+
+/* line 31, ../../styles/main.scss */
+.nav-tabs li {
+  cursor: pointer;
+}
+
+/* line 36, ../../styles/main.scss */
+#table-filter {
+  padding: 0;
+}
+/* line 38, ../../styles/main.scss */
+#table-filter > div {
+  padding: 20px;
+}
+/* line 41, ../../styles/main.scss */
+#table-filter .filter-btns > button {
+  margin-top: 33px;
+}
+
+/* line 46, ../../styles/main.scss */
+.selected__counts {
+  color: white !important;
+  border-radius: 4px;
+  padding: 4px 8px 6px 8px;
+  margin: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+/* line 55, ../../styles/main.scss */
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer;
+}
