@@ -59,7 +59,7 @@ You may also see all releases of the IRIDA MiSeq Uploader Tool at:
 
 The documentation for using the IRIDA MiSeq Uploader Tool is included in the package, but can also be found at:
 
-<https://irida.corefacility.ca/documentation/administrator/uploader/>
+<https://irida.corefacility.ca/documentation/user/administrator/uploader/>
 
 Sample Data
 -----------
