@@ -220,7 +220,7 @@
         return "ids=" + id
       });
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "projects/" + project.identifier + "/download/files?" + mapped.join("&");
+      iframe.src = TL.BASE_URL + "projects/" + project.id + "/download/files?" + mapped.join("&");
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
@@ -538,7 +538,7 @@
       galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.identifier,
+          templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.id,
           controller : 'GalaxyDialogCtrl as gCtrl',
           resolve    : {
             openedByCart: function () {
@@ -732,7 +732,7 @@
     "use strict";
     var vm = this;
     vm.samples = SamplesService.getSelectedSampleNames();
-    vm.projectId = project.identifier;
+    vm.projectId = project.id;
     vm.total = SamplesService.samples.length;
 
     vm.close = function () {
@@ -800,7 +800,7 @@
     vm.add = function () {
       var samples = [];
       _.forEach(storage.getSamples(), function (s) {
-        samples.push({"sample": s.identifier, "project": s.project.identifier, "type" : s.sampleType});
+        samples.push({"sample": s.identifier, "project": s.project.id, "type" : s.sampleType});
       });
 
       cart.add(samples);
