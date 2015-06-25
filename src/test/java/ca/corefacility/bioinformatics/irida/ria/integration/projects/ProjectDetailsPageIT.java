@@ -60,7 +60,7 @@ public class ProjectDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	public void hasCorrectMetaData() {
 		detailsPage.goTo(PROJECT_ID);
 		logger.debug("Testing: hasCorrectMetaDate");
-		assertEquals("Page should show correct title", PROJECT_NAME, detailsPage.getPageTitle());
+		assertTrue("Page should show correct title", detailsPage.getPageTitle().contains(PROJECT_NAME));
 		assertEquals("Should have the organism displayed", PROJECT_ORGANISM, detailsPage.getOrganism());
 		assertEquals("Should have the correct date format for creation date", PROJECT_CREATED_DATE,
 				detailsPage.getCreatedDate());
