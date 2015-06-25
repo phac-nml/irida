@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -43,7 +44,7 @@ public class ProjectEventsController {
 			UserRoleSetProjectEvent.class, "user-role-event", UserRemovedProjectEvent.class, "user-removed-event",
 			SampleAddedProjectEvent.class, "sample-added-event", DataAddedToSampleProjectEvent.class,
 			"data-added-event");
-	private static final int PAGE_SIZE = 10;
+	private static final Integer PAGE_SIZE = 10;
 
 	private final ProjectEventService eventService;
 	private final ProjectService projectService;
@@ -116,8 +117,8 @@ public class ProjectEventsController {
 	 * @return Name of the events view
 	 */
 	@RequestMapping("/all")
-	public String getAllRecentEvents(Model model) {
-		Page<ProjectEvent> list = eventService.list(0, PAGE_SIZE, Direction.DESC, "createdDate");
+	public String getAllRecentEvents(Model model, @RequestParam(required=false, defaultValue="10") Integer size) {
+		Page<ProjectEvent> list = eventService.list(0, size, Direction.DESC, "createdDate");
 
 		List<Map<String, Object>> eventInfo = buildEventsListFromPage(list);
 

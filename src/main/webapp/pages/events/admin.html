@@ -10,24 +10,44 @@
   <div class="row" layout:fragment="page">
     <main class="container" role="main" property="mainContentOfPage">
       <h1 th:text="#{event.admin.title}">_Recent Activities_</h1>
+      <div class="row">
+      <div class="col-xs-2">
+      <label for="size" th:text="#{event.size}">_Activities to show:_</label>
+      <select id="size" class="form-control">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+        </div>
+      </div>
       <div id="events"></div>
     </main>
   </div>
   <th:block layout:fragment="page-scripts">
     <script>
       $(function() {
+        getEvents($("#size").val());
+        
+        $("#size").change(function(){
+          getEvents($(this).val());
+        });
+      });
+      
+      function getEvents(size){
         var eventUrl = /*[[@{/events/all}]]*/ '/events/all/'
         $.ajax({
           method: "GET",
           url: eventUrl,
+          data:{size: size},
           headers: {
             Accept: 'text/html'
           },
           success: function(data, textStatus, jqXHR) {
             $("#events").html(data);
           }
-        })
-      });
+        });
+      }
     </script>
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
   </th:block>
