@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteExcep
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -80,7 +81,7 @@ public class AnalysisController {
 	// PAGES
 	// ************************************************************************************************
 
-	@RequestMapping("/list")
+	@RequestMapping()
 	public String getUserAnalysesPage(Model model, Locale locale) {
 		String response = PAGE_USER_ANALYSIS;
 		try {
@@ -92,7 +93,7 @@ public class AnalysisController {
 		return response;
 	}
 
-	@RequestMapping("/list/all")
+	@RequestMapping("/all")
 	public String getAdminAnalysesPage(Model model, Locale locale) {
 		String response = PAGE_USER_ANALYSIS;
 		try {
@@ -142,6 +143,14 @@ public class AnalysisController {
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
 		model.addAttribute("paired_end", inputFilePairs);
+		
+		// - Remote
+		Set<SequenceFilePairSnapshot> remoteFilesPaired = submission.getRemoteFilesPaired();
+		model.addAttribute("remote_paired", remoteFilesPaired);
+		
+		// Get the number of files currently being mirrored
+		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
+		model.addAttribute("mirroringCount", mirroringCount);
 
 		/*
 		 * Preview information

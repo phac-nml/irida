@@ -10,6 +10,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -66,6 +68,11 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param sequenceFilePairs
 	 *            {@link List} of {@link SequenceFilePair} to run on the
 	 *            workflow
+	 * @param remoteFiles
+	 *            List of {@link SequenceFileSnapshot}s to be used in the workflow
+	 * @param remotePairs
+	 *            List of {@link SequenceFilePairSnapshot}s to be used in the
+	 *            workflow
 	 * @param unnamedParameters
 	 *            {@link Map} of parameters specific for the pipeline
 	 * @param namedParameters
@@ -76,6 +83,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
+			List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
 
 	/**
@@ -91,6 +99,11 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param sequenceFilePairs
 	 *            {@link List} of {@link SequenceFilePair} to run on the
 	 *            workflow
+	 * @param remoteFiles
+	 *            List of {@link SequenceFileSnapshot}s to be used in the workflow
+	 * @param remotePairs
+	 *            List of {@link SequenceFilePairSnapshot}s to be used in the
+	 *            workflow
 	 * @param unnamedParameters
 	 *            {@link Map} of parameters specific for the pipeline
 	 * @param namedParameters
@@ -102,8 +115,9 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
+			List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
-	
+
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
 	 * complete.

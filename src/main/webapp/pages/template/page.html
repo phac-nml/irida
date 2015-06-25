@@ -3,8 +3,6 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/base">
 <head lang="en">
-	<link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
-	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/AngularJS-Toaster/toaster.css}"
 	      href="/resources/bower_components/AngularJS-Toaster/toaster.css"/>
 	<style>
@@ -15,17 +13,17 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-	<div style="height: 100%;">
+	<div style="height: 100%;" ddl:bundle-includes="app">
 		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}"
 		     ng-controller="UIGalaxyController as uiGalaxyCtrl">
 			<div class="st-content">
 				<div class="st-content-inner">
 					<nav th:replace="template/bootstrap :: #topnav"></nav>
-					<div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
-						<div class="container ng-cloak">
+					<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
+						<div class="container">
 							<ol>
-								<li ng-repeat="crumb in breadcrumb.crumbs">
-									<a href="{{ crumb.url }}">{{ crumb.text }}</a>
+								<li th:each="crumb : ${crumbs} ">
+									<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
 								</li>
 							</ol>
 						</div>
@@ -43,11 +41,11 @@
 	<div toaster-container=""></div>
 	<script type="text/ng-template" id="/cart.html">
 		<aside class="cart">
-			<section ng-hide="cart.projects.length">
+			<section ng-hide="cart.count">
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
 				<p class="lead" th:text="#{cart.empty-text}"></p>
 			</section>
-			<section ng-show="cart.projects.length > 0" ng-controller="CartSliderController as cartCtrl">
+			<section ng-show="cart.count > 0" ng-controller="CartSliderController as cartCtrl">
 				<div class="cart-control-buttons">
 					<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close
 					</button>
@@ -62,7 +60,7 @@
 					</div>
 				</div>
 				<ul id="cart-project-list" class="list-group">
-					<li class="list-group-item" ng-repeat="p in cart.projects | cartFilter:cart.term" ng-attr-id="{{'cart-project-'+p.id}}">
+					<li class="list-group-item local-project" ng-repeat="p in cart.projects | cartFilter:cart.term" ng-attr-id="{{'cart-project-'+p.id}}">
 						<div class="cart-project-header" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
 							<div><i class="fa fa-fw"  ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></i></div>
 							<div class="cart-item__label">
@@ -88,6 +86,31 @@
 							</li>
 						</ul>
 					</li>
+                    <li class="list-group-item remote-samples" ng-show="r.filteredSamples.length > 0">
+                        <div class="cart-project-header" ng-click="cart.collapsed['remote'] = !cart.collapsed['remote' ]">
+                            <span class="fa fa-fw"
+                                      ng-class="cart.collapsed['remote'] ? 'fa-caret-right' : 'fa-caret-down'"></span>
+                            <span th:text="#{cart.remoteSamples.title}">_REMOTE_</span>
+                            <div class="pull-right">
+                                <span class="label label-info">{{r.filteredSamples.length}} / {{ cart.getRemoteCount() }}</span>
+                                <button class="btn-icon" ng-click="cartCtrl.removeRemoteSamples()"
+                                    id="remove-remote"
+                                    th:title="#{cart.tooltip.remoteRemote}">
+                                    <i class="fa fa-remove remove-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <ul collapse="cart.collapsed['remote']">
+                            <li ng-repeat="(id,s) in r.filteredSamples = (cart.remote | cartFilter:cart.term)">
+                                <span>{{ s.label }}</span>
+                                <button class="btn-icon pull-right remove-sample-btn"
+                                    ng-click="cartCtrl.removeRemoteSample(id)"
+                                    th:title="#{cart.tooltip.removeSample}">
+                                    <i class="fa fa-remove remove-icon"></i>
+                                </button>
+                                </li>
+                        </ul>
+                    </li>
 				</ul>
 				<div class="cart-control-bottom">
 					<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
@@ -123,17 +146,16 @@
 			BASE_URL      : /*[[@{/}]]*/ '/',
 			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
 			lang          : {
-				crumbs: {
-					"projects"      : /*[[#{bc.projects}]]*/ "Projects",
-					"samples"       : /*[[#{bc.samples}]]*/ "Samples",
-					"sequencingRuns": /*[[#{bc.sequencingRuns}]]*/  "Sequencing Runs",
-					"sequenceFiles" : /*[[#{bc.sequenceFiles}]]*/ "Sequence Files"
-				},
 				page  : {
 					"first": /*[[#{table.first}]]*/ 'First',
 					"prev" : /*[[#{table.previous}]]*/ 'Previous',
 					"next" : /*[[#{table.next}]]*/ 'Next',
 					"last" : /*[[#{table.last}]]*/ 'Last'
+				}
+			},
+			date: {
+				moment: {
+					short: /*[[#{moment.short}]]*/ 'Do MMM YYYY'
 				}
 			},
 			galaxyCallback: /*[[${#httpSession.getAttribute('galaxyExportToolCallbackURL')}!= null]]*/ false,
@@ -175,9 +197,6 @@
 	<script src="/resources/js/modules/cart/irida.cart.js"
 	        th:src="@{/resources/js/modules/cart/irida.cart.js}"></script>
 	<script src="/resources/js/app.js" th:src="@{/resources/js/app.js}"></script>
-	<!-- Controllers -->
-	<script src="/resources/js/controllers/breadcrumbs/breadcrumbController.js"
-	        th:src="@{/resources/js/controllers/breadcrumbs/breadcrumbController.js}"></script>
 
 	<th:block layout:fragment="theme-scripts">
 		<!--/* This is where the main for the theme template are loaded. */-->

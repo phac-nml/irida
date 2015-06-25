@@ -28,6 +28,10 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
@@ -48,9 +52,14 @@ public class PipelineControllerTest {
 	private UserService userService;
 	private MessageSource messageSource;
 	private CartController cartController;
+	private SequenceFileRemoteService sequenceFileRemoteService;
+	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	// Controller to test
 	private PipelineController controller;
 	private WorkflowNamedParametersService namedParameterService;
+	
+	SequenceFileSnapshotService remoteSequenceFileService;
+	SequenceFilePairSnapshotService remoteSequenceFilePairService;
 
 	@Before
 	public void setUp() {
@@ -66,8 +75,9 @@ public class PipelineControllerTest {
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 
 		controller = new PipelineController(sequenceFileService, sequenceFilePairService, referenceFileService,
-				analysisSubmissionService, workflowsService, projectService, userService, cartController,
-				messageSource, namedParameterService);
+				analysisSubmissionService, workflowsService, projectService, userService, sequenceFileRemoteService,
+				cartController, messageSource, namedParameterService, sequenceFilePairRemoteService,
+				remoteSequenceFileService, remoteSequenceFilePairService);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 

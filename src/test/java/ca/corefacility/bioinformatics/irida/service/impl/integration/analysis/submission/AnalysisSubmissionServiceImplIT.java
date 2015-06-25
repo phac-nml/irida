@@ -189,15 +189,6 @@ public class AnalysisSubmissionServiceImplIT {
 	}
 
 	/**
-	 * Tests finding all as a regular user and being denied.
-	 */
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "aaron", roles = "USER")
-	public void testFindAllDeniedRegularUser() {
-		analysisSubmissionService.findAll();
-	}
-
-	/**
 	 * Tests finding all as an admin user.
 	 */
 	@Test
@@ -579,7 +570,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetPercentageCompleteAlternativeState() throws EntityNotFoundException, ExecutionManagerException {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(3L);
-		assertEquals("submission was not properly returned", 5.0f, percentageComplete, DELTA);
+		assertEquals("submission was not properly returned", 15.0f, percentageComplete, DELTA);
 	}
 	
 	/**

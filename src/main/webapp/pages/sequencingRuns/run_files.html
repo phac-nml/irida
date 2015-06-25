@@ -4,15 +4,15 @@
       layout:decorator="sequencingRuns/_details_base">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title th:text="#{sequencingruns.details.title(${run.id})}">_Run_</title>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-	      href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+	<title th:text="#{sequencingruns.details.title(${run.getId()})}">_Run_</title>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
+	      href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <main layout:fragment="main">
 	<div class="row">
 		<div class="col-md-12">
-			<h1 id="page-title" role="heading" th:text="#{sequencingruns.files.title(${run.id})}">
+			<h1 id="page-title" role="heading" th:text="#{sequencingruns.files.title(${run.getId()})}">
 				__TITLE__</h1>
 		</div>
 	</div>
@@ -29,11 +29,11 @@
 				</thead>
 				<tbody>
 				<tr class="file-row" role="row" th:each="file : ${files}"
-				    th:id="${'file-row-' + file.id}">
-					<td class="file-id" th:text="${file.id}">ID</td>
+				    th:id="${'file-row-' + file.identifier}">
+					<td class="file-id" th:text="${file.identifier}">ID</td>
 					<td>
 						<a class="file-name btn btn-default btn-xs"
-						   th:href="@{/sequencingRuns/{runId}/sequenceFiles/{id}/summary(runId=${run.id}, id=${file.id})}"
+						   th:href="@{/sequencingRuns/{runId}/sequenceFiles/{id}/summary(runId=${run.getId()}, id=${file.identifier})}"
 						   href="#"
 						   th:text="${file.label}"></a>
 					</td>
@@ -41,7 +41,7 @@
 					<td class="file-buttons">
 						<div class="btn-toolbar pull-right">
 							<button class="btn btn-primary btn-xs download-file"
-							        th:attr="data-file-id=${file.id}">
+							        th:attr="data-file-id=${file.identifier}">
 								<span class="fa fa-fw fa-download"></span>
 							</button>
 						</div>
@@ -53,8 +53,8 @@
 	</div>
 </main>
 <th:block layout:fragment="pageScripts" th:inline="javascript">
-	<script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
-	        src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+	<script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
+	        src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 	<script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
 	        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
 	<script>

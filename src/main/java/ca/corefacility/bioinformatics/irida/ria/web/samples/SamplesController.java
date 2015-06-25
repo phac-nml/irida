@@ -106,8 +106,9 @@ public class SamplesController extends BaseController {
 	private final MessageSource messageSource;
 
 	@Autowired
-	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
-			UserService userService, ProjectService projectService, SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
+	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService,
+			SequenceFilePairService sequenceFilePairService, UserService userService, ProjectService projectService,
+			SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
@@ -219,7 +220,7 @@ public class SamplesController extends BaseController {
 	 *            a reference to the logged in user.
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
-	@RequestMapping(value = {"/samples/{sampleId}",  "/samples/{sampleId}/sequenceFiles",
+	@RequestMapping(value = { "/samples/{sampleId}", "/samples/{sampleId}/sequenceFiles",
 			"/projects/{projectId}/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal) {
 		Sample sample = sampleService.read(sampleId);
@@ -276,20 +277,21 @@ public class SamplesController extends BaseController {
 	 * @return map stating the request was successful
 	 */
 	@RequestMapping(value = "/samples/{sampleId}/files/delete", method = RequestMethod.POST)
-	public String removeFileFromSample(RedirectAttributes attributes, @PathVariable Long sampleId, @RequestParam Long fileId, HttpServletRequest request, Locale locale) {
+	public String removeFileFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
+			@RequestParam Long fileId, HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		SequenceFile sequenceFile = sequenceFileService.read(fileId);
 
 		try {
 			sampleService.removeSequenceFileFromSample(sample, sequenceFile);
 			attributes.addFlashAttribute("fileDeleted", true);
-			attributes.addFlashAttribute("fileDeletedMessage", messageSource
-					.getMessage("samples.files.removed.message", new Object[] { sequenceFile.getLabel() }, locale));
+			attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage(
+					"samples.files.removed.message", new Object[] { sequenceFile.getLabel() }, locale));
 		} catch (Exception e) {
 			logger.error("Could not remove sequence file from sample: ", e);
 			attributes.addFlashAttribute("fileDeleted", true);
-			attributes.addFlashAttribute("fileDeletedError", messageSource
-					.getMessage("samples.files.remove.error", new Object[] { sequenceFile.getLabel() }, locale));
+			attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage("samples.files.remove.error",
+					new Object[] { sequenceFile.getLabel() }, locale));
 		}
 
 		return "redirect:" + request.getHeader("referer");
@@ -339,9 +341,12 @@ public class SamplesController extends BaseController {
 	 * Upload {@link SequenceFile}'s to a sample
 	 *
 	 * @param sampleId
-	 * 		The {@link Sample} id to upload to
+	 *            The {@link Sample} id to upload to
 	 * @param files
-	 * 		A list of {@link MultipartFile} sequence files.
+	 *            A list of {@link MultipartFile} sequence files.
+	 * @param response
+	 *            HTTP response object to update response status if there's an
+	 *            error.
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" })
 	public void uploadSequenceFiles(@PathVariable Long sampleId,
@@ -363,8 +368,7 @@ public class SamplesController extends BaseController {
 				List<MultipartFile> list = pairedUpFiles.get(key);
 				if (list.size() > 1) {
 					createSequenceFilePairsInSample(list, sample);
-				}
-				else {
+				} else {
 					createSequenceFileInSample(list.get(0), sample);
 				}
 			}
@@ -376,8 +380,11 @@ public class SamplesController extends BaseController {
 
 	/**
 	 * Create a {@link SequenceFile} and add it to a {@link Sample}
-	 * @param file {@link MultipartFile}
-	 * @param sample {@link Sample} to add the file to.
+	 * 
+	 * @param file
+	 *            {@link MultipartFile}
+	 * @param sample
+	 *            {@link Sample} to add the file to.
 	 * @throws IOException
 	 */
 	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
@@ -386,9 +393,13 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
-	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair} to a {@link Sample}
-	 * @param pair {@link List} of {@link MultipartFile}
-	 * @param sample {@link Sample} to add the pair to.
+	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
+	 * to a {@link Sample}
+	 * 
+	 * @param pair
+	 *            {@link List} of {@link MultipartFile}
+	 * @param sample
+	 *            {@link Sample} to add the pair to.
 	 * @throws IOException
 	 */
 	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
@@ -398,14 +409,15 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
-	 * Private method to move the sequence file into the correct directory and create the {@link SequenceFile} object.
+	 * Private method to move the sequence file into the correct directory and
+	 * create the {@link SequenceFile} object.
 	 *
 	 * @param file
-	 * 		{@link MultipartFile} sequence file uploaded.
+	 *            {@link MultipartFile} sequence file uploaded.
 	 *
 	 * @return {@link SequenceFile}
 	 * @throws IOException
-	 * 		Exception thrown if there is an error handling the file.
+	 *             Exception thrown if there is an error handling the file.
 	 */
 	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
 		Path temp = Files.createTempDirectory(null);

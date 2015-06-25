@@ -1,7 +1,7 @@
 <div id="merge-samples-modal" class="form">
 	<div class="modal-header">
 		<h3 class="modal-title">
-			<span class="fa fa-fw fa-compress"></span>
+			<fa:icon type="merge" />&nbsp;
 			<span th:utext="#{project.samples.modal.merge.title}">__COMBINE_SAMPLES__</span>
 		</h3>
 	</div>
@@ -15,7 +15,7 @@
 		</ul>
 		<div class="alert alert-warning">
 			<h4>
-				<span class="fa fa-fw fa-exclamation-circle"></span>
+				<fa:icon type="warning" />&nbsp;
 				<span th:text="#{alert.warning.title}"></span>
 			</h4>
 
@@ -26,7 +26,7 @@
 		<div class="form-group">
 			<label for="samplesSelect" th:text="#{project.samples.modal.merge.select-label}"></label>
 			<select class="form-control" name="samplesSelect" id="samplesSelect" ng-model="mergeCtrl.selected">
-				<option ng-repeat="s in mergeCtrl.samples" value="{{s.id}}">{{s.sample.sampleName}}</option>
+				<option ng-repeat="s in mergeCtrl.samples" value="{{s.identifier}}">{{s.sample.sampleName}}</option>
 			</select>
 		</div>
 		<div class="form-group">

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="update-project-modified-date" author="tom">
+		<dropColumn columnName="modifiedDate" tableName="project_AUD" />
+
+		<sql>
+			UPDATE project p SET modifiedDate=(SELECT created_date FROM
+			project_event e
+			WHERE p.id = e.project_id ORDER BY created_date DESC
+			LIMIT 1) WHERE
+			EXISTS (SELECT id FROM project_event e WHERE
+			e.project_id=p.id);
+		</sql>
+	</changeSet>
+</databaseChangeLog>

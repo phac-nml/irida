@@ -1,69 +1,5 @@
 (function(angular, TL, PAGE) {
   'use strict';
-  var UPLOAD_ERROR = 'upload_error';
-
-  /**
-   * Services to call API for SequenceFile
-   * @param $rootScope
-   * @param upload
-   * @returns {{download: download, upload: uploadFiles}}
-   * @constructor
-   */
-  function FileService($rootScope, upload) {
-    return {
-      download: download,
-      upload: uploadFiles
-    };
-
-    /**
-     * Creates a new iFrame to download a file into.
-     * @param id Id for the sequenceFile to download
-     */
-    function download(id) {
-      var iframe = document.createElement('iframe');
-      iframe.src = TL.BASE_URL + 'sequenceFiles/download/' + id;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-    }
-
-    /**
-     * Uploads list of files
-     * @param files Array of files.
-     */
-    function uploadFiles(files) {
-      if (files && files.length) {
-        upload.upload({
-            url: TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload',
-            file: files
-          })
-          .success(function() {
-            window.location.href = window.location.href;
-          })
-          .error(function() {
-            $rootScope.$broadcast(UPLOAD_ERROR);
-          });
-      }
-    }
-  }
-
-  /**
-   * Directive to show error message if files fail to upload.
-   * @returns {{restrict: string, templateUrl: string, controllerAs: string, controller: *[]}}
-   */
-  function uploadError() {
-    return {
-      restrict: 'E',
-      templateUrl: '/upload-error.html',
-      controllerAs: 'errorCtrl',
-      controller: ['$scope', function(scope) {
-        var vm = this;
-        vm.showError = false;
-        scope.$on(UPLOAD_ERROR, function() {
-          vm.showError = true;
-        });
-      }]
-    };
-  }
 
   /**
    * Controller for the modal to confirm removing a sequenceFile
@@ -100,7 +36,8 @@
      * @param id Id for the sequenceFile to download
      */
     vm.download = function(id) {
-      fileService.download(id);
+      var url = TL.BASE_URL + 'sequenceFiles/download/' + id;
+      fileService.download(url);
     };
 
     /**
@@ -149,13 +86,15 @@
       'restrict': 'E',
       'templateUrl': '/upload-btn.html',
       'controllerAs': 'uploadCtrl',
-      'controller': ['$modal', 'FileService', function($modal, fileService) {
+      'controller': ['$scope', '$timeout', '$modal', 'FileService', function($scope, $timeout, $modal, fileService) {
         var vm = this;
         vm.files = [];
         /**
          * Open the modal for file selection
          */
         vm.open = function() {
+          $scope.$broadcast('NEW_UPLOAD');
+
           $modal.open({
               animation: true,
               templateUrl: '/upload.html',
@@ -163,7 +102,12 @@
               controller: 'UploadModalController'
             })
             .result.then(function(files) {
-              fileService.upload(files);
+              var url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
+              fileService.uploadBulk(url, files).then(function() {
+                $timeout(function () {
+                  window.location.href = window.location.href;
+                }, 500);
+              });
             });
         };
       }]
@@ -227,32 +171,9 @@
     };
   }
 
-  /**
-   * Filter for formatting the files size.
-   * @returns {Function}
-   */
-  function humanReadableBytes() {
-    return function(bytes) {
-      var thresh = 1024;
-      if (Math.abs(bytes) < thresh) {
-        return bytes + ' B';
-      }
-      var units = ['kB', 'MB', 'GB'];
-      var u = -1;
-      do {
-        bytes /= thresh;
-        ++u;
-      } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-      return bytes.toFixed(1) + ' ' + units[u];
-    };
-  }
-
-  angular.module('irida.sample.files', ['ui.bootstrap', 'ngFileUpload'])
-    .filter('humanReadableBytes', [humanReadableBytes])
+  angular.module('irida.sample.files', ['ui.bootstrap', 'file.utils'])
     .directive('fileUpload', [fileUpload])
-    .directive('uploadError', [uploadError])
     .controller('FileController', ['FileService', '$modal', FileController])
     .controller('FileDeletionController', ['$modalInstance', 'id', 'label', FileDeletionController])
-    .controller('UploadModalController', ['$modalInstance', UploadModalController])
-    .factory('FileService', ['$rootScope', 'Upload', FileService]);
+    .controller('UploadModalController', ['$modalInstance', UploadModalController]);
 })(window.angular, window.TL, window.PAGE);

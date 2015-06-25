@@ -1,0 +1,24 @@
+{
+  "bundle": "datatables",
+  "dependencies": [
+    "jquery"
+  ],
+  "assets": [
+    {
+      "name": "datatables",
+      "version": "1.10.7",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"
+      }
+    },
+    {
+      "name": "datatables",
+      "version": "1.10.7",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"
+      }
+    }
+  ]
+}

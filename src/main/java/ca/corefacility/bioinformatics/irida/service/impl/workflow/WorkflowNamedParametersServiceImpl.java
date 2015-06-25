@@ -42,7 +42,15 @@ public class WorkflowNamedParametersServiceImpl extends CRUDServiceImpl<Long, Ir
 		return super.create(parameters);
 	}
 
-	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public IridaWorkflowNamedParameters read(final Long id) {
+		return super.read(id);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

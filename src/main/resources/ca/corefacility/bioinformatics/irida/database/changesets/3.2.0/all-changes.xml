@@ -7,4 +7,5 @@
 
 	<include file="command-line-not-nullable.xml" relativeToChangelogFile="true"/>
 	<include file="assembly-annotation-collection.xml" relativeToChangelogFile="true"/>
+	<include file="remote-sequence-file.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

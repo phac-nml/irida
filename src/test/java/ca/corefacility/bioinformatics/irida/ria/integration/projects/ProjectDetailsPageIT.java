@@ -1,50 +1,30 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
 /**
- * <p>
- * Integration test to ensure that the Project Details Page.
- * </p>
- *
+ * <p> Integration test to ensure that the Project Details Page. </p>
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectDetailsPageIT {
+public class ProjectDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectDetailsPageIT.class);
 	public static final Long PROJECT_ID = 1L;
 	public static final String PROJECT_NAME = "project";
@@ -52,23 +32,28 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_CREATED_DATE = "12 Jul 2013";
 	public static final String PROJECT_ORGANISM = "E. coli";
 
-	private WebDriver driver;
+	private List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
+			ImmutableMap.of(
+					"href", "/projects",
+					"text", "Projects"
+			),
+			ImmutableMap.of(
+					"href", "/projects/" + PROJECT_ID,
+					"text", String.valueOf(PROJECT_ID)
+			),
+			ImmutableMap.of(
+					"href", "/projects/" + PROJECT_ID + "/activity",
+					"text", "Activity"
+			)
+	);
+
+
 	private ProjectDetailsPage detailsPage;
 
 	@Before
-	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
-		LoginPage.loginAsManager(driver);
-
-		detailsPage = new ProjectDetailsPage(driver);
-	}
-
-	@After
-	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
+	public void setUpTest() {
+		detailsPage = new ProjectDetailsPage(driver());
+		LoginPage.loginAsManager(driver());
 	}
 
 	@Test
@@ -79,6 +64,8 @@ public class ProjectDetailsPageIT {
 		assertEquals("Should have the organism displayed", PROJECT_ORGANISM, detailsPage.getOrganism());
 		assertEquals("Should have the correct date format for creation date", PROJECT_CREATED_DATE,
 				detailsPage.getCreatedDate());
+
+		detailsPage.checkBreadCrumbs(BREADCRUMBS);
 	}
 
 	@Test

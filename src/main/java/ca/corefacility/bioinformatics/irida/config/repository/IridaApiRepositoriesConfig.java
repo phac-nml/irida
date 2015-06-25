@@ -18,6 +18,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -77,5 +79,11 @@ public class IridaApiRepositoriesConfig {
 	@Bean
 	public AuditReader auditReader(EntityManagerFactory entityManagerFactory) {
 		return AuditReaderFactory.get(entityManagerFactory.createEntityManager());
+	}
+	
+	@Bean(name="iridaTokenStore")
+	public TokenStore tokenStore(DataSource dataSource) {
+		TokenStore store = new JdbcTokenStore(dataSource);
+		return store;
 	}
 }

@@ -37,6 +37,10 @@ public class SampleFilesPage extends AbstractPage {
 		return driver.findElements(By.cssSelector("tr")).size();
 	}
 	
+	public String getSampleName(){
+		return driver.findElement(By.id("sample-name")).getText();
+	}
+	
 	public void deleteFirstFile(){
 		WebElement removeButton = driver.findElements(By.className("remove-file")).iterator().next();
 		removeButton.click();

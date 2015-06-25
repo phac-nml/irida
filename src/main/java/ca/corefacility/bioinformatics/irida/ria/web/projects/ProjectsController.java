@@ -14,18 +14,13 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,18 +33,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.config.web.IridaUIWebConfig;
+import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdminDataTable;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -58,10 +50,10 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
- *
  */
 @Controller
 public class ProjectsController {
@@ -99,8 +91,7 @@ public class ProjectsController {
 	 */
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
-	
-	
+
 	// HTTP session variable name for Galaxy callback variable
 	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
 	public static final String GALAXY_CLIENT_ID_NAME = "galaxyExportToolClientID";
@@ -120,7 +111,7 @@ public class ProjectsController {
 	/**
 	 * Request for the page to display a list of all projects available to the
 	 * currently logged in user.
-	 * 
+	 *
 	 * @param model
 	 *            The model to add attributes to for the template.
 	 * @param galaxyCallbackURL
@@ -133,26 +124,31 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/projects")
 	public String getProjectsPage(Model model,
-			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
-			@RequestParam(value="galaxyClientID",required=false) String galaxyClientID,
-			HttpSession httpSession) {
+			@RequestParam(value = "galaxyCallbackUrl", required = false) String galaxyCallbackURL,
+			@RequestParam(value = "galaxyClientID", required = false) String galaxyClientID, HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
-		model.addAttribute("isAdmin", false);
 
-		//External exporting functionality
-		if(galaxyCallbackURL != null && galaxyClientID != null) {
+		// External exporting functionality
+		if (galaxyCallbackURL != null && galaxyClientID != null) {
 			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
 			httpSession.setAttribute(GALAXY_CLIENT_ID_NAME, galaxyClientID);
 		}
-		
+
 		return LIST_PROJECTS_PAGE;
 	}
 
+	/**
+	 * Get the admin projects page.
+	 *
+	 * @param model
+	 *            {@link Model}
+	 *
+	 * @return The name of the page
+	 */
 	@RequestMapping("/projects/all")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public String getAllProjectsPage(Model model) {
-		model.addAttribute("ajaxURL", "/projects/ajax/list/all");
-		model.addAttribute("isAdmin", true);
+		model.addAttribute("ajaxURL", "/projects/admin/ajax/list");
 		return LIST_PROJECTS_PAGE;
 	}
 
@@ -182,7 +178,7 @@ public class ProjectsController {
 	 * Gets the name of the template for the new project page
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 *
 	 * @return The name of the create new project page
 	 */
@@ -195,18 +191,19 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Creates a new project and displays a list of users for the user to add to the project
+	 * Creates a new project and displays a list of users for the user to add to
+	 * the project
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 * @param name
-	 * 		String name of the project
+	 *            String name of the project
 	 * @param organism
-	 * 		Organism name
+	 *            Organism name
 	 * @param projectDescription
-	 * 		Brief description of the project
+	 *            Brief description of the project
 	 * @param remoteURL
-	 * 		URL for the project wiki
+	 *            URL for the project wiki
 	 *
 	 * @return The name of the add users to project page
 	 */
@@ -255,12 +252,12 @@ public class ProjectsController {
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.GET)
-	public String getProjectMetadataEditPage(final Model model, final Principal principal,
-			@PathVariable long projectId) throws IOException {
+	public String getProjectMetadataEditPage(final Model model, final Principal principal, @PathVariable long projectId)
+			throws IOException {
 		Project project = projectService.read(projectId);
 		User user = userService.getUserByUsername(principal.getName());
-		if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService
-				.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
+		if (user.getSystemRole().equals(Role.ROLE_ADMIN)
+				|| projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
 			if (!model.containsAttribute("errors")) {
 				model.addAttribute("errors", new HashMap<>());
 			}
@@ -323,123 +320,17 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Handles AJAX request for getting a list of projects available to the logged in user. Produces JSON.
-	 *
-	 * @param principal
-	 * 		{@link Principal} The currently authenticated users
-	 * @param start
-	 * 		The start position in the list to page.
-	 * @param length
-	 * 		The size of the page to display.
-	 * @param draw
-	 * 		Id for the table to draw, this must be returned.
-	 * @param sortColumn
-	 * 		The id for the column to sort by.
-	 * @param direction
-	 * 		The direction of the sort.
-	 * @param searchValue
-	 * 		Any search terms.
-	 *
-	 * @return JSON value of the page data.
-	 */
-	@RequestMapping(value = "/projects/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxProjectListForUser(
-			final Principal principal,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_COLUMN,
-					defaultValue = ProjectsDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
-			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_DIRECTION,
-					defaultValue = ProjectsDataTable.SORT_DEFAULT_DIRECTION) String direction,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
-		int pageNumber = ProjectsDataTable.getPageNumber(start, length);
-		Sort.Direction sortDirection = ProjectsDataTable.getSortDirection(direction);
-		String sortString = ProjectsDataTable.getSortStringFromColumnID(sortColumn);
-
-		User user = userService.getUserByUsername(principal.getName());
-
-		Page<ProjectUserJoin> page = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser(searchValue, user), pageNumber, length,
-				sortDirection, sortString);
-		List<ProjectUserJoin> projectList = page.getContent();
-
-		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
-	}
-
-	/**
-	 * Handles AJAX request for getting a list of projects available to the admin user. Produces JSON.
-	 *
-	 * @param start
-	 * 		The start position in the list to page.
-	 * @param length
-	 * 		The size of the page to display.
-	 * @param draw
-	 * 		Id for the table to draw, this must be returned.
-	 * @param sortColumn
-	 * 		The id for the column to sort by.
-	 * @param direction
-	 * 		The direction of the sort.
-	 * @param searchValue
-	 * 		Any search terms.
-	 *
-	 * @return JSON value of the page data.
-	 */
-	@RequestMapping(value = "/projects/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public @ResponseBody Map<String, Object> getAjaxProjectListForAdmin(
-			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = ProjectsAdminDataTable.REQUEST_PARAM_SORT_COLUMN,
-					defaultValue = ProjectsAdminDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
-			@RequestParam(value = ProjectsAdminDataTable.REQUEST_PARAM_SORT_DIRECTION,
-					defaultValue = ProjectsAdminDataTable.SORT_DEFAULT_DIRECTION) String direction,
-			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
-
-		int pageNumber = ProjectsAdminDataTable.getPageNumber(start, length);
-		Sort.Direction sortDirection = ProjectsAdminDataTable.getSortDirection(direction);
-		String sortString = ProjectsAdminDataTable.getSortStringFromColumnID(sortColumn);
-
-		// Get the page information
-		Page<Project> page = projectService.search(ProjectSpecification.searchProjectName(searchValue), pageNumber,
-				length, sortDirection, sortString);
-
-		Map<String, Object> map = new HashMap<>();
-		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_DRAW, draw);
-		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_RECORDS_TOTAL, page.getTotalElements());
-		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
-
-		// Create the format required by DataTable
-		List<Map<String, String>> projectsData = new ArrayList<>();
-		for (Project p : page.getContent()) {
-			Map<String, String> l = new HashMap<>();
-
-			l.put("id", p.getId().toString());
-			l.put("name", p.getName());
-			l.put("organism", p.getOrganism());
-			l.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
-			l.put("members", String.valueOf(userService.getUsersForProject(p).size()));
-			l.put("dateCreated", dateFormatter.print(p.getCreatedDate(), LocaleContextHolder.getLocale()));
-			l.put("dateModified", p.getModifiedDate().toString());
-			projectsData.add(l);
-		}
-		map.put(ProjectsDataTable.RESPONSE_PARAM_DATA, projectsData);
-		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
-		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
-
-		return map;
-	}
-
-	/**
-	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
+	 * Search for taxonomy terms. This method will return a map of found
+	 * taxonomy terms and their child nodes.
 	 * <p>
-	 * Note: If the search term was not included in the results, it will be added as an option
+	 * Note: If the search term was not included in the results, it will be
+	 * added as an option
 	 *
 	 * @param searchTerm
-	 * 		The term to find taxa for
+	 *            The term to find taxa for
 	 *
-	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
+	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic
+	 *         tree of matching terms
 	 */
 	@RequestMapping("/projects/ajax/taxonomy/search")
 	@ResponseBody
@@ -465,56 +356,102 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Generates a map of project information for the {@link ProjectsDataTable}
-	 *
-	 * @param projectList
-	 * 		a List of {@link ProjectUserJoin} for the current user.
-	 * @param draw
-	 * 		property sent from {@link ProjectsDataTable} as the table to render information to.
-	 * @param totalElements
-	 * 		Total number of elements that could go into the table.
-	 * @param sortColumn
-	 * 		Column to sort by.
-	 * @param sortDirection
-	 * 		Direction to sort the column
-	 *
-	 * @return Map containing the information to put into the {@link ProjectsDataTable}
+	 * User mapping to get a list of all project they are on.
+	 * 
+	 * @param principal
+	 *            {@link Principal} currently logged in user.
+	 * @return {@link List} of project {@link Map}
 	 */
-	public Map<String, Object> getProjectsDataMap(List<ProjectUserJoin> projectList, int draw, long totalElements,
-			int sortColumn, Sort.Direction sortDirection) {
-		Map<String, Object> map = new HashMap<>();
-		map.put(ProjectsDataTable.RESPONSE_PARAM_DRAW, draw);
-		map.put(ProjectsDataTable.RESPONSE_PARAM_RECORDS_TOTAL, totalElements);
-		map.put(ProjectsDataTable.RESPONSE_PARAM_RECORDS_FILTERED, totalElements);
+	@RequestMapping("/projects/ajax/list")
+	@ResponseBody
+	public List<Map<String, Object>> getAjaxProjectList(final Principal principal) {
 
+		User user = userService.getUserByUsername(principal.getName());
+		return getProjectsDataMap(projectService.getProjectsForUser(user));
+	}
+
+	/**
+	 * Admin mapping to get a list of all project they are on.
+	 *
+	 * @param principal
+	 *            {@link Principal} currently logged in user.
+	 *
+	 * @return {@link List} of project {@link Map}
+	 */
+	@RequestMapping("/projects/admin/ajax/list")
+	@ResponseBody
+	public List<Map<String, Object>> getAjaxAdminProjectsList(final Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		return generateAdminProjectMap(user, (List<Project>) projectService.findAll());
+	}
+
+	/**
+	 * Generates a map of project information for the projects table
+	 * 
+	 * @param projectList
+	 *            {@link List} of {@link ProjectUserJoin}
+	 * @return A list of information about a project.
+	 */
+	public List<Map<String, Object>> getProjectsDataMap(List<Join<Project, User>> projectList) {
 		// Create the format required by DataTable
-		List<Map<String, String>> projectsData = new ArrayList<>();
-		for (ProjectUserJoin projectUserJoin : projectList) {
-			Project p = projectUserJoin.getSubject();
-			String role = projectUserJoin.getProjectRole() != null ? projectUserJoin.getProjectRole().toString() : "";
-			Map<String, String> l = new HashMap<>();
-
-			l.put("id", p.getId().toString());
-			l.put("name", p.getName());
-			l.put("organism", p.getOrganism());
-			l.put("role", role);
-			l.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
-			l.put("members", String.valueOf(userService.getUsersForProject(p).size()));
-			l.put("dateCreated", dateFormatter.print(p.getCreatedDate(), LocaleContextHolder.getLocale()));
-			l.put("dateModified", p.getModifiedDate().toString());
-			projectsData.add(l);
+		List<Map<String, Object>> projectsData = new ArrayList<>(projectList.size());
+		for (Join<Project, User> join : projectList) {
+			Project p = join.getSubject();
+			String role = ((ProjectUserJoin) join).getProjectRole() != null ? ((ProjectUserJoin) join).getProjectRole()
+					.toString() : "";
+			projectsData.add(createProjectDetailsMap(p, role));
 		}
-		map.put(ProjectsDataTable.RESPONSE_PARAM_DATA, projectsData);
-		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
-		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
+		return projectsData;
+	}
+
+	/**
+	 * Generates a map of projects for an admin user.
+	 * 
+	 * @param user
+	 *            {@link User} currently logged in user.
+	 * @param projects
+	 *            {@link List} of {@link Project}
+	 * @return {@link List} of {@link Map} of project data.
+	 */
+	private List<Map<String, Object>> generateAdminProjectMap(User user, List<Project> projects) {
+		List<Map<String, Object>> result = new ArrayList<>(projects.size());
+		for (Project project : projects) {
+			String role = projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER) ? ProjectRole.PROJECT_OWNER
+					.toString()
+					: projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_USER) ? ProjectRole.PROJECT_USER
+							.toString() : "PROJECT_NONE";
+			result.add(createProjectDetailsMap(project, role));
+		}
+		return result;
+	}
+
+	/**
+	 * Generates a map of the project data. This is required for specific fields
+	 * such as 'role', 'samples' and 'members'
+	 *
+	 * @param project
+	 *            {@link Project}
+	 * @param role
+	 *            {@link String} user's role on the project.
+	 *
+	 * @return
+	 */
+	private Map<String, Object> createProjectDetailsMap(Project project, String role) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("item", project);
+		map.put("link", "projects/" + project.getId());
+		map.put("custom", ImmutableMap.of("samples",
+				String.valueOf(sampleService.getNumberOfSamplesForProject(project)), "members",
+				String.valueOf(userService.countUsersForProject(project)), "role", role));
 		return map;
 	}
 
 	/**
-	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings
+	 * for displaing in the UI.
 	 *
 	 * @param e
-	 * 		{@link ConstraintViolationException} for the form submitted.
+	 *            {@link ConstraintViolationException} for the form submitted.
 	 *
 	 * @return Map of string {fieldName, error}
 	 */
@@ -537,10 +474,11 @@ public class ProjectsController {
 	/**
 	 * }
 	 * <p>
-	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
+	 * /** Recursively transform a {@link TreeNode} into a json parsable map
+	 * object
 	 *
 	 * @param node
-	 * 		The node to transform
+	 *            The node to transform
 	 *
 	 * @return A Map<String,Object> which may contain more children
 	 */

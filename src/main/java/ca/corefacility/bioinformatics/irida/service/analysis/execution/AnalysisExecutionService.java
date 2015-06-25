@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -18,6 +19,16 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  */
 public interface AnalysisExecutionService {
 
+	/**
+	 * Downloads any required {@link SequenceFileSnapshot}s for the given
+	 * {@link AnalysisSubmission}.
+	 * 
+	 * @param analysisSubmission
+	 *            the {@link AnalysisSubmission} to get files for
+	 * @return A Future of the {@link AnalysisSubmission}
+	 */
+	public Future<AnalysisSubmission> downloadSubmissionFiles(AnalysisSubmission analysisSubmission);
+	
 	/**
 	 * Prepares the given {@link AnalysisSubmission} to be executed within an
 	 * execution manager. This will persist the submission within the database.

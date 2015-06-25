@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.config.security;
 
 import java.lang.reflect.Field;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +37,6 @@ import org.springframework.security.oauth2.provider.error.WebResponseExceptionTr
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -131,6 +128,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
 		@Autowired
+		@Qualifier("iridaTokenStore")
 		private TokenStore tokenStore;
 
 		@Autowired
@@ -225,19 +223,13 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	@Primary
-	public ResourceServerTokenServices tokenServices(@Qualifier("clientDetails") ClientDetailsService clientDetails,
+	public ResourceServerTokenServices tokenServices(@Qualifier("clientDetails") ClientDetailsService clientDetails, @Qualifier("iridaTokenStore")
 			TokenStore tokenStore) {
 		DefaultTokenServices services = new DefaultTokenServices();
 		services.setTokenStore(tokenStore);
 		services.setSupportRefreshToken(true);
 		services.setClientDetailsService(clientDetails);
 		return services;
-	}
-
-	@Bean
-	public TokenStore tokenStore(DataSource dataSource) {
-		TokenStore store = new JdbcTokenStore(dataSource);
-		return store;
 	}
 
 	@Bean

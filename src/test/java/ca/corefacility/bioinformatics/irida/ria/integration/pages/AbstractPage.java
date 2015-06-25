@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import com.google.common.base.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,9 +13,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.google.common.base.Strings;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the common elements in a page within the application.
@@ -49,7 +50,7 @@ public class AbstractPage {
 		driver.get(url);
 	}
 
-	public void logout(WebDriver driver) {
+	public static void logout(WebDriver driver) {
 		driver.get(BASE_URL + "logout");
 	}
 
@@ -106,7 +107,7 @@ public class AbstractPage {
 	public boolean isElementOnScreen(String id) {
 		driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
 		boolean exists = driver.findElements(By.id(id)).size() != 0;
-		driver.manage().timeouts().implicitlyWait(TestUtilities.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(AbstractIridaUIITChromeDriver.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 		return exists;
 	}
 
@@ -143,7 +144,26 @@ public class AbstractPage {
 	}
 
 	public int getCartProjectCount() {
-		return driver.findElements(By.cssSelector("#cart-project-list > li")).size();
+		return driver.findElements(By.cssSelector("#cart-project-list > li.local-project")).size();
+	}
+
+	/**
+	 * Test for breadcrumbs on any given page.
+	 * @param expected {@link List} containing {@link Map} of expected crumbs
+	 *                             - href: expected href
+	 *                             - text: expected text displayed
+	 */
+	public void checkBreadCrumbs(List<Map<String, String>> expected) {
+		List<WebElement> crumbs = driver.findElement(By.className("breadcrumbs")).findElements(By.tagName("a"));
+		assertEquals("Should have the correct number of breadcrumbs", expected.size(), crumbs.size());
+		for (int i = 0; i < crumbs.size(); i++) {
+			WebElement crumb = crumbs.get(i);
+			String href = crumb.getAttribute("href");
+			String text = crumb.getText();
+			assertTrue("Should have the epected url in the breadcrumb", href.contains(expected.get(i).get("href")));
+			assertTrue("Should have the epected url in the breadcrumb", href.contains(expected.get(i).get("href")));
+			assertEquals("Should have the epected text in the breadcrumb", expected.get(i).get("text"), text);
+		}
 	}
 
 	/**

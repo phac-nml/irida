@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectUsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
@@ -78,9 +77,9 @@ public class ProjectUsersControllerTest {
         assertNotNull(o);
         assertTrue(o instanceof ResourceCollection);
         @SuppressWarnings("unchecked")
-        ResourceCollection<UserResource> users = (ResourceCollection<UserResource>) o;
+        ResourceCollection<User> users = (ResourceCollection<User>) o;
         assertEquals(1, users.size());
-        UserResource ur = users.iterator().next();
+        User ur = users.iterator().next();
         assertTrue(ur.getLink("self").getHref().endsWith(username));
         Link relationship = ur.getLink(RESTGenericController.REL_RELATIONSHIP);
         assertNotNull(relationship);

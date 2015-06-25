@@ -80,6 +80,7 @@ public class SequenceFileController {
 	 * @return The name of the template.
 	 */
 	@RequestMapping(value = { "/sequenceFiles/{sequenceFileId}/summary",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/summary",
 			"/sequencingRuns/{runId}/sequenceFiles/{sequenceFileId}/summary" })
 	public String getSequenceFilePage(final Model model, @PathVariable Long sequenceFileId) {

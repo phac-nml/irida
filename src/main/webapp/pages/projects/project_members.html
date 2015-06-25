@@ -10,8 +10,8 @@
           href="/resources/bower_components/select2/select2-bootstrap.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
           href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-          href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
+          href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <main layout:fragment="main">
@@ -47,8 +47,8 @@
 </main>
 
 <th:block layout:fragment="scripts">
-<script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
-        src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
+        src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 <script th:src="@{/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js}"
         src="/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
 <script th:src="@{/resources/bower_components/select2/select2.min.js}"
@@ -88,7 +88,7 @@
         </form>
     </div>
     <div class="panel-footer text-right">
-        <button class="btn btn-default popup-modal-dismiss" th:text="#{project.members.add.cancel}">_Cancel_</button>
+        <button id="closeAddMemer" class="btn btn-default popup-modal-dismiss" th:text="#{project.members.add.cancel}">_Cancel_</button>
         <button id="submitAddMember" class="btn btn-primary" th:text="#{project.members.add.submit}">_Submit_</button>
     </div>
 </section>
@@ -139,8 +139,8 @@ var DT = {
         }
     },
     createRemoveButton: function (row) {
-        var pid = row.subject.id;
-        var uid = row.object.id;
+        var pid = row.subject.identifier;
+        var uid = row.object.identifier;
         var frag = document.createElement("div");
         var btn = document.createElement("button");
         frag.appendChild(btn);
@@ -162,7 +162,7 @@ var DT = {
         //create the edit button group
         var group2 = document.createElement("div");
         group2.className = "btn-group edit-button-container";
-        group2.innerHTML = DT.createEditBtn(row.object.id);
+        group2.innerHTML = DT.createEditBtn(row.object.identifier);
 
         //add the buttons to the toolbar
         toolbar.appendChild(group1);
@@ -187,8 +187,8 @@ $(document).ready(function () {
             [0, "asc"]
         ],
         rowCallback: function (row, data) {
-            var uid = data.object.id;
-            var pid = data.subject.id;
+            var uid = data.object.identifier;
+            var pid = data.subject.identifier;
             var userLabel = data.object.label;
 
             var removeUrl = /*[[@{/projects/{pid}/members/remove(pid=${project.getId()})}]]*/ '/projects/1/members/remove';
@@ -207,7 +207,7 @@ $(document).ready(function () {
                 "render": function (data) {
                     return '<a class="col-names" href="' +
                         /*[[@{'/users/'}]]*/ ''
-                    + data.id + '">' + data.label + '</a>';
+                    + data.identifier + '">' + data.label + '</a>';
                 }
             },
             {
@@ -222,7 +222,7 @@ $(document).ready(function () {
                     }
 
                     var roleSelect = $("#template-roles").clone();
-                    var userid = row.object.id;
+                    var userid = row.object.identifier;
                     var newId = userid + "-role-select";
                     roleSelect.attr("id", newId);
                     roleSelect.attr("data-user", userid);
@@ -248,7 +248,8 @@ $(document).ready(function () {
             {
                 "data": "modifiedDate",
                 "render": function (data) {
-                    return '<span data-livestamp="' + new Date(parseInt(data)) + '"></span>';
+                    var day = new Date(data);
+                    return moment(day).format(TL.date.moment.short);
                 }
             },
             {
@@ -297,6 +298,10 @@ $(document).ready(function () {
                 $("#add-user-role").select2("val", "PROJECT_USER");
             }
         }
+    });
+
+    $("#closeAddMemer").on('click', function() {
+        $.magnificPopup.close();
     });
 
     $("#submitAddMember").click(function () {

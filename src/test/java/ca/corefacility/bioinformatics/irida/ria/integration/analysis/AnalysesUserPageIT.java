@@ -1,52 +1,28 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
 /**
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class AnalysesUserPageIT {
-	private WebDriver driver;
+public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Before
-	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsManager(driver);
+	public void setUpTest() {
+		LoginPage.loginAsManager(driver());
 	}
 
 	@Test
 	public void testPageSetUp() {
-		AnalysesUserPage page = AnalysesUserPage.initializePage(driver);
+		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
 		page.filterByName("submission");
 		assertEquals("Should be 6 analyses displayed on the page after filtering by name", 6,
@@ -56,12 +32,12 @@ public class AnalysesUserPageIT {
 		assertEquals("Should display progress bars with percent complete for everything except error state", 6,
 				page.getNumberOfProgressBars());
 		assertEquals("Should display 90% complete", "90%", page.getPercentComplete(1));
-		assertEquals("Should display 100% complete", "5%", page.getPercentComplete(2));
+		assertEquals("Should display 15% complete", "15%", page.getPercentComplete(2));
 	}
 
 	@Test
 	public void testAdvancedFilters() {
-		AnalysesUserPage page = AnalysesUserPage.initializePage(driver);
+		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
 
 		page.filterByState("New");
@@ -90,10 +66,5 @@ public class AnalysesUserPageIT {
 		page.clearFilter();
 		page.filterByType("Phylogenomics Pipeline");
 		assertEquals("Should be 6 analyses aftering filtering by type", 6, page.getNumberOfAnalyses());
-	}
-
-	@After
-	public void destroy() {
-		driver.quit();
 	}
 }

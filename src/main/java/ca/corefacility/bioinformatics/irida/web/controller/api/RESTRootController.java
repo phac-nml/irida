@@ -65,12 +65,17 @@ public class RESTRootController {
 	public void initLinks() {
 		PUBLIC_CONTROLLERS.put("users", RESTUsersController.class);
 		PUBLIC_CONTROLLERS.put("projects", RESTProjectsController.class);
+		PUBLIC_CONTROLLERS
+				.put(RESTAnalysisSubmissionController.SUBMISSIONS_REL, RESTAnalysisSubmissionController.class);
 		RESTRICTED_CONTROLLERS.put("sequencingRuns", RESTSequencingRunController.class);
 	}
 
 	/**
 	 * Creates a response with a set of links used to discover the rest of the
 	 * system.
+	 * 
+	 * @param request
+	 *            Incoming HTTP request object to check the user's role.
 	 *
 	 * @return a response to the client.
 	 */
