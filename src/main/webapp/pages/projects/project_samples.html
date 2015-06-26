@@ -11,6 +11,11 @@
 	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
     <link rel="stylesheet" href="/resources/css/pages/project_samples.css" th:href="@{/resources/css/pages/project_samples.css}"/>
 	<script>window.dependencies = ['Samples'];</script>
+	<style>
+		td {
+			vertical-align: middle!important;
+		}
+	</style>
 </head>
 <body>
 <aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
@@ -273,7 +278,7 @@
 					</th>
 				</tr>
 				</thead>
-				<tbody>
+				<tbody th:inline="text">
 				<tr class="sample-row" ng-class="{'selected': entry.selected, 'local-sample' : entry.sampleType=='LOCAL', 'associated-sample' : entry.sampleType=='ASSOCIATED', 'remote-sample' : entry.sampleType=='REMOTE'}"
 				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
@@ -286,22 +291,20 @@
 							</md-button>
 							<span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
 					</td>
-					<td><md-content flex="" layout-padding="">{{entry.sample.organism}}</md-content></td>
+					<td>{{entry.sample.organism}}</td>
 					<td>{{entry.sample.collectedBy}}</td>
 					<td ng-show="table.requested.associated || table.requested.remote">
-						<md-content flex="" layout-padding="">
 					   <span ng-if="entry.sampleType != 'LOCAL'">
                             {{entry.project.label}}
 						</span>
-						</md-content>
 					</td>
 					<td class="createdDate" data-date="{{entry.sample.createdDate}}">
-						<md-content flex="" layout-padding="">
+						<span layout-padding="">
+							<span>{{entry.sample.createdDate | date:'[[#{datepicker.short}]]'}}</span>
 							<md-tooltip md-direction="top">
 								{{entry.sample.createdDate | date:'medium'}}
 							</md-tooltip>
-							<span>{{entry.sample.createdDate | date:'shortDate'}}</span>
-						</md-content>
+						</span>
 					</td>
 				</tr>
 				</tbody>
