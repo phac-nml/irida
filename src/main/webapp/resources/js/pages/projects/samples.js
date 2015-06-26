@@ -124,11 +124,7 @@
         filtered = [];
     svc.samples = [];
     
-    svc.requested = {
-      local: false,
-      associated: false,
-      remote: false
-    };
+    svc.requested = {};
     
     //disconnected remote apis
     svc.notConnected = [];
@@ -449,11 +445,7 @@
 
     vm.samples = [];
     
-    vm.requested = {
-      local: false,
-      associated: false,
-      remote: false
-    };
+    vm.requested = {};
 
     vm.updateSample = function (s) {
       SamplesService.updateSample(s);
