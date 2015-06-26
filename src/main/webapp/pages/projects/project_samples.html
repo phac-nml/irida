@@ -323,19 +323,6 @@
 </main>
 
 <th:block layout:fragment="scripts" th:inline="javascript">
-	<script th:inline="javascript">
-		var associatedSelectedTooltip = /*[[#{project.samples.associated-selected-error}]]*/ "_Unavailable_",
-			PAGE = {
-				urls: {
-					merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '/projects/1/ajax/samples/merge',
-					remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '/projects/1/ajax/samples/delete',
-					copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '/projects/1/ajax/samples/copy',
-					local: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '/projects/1/ajax/samples',
-					associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '/projects/1/associated/samples',
-					remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '/projects/1/associated/remote/samples'
-				}
-			};
-	</script>
 	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
 	        src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
@@ -343,6 +330,9 @@
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>
+	<script th:inline="javascript">
+		var associatedSelectedTooltip = /*[[#{project.samples.associated-selected-error}]]*/ "_Unavailable_";
+	</script>
 </th:block>
 </body>
 </html>
