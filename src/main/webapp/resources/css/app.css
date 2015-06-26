@@ -8112,56 +8112,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* line 17, ../../styles/components/_forms.scss */
-.large-checkbox label {
-  position: relative;
-  font-size: 14px;
-  cursor: pointer;
-  color: #232323;
-  margin-right: 1rem;
-}
-/* line 23, ../../styles/components/_forms.scss */
-.large-checkbox label:before, .large-checkbox label:after {
-  font-family: FontAwesome;
-  font-weight: 100;
-  font-size: 22px;
-  /*absolutely positioned*/
-  position: absolute;
-  top: -16px;
-  left: 0;
-}
-/* line 33, ../../styles/components/_forms.scss */
-.large-checkbox label:before {
-  content: '\f0c8';
-  /*unchecked*/
-}
-/* line 36, ../../styles/components/_forms.scss */
-.large-checkbox label:after {
-  content: '\f14a';
-  /*checked*/
-  max-width: 0;
-  overflow: hidden;
-  opacity: 0.5;
-}
-/* line 42, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"] {
-  display: none;
-}
-/* line 45, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"]:checked + label:after {
-  max-width: 25px;
-  opacity: 1;
-}
-/* line 49, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"]:checked + label:before {
-  display: none;
-}
-
-/* line 55, ../../styles/components/_forms.scss */
 input {
   font-size: 16px !important;
 }
 
-/* line 60, ../../styles/components/_forms.scss */
+/* line 22, ../../styles/components/_forms.scss */
 .input-group input, .input-group button.btn-default {
   border-color: #cccccc !important;
 }
