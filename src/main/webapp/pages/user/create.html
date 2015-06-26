@@ -67,7 +67,7 @@
 							
 							<div class="form-group">
 								<label class="control-label" th:text="#{user.setpassword}" for="setpassword">_User Created Password_</label>
-								<input type="checkbox" id="setpassword" name="requireActivation" th:checked="${given_requireActivation}" checked="checked" value="requireActivation" disabled="${!emailConfigured} ? 'disabled'"/>
+								<input type="checkbox" id="setpassword" name="requireActivation" th:checked="${given_requireActivation}" checked="checked" value="requireActivation" th:disabled="${!emailConfigured} ? 'disabled'"/>
                                 <p class="help-block" th:text="#{user.create.setpassword.help}">_Activate User Help_</p>
 							</div>
 							
