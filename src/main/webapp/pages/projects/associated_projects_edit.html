@@ -5,7 +5,7 @@
 <head>
 	<title th:text="#{project.associated.heading(${project.label})}"></title>
 	<script>
-		window.dependencies = ['irida.datatables', 'restangular', 'frapontillo.bootstrap-switch'];
+		window.dependencies = ['associated.edit'];
 	</script>
     <link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css}"
 	      href="/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css"/>
@@ -191,9 +191,15 @@
         src="/resources/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
 <script th:replace="remote_apis/remote_api_connect"></script>
 <script th:inline="javascript">
-	var app = angular.module('irida');
+	var PAGE = {
+			urls: {
+				base: /*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
+			}
+		},
+		app = angular.module('associated.edit', ['irida.datatables', 'restangular', 'frapontillo.bootstrap-switch']);
+
 	app.config(function (RestangularProvider) {
-		RestangularProvider.setBaseUrl(/*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/');
+		RestangularProvider.setBaseUrl(PAGE.urls.base);
 	});
 
 	app.factory('AssociatedService', function (Restangular) {

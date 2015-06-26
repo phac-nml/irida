@@ -1,0 +1,32 @@
+{
+  "bundle": "notifications",
+  "dependencies": [
+    "angular"
+  ],
+  "assets": [
+    {
+      "name": "angularjs-toaster",
+      "version": "0.4.9",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/AngularJS-Toaster/toaster.js"
+      }
+    },
+    {
+      "name": "angularjs-toaster",
+      "version": "0.4.9",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/AngularJS-Toaster/toaster.css"
+      }
+    },
+    {
+      "name": "notifications",
+      "version": "0.0.1",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/services/notifications/irida-notifications.js"
+      }
+    }
+  ]
+}

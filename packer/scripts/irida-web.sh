@@ -2,7 +2,7 @@
 yum -y install epel-release
 yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-client tomcat-native
 
-mkdir -p /opt/irida/data/{sequencing,reference,analysis,remote}
+mkdir -p /opt/irida/data/{sequencing,reference,analysis,snapshot}
 mkdir -p /etc/irida/analytics
 
 chown -R tomcat:tomcat /opt/irida/
@@ -22,7 +22,7 @@ ln -s /opt/irida/web.conf /etc/irida/web.conf
 sed -i 's_sequence.file.base.directory=.*_sequence.file.base.directory=/opt/irida/data/sequencing_' /etc/irida/irida.conf
 sed -i 's_reference.file.base.directory=.*_reference.file.base.directory=/opt/irida/data/reference_' /etc/irida/irida.conf
 sed -i 's_output.file.base.directory=.*_output.file.base.directory=/opt/irida/data/analysis_' /etc/irida/irida.conf
-sed -i 's_remote.file.temporary.directory=.*_remote.file.temporary.directory=/opt/irida/data/remote_' /etc/irida/irida.conf
+sed -i 's_snapshot.file.base.directory=.*_snapshot.file.base.directory=/opt/irida/data/snapshot_' /etc/irida/irida.conf
 
 ## Set up a local database and point /etc/irida/irida.conf at that database
 systemctl enable mariadb
