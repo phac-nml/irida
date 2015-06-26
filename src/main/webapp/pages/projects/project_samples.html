@@ -277,30 +277,31 @@
 				<tr class="sample-row" ng-class="{'selected': entry.selected, 'local-sample' : entry.sampleType=='LOCAL', 'associated-sample' : entry.sampleType=='ASSOCIATED', 'remote-sample' : entry.sampleType=='REMOTE'}"
 				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
-						<div class="large-checkbox">
-							<input class="sample-select" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}"
-							       type="checkbox"
-							       ng-model="entry.selected"
-							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.identifier}}"></label>
-						</div>
+						<md-checkbox th:attr="aria-label=#{project.smaples.aria.select}" class="md-primary" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}" ng-model="entry.selected" ng-change="table.updateSample(entry)"></md-checkbox>
 					</td>
 					<td class="sample-name">
-						<a class="btn btn-default btn-xs" ng-if="entry.sampleType!='REMOTE'"
-						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
-						   href="#">{{entry.sample.sampleName}}
-						</a>
-                        <span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
+							<md-button class="md-primary" ng-if="entry.sampleType!='REMOTE'"
+							   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
+							   href="#">{{entry.sample.sampleName}}
+							</md-button>
+							<span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
 					</td>
-					<td>{{entry.sample.organism}}</td>
+					<td><md-content flex="" layout-padding="">{{entry.sample.organism}}</md-content></td>
 					<td>{{entry.sample.collectedBy}}</td>
 					<td ng-show="table.requested.associated || table.requested.remote">
+						<md-content flex="" layout-padding="">
 					   <span ng-if="entry.sampleType != 'LOCAL'">
                             {{entry.project.label}}
 						</span>
+						</md-content>
 					</td>
-					<td class="createdDate" data-date="{{entry.sample.createdDate}}" tooltip-popup-delay='500'
-					    tooltip-placement="left" tooltip="{{entry.sample.createdDate | date:'medium'}}">
-						<span>{{entry.sample.createdDate | date:'mediumDate'}}</span>
+					<td class="createdDate" data-date="{{entry.sample.createdDate}}">
+						<md-content flex="" layout-padding="">
+							<md-tooltip md-direction="top">
+								{{entry.sample.createdDate | date:'medium'}}
+							</md-tooltip>
+							<span>{{entry.sample.createdDate | date:'shortDate'}}</span>
+						</md-content>
 					</td>
 				</tr>
 				</tbody>
@@ -319,6 +320,19 @@
 </main>
 
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:inline="javascript">
+		var associatedSelectedTooltip = /*[[#{project.samples.associated-selected-error}]]*/ "_Unavailable_",
+			PAGE = {
+				urls: {
+					merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '/projects/1/ajax/samples/merge',
+					remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '/projects/1/ajax/samples/delete',
+					copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '/projects/1/ajax/samples/copy',
+					local: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '/projects/1/ajax/samples',
+					associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '/projects/1/associated/samples',
+					remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '/projects/1/associated/remote/samples'
+				}
+			};
+	</script>
 	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
 	        src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
@@ -326,9 +340,6 @@
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>
-	<script th:inline="javascript">
-		var associatedSelectedTooltip = /*[[#{project.samples.associated-selected-error}]]*/ "_Unavailable_";
-	</script>
 </th:block>
 </body>
 </html>
