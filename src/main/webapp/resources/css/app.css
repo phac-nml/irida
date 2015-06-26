@@ -8385,47 +8385,23 @@ input {
   margin-right: 1rem;
   padding: .5rem;
 }
-@media screen and (max-width: 920px) {
+@media screen and (max-width: 960px) {
   /* line 3, ../../styles/components/_sidenav.scss */
   .sidenav {
     width: 100%;
   }
 }
 
-/* line 12, ../../styles/components/_sidenav.scss */
-.sidenav__inner--fixed {
-  position: fixed;
-  top: 60px;
-  width: 290px;
-  z-index: 500;
-}
-@media screen and (max-width: 1200px) {
+@media screen and (min-width: 960px) {
   /* line 12, ../../styles/components/_sidenav.scss */
   .sidenav__inner--fixed {
-    width: 240px;
-  }
-}
-@media screen and (max-width: 1000px) {
-  /* line 12, ../../styles/components/_sidenav.scss */
-  .sidenav__inner--fixed {
-    width: 180px;
-  }
-}
-@media screen and (max-width: 830px) {
-  /* line 12, ../../styles/components/_sidenav.scss */
-  .sidenav__inner--fixed {
-    position: static;
-    width: 100%;
-  }
-}
-@media screen and (max-width: 992px) {
-  /* line 12, ../../styles/components/_sidenav.scss */
-  .sidenav__inner--fixed {
-    top: 110px;
+    width: 290px;
+    position: fixed;
+    top: 70px;
   }
 }
 
-/* line 32, ../../styles/components/_sidenav.scss */
+/* line 20, ../../styles/components/_sidenav.scss */
 .sidenav__label {
   color: #939393;
   font-weight: normal;

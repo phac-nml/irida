@@ -5,16 +5,14 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title th:text="#{${admin} ? 'analyses.admin.page-title' : 'analyses.user.page-title'}">My Title Goes Here</title>
-	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
-	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
 	<link rel="stylesheet" href="/resources/bower_components/ng-table/dist/ng-table.min.css"
 	      th:href="@{/resources/bower_components/ng-table/dist/ng-table.min.css}"/>
 	<script>window.dependencies = ['irida.analysis.user'];</script>
 </head>
 <body>
-<div layout:fragment="page">
-	<div class="row">
-		<aside class="col-sm-3" ng-controller="filterController as filter">
+<div layout:fragment="page" ddl:bundle-includes="analyses">
+	<div layout="column" layout-gt-md="row" layout-padding="">
+		<aside ng-controller="filterController as filter" flex="" flex-gt-md="25">
 			<div class="sidenav__inner--fixed sidebar">
 				<div class="sidebar__heading">
 					<h2>
@@ -82,7 +80,7 @@
 				</div>
 			</div>
 		</aside>
-		<div class="col-sm-9">
+		<div flex="">
 			<h1 style="margin-top: 0;" th:text="#{${admin} ? 'analyses.admin.page-title' : 'analyses.user.page-title'}">
 				_ANALYSIS_PAGE_</h1>
 
@@ -97,12 +95,16 @@
 						<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)"
 						    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
 							<td class="analysis-percent" data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}
-								<progressbar ng-if="analysis.analysisState !== 'ERROR'" value="analysis.percentComplete">{{ analysis.percentComplete | number:0 }}%</progressbar>
+								<span ng-if="analysis.analysisState !== 'ERROR'" class="md-caption">
+									<md-progress-linear md-mode="determinate"
+								                    ng-value="analysis.percentComplete"></md-progress-linear>
+									{{ analysis.percentComplete | number:0 }}%
+								</span>
 							</td>
 							<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
-                              <a class="btn btn-default btn-xs" th:href="@{/analysis/{{analysis.id}}}" href="#">
+                              <md-button th:href="@{/analysis/{{analysis.id}}}" href="#">
 							    {{analysis.label}}
-                              </a>
+                              </md-button>
 							</td>
 							<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">
 								{{analysis.workflowName}}
@@ -148,8 +150,6 @@
 	</script>
 	<script src="/resources/bower_components/ng-table/dist/ng-table.min.js"
 	        th:src="@{/resources/bower_components/ng-table/dist/ng-table.min.js}"></script>
-	<script src="/resources/js/pages/analyses/analyses.js"
-	        th:src="@{/resources/js/pages/analyses/analyses.js}"></script>
 </th:block>
 </body>
 </html>
