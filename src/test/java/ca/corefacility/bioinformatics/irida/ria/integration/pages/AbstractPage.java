@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -48,6 +49,9 @@ public class AbstractPage {
 	protected static void get(WebDriver driver, String relativeUrl) {
 		String url = BASE_URL + relativeUrl;
 		driver.get(url);
+		// Check to make sure that there is no server error
+		assertFalse("Should not be on the server error page",
+				driver.findElement(By.tagName("h1")).getText().equals("Server Error"));
 	}
 
 	public static void logout(WebDriver driver) {
