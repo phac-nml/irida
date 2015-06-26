@@ -33,4 +33,8 @@ public class TestEmailController extends EmailController {
 		logger.info("TestEmailController#sendWelcomeEmail called for " + user + " " + sender + " " + passwordReset);
 	}
 
+	@Override
+	public Boolean isMailConfigured() {
+		return true;
+	}
 }
