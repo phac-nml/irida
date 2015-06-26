@@ -126,7 +126,7 @@
     
     svc.requested = {
       local: false,
-      assocaited: false,
+      associated: false,
       remote: false
     };
     
@@ -451,7 +451,7 @@
     
     vm.requested = {
       local: false,
-      assocaited: false,
+      associated: false,
       remote: false
     };
 
