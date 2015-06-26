@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -56,7 +57,7 @@ public class ProjectEventsControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(eventService.getEventsForProject(eq(project), any(Pageable.class))).thenReturn(page);
 
-		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model);
+		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model, 10);
 
 		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
 		assertTrue(model.containsAttribute("events"));
@@ -81,13 +82,38 @@ public class ProjectEventsControllerTest {
 		when(userService.getUserByUsername(principal.getName())).thenReturn(user);
 		when(eventService.getEventsForUser(eq(user), any(Pageable.class))).thenReturn(page);
 
-		String recentEventsForProject = controller.getRecentEventsForUser(model, principal);
+		String recentEventsForProject = controller.getRecentEventsForUser(model, principal, 10);
 
 		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
 		assertTrue(model.containsAttribute("events"));
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> events = (List<Map<String, Object>>) model.get("events");
 		assertEquals(1, events.size());
+		Map<String, Object> next = events.iterator().next();
+		assertTrue(next.containsKey("name"));
+		assertTrue(next.containsKey("event"));
+		assertEquals(ProjectEventsController.FRAGMENT_NAMES.get(event.getClass()), next.get("name"));
+		assertEquals(event, next.get("event"));
+	}
+
+	@Test
+	public void testGetAllEvents() {
+		ExtendedModelMap model = new ExtendedModelMap();
+		ProjectEvent event = new UserRoleSetProjectEvent();
+		Page<ProjectEvent> page = new PageImpl<>(Lists.newArrayList(event));
+		int size = 10;
+
+		when(eventService.list(0, size, Direction.DESC, "createdDate")).thenReturn(page);
+
+		String recentEventsForProject = controller.getAllRecentEvents(model, 10);
+
+		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
+		assertTrue(model.containsAttribute("events"));
+
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> events = (List<Map<String, Object>>) model.get("events");
+		assertEquals(1, events.size());
+
 		Map<String, Object> next = events.iterator().next();
 		assertTrue(next.containsKey("name"));
 		assertTrue(next.containsKey("event"));
@@ -113,7 +139,7 @@ public class ProjectEventsControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(eventService.getEventsForProject(eq(project), any(Pageable.class))).thenReturn(page);
 
-		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model);
+		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model, 10);
 
 		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
 		assertTrue(model.containsAttribute("events"));

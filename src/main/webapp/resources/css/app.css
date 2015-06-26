@@ -8478,6 +8478,11 @@ input {
   color: #232323;
 }
 
+/* line 1, ../../styles/components/_events.scss */
+.event-count {
+  margin-bottom: 1rem;
+}
+
 /* line 1, ../../styles/components/_magnific-popup.scss */
 .image-link {
   cursor: -webkit-zoom-in;
@@ -8584,55 +8589,55 @@ iframe.remote-api-frame {
   height: 450px;
 }
 
-/* line 35, ../../styles/app.scss */
+/* line 36, ../../styles/app.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
 
-/* line 37, ../../styles/app.scss */
+/* line 38, ../../styles/app.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 40, ../../styles/app.scss */
+/* line 41, ../../styles/app.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 45, ../../styles/app.scss */
+/* line 46, ../../styles/app.scss */
 .form-group .alert {
   font-weight: normal;
 }
 
-/* line 49, ../../styles/app.scss */
+/* line 50, ../../styles/app.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 53, ../../styles/app.scss */
+/* line 54, ../../styles/app.scss */
 .container {
   width: 1300px !important;
 }
 
-/* line 58, ../../styles/app.scss */
+/* line 59, ../../styles/app.scss */
 input[type="search"] {
   box-sizing: inherit !important;
 }
 
-/* line 63, ../../styles/app.scss */
+/* line 64, ../../styles/app.scss */
 #table-filter {
   padding: 0;
 }
-/* line 65, ../../styles/app.scss */
+/* line 66, ../../styles/app.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 68, ../../styles/app.scss */
+/* line 69, ../../styles/app.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 73, ../../styles/app.scss */
+/* line 74, ../../styles/app.scss */
 .selected__counts {
   color: white !important;
   border-radius: 4px;

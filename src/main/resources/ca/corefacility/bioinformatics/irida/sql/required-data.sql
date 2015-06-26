@@ -587,3 +587,22 @@ INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parame
 INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13 ,1);
 
 INSERT INTO `remote_related_project`(id, created_date, remote_project_uri, project_id, remote_api_id) VALUES ('1','2015-03-27 11:13:39','http://localhost:8080/api/projects/5','4','1'); 
+
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_OWNER', 1, 2, NULL, 'UserRoleSetProjectEvent') 
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_USER', 3, 2, NULL, 'UserRoleSetProjectEvent')
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_OWNER', 3, 1, NULL, 'UserRoleSetProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 3, 5, 1, 'SampleAddedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 3, 4, 2, 'SampleAddedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 3, 4, 3, 'SampleAddedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
