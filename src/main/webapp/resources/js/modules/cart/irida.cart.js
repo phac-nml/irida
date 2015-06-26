@@ -136,7 +136,7 @@
       var promises = [];
 
       _.forEach(samples, function (s) {
-        if (s.type === 'LOCAL' || s.type === 'ASSOCAITED') {
+        if (s.type === 'LOCAL' || s.type === 'ASSOCIATED') {
           promises.push($http.post(urls.add, {projectId: s.project, sampleIds: [s.sample]}));
         } else if (s.type === 'REMOTE') {
           promises.push($http.post(urls.addRemote, {sampleURL: s.sample}));
