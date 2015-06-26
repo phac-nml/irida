@@ -63,8 +63,6 @@
     <project_user id="9" project_id="6" user_id="1"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
 
-    <related_project />
-
     <sample id="1" createdDate="2013-07-18 14:00:19.0" description="description1"
             sequencerSampleId="sample1" sampleName="sample1" organism="E. coli" />
     <sample id="2" createdDate="2013-07-18 14:01:19.0" description="description2"

@@ -599,6 +599,19 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testAddAssociatedToCart() throws InterruptedException {
+		LoginPage.loginAsManager(driver());
+		page.goToPage("6");
+		page.enableAssociatedProjects();
+
+		page.selectSampleByClass("associated-sample");
+		page.addSamplesToGlobalCart();
+		int cartCount = page.getCartCount();
+
+		assertEquals(1, cartCount);
+	}
+
+	@Test
 	public void testShowRemoteSamples() throws InterruptedException {
 		LoginPage.loginAsAdmin(driver());
 		// add the api
