@@ -8,7 +8,7 @@
 
 <body>
   <div class="row" layout:fragment="page">
-    <main class="container" role="main" property="mainContentOfPage">
+    <main class="container" role="main" property="mainContentOfPage" ddl:bundle-includes="all-events">
       <h1 th:text="#{event.admin.title}">_Recent Activities_</h1>
       <div class="row">
         <div class="col-xs-2">
@@ -25,10 +25,6 @@
       <input type="hidden" id="eventURL" value="/events/all" th:value="@{/events/all}" />
     </main>
   </div>
-  <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-    <script th:src="@{/resources/js/pages/events/events.js}" src="/resources/js/pages/events.js"></script>
-  </th:block>
 </body>
 
 </html>

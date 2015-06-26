@@ -1,0 +1,16 @@
+{
+  "bundle": "events",
+  "dependencies": [
+    "livestamp"
+  ],
+  "assets": [
+    {
+      "name": "events",
+      "version": "0.0.1",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/events/events.js"
+      }
+    }
+  ]
+}
