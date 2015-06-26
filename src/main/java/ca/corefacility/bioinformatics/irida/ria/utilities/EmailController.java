@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
@@ -21,6 +20,7 @@ import org.thymeleaf.context.Context;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig.ConfigurableJavaMailSender;
 
 /**
  * This class is responsible for all email sent to the server that are templated
@@ -39,12 +39,12 @@ public class EmailController {
 
 	private @Value("${server.base.url}") String serverURL;
 
-	private JavaMailSender javaMailSender;
+	private ConfigurableJavaMailSender javaMailSender;
 	private TemplateEngine templateEngine;
 	private MessageSource messageSource;
 
 	@Autowired
-	public EmailController(final JavaMailSender javaMailSender,
+	public EmailController(final ConfigurableJavaMailSender javaMailSender,
 			@Qualifier("emailTemplateEngine") TemplateEngine templateEngine, MessageSource messageSource) {
 		this.javaMailSender = javaMailSender;
 		this.templateEngine = templateEngine;
@@ -123,5 +123,15 @@ public class EmailController {
 		} catch (MessagingException e) {
 			logger.error("Error trying to send a password reset link email.", e);
 		}
+	}
+	
+	/**
+	 * Is the mail server configured?
+	 * 
+	 * @return {@value Boolean#TRUE} if configured, {@value Boolean#FALSE} if
+	 *         not.
+	 */
+	public Boolean isMailConfigured() {
+		return javaMailSender.isConfigured();
 	}
 }

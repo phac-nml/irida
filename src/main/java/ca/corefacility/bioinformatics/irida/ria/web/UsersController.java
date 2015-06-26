@@ -346,6 +346,8 @@ public class UsersController {
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
+		
+		model.addAttribute("emailConfigured", emailController.isMailConfigured());
 
 		return CREATE_USER_PAGE;
 	}
