@@ -21,34 +21,10 @@
       </div>
     </div>
     <div id="events"></div>
+    <input type="hidden" id="eventURL" value="/events/project" th:value="@{/events/project/{id}(id=${project.getId()})}" />
   </main>
   <th:block layout:fragment="scripts" th:inline="javascript">
-    <script>
-      $(function() {
-        getEvents($("#size").val());
-
-        $("#size").change(function() {
-          getEvents($(this).val());
-        });
-      });
-
-      function getEvents(size) {
-        var eventUrl = /*[[@{/events/project/{id}(id=${project.getId()})}]]*/ '/events/project/'
-        $.ajax({
-          method: 'GET',
-          url: eventUrl,
-          data: {
-            size: size
-          },
-          headers: {
-            Accept: 'text/html'
-          },
-          success: function(data, textStatus, jqXHR) {
-            $("#events").html(data);
-          }
-        });
-      }
-    </script>
+    <script th:src="@{/resources/js/pages/events/events.js}" src="/resources/js/pages/events.js"></script>
   </th:block>
 </body>
 

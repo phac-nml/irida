@@ -22,36 +22,12 @@
         </div>
       </div>
       <div id="events"></div>
+      <input type="hidden" id="eventURL" value="/events/all" th:value="@{/events/all}" />
     </main>
   </div>
   <th:block layout:fragment="page-scripts">
-    <script>
-      $(function() {
-        getEvents($("#size").val());
-
-        $("#size").change(function() {
-          getEvents($(this).val());
-        });
-      });
-
-      function getEvents(size) {
-        var eventUrl = /*[[@{/events/all}]]*/ '/events/all/'
-        $.ajax({
-          method: "GET",
-          url: eventUrl,
-          data: {
-            size: size
-          },
-          headers: {
-            Accept: 'text/html'
-          },
-          success: function(data, textStatus, jqXHR) {
-            $("#events").html(data);
-          }
-        });
-      }
-    </script>
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+    <script th:src="@{/resources/js/pages/events/events.js}" src="/resources/js/pages/events.js"></script>
   </th:block>
 </body>
 
