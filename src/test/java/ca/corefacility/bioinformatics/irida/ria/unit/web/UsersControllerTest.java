@@ -7,6 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +28,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -41,8 +44,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
@@ -333,7 +334,8 @@ public class UsersControllerTest {
 		Map<String, String> errors = (Map<String, String>) model.get("errors");
 		assertTrue(errors.containsKey("password"));
 
-		verifyZeroInteractions(emailController);
+		verify(emailController, times(1)).isMailConfigured();
+		verifyNoMoreInteractions(emailController);
 	}
 
 	@Test
@@ -341,14 +343,16 @@ public class UsersControllerTest {
 		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
 				+ User.USER_EMAIL_CONSTRAINT_NAME);
 		createWithException(ex, "email");
-		verifyZeroInteractions(emailController);
+		verify(emailController, times(1)).isMailConfigured();
+		verifyNoMoreInteractions(emailController);
 	}
 
 	@Test
 	public void testSubmitUsernameExists() {
 		EntityExistsException ex = new EntityExistsException("username exists", "username");
 		createWithException(ex, "username");
-		verifyZeroInteractions(emailController);
+		verify(emailController, times(1)).isMailConfigured();
+		verifyNoMoreInteractions(emailController);
 	}
 
 	public void createWithException(Throwable exception, String fieldname) {
