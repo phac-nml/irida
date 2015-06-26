@@ -11,19 +11,43 @@
 
 // COMPONENTS
 @import "components/breadcrumbs";
+@import "components/buttons";
 @import "components/card";
 @import "components/cart";
 @import "components/forms";
 @import "components/modals";
 @import "components/navbar";
 @import "components/notifications";
+@import "components/panels";
 @import "components/sidenav";
 @import "components/tables";
 @import "components/typography";
 
+// TODO: remove these asap
+@import "components/magnific-popup";
+@import "components/noty";
+
+// TODO: these should only be loaded on their pages - add through dandelion
+@import "pages/sequenceFile";
+@import "pages/remoteApi";
+
 // Bootstrap override
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+.clickable {
+  display: block;
+  cursor: pointer;
+  span {
+    display: inline-block;
+  }
+}
+
 .form-group .alert {
   font-weight: normal;
+}
+
+.nav-tabs li {
+  cursor: pointer;
 }
 
 .container {
@@ -33,4 +57,24 @@
 // Material overide, conflicts with bootstrap.
 input[type="search"] {
   box-sizing: inherit!important;
+}
+
+// TODO: Clean these up.
+#table-filter {
+  padding: 0;
+  &>div {
+    padding: 20px;
+  }
+  .filter-btns > button {
+    margin-top: 33px;
+  }
+}
+
+.selected__counts {
+  color: white !important;
+  border-radius: 4px;
+  padding: 4px 8px 6px 8px;
+  margin: 5px;
+  background-color: rgba(0, 0, 0, .5);
+  border-top: 1px solid rgba(0, 0, 0, .4);
 }
