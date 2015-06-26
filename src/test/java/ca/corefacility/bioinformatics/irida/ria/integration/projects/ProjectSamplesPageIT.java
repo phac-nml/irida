@@ -40,6 +40,21 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		this.page = new ProjectSamplesPage(driver());
 	}
 
+	@Test(expected = AssertionError.class)
+	public void testGoingToInvalidPage() {
+		logger.debug("Testing going to an invalid sample id");
+		LoginPage.loginAsManager(driver());
+		page.goToPage("112423");
+	}
+
+	@Test(expected = AssertionError.class)
+	public void testGoingToNonLongProjectId() {
+		logger.debug("Testing going to an invalid sample id");
+		LoginPage.loginAsManager(driver());
+		page.goToPage("not_a_long");
+		String wait = "wat";
+	}
+
 	@Test
 	public void testInitialPageSetUp() {
 		logger.info("Testing page set up for: Project Samples");

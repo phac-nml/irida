@@ -54,8 +54,10 @@ public class AbstractPage {
 		try {
 			assertFalse("Should not be on the server error page",
 					driver.findElement(By.tagName("h1")).getText().equals("Server Error"));
+			assertFalse("Should not be on a 404 page",
+					driver.findElement(By.tagName("h1")).getText().equals("Resource Not Found"));
 		} catch (NoSuchElementException e) {
-			logger.warn("No h1 tag on page.");
+			logger.debug("No h1 tag on page.");
 		}
 	}
 
