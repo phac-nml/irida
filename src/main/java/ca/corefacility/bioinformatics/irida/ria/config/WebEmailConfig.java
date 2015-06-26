@@ -81,7 +81,7 @@ public class WebEmailConfig {
 		/**
 		 * Check to see if the mail server has been configured correctly.
 		 * 
-		 * @return {@value Boolean#TRUE} if configured, {@value Boolean#FALSE}
+		 * @return {@link Boolean#TRUE} if configured, {@link Boolean#FALSE}
 		 *         if unconfigured.
 		 */
 		public Boolean isConfigured();

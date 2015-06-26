@@ -130,7 +130,7 @@ public class EmailController {
 	/**
 	 * Is the mail server configured?
 	 * 
-	 * @return {@value Boolean#TRUE} if configured, {@value Boolean#FALSE} if
+	 * @return {@link Boolean#TRUE} if configured, {@link Boolean#FALSE} if
 	 *         not.
 	 */
 	public Boolean isMailConfigured() {

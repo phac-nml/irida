@@ -116,6 +116,8 @@ public class UsersController {
 	 *            Spring model to populate the html page
 	 * @param principal
 	 *            the currently logged in user
+	 * @param mailFailure
+	 * 			  if sending a user activation e-mail passed or failed
 	 *
 	 * @return The name of the user/details page
 	 */
