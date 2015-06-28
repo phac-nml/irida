@@ -8382,6 +8382,7 @@ input {
 /* line 3, ../../styles/components/_sidenav.scss */
 .sidenav {
   height: 100%;
+  background-color: #ffffff;
   margin-right: 1rem;
   padding: .5rem;
 }
@@ -8393,15 +8394,16 @@ input {
 }
 
 @media screen and (min-width: 960px) {
-  /* line 12, ../../styles/components/_sidenav.scss */
+  /* line 13, ../../styles/components/_sidenav.scss */
   .sidenav__inner--fixed {
+    z-index: 200;
     width: 290px;
     position: fixed;
     top: 70px;
   }
 }
 
-/* line 20, ../../styles/components/_sidenav.scss */
+/* line 22, ../../styles/components/_sidenav.scss */
 .sidenav__label {
   color: #939393;
   font-weight: normal;
