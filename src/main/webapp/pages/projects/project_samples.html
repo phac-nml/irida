@@ -321,11 +321,18 @@
 <th:block layout:fragment="scripts" th:inline="javascript">
 	<script th:inline="javascript">
 		var PAGE = {
-				i18n: {
-					associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
-				}
-			};
-
+			urls: {
+				local: /*[[@{/projects/{id}/ajax/samples(id=${project.identifier})}]]*/ '',
+				associated: /*[[@{/projects/{id}/associated/samples(id=${project.identifier})}]]*/ '',
+				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.identifier})}]]*/ '',
+				merge: /*[[@{/projects/{id}/ajax/samples(id=${project.identifier})}]]*/ '',
+				removed: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.identifier})}]]*/ '',
+				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.identifier})}]]*/ ''
+			},
+			i18n: {
+				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
+			}
+		};
 	</script>
 	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
 	        src="/resources/bower_components/select2/select2.min.js"></script>
