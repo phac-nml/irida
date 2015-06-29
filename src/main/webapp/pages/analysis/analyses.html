@@ -104,7 +104,7 @@
 							<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
                               <md-button th:href="@{/analysis/{{analysis.id}}}" href="#" aria-label="Go to {{::analysis.label}}">
 	                              <md-tooltip>{{::analysis.label}}</md-tooltip>
-							    {{::analysis.label}}
+							    <span class="crop">{{::analysis.label}}</span>
                               </md-button>
 							</td>
 							<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">

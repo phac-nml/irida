@@ -131,27 +131,26 @@ table {
   width: 100%;
 }
 
-/* line 59, ../../../styles/pages/analyses.scss */
-tr {
-  color: slategrey;
-}
-/* line 61, ../../../styles/pages/analyses.scss */
-tr a.md-button {
-  display: inline-flex;
-  max-width: 200px !important;
-  text-overflow: clip;
-}
-/* line 66, ../../../styles/pages/analyses.scss */
+/* line 60, ../../../styles/pages/analyses.scss */
 tr td {
   vertical-align: middle !important;
 }
 
-/* line 70, ../../../styles/pages/analyses.scss */
+/* line 64, ../../../styles/pages/analyses.scss */
 td.para-key {
   word-wrap: break-word;
 }
 
-/* line 73, ../../../styles/pages/analyses.scss */
+/* line 67, ../../../styles/pages/analyses.scss */
 td.para-value {
   text-align: right;
+}
+
+/* line 71, ../../../styles/pages/analyses.scss */
+.md-button > .crop {
+  display: block;
+  max-width: 200px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
