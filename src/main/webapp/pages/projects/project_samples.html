@@ -288,9 +288,10 @@
 							<md-button class="md-primary" ng-if="entry.sampleType!='REMOTE'"
 							   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
 							   href="#">
+								<md-tooltip>{{::entry.sample.sampleName}}</md-tooltip>
 								<span class="crop">{{entry.sample.sampleName}}</span>
 							</md-button>
-							<span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
+							<span ng-if="entry.sampleType=='REMOTE'">{{::entry.sample.sampleName}}</span>
 					</td>
 					<td>{{entry.sample.organism}}</td>
 					<td>{{entry.sample.collectedBy}}</td>
