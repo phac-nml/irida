@@ -287,7 +287,8 @@
 					<td class="sample-name">
 							<md-button class="md-primary" ng-if="entry.sampleType!='REMOTE'"
 							   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
-							   href="#">{{entry.sample.sampleName}}
+							   href="#">
+								<span class="crop">{{entry.sample.sampleName}}</span>
 							</md-button>
 							<span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
 					</td>
@@ -329,8 +330,8 @@
 				local: /*[[@{/projects/{id}/ajax/samples(id=${project.identifier})}]]*/ '',
 				associated: /*[[@{/projects/{id}/associated/samples(id=${project.identifier})}]]*/ '',
 				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.identifier})}]]*/ '',
-				merge: /*[[@{/projects/{id}/ajax/samples(id=${project.identifier})}]]*/ '',
-				removed: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.identifier})}]]*/ '',
+				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.identifier})}]]*/ '',
+				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.identifier})}]]*/ '',
 				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.identifier})}]]*/ ''
 			},
 			i18n: {

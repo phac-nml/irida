@@ -60,6 +60,19 @@ input[type="search"] {
   box-sizing: inherit!important;
 }
 
+button.md-button, a.md-button > span {
+  padding: 0 6px !important;
+}
+
+.md-button > .crop {
+  display: block;
+  max-width: 200px!important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
 // TODO: Clean these up.
 #table-filter {
   padding: 0;

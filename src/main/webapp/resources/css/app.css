@@ -8579,20 +8579,34 @@ input[type="search"] {
   box-sizing: inherit !important;
 }
 
-/* line 64, ../../styles/app.scss */
+/* line 63, ../../styles/app.scss */
+button.md-button, a.md-button > span {
+  padding: 0 6px !important;
+}
+
+/* line 67, ../../styles/app.scss */
+.md-button > .crop {
+  display: block;
+  max-width: 200px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* line 77, ../../styles/app.scss */
 #table-filter {
   padding: 0;
 }
-/* line 66, ../../styles/app.scss */
+/* line 79, ../../styles/app.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 69, ../../styles/app.scss */
+/* line 82, ../../styles/app.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 74, ../../styles/app.scss */
+/* line 87, ../../styles/app.scss */
 .selected__counts {
   color: white !important;
   border-radius: 4px;

@@ -115,7 +115,7 @@
   /*[- */
 // Responsible for all server calls for samples
 // @param $rootScope The root scope for the page.
-// @param R Restangular
+// @param $http
   /* -]*/
   function SamplesService($rootScope, storage, $http, notifications, filter, $q) {
     "use strict";
