@@ -129,7 +129,7 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public int getNumberOfSamplesSelected() {
-		return driver.findElements(By.cssSelector(".large-checkbox input[type=\"checkbox\"]:checked")).size();
+		return driver.findElements(By.cssSelector("md-checkbox.md-checked")).size();
 	}
 
 	public int getTotalNumberOfSamplesSelected() {
@@ -137,13 +137,13 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public void selectSampleByRow(int row) {
-		List<WebElement> inputs = driver.findElements(By.className("large-checkbox"));
+		List<WebElement> inputs = driver.findElements(By.tagName("md-checkbox"));
 		inputs.get(row).click();
 	}
 	
 	public void selectSampleByClass(String sampleClass){
 		List<WebElement> findElements = driver.findElements(By.cssSelector(".sample-row."+sampleClass));
-		WebElement checkbox = findElements.iterator().next().findElement(By.className("large-checkbox"));
+		WebElement checkbox = findElements.iterator().next().findElement(By.tagName("md-checkbox"));
 		checkbox.click();
 	}
 
