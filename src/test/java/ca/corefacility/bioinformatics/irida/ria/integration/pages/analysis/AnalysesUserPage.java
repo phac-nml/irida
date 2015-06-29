@@ -44,7 +44,7 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(className = "download-analysis-btn")
 	private List<WebElement> downloadAnalysisBtn;
 
-	@FindBy(className = "progress-bar")
+	@FindBy(tagName = "md-progress-linear")
 	private List<WebElement> progressBars;
 
 	public AnalysesUserPage(WebDriver driver) {

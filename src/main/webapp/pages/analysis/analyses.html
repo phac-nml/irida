@@ -97,7 +97,7 @@
 							<td class="analysis-percent" data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}
 								<span ng-if="analysis.analysisState !== 'ERROR'" class="md-caption">
 									<md-progress-linear md-mode="determinate"
-								                    ng-value="analysis.percentComplete"></md-progress-linear>
+								                    ng-value="analysis.percentComplete" aria-valuetext="{{analysis.percentComplete | number:0}}%"></md-progress-linear>
 									{{ analysis.percentComplete | number:0 }}%
 								</span>
 							</td>
