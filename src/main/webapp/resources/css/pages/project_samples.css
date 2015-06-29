@@ -17,3 +17,9 @@
 .remote-sample {
   border-color: #a3a300;
 }
+
+/* line 13, ../../../styles/pages/project_samples.scss */
+td .md-button, td md-checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
+}
