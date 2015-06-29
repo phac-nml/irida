@@ -592,7 +592,7 @@
 
     vm.showTooltip = function () {
       if (!vm.localSelected) {
-        return associatedSelectedTooltip;
+        return page.i18n.associatedSelectedTooltip;
       }
       return "";
     }
