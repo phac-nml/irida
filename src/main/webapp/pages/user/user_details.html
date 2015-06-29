@@ -178,22 +178,27 @@
 	</script>
 
 	<script th:inline="javascript">
+		var PAGE = {
+			urls: {
+				reset: /*[[@{/password_reset/ajax/create/{id}(id=${user.getId()})}]]*/ 'password_reset/ajax/create/'
+			}
+		};
 
 		var pwd = angular.module('PasswordRest', []);
 
-		pwd.service('ResetService', ['Restangular', 'notifications', function (Restangular, notifications) {
-			var base = Restangular.all('password_reset/ajax/create/' + angular.element("#userId").val()),
-					svc = this;
+		pwd.service('ResetService', ['$http', 'notifications', function ($http, notifications) {
+			var svc = this;
 
 			svc.resetPassword = function () {
-				return base.get("").then(function (data) {
-					if(data.success){
-						notifications.show({type: 'success', msg: data.message, title: data.title});
-					}else{
-						notifications.show({type: 'error', msg: data.message, title: data.title});
-					}
-					return data;
-				});
+				return $http.get(PAGE.urls.reset)
+					.success(function (data) {
+						if(data.success){
+							notifications.show({type: 'success', msg: data.message, title: data.title});
+						}else{
+							notifications.show({type: 'error', msg: data.message, title: data.title});
+						}
+						return data;
+					});
 			}
 		}]);
 
