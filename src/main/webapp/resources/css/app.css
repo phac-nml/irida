@@ -8317,3 +8317,29 @@ input {
 input[type="search"] {
   box-sizing: inherit !important;
 }
+
+/* line 38, ../../styles/app.scss */
+button.md-button > span, a.md-button > span {
+  padding: 0 6px !important;
+}
+
+/* line 42, ../../styles/app.scss */
+.md-button > .crop {
+  display: block;
+  max-width: 200px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* line 51, ../../styles/app.scss */
+td .md-button, td md-checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* line 56, ../../styles/app.scss */
+td a.md-button[disabled], td .md-button[disabled] {
+  color: #42A5F5;
+  cursor: default !important;
+}
