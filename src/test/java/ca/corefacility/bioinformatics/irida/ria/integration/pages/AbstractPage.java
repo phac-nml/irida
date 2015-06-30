@@ -51,10 +51,14 @@ public class AbstractPage {
 		String url = BASE_URL + relativeUrl;
 		driver.get(url);
 		// Check to make sure that there is no server error
-		WebElement main = driver.findElement(By.tagName("main"));
-		String error = main.getAttribute("data-error");
-		if (!Strings.isNullOrEmpty(error)) {
-			determineError(error);
+		try {
+			WebElement main = driver.findElement(By.tagName("main"));
+			String error = main.getAttribute("data-error");
+			if (!Strings.isNullOrEmpty(error)) {
+				determineError(error);
+			}
+		} catch (NoSuchElementException e) {
+			logger.debug("No page element on page.");
 		}
 	}
 
