@@ -22,6 +22,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -115,17 +116,22 @@ public class UsersController {
 	 *            Spring model to populate the html page
 	 * @param principal
 	 *            the currently logged in user
+	 * @param mailFailure
+	 * 			  if sending a user activation e-mail passed or failed
 	 *
 	 * @return The name of the user/details page
 	 */
 
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-	public String getUserSpecificPage(@PathVariable("userId") Long userId, final Model model, Principal principal) {
+	public String getUserSpecificPage(@PathVariable("userId") Long userId,
+									  @RequestParam(value = "mailFailure", required = false, defaultValue = "false") final Boolean mailFailure,
+			final Model model, Principal principal) {
 		logger.debug("Getting project information for [User " + userId + "]");
 
 		// add the user to the model
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
+		model.addAttribute("mailFailure", mailFailure);
 
 		User principalUser = userService.getUserByUsername(principal.getName());
 
@@ -139,6 +145,7 @@ public class UsersController {
 		// check if we should show an edit button
 		boolean canEditUser = canEditUser(principalUser, user);
 		model.addAttribute("canEditUser", canEditUser);
+		model.addAttribute("mailConfigured", emailController.isMailConfigured());
 
 		model.addAttribute("canCreatePasswordReset",
 				PasswordResetController.canCreatePasswordReset(principalUser, user));
@@ -180,7 +187,7 @@ public class UsersController {
 	public String getLoggedInUserPage(Model model, Principal principal) {
 		User readPrincipal = userService.getUserByUsername(principal.getName());
 
-		return getUserSpecificPage(readPrincipal.getId(), model, principal);
+		return getUserSpecificPage(readPrincipal.getId(), false, model, principal);
 	}
 
 	/**
@@ -347,6 +354,8 @@ public class UsersController {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
 
+		model.addAttribute("emailConfigured", emailController.isMailConfigured());
+
 		return CREATE_USER_PAGE;
 	}
 
@@ -371,8 +380,8 @@ public class UsersController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
 	public String submitCreateUser(@ModelAttribute User user, @RequestParam String systemRole,
-			@RequestParam String confirmPassword, @RequestParam(required = false) String requireActivation,
-			Model model, Principal principal) {
+			@RequestParam String confirmPassword, @RequestParam(required = false) String requireActivation, Model model,
+			Principal principal) {
 
 		Map<String, String> errors = new HashMap<>();
 
@@ -405,6 +414,8 @@ public class UsersController {
 
 			try {
 				user = userService.create(user);
+				Long userId = user.getId();
+				returnView = "redirect:/users/" + userId;
 
 				// if the password isn't set, we'll generate a password reset
 				PasswordReset passwordReset = null;
@@ -414,11 +425,11 @@ public class UsersController {
 				}
 
 				emailController.sendWelcomeEmail(user, creator, passwordReset);
-
-				Long userId = user.getId();
-				returnView = "redirect:/users/" + userId;
 			} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
 				errors = handleCreateUpdateException(ex, locale);
+			} catch (final MailSendException e) {
+				logger.error("Failed to send user activation e-mail.", e);
+				model.addAttribute("mailFailure", true);
 			}
 		}
 

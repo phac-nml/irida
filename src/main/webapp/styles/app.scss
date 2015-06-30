@@ -22,6 +22,7 @@
 @import "components/sidenav";
 @import "components/tables";
 @import "components/typography";
+@import "components/events";
 
 // TODO: remove these asap
 @import "components/magnific-popup";
@@ -59,7 +60,7 @@ input[type="search"] {
   box-sizing: inherit!important;
 }
 
-button.md-button, a.md-button > span {
+button.md-button > span, a.md-button > span {
   padding: 0 6px !important;
 }
 
@@ -69,6 +70,17 @@ button.md-button, a.md-button > span {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+
+td .md-button, td md-checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+td a.md-button[disabled], td .md-button[disabled] {
+  color: #42A5F5;
+  cursor: default!important;
 }
 
 // TODO: Clean these up.
