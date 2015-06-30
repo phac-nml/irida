@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.util.Locale;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
@@ -21,6 +20,7 @@ import org.thymeleaf.context.Context;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig.ConfigurableJavaMailSender;
 
 /**
  * This class is responsible for all email sent to the server that are templated
@@ -39,12 +39,12 @@ public class EmailController {
 
 	private @Value("${server.base.url}") String serverURL;
 
-	private JavaMailSender javaMailSender;
+	private ConfigurableJavaMailSender javaMailSender;
 	private TemplateEngine templateEngine;
 	private MessageSource messageSource;
 
 	@Autowired
-	public EmailController(final JavaMailSender javaMailSender,
+	public EmailController(final ConfigurableJavaMailSender javaMailSender,
 			@Qualifier("emailTemplateEngine") TemplateEngine templateEngine, MessageSource messageSource) {
 		this.javaMailSender = javaMailSender;
 		this.templateEngine = templateEngine;
@@ -61,7 +61,7 @@ public class EmailController {
 	 * @param passwordReset
 	 *            A {@link PasswordReset} object to send an activation link
 	 */
-	public void sendWelcomeEmail(User user, User sender, PasswordReset passwordReset) {
+	public void sendWelcomeEmail(User user, User sender, PasswordReset passwordReset) throws MailSendException {
 		logger.debug("Sending user creation email to " + user.getEmail());
 
 		Locale locale = LocaleContextHolder.getLocale();
@@ -74,9 +74,9 @@ public class EmailController {
 		ctx.setVariable("user", user);
 		ctx.setVariable("passwordReset", passwordReset);
 
-		final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
-		final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
 		try {
+			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
 			message.setSubject(messageSource.getMessage("email.welcome.subject", null, locale));
 			message.setFrom(serverEmail);
 			message.setTo(user.getEmail());
@@ -84,8 +84,9 @@ public class EmailController {
 			final String htmlContent = templateEngine.process(WELCOME_TEMPLATE, ctx);
 			message.setText(htmlContent, true);
 			javaMailSender.send(mimeMessage);
-		} catch (MessagingException e) {
+		} catch (final Exception e) {
 			logger.error("User creation email failed to send", e);
+			throw new MailSendException("Failed to send e-mail when creating user account.", e);
 		}
 	}
 
@@ -97,7 +98,7 @@ public class EmailController {
 	 * @param passwordReset
 	 *            the reset object
 	 */
-	public void sendPasswordResetLinkEmail(User user, PasswordReset passwordReset) {
+	public void sendPasswordResetLinkEmail(User user, PasswordReset passwordReset) throws MailSendException {
 		logger.debug("Sending password reset email to " + user.getEmail());
 		final Context ctx = new Context();
 		ctx.setVariable("ngsEmail", serverEmail);
@@ -120,8 +121,19 @@ public class EmailController {
 			message.setText(htmlContent, true);
 
 			javaMailSender.send(mimeMessage);
-		} catch (MessagingException e) {
+		} catch (Exception e) {
 			logger.error("Error trying to send a password reset link email.", e);
+			throw new MailSendException("Failed to send e-mail when doing password reset.", e);
 		}
+	}
+	
+	/**
+	 * Is the mail server configured?
+	 * 
+	 * @return {@link Boolean#TRUE} if configured, {@link Boolean#FALSE} if
+	 *         not.
+	 */
+	public Boolean isMailConfigured() {
+		return javaMailSender.isConfigured();
 	}
 }

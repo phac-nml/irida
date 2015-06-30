@@ -4,6 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 
 /**
@@ -19,6 +21,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 public class LoginController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	private static final String LOGIN_PAGE = "login";
+	
+	
+	private final EmailController emailController;
+	
+	@Autowired
+	public LoginController(final EmailController emailController) {
+		this.emailController = emailController;
+	}
 
 	@RequestMapping(value = "/")
 	public String showSplash() {
@@ -36,6 +46,8 @@ public class LoginController extends BaseController {
 			@RequestParam(value="galaxyClientID",required=false) String galaxyClientID,
 			HttpSession httpSession) {
 		logger.debug("Displaying login page.");
+		
+		model.addAttribute("emailConfigured", emailController.isMailConfigured());
 		
 		//External exporting functionality
 		if(galaxyCallbackURL != null && galaxyClientID !=null) {

@@ -1,0 +1,5 @@
+{
+  "bundle": "all-events",
+  "dependencies": [ "events" ],
+  "assets": []
+}
