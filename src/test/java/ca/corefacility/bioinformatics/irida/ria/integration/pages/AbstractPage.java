@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import com.google.common.base.Strings;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -48,6 +50,23 @@ public class AbstractPage {
 	protected static void get(WebDriver driver, String relativeUrl) {
 		String url = BASE_URL + relativeUrl;
 		driver.get(url);
+		// Check to make sure that there is no server error
+		try {
+			WebElement main = driver.findElement(By.tagName("main"));
+			String error = main.getAttribute("data-error");
+			if (!Strings.isNullOrEmpty(error)) {
+				determineError(error);
+			}
+		} catch (NoSuchElementException e) {
+			logger.debug("No page element on page.");
+		}
+	}
+
+	private static void determineError(String error) {
+		assertFalse("A server error occured", error.equals("server"));
+		assertFalse("An oauth error occured", error.equals("oauth"));
+		assertFalse("An access denied error occured", error.equals("access_denied"));
+		assertFalse("An item not found error occured", error.equals("404"));
 	}
 
 	public static void logout(WebDriver driver) {

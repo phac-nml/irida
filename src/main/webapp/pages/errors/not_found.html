@@ -5,7 +5,7 @@
 <title th:text="#{error.notfound.title}">_Not found_</title>
 </head>
 <body>
-    <main layout:fragment="page">
+    <main layout:fragment="page" data-error="404">
     <h1 th:text="#{error.notfound.title}"></h1>
     <p th:text="#{error.notfound.content}">_Not found_</p>
     <p th:utext="#{error.contact_admins(${adminEmail})}">_contact admins_</p>
