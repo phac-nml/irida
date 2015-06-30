@@ -31,10 +31,10 @@
 						<div class="row">
 							<div class="col-md-12"><button id="submitBtn" type="submit" class="btn btn-primary" th:text="#{login.btn}">Submit
 							</button>
-							<a class="btn btn-link" href="/password_reset" th:href="@{/password_reset}" th:text="#{user.passwordReset}">Reset
-								Password
+							<a class="btn btn-link" href="/password_reset" th:href="@{/password_reset}" th:text="#{user.passwordReset}" th:if="${emailConfigured}">
+								Reset Password
 							</a>
-							<a class="btn btn-link" href="#" th:href="@{/password_reset/activate}">Activate Account</a></div>
+							<a class="btn btn-link" href="#" th:href="@{/password_reset/activate}" th:if="${emailConfigured}">Activate Account</a></div>
 						</div>
 					</form>
 				</div>
