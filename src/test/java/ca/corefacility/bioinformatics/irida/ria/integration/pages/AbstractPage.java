@@ -51,14 +51,18 @@ public class AbstractPage {
 		String url = BASE_URL + relativeUrl;
 		driver.get(url);
 		// Check to make sure that there is no server error
-		try {
-			assertFalse("Should not be on the server error page",
-					driver.findElement(By.tagName("h1")).getText().equals("Server Error"));
-			assertFalse("Should not be on a 404 page",
-					driver.findElement(By.tagName("h1")).getText().equals("Resource Not Found"));
-		} catch (NoSuchElementException e) {
-			logger.debug("No h1 tag on page.");
+		WebElement main = driver.findElement(By.tagName("main"));
+		String error = main.getAttribute("data-error");
+		if (!Strings.isNullOrEmpty(error)) {
+			determineError(error);
 		}
+	}
+
+	private static void determineError(String error) {
+		assertFalse("A server error occured", error.equals("server"));
+		assertFalse("An oauth error occured", error.equals("oauth"));
+		assertFalse("An access denied error occured", error.equals("access_denied"));
+		assertFalse("An item not found error occured", error.equals("404"));
 	}
 
 	public static void logout(WebDriver driver) {
