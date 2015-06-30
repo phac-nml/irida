@@ -8580,7 +8580,7 @@ input[type="search"] {
 }
 
 /* line 63, ../../styles/app.scss */
-button.md-button, a.md-button > span {
+button.md-button > span, a.md-button > span {
   padding: 0 6px !important;
 }
 
@@ -8593,20 +8593,32 @@ button.md-button, a.md-button > span {
   text-overflow: ellipsis;
 }
 
-/* line 77, ../../styles/app.scss */
+/* line 76, ../../styles/app.scss */
+td .md-button, td md-checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* line 81, ../../styles/app.scss */
+td a.md-button[disabled], td .md-button[disabled] {
+  color: #42A5F5;
+  cursor: default !important;
+}
+
+/* line 87, ../../styles/app.scss */
 #table-filter {
   padding: 0;
 }
-/* line 79, ../../styles/app.scss */
+/* line 89, ../../styles/app.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 82, ../../styles/app.scss */
+/* line 92, ../../styles/app.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 87, ../../styles/app.scss */
+/* line 97, ../../styles/app.scss */
 .selected__counts {
   color: white !important;
   border-radius: 4px;
