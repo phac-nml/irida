@@ -9,6 +9,9 @@
 <main layout:fragment="page">
 	<input id="userId" type="hidden" th:value="${user.getId()}"/>
 	<div class="col-md-12">
+		<div th:if="${mailFailure}" class="alert alert-warning" th:text="#{user.creation.activation.mail.failure}">
+			
+		</div>
 		<div class="row">
 			<div class="col-md-12">
 				<h1 id="wb-cont" property="name" th:text="${user.label}">__USER NAME__</h1>
@@ -22,7 +25,7 @@
 						<h2 class="pull-left" th:text="#{user.details}">_User Details_</h2>
 
 						<div class="btn-group-xs pull-right">
-							<button th:if="${canCreatePasswordReset}"
+							<button th:if="${canCreatePasswordReset and mailConfigured}"
 							        ng-click="details.resetPrompt()" class="btn btn-default password-reset-link"
 							        th:text="#{user.passwordReset}">_Password Reset_
 							</button>
