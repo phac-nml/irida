@@ -46,7 +46,7 @@ public class AssociatedProjectsEditPageIT extends AbstractIridaUIITChromeDriver 
 	}
 
 	@Test
-	public void hasInitialAssocaitedProjects() {
+	public void hasInitialAssociatedProjects() {
 		page.goTo(projectId);
 		logger.debug("Testing: hasTheCorrectProjectsDisplayed");
 		List<String> projectsDiv = page.getAssociatedProjects();

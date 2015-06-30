@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -219,9 +220,14 @@ public class PasswordResetController {
 		try {
 			User user = userService.loadUserByEmail(email);
 
-			createNewPasswordReset(user);
-
-			page = CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes());
+			try {
+				createNewPasswordReset(user);
+				page = CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes());
+			} catch (final MailSendException e) {
+				model.addAttribute("mailSendError", true);
+				SecurityContextHolder.clearContext();
+				page = noLoginResetPassword(model);
+			}
 		} catch (EntityNotFoundException ex) {
 			model.addAttribute("emailError", true);
 			SecurityContextHolder.clearContext();
@@ -290,10 +296,18 @@ public class PasswordResetController {
 
 		Map<String, Object> response;
 		if (canCreatePasswordReset(principalUser, user)) {
-			createNewPasswordReset(user);
-			response = ImmutableMap.of("success", true, "message", messageSource.getMessage(
-					"password.reset.success-message", new Object[] { user.getFirstName() }, locale), "title",
-					messageSource.getMessage("password.reset.success-title", null, locale));
+			try {
+				createNewPasswordReset(user);
+				response = ImmutableMap.of("success", true, "message", messageSource.getMessage(
+						"password.reset.success-message", new Object[] { user.getFirstName() }, locale), "title",
+						messageSource.getMessage("password.reset.success-title", null, locale));
+			} catch (final MailSendException e) {
+				logger.error("Failed to send password reset e-mail.");
+				response = ImmutableMap.of("success", false, "message",
+						messageSource.getMessage("password.reset.error-message", null, locale), "title",
+						messageSource.getMessage("password.reset.error-title", null, locale));
+			}
+			
 		} else {
 			response = ImmutableMap.of("success", false, "message",
 					messageSource.getMessage("password.reset.error-message", null, locale), "title",

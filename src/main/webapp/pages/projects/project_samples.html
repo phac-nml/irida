@@ -11,6 +11,11 @@
 	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
     <link rel="stylesheet" href="/resources/css/pages/project_samples.css" th:href="@{/resources/css/pages/project_samples.css}"/>
 	<script>window.dependencies = ['Samples'];</script>
+	<style>
+		td {
+			vertical-align: middle!important;
+		}
+	</style>
 </head>
 <body>
 <aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
@@ -273,23 +278,19 @@
 					</th>
 				</tr>
 				</thead>
-				<tbody>
+				<tbody th:inline="text">
 				<tr class="sample-row" ng-class="{'selected': entry.selected, 'local-sample' : entry.sampleType=='LOCAL', 'associated-sample' : entry.sampleType=='ASSOCIATED', 'remote-sample' : entry.sampleType=='REMOTE'}"
 				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
-						<div class="large-checkbox">
-							<input class="sample-select" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}"
-							       type="checkbox"
-							       ng-model="entry.selected"
-							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.identifier}}"></label>
-						</div>
+						<md-checkbox th:attr="aria-label=#{project.smaples.aria.select}" class="md-primary" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}" ng-model="entry.selected" ng-change="table.updateSample(entry)"></md-checkbox>
 					</td>
 					<td class="sample-name">
-						<a class="btn btn-default btn-xs" ng-if="entry.sampleType!='REMOTE'"
-						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
-						   href="#">{{entry.sample.sampleName}}
-						</a>
-                        <span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
+							<md-button class="md-primary"
+							   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
+							   href="#" ng-disabled="entry.sampleType=='REMOTE'">
+								<md-tooltip ng-if="entry.sampleType=='REMOTE'" th:text="#{project.samples.remote.no-access}"></md-tooltip>
+								<span class="crop">{{::entry.sample.sampleName}}</span>
+							</md-button>
 					</td>
 					<td>{{entry.sample.organism}}</td>
 					<td>{{entry.sample.collectedBy}}</td>
@@ -298,9 +299,13 @@
                             {{entry.project.label}}
 						</span>
 					</td>
-					<td class="createdDate" data-date="{{entry.sample.createdDate}}" tooltip-popup-delay='500'
-					    tooltip-placement="left" tooltip="{{entry.sample.createdDate | date:'medium'}}">
-						<span>{{entry.sample.createdDate | date:'mediumDate'}}</span>
+					<td class="createdDate" data-date="{{entry.sample.createdDate}}">
+						<span layout-padding="">
+							<span>{{entry.sample.createdDate | date:'[[#{datepicker.short}]]'}}</span>
+							<md-tooltip md-direction="top">
+								{{entry.sample.createdDate | date:'medium'}}
+							</md-tooltip>
+						</span>
 					</td>
 				</tr>
 				</tbody>
