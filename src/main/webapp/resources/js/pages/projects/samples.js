@@ -324,7 +324,7 @@
     }
 
     function updateSelectedCount() {
-      var message = {count: 0, LOCAL: 0, ASSOCIATED: 0};
+      var message = {count: 0, LOCAL: 0, ASSOCIATED: 0, REMOTE: 0};
       _.forEach(storage.getSamples(), function (s) {
         message.count++;
         message[s.sampleType]++;
@@ -515,8 +515,10 @@
     vm.export = {
       open    : false,
       download: function download() {
-        vm.export.open = false;
-        SamplesService.downloadFiles();
+        if (vm.localSelected) {
+          vm.export.open = false;
+          SamplesService.downloadFiles();
+        }
       },
       linker  : function linker() {
         if (vm.localSelected) {
@@ -599,10 +601,10 @@
     $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
 
-      if (a["ASSOCIATED"] > 0) {
+      if (a["ASSOCIATED"] > 0 || a["REMOTE"] > 0 || a["LOCAL"] == 0) {
         vm.localSelected = false;
       }
-      else {
+      else if(a["LOCAL"] > 0){
         vm.localSelected = true;
       }
     });
