@@ -529,6 +529,15 @@
           });
         }
       },
+      ncbi : function ncbi() {
+        var url = TL.BASE_URL + 'projects/export/ncbi?projectId='+project.id;
+        _.forEach(SamplesService.getSelectedSampleNames(), function(s){
+          url += '&sampleId=' + s.identifier;
+        });
+        console.log(url);
+        window.location = url;
+        
+      },
       galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
