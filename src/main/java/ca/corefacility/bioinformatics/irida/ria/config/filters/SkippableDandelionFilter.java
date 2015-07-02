@@ -61,7 +61,14 @@ import com.github.dandelion.core.web.WebConstants;
  * request is executed. If the flag is set, this will simply pass down the
  * filter chain.
  * 
+ * TODO: Remove this filter when the Dandelion bug is fixed.
+ * 
  * @see DandelionFilter
+ * @see <a href="https://github.com/dandelion/dandelion/issues/60"
+ *      >https://github.com/dandelion/dandelion/issues/60</a>
+ * @see <a
+ *      href="http://dandelion-forum.48353.x6.nabble.com/Dandelion-not-flushing-response-buffer-until-complete-td1911.html"
+ *      >http://dandelion-forum.48353.x6.nabble.com/Dandelion-not-flushing-response-buffer-until-complete-td1911.html</a>
  */
 public class SkippableDandelionFilter extends DandelionFilter implements Filter {
 
