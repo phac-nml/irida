@@ -5,7 +5,7 @@
 <title th:text="#{error.other.title}">_Server Error_</title>
 </head>
 <body>
-    <main layout:fragment="page">
+    <main layout:fragment="page" data-error="server">
     <h1 th:text="#{error.other.title}"></h1>
     <p th:utext="#{error.other.content(${adminEmail})}">_Not found_</p>
     </main>
