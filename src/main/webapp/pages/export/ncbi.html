@@ -10,20 +10,17 @@
 <body>
   <main layout:fragment="main">
     <h1>_NCBI Export_</h1>
+    <div>
+      <h2 th:text="${project.label}">_project id_</h2>
+    </div>
     <div class="form-group">
-					<label class="col-sm-2 control-label" th:text="#{workflow.label.files}">Files</label>
+					<label class="col-sm-2 control-label">_Files_</label>
 
 					<div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
 							<div th:id="${'sample-' + sample.id}" class="sample-container" th:each="sample : ${samples}">
 								<h3>
-									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}"
-									   th:text="${project.name + ' / ' + sample.name}"></a>
-									<button type="button"
-									        class="btn btn-xs btn-default pull-right remove remove-sample-button"
-									        th:text="#{form.btn.remove}"
-									        th:attr="ng-click=${'pipeline.removeSample('+project.id+','+sample.id+')'}">
-										Remove
-									</button>
+									<a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.id},sid=${sample.id})}"
+									   th:text="${sample.name}"></a>
 								</h3>
 
 								<!--/* (15-03-26 )
@@ -64,12 +61,6 @@
 										</th:block>
 									</table>
 
-									<!--/* (15-03-26 ) If there are no files available in this sample to run on the selected pipeline show a warning with no files. */-->
-									<div th:unless="${hasPaired or hasSingles}" class="alert alert-warning">
-										<strong
-											class="fa fa-fw fa-ban"></strong>
-										<th:block th:text="#{workflow.files.files-not-appropriate}"></th:block>
-									</div>
 								</th:block>
 
 							</div>
