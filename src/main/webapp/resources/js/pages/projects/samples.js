@@ -601,10 +601,10 @@
     $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
 
-      if (a["ASSOCIATED"] > 0 || a["REMOTE"] > 0 || a["LOCAL"] == 0) {
+      if (a.ASSOCIATED > 0 || a.REMOTE > 0 || a.LOCAL == 0) {
         vm.localSelected = false;
       }
-      else if(a["LOCAL"] > 0){
+      else if(a.LOCAL > 0){
         vm.localSelected = true;
       }
     });
