@@ -237,7 +237,7 @@
 			};
 			
 			self.removeRemoteAssociatedStatus = function (params) {
-				return $http.delete(PAGE.urls.remote.remove, {
+				return $http.post(PAGE.urls.remote.remove, {
 					params: params
 				});
 			};
@@ -301,7 +301,7 @@
 					// Normally will only hit on bad credentials.
 					window.location = window.location;
 				}
-			}),error(function () {
+			}).error(function () {
 				$scope.associated = [];
 			});
 		};

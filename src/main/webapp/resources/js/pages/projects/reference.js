@@ -1,4 +1,4 @@
-(function (angular, $, _, page) {
+(function (angular, $, _, page, project) {
 
   function ProjectFileService($rootScope, $http) {
     "use strict";
@@ -30,7 +30,7 @@
 
     svc.download = function (id) {
       var iframe = document.createElement("iframe");
-      iframe.src = page.urls.download;
+      iframe.src = page.urls.download + id;
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
@@ -55,7 +55,7 @@
           $rootScope.$broadcast('FILE_DELETED', {id: file.id});
         });
       });
-    }
+    };
   }
 
   function DeleteCtrl($modalInstance, file) {
@@ -121,4 +121,4 @@
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
     .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl])
   ;
-})(window.angular, window.jQuery, window._, window.PAGE);
+})(window.angular, window.jQuery, window._, window.PAGE, window.project);
