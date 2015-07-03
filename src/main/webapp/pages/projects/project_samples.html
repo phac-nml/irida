@@ -285,12 +285,12 @@
 						<md-checkbox th:attr="aria-label=#{project.smaples.aria.select}" class="md-primary" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}" ng-model="entry.selected" ng-change="table.updateSample(entry)"></md-checkbox>
 					</td>
 					<td class="sample-name">
-							<md-button class="md-primary"
-							   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
-							   href="#" ng-disabled="entry.sampleType=='REMOTE'">
-								<md-tooltip ng-if="entry.sampleType=='REMOTE'" th:text="#{project.samples.remote.no-access}"></md-tooltip>
-								<span class="crop">{{::entry.sample.sampleName}}</span>
-							</md-button>
+						<md-button class="md-primary"
+						           data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.identifier}}/sequenceFiles'}"
+						           href="#" ng-disabled="entry.sampleType=='REMOTE'">
+							<md-tooltip ng-if="entry.sampleType=='REMOTE'" th:text="#{project.samples.remote.no-access}"></md-tooltip>
+							<span class="crop">{{::entry.sample.sampleName}}</span>
+						</md-button>
 					</td>
 					<td>{{entry.sample.organism}}</td>
 					<td>{{entry.sample.collectedBy}}</td>
@@ -324,6 +324,21 @@
 </main>
 
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:inline="javascript">
+		var PAGE = {
+			urls: {
+				local: /*[[@{/projects/{id}/ajax/samples(id=${project.identifier})}]]*/ '',
+				associated: /*[[@{/projects/{id}/associated/samples(id=${project.identifier})}]]*/ '',
+				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.identifier})}]]*/ '',
+				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.identifier})}]]*/ '',
+				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.identifier})}]]*/ '',
+				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.identifier})}]]*/ ''
+			},
+			i18n: {
+				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
+			}
+		};
+	</script>
 	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
 	        src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
@@ -331,9 +346,6 @@
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>
-	<script th:inline="javascript">
-		var associatedSelectedTooltip = /*[[#{project.samples.associated-selected-error}]]*/ "_Unavailable_";
-	</script>
 </th:block>
 </body>
 </html>
