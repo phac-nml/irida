@@ -530,7 +530,7 @@
         }
       },
       ncbi : function ncbi() {
-        var url = TL.BASE_URL + 'projects/export/ncbi?projectId='+project.id;
+        var url = TL.BASE_URL + 'export/ncbi?projectId='+project.id;
         _.forEach(SamplesService.getSelectedSampleNames(), function(s){
           url += '&sampleId=' + s.identifier;
         });
