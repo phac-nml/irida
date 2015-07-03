@@ -530,10 +530,13 @@
         }
       },
       ncbi : function ncbi() {
-        var url = TL.BASE_URL + 'export/ncbi?projectId='+project.id;
+        var url = TL.BASE_URL + 'projects/'+project.id+'/export/ncbi?';
+        var sampleIds = [];
         _.forEach(SamplesService.getSelectedSampleNames(), function(s){
-          url += '&sampleId=' + s.identifier;
+          sampleIds.push('sampleId='+s.identifier);
         });
+        
+        url = url + sampleIds.join('&');
         console.log(url);
         window.location = url;
         

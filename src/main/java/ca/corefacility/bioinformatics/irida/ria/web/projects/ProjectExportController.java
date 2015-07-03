@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -37,8 +38,8 @@ public class ProjectExportController {
 		this.sequenceFilePairService = sequenceFilePairService;
 	}
 
-	@RequestMapping("/export/ncbi")
-	public String getUploadNcbiPage(@RequestParam Long projectId, @RequestParam List<Long> sampleId, Model model) {
+	@RequestMapping("/projects/{projectId}/export/ncbi")
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam List<Long> sampleId, Model model) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = sampleId.stream().map((i) -> sampleService.getSampleForProject(project, i))
 				.collect(Collectors.toList());
