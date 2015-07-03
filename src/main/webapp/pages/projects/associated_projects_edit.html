@@ -201,7 +201,7 @@
 				remote: {
 					get: /*[[@{/projects/{id}/associated/remote/(id=${project.getId()})}]]*/ '/projects/1/associated/remote/',
 					add: /*[[@{/projects/{id}/associated/remote/(id=${project.getId()})}]]*/ '/projects/1/associated/remote/',
-					remove: /*[[@{/projects/{id}/associated/remote/(id=${project.getId()})}]]*/ '/projects/1/associated/remote/remove'
+					remove: /*[[@{/projects/{id}/associated/remote/remove(id=${project.getId()})}]]*/ '/projects/1/associated/remote/remove'
 				}
 			}
 		},
@@ -237,9 +237,7 @@
 			};
 			
 			self.removeRemoteAssociatedStatus = function (params) {
-				return $http.post(PAGE.urls.remote.remove, {
-					params: params
-				});
+				return $http.post(PAGE.urls.remote.remove, params);
 			};
 		}
 
