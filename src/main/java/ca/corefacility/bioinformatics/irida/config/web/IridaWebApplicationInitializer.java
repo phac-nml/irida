@@ -11,9 +11,9 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.filters.SkippableDandelionFilter;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
 
-import com.github.dandelion.core.web.DandelionFilter;
 import com.github.dandelion.core.web.DandelionServlet;
 
 /**
@@ -40,7 +40,8 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 				false, "/*");
 
 		// Register the Dandelion filter
-		FilterRegistration.Dynamic dandelionFilter = servletContext.addFilter("dandelionFilter", new DandelionFilter());
+		FilterRegistration.Dynamic dandelionFilter = servletContext.addFilter("dandelionFilter",
+				new SkippableDandelionFilter());
 		dandelionFilter.addMappingForUrlPatterns(null, false, "/*");
 
 		// Register the Dandelion servlet
