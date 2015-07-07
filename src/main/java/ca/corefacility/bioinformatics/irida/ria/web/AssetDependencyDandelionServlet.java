@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,40 +71,38 @@ public class AssetDependencyDandelionServlet extends HttpServlet {
 		final String cacheKey = AssetUtils.extractCacheKeyFromRequest(request);
 		final AssetStorage assetStorage = context.getAssetStorage();
 		final StorageEntry entry = assetStorage.get(cacheKey);
-		final URL resourceLocation = request.getServletContext().getResource(entry.getAsset().getConfigLocation());
+		final String configLocation = entry.getAsset().getConfigLocation();
+		logger.trace("Loading entry from [" + configLocation + "]");
+		final String resourceLocation = request.getServletContext().getRealPath(configLocation);
+		logger.trace("Loading entry from [" + resourceLocation + "]");
 
-		try {
-			Path parentPath = Paths.get(resourceLocation.toURI());
-			logger.trace("Found original resource at: [ " + parentPath + "].");
-			final String requestURI = request.getRequestURI();
+		Path parentPath = Paths.get(resourceLocation);
+		logger.trace("Found original resource at: [ " + parentPath + "].");
+		final String requestURI = request.getRequestURI();
 
-			// get the relative path suffix of the file that we're *actually*
-			// looking for (i.e., fonts/fontawesome-webfont.woff).
-			final String pathSuffix = requestURI.substring(requestURI.indexOf(cacheKey) + cacheKey.length() + 1,
-					requestURI.length());
+		// get the relative path suffix of the file that we're *actually*
+		// looking for (i.e., fonts/fontawesome-webfont.woff).
+		final String pathSuffix = requestURI.substring(requestURI.indexOf(cacheKey) + cacheKey.length() + 1,
+				requestURI.length());
 
-			while (parentPath.getParent() != null) {
-				// now start stripping off parts of the path of the "owning"
-				// resource until we get to the root of the filesystem.
-				final Path parent = parentPath.getParent();
+		while (parentPath.getParent() != null) {
+			// now start stripping off parts of the path of the "owning"
+			// resource until we get to the root of the filesystem.
+			final Path parent = parentPath.getParent();
 
-				// if we found the resource, write it to the output stream in
-				// the response and terminate.
-				final Path possibleLocation = parent.resolve(pathSuffix);
-				if (Files.exists(possibleLocation)) {
-					logger.trace("Found requested resource at [" + possibleLocation + "]");
-					Files.copy(possibleLocation, response.getOutputStream());
-					return;
-				}
-				parentPath = parent;
+			// if we found the resource, write it to the output stream in
+			// the response and terminate.
+			final Path possibleLocation = parent.resolve(pathSuffix);
+			if (Files.exists(possibleLocation)) {
+				logger.trace("Found requested resource at [" + possibleLocation + "]");
+				Files.copy(possibleLocation, response.getOutputStream());
+				return;
 			}
-
-			// if we get here, we navigated the filesystem all the way to the
-			// root, so we couldn't find what we were looking for.
-			throw new FileNotFoundException("Could not find requested resource [" + requestURI + "]");
-		} catch (URISyntaxException e) {
-			throw new IOException("Failed to get child resource for [" + resourceLocation + "]", e);
+			parentPath = parent;
 		}
 
+		// if we get here, we navigated the filesystem all the way to the
+		// root, so we couldn't find what we were looking for.
+		throw new FileNotFoundException("Could not find requested resource [" + requestURI + "]");
 	}
 }
