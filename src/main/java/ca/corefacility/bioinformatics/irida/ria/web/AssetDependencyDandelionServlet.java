@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,10 +32,24 @@ import com.github.dandelion.core.web.WebConstants;
  * system and instead just serves files directly from the filesystem.
  * 
  */
-public class CustomizedDandelionServlet extends DandelionServlet {
-	private static final Logger logger = LoggerFactory.getLogger(CustomizedDandelionServlet.class);
+public class AssetDependencyDandelionServlet extends HttpServlet {
+	private static final Logger logger = LoggerFactory.getLogger(AssetDependencyDandelionServlet.class);
 
 	private static final Pattern JS_CSS_QUERY = Pattern.compile("(js|css)$", Pattern.CASE_INSENSITIVE);
+
+	private final DandelionServlet delegateServlet;
+
+	/**
+	 * Create a new customized dandelion servlet that will allow loading
+	 * dependencies for assets.
+	 * 
+	 * @param dandelionServlet
+	 *            the servlet to use when we're just passing through directly to
+	 *            the next servlet (for JavaScript and CSS files).
+	 */
+	public AssetDependencyDandelionServlet(final DandelionServlet dandelionServlet) {
+		this.delegateServlet = dandelionServlet;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -44,7 +59,7 @@ public class CustomizedDandelionServlet extends DandelionServlet {
 			throws ServletException, IOException {
 
 		if (JS_CSS_QUERY.matcher(request.getRequestURI()).find()) {
-			super.doGet(request, response);
+			delegateServlet.service(request, response);
 			return;
 		}
 
@@ -70,7 +85,7 @@ public class CustomizedDandelionServlet extends DandelionServlet {
 			final String pathSuffix = requestURI.substring(requestURI.indexOf(cacheKey) + cacheKey.length() + 1,
 					requestURI.length());
 
-			while (!parentPath.equals(parentPath.getParent())) {
+			while (parentPath.getParent() != null) {
 				// now start stripping off parts of the path of the "owning"
 				// resource until we get to the root of the filesystem.
 				final Path parent = parentPath.getParent();

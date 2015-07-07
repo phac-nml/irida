@@ -880,7 +880,7 @@
 		<spring.security.oauth.version>2.0.4.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>2.2.0.RELEASE</spring.ws.test.version>
-		<mockito.version>1.9.5</mockito.version>
+		<mockito.version>1.10.19</mockito.version>
 		<mysql.connector.version>5.1.31</mysql.connector.version>
 		<hibernate.version>4.3.6.Final</hibernate.version>
 		<h2.version>1.4.180</h2.version>
@@ -912,7 +912,6 @@
 		<thymeleaf-layout-dialect.version>1.2.4</thymeleaf-layout-dialect.version>
 		<thymeleaf-dandelion.version>1.0.1</thymeleaf-dandelion.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
-		<powermock.version>1.5.4</powermock.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
 		<selenium-driver.version>2.42.2</selenium-driver.version>
@@ -921,6 +920,7 @@
 		<thymeleaf.extras.springsecurity3.version>2.1.1.RELEASE</thymeleaf.extras.springsecurity3.version>
 		<thymeleaf.extras.conditionalcomments.version>2.1.1.RELEASE</thymeleaf.extras.conditionalcomments.version>
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
+		<powermock.version>1.6.2</powermock.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>

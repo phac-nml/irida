@@ -13,10 +13,11 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import com.github.dandelion.core.web.DandelionFilter;
+import com.github.dandelion.core.web.DandelionServlet;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.web.CustomizedDandelionServlet;
+import ca.corefacility.bioinformatics.irida.ria.web.AssetDependencyDandelionServlet;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
 
 /**
@@ -50,7 +51,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 		// Register the Dandelion servlet
 		ServletRegistration.Dynamic dandelionServlet = servletContext.addServlet("dandelionServlet",
-				new CustomizedDandelionServlet());
+				new AssetDependencyDandelionServlet(new DandelionServlet()));
 		dandelionServlet.setLoadOnStartup(2);
 		dandelionServlet.addMapping("/dandelion-assets/*");
 	}
