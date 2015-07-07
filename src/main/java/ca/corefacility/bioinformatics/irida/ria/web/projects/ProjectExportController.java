@@ -10,8 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -38,7 +44,7 @@ public class ProjectExportController {
 		this.sequenceFilePairService = sequenceFilePairService;
 	}
 
-	@RequestMapping("/projects/{projectId}/export/ncbi")
+	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
 	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam List<Long> sampleId, Model model) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = sampleId.stream().map((i) -> sampleService.getSampleForProject(project, i))
@@ -58,11 +64,41 @@ public class ProjectExportController {
 			sampleMap.put("files", files);
 			sampleList.add(sampleMap);
 		}
-		
+
 		model.addAttribute("project", project);
 		model.addAttribute("samples", sampleList);
 
 		return NCBI_EXPORT_VIEW;
 	}
 
+	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> submitToNcbi(@RequestBody SubmissionBody submission) {
+		return ImmutableMap.of("submissionId", 1);
+	}
+
+	static class SubmissionBody {
+		@JsonProperty
+		List<Long> single;
+
+		@JsonProperty
+		List<Long> paired;
+
+		public SubmissionBody() {
+		}
+
+		public SubmissionBody(List<Long> single, List<Long> paired) {
+			this.single = single;
+			this.paired = paired;
+		}
+
+		public List<Long> getSingle() {
+			return single;
+		}
+
+		public List<Long> getPaired() {
+			return paired;
+		}
+
+	}
 }
