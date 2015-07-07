@@ -16,15 +16,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
-
+import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.service.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 public class ProjectExportController {
@@ -34,14 +38,17 @@ public class ProjectExportController {
 	SampleService sampleService;
 	SequenceFileService sequenceFileService;
 	SequenceFilePairService sequenceFilePairService;
+	NcbiExportSubmissionService exportSubmissionService;
 
 	@Autowired
 	public ProjectExportController(ProjectService projectService, SampleService sampleService,
-			SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService) {
+			SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
+			NcbiExportSubmissionService exportSubmissionService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
+		this.exportSubmissionService = exportSubmissionService;
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
@@ -73,8 +80,19 @@ public class ProjectExportController {
 
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> submitToNcbi(@RequestBody SubmissionBody submission) {
-		return ImmutableMap.of("submissionId", 1);
+	public Map<String, Object> submitToNcbi(@PathVariable Long projectId, @RequestBody SubmissionBody submission) {
+		Project project = projectService.read(projectId);
+
+		List<SequenceFile> singleFiles = submission.getSingle().stream().map(sequenceFileService::read)
+				.collect(Collectors.toList());
+
+		List<SequenceFilePair> pairFiles = submission.getPaired().stream().map(sequenceFilePairService::read)
+				.collect(Collectors.toList());
+
+		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, singleFiles, pairFiles);
+		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
+
+		return ImmutableMap.of("submissionId", ncbiExportSubmission.getId());
 	}
 
 	static class SubmissionBody {
