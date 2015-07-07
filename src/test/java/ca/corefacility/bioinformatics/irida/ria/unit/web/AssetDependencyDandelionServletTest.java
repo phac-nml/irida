@@ -11,6 +11,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -80,7 +81,7 @@ public class AssetDependencyDandelionServletTest {
 	}
 
 	@Test
-	public void testRequestWOFF() throws ServletException, IOException {
+	public void testRequestWOFF() throws ServletException, IOException, URISyntaxException {
 		final String cacheKey = "cacheKey";
 		final String assetLocation = "AssetLocation";
 		final ByteArrayOutputStream streamCapture = new ByteArrayOutputStream();
@@ -92,8 +93,8 @@ public class AssetDependencyDandelionServletTest {
 		when(request.getRequestURI())
 				.thenReturn(String.format("/%s/something that doesn't end with css or js.woff", cacheKey));
 		when(request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE)).thenReturn(context);
-		when(request.getServletContext().getResource(assetLocation))
-				.thenReturn(getClass().getResource("/files/dialects/icons/good-icons.html"));
+		when(request.getServletContext().getRealPath(assetLocation))
+				.thenReturn(getClass().getResource("/files/dialects/icons/good-icons.html").toURI().getPath());
 		BDDMockito.given(AssetUtils.extractCacheKeyFromRequest(request)).willReturn(cacheKey);
 		when(context.getAssetStorage()).thenReturn(assetStorage);
 		when(assetStorage.get(cacheKey)).thenReturn(new StorageEntry(asset, null));
@@ -105,9 +106,9 @@ public class AssetDependencyDandelionServletTest {
 		assertEquals("The content of the outputstream should be the contents of the test file.", "This is a test file.",
 				streamCapture.toString());
 	}
-	
+
 	@Test(expected = FileNotFoundException.class)
-	public void testRequestMissing() throws ServletException, IOException {
+	public void testRequestMissing() throws ServletException, IOException, URISyntaxException {
 		final String cacheKey = "cacheKey";
 		final String assetLocation = "AssetLocation";
 		final ByteArrayOutputStream streamCapture = new ByteArrayOutputStream();
@@ -116,11 +117,10 @@ public class AssetDependencyDandelionServletTest {
 
 		mockStatic(AssetUtils.class);
 
-		when(request.getRequestURI())
-				.thenReturn(String.format("/%s/something that exist!", cacheKey));
+		when(request.getRequestURI()).thenReturn(String.format("/%s/something that doesn't exist!", cacheKey));
 		when(request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE)).thenReturn(context);
-		when(request.getServletContext().getResource(assetLocation))
-				.thenReturn(getClass().getResource("/files/dialects/icons/good-icons.html"));
+		when(request.getServletContext().getRealPath(assetLocation))
+				.thenReturn(getClass().getResource("/files/dialects/icons/good-icons.html").toURI().getPath());
 		BDDMockito.given(AssetUtils.extractCacheKeyFromRequest(request)).willReturn(cacheKey);
 		when(context.getAssetStorage()).thenReturn(assetStorage);
 		when(assetStorage.get(cacheKey)).thenReturn(new StorageEntry(asset, null));
