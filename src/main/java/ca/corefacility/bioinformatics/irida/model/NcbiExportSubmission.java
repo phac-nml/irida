@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
 @Entity
 @Table(name = "ncbi_export_submission")
@@ -33,9 +34,13 @@ public class NcbiExportSubmission implements IridaThing {
 	@ManyToOne
 	private Project project;
 
-	@ManyToMany(fetch=FetchType.EAGER)
-	@CollectionTable(name="ncbi_export_submission_files")
-	private List<SequenceFile> files;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@CollectionTable(name = "ncbi_export_submission_single_files")
+	private List<SequenceFile> singleFiles;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@CollectionTable(name = "ncbi_export_submission_pair_files")
+	private List<SequenceFilePair> pairFiles;
 
 	private Date createdDate;
 
@@ -46,9 +51,10 @@ public class NcbiExportSubmission implements IridaThing {
 		createdDate = new Date();
 	}
 
-	public NcbiExportSubmission(Project project, List<SequenceFile> files) {
+	public NcbiExportSubmission(Project project, List<SequenceFile> singleFiles, List<SequenceFilePair> pairFiles) {
 		this.project = project;
-		this.files = files;
+		this.singleFiles = singleFiles;
+		this.pairFiles = pairFiles;
 	}
 
 	@Override
@@ -85,8 +91,12 @@ public class NcbiExportSubmission implements IridaThing {
 		return project;
 	}
 
-	public List<SequenceFile> getFiles() {
-		return files;
+	public List<SequenceFilePair> getPairFiles() {
+		return pairFiles;
+	}
+
+	public List<SequenceFile> getSingleFiles() {
+		return singleFiles;
 	}
 
 }
