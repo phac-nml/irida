@@ -14,8 +14,9 @@
     </div>
     <div class="form-group">
       <label class="col-sm-2 control-label" th:text="#{project.export.files}">_Files_</label>
-
+      
       <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
+        <div class="alert alert-info" role="alert" th:text="#{project.export.files.description}">_Select files_</div>
         <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" class="sample-container" th:each="sample : ${samples}">
           <h3>
             <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.id},sid=${sample.id})}" th:text="${sample.name}"></a>
@@ -56,7 +57,7 @@
           </th:block>
 
         </div>
-        <button id="submit" class="btn btn-primary">Submit</button>
+        <button id="submit" class="btn btn-primary" th:text="#{global.btn.submit}">_Submit_</button>
 
       </div>
     </div>
