@@ -31,7 +31,7 @@
                   <tr class="paired_end paired_end__forward">
                     <td class="td_radio" rowspan="2">
                       <!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
-                      <input type="checkbox" class="paired_files" data-type="paired_end" th:value="${pair.getId()}" th:name="${sample.id}" />
+                      <input type="checkbox" class="paired_files file-checkbox" data-type="paired_end" th:value="${pair.getId()}" th:name="${sample.id}" />
                     </td>
                     <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
                   </tr>
@@ -46,7 +46,7 @@
                 <tr class="single_end" th:each="join : ${files}" th:with="file=${join.getObject()}">
                   <td class="td_radio">
                     <!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
-                    <input type="checkbox" class="single_files" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" />
+                    <input type="checkbox" class="single_files file-checkbox" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" />
                   </td>
                   <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='single')"></td>
                 </tr>
@@ -94,6 +94,28 @@
         });
         console.log(submission);
       });
+      
+      /*
+      * Disable the submit button if nothing is selected
+      */
+      $(document).ready(function(){
+        var fileBoxes = $(".file-checkbox");
+        var submitButton = $("#submit");
+        disableSubmit(fileBoxes,submitButton);
+        
+        fileBoxes.click(function(){
+          disableSubmit(fileBoxes,submitButton);
+        });
+      });
+      
+      function disableSubmit(fileBoxes, submitButton){
+        if(fileBoxes.is(":checked")){
+            submitButton.removeAttr("disabled");
+          }
+        else{
+          submitButton.attr("disabled", "disabled");
+        }
+      }
     </script>
   </th:block>
 </body>
