@@ -22,6 +22,9 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
+/**
+ * Class storing a request to upload sequence data to NCBI.
+ */
 @Entity
 @Table(name = "ncbi_export_submission")
 @Audited

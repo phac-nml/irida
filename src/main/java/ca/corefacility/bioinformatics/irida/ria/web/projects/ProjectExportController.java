@@ -30,15 +30,19 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Controller managing requests to export project data to external sources.
+ */
 @Controller
 public class ProjectExportController {
 
 	public static final String NCBI_EXPORT_VIEW = "export/ncbi";
-	ProjectService projectService;
-	SampleService sampleService;
-	SequenceFileService sequenceFileService;
-	SequenceFilePairService sequenceFilePairService;
-	NcbiExportSubmissionService exportSubmissionService;
+
+	private final ProjectService projectService;
+	private final SampleService sampleService;
+	private final SequenceFileService sequenceFileService;
+	private final SequenceFilePairService sequenceFilePairService;
+	private final NcbiExportSubmissionService exportSubmissionService;
 
 	@Autowired
 	public ProjectExportController(ProjectService projectService, SampleService sampleService,
@@ -51,10 +55,23 @@ public class ProjectExportController {
 		this.exportSubmissionService = exportSubmissionService;
 	}
 
+	/**
+	 * Get the page for exporting a given {@link Project} and selected
+	 * {@link Sample}s
+	 * 
+	 * @param projectId
+	 *            The ID of the project to export
+	 * @param sampleIds
+	 *            A List of sample ids to export
+	 * @param model
+	 *            model for the view to render
+	 * @return Name of the NCBI export page
+	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam List<Long> sampleId, Model model) {
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("sampleId") List<Long> sampleIds,
+			Model model) {
 		Project project = projectService.read(projectId);
-		List<Sample> samples = sampleId.stream().map((i) -> sampleService.getSampleForProject(project, i))
+		List<Sample> samples = sampleIds.stream().map((i) -> sampleService.getSampleForProject(project, i))
 				.collect(Collectors.toList());
 
 		List<Map<String, Object>> sampleList = new ArrayList<>();
@@ -78,6 +95,15 @@ public class ProjectExportController {
 		return NCBI_EXPORT_VIEW;
 	}
 
+	/**
+	 * Save an NCBI submission to the database
+	 * 
+	 * @param projectId
+	 *            the ID of the {@link Project} for the submission
+	 * @param submission
+	 *            A {@link SubmissionBody} describing the files to upload
+	 * @return ID of the submission if successful
+	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> submitToNcbi(@PathVariable Long projectId, @RequestBody SubmissionBody submission) {
@@ -95,6 +121,9 @@ public class ProjectExportController {
 		return ImmutableMap.of("submissionId", ncbiExportSubmission.getId());
 	}
 
+	/**
+	 * Class storing IDs of single and paired end files submitted for upload
+	 */
 	static class SubmissionBody {
 		@JsonProperty
 		List<Long> single;
