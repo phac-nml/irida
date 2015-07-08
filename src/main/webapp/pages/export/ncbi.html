@@ -84,7 +84,12 @@
           type: "POST",
           url: /*[[@{/projects/{id}/export/ncbi(id=${project.id})}]]*/ '/projects/1/export/ncbi',
           contentType: 'application/json',
-          data: JSON.stringify(submission)
+          data: JSON.stringify(submission),
+          success : function(data, textStatus, jqXHR) {
+            var url = /*[[@{/export/submission/}]]*/ '/export/submission/';
+            url = url + data.submissionId;
+            window.location = url;
+          }
         });
         console.log(submission);
       });
