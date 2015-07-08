@@ -5,42 +5,48 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
 <head>
-    <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
+    <title th:text="#{projects.title}">List of Projects</title>
     <style>
-        #projectsTable_wrapper th:nth-child(3), #projectsTable_wrapper td:nth-child(3),
-        #projectsTable th:nth-child(3), #projectsTable td:nth-child(3) {
-            width: 200px!important;
-            wrap:nowrap;
-            white-space:nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .table-cell-override {
-            width: 200px!important;
-            wrap:nowrap;
-            white-space:nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    	table tr th {
+    		vertical-align: top !important;
+    	}
+    	
+    	.yadcf-filter-reset-button {
+    		display: none !important;
+    	}
     </style>
 </head>
-<body ddl:bundle-includes="projects">
+<body>
 <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
         <h1 th:text="#{projects.title}"></h1>
-        <div dt:conf="projectsTable">
+		<div dt:conf="projectsTable">
             <div dt:confType="callback" dt:type="init" dt:function="irida-datatables#datatable.tableDrawn"></div>
         </div>
-        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}">
+        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none">
+        	<!-- 
+        		
+        		We (frustratingly) cannot use multiple rows in the header because Dandelion Datatables
+        		doesn't support that: https://github.com/dandelion/dandelion-datatables/issues/249, so
+        		we have to resort to writing out our filter fields into divs.
+        	
+        	 -->
             <thead>
             <tr role="row">
-                <th id="project-id" dt:property="item.identifier" th:text="#{projects.table.id}"></th>
-                <th id="project-name" dt:filterable="true" dt:property="item.name" th:text="#{projects.table.name}"
-                    dt:renderFunction="irida-datatables#datatable.createItemButton"></th>
-                <th id="project-organism" class="table-cell-override" dt:filterable="true" dt:filterType="select" dt:property="item.organism"
-                    th:text="#{projects.table.organism}" dt:renderFunction="irida-datatables#datatable.forceContentSize"></th>
-                <th dt:property="custom.role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles" th:text="#{projects.table.role}"
-                    dt:renderFunction="irida-datatables#datatable.i18n"></th>
+                <th dt:property="item.identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
+                <th dt:filterable="true" dt:property="item.name" dt:selector="name-filter" >
+                	<span th:text="#{projects.table.name}" />
+                	<div id="name-filter" />
+                </th>
+                <th dt:filterable="true" dt:property="item.organism" dt:selector="organism-filter" >
+                	<span  th:text="#{projects.table.organism}" />
+                	<div id="organism-filter" />
+                </th>
+                <th dt:property="custom.role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles" dt:selector="role-filter"
+                    dt:renderFunction="irida-datatables#datatable.i18n">
+                    <span  th:text="#{projects.table.role}"></span>
+                    <div id="role-filter" />
+                </th>
                 <th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
                 <th dt:property="custom.members" dt:searchable="false" th:text="#{projects.table.members}"></th>
                 <th dt:property="item.createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
