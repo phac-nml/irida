@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 /**
  * Controller managing requests to export project data to external sources.
@@ -109,11 +110,9 @@ public class ProjectExportController {
 	public Map<String, Object> submitToNcbi(@PathVariable Long projectId, @RequestBody SubmissionBody submission) {
 		Project project = projectService.read(projectId);
 
-		List<SequenceFile> singleFiles = submission.getSingle().stream().map(sequenceFileService::read)
-				.collect(Collectors.toList());
-
-		List<SequenceFilePair> pairFiles = submission.getPaired().stream().map(sequenceFilePairService::read)
-				.collect(Collectors.toList());
+		List<SequenceFile> singleFiles = Lists.newArrayList(sequenceFileService.readMultiple(submission.getSingle()));
+		List<SequenceFilePair> pairFiles = Lists.newArrayList(sequenceFilePairService.readMultiple(submission
+				.getPaired()));
 
 		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, singleFiles, pairFiles);
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);

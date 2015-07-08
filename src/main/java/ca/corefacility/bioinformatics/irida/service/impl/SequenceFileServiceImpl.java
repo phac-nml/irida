@@ -99,7 +99,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -132,6 +132,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile read(Long id) throws EntityNotFoundException {
 		return super.read(id);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission('#idents', 'canReadSequenceFile')")
+	public Iterable<SequenceFile> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
 	}
 
 	/**
@@ -288,8 +294,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
 
 		for (SequenceFile file : sequenceFiles) {
-			Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository
-					.getSampleForSequenceFile(file);
+			Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository.getSampleForSequenceFile(file);
 			Sample sample = sampleSequenceFile.getSubject();
 			SequenceFile sequenceFile = sampleSequenceFile.getObject();
 
@@ -305,7 +310,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		return sampleSequenceFiles;
 	}
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
