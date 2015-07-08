@@ -124,7 +124,7 @@ public class ProjectExportController {
 	/**
 	 * Class storing IDs of single and paired end files submitted for upload
 	 */
-	static class SubmissionBody {
+	protected static class SubmissionBody {
 		@JsonProperty
 		List<Long> single;
 
