@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -38,6 +39,7 @@ public class NcbiExportSubmission implements IridaThing {
 	private Long id;
 
 	@ManyToOne
+	@JoinColumn(name = "project_id")
 	private Project project;
 
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -48,7 +50,7 @@ public class NcbiExportSubmission implements IridaThing {
 	@CollectionTable(name = "ncbi_export_submission_pair_files")
 	private List<SequenceFilePair> pairFiles;
 
-	@Column(name = "created_date")
+	@Column(name = "created_date", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 

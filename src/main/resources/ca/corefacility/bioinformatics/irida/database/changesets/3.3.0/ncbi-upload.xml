@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="ncbi-upload" author="tom">
+		<createTable tableName="ncbi_export_submission">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="modified_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="project_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_NCBI_SUBMISSION_PROJECT"
+					referencedColumnNames="id" referencedTableName="project" />
+			</column>
+		</createTable>
+
+		<createTable tableName="ncbi_export_submission_single_files">
+			<column name="ncbi_export_submission_id" type="bigint(20)">
+				<constraints nullable="false"
+					foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_FILE_SUBMISSION"
+					referencedColumnNames="id" referencedTableName="ncbi_export_submission"></constraints>
+			</column>
+
+			<column name="singleFiles_id" type="bigint(20)">
+				<constraints nullable="false"
+					foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_FILE_FILE"
+					referencedColumnNames="id" referencedTableName="sequence_file"></constraints>
+			</column>
+		</createTable>
+
+		<createTable tableName="ncbi_export_submission_pair_files">
+			<column name="ncbi_export_submission_id" type="bigint(20)">
+				<constraints nullable="false"
+					foreignKeyName="FK_NCBI_SUBMISSION_PAIR_FILE_SUBMISSION"
+					referencedColumnNames="id" referencedTableName="ncbi_export_submission"></constraints>
+			</column>
+
+			<column name="pairFiles_id" type="bigint(20)">
+				<constraints nullable="false"
+					foreignKeyName="FK_NCBI_SUBMISSION_PAIR_FILE_PAIR"
+					referencedColumnNames="id" referencedTableName="sequence_file_pair"></constraints>
+			</column>
+		</createTable>
+
+		<createTable tableName="ncbi_export_submission_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
+			<column name="project_id" type="bigint(20)" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_NCBI_SUBMISSION_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<createTable tableName="ncbi_export_submission_single_files_AUD">
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_FILES_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="ncbi_export_submission_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"></constraints>
+			</column>
+
+			<column name="singleFiles_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"></constraints>
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<createTable tableName="ncbi_export_submission_pair_files_AUD">
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_NCBI_SUBMISSION_PAIR_FILES_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="ncbi_export_submission_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"></constraints>
+			</column>
+
+			<column name="pairFiles_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"></constraints>
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+
+		</createTable>
+
+	</changeSet>
+</databaseChangeLog>
