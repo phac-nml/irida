@@ -220,7 +220,7 @@
 							<a id="exportNcbiButton" href="#" ng-click="subnav.export.ncbi()">
 								<span class="fa fa-fw fa-upload"></span>
 								&nbsp;
-								<span>_Upload to NCBI_</span>
+								<span th:text="#{project.samples.export.ncbi}">_Upload to NCBI_</span>
 							</a>
 						</li>
 						<li th:if="${galaxyCallback}">
