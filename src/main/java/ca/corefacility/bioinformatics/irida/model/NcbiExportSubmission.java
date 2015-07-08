@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -13,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -45,9 +48,13 @@ public class NcbiExportSubmission implements IridaThing {
 	@CollectionTable(name = "ncbi_export_submission_pair_files")
 	private List<SequenceFilePair> pairFiles;
 
+	@Column(name = "created_date")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
 	@LastModifiedDate
+	@Column(name = "modified_date")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
 	public NcbiExportSubmission() {
@@ -55,6 +62,7 @@ public class NcbiExportSubmission implements IridaThing {
 	}
 
 	public NcbiExportSubmission(Project project, List<SequenceFile> singleFiles, List<SequenceFilePair> pairFiles) {
+		this();
 		this.project = project;
 		this.singleFiles = singleFiles;
 		this.pairFiles = pairFiles;
