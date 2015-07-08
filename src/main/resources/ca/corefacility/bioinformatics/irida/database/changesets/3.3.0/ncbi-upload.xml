@@ -49,54 +49,5 @@
 					referencedColumnNames="id" referencedTableName="sequence_file_pair"></constraints>
 			</column>
 		</createTable>
-
-		<createTable tableName="ncbi_export_submission_AUD">
-			<column name="id" type="bigint(20)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="created_date" type="datetime" />
-			<column name="modified_date" type="datetime" />
-			<column name="project_id" type="bigint(20)" />
-			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="FK_NCBI_SUBMISSION_REVISION" referencedColumnNames="id"
-					referencedTableName="Revisions" />
-			</column>
-			<column name="REVTYPE" type="tinyint(4)" />
-		</createTable>
-
-		<createTable tableName="ncbi_export_submission_single_files_AUD">
-			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_FILES_REVISION"
-					referencedColumnNames="id" referencedTableName="Revisions" />
-			</column>
-			<column name="ncbi_export_submission_id" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true"></constraints>
-			</column>
-
-			<column name="singleFiles_id" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true"></constraints>
-			</column>
-			<column name="REVTYPE" type="tinyint(4)" />
-		</createTable>
-
-		<createTable tableName="ncbi_export_submission_pair_files_AUD">
-			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="FK_NCBI_SUBMISSION_PAIR_FILES_REVISION"
-					referencedColumnNames="id" referencedTableName="Revisions" />
-			</column>
-			<column name="ncbi_export_submission_id" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true"></constraints>
-			</column>
-
-			<column name="pairFiles_id" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true"></constraints>
-			</column>
-			<column name="REVTYPE" type="tinyint(4)" />
-
-		</createTable>
-
 	</changeSet>
 </databaseChangeLog>

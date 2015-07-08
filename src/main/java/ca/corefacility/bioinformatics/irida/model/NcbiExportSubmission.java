@@ -18,7 +18,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -31,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
  */
 @Entity
 @Table(name = "ncbi_export_submission")
-@Audited
 @EntityListeners(AuditingEntityListener.class)
 public class NcbiExportSubmission implements IridaThing {
 	@Id
