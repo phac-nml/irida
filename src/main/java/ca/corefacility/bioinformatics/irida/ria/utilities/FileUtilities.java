@@ -51,10 +51,7 @@ public class FileUtilities {
 		// for zip file
 		response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
 
-		// warnings suppressed here because we are actually closing the stream,
-		// eclipse just doesn't know it
-		try (@SuppressWarnings("resource")
-		ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
+		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
 
 			for (AnalysisOutputFile file : files) {
 				if (!Files.exists(file.getFile())) {

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -57,7 +58,7 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		passwordResetPage.enterPassword(newPassword, newPassword);
 		assertTrue(passwordResetPage.checkSuccess());
 
-		page.logout(driver());
+		AbstractPage.logout(driver());
 		page = LoginPage.to(driver());
 		page.login(EXPIRED_USERNAME, newPassword);
 		assertTrue("The user is logged in and redirected.", driver().getCurrentUrl().contains("dashboard"));
