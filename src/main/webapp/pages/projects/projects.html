@@ -34,7 +34,7 @@
             <thead>
             <tr role="row">
                 <th dt:property="item.identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
-                <th dt:filterable="true" dt:property="item.name" dt:selector="name-filter" >
+                <th dt:filterable="true" dt:property="item.name" dt:selector="name-filter" dt:renderFunction="iridaDatatables#datatable.createItemButton">
                 	<span th:text="#{projects.table.name}" />
                 	<div id="name-filter" />
                 </th>
