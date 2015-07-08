@@ -64,6 +64,7 @@
   <th:block layout:fragment="scripts" th:inline="javascript">
     <script>
       $("#submit").click(function() {
+        $(this).attr("disabled","disabled");
         var single = [];
         var paired = [];
 
