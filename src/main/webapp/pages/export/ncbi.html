@@ -19,7 +19,7 @@
         <div class="alert alert-info" role="alert" th:text="#{project.export.files.description}">_Select files_</div>
         <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" class="sample-container" th:each="sample : ${samples}">
           <h3>
-            <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.id},sid=${sample.id})}" th:text="${sample.name}"></a>
+            <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
           </h3>
 
           <th:block th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
@@ -34,7 +34,7 @@
                       <!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
                       <input type="checkbox" class="paired_files file-checkbox" data-type="paired_end" th:value="${pair.getId()}" th:name="${sample.id}" />
                     </td>
-                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
+                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward', relative='false')"></td>
                   </tr>
                   <tr class="paired_end paired_end__reverse">
                     <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
