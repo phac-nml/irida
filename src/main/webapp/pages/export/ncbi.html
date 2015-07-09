@@ -14,7 +14,7 @@
     </div>
     <div class="form-group">
       <label class="col-sm-2 control-label" th:text="#{project.export.files}">_Files_</label>
-      
+
       <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
         <div class="alert alert-info" role="alert" th:text="#{project.export.files.description}">_Select files_</div>
         <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" class="sample-container" th:each="sample : ${samples}">
@@ -32,7 +32,7 @@
                   <tr class="paired_end paired_end__forward">
                     <td class="td_radio" rowspan="2">
                       <!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
-                      <input type="checkbox" class="paired_files file-checkbox" data-type="paired_end" th:value="${pair.getId()}" th:name="${sample.id}" />
+                      <input type="checkbox" class="paired_files file-checkbox" data-type="paired_end" th:value="${pair.getId()}" th:name="${sample.id}" th:checked="${#sets.contains(newestPairs, pair.getId())}" />
                     </td>
                     <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward', relative='false')"></td>
                   </tr>
@@ -47,7 +47,7 @@
                 <tr class="single_end" th:each="join : ${files}" th:with="file=${join.getObject()}">
                   <td class="td_radio">
                     <!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
-                    <input type="checkbox" class="single_files file-checkbox" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" />
+                    <input type="checkbox" class="single_files file-checkbox" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" th:checked="${#sets.contains(newestSingles, file.getId())}" />
                   </td>
                   <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='single')"></td>
                 </tr>
@@ -65,7 +65,7 @@
   <th:block layout:fragment="scripts" th:inline="javascript">
     <script>
       $("#submit").click(function() {
-        $(this).attr("disabled","disabled");
+        $(this).attr("disabled", "disabled");
         var single = [];
         var paired = [];
 
@@ -87,7 +87,7 @@
           url: /*[[@{/projects/{id}/export/ncbi(id=${project.id})}]]*/ '/projects/1/export/ncbi',
           contentType: 'application/json',
           data: JSON.stringify(submission),
-          success : function(data, textStatus, jqXHR) {
+          success: function(data, textStatus, jqXHR) {
             var url = /*[[@{/export/submission/}]]*/ '/export/submission/';
             url = url + data.submissionId;
             window.location = url;
@@ -95,25 +95,24 @@
         });
         console.log(submission);
       });
-      
+
       /*
-      * Disable the submit button if nothing is selected
-      */
-      $(document).ready(function(){
+       * Disable the submit button if nothing is selected
+       */
+      $(document).ready(function() {
         var fileBoxes = $(".file-checkbox");
         var submitButton = $("#submit");
-        disableSubmit(fileBoxes,submitButton);
-        
-        fileBoxes.click(function(){
-          disableSubmit(fileBoxes,submitButton);
+        disableSubmit(fileBoxes, submitButton);
+
+        fileBoxes.click(function() {
+          disableSubmit(fileBoxes, submitButton);
         });
       });
-      
-      function disableSubmit(fileBoxes, submitButton){
-        if(fileBoxes.is(":checked")){
-            submitButton.removeAttr("disabled");
-          }
-        else{
+
+      function disableSubmit(fileBoxes, submitButton) {
+        if (fileBoxes.is(":checked")) {
+          submitButton.removeAttr("disabled");
+        } else {
           submitButton.attr("disabled", "disabled");
         }
       }

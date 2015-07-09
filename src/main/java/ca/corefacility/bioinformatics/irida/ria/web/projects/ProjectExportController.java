@@ -2,8 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -75,16 +79,45 @@ public class ProjectExportController {
 		List<Sample> samples = sampleIds.stream().map((i) -> sampleService.getSampleForProject(project, i))
 				.collect(Collectors.toList());
 
+		Set<Long> checkedSingles = new HashSet<>();
+		Set<Long> checkedPairs = new HashSet<>();
+
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		for (Sample sample : samples) {
 			Map<String, Object> sampleMap = new HashMap<>();
 			sampleMap.put("name", sample.getLabel());
 			sampleMap.put("id", sample.getId().toString());
 			Map<String, List<? extends Object>> files = new HashMap<>();
+			List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService
+					.getSequenceFilePairsForSample(sample);
+			List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
+					.getUnpairedSequenceFilesForSample(sample);
 
-			files.put("paired_end", sequenceFilePairService.getSequenceFilePairsForSample(sample));
+			Optional<SequenceFilePair> newestPair = sequenceFilePairsForSample.stream()
+					.sorted((f1, f2) -> f2.getCreatedDate().compareTo(f1.getCreatedDate())).findFirst();
 
-			files.put("single_end", sequenceFileService.getUnpairedSequenceFilesForSample(sample));
+			Optional<Join<Sample, SequenceFile>> newestSingle = unpairedSequenceFilesForSample.stream()
+					.sorted((f1, f2) -> f2.getCreatedDate().compareTo(f1.getCreatedDate())).findFirst();
+
+			if (newestPair.isPresent() && newestSingle.isPresent()) {
+				SequenceFilePair sequenceFilePair = newestPair.get();
+				Join<Sample, SequenceFile> join = newestSingle.get();
+
+				if (sequenceFilePair.getCreatedDate().after(join.getCreatedDate())) {
+					checkedPairs.add(newestPair.get().getId());
+				} else {
+					checkedSingles.add(newestSingle.get().getId());
+				}
+			} else {
+				if (newestPair.isPresent()) {
+					checkedPairs.add(newestPair.get().getId());
+				} else if (newestSingle.isPresent()) {
+					checkedSingles.add(newestSingle.get().getId());
+				}
+			}
+
+			files.put("paired_end", sequenceFilePairsForSample);
+			files.put("single_end", unpairedSequenceFilesForSample);
 
 			sampleMap.put("files", files);
 			sampleList.add(sampleMap);
@@ -92,6 +125,9 @@ public class ProjectExportController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("samples", sampleList);
+
+		model.addAttribute("newestSingles", checkedSingles);
+		model.addAttribute("newestPairs", checkedPairs);
 
 		return NCBI_EXPORT_VIEW;
 	}
