@@ -43,14 +43,6 @@ var datatable = (function(moment, tl, page) {
     }
   }
 
-  function forceContentSize(data, type, full) {
-    if (data && data.length > 0) {
-      return '<div class="table-cell-override" title="' + data + '">' + data + '</div>';
-    } else {
-      return data;
-    }
-  }
-
   /**
    * Called when the datatable is drawn.
    *    Resizes the table
@@ -108,7 +100,6 @@ var datatable = (function(moment, tl, page) {
     formatDate: formatDate,
     i18n: i18n,
     createItemButton: createItemButton,
-    forceContentSize: forceContentSize,
     tableDrawn: tableDrawn
   };
 })(window.moment, window.TL, window.PAGE);

@@ -18,6 +18,13 @@
     	.yadcf-filter-wrapper {
     		display: block !important;
     	}
+    	
+    	.row td {
+    		max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+    	}
     </style>
 </head>
 <body>
@@ -28,13 +35,6 @@
             <div dt:confType="callback" dt:type="init" dt:function="irida-datatables#datatable.tableDrawn"></div>
         </div>
         <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="header">
-        	<!-- 
-        		
-        		We (frustratingly) cannot use multiple rows in the header because Dandelion Datatables
-        		doesn't support that: https://github.com/dandelion/dandelion-datatables/issues/249, so
-        		we have to resort to writing out our filter fields into divs.
-        	
-        	 -->
             <thead>
             <tr role="row">
                 <th dt:property="item.identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
