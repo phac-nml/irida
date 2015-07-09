@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.impl.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,7 +18,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.junit.Assume;
@@ -32,6 +35,16 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+
+import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
@@ -55,24 +68,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Tests out the analysis service for the Galaxy analyses.
@@ -110,20 +110,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private AnalysisService analysisService;
 
 	@Autowired
-	private AnalysisRepository analysisRepository;
-
-	@Autowired
 	private AnalysisExecutionService analysisExecutionService;
 
-	@Autowired
-	private IridaWorkflowsService iridaWorkflowsService;
-
-	@Autowired
-	private ExecutorService analysisTaskExecutor;
-	
-	@Autowired
-	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
-	
 	private WorkflowsClient workflowsClient;
 
 	private Path sequenceFilePath;

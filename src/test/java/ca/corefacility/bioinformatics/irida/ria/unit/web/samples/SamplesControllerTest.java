@@ -140,6 +140,7 @@ public class SamplesControllerTest {
 				model.containsAttribute(SamplesController.LATITUDE));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFiles() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -152,7 +153,6 @@ public class SamplesControllerTest {
 		User user = new User();
 		Project project = new Project();
 
-		@SuppressWarnings("unchecked")
 		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
@@ -203,6 +203,7 @@ public class SamplesControllerTest {
 		verifyZeroInteractions(projectService);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFilesNoAccess() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -215,7 +216,6 @@ public class SamplesControllerTest {
 		User user = new User();
 		Project project = new Project();
 
-		@SuppressWarnings("unchecked")
 		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
