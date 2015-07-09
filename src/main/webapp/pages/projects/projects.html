@@ -14,6 +14,10 @@
     	.yadcf-filter-reset-button {
     		display: none !important;
     	}
+    	
+    	.yadcf-filter-wrapper {
+    		display: block !important;
+    	}
     </style>
 </head>
 <body>
@@ -23,7 +27,7 @@
 		<div dt:conf="projectsTable">
             <div dt:confType="callback" dt:type="init" dt:function="irida-datatables#datatable.tableDrawn"></div>
         </div>
-        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none">
+        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="header">
         	<!-- 
         		
         		We (frustratingly) cannot use multiple rows in the header because Dandelion Datatables
@@ -34,19 +38,11 @@
             <thead>
             <tr role="row">
                 <th dt:property="item.identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
-                <th dt:filterable="true" dt:property="item.name" dt:selector="name-filter" dt:renderFunction="irida-datatables#datatable.createItemButton">
-                	<span th:text="#{projects.table.name}" />
-                	<div id="name-filter" />
-                </th>
-                <th dt:filterable="true" dt:property="item.organism" dt:selector="organism-filter" >
-                	<span  th:text="#{projects.table.organism}" />
-                	<div id="organism-filter" />
-                </th>
-                <th dt:property="custom.role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles" dt:selector="role-filter"
-                    dt:renderFunction="irida-datatables#datatable.i18n">
-                    <span  th:text="#{projects.table.role}"></span>
-                    <div id="role-filter" />
-                </th>
+                <th dt:filterable="true" dt:property="item.name" dt:renderFunction="irida-datatables#datatable.createItemButton"
+                	th:text="#{projects.table.name}"></th>
+                <th dt:filterable="true" dt:property="item.organism" th:text="#{projects.table.organism}"></th>
+                <th dt:property="custom.role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles"
+                    dt:renderFunction="irida-datatables#datatable.i18n" th:text="#{projects.table.role}"></th>
                 <th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
                 <th dt:property="custom.members" dt:searchable="false" th:text="#{projects.table.members}"></th>
                 <th dt:property="item.createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
