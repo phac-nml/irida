@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl;
+package ca.corefacility.bioinformatics.irida.service.impl.export;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -11,7 +11,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.service.NcbiExportSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 @Service
 // TODO: Write permission
