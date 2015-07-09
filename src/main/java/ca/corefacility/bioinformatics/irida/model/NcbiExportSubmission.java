@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -41,11 +42,11 @@ public class NcbiExportSubmission implements IridaThing {
 	private Project project;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@CollectionTable(name = "ncbi_export_submission_single_files")
+	@JoinTable(name = "ncbi_export_submission_single_files", inverseJoinColumns = @JoinColumn(name = "sequence_file_id") )
 	private List<SequenceFile> singleFiles;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@CollectionTable(name = "ncbi_export_submission_pair_files")
+	@JoinTable(name = "ncbi_export_submission_pair_files", inverseJoinColumns = @JoinColumn(name = "pair_file_id") )
 	private List<SequenceFilePair> pairFiles;
 
 	@Column(name = "created_date", nullable = false)
