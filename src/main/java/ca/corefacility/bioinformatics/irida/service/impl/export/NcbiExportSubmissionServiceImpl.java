@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.export;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
@@ -45,6 +47,12 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	@Override
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state) {
 		return repository.getSubmissionsWithState(state);
+	}
+	
+	@Override
+	public NcbiExportSubmission update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
+			EntityExistsException, InvalidPropertyException {
+		return super.update(id, updatedFields);
 	}
 
 }

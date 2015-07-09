@@ -32,6 +32,7 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaExportUploadConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.web.spring.view.CSVView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
@@ -50,7 +51,7 @@ import com.google.common.collect.ImmutableMap;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.web.controller.api" })
-@Import(IridaScheduledTasksConfig.class)
+@Import({IridaScheduledTasksConfig.class, IridaExportUploadConfig.class})
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	/** named constant for allowing unlimited upload sizes. */
