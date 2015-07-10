@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis;
+package ca.corefacility.bioinformatics.irida.service.analysis.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

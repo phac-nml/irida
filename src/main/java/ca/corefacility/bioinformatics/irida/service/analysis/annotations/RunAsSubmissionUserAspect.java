@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis;
+package ca.corefacility.bioinformatics.irida.service.analysis.annotations;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
