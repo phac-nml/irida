@@ -52,7 +52,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		logger.debug("Testing going to an invalid sample id");
 		LoginPage.loginAsManager(driver());
 		page.goToPage("not_a_long");
-		String wait = "wat";
 	}
 
 	@Test
