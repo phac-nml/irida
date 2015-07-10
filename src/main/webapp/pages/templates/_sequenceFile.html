@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<th:block th:fragment="sequenceFileTableLayout" th:with="url=@{${#httpServletRequest.requestURI}},dateFormat=#{locale.date.short}">
+<th:block th:fragment="sequenceFileTableLayout" th:with="dateFormat=#{locale.date.short}">
 	<td class="td_icon" th:switch="${icon}">
 		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:tooltip="#{sf.tooltip.forward}"></i>
 		<i th:case="'reverse'" class="fa fa-fw fa-arrow-left" data:tooltip="#{sf.tooltip.reverse}"></i>
@@ -14,7 +14,7 @@
 	</td>
 	<td>
 		<a href="#"
-		   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.getId() + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.getId()})}"
+		   th:href="${relative} ? ${'sequenceFiles/' + file.getId() + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.getId()})}"
 		   class="btn btn-default btn-sm file-name"
 		   th:text="${file.getLabel()}"></a>
 	</td>
@@ -37,7 +37,7 @@
 	</td>
 </th:block>
     
-<th:block th:fragment="remoteSequenceFileTableLayout" th:with="url=@{${#httpServletRequest.requestURI}},dateFormat=#{locale.date.short}">
+<th:block th:fragment="remoteSequenceFileTableLayout" th:with="dateFormat=#{locale.date.short}">
 	<td class="td_icon" th:switch="${icon}">
 		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:tooltip="#{sf.tooltip.forward}"></i>
 		<i th:case="'reverse'" class="fa fa-fw fa-arrow-left" data:tooltip="#{sf.tooltip.reverse}"></i>

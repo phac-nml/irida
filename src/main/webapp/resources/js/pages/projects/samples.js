@@ -530,6 +530,18 @@
           });
         }
       },
+      ncbi : function ncbi() {
+        var url = TL.BASE_URL + 'projects/'+project.id+'/export/ncbi?';
+        var sampleIds = [];
+        _.forEach(SamplesService.getSelectedSampleNames(), function(s){
+          sampleIds.push('s='+s.identifier);
+        });
+        
+        url = url + sampleIds.join('&');
+        console.log(url);
+        window.location = url;
+        
+      },
       galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({

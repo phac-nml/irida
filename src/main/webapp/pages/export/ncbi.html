@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="export/_base">
+
+<head>
+  <title th:text="#{project.export.title}"></title>
+  <link rel="stylesheet" href="/resources/css/pages/sample_files.css" th:href="@{/resources/css/pages/sample_files.css}" />
+</head>
+
+<body>
+  <main layout:fragment="main">
+    <h1 th:text="#{project.export.title}">_NCBI Export_</h1>
+    <div>
+      <h2 th:text="${project.label}">_project id_</h2>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label" th:text="#{project.export.files}">_Files_</label>
+
+      <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
+        <div class="alert alert-info" role="alert" th:text="#{project.export.files.description}">_Select files_</div>
+        <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" class="sample-container" th:each="sample : ${samples}">
+          <h3>
+            <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
+          </h3>
+
+          <th:block th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
+								hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
+            <table class="table" th:if="${hasPaired or hasSingles}">
+
+              <!--/* (15-03-26 ) PAIRED END DATA */-->
+              <th:block th:if="${hasPaired}" th:with="pairs=${sample.files.paired_end}">
+                <th:block th:each="pair : ${pairs}">
+                  <tr class="paired_end paired_end__forward">
+                    <td class="td_radio" rowspan="2">
+                      <!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
+                      <input type="checkbox" class="paired_files file-checkbox" data-type="paired_end" th:value="${pair.getId()}" th:name="${sample.id}" th:checked="${#sets.contains(newestPairs, pair.getId())}" />
+                    </td>
+                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward', relative='false')"></td>
+                  </tr>
+                  <tr class="paired_end paired_end__reverse">
+                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+                  </tr>
+                </th:block>
+              </th:block>
+
+              <!--/* (15-03-26 ) SINGLE END DATA */-->
+              <th:block th:if="${hasSingles}" th:with="files=${sample.files.single_end}">
+                <tr class="single_end" th:each="join : ${files}" th:with="file=${join.getObject()}">
+                  <td class="td_radio">
+                    <!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
+                    <input type="checkbox" class="single_files file-checkbox" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" th:checked="${#sets.contains(newestSingles, file.getId())}" />
+                  </td>
+                  <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='single')"></td>
+                </tr>
+              </th:block>
+            </table>
+
+          </th:block>
+
+        </div>
+        <button id="submit" class="btn btn-primary" th:text="#{global.btn.submit}">_Submit_</button>
+
+      </div>
+    </div>
+  </main>
+  <th:block layout:fragment="scripts" th:inline="javascript">
+    <script>
+      $("#submit").click(function() {
+        $(this).attr("disabled", "disabled");
+        var single = [];
+        var paired = [];
+
+        $('.paired_files:checked').each(function() {
+          paired.push($(this).val());
+        });
+
+        $('.single_files:checked').each(function() {
+          single.push($(this).val());
+        });
+
+        var submission = {
+          single: single,
+          paired: paired
+        };
+
+        $.ajax({
+          type: "POST",
+          url: /*[[@{/projects/{id}/export/ncbi(id=${project.id})}]]*/ '/projects/1/export/ncbi',
+          contentType: 'application/json',
+          data: JSON.stringify(submission),
+          success: function(data, textStatus, jqXHR) {
+            var url = /*[[@{/export/submission/}]]*/ '/export/submission/';
+            url = url + data.submissionId;
+            window.location = url;
+          }
+        });
+        console.log(submission);
+      });
+
+      /*
+       * Disable the submit button if nothing is selected
+       */
+      $(document).ready(function() {
+        var fileBoxes = $(".file-checkbox");
+        var submitButton = $("#submit");
+        disableSubmit(fileBoxes, submitButton);
+
+        fileBoxes.click(function() {
+          disableSubmit(fileBoxes, submitButton);
+        });
+      });
+
+      function disableSubmit(fileBoxes, submitButton) {
+        if (fileBoxes.is(":checked")) {
+          submitButton.removeAttr("disabled");
+        } else {
+          submitButton.attr("disabled", "disabled");
+        }
+      }
+    </script>
+  </th:block>
+</body>
+
+</html>

@@ -10,5 +10,6 @@
 	<include file="update-project-modified-date.xml"
 		relativeToChangelogFile="true" />
 	<include file="fix-workflow-id-column-type.xml"
-			 relativeToChangelogFile="true" />
+		relativeToChangelogFile="true" />
+	<include file="ncbi-upload.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
