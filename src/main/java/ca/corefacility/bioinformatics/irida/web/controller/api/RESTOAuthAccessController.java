@@ -6,9 +6,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -25,9 +23,6 @@ import com.google.common.base.Joiner;
 public class RESTOAuthAccessController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTOAuthAccessController.class);
 
-	@Autowired
-	private ClientDetailsService clientDetailsService;
-	
 	/**
 	 * Basic access confirmation controller for OAuth2
 	 * @param model Model objects to be passed to the view

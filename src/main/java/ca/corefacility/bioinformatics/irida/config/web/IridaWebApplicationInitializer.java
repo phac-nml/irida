@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
+import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
@@ -9,12 +12,13 @@ import javax.servlet.ServletRegistration;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.github.dandelion.core.web.DandelionFilter;
+import com.github.dandelion.core.web.DandelionServlet;
+
 import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.filters.SkippableDandelionFilter;
+import ca.corefacility.bioinformatics.irida.ria.web.AssetDependencyDandelionServlet;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
-
-import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * REST API initializer with security.
@@ -28,6 +32,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 		// make sure that we load up the database in hibernate by default. This
 		// behaviour can be overridden by external configuration files.
 		servletContext.setInitParameter("spring.profiles.default", "dev");
+		servletContext.setInitParameter("dandelion.profile.active", "dev");
 
 		// do the default setup
 		super.onStartup(servletContext);
@@ -40,13 +45,13 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 				false, "/*");
 
 		// Register the Dandelion filter
-		FilterRegistration.Dynamic dandelionFilter = servletContext.addFilter("dandelionFilter",
-				new SkippableDandelionFilter());
-		dandelionFilter.addMappingForUrlPatterns(null, false, "/*");
+		FilterRegistration.Dynamic dandelionFilter = servletContext.addFilter("dandelionFilter", new DandelionFilter());
+		dandelionFilter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD,
+				DispatcherType.INCLUDE, DispatcherType.ERROR), false, "/*");
 
 		// Register the Dandelion servlet
 		ServletRegistration.Dynamic dandelionServlet = servletContext.addServlet("dandelionServlet",
-				new DandelionServlet());
+				new AssetDependencyDandelionServlet(new DandelionServlet()));
 		dandelionServlet.setLoadOnStartup(2);
 		dandelionServlet.addMapping("/dandelion-assets/*");
 	}

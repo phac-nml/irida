@@ -1,5 +1,7 @@
 {
   "bundle": "all-events",
   "dependencies": [ "events" ],
-  "assets": []
+  "assets": [
+    { "locations": { "webapp": "/resources/js/pages/events/events.js" } }
+  ]
 }

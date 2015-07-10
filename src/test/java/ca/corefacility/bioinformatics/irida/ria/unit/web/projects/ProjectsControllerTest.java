@@ -24,21 +24,18 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -47,30 +44,17 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 /**
  * Unit test for {@link }
  * 
  */
 public class ProjectsControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
-	// DATATABLES position for project information
-	// private static final int PROJECT_NAME_TABLE_LOCATION = 1;
-	// private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
-	// private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
-	// private static final long NUM_TOTAL_ELEMENTS = 100L;
-	private static final int NUM_PROJECT_SAMPLES = 12;
-	private static final int NUM_PROJECT_USERS = 50;
 	private static final String USER_NAME = "testme";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
 	private static final String PROJECT_NAME = "test_project";
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
-	private static final ImmutableList<String> REQUIRED_DATATABLE_RESPONSE_PARAMS = ImmutableList.of(
-			DataTable.RESPONSE_PARAM_DATA, DataTable.RESPONSE_PARAM_DRAW, DataTable.RESPONSE_PARAM_RECORDS_FILTERED,
-			DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_SORT_COLUMN);
 	private static Project project = null;
 	// Services
 	private ProjectService projectService;
@@ -231,15 +215,6 @@ public class ProjectsControllerTest {
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 	}
 
-	/**
-	 * Check the response for DataTable calls
-	 */
-	private void checkAjaxDataTableResponse(Map<String, Object> response) {
-		for (String param : REQUIRED_DATATABLE_RESPONSE_PARAMS) {
-			assertTrue("Response has the key '" + param + "'", response.containsKey(param));
-		}
-	}
-
 	private List<Join<Project, User>> getProjectsForUser() {
 		List<Join<Project, User>> projects = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
@@ -266,27 +241,6 @@ public class ProjectsControllerTest {
 		return join;
 	}
 
-	private List<Project> getAdminProjectsList() {
-		List<Project> projects = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			Project p = new Project("project" + i);
-			p.setId((long) i);
-			p.setOrganism(PROJECT_ORGANISM);
-			p.setModifiedDate(new Date());
-			projects.add(p);
-		}
-		return projects;
-	}
-
-	/**
-	 * Creates a Page of Projects for testing.
-	 * 
-	 * @return Page of Projects (1 project)
-	 */
-	private Page<ProjectUserJoin> getProjectsPage() {
-		return new PageImpl<>(Lists.newArrayList(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER)));
-	}
-
 	private Project getProject() {
 		if (project == null) {
 			project = new Project(PROJECT_NAME);
@@ -297,24 +251,6 @@ public class ProjectsControllerTest {
 		return project;
 	}
 
-	private List<Join<Project, Sample>> getSamplesForProject() {
-		List<Join<Project, Sample>> join = new ArrayList<>(NUM_PROJECT_SAMPLES);
-		for (int i = 0; i < NUM_PROJECT_SAMPLES; i++) {
-			join.add(new ProjectSampleJoin(getProject(), new Sample("sample" + i)));
-		}
-		return join;
-	}
-
-	private List<Join<Project, User>> getUsersForProject() {
-		List<Join<Project, User>> join = new ArrayList<>();
-		for (int i = 0; i < NUM_PROJECT_USERS; i++) {
-			Project p = new Project("project" + i);
-			p.setId(new Long(i));
-			join.add(new ProjectUserJoin(p, new User("user" + i, null, null, null, null, null),
-					ProjectRole.PROJECT_USER));
-		}
-		return join;
-	}
 
 	private List<Join<Project, User>> getUsersForProjectByRole() {
 		List<Join<Project, User>> list = new ArrayList<>();
