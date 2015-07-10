@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.analysis;
 
-import java.util.concurrent.Future;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -17,18 +15,37 @@ import com.google.common.collect.Lists;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
+/**
+ * Aspect to update the Authentication object in the SecurityContext to be the
+ * submitter of the {@link AnalysisSubmission}
+ */
 @Aspect
 public class RunAsSubmissionUserAspect {
 	private static final Logger logger = LoggerFactory.getLogger(RunAsSubmissionUserAspect.class);
 
+	/**
+	 * Advice around a method that has an {@link AnalysisSubmission} as an
+	 * argument. This method will set the {@link Authentication} in the
+	 * {@link SecurityContext} to be the submitting user, run the method, then
+	 * reset the {@link Authentication} afterwards.
+	 * 
+	 * @param jp
+	 *            {@link ProceedingJoinPoint} for the called method
+	 * @param eventAnnotation
+	 *            The annotation on the method called
+	 * @return Return value of the method called
+	 * @throws Throwable
+	 *             if the method throws an exception
+	 */
 	@Around(value = "execution(* *(..)) && @annotation(eventAnnotation)")
 	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, RunAsSubmissionUser eventAnnotation)
 			throws Throwable {
+		logger.trace("Updating user authentication");
 		SecurityContext context = SecurityContextHolder.getContext();
 
 		Authentication originalAuthentication = context.getAuthentication();
 
-		logger.debug("Original user: " + originalAuthentication.getName());
+		logger.trace("Original user: " + originalAuthentication.getName());
 
 		Object[] args = jp.getArgs();
 
@@ -39,11 +56,16 @@ public class RunAsSubmissionUserAspect {
 			}
 		}
 
-		logger.debug("Working with submission " + submission);
+		if (submission == null) {
+			throw new IllegalArgumentException(
+					"Method annotated with @RunAsSubmissionUser must have an AnalysisSubmission as an argument");
+		}
+
+		logger.trace("Working with submission " + submission);
 
 		User submitter = submission.getSubmitter();
 
-		logger.debug("Setting user " + submitter.getUsername());
+		logger.trace("Setting user " + submitter.getUsername());
 
 		PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
 				submitter, null, Lists.newArrayList(submitter.getSystemRole()));
@@ -53,7 +75,7 @@ public class RunAsSubmissionUserAspect {
 
 		Object returnValue = jp.proceed();
 
-		logger.debug("Resetting authentication");
+		logger.trace("Resetting authentication to " + originalAuthentication.getName());
 
 		context.setAuthentication(originalAuthentication);
 		SecurityContextHolder.setContext(context);
