@@ -540,7 +540,7 @@
               return false;
             },
             multiProject: function () {
-              return (data.length > 1)
+              return false;
             }
           }
         });
