@@ -24,7 +24,6 @@ import java.util.Map;
 public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	private final String SAMPLE_LABEL = "sample1";
 	private final Long SAMPLE_ID = 1L;
-	private final String FILE_NAME = "01-1111_S1_L001_R1_001.fastq";
 	private SampleFilesPage page;
 
 	private List<Map<String, String>> BREADCRUMBS = ImmutableList.of(

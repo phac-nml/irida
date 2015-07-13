@@ -46,6 +46,7 @@ public class ManageRemoteRelatedProjectPermissionTest {
 				pujRepository);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testOwner() {
 		String username = "aaron";
