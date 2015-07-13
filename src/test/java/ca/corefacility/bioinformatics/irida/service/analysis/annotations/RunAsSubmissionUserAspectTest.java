@@ -69,6 +69,22 @@ public class RunAsSubmissionUserAspectTest {
 		annotatedClass.methodWithoutArgument();
 	}
 
+	@Test
+	public void testMethodThatThrows() {
+		AnalysisSubmission submission = new AnalysisSubmission.Builder(UUID.randomUUID())
+				.inputFilesSingle(Sets.newHashSet(new SequenceFile())).build();
+		submission.setSubmitter(submittingUser);
+
+		try {
+			annotatedClass.methodThatThrows(submission);
+		} catch (Exception e) {
+			// It's a good thing!
+		}
+
+		String securedUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+		assertEquals("Should be admin user", adminUser.getUsername(), securedUserName);
+	}
+
 	private static class AnnotatedClass {
 
 		@RunAsSubmissionUser
@@ -80,6 +96,11 @@ public class RunAsSubmissionUserAspectTest {
 		@RunAsSubmissionUser
 		public void methodWithoutArgument() {
 			fail("Method should not have run because it doesn't have an analysis submission as argument");
+		}
+		
+		@RunAsSubmissionUser
+		public void methodThatThrows(AnalysisSubmission submission) throws Exception {
+			throw new Exception("I'm broken!");
 		}
 
 	}
