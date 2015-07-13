@@ -37,31 +37,15 @@ public class RunAsSubmissionUserAspect {
 	 * @throws Throwable
 	 *             if the method throws an exception
 	 */
-	@Around(value = "execution(* *(..)) && @annotation(eventAnnotation)")
-	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, RunAsSubmissionUser eventAnnotation)
-			throws Throwable {
-		logger.trace("Updating user authentication");
+	@Around(value = "execution(* *(..)) && @annotation(eventAnnotation) && args(submission)")
+	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, AnalysisSubmission submission,
+			RunAsSubmissionUser eventAnnotation) throws Throwable {
+		logger.trace("Updating user authentication for submission" + submission.getId());
 		SecurityContext context = SecurityContextHolder.getContext();
 
 		Authentication originalAuthentication = context.getAuthentication();
 
 		logger.trace("Original user: " + originalAuthentication.getName());
-
-		Object[] args = jp.getArgs();
-
-		AnalysisSubmission submission = null;
-		for (Object arg : args) {
-			if (arg instanceof AnalysisSubmission) {
-				submission = (AnalysisSubmission) arg;
-			}
-		}
-
-		if (submission == null) {
-			throw new IllegalArgumentException(
-					"Method annotated with @RunAsSubmissionUser must have an AnalysisSubmission as an argument");
-		}
-
-		logger.trace("Working with submission " + submission);
 
 		User submitter = submission.getSubmitter();
 

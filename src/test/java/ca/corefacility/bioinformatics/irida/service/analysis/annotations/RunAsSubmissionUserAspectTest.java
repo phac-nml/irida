@@ -28,7 +28,7 @@ public class RunAsSubmissionUserAspectTest {
 
 	static User submittingUser;
 
-	User adminUser;
+	static User adminUser;
 
 	@Before
 	public void setup() {
@@ -64,7 +64,7 @@ public class RunAsSubmissionUserAspectTest {
 		assertEquals("Should be admin user", adminUser.getUsername(), securedUserName);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testMethodWithoutArgument() {
 		annotatedClass.methodWithoutArgument();
 	}
@@ -95,9 +95,10 @@ public class RunAsSubmissionUserAspectTest {
 
 		@RunAsSubmissionUser
 		public void methodWithoutArgument() {
-			fail("Method should not have run because it doesn't have an analysis submission as argument");
+			String adminName = SecurityContextHolder.getContext().getAuthentication().getName();
+			assertEquals("Context shouldn't be updated", adminUser.getUsername(), adminName);
 		}
-		
+
 		@RunAsSubmissionUser
 		public void methodThatThrows(AnalysisSubmission submission) throws Exception {
 			throw new Exception("I'm broken!");
