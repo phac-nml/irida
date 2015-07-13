@@ -74,20 +74,13 @@ public class RunAsSubmissionUserAspect {
 		SecurityContextHolder.setContext(context);
 
 		Object returnValue = null;
-		Throwable exception = null;
 		try {
 			returnValue = jp.proceed();
-		} catch (Throwable e) {
-			exception = e;
 		} finally {
 			logger.trace("Resetting authentication to " + originalAuthentication.getName());
 
 			context.setAuthentication(originalAuthentication);
 			SecurityContextHolder.setContext(context);
-		}
-
-		if (exception != null) {
-			throw exception;
 		}
 
 		return returnValue;
