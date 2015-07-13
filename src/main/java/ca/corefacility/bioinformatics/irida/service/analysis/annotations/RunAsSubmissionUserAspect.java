@@ -18,6 +18,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 /**
  * Aspect to update the Authentication object in the SecurityContext to be the
  * submitter of the {@link AnalysisSubmission}
+ * 
+ * @see RunAsSubmissionUser
  */
 @Aspect
 public class RunAsSubmissionUserAspect {
