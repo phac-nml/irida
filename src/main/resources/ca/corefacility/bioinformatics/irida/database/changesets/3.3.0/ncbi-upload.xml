@@ -13,9 +13,7 @@
 			<column name="created_date" type="datetime">
 				<constraints nullable="false" />
 			</column>
-			<column name="modified_date" type="datetime">
-				<constraints nullable="false" />
-			</column>
+			<column name="modified_date" type="datetime" />
 			<column name="project_id" type="bigint(20)">
 				<constraints foreignKeyName="FK_NCBI_SUBMISSION_PROJECT"
 					referencedColumnNames="id" referencedTableName="project" />
@@ -29,7 +27,7 @@
 					referencedColumnNames="id" referencedTableName="ncbi_export_submission"></constraints>
 			</column>
 
-			<column name="singleFiles_id" type="bigint(20)">
+			<column name="sequence_file_id" type="bigint(20)">
 				<constraints nullable="false"
 					foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_FILE_FILE"
 					referencedColumnNames="id" referencedTableName="sequence_file"></constraints>
@@ -43,7 +41,7 @@
 					referencedColumnNames="id" referencedTableName="ncbi_export_submission"></constraints>
 			</column>
 
-			<column name="pairFiles_id" type="bigint(20)">
+			<column name="pair_file_id" type="bigint(20)">
 				<constraints nullable="false"
 					foreignKeyName="FK_NCBI_SUBMISSION_PAIR_FILE_PAIR"
 					referencedColumnNames="id" referencedTableName="sequence_file_pair"></constraints>

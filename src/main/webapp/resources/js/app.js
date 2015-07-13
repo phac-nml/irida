@@ -6,7 +6,6 @@
     'ngMaterial',
     'ngMessages',
     'ui.bootstrap',
-    'restangular',
     'irida.session',
     'irida.notifications',
     'irida.cart'

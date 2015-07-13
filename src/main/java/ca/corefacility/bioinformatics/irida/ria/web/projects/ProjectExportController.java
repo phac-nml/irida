@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,6 +41,7 @@ import com.google.common.collect.Lists;
  */
 @Controller
 public class ProjectExportController {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectExportController.class);
 
 	public static final String NCBI_EXPORT_VIEW = "export/ncbi";
 
@@ -73,12 +75,13 @@ public class ProjectExportController {
 	 * @return Name of the NCBI export page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("sampleId") List<Long> sampleIds,
-			Model model) {
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("s") List<Long> sampleIds, Model model) {
 		Project project = projectService.read(projectId);
-		List<Sample> samples = sampleIds.stream().map((i) -> sampleService.getSampleForProject(project, i))
-				.collect(Collectors.toList());
 
+		logger.trace("Reading " + sampleIds.size() + " samples");
+		Iterable<Sample> samples = sampleService.readMultiple(sampleIds);
+
+		logger.trace("Got samples");
 		Set<Long> checkedSingles = new HashSet<>();
 		Set<Long> checkedPairs = new HashSet<>();
 
@@ -87,6 +90,9 @@ public class ProjectExportController {
 			Map<String, Object> sampleMap = new HashMap<>();
 			sampleMap.put("name", sample.getLabel());
 			sampleMap.put("id", sample.getId().toString());
+
+			logger.trace("Doing sample " + sample.getId());
+
 			Map<String, List<? extends Object>> files = new HashMap<>();
 			List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService
 					.getSequenceFilePairsForSample(sample);
