@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import org.junit.*;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 
@@ -63,7 +64,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		passwordResetPage.enterPassword(password, password);
 		assertTrue(passwordResetPage.checkSuccess());
 
-		passwordResetPage.logout(driver());
+		AbstractPage.logout(driver());
 		// try new password
 		LoginPage.login(driver(), RESET_USER, password);
 		assertTrue("The user is logged in and redirected.", driver().getCurrentUrl().contains("dashboard"));

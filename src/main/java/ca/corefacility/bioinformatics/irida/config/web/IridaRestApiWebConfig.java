@@ -18,9 +18,6 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.View;
@@ -32,6 +29,9 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
+import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.config.services.IridaExportUploadConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.web.spring.view.CSVView;
@@ -39,9 +39,6 @@ import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
-
-import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Configuration for IRIDA REST API.
@@ -51,7 +48,7 @@ import com.google.common.collect.ImmutableMap;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.web.controller.api" })
-@Import({IridaScheduledTasksConfig.class, IridaExportUploadConfig.class})
+@Import({ IridaScheduledTasksConfig.class, IridaExportUploadConfig.class })
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	/** named constant for allowing unlimited upload sizes. */
@@ -89,10 +86,10 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		List<View> views = new ArrayList<>();
 		MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
 		jsonView.setPrettyPrint(true);
-		
+
 		// add support for serializing Path data
 		jsonView.getObjectMapper().registerModule(new Jdk7Module());
-		
+
 		views.add(jsonView);
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
 		jaxb2marshaller
@@ -124,20 +121,5 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		source.setBasenames(resources);
 		source.setDefaultEncoding("UTF-8");
 		return source;
-	}
-
-	/**
-	 * Test if a user is logged in via the REST API
-	 * 
-	 * @return true/false
-	 */
-	private boolean isRestUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		if (authentication != null && authentication.getClass().equals(OAuth2Authentication.class)) {
-			logger.trace("Detecting OAuth2 authentication.  User is a REST user.");
-			return true;
-		}
-		return false;
 	}
 }

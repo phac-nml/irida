@@ -11,12 +11,10 @@ import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 
 import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
@@ -34,9 +32,6 @@ public class IridaApiFilesystemRepositoryConfig {
 	private @Value("${snapshot.file.base.directory}") String snapshotFileBaseDirectory;
 
 	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
-
-	@Autowired
-	private Environment environment;
 
 	// Franklin: I assume that the scope of a configuration bean is the lifetime
 	// of the application, so the directory should only get deleted *after* the
