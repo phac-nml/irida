@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 
 import com.google.common.collect.ImmutableMap;
 
-//@Async("exportUpload")
 @Service
 public class ExportUploadService {
 	private static final Logger logger = LoggerFactory.getLogger(ExportUploadService.class);
@@ -26,31 +25,29 @@ public class ExportUploadService {
 		this.exportSubmissionService = exportSubmissionService;
 	}
 
-	public void launchUpload() throws InterruptedException {
-		synchronized (uploadLock) {
+	public synchronized void launchUpload() throws InterruptedException {
 
-			logger.debug("Getting new exports");
+		logger.debug("Getting new exports");
 
-			List<NcbiExportSubmission> submissionsWithState = exportSubmissionService
-					.getSubmissionsWithState(ExportUploadState.NEW);
+		List<NcbiExportSubmission> submissionsWithState = exportSubmissionService
+				.getSubmissionsWithState(ExportUploadState.NEW);
 
-			if (!submissionsWithState.isEmpty()) {
-				NcbiExportSubmission submission = submissionsWithState.iterator().next();
+		for (NcbiExportSubmission submission : submissionsWithState) {
 
-				logger.debug("Updating submission " + submission.getId());
+			logger.debug("Updating submission " + submission.getId());
 
-				submission = exportSubmissionService.update(submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.PROCESSING));
-				
-				logger.debug("Going to sleep " + submission.getId());
+			submission = exportSubmissionService.update(submission.getId(),
+					ImmutableMap.of("uploadState", ExportUploadState.PROCESSING));
 
-				Thread.sleep(30000);
-				
-				logger.debug("Finished sleep " + submission.getId());
+			logger.debug("Going to sleep " + submission.getId());
 
-				submission = exportSubmissionService.update(submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
-			}
+			Thread.sleep(30000);
+
+			logger.debug("Finished sleep " + submission.getId());
+
+			submission = exportSubmissionService.update(submission.getId(),
+					ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
 		}
+
 	}
 }
