@@ -35,7 +35,7 @@ public class IridaExportUploadConfig implements SchedulingConfigurer {
 	@Autowired
 	private UserService userService;
 
-	@Scheduled(initialDelay = 1000, fixedRate = 15000)
+	@Scheduled(initialDelay = 1000, fixedDelay = 15000)
 	public void downloadFiles() throws InterruptedException {
 		uploadService.launchUpload();
 	}
