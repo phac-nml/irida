@@ -177,7 +177,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 * @throws IridaWorkflowException If there was an issue with the IRIDA workflow.
 	 */
 	@Transactional
-	@RunAsUser("#submission.getSubmitter()")
+	@RunAsUser("#analysisSubmission.getSubmitter()")
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
