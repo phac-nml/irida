@@ -25,19 +25,19 @@ public class ExportUploadService {
 
 	public synchronized void launchUpload() {
 
-		logger.debug("Getting new exports");
+		logger.trace("Getting new exports");
 
 		List<NcbiExportSubmission> submissionsWithState = exportSubmissionService
 				.getSubmissionsWithState(ExportUploadState.NEW);
 
 		for (NcbiExportSubmission submission : submissionsWithState) {
 
-			logger.debug("Updating submission " + submission.getId());
+			logger.trace("Updating submission " + submission.getId());
 
 			submission = exportSubmissionService.update(submission.getId(),
 					ImmutableMap.of("uploadState", ExportUploadState.PROCESSING));
 
-			logger.debug("Going to sleep " + submission.getId());
+			logger.trace("Going to sleep " + submission.getId());
 
 			try {
 				Thread.sleep(30000);
@@ -45,7 +45,7 @@ public class ExportUploadService {
 
 			}
 
-			logger.debug("Finished sleep " + submission.getId());
+			logger.trace("Finished sleep " + submission.getId());
 
 			submission = exportSubmissionService.update(submission.getId(),
 					ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
