@@ -60,7 +60,7 @@ public class NcbiExportSubmission implements IridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@Column(name = "upload_state")
+	@Column(name = "upload_state", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ExportUploadState uploadState;
 

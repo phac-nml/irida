@@ -18,6 +18,9 @@
 				<constraints foreignKeyName="FK_NCBI_SUBMISSION_PROJECT"
 					referencedColumnNames="id" referencedTableName="project" />
 			</column>
+			<column name="upload_state" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 
 		<createTable tableName="ncbi_export_submission_single_files">
