@@ -66,7 +66,6 @@ public class RunAsUserAspect {
 		ExpressionParser parser = new SpelExpressionParser();
 
 		Expression parseExpression = parser.parseExpression(expression);
-		
 
 		Object expressionValue = parseExpression.getValue(evaluationContext);
 		

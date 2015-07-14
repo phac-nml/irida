@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
+import org.springframework.expression.EvaluationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -77,6 +78,14 @@ public class RunAsUserAspectTest {
 		annotatedClass.badParam("bleh");
 	}
 
+	/**
+	 * Testing when an exception is thrown on the SpEL from the annotation
+	 */
+	@Test(expected = EvaluationException.class)
+	public void testBadSpel() {
+		annotatedClass.badSpel("bleh");
+	}
+
 	private static class AnnotatedClass {
 
 		@RunAsUser("#submitter")
@@ -97,6 +106,11 @@ public class RunAsUserAspectTest {
 
 		@RunAsUser("#wrong")
 		public void badParam(String other) {
+			fail("Method should not be run");
+		}
+
+		@RunAsUser("#object.badMethod()")
+		public void badSpel(String object) {
 			fail("Method should not be run");
 		}
 
