@@ -7,16 +7,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
-
-import com.google.common.collect.ImmutableMap;
 
 @Service
 public class ExportUploadService {
 	private static final Logger logger = LoggerFactory.getLogger(ExportUploadService.class);
-
-	Object uploadLock = new Object();
 
 	private NcbiExportSubmissionService exportSubmissionService;
 
@@ -25,7 +23,7 @@ public class ExportUploadService {
 		this.exportSubmissionService = exportSubmissionService;
 	}
 
-	public synchronized void launchUpload() throws InterruptedException {
+	public synchronized void launchUpload() {
 
 		logger.debug("Getting new exports");
 
@@ -41,7 +39,11 @@ public class ExportUploadService {
 
 			logger.debug("Going to sleep " + submission.getId());
 
-			Thread.sleep(30000);
+			try {
+				Thread.sleep(30000);
+			} catch (InterruptedException e) {
+
+			}
 
 			logger.debug("Finished sleep " + submission.getId());
 
