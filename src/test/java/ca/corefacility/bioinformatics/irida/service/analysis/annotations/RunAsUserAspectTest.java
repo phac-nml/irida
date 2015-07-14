@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.analysis.annotations;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.UUID;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
@@ -12,16 +10,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
-public class RunAsSubmissionUserAspectTest {
+public class RunAsUserAspectTest {
 
-	RunAsSubmissionUserAspect aspect = new RunAsSubmissionUserAspect();
+	RunAsUserAspect aspect = new RunAsUserAspect();
 
 	AnnotatedClass annotatedClass;
 
@@ -31,7 +26,7 @@ public class RunAsSubmissionUserAspectTest {
 
 	@Before
 	public void setup() {
-		aspect = new RunAsSubmissionUserAspect();
+		aspect = new RunAsUserAspect();
 		annotatedClass = new AnnotatedClass();
 		AspectJProxyFactory proxyFactory = new AspectJProxyFactory(annotatedClass);
 		proxyFactory.addAspect(aspect);
@@ -53,11 +48,7 @@ public class RunAsSubmissionUserAspectTest {
 
 	@Test
 	public void testMethodWithArgument() {
-		AnalysisSubmission submission = new AnalysisSubmission.Builder(UUID.randomUUID())
-				.inputFilesSingle(Sets.newHashSet(new SequenceFile())).build();
-		submission.setSubmitter(submittingUser);
-
-		annotatedClass.methodWithArgument(submission);
+		annotatedClass.methodWithArgument(submittingUser);
 
 		String securedUserName = SecurityContextHolder.getContext().getAuthentication().getName();
 		assertEquals("Should be admin user", adminUser.getUsername(), securedUserName);
@@ -65,12 +56,8 @@ public class RunAsSubmissionUserAspectTest {
 
 	@Test
 	public void testMethodThatThrows() {
-		AnalysisSubmission submission = new AnalysisSubmission.Builder(UUID.randomUUID())
-				.inputFilesSingle(Sets.newHashSet(new SequenceFile())).build();
-		submission.setSubmitter(submittingUser);
-
 		try {
-			annotatedClass.methodThatThrows(submission);
+			annotatedClass.methodThatThrows(submittingUser);
 		} catch (Exception e) {
 			// It's a good thing!
 		}
@@ -81,14 +68,14 @@ public class RunAsSubmissionUserAspectTest {
 
 	private static class AnnotatedClass {
 
-		@RunAsSubmissionUser("#submission.getSubmitter()")
-		public void methodWithArgument(AnalysisSubmission submission) {
+		@RunAsUser("#submitter")
+		public void methodWithArgument(User submitter) {
 			String submitterName = SecurityContextHolder.getContext().getAuthentication().getName();
 			assertEquals("Should be submitting user", submittingUser.getUsername(), submitterName);
 		}
 
-		@RunAsSubmissionUser("#submission.getSubmitter()")
-		public void methodThatThrows(AnalysisSubmission submission) throws Exception {
+		@RunAsUser("#submission")
+		public void methodThatThrows(User submitter) throws Exception {
 			throw new Exception("I'm broken!");
 		}
 

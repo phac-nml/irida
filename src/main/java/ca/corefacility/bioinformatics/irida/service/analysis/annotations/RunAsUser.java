@@ -11,10 +11,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * Annotation saying the function should be run as the user that submitted the
  * {@link AnalysisSubmission}
  * 
- * @see RunAsSubmissionUserAspect
+ * @see RunAsUserAspect
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface RunAsSubmissionUser {
+public @interface RunAsUser {
 	String value();
 }

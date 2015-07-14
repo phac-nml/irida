@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsSubmissionUserAspect;
+import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUserAspect;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.validators.ValidMethodParametersAspect;
 
@@ -42,10 +42,10 @@ public class IridaApiAspectsConfig {
 	 * Aspect for setting the user in the security context to be the user in the
 	 * {@link AnalysisSubmission}
 	 * 
-	 * @return new {@link RunAsSubmissionUserAspect} bean
+	 * @return new {@link RunAsUserAspect} bean
 	 */
 	@Bean
-	public RunAsSubmissionUserAspect runAsSubmissionUserAspect() {
-		return new RunAsSubmissionUserAspect();
+	public RunAsUserAspect runAsSubmissionUserAspect() {
+		return new RunAsUserAspect();
 	}
 }

@@ -24,11 +24,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * Aspect to update the Authentication object in the SecurityContext to be the
  * submitter of the {@link AnalysisSubmission}
  * 
- * @see RunAsSubmissionUser
+ * @see RunAsUser
  */
 @Aspect
-public class RunAsSubmissionUserAspect {
-	private static final Logger logger = LoggerFactory.getLogger(RunAsSubmissionUserAspect.class);
+public class RunAsUserAspect {
+	private static final Logger logger = LoggerFactory.getLogger(RunAsUserAspect.class);
 
 	/**
 	 * Advice around a method that has an {@link AnalysisSubmission} as an
@@ -45,7 +45,7 @@ public class RunAsSubmissionUserAspect {
 	 *             if the method throws an exception
 	 */
 	@Around(value = "execution(* *(..)) && @annotation(eventAnnotation)")
-	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, RunAsSubmissionUser eventAnnotation)
+	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, RunAsUser eventAnnotation)
 			throws Throwable {
 
 		MethodSignature signature = (MethodSignature) jp.getSignature();
