@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 
 /**
  * Aspect to update the Authentication object in the SecurityContext to be the
- * submitter of the {@link AnalysisSubmission}
+ * user specified in the annotation using SpEL.
  * 
  * @see RunAsUser
  */
