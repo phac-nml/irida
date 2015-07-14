@@ -3,8 +3,13 @@ package ca.corefacility.bioinformatics.irida.service.analysis.annotations;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,17 +44,35 @@ public class RunAsSubmissionUserAspect {
 	 * @throws Throwable
 	 *             if the method throws an exception
 	 */
-	@Around(value = "execution(* *(..)) && @annotation(eventAnnotation) && args(submission)")
-	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, AnalysisSubmission submission,
-			RunAsSubmissionUser eventAnnotation) throws Throwable {
-		logger.trace("Updating user authentication for submission" + submission.getId());
+	@Around(value = "execution(* *(..)) && @annotation(eventAnnotation)")
+	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, RunAsSubmissionUser eventAnnotation)
+			throws Throwable {
+
+		MethodSignature signature = (MethodSignature) jp.getSignature();
+		String[] parameterNames = signature.getParameterNames();
+		Object[] args = jp.getArgs();
+
+		StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+
+		for (int i = 0; i < args.length; i++) {
+			String name = parameterNames[i];
+			Object val = args[i];
+			evaluationContext.setVariable(name, val);
+		}
+
+		String expression = eventAnnotation.value();
+		ExpressionParser parser = new SpelExpressionParser();
+
+		Expression parseExpression = parser.parseExpression(expression);
+
+		User submitter = parseExpression.getValue(evaluationContext, User.class);
+
+		logger.trace("Updating user authentication");
 		SecurityContext context = SecurityContextHolder.getContext();
 
 		Authentication originalAuthentication = context.getAuthentication();
 
 		logger.trace("Original user: " + originalAuthentication.getName());
-
-		User submitter = submission.getSubmitter();
 
 		logger.trace("Setting user " + submitter.getUsername());
 

@@ -64,11 +64,6 @@ public class RunAsSubmissionUserAspectTest {
 	}
 
 	@Test
-	public void testMethodWithoutArgument() {
-		annotatedClass.methodWithoutArgument();
-	}
-
-	@Test
 	public void testMethodThatThrows() {
 		AnalysisSubmission submission = new AnalysisSubmission.Builder(UUID.randomUUID())
 				.inputFilesSingle(Sets.newHashSet(new SequenceFile())).build();
@@ -86,19 +81,13 @@ public class RunAsSubmissionUserAspectTest {
 
 	private static class AnnotatedClass {
 
-		@RunAsSubmissionUser
+		@RunAsSubmissionUser("#submission.getSubmitter()")
 		public void methodWithArgument(AnalysisSubmission submission) {
 			String submitterName = SecurityContextHolder.getContext().getAuthentication().getName();
 			assertEquals("Should be submitting user", submittingUser.getUsername(), submitterName);
 		}
 
-		@RunAsSubmissionUser
-		public void methodWithoutArgument() {
-			String adminName = SecurityContextHolder.getContext().getAuthentication().getName();
-			assertEquals("Context shouldn't be updated", adminUser.getUsername(), adminName);
-		}
-
-		@RunAsSubmissionUser
+		@RunAsSubmissionUser("#submission.getSubmitter()")
 		public void methodThatThrows(AnalysisSubmission submission) throws Exception {
 			throw new Exception("I'm broken!");
 		}

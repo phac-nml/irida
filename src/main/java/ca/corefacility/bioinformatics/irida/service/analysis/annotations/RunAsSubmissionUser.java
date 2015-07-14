@@ -16,5 +16,5 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RunAsSubmissionUser {
-
+	String value();
 }

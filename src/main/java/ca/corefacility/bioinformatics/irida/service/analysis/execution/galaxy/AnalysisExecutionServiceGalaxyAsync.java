@@ -95,7 +95,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *         mirrored
 	 */
 	@Transactional
-	@RunAsSubmissionUser
+	@RunAsSubmissionUser("#analysisSubmission.getSubmitter()")
 	public Future<AnalysisSubmission> downloadFilesForSubmission(final AnalysisSubmission analysisSubmission) {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
@@ -177,7 +177,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 * @throws IridaWorkflowException If there was an issue with the IRIDA workflow.
 	 */
 	@Transactional
-	@RunAsSubmissionUser
+	@RunAsSubmissionUser("#submission.getSubmitter()")
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
