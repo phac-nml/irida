@@ -17,7 +17,6 @@ import com.github.dandelion.core.web.DandelionServlet;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.web.AssetDependencyDandelionServlet;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
 
 /**
@@ -51,7 +50,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 		// Register the Dandelion servlet
 		ServletRegistration.Dynamic dandelionServlet = servletContext.addServlet("dandelionServlet",
-				new AssetDependencyDandelionServlet(new DandelionServlet()));
+				new DandelionServlet());
 		dandelionServlet.setLoadOnStartup(2);
 		dandelionServlet.addMapping("/dandelion-assets/*");
 	}
