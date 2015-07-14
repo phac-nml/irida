@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Aspect to update the Authentication object in the SecurityContext to be the
@@ -31,23 +30,24 @@ public class RunAsUserAspect {
 	private static final Logger logger = LoggerFactory.getLogger(RunAsUserAspect.class);
 
 	/**
-	 * Advice around a method that has an {@link AnalysisSubmission} as an
-	 * argument. This method will set the {@link Authentication} in the
-	 * {@link SecurityContext} to be the submitting user, run the method, then
-	 * reset the {@link Authentication} afterwards.
+	 * Advice around a method annotated with {@link RunAsUser}. This method will
+	 * set the {@link User} specified in the {@link RunAsUser#value()} using
+	 * SpEL in the security context before the method is run, then reset the
+	 * original user after the method completes.
 	 * 
 	 * @param jp
 	 *            {@link ProceedingJoinPoint} for the called method
-	 * @param eventAnnotation
-	 *            The annotation on the method called
+	 * @param userAnnotation
+	 *            {@link RunAsUser} annotation specifying the user
 	 * @return Return value of the method called
 	 * @throws Throwable
 	 *             if the method throws an exception
 	 */
 	@Around(value = "execution(* *(..)) && @annotation(eventAnnotation)")
-	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, RunAsUser eventAnnotation)
+	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, RunAsUser userAnnotation)
 			throws Throwable {
 
+		// Get the method arguments and apply them to an evaluation context
 		MethodSignature signature = (MethodSignature) jp.getSignature();
 		String[] parameterNames = signature.getParameterNames();
 		Object[] args = jp.getArgs();
@@ -60,13 +60,16 @@ public class RunAsUserAspect {
 			evaluationContext.setVariable(name, val);
 		}
 
-		String expression = eventAnnotation.value();
+		// get the expression from the annotation and apply it to the evaluation
+		// context
+		String expression = userAnnotation.value();
 		ExpressionParser parser = new SpelExpressionParser();
 
 		Expression parseExpression = parser.parseExpression(expression);
 
 		User submitter = parseExpression.getValue(evaluationContext, User.class);
 
+		// get the original authentication
 		logger.trace("Updating user authentication");
 		SecurityContext context = SecurityContextHolder.getContext();
 
@@ -74,6 +77,7 @@ public class RunAsUserAspect {
 
 		logger.trace("Original user: " + originalAuthentication.getName());
 
+		// set the new user authentication
 		logger.trace("Setting user " + submitter.getUsername());
 
 		PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
@@ -82,10 +86,12 @@ public class RunAsUserAspect {
 		context.setAuthentication(submitterAuthenticationToken);
 		SecurityContextHolder.setContext(context);
 
+		// run the method
 		Object returnValue = null;
 		try {
 			returnValue = jp.proceed();
 		} finally {
+			// return the old authentication
 			logger.trace("Resetting authentication to " + originalAuthentication.getName());
 
 			context.setAuthentication(originalAuthentication);
