@@ -12,6 +12,9 @@ import com.google.common.collect.ImmutableMap;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 
+/**
+ * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
+ */
 @Service
 public class ExportUploadService {
 	private static final Logger logger = LoggerFactory.getLogger(ExportUploadService.class);
@@ -23,6 +26,10 @@ public class ExportUploadService {
 		this.exportSubmissionService = exportSubmissionService;
 	}
 
+	/**
+	 * Check for new {@link NcbiExportSubmission}s to be uploaded and begin
+	 * their upload
+	 */
 	public synchronized void launchUpload() {
 
 		logger.trace("Getting new exports");
