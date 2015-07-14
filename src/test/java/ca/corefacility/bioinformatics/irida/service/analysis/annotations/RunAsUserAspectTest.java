@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.annotations;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +67,16 @@ public class RunAsUserAspectTest {
 		assertEquals("Should be admin user", adminUser.getUsername(), securedUserName);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testOther() {
+		annotatedClass.otherMethod("bleh");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testBadParamName() {
+		annotatedClass.badParam("bleh");
+	}
+
 	private static class AnnotatedClass {
 
 		@RunAsUser("#submitter")
@@ -77,6 +88,16 @@ public class RunAsUserAspectTest {
 		@RunAsUser("#submission")
 		public void methodThatThrows(User submitter) throws Exception {
 			throw new Exception("I'm broken!");
+		}
+
+		@RunAsUser("#other")
+		public void otherMethod(String other) {
+			fail("Method should not be run");
+		}
+
+		@RunAsUser("#wrong")
+		public void badParam(String other) {
+			fail("Method should not be run");
 		}
 
 	}

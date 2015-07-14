@@ -43,7 +43,7 @@ public class RunAsUserAspect {
 	 * @throws Throwable
 	 *             if the method throws an exception
 	 */
-	@Around(value = "execution(* *(..)) && @annotation(eventAnnotation)")
+	@Around(value = "execution(* *(..)) && @annotation(userAnnotation)")
 	public Object setSecurityContextFromAnalysisSubmission(ProceedingJoinPoint jp, RunAsUser userAnnotation)
 			throws Throwable {
 
@@ -66,8 +66,15 @@ public class RunAsUserAspect {
 		ExpressionParser parser = new SpelExpressionParser();
 
 		Expression parseExpression = parser.parseExpression(expression);
+		
 
-		User submitter = parseExpression.getValue(evaluationContext, User.class);
+		Object expressionValue = parseExpression.getValue(evaluationContext);
+		
+		if (! (expressionValue instanceof User)) {
+			throw new IllegalArgumentException("RunAsUser value must refer to a User");
+		}
+
+		User submitter = (User) expressionValue;
 
 		// get the original authentication
 		logger.trace("Updating user authentication");
