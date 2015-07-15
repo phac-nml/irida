@@ -14,6 +14,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -31,11 +33,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Service for executing {@link AnalysisSubmission} stages within a Galaxy
@@ -94,6 +95,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *         mirrored
 	 */
 	@Transactional
+	@RunAsUser("#analysisSubmission.getSubmitter()")
 	public Future<AnalysisSubmission> downloadFilesForSubmission(final AnalysisSubmission analysisSubmission) {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
@@ -175,6 +177,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 * @throws IridaWorkflowException If there was an issue with the IRIDA workflow.
 	 */
 	@Transactional
+	@RunAsUser("#analysisSubmission.getSubmitter()")
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
