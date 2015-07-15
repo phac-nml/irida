@@ -27,7 +27,7 @@
       <th th:text="#{project.associated.project.location}">_Location_</th>
       <th th:text="#{project.associated.access}">_Access_</th>
     </tr>
-    <tr th:each="project : ${associatedProjects}" class="associated-project">
+    <tr th:each="project : ${associatedProjects}" class="associated-project local-project-row">
       <td>
         <a class="project-name authorized" th:if="${project.auth} == 'authorized'" th:text="${project.name}" th:href="@{'/projects/' + ${project.id}}">_Project Name_</a>
         <span class="project-name unauthorized" th:if="${project.auth} != 'authorized'" th:text="${project.name}">_Project Access_</span>
