@@ -12,6 +12,11 @@ import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
  */
 public interface NcbiExportSubmissionRepository extends IridaJpaRepository<NcbiExportSubmission, Long> {
 
+	/**
+	 * Get a List of {@link NcbiExportSubmission} object with the given {@link ExportUploadState}
+	 * @param state {@link ExportUploadState} to search for
+	 * @return a List of {@link NcbiExportSubmission}
+	 */
 	@Query("FROM NcbiExportSubmission s WHERE s.uploadState=?1")
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state);
 }

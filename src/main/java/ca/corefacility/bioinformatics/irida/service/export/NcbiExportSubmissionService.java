@@ -11,5 +11,13 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * Service for exporting {@link SequenceFile} data to NCBI
  */
 public interface NcbiExportSubmissionService extends CRUDService<Long, NcbiExportSubmission> {
+	/**
+	 * Get a List of {@link NcbiExportSubmission} object with the given
+	 * {@link ExportUploadState}
+	 * 
+	 * @param state
+	 *            {@link ExportUploadState} to search for
+	 * @return a List of {@link NcbiExportSubmission}
+	 */
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state);
 }

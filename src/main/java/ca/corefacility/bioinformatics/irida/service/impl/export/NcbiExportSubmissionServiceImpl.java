@@ -22,8 +22,8 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 @Service
 // TODO: Write permission
 @PreAuthorize("permitAll()")
-public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiExportSubmission> implements
-		NcbiExportSubmissionService {
+public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiExportSubmission>
+		implements NcbiExportSubmissionService {
 
 	private final NcbiExportSubmissionRepository repository;
 
@@ -33,25 +33,37 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 		this.repository = repository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public NcbiExportSubmission read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public NcbiExportSubmission create(NcbiExportSubmission object) throws ConstraintViolationException,
-			EntityExistsException {
+	public NcbiExportSubmission create(NcbiExportSubmission object)
+			throws ConstraintViolationException, EntityExistsException {
 		return super.create(object);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state) {
 		return repository.getSubmissionsWithState(state);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public NcbiExportSubmission update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
-			EntityExistsException, InvalidPropertyException {
+	public NcbiExportSubmission update(Long id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
 	}
 
