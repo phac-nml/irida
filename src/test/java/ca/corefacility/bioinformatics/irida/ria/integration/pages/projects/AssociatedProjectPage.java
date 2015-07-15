@@ -14,11 +14,13 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 public class AssociatedProjectPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectPage.class);
 
-	private static final String RELATIVE_URL = "/projects/1/associated";
-
 	public AssociatedProjectPage(WebDriver driver) {
 		super(driver);
-		get(driver, RELATIVE_URL);
+	}
+
+	public void getPage(Long id) {
+		String url = "/projects/" + id + "/associated";
+		get(driver, url);
 	}
 
 	public List<String> getAssociatedProjects() {
@@ -32,5 +34,10 @@ public class AssociatedProjectPage extends AbstractPage {
 		logger.debug("Getting authorized projects");
 		List<WebElement> authorized = driver.findElements(By.cssSelector(".authorized.project-name"));
 		return authorized.stream().map(WebElement::getText).collect(Collectors.toList());
+	}
+
+	public List<String> getRemoteAssociatedProjects() {
+		List<WebElement> findElements = driver.findElements(By.className("remote-project-name"));
+		return findElements.stream().map(WebElement::getText).collect(Collectors.toList());
 	}
 }
