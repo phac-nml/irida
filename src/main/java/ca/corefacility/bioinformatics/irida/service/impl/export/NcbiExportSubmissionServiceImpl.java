@@ -1,0 +1,70 @@
+package ca.corefacility.bioinformatics.irida.service.impl.export;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+
+@Service
+// TODO: Write permission
+@PreAuthorize("permitAll()")
+public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiExportSubmission>
+		implements NcbiExportSubmissionService {
+
+	private final NcbiExportSubmissionRepository repository;
+
+	@Autowired
+	public NcbiExportSubmissionServiceImpl(NcbiExportSubmissionRepository repository, Validator validator) {
+		super(repository, validator, NcbiExportSubmission.class);
+		this.repository = repository;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NcbiExportSubmission read(Long id) throws EntityNotFoundException {
+		return super.read(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NcbiExportSubmission create(NcbiExportSubmission object)
+			throws ConstraintViolationException, EntityExistsException {
+		return super.create(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state) {
+		return repository.getSubmissionsWithState(state);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NcbiExportSubmission update(Long id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
+		return super.update(id, updatedFields);
+	}
+
+}

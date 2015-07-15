@@ -3,10 +3,11 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +23,7 @@ import javax.persistence.TemporalType;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -58,7 +60,12 @@ public class NcbiExportSubmission implements IridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
+	@Column(name = "upload_state", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private ExportUploadState uploadState;
+
 	public NcbiExportSubmission() {
+		uploadState = ExportUploadState.NEW;
 		createdDate = new Date();
 	}
 
@@ -109,6 +116,14 @@ public class NcbiExportSubmission implements IridaThing {
 
 	public List<SequenceFile> getSingleFiles() {
 		return singleFiles;
+	}
+
+	public void setUploadState(ExportUploadState uploadState) {
+		this.uploadState = uploadState;
+	}
+
+	public ExportUploadState getUploadState() {
+		return uploadState;
 	}
 
 }

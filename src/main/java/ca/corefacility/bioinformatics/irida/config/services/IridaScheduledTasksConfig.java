@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.export.ExportUploadService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -60,10 +61,16 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private ExportUploadService uploadService;
+	
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
 	 */
 	private static final long ANALYSIS_EXECUTION_TASK_RATE = 15000; // 15 seconds
+	
+	// rate in MS of the upload task rate
+	private static final long UPLOAD_EXECUTION_TASK_RATE = 60000; // 60 seconds
 	
 	/**
 	 * Rate in milliseconds of the cleanup task.
@@ -123,6 +130,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Scheduled(initialDelay = 10000, fixedRate = CLEANUP_TASK_RATE)
 	public void cleanupAnalysisSubmissions() {
 		analysisExecutionScheduledTask().cleanupAnalysisSubmissions();
+	}
+
+	/**
+	 * Launch the NCBI uploader
+	 */
+	@Scheduled(initialDelay = 1000, fixedDelay = UPLOAD_EXECUTION_TASK_RATE)
+	public void ncbiUpload() {
+		uploadService.launchUpload();
 	}
 
 	/**
