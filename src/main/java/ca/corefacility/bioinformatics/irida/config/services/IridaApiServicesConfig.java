@@ -35,6 +35,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
@@ -67,8 +70,8 @@ import com.google.common.collect.Lists;
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
-		IridaCachingConfig.class, IridaWorkflowsConfig.class })
+		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, IridaCachingConfig.class,
+		IridaWorkflowsConfig.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
@@ -81,7 +84,7 @@ public class IridaApiServicesConfig {
 
 	@Value("${file.processing.decompress.remove.compressed.file}")
 	private Boolean removeCompressedFiles;
-	
+
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
 		return new ForbidJpqlUpdateDeletePostProcessor();
@@ -150,13 +153,13 @@ public class IridaApiServicesConfig {
 	 */
 	@Bean
 	@DependsOn("springLiquibase")
-	@Profile({"prod", "dev"})
+	@Profile({ "prod", "dev" })
 	public Executor analysisTaskExecutor(UserService userService) {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
 		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
 	}
-	
+
 	@Bean
 	@DependsOn("springLiquibase")
 	@Profile({ "prod" })
@@ -221,5 +224,20 @@ public class IridaApiServicesConfig {
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
 		jaxb2marshaller.setPackagesToScan(new String[] { "ca.corefacility.bioinformatics.irida.model.workflow" });
 		return jaxb2marshaller;
+	}
+
+	@Bean(name = "exportUploadTemplateEngine")
+	public SpringTemplateEngine exportUploadTemplateEngine() {
+		SpringTemplateEngine exportUploadTemplateEngine = new SpringTemplateEngine();
+
+		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
+		classLoaderTemplateResolver.setPrefix("/ca/corefacility/bioinformatics/irida/export/");
+		classLoaderTemplateResolver.setSuffix(".xml");
+
+		classLoaderTemplateResolver.setTemplateMode(StandardTemplateModeHandlers.XML.getTemplateModeName());
+		classLoaderTemplateResolver.setCharacterEncoding("UTF-8");
+
+		exportUploadTemplateEngine.addTemplateResolver(classLoaderTemplateResolver);
+		return exportUploadTemplateEngine;
 	}
 }

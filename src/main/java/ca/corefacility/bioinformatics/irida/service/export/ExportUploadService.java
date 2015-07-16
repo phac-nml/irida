@@ -5,12 +5,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
 /**
  * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
@@ -19,11 +23,16 @@ import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 public class ExportUploadService {
 	private static final Logger logger = LoggerFactory.getLogger(ExportUploadService.class);
 
+	private static final String NCBI_TEMPLATE = "ncbi";
+
 	private NcbiExportSubmissionService exportSubmissionService;
+	private TemplateEngine templateEngine;
 
 	@Autowired
-	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService) {
+	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
+			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine) {
 		this.exportSubmissionService = exportSubmissionService;
+		this.templateEngine = templateEngine;
 	}
 
 	/**
@@ -48,6 +57,7 @@ public class ExportUploadService {
 
 			try {
 				Thread.sleep(30000);
+				createXml(submission);
 			} catch (InterruptedException e) {
 
 			}
@@ -58,5 +68,16 @@ public class ExportUploadService {
 					ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
 		}
 
+	}
+
+	public void createXml(NcbiExportSubmission submission) {
+		final Context ctx = new Context();
+		List<SequenceFilePair> pairFiles = submission.getPairFiles();
+
+		ctx.setVariable("pairFiles", pairFiles);
+
+		final String htmlContent = templateEngine.process(NCBI_TEMPLATE, ctx);
+
+		logger.debug(htmlContent);
 	}
 }
