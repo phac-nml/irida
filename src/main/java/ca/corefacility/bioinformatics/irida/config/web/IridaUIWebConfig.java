@@ -32,6 +32,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.thymeleaf.cache.StandardCacheManager;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
@@ -57,7 +58,7 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
-@Import({WebEmailConfig.class, IridaApiSecurityConfig.class})
+@Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
@@ -80,7 +81,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
 		return localeChangeInterceptor;
 	}
-	
+
 	@Bean
 	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
 		Path analyticsPath = Paths.get(ANALYTICS_DIR);
@@ -149,8 +150,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
 		registry.addViewController("/projects/templates/remove").setViewName("projects/templates/remove");
 		registry.addViewController("/cart/templates/galaxy").setViewName("cart/templates/galaxy");
-		registry.addViewController("/projects/templates/referenceFiles/delete").setViewName(
-				"projects/templates/referenceFiles/delete");
+		registry.addViewController("/projects/templates/referenceFiles/delete")
+				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
 	@Bean
@@ -177,6 +178,16 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.setTemplateResolver(templateResolver());
 		engine.setAdditionalDialects(additionalDialects());
+
+		// straight up disable the thymeleaf expression cache. The problem with
+		// ${object.member} sometimes working and sometimes not working comes
+		// from using the same expression in two different contexts (i.e.,
+		// object is a Map in one case, and a Project in another). Thymeleaf
+		// caches the expressions, and something is happening between uses of
+		// the expression.
+		final StandardCacheManager cacheManager = (StandardCacheManager) engine.getCacheManager();
+		cacheManager.setExpressionCacheMaxSize(0);
+
 		return engine;
 	}
 
