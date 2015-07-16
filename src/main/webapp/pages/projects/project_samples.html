@@ -322,12 +322,12 @@
 	<script th:inline="javascript">
 		var PAGE = {
 			urls: {
-				local: /*[[@{/projects/{id}/ajax/samples(id=${project.identifier})}]]*/ '',
-				associated: /*[[@{/projects/{id}/associated/samples(id=${project.identifier})}]]*/ '',
-				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.identifier})}]]*/ '',
-				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.identifier})}]]*/ '',
-				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.identifier})}]]*/ '',
-				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.identifier})}]]*/ ''
+				local: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
+				associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '',
+				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
+				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
+				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
+				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
 			},
 			i18n: {
 				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
