@@ -388,4 +388,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return assembledGenomesSet;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Join<Sample, SequenceFile> getSampleForSequenceFile(SequenceFile file) {
+		return ssfRepository.getSampleForSequenceFile(file);
+	}
 }
