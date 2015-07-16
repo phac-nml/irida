@@ -32,6 +32,8 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.thymeleaf.cache.StandardCache;
+import org.thymeleaf.cache.StandardCacheManager;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
@@ -177,6 +179,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.setTemplateResolver(templateResolver());
 		engine.setAdditionalDialects(additionalDialects());
+		final StandardCacheManager cacheManager = (StandardCacheManager) engine.getCacheManager();
+		cacheManager.setExpressionCacheMaxSize(0);
 		return engine;
 	}
 
