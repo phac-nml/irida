@@ -64,12 +64,8 @@ public class ExportUploadService {
 
 			logger.trace("Going to sleep " + submission.getId());
 
-			try {
-				Thread.sleep(30000);
-				createXml(submission);
-			} catch (InterruptedException e) {
+			createXml(submission);
 
-			}
 
 			logger.trace("Finished sleep " + submission.getId());
 

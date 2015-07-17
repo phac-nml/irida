@@ -85,7 +85,62 @@
     </AddData>
   </Action>
  -->
-  <Action th:each="entry : ${samplesForPairs}" th:with="sample=${entry.key},pair=${entry.value},forward=${pair.getForwardSequenceFile()},reverse=${pair.getReverseSequenceFile()}">
+ <th:block th:each="entry : ${samplesForPairs}" th:with="sample=${entry.key},pair=${entry.value},forward=${pair.getForwardSequenceFile()},reverse=${pair.getReverseSequenceFile()}">
+ <Action>
+    <AddData target_db="SRA">
+      <Data content_type="xml">
+        <XmlContent>
+          <EXPERIMENT>
+            <TITLE>Whole genome shotgun sequencing of Salmonella enterica subsp. enterica serovar Newport str. CIES-13-0265 by
+              Illumina MiSeq</TITLE>
+            <STUDY_REF>
+              <IDENTIFIERS>
+                <EXTERNAL_ID namespace="BioProject">PRJNA217342</EXTERNAL_ID>
+              </IDENTIFIERS>
+            </STUDY_REF>
+            <DESIGN>
+              <DESIGN_DESCRIPTION>MiSeq deep shotgun sequencing of cultured isolate.</DESIGN_DESCRIPTION>
+              <SAMPLE_DESCRIPTOR>
+                <IDENTIFIERS>
+                  <EXTERNAL_ID namespace="BioSample">SAMN02335374</EXTERNAL_ID>
+                </IDENTIFIERS>
+              </SAMPLE_DESCRIPTOR>
+              <LIBRARY_DESCRIPTOR>
+                <LIBRARY_NAME>Salmonella enterica str. CFSAN006236_01 shotgun</LIBRARY_NAME>
+                <LIBRARY_STRATEGY>WGS</LIBRARY_STRATEGY>
+                <LIBRARY_SOURCE>GENOMIC</LIBRARY_SOURCE>
+                <LIBRARY_SELECTION>RANDOM</LIBRARY_SELECTION>
+                <LIBRARY_LAYOUT>
+                  <PAIRED NOMINAL_LENGTH="500"/>
+                </LIBRARY_LAYOUT>
+                <LIBRARY_CONSTRUCTION_PROTOCOL>Illumina Nextera XT library created for Salmonella enterica subsp. enterica serovar
+                  Newport str. CIES-13-0265.</LIBRARY_CONSTRUCTION_PROTOCOL>
+              </LIBRARY_DESCRIPTOR>
+            </DESIGN>
+            <PLATFORM>
+              <ILLUMINA>
+                <INSTRUMENT_MODEL>Illumina MiSeq</INSTRUMENT_MODEL>
+              </ILLUMINA>
+            </PLATFORM>
+            <PROCESSING>
+              <PIPELINE>
+                <PIPE_SECTION section_name="base caller">
+                  <STEP_INDEX>0</STEP_INDEX>
+                  <PREV_STEP_INDEX>NULL</PREV_STEP_INDEX>
+                  <PROGRAM>RTA</PROGRAM>
+                  <VERSION>1.17.28</VERSION>
+                </PIPE_SECTION>
+              </PIPELINE>
+            </PROCESSING>
+          </EXPERIMENT>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="_MY_NAMESPACE_" th:text="${sample.getSampleName()}">_SAMPLE_ID_</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
     <AddFiles target_db="SRA">
       <File file_path="_f1_R1.fastq_" th:attr="file_path=${forward.getFileName()}">
         <DataType>generic-data</DataType>
@@ -95,13 +150,13 @@
       </File>
       <AttributeRefId name="experiment">
         <RefId>
-          <SPUID spuid_namespace="CFSAN">CFSAN006236_01:2</SPUID>
+          <SPUID spuid_namespace="_MY_NAMESPACE_">CFSAN006236_01:2</SPUID>
         </RefId>
       </AttributeRefId>
       <Identifier>
-        <SPUID spuid_namespace="CFSAN">CFSAN006236_01:3</SPUID>
+        <SPUID spuid_namespace="_MY_NAMESPACE_">CFSAN006236_01:3</SPUID>
       </Identifier>
     </AddFiles>
   </Action>
-
+</th:block>
 </Submission>
