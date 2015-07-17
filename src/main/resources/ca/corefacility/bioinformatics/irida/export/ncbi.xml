@@ -85,7 +85,7 @@
     </AddData>
   </Action>
  -->
-  <Action th:each="pair : ${pairFiles}" th:with="forward=${pair.getForwardSequenceFile()},reverse=${pair.getReverseSequenceFile()}">
+  <Action th:each="entry : ${samplesForPairs}" th:with="sample=${entry.key},pair=${entry.value},forward=${pair.getForwardSequenceFile()},reverse=${pair.getReverseSequenceFile()}">
     <AddFiles target_db="SRA">
       <File file_path="_f1_R1.fastq_" th:attr="file_path=${forward.getFileName()}">
         <DataType>generic-data</DataType>

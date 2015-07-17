@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +17,11 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
@@ -27,12 +34,14 @@ public class ExportUploadService {
 
 	private NcbiExportSubmissionService exportSubmissionService;
 	private TemplateEngine templateEngine;
+	private SampleService sampleService;
 
 	@Autowired
 	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
-			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine) {
+			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine, SampleService sampleService) {
 		this.exportSubmissionService = exportSubmissionService;
 		this.templateEngine = templateEngine;
+		this.sampleService = sampleService;
 	}
 
 	/**
@@ -74,7 +83,13 @@ public class ExportUploadService {
 		final Context ctx = new Context();
 		List<SequenceFilePair> pairFiles = submission.getPairFiles();
 
-		ctx.setVariable("pairFiles", pairFiles);
+		Map<Sample, SequenceFilePair> samplesAndPairs = new HashMap<>();
+		submission.getPairFiles().forEach((p) -> {
+			Join<Sample, SequenceFile> join = sampleService.getSampleForSequenceFile(p.getForwardSequenceFile());
+			samplesAndPairs.put(join.getSubject(), p);
+		});
+
+		ctx.setVariable("samplesForPairs", samplesAndPairs);
 
 		final String htmlContent = templateEngine.process(NCBI_TEMPLATE, ctx);
 
