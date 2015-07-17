@@ -34,6 +34,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -120,6 +121,7 @@ public class SamplesControllerTest {
 	public void testUpdateSample() {
 		Model model = new ExtendedModelMap();
 		Sample sample = TestDataFactory.constructSample();
+		final String contextPath = "/some-nonsense";
 		String organism = "E. coli";
 		String geographicLocationName = "The Forks";
 		Map<String, Object> updatedValues = ImmutableMap.of(SamplesController.ORGANISM, organism,
@@ -129,9 +131,12 @@ public class SamplesControllerTest {
 		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setRequestURI("/projects/5/samples/" + sample.getId() + "/edit");
+		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE,
+				"/projects/5/samples/" + sample.getId() + "/edit");
 		String result = controller.updateSample(model, sample.getId(), null, update, request);
 		assertTrue("Returns the correct redirect", result.contains(sample.getId() + "/details"));
+		assertTrue("Should be a redirect response.", result.startsWith("redirect:"));
+		assertFalse("Redirect should **not** contain the context path.", result.contains(contextPath));
 		assertTrue("Model should be populated with updated attributes",
 				model.containsAttribute(SamplesController.ORGANISM));
 		assertTrue("Model should be populated with updated attributes",
