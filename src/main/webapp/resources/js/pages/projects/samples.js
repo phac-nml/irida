@@ -1,4 +1,4 @@
-(function (angular, $, _) {
+(function (angular, $, _, page) {
   function setRootVariable($rootScope) {
     $rootScope.cgPromise = null;
   }
@@ -115,12 +115,11 @@
   /*[- */
 // Responsible for all server calls for samples
 // @param $rootScope The root scope for the page.
-// @param R Restangular
+// @param $http
   /* -]*/
-  function SamplesService($rootScope, storage, R, notifications, filter, $q) {
+  function SamplesService($rootScope, storage, $http, notifications, filter, $q) {
     "use strict";
     var svc = this,
-        base = R.all('projects/' + project.id),
         filtered = [];
     svc.samples = [];
     
@@ -153,7 +152,8 @@
 
     svc.merge = function (params) {
       params.sampleIds = getSelectedSampleIds();
-      return base.customPOST(params, 'ajax/samples/merge').then(function (data) {
+      return $http.post(page.urls.merge, params)
+        .success(function (data) {
         if (data.result === 'success') {
           $rootScope.$broadcast("SAMPLE_CONTENT_MODIFIED");
           storage.clear();
@@ -164,14 +164,15 @@
     };
     
     svc.removeSamples = function(sampleIds){
-      return base.customPOST({sampleIds: sampleIds}, 'ajax/samples/delete').then(function (data) {
-        if (data.result === 'success') {
-          $rootScope.$broadcast("SAMPLE_CONTENT_MODIFIED");
-          storage.clear();
-          updateSelectedCount();
-          notifications.show({type: data.result, msg: data.message});
-        }
-      });
+      return $http.post(page.urls.remove, {sampleIds: sampleIds})
+        .success(function (data) {
+          if (data.result === 'success') {
+            $rootScope.$broadcast("SAMPLE_CONTENT_MODIFIED");
+            storage.clear();
+            updateSelectedCount();
+            notifications.show({type: data.result, msg: data.message});
+          }
+        });
     };
 
 
@@ -276,7 +277,7 @@
 
       return $q.all(samplePromises).then(function (response) {
         _.forEach(response, function (p) {
-          svc.samples = svc.samples.concat(p);
+          svc.samples = svc.samples.concat(p.data.samples);
           svc.updateSampleCount();
         });
 
@@ -293,11 +294,11 @@
 
     function copyMoveSamples(projectId, move) {
 
-      return base.customPOST({
+      return $http.post(page.urls.copy, {
         sampleIds         : getSelectedSampleIds(),
         newProjectId      : projectId,
         removeFromOriginal: move
-      }, "/ajax/samples/copy").then(function (data) {
+      }).success(function (data) {
         updateSelectedCount(data.count);
         if (data.message) {
           notifications.show({msg: data.message});
@@ -324,7 +325,7 @@
     }
 
     function updateSelectedCount() {
-      var message = {count: 0, LOCAL: 0, ASSOCIATED: 0};
+      var message = {count: 0, LOCAL: 0, ASSOCIATED: 0, REMOTE: 0};
       _.forEach(storage.getSamples(), function (s) {
         message.count++;
         message[s.sampleType]++;
@@ -336,24 +337,24 @@
 
     function getLocalSamples(f) {
       _.extend(svc.filter, f || {});
-      return base.customGET('ajax/samples').then(function (data) {
+      return $http.get(page.urls.local).success(function (data) {
         return data.samples;
       });
     }
 
     function getAssociatedSamples(f) {
       _.extend(svc.filter, f || {});
-      return base.customGET('associated/samples').then(function (data) {
+      return $http.get(page.urls.associated).success(function (data) {
         return data.samples;
       });
     }
 
     function getRemoteAssociatedSamples(f) {
-        _.extend(svc.filter, f || {});
-        return base.customGET('associated/remote/samples').then(function (data) {
-            svc.notConnected = data.notConnected;
-            return data.samples;
-        });
+      _.extend(svc.filter, f || {});
+      return $http.get(page.urls.remote).success(function (data) {
+        svc.notConnected = data.notConnected;
+        return data.samples;
+      });
     }
   }
 
@@ -515,8 +516,10 @@
     vm.export = {
       open    : false,
       download: function download() {
-        vm.export.open = false;
-        SamplesService.downloadFiles();
+        if (vm.localSelected) {
+          vm.export.open = false;
+          SamplesService.downloadFiles();
+        }
       },
       linker  : function linker() {
         if (vm.localSelected) {
@@ -537,7 +540,7 @@
               return false;
             },
             multiProject: function () {
-              return (data.length > 1)
+              return false;
             }
           }
         });
@@ -591,7 +594,7 @@
 
     vm.showTooltip = function () {
       if (!vm.localSelected) {
-        return associatedSelectedTooltip;
+        return page.i18n.associatedSelectedTooltip;
       }
       return "";
     }
@@ -599,10 +602,10 @@
     $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
 
-      if (a["ASSOCIATED"] > 0) {
+      if (a.ASSOCIATED > 0 || a.REMOTE > 0 || a.LOCAL == 0) {
         vm.localSelected = false;
       }
-      else {
+      else if(a.LOCAL > 0){
         vm.localSelected = true;
       }
     });
@@ -822,7 +825,7 @@
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', [StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', '$q', SamplesService])
+    .service('SamplesService', ['$rootScope', 'StorageService', '$http', 'notifications', 'FilterFactory', '$q', SamplesService])
     .filter('SamplesFilter', ['FilterFactory', SamplesFilter])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
@@ -842,4 +845,4 @@
     .controller('ConnectionWarningCtrl', ['$rootScope', 'SamplesService', ConnectionWarningCtrl])
   ;
 })
-(angular, $, _);
+(angular, $, _, PAGE);

@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -204,8 +205,13 @@ public class SamplesController extends BaseController {
 			}
 		}
 
-		String url = request.getRequestURI();
-		String redirectUrl = url.substring(0, url.indexOf("/edit")) + "/details";
+		// this used to read request.getURI(), but request.getURI() includes the
+		// context path. When issuing a redirect: return, the redirect: string
+		// should **not** contain the context path.
+		// HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE contains the
+		// matched URL without the context path.
+		final String url = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		final String redirectUrl = url.substring(0, url.indexOf("/edit")) + "/details";
 		return "redirect:" + redirectUrl;
 	}
 

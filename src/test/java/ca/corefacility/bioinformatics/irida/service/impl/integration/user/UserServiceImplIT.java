@@ -35,6 +35,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
@@ -47,16 +53,9 @@ import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.GroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -76,8 +75,6 @@ public class UserServiceImplIT {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private GroupService groupService;
-	@Autowired
-	private CRUDService<Long, User> crudUserService;
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")

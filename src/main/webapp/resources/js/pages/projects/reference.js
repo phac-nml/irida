@@ -1,15 +1,15 @@
-(function (angular, $, _) {
+(function (angular, $, _, page, project) {
 
-  function ProjectFileService($rootScope, R) {
+  function ProjectFileService($rootScope, $http) {
     "use strict";
-    var svc = this,
-        base = R.all('projects/' + project.id + '/ajax/reference');
+    var svc = this;
       svc.files = [];
 
     svc.getFiles = function getFiles() {
-      return base.customGET("all").then(function (data) {
-        angular.copy(data.files, svc.files);
-      });
+      return $http.get(page.urls.get)
+        .success(function(data){
+          angular.copy(data.files, svc.files);
+        });
     };
 
     $rootScope.$on('FILE_DELETED', function (e, args) {
@@ -24,21 +24,20 @@
     });
   }
 
-  function ReferenceFileService($rootScope, $modal, R, notifications) {
+  function ReferenceFileService($rootScope, $modal, $http, notifications) {
     "use strict";
-    var svc = this,
-        api = R.all('referenceFiles');
+    var svc = this;
 
     svc.download = function (id) {
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "referenceFiles/download/" + id;
+      iframe.src = page.urls.download + id;
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
 
     svc.deleteFile = function (file) {
       var modalInstance = $modal.open({
-        templateUrl: TL.BASE_URL + 'projects/templates/referenceFiles/delete',
+        templateUrl: '/delete-modal.html',
         controller : 'DeleteCtrl as dCtrl',
         resolve    : {
           file: function () {
@@ -48,15 +47,15 @@
       });
 
       modalInstance.result.then(function () {
-        api.customPOST({
-          fileId   : file.id,
+        $http.post(page.urls.remove, {
+          fileId: file.id,
           projectId: project.id
-        }, "delete").then(function (data) {
+        }).success(function(data) {
           notifications.show({msg: data.msg, type: data.result});
-          $rootScope.$broadcast("FILE_DELETED", {id: file.id});
+          $rootScope.$broadcast('FILE_DELETED', {id: file.id});
         });
       });
-    }
+    };
   }
 
   function DeleteCtrl($modalInstance, file) {
@@ -102,12 +101,11 @@
   }
 
   function FileUploadCtrl($timeout, fileService) {
-    var vm = this,
-      url = TL.BASE_URL + 'referenceFiles/project/' + project.id + '/new';
+    var vm = this;
 
     vm.onFileSelect = function ($files) {
       if ($files && $files.length) {
-        fileService.upload(url, $files).then(function () {
+        fileService.upload(page.urls.upload, $files).then(function () {
           $timeout(function () {
             window.location.href = window.location.href;
           }, 500);
@@ -117,10 +115,10 @@
   }
 
   angular.module('References', ['file.utils'])
-    .service('ProjectFileService', ['$rootScope', 'Restangular', ProjectFileService])
-    .service('ReferenceFileService', ['$rootScope', '$modal', 'Restangular', 'notifications', ReferenceFileService])
+    .service('ProjectFileService', ['$rootScope', '$http', ProjectFileService])
+    .service('ReferenceFileService', ['$rootScope', '$modal', '$http', 'notifications', ReferenceFileService])
     .controller('FilesCtrl', ['ProjectFileService', 'ReferenceFileService', FilesCtrl])
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
     .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl])
   ;
-})(window.angular, window.jQuery, window._, window.TL, window.project);
+})(window.angular, window.jQuery, window._, window.PAGE, window.project);

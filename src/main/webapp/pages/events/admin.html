@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
+
+<head>
+  <title th:text="#{event.admin.title}">_ALL EVENTS_</title>
+
+</head>
+
+<body>
+  <div class="row" layout:fragment="page">
+    <main class="container" role="main" property="mainContentOfPage" ddl:bundle-includes="all-events">
+      <h1 th:text="#{event.admin.title}">_Recent Activities_</h1>
+      <div class="row">
+        <div class="col-xs-2">
+          <label for="size" th:text="#{event.size}">_Activities to show:_</label>
+          <select id="size" class="form-control event-count">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </div>
+      <div id="events"></div>
+      <input type="hidden" id="eventURL" value="/events/all" th:value="@{/events/all}" />
+    </main>
+  </div>
+</body>
+
+</html>

@@ -189,7 +189,7 @@
 
 				<div class="btn-group" dropdown="" is-open="subnav.export.open">
 					<button id="exportOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle=""
-					        ng-disabled="subnav.count&lt;1">
+					        ng-disabled="!subnav.localSelected">
 						<span th:text="#{project.samples.export.label}">Export</span>
 						&nbsp;
 						<span class="caret"></span>
@@ -319,6 +319,21 @@
 </main>
 
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:inline="javascript">
+		var PAGE = {
+			urls: {
+				local: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
+				associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '',
+				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
+				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
+				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
+				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
+			},
+			i18n: {
+				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
+			}
+		};
+	</script>
 	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
 	        src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
@@ -326,9 +341,6 @@
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>
-	<script th:inline="javascript">
-		var associatedSelectedTooltip = /*[[#{project.samples.associated-selected-error}]]*/ "_Unavailable_";
-	</script>
 </th:block>
 </body>
 </html>

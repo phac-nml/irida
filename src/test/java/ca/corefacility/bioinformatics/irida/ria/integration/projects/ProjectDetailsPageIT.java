@@ -1,12 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,11 +12,13 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
 
 /**
  * <p> Integration test to ensure that the Project Details Page. </p>
@@ -60,7 +60,7 @@ public class ProjectDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	public void hasCorrectMetaData() {
 		detailsPage.goTo(PROJECT_ID);
 		logger.debug("Testing: hasCorrectMetaDate");
-		assertEquals("Page should show correct title", PROJECT_NAME, detailsPage.getPageTitle());
+		assertTrue("Page should show correct title", detailsPage.getPageTitle().contains(PROJECT_NAME));
 		assertEquals("Should have the organism displayed", PROJECT_ORGANISM, detailsPage.getOrganism());
 		assertEquals("Should have the correct date format for creation date", PROJECT_CREATED_DATE,
 				detailsPage.getCreatedDate());

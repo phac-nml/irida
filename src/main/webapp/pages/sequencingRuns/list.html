@@ -54,6 +54,13 @@
     </main>
 
     <th:block layout:fragment="scripts">
+	    <script th:inline="javascript">
+		    var PAGE = {
+			    urls: {
+				    list: /*[[@{/sequencingRuns/ajax/list}]]*/ '/sequencingRuns/ajax/list'
+			    }
+		    };
+	    </script>
         <script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
             src="/resources/js/directives/datatables/irida-datatable.js"></script>
         <script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
@@ -65,12 +72,12 @@
             		$rootScope.cgPromise = null;
             	}
             
-            	function RunsService($rootScope, R, filter) {
-            		var svc = this, base = R.all('sequencingRuns/ajax/list');
+            	function RunsService($rootScope, $http, filter) {
+            		var svc = this;
             		svc.runs = [];
             
             		svc.getRuns = function() {
-            			$rootScope.cgPromise = base.customGET("").then(function(data) {
+            			$rootScope.cgPromise = $http.get(PAGE.urls.list).success(function(data) {
             				angular.copy(data, svc.runs);
             				$rootScope.$broadcast('RUNS_INIT', {
             					total : data.length
@@ -179,7 +186,7 @@
             	angular.module('SequencingRuns', [ 'cgBusy' ])
             	       .run([ '$rootScope', setRootVariable ])
             	       .factory('FilterFactory', [ FilterFactory ])
-            			   .service('RunsService', [ '$rootScope', 'Restangular', 'FilterFactory', RunsService ])
+            			   .service('RunsService', [ '$rootScope', '$http', 'FilterFactory', RunsService ])
             			   .filter('PagingFilter', [ '$rootScope', 'FilterFactory', 'RunsService', PagingFilter ])
             			   .directive('sortBy', [ sortBy ]).controller('PagingCtrl', [ '$scope', 'FilterFactory', PagingCtrl ])
             			   .controller('SortCtrl', [ '$rootScope', 'FilterFactory', SortCtrl ])

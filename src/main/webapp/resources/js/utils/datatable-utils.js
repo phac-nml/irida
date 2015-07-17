@@ -65,10 +65,9 @@ var datatable = (function(moment, tl, page) {
    * Updates the filters and search field to use the appropriate bootstrap classes.
    */
   function updateFilters() {
-    var filters = document.querySelectorAll('input.dandelion_column_filter, select.dandelion_column_filter');
+    var filters = document.querySelectorAll('.yadcf-filter');
     if (filters && filters.length) {
       [].forEach.call(filters, function (el) {
-        el.setAttribute('style','width:200px');
         var classList = el.classList;
         if (!classList.contains('form-control')) {
           el.classList.add('form-control');
@@ -76,11 +75,11 @@ var datatable = (function(moment, tl, page) {
         if (!classList.contains('input-sm')) {
           el.classList.add('input-sm');
         }
-        if(el.type === 'text'){
-          el.value = '';
+        if(el.type == 'text'){
+          el.placeholder = '';
         }
-        else if(el.type === 'select-one') {
-         el.options[0] = new Option('-', '', true, true);
+        else if(el.tagName.toLowerCase() == 'select') {
+         el.options[0] = new Option('', '', true, true);
         }
       });
     }

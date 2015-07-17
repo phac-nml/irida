@@ -53,7 +53,7 @@ public class ProjectsPage extends AbstractPage {
 	public void clickProjectNameHeader() {
 		// Sorting row is the second one
 		WebElement headerRow = driver.findElements(By.cssSelector(".dataTables_scrollHeadInner thead tr")).get(0);
-		headerRow.findElements(By.cssSelector("th")).get(1).click();
+		headerRow.findElements(By.cssSelector("th")).get(0).click();
 		waitForAjax();
 	}
 

@@ -4,6 +4,12 @@
       layout:decorator="template/base">
 <head>
 	<title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
+	<style>
+		.login__links a {
+			margin-top: 10px;
+			display: block;
+		}
+	</style>
 </head>
 <body>
 <th:block layout:fragment="content">
