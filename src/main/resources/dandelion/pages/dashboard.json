@@ -1,6 +1,6 @@
 {
   "bundle": "dashboard",
-  "dependencies": [ "livestamp", "events" ],
+  "dependencies": [ "livestamp", "events", "marked" ],
   "assets": [
     {
       "name": "dashboard",
