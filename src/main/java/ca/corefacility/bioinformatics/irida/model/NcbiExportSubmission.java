@@ -43,6 +43,12 @@ public class NcbiExportSubmission implements IridaThing {
 	@JoinColumn(name = "project_id")
 	private Project project;
 
+	@Column(name = "bio_project_id", nullable = false)
+	private String bioProjectId;
+
+	@Column(name = "namespace", nullable = false)
+	private String ncbiNamespace;
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "ncbi_export_submission_single_files", inverseJoinColumns = @JoinColumn(name = "sequence_file_id") )
 	private List<SequenceFile> singleFiles;
@@ -72,6 +78,16 @@ public class NcbiExportSubmission implements IridaThing {
 	public NcbiExportSubmission(Project project, List<SequenceFile> singleFiles, List<SequenceFilePair> pairFiles) {
 		this();
 		this.project = project;
+		this.singleFiles = singleFiles;
+		this.pairFiles = pairFiles;
+	}
+
+	public NcbiExportSubmission(Project project, String bioProjectId, String ncbiNamespace,
+			List<SequenceFile> singleFiles, List<SequenceFilePair> pairFiles) {
+		this();
+		this.project = project;
+		this.bioProjectId = bioProjectId;
+		this.ncbiNamespace = ncbiNamespace;
 		this.singleFiles = singleFiles;
 		this.pairFiles = pairFiles;
 	}
@@ -126,4 +142,19 @@ public class NcbiExportSubmission implements IridaThing {
 		return uploadState;
 	}
 
+	public String getNcbiNamespace() {
+		return ncbiNamespace;
+	}
+
+	public void setNcbiNamespace(String ncbiNamespace) {
+		this.ncbiNamespace = ncbiNamespace;
+	}
+
+	public String getBioProjectId() {
+		return bioProjectId;
+	}
+
+	public void setBioProjectId(String bioProjectId) {
+		this.bioProjectId = bioProjectId;
+	}
 }

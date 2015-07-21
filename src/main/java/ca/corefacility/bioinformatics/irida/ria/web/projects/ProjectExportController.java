@@ -75,7 +75,8 @@ public class ProjectExportController {
 	 * @return Name of the NCBI export page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("s") List<Long> sampleIds, Model model) {
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("s") List<Long> sampleIds,
+			Model model) {
 		Project project = projectService.read(projectId);
 
 		logger.trace("Reading " + sampleIds.size() + " samples");
@@ -153,10 +154,11 @@ public class ProjectExportController {
 		Project project = projectService.read(projectId);
 
 		List<SequenceFile> singleFiles = Lists.newArrayList(sequenceFileService.readMultiple(submission.getSingle()));
-		List<SequenceFilePair> pairFiles = Lists.newArrayList(sequenceFilePairService.readMultiple(submission
-				.getPaired()));
+		List<SequenceFilePair> pairFiles = Lists
+				.newArrayList(sequenceFilePairService.readMultiple(submission.getPaired()));
 
-		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, singleFiles, pairFiles);
+		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submission.getBioProject(),
+				submission.getNamespace(), singleFiles, pairFiles);
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 
 		return ImmutableMap.of("submissionId", ncbiExportSubmission.getId());
@@ -166,6 +168,13 @@ public class ProjectExportController {
 	 * Class storing IDs of single and paired end files submitted for upload
 	 */
 	protected static class SubmissionBody {
+
+		@JsonProperty
+		String bioProject;
+
+		@JsonProperty
+		String namespace;
+
 		@JsonProperty
 		List<Long> single;
 
@@ -175,17 +184,20 @@ public class ProjectExportController {
 		public SubmissionBody() {
 		}
 
-		public SubmissionBody(List<Long> single, List<Long> paired) {
-			this.single = single;
-			this.paired = paired;
-		}
-
 		public List<Long> getSingle() {
 			return single;
 		}
 
 		public List<Long> getPaired() {
 			return paired;
+		}
+
+		public String getBioProject() {
+			return bioProject;
+		}
+
+		public String getNamespace() {
+			return namespace;
 		}
 
 	}

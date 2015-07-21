@@ -1,162 +1,159 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Submission schema_version="2.0" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
-  <Description> 
-    <Comment>New Submission. Experiment + Runs</Comment> 
-    <Organization role="owner" type="institute">
-      <Name>CFSAN</Name>
-      <Contact email="jdoe@institute.org">
-        <Name>
-          <First>Jane</First>
-          <Last>Doe</Last>
-        </Name>
-      </Contact>
-    </Organization>
-  </Description>
-<!-- 
-  <Action>
-    <AddData target_db="SRA">
-      <Data content_type="xml">
-        <XmlContent>
-          <EXPERIMENT>
-            <TITLE>Whole genome shotgun sequencing of Salmonella enterica subsp. enterica serovar Newport str. CIES-13-0265 by
-              Illumina MiSeq</TITLE>
-            <STUDY_REF>
-              <IDENTIFIERS>
-                <EXTERNAL_ID namespace="BioProject">PRJNA217342</EXTERNAL_ID>
-              </IDENTIFIERS>
-            </STUDY_REF>
-            <DESIGN>
-              <DESIGN_DESCRIPTION>MiSeq deep shotgun sequencing of cultured isolate.</DESIGN_DESCRIPTION>
-              <SAMPLE_DESCRIPTOR>
-                <IDENTIFIERS>
-                  <EXTERNAL_ID namespace="BioSample">SAMN02335374</EXTERNAL_ID>
-                </IDENTIFIERS>
-              </SAMPLE_DESCRIPTOR>
-              <LIBRARY_DESCRIPTOR>
-                <LIBRARY_NAME>Salmonella enterica str. CFSAN006236_01 shotgun</LIBRARY_NAME>
-                <LIBRARY_STRATEGY>WGS</LIBRARY_STRATEGY>
-                <LIBRARY_SOURCE>GENOMIC</LIBRARY_SOURCE>
-                <LIBRARY_SELECTION>RANDOM</LIBRARY_SELECTION>
-                <LIBRARY_LAYOUT>
-                  <PAIRED NOMINAL_LENGTH="500"/>
-                </LIBRARY_LAYOUT>
-                <LIBRARY_CONSTRUCTION_PROTOCOL>Illumina Nextera XT library created for Salmonella enterica subsp. enterica serovar
-                  Newport str. CIES-13-0265.</LIBRARY_CONSTRUCTION_PROTOCOL>
-              </LIBRARY_DESCRIPTOR>
-              <SPOT_DESCRIPTOR>
-                <SPOT_DECODE_SPEC>
-                  <SPOT_LENGTH>502</SPOT_LENGTH>
-                  <READ_SPEC>
-                    <READ_INDEX>0</READ_INDEX>
-                    <READ_CLASS>Application Read</READ_CLASS>
-                    <READ_TYPE>Forward</READ_TYPE>
-                    <BASE_COORD>1</BASE_COORD>
-                  </READ_SPEC>
-                  <READ_SPEC>
-                    <READ_INDEX>1</READ_INDEX>
-                    <READ_CLASS>Application Read</READ_CLASS>
-                    <READ_TYPE>Reverse</READ_TYPE>
-                    <BASE_COORD>251</BASE_COORD>
-                  </READ_SPEC>
-                </SPOT_DECODE_SPEC>
-              </SPOT_DESCRIPTOR>
-            </DESIGN>
-            <PLATFORM>
-              <ILLUMINA>
-                <INSTRUMENT_MODEL>Illumina MiSeq</INSTRUMENT_MODEL>
-              </ILLUMINA>
-            </PLATFORM>
-            <PROCESSING>
-              <PIPELINE>
-                <PIPE_SECTION section_name="base caller">
-                  <STEP_INDEX>0</STEP_INDEX>
-                  <PREV_STEP_INDEX>NULL</PREV_STEP_INDEX>
-                  <PROGRAM>RTA</PROGRAM>
-                  <VERSION>1.17.28</VERSION>
-                </PIPE_SECTION>
-              </PIPELINE>
-            </PROCESSING>
-          </EXPERIMENT>
-        </XmlContent>
-      </Data>
-      <Identifier>
-        <SPUID spuid_namespace="CFSAN">CFSAN006236_01:2</SPUID>
-      </Identifier>
-    </AddData>
-  </Action>
- -->
- <th:block th:each="entry : ${samplesForPairs}" th:with="sample=${entry.key},pair=${entry.value},forward=${pair.getForwardSequenceFile()},reverse=${pair.getReverseSequenceFile()}">
- <Action>
-    <AddData target_db="SRA">
-      <Data content_type="xml">
-        <XmlContent>
-          <EXPERIMENT>
-            <TITLE>Whole genome shotgun sequencing of Salmonella enterica subsp. enterica serovar Newport str. CIES-13-0265 by
-              Illumina MiSeq</TITLE>
-            <STUDY_REF>
-              <IDENTIFIERS>
-                <EXTERNAL_ID namespace="BioProject">PRJNA217342</EXTERNAL_ID>
-              </IDENTIFIERS>
-            </STUDY_REF>
-            <DESIGN>
-              <DESIGN_DESCRIPTION>MiSeq deep shotgun sequencing of cultured isolate.</DESIGN_DESCRIPTION>
-              <SAMPLE_DESCRIPTOR>
-                <IDENTIFIERS>
-                  <EXTERNAL_ID namespace="BioSample">SAMN02335374</EXTERNAL_ID>
-                </IDENTIFIERS>
-              </SAMPLE_DESCRIPTOR>
-              <LIBRARY_DESCRIPTOR>
-                <LIBRARY_NAME>Salmonella enterica str. CFSAN006236_01 shotgun</LIBRARY_NAME>
-                <LIBRARY_STRATEGY>WGS</LIBRARY_STRATEGY>
-                <LIBRARY_SOURCE>GENOMIC</LIBRARY_SOURCE>
-                <LIBRARY_SELECTION>RANDOM</LIBRARY_SELECTION>
-                <LIBRARY_LAYOUT>
-                  <PAIRED NOMINAL_LENGTH="500"/>
-                </LIBRARY_LAYOUT>
-                <LIBRARY_CONSTRUCTION_PROTOCOL>Illumina Nextera XT library created for Salmonella enterica subsp. enterica serovar
-                  Newport str. CIES-13-0265.</LIBRARY_CONSTRUCTION_PROTOCOL>
-              </LIBRARY_DESCRIPTOR>
-            </DESIGN>
-            <PLATFORM>
-              <ILLUMINA>
-                <INSTRUMENT_MODEL>Illumina MiSeq</INSTRUMENT_MODEL>
-              </ILLUMINA>
-            </PLATFORM>
-            <PROCESSING>
-              <PIPELINE>
-                <PIPE_SECTION section_name="base caller">
-                  <STEP_INDEX>0</STEP_INDEX>
-                  <PREV_STEP_INDEX>NULL</PREV_STEP_INDEX>
-                  <PROGRAM>RTA</PROGRAM>
-                  <VERSION>1.17.28</VERSION>
-                </PIPE_SECTION>
-              </PIPELINE>
-            </PROCESSING>
-          </EXPERIMENT>
-        </XmlContent>
-      </Data>
-      <Identifier>
-        <SPUID spuid_namespace="_MY_NAMESPACE_" th:text="${sample.getSampleName()}">_SAMPLE_ID_</SPUID>
-      </Identifier>
-    </AddData>
-  </Action>
-  <Action>
-    <AddFiles target_db="SRA">
-      <File file_path="_f1_R1.fastq_" th:attr="file_path=${forward.getFileName()}">
-        <DataType>generic-data</DataType>
-      </File>
-      <File file_path="_f1_R2.fastq_" th:attr="file_path=${reverse.getFileName()}">>
-        <DataType>generic-data</DataType>
-      </File>
-      <AttributeRefId name="experiment">
-        <RefId>
-          <SPUID spuid_namespace="_MY_NAMESPACE_">CFSAN006236_01:2</SPUID>
-        </RefId>
-      </AttributeRefId>
-      <Identifier>
-        <SPUID spuid_namespace="_MY_NAMESPACE_">CFSAN006236_01:3</SPUID>
-      </Identifier>
-    </AddFiles>
-  </Action>
-</th:block>
+<Submission schema_version="2.0" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
+	<Description>
+		<Comment>New Submission. Experiment + Runs</Comment>
+		<Organization role="owner" type="institute">
+			<Name>CFSAN</Name>
+			<Contact email="jdoe@institute.org">
+				<Name>
+					<First>Jane</First>
+					<Last>Doe</Last>
+				</Name>
+			</Contact>
+		</Organization>
+	</Description>
+
+	<th:block th:each="entry : ${samplesForPairs}"
+		th:with="sample=${entry.key},pair=${entry.value},forward=${pair.getForwardSequenceFile()},reverse=${pair.getReverseSequenceFile()}">
+		<!-- BioSample -->
+		<Action>
+			<AddData target_db="BioSample">
+				<Data content_type="XML">
+					<XmlContent>
+						<BioSample schema_version="2.0">
+							<SampleId>
+								<SPUID spuid_namespace="CFSAN" th:text="${sample.getSampleName()}">CIES-13-0265:2</SPUID>
+							</SampleId>
+							<Descriptor>
+								<Title>Pathogen sample from Salmonella enterica</Title>
+							</Descriptor>
+							<Organism>
+								<OrganismName>Salmonella enterica subsp. enterica</OrganismName>
+							</Organism>
+							<BioProject>
+								<PrimaryId db="BioProject" th:text="${submission.bioProject}">_USER_ENTERED_PROJECT_</PrimaryId>
+							</BioProject>
+							<Package>Pathogen.env.1.0</Package>
+							<Attributes>
+								<Attribute attribute_name="strain">CIES-13-0265</Attribute>
+								<Attribute attribute_name="collected_by">CIES</Attribute>
+								<Attribute attribute_name="collection_date">2013-05-13</Attribute>
+								<Attribute attribute_name="isolation_source">water</Attribute>
+								<Attribute attribute_name="geo_loc_name">Mexico:Sinaloa</Attribute>
+								<Attribute attribute_name="lat_lon">missing</Attribute>
+								<Attribute attribute_name="serovar">Newport</Attribute>
+								<Attribute attribute_name="isolate_name_alias">13-CIES-0265</Attribute>
+								<Attribute attribute_name="VirulenceMarker">InvA</Attribute>
+							</Attributes>
+						</BioSample>
+					</XmlContent>
+				</Data>
+				<Identifier>
+					<SPUID spuid_namespace="CFSAN" th:text="${sample.getSampleName()}">CIES-13-0265:2</SPUID>
+				</Identifier>
+			</AddData>
+		</Action>
+
+
+		<!-- Experiment -->
+		<Action>
+			<AddData target_db="SRA">
+				<Data content_type="xml">
+					<XmlContent>
+						<EXPERIMENT>
+							<IDENTIFIERS>
+								<SUBMITTER_ID namespace="CFSAN">CFSAN006236_01:2</SUBMITTER_ID>
+							</IDENTIFIERS>
+							<TITLE>Whole genome shotgun sequencing of Salmonella enterica
+								subsp. enterica serovar Newport str. CIES-13-0265 by
+								Illumina
+								MiSeq</TITLE>
+							<STUDY_REF>
+								<IDENTIFIERS>
+									<SUBMITTER_ID namespace="CFSAN" th:text="${submission.bioProject}">_USER_ENTERED_PROJECT_</SUBMITTER_ID>
+								</IDENTIFIERS>
+							</STUDY_REF>
+							<DESIGN>
+								<DESIGN_DESCRIPTION>MiSeq deep shotgun sequencing of cultured
+									isolate.</DESIGN_DESCRIPTION>
+								<SAMPLE_DESCRIPTOR>
+									<IDENTIFIERS>
+										<SUBMITTER_ID namespace="CFSAN" th:text="${sample.getSampleName()}">CIES-13-0265:2</SUBMITTER_ID>
+									</IDENTIFIERS>
+								</SAMPLE_DESCRIPTOR>
+								<LIBRARY_DESCRIPTOR>
+									<LIBRARY_NAME>Salmonella enterica str. CFSAN006236_01 shotgun</LIBRARY_NAME>
+									<LIBRARY_STRATEGY>WGS</LIBRARY_STRATEGY>
+									<LIBRARY_SOURCE>GENOMIC</LIBRARY_SOURCE>
+									<LIBRARY_SELECTION>RANDOM</LIBRARY_SELECTION>
+									<LIBRARY_LAYOUT>
+										<PAIRED NOMINAL_LENGTH="500" />
+									</LIBRARY_LAYOUT>
+									<LIBRARY_CONSTRUCTION_PROTOCOL>Illumina Nextera XT library
+										created for Salmonella enterica subsp. enterica serovar
+										Newport str. CIES-13-0265.</LIBRARY_CONSTRUCTION_PROTOCOL>
+								</LIBRARY_DESCRIPTOR>
+								<SPOT_DESCRIPTOR>
+									<SPOT_DECODE_SPEC>
+										<SPOT_LENGTH>502</SPOT_LENGTH>
+										<READ_SPEC>
+											<READ_INDEX>0</READ_INDEX>
+											<READ_CLASS>Application Read</READ_CLASS>
+											<READ_TYPE>Forward</READ_TYPE>
+											<BASE_COORD>1</BASE_COORD>
+										</READ_SPEC>
+										<READ_SPEC>
+											<READ_INDEX>1</READ_INDEX>
+											<READ_CLASS>Application Read</READ_CLASS>
+											<READ_TYPE>Reverse</READ_TYPE>
+											<BASE_COORD>251</BASE_COORD>
+										</READ_SPEC>
+									</SPOT_DECODE_SPEC>
+								</SPOT_DESCRIPTOR>
+							</DESIGN>
+							<PLATFORM>
+								<ILLUMINA>
+									<INSTRUMENT_MODEL>Illumina MiSeq</INSTRUMENT_MODEL>
+								</ILLUMINA>
+							</PLATFORM>
+							<PROCESSING>
+								<PIPELINE>
+									<PIPE_SECTION section_name="base caller">
+										<STEP_INDEX>0</STEP_INDEX>
+										<PREV_STEP_INDEX>NULL</PREV_STEP_INDEX>
+										<PROGRAM>RTA</PROGRAM>
+										<VERSION>1.17.28</VERSION>
+									</PIPE_SECTION>
+								</PIPELINE>
+							</PROCESSING>
+						</EXPERIMENT>
+					</XmlContent>
+				</Data>
+				<Identifier>
+					<SPUID spuid_namespace="CFSAN">CFSAN006236_01:2</SPUID>
+				</Identifier>
+			</AddData>
+		</Action>
+		<!-- Run -->
+		<Action>
+			<AddFiles target_db="SRA">
+				<File file_path="_f1_R1.fastq_" th:attr="file_path=${forward.getFileName()}">
+					<DataType>generic-data</DataType>
+				</File>
+				<File file_path="_f1_R2.fastq_" th:attr="file_path=${reverse.getFileName()}">
+					<DataType>generic-data</DataType>
+				</File>
+				<AttributeRefId name="experiment">
+					<RefId>
+						<SPUID spuid_namespace="_MY_NAMESPACE_">CFSAN006236_01:2</SPUID>
+					</RefId>
+				</AttributeRefId>
+				<Identifier>
+					<SPUID spuid_namespace="_MY_NAMESPACE_">CFSAN006236_01:3</SPUID>
+				</Identifier>
+			</AddFiles>
+		</Action>
+	</th:block>
 </Submission>

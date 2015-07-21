@@ -77,7 +77,7 @@ public class ExportUploadService {
 
 	public void createXml(NcbiExportSubmission submission) {
 		final Context ctx = new Context();
-		List<SequenceFilePair> pairFiles = submission.getPairFiles();
+		ctx.setVariable("submission", submission);
 
 		Map<Sample, SequenceFilePair> samplesAndPairs = new HashMap<>();
 		submission.getPairFiles().forEach((p) -> {

@@ -13,6 +13,19 @@
       <h2 th:text="${project.label}">_project id_</h2>
     </div>
     <div class="form-group">
+      <label class="col-sm-2 control-label">_Metadata_</label>
+      <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
+        <div class="form-group">
+          <label for="bioProject">_BioProject ID_</label>
+          <input class="form-control" id="bioProject" />
+        </div>
+        <div class="form-group">
+          <label for="namespace">_SRA Namespace_</label>
+          <input class="form-control" id="namespace" />
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
       <label class="col-sm-2 control-label" th:text="#{project.export.files}">_Files_</label>
 
       <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
@@ -68,6 +81,9 @@
         $(this).attr("disabled", "disabled");
         var single = [];
         var paired = [];
+        
+        var bioProject = $('#bioProject').val();
+        var namespace = $('#namespace').val();
 
         $('.paired_files:checked').each(function() {
           paired.push($(this).val());
@@ -79,7 +95,9 @@
 
         var submission = {
           single: single,
-          paired: paired
+          paired: paired,
+          bioProject: bioProject,
+          namespace: namespace
         };
 
         $.ajax({
