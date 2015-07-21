@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -35,5 +37,7 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
+	
+	public List<ProjectEvent> getEventsToEmailToUser(User user, long cooldown);
 
 }
