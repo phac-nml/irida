@@ -122,12 +122,16 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private Set<UserGroupJoin> userGroups;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastSubscriptionEmail;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.
 	 */
 	public User() {
 		createdDate = new Date();
+		lastSubscriptionEmail = createdDate;
 		locale = "en";
 		credentialsNonExpired = true;
 		this.systemRole = Role.ROLE_USER;
@@ -363,5 +367,13 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
+	}
+	
+	public Date getLastSubscriptionEmail() {
+		return lastSubscriptionEmail;
+	}
+	
+	public void setLastSubscriptionEmail(Date lastSubscriptionEmail) {
+		this.lastSubscriptionEmail = lastSubscriptionEmail;
 	}
 }
