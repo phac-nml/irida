@@ -75,4 +75,7 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 */
 	@Query("from ProjectUserJoin j where j.project = ?1 and j.user = ?2")
 	public ProjectUserJoin getProjectJoinForUser(Project project, User user);
+	
+	@Query("SELECT DISTINCT j.user FROM ProjectUserJoin j WHERE j.emailSubscription=true")
+	public List<User> getUsersWithSubscriptions();
 }

@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -40,8 +42,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoi
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Implementation of the {@link UserService}.
@@ -343,6 +343,12 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException {
 		return userGroupRepository.getUsersForGroup(g);
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public List<User> getUsersWithEmailSubscriptions() {
+		return pujRepository.getUsersWithSubscriptions();
 	}
 
 	/**

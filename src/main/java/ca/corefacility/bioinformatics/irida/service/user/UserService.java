@@ -86,6 +86,8 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 *         role
 	 */
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole);
+	
+	public List<User> getUsersWithEmailSubscriptions();
 
 	/**
 	 * Change the password on the {@link User} account. This method may be
