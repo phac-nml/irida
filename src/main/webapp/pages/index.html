@@ -23,8 +23,8 @@
 
 <body>
   <div class="row" layout:fragment="page">
-    <div layout="row" layout-margin="" layout-fill="">
-      <div flex="66" class="md-whiteframe-z1">
+    <div layout-gt-sm="row" layout-sm="column" layout-margin="" layout-fill="">
+      <div flex="" class="md-whiteframe-z1">
         <md-toolbar>
           <div class="md-toolbar-tools">
             <h2 th:text="#{event.title}">_Recent Activities_</h2>
@@ -48,7 +48,7 @@
           <input type="hidden" id="eventURL" value="/events/current_user" th:value="@{/events/current_user}"/>
         </md-content>
       </div>
-      <div th:if="${updates}" flex="" class="md-whiteframe-z1" ng-controller="updateController as updateCtrl">
+      <div th:if="${updates}" flex-gt-sm="33" class="md-whiteframe-z1" ng-controller="updateController as updateCtrl">
         <md-toolbar>
           <div class="md-toolbar-tools">
             <h2 th:text="#{updates.title}">_UPDATES_</h2>

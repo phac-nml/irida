@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
+import com.google.common.base.Strings;
 
 /**
  * User Login Page Controller
@@ -24,7 +24,9 @@ public class DashboardController {
 	@RequestMapping(value = "/dashboard")
 	public String showIndex(Model model) {
 		logger.debug("Displaying dashboard page");
-		model.addAttribute("updates", UPDATE_FILE);
+		if (!Strings.isNullOrEmpty(UPDATE_FILE)) {
+			model.addAttribute("updates", UPDATE_FILE);
+		}
 		return DASHBOARD_PAGE;
 	}
 }
