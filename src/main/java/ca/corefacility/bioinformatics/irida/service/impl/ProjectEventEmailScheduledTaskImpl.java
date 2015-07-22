@@ -26,6 +26,9 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 
 	@Autowired
 	ProjectEventService eventService;
+	
+	@Autowired
+	EmailController emailController;
 
 	Long cooldown = 60000L;
 
@@ -44,9 +47,11 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 		List<ProjectEvent> eventsToEmailToUser = eventService.getEventsToEmailToUser(user, cooldown);
 
 		if (!eventsToEmailToUser.isEmpty()) {
-			for (ProjectEvent e : eventsToEmailToUser) {
+			/*for (ProjectEvent e : eventsToEmailToUser) {
 				logger.debug("Event: " + e.getLabel());
-			}
+			}*/
+			
+			emailController.sendSubscriptionUpdateEmail(user, eventsToEmailToUser);
 
 			userService.update(user.getId(), ImmutableMap.of("lastSubscriptionEmail", new Date()));
 		}

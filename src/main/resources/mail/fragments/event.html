@@ -11,41 +11,37 @@ can be internationalized.
 */-->
 
 <span th:fragment="user-role-event (event)">  
-    <fa:icon type="user" fixed="" />
     <span class="event-content user-role-event"
-        th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
+        th:with="userHref=${serverURL + '/users/' + event.user.getId()},
         userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt;'},
-        projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+        projectHref=${serverURL + '/projects/' + event.project.getId()},
         projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}" 
         th:utext="#{event.user_added(${userLink},#{'projectRole.'+${event.role}},${projectLink})}"></span>
 </span>
 
 <span th:fragment="user-removed-event (event)">
-    <fa:icon type="ban" fixed=""/>
     <span class="event-content user-removed-event" 
-            th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
+            th:with="userHref=${serverURL + '/users/' + event.user.getId()},
             userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
-            projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+            projectHref=${serverURL + '/projects/' + event.project.getId()},
             projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}" 
             th:utext="#{event.user_removed(${userLink},${projectLink})}"></span>
 </span>
 
 <span th:fragment="sample-added-event (event)">
-    <fa:icon type="sample" fixed=""/>
     <span class="event-content sample-added-event"
-            th:with="sampleHref=@{/projects/{pid}/samples/{sid}(sid=${event.sample.getId()}, pid=${event.project.getId()})},
+            th:with="sampleHref=${serverURL + '/projects/' + event.project.getId() + '/samples/' + event.sample.getId()},
             sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
-            projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+            projectHref=${serverURL + '/projects/' + event.project.getId()},
             projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
             th:utext="#{event.sample_added(${sampleLink},${projectLink})}"></span>
 </span>
 
 <span th:fragment="data-added-event (event)">
-    <fa:icon type="file" fixed=""/>
     <span class="event-content data-added-event"
-            th:with="sampleHref=@{/projects/{pid}/samples/{sid}(sid=${event.sample.getId()}, pid=${event.project.getId()})},
+            th:with="sampleHref=${serverURL + '/projects/' + event.project.getId() + '/samples/' + event.sample.getId()},
             sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
-            projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+            projectHref=${serverURL + '/projects/' + event.project.getId()},
             projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
             th:utext="#{event.data_added(${sampleLink},${projectLink})}"></span>
 </span>

@@ -41,8 +41,8 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 
@@ -66,13 +66,14 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String TEMPLATE_MODE = "HTML5";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final String LOCALE_CHANGE_PARAMETER = "lang";
-	private static final String DEFAULT_ENCODING = "UTF-8";
-	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private MessageSource messageSource;
 
 	@Bean
 	public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -111,26 +112,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
-	public MessageSource messageSource() {
-		logger.info("Configuring ReloadableResourceBundleMessageSource.");
-
-		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasenames(RESOURCE_LOCATIONS);
-		source.setFallbackToSystemLocale(false);
-		source.setDefaultEncoding(DEFAULT_ENCODING);
-
-		// Set template cache timeout if in production
-		// Don't cache at all if in development
-		if (!env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
-			source.setCacheSeconds(0);
-		}
-
-		return source;
-	}
-
-	@Bean
 	public BreadCrumbInterceptor breadCrumbInterceptor() {
-		return new BreadCrumbInterceptor(messageSource());
+		return new BreadCrumbInterceptor(messageSource);
 	}
 
 	@Override
