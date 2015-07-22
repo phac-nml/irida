@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.google.common.base.Strings;
+
 /**
  * User Login Page Controller
  * 
@@ -28,13 +30,15 @@ public class DashboardController {
 	public String showIndex(Model model) {
 		logger.debug("Displaying dashboard page");
 
-		Path path = Paths.get(UPDATE_FILE);
-		if (Files.exists(path)) {
-			try {
-				String updates = new String(Files.readAllBytes(path));
-				model.addAttribute("updates", updates);
-			} catch (IOException e) {
-				logger.error("Error reading updates file at path: " + UPDATE_FILE);
+		if (!Strings.isNullOrEmpty(UPDATE_FILE)) {
+			Path path = Paths.get(UPDATE_FILE);
+			if (Files.exists(path)) {
+				try {
+					String updates = new String(Files.readAllBytes(path));
+					model.addAttribute("updates", updates);
+				} catch (IOException e) {
+					logger.error("Error reading updates file at path: " + UPDATE_FILE);
+				}
 			}
 		}
 		return DASHBOARD_PAGE;
