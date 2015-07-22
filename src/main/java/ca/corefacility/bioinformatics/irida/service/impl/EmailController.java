@@ -152,6 +152,7 @@ public class EmailController {
 		ctx.setVariable("ngsEmail", serverEmail);
 		ctx.setVariable("serverURL", serverURL);
 		ctx.setVariable("lastEmail", user.getLastSubscriptionEmail());
+		ctx.setVariable("user", user);
 
 		Locale locale = Locale.forLanguageTag(user.getLocale());
 
