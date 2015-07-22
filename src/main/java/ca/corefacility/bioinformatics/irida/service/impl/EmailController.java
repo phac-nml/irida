@@ -1,6 +1,11 @@
-package ca.corefacility.bioinformatics.irida.ria.utilities;
+package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
 
@@ -12,15 +17,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.google.common.collect.ImmutableMap;
+
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig.ConfigurableJavaMailSender;
+import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig.ConfigurableJavaMailSender;
 
 /**
  * This class is responsible for all email sent to the server that are templated
@@ -34,7 +47,8 @@ public class EmailController {
 
 	public static final String WELCOME_TEMPLATE = "welcome-email";
 	public static final String RESET_TEMPLATE = "password-reset-link";
-	
+	public static final String SUBSCRIPTION_TEMPLATE = "subscription-email";
+
 	private @Value("${mail.server.email}") String serverEmail;
 
 	private @Value("${server.base.url}") String serverURL;
@@ -42,6 +56,11 @@ public class EmailController {
 	private ConfigurableJavaMailSender javaMailSender;
 	private TemplateEngine templateEngine;
 	private MessageSource messageSource;
+
+	public static final Map<Class<? extends ProjectEvent>, String> FRAGMENT_NAMES = ImmutableMap.of(
+			UserRoleSetProjectEvent.class, "user-role-event", UserRemovedProjectEvent.class, "user-removed-event",
+			SampleAddedProjectEvent.class, "sample-added-event", DataAddedToSampleProjectEvent.class,
+			"data-added-event");
 
 	@Autowired
 	public EmailController(final ConfigurableJavaMailSender javaMailSender,
@@ -126,14 +145,54 @@ public class EmailController {
 			throw new MailSendException("Failed to send e-mail when doing password reset.", e);
 		}
 	}
-	
+
+	public void sendSubscriptionUpdateEmail(User user, List<ProjectEvent> events) {
+		logger.debug("Sending subscription email to " + user.getEmail());
+		final Context ctx = new Context();
+		ctx.setVariable("ngsEmail", serverEmail);
+		ctx.setVariable("serverURL", serverURL);
+		ctx.setVariable("lastEmail", user.getLastSubscriptionEmail());
+
+		Locale locale = Locale.forLanguageTag(user.getLocale());
+
+		ctx.setVariable("dateFormat", messageSource.getMessage("locale.date.long", null, locale));
+
+		List<Map<String, Object>> eventsList = buildEventsListFromCollection(events);
+		ctx.setVariable("events", eventsList);
+
+		final String htmlContent = templateEngine.process(SUBSCRIPTION_TEMPLATE, ctx);
+
+		logger.debug("Content: " + htmlContent);
+	}
+
 	/**
 	 * Is the mail server configured?
 	 * 
-	 * @return {@link Boolean#TRUE} if configured, {@link Boolean#FALSE} if
-	 *         not.
+	 * @return {@link Boolean#TRUE} if configured, {@link Boolean#FALSE} if not.
 	 */
 	public Boolean isMailConfigured() {
 		return javaMailSender.isConfigured();
+	}
+
+	/**
+	 * Convert the Page of events to the list expected in the model
+	 * 
+	 * @param events
+	 *            Page of {@link ProjectEvent}s
+	 * @return A List<Map<String,Object>> containing the events and fragment
+	 *         names
+	 */
+	private List<Map<String, Object>> buildEventsListFromCollection(Collection<ProjectEvent> events) {
+		List<Map<String, Object>> eventInfo = new ArrayList<>();
+		for (ProjectEvent e : events) {
+			if (FRAGMENT_NAMES.containsKey(e.getClass())) {
+				Map<String, Object> info = new HashMap<>();
+				info.put("name", FRAGMENT_NAMES.get(e.getClass()));
+				info.put("event", e);
+				eventInfo.add(info);
+			}
+		}
+
+		return eventInfo;
 	}
 }

@@ -1,15 +1,18 @@
-package ca.corefacility.bioinformatics.irida.ria.config;
+package ca.corefacility.bioinformatics.irida.config.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 /**
@@ -60,7 +63,7 @@ public class WebEmailConfig {
 		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
 		classLoaderTemplateResolver.setPrefix(MAIL_TEMPLATE_PREFIX);
 		classLoaderTemplateResolver.setSuffix(TEMPLATE_SUFFIX);
-		classLoaderTemplateResolver.setTemplateMode(TEMPLATE_MODE);
+		classLoaderTemplateResolver.setTemplateMode(StandardTemplateModeHandlers.XHTML.getTemplateModeName());
 		classLoaderTemplateResolver.setCharacterEncoding(CHARACER_ENCODING);
 		return classLoaderTemplateResolver;
 	}
