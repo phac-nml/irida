@@ -13,19 +13,14 @@
     .updates.ng-hide {
       opacity: 0;
     }
-
-    .updates-content ul {
-      list-style-position: inside;
-      padding: 0;
-    }
   </style>
 </head>
 
 <body>
   <div class="row" layout:fragment="page">
-    <div layout-gt-sm="row" layout-sm="column" layout-margin="" layout-fill="">
+    <div layout-gt-md="row" layout-sm="column" layout-margin="" layout-fill="">
       <div flex="" class="md-whiteframe-z1">
-        <md-toolbar>
+        <md-toolbar class="md-primary">
           <div class="md-toolbar-tools">
             <h2 th:text="#{event.title}">_Recent Activities_</h2>
             <span flex=""></span>
@@ -49,7 +44,7 @@
         </md-content>
       </div>
       <div th:if="${updates}" flex-gt-sm="33" class="md-whiteframe-z1" ng-controller="updateController as updateCtrl">
-        <md-toolbar>
+        <md-toolbar class="md-accent">
           <div class="md-toolbar-tools">
             <h2 th:text="#{updates.title}">_UPDATES_</h2>
           </div>
