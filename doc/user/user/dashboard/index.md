@@ -111,7 +111,7 @@ You can log out of IRIDA by clicking on the <img src="images/logout-icon.png" al
 Recent Activities
 -----------------
 
-The recent activities panel appears in the left panel of the dashboard:
+The recent activities panel appears on the left panel of the dashboard:
 
 ![Recent activities section.](images/recent-activities.png)
 
@@ -125,12 +125,13 @@ All activities in the recent activities section will link to the project or user
 IRIDA Platform Updates
 ----------------------
 
-Updates to the IRIDA Platform will be announces in the right panel the dashboard.
+Updates to the IRIDA Platform will be announces on the right panel the dashboard.
 
 ![Platform Update section.](images/platform-updates.png)
 
 The platform updates section will show you things like:
 
-* When the will be downtime.
+* When scheduled downtime will happen.
 * What features were added to the platform.
-* Any other changes to the platform.
+* Recently added features or bug fixes.
+* Other platform announcements.
