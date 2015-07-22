@@ -27,6 +27,11 @@
   }
 
   angular.module('irida', deps)
+    .config(function($mdThemingProvider) {
+      $mdThemingProvider.theme('default')
+        .primaryPalette('blue')
+        .accentPalette('blue-grey');
+    })
     .config(function($httpProvider) {
       $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
