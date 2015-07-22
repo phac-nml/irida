@@ -15,10 +15,10 @@
 <body>
   <h1 th:text="#{email.subscription.title}">_Recent Events_</h1>
   <div>
-    <p>_The following events have occured on your subscribed projects:_</p>
+    <p th:text="#{email.subscription.description(${#dates.format(lastEmail, dateFormat)})}">_The following events have occured on your subscribed projects:_</p>
     <ul class="list-group">
       <li th:each="event : ${events}">
-        <span th:replace="fragments/event :: ${event.name} (${event.event})"></span>
+        <span th:replace="fragments/event :: ${event.name} (${event.event})"></span> - 
         <span class="event-date" th:text="${#dates.format(event.event.createdDate, dateFormat)}"></span>
       </li>
     </ul>
@@ -27,7 +27,7 @@
     <a href="#" th:href="${serverURL}" th:text="${serverURL}">_http://localhost:8080_</a>
   </p>
   <p><span th:text="#{email.subscription.unsubscribe}">_Update your subscription preferences at_</span>
-    <a href="#" th:href="${serverURL + '/users/' + event.user.getId()}">_http://localhost:8080_</a>
+    <a href="#" th:href="${serverURL + '/users/' + user.getId()}" th:text="${serverURL + '/users/' + user.getId()}">_http://localhost:8080_</a>
   </p>
 
 </body>
