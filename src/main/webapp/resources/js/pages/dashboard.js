@@ -9,10 +9,12 @@
     var vm = this;
     vm.content = "";
 
-    $http.get(page.urls.updates)
-      .success(function(data) {
-        vm.content = data;
-      });
+    if (page.urls.updates) {
+      $http.get(page.urls.updates)
+        .success(function (data) {
+          vm.content = data;
+        });
+    }
   }
 
   angular.module('irida.dashboard', ['hc.marked'])
