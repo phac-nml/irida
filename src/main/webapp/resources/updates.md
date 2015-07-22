@@ -1,17 +1,5 @@
-Test from server
+*The server will be down on Monday for an amazing update.*
 
-- This is some content
-- This is some content
-- This is some content
-- This is some content
-- This is some content
-- This is some content [Google it.](http://www.google.com)
-
-`code here`
-
-- This is some content
-- This is some content
-- This is some content
-- This is some content
-- This is some content
-- This is some content
+### New Features
+- IRIDA Updates panel on dashboard page.  See all the great things that we have been up to.
+- Fantastic new pipelines.
