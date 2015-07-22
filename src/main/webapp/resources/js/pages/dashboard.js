@@ -5,19 +5,12 @@
    * @param $http
    * @constructor
    */
-  function UpdateController ($http) {
+  function UpdateController () {
     var vm = this;
-    vm.content = "";
-
-    if (page.urls.updates) {
-      $http.get(page.urls.updates)
-        .success(function (data) {
-          vm.content = data;
-        });
-    }
+    vm.content = page.updates;
   }
 
   angular.module('irida.dashboard', ['hc.marked'])
-    .controller('updateController', ['$http', UpdateController])
+    .controller('updateController', [UpdateController])
   ;
 })(window.angular, window.PAGE);

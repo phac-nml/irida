@@ -4,16 +4,6 @@
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
   <script>window.dependencies = ['irida.dashboard'];</script>
-  <style>
-    .updates {
-      opacity: 1;
-      transition: 0.5s linear all;
-    }
-
-    .updates.ng-hide {
-      opacity: 0;
-    }
-  </style>
 </head>
 
 <body>
@@ -25,7 +15,7 @@
             <h2 th:text="#{event.title}">_Recent Activities_</h2>
             <span flex=""></span>
             <md-button th:href="@{/events/admin}" sec:authorize="hasRole('ROLE_ADMIN')"
-                       th:text="#{activities.list-all}">_All Projects_
+                       th:text="#{event.admin.link}">_All Projects_
             </md-button>
           </div>
         </md-toolbar>
@@ -39,7 +29,6 @@
               <option value="100">100</option>
             </select>
           </div>
-          <div id="events"></div>
           <input type="hidden" id="eventURL" value="/events/current_user" th:value="@{/events/current_user}"/>
         </md-content>
       </div>
@@ -58,9 +47,7 @@
   <th:block layout:fragment="page-scripts">
     <script th:inline="javascript">
       var PAGE = {
-        urls: {
-          updates: /*[[${updates}]]*/ '/resources/updates.md'
-        }
+          updates: /*[[${updates}]]*/ '## Nothing Here!'
       };
     </script>
   </th:block>
