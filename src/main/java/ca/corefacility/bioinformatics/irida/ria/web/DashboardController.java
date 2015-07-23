@@ -37,7 +37,7 @@ public class DashboardController {
 					String updates = new String(Files.readAllBytes(path));
 					model.addAttribute("updates", updates);
 				} catch (IOException e) {
-					logger.error("Error reading updates file at path: " + UPDATE_FILE);
+					logger.error("Error reading updates file at path: " + UPDATE_FILE, e);
 				}
 			}
 		}
