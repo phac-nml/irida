@@ -3,12 +3,10 @@ package ca.corefacility.bioinformatics.irida.config.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -33,7 +31,6 @@ public class WebEmailConfig {
 
 	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
 	private static final String TEMPLATE_SUFFIX = ".html";
-	private static final String TEMPLATE_MODE = "VALIDXHTML";
 	private static final String CHARACER_ENCODING = "UTF-8";
 
 	@Value("${mail.server.host}")
