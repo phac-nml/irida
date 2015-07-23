@@ -171,8 +171,6 @@ public class EmailController {
 
 		final String htmlContent = templateEngine.process(SUBSCRIPTION_TEMPLATE, ctx);
 
-		logger.debug("Content: " + htmlContent);
-
 		try {
 			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
