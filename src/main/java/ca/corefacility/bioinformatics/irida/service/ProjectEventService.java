@@ -37,7 +37,19 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
-	
+
+	/**
+	 * Get a list of events which occurred after the
+	 * {@link User#getLastSubscriptionEmail()}. This method will also ensure
+	 * that no events occurred in a cooldown period between the current date and
+	 * {@code cooldown} milliseconds ago.
+	 * 
+	 * @param user
+	 *            {@link User} to get events for
+	 * @param cooldown
+	 *            cooldown period in milliseconds
+	 * @return List of {@link ProjectEvent}
+	 */
 	public List<ProjectEvent> getEventsToEmailToUser(User user, long cooldown);
 
 }

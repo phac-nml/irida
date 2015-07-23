@@ -16,44 +16,49 @@ import ca.corefacility.bioinformatics.irida.service.ProjectEventEmailScheduledTa
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Implementation of {@link ProjectEventEmailScheduledTask} which sends emails to users when they have new events
+ */
 @Component
 public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailScheduledTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectEventEmailScheduledTaskImpl.class);
 
-	@Autowired
 	UserService userService;
 
-	@Autowired
 	ProjectEventService eventService;
-	
-	@Autowired
+
 	EmailController emailController;
 
 	Long cooldown = 60000L;
 
-	@Override
-	public void emailUserTasks() {
-		List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
-
-		for (User u : usersWithEmailSubscriptions) {
-			checkForNewEvents(u);
-		}
+	@Autowired
+	public ProjectEventEmailScheduledTaskImpl(UserService userService, ProjectEventService eventService,
+			EmailController emailController) {
+		super();
+		this.userService = userService;
+		this.eventService = eventService;
+		this.emailController = emailController;
 	}
 
-	private void checkForNewEvents(User user) {
-		logger.debug("Getting events for " + user.getUsername());
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void emailUserTasks() {
+		logger.trace("Checking for users with subscriptions");
+		List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
 
-		List<ProjectEvent> eventsToEmailToUser = eventService.getEventsToEmailToUser(user, cooldown);
+		for (User user : usersWithEmailSubscriptions) {
+			logger.trace("Checking for events for user " + user.getUsername());
+			List<ProjectEvent> eventsToEmailToUser = eventService.getEventsToEmailToUser(user, cooldown);
 
-		if (!eventsToEmailToUser.isEmpty()) {
-			/*for (ProjectEvent e : eventsToEmailToUser) {
-				logger.debug("Event: " + e.getLabel());
-			}*/
-			
-			emailController.sendSubscriptionUpdateEmail(user, eventsToEmailToUser);
+			if (!eventsToEmailToUser.isEmpty()) {
+				logger.debug("Sending " + eventsToEmailToUser.size() + " to user.");
+				emailController.sendSubscriptionUpdateEmail(user, eventsToEmailToUser);
 
-			userService.update(user.getId(), ImmutableMap.of("lastSubscriptionEmail", new Date()));
+				userService.update(user.getId(), ImmutableMap.of("lastSubscriptionEmail", new Date()));
+			}
 		}
 	}
 

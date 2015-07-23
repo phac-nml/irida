@@ -65,6 +65,9 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 		return super.list(page, size, order, sortProperties);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Transactional
 	public List<ProjectEvent> getEventsToEmailToUser(User user, long cooldown) {

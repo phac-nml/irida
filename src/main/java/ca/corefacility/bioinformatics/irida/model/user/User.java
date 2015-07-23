@@ -123,6 +123,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private Set<UserGroupJoin> userGroups;
 	
+	// The last time that the user received a subscription email
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastSubscriptionEmail;
 
