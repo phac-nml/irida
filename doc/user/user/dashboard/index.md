@@ -125,7 +125,7 @@ All activities in the recent activities section will link to the project or user
 IRIDA Platform Updates
 ----------------------
 
-Updates to the IRIDA Platform will be announces on the right panel the dashboard.
+Updates to the IRIDA Platform will be announced on the right panel the dashboard.
 
 ![Platform Update section.](images/platform-updates.png)
 
