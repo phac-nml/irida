@@ -33,13 +33,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 
 /**
  * A user object.
@@ -51,7 +51,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class User extends IridaResourceSupport implements IridaThing, Comparable<User>, UserDetails {
+public class User extends IridaResourceSupport implements MutableIridaThing, Comparable<User>, UserDetails {
 
 	private static final long serialVersionUID = -7516211470008791995L;
 

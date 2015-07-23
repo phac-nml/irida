@@ -25,7 +25,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
@@ -51,10 +50,6 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
-	@LastModifiedDate
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date modifiedDate;
-
 	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, mappedBy = "sequencingRun")
 	private Set<SequenceFile> sequenceFiles;
 
@@ -69,9 +64,13 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 	private LayoutType layoutType;
 
 	public SequencingRun() {
-		layoutType = LayoutType.SINGLE_END;
-		uploadStatus = SequencingRunUploadStatus.UPLOADING;
 		createdDate = new Date();
+	}
+	
+	public SequencingRun(final LayoutType layoutType, final SequencingRunUploadStatus uploadStatus) {
+		this();
+		this.layoutType = layoutType;
+		this.uploadStatus = uploadStatus;
 	}
 
 	@Override
@@ -79,36 +78,13 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getDescription() {
 		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	@Override
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	@Override
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
-
-	@Override
-	public int compareTo(SequencingRun p) {
-		return modifiedDate.compareTo(p.modifiedDate);
 	}
 
 	/**
@@ -121,7 +97,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, modifiedDate, description);
+		return Objects.hash(createdDate, description);
 	}
 
 	@Override
@@ -133,16 +109,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 			return false;
 		}
 		final SequencingRun other = (SequencingRun) obj;
-		if (Objects.equals(this.description, other.description) && Objects.equals(this.createdDate, other.createdDate)
-				&& Objects.equals(this.modifiedDate, other.modifiedDate)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public void setUploadStatus(SequencingRunUploadStatus uploadStatus) {
-		this.uploadStatus = uploadStatus;
+		return Objects.equals(this.description, other.description) && Objects.equals(this.createdDate, other.createdDate);
 	}
 
 	public SequencingRunUploadStatus getUploadStatus() {
@@ -151,10 +118,6 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 
 	public LayoutType getLayoutType() {
 		return layoutType;
-	}
-
-	public void setLayoutType(LayoutType layoutType) {
-		this.layoutType = layoutType;
 	}
 
 	/**

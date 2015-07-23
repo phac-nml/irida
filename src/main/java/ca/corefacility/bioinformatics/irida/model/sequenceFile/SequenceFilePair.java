@@ -31,13 +31,12 @@ import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.google.common.collect.ImmutableSet;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableSet;
 
 @Entity
 @Table(name = "sequence_file_pair")
@@ -110,23 +109,8 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	@Override
-	public Date getModifiedDate() {
-		return createdDate;
-	}
-
-	@JsonIgnore
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("Cannot update a sequence file pair");
 	}
 
 	/**
@@ -178,20 +162,6 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 	public Set<SequenceFile> getFiles() {
 		// returning an ImmutableSet to ensure it isn't changed
 		return ImmutableSet.copyOf(files);
-	}
-
-	/**
-	 * Set the {@link SequenceFile}s in this pair. Note it must contain 2 files.
-	 * 
-	 * @param files
-	 *            The set of {@link SequenceFile}s
-	 */
-	public void setFiles(Set<SequenceFile> files) {
-		if (files.size() != 2) {
-			throw new IllegalArgumentException("SequenceFilePair must have 2 files");
-		}
-
-		this.files = files;
 	}
 
 	@Override

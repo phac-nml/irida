@@ -30,12 +30,12 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ca.corefacility.bioinformatics.irida.exceptions.RemoteFileNotCachedException;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Remote representation of an {@link IridaSequenceFile}. This object will point
@@ -45,7 +45,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "remote_sequence_file")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFileSnapshot implements IridaSequenceFile, IridaThing, VersionedFileFields<Long> {
+public class SequenceFileSnapshot implements IridaSequenceFile, MutableIridaThing, VersionedFileFields<Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileSnapshot.class);
 

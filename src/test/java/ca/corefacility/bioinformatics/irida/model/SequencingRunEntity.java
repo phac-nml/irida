@@ -47,4 +47,9 @@ public class SequencingRunEntity extends SequencingRun {
 		return "TestSequencer";
 	}
 
+	@Override
+	public int compareTo(SequencingRun o) {
+		return 0;
+	}
+
 }

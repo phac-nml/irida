@@ -36,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "remote_api", uniqueConstraints = { @UniqueConstraint(name = RemoteAPI.SERVICE_URI_CONSTRAINT_NAME, columnNames = "serviceURI") })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
+public class RemoteAPI implements Comparable<RemoteAPI>, MutableIridaThing {
 
 	public static final String SERVICE_URI_CONSTRAINT_NAME = "UK_REMOTE_API_SERVICEURI";
 
