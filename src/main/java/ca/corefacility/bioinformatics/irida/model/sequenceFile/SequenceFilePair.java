@@ -34,7 +34,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.google.common.collect.ImmutableSet;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 @Table(name = "sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFilePair extends IridaResourceSupport implements IridaThing, IridaSequenceFilePair {
+public class SequenceFilePair extends IridaResourceSupport implements MutableIridaThing, IridaSequenceFilePair {
 
 	/**
 	 * Pattern for matching forward {@link SequenceFile}s from a file name.
@@ -178,5 +178,20 @@ public class SequenceFilePair extends IridaResourceSupport implements IridaThing
 		}
 
 		return false;
+	}
+
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public Date getModifiedDate() {
+		return this.createdDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		throw new UnsupportedOperationException("Sequence file pair is immutable.");
 	}
 }
