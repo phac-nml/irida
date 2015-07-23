@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.LocaleResolver;
@@ -40,17 +39,17 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
-import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
-
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
