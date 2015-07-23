@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.user;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -349,6 +351,23 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	public List<User> getUsersWithEmailSubscriptions() {
 		return pujRepository.getUsersWithSubscriptions();
+	}
+	
+	@PreAuthorize("hasPermission(#user, 'canUpdateUser')")
+	public ProjectUserJoin updateEmailSubscription(User user, Project project, boolean subscribed) {
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
+		projectJoinForUser.setEmailSubscription(subscribed);
+
+		/*
+		 * If we're adding a new subscription, update the last email date. This
+		 * is needed so that we don't send a user the events for a project since
+		 * the beginning of time.
+		 */
+		if (subscribed) {
+			update(user.getId(), ImmutableMap.of("lastSubscriptionEmail", new Date()));
+		}
+
+		return pujRepository.save(projectJoinForUser);
 	}
 
 	/**

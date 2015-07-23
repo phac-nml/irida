@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -88,6 +89,8 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole);
 	
 	public List<User> getUsersWithEmailSubscriptions();
+	
+	public ProjectUserJoin updateEmailSubscription(User user, Project project, boolean subscribed);
 
 	/**
 	 * Change the password on the {@link User} account. This method may be
