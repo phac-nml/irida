@@ -62,6 +62,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 	private Date createdDate;
 
 	@Column(name = "email_subscription")
+	@NotNull
 	private boolean emailSubscription;
 
 	public ProjectUserJoin() {
