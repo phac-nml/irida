@@ -5,6 +5,7 @@ import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
 /**
@@ -19,7 +20,7 @@ public class SequencingRunEntity extends SequencingRun {
 	private String data;
 
 	public SequencingRunEntity() {
-		super();
+		super(LayoutType.PAIRED_END, SequencingRunUploadStatus.UPLOADING);
 	}
 
 	public SequencingRunEntity(String data) {

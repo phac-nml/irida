@@ -63,7 +63,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 	@Column(name = "layout_type")
 	private LayoutType layoutType;
 
-	public SequencingRun() {
+	protected SequencingRun() {
 		createdDate = new Date();
 	}
 	
