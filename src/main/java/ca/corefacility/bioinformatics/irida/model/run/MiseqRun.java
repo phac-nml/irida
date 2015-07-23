@@ -41,6 +41,14 @@ public class MiseqRun extends SequencingRun {
 	@Column(name = "read_lengths")
 	private Integer readLengths;
 	
+	/**
+	 * For hibernate
+	 */
+	@SuppressWarnings("unused")
+	private MiseqRun() {
+		this(null, null);
+	}
+	
 	public MiseqRun(final LayoutType layoutType, final String workflow) {
 		super(layoutType, SequencingRunUploadStatus.UPLOADING);
 		this.workflow = workflow;
