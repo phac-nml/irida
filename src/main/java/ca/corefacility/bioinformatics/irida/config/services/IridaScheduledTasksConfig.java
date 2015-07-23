@@ -45,7 +45,7 @@ import com.google.common.collect.Lists;
  * 
  *
  */
-//@Profile({ "prod" })
+@Profile({ "prod" })
 @Configuration
 @EnableScheduling
 public class IridaScheduledTasksConfig implements SchedulingConfigurer {
@@ -61,7 +61,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
+	@Autowired 	
 	private ProjectEventEmailScheduledTask eventEmailTask;
 	
 	/**
@@ -74,6 +74,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	private static final long CLEANUP_TASK_RATE = 60*60*1000; // 1 hour
 	
+	// Rate of subscription emails sent
+	private static final long SUBSCRIPTION_EMAIL_RATE = 10*60*1000; //10 minutes
+	
 	/**
 	 * Defines the time to clean up in number of days a submission must exist before it is cleaned up.
 	 */
@@ -83,54 +86,58 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any newly created submissions and download any required
 	 * {@link SequenceFileSnapshot}s.
-	 
+	 */
 	@Scheduled(initialDelay = 1000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void downloadFiles() {
 		analysisExecutionScheduledTask().downloadFiles();
-	}*/
+	}
 
 	/**
 	 * Cycle through any submissions and prepare them for execution.
-	 
+	 */
 	@Scheduled(initialDelay = 2000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void prepareAnalyses() {
 		analysisExecutionScheduledTask().prepareAnalyses();
-	}*/
+	}
 
 	/**
 	 * Cycle through any outstanding submissions and execute them.
-	 
+	 */
 	@Scheduled(initialDelay = 3000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void executeAnalyses() {
 		analysisExecutionScheduledTask().executeAnalyses();
-	}*/
+	}
 
 	/**
 	 * Cycle through any submissions running in Galaxy and monitor the status.
-	 
+	 */
 	@Scheduled(initialDelay = 4000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void monitorRunningAnalyses() {
 		analysisExecutionScheduledTask().monitorRunningAnalyses();
-	}*/
+	}
 
 	/**
 	 * Cycle through any completed submissions and transfer the results.
-	 
+	 */
 	@Scheduled(initialDelay = 5000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void transferAnalysesResults() {
 		analysisExecutionScheduledTask().transferAnalysesResults();
-	}*/
+	}
 	
 	/**
 	 * Cycle through any completed or error submissions and clean up results from the execution manager.
-	 
+	 */
 	@Scheduled(initialDelay = 10000, fixedRate = CLEANUP_TASK_RATE)
 	public void cleanupAnalysisSubmissions() {
 		analysisExecutionScheduledTask().cleanupAnalysisSubmissions();
-	}*/
+	}
 	
-	@Scheduled(initialDelay = 10000, fixedDelay = 10000)
-	public void emailProjectEvents(){
+	/**
+	 * Check for any new events for users who are subscribed to projects and
+	 * email them
+	 */
+	@Scheduled(fixedDelay = SUBSCRIPTION_EMAIL_RATE)
+	public void emailProjectEvents() {
 		eventEmailTask.emailUserTasks();
 	}
 
@@ -139,13 +146,13 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 * the analysis tasks.
 	 * 
 	 * @return A AnalysisExecutionScheduledTask bean.
-	 
+	 */
 	@DependsOn("analysisSubmissionCleanupService")
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService,
 				cleanupAnalysisSubmissionCondition());
-	}*/
+	}
 
 	/**
 	 * Builds a condition object defining the conditions under which an analysis
