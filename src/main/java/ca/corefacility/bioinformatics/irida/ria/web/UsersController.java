@@ -162,6 +162,7 @@ public class UsersController {
 			map.put("identifier", project.getId());
 			map.put("name", project.getName());
 			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER) ? true : false);
+			map.put("subscribed" , pujoin.isEmailSubscription());
 
 			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
 			map.put("role", messageSource.getMessage(proleMessageName, null, locale));
