@@ -146,6 +146,15 @@ public class EmailController {
 		}
 	}
 
+	/**
+	 * Send a subscription email to the given {@link User} containing the given
+	 * {@link ProjectEvent}s
+	 * 
+	 * @param user
+	 *            The user to email
+	 * @param events
+	 *            the events to send to the user
+	 */
 	public void sendSubscriptionUpdateEmail(User user, List<ProjectEvent> events) {
 		logger.debug("Sending subscription email to " + user.getEmail());
 		final Context ctx = new Context();
@@ -164,6 +173,21 @@ public class EmailController {
 		final String htmlContent = templateEngine.process(SUBSCRIPTION_TEMPLATE, ctx);
 
 		logger.debug("Content: " + htmlContent);
+
+		try {
+			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
+			message.setSubject(messageSource.getMessage("email.subscription.title", null, locale));
+			message.setFrom(serverEmail);
+			message.setTo(user.getEmail());
+
+			message.setText(htmlContent, true);
+
+			javaMailSender.send(mimeMessage);
+		} catch (Exception e) {
+			logger.error("Error trying to send subcription email.", e);
+			throw new MailSendException("Failed to send e-mail for project event subscription.", e);
+		}
 	}
 
 	/**
