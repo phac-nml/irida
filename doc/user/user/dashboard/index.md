@@ -132,6 +132,5 @@ Updates to the IRIDA Platform will be announces on the right panel the dashboard
 The platform updates section will show you things like:
 
 * When scheduled downtime will happen.
-* What features were added to the platform.
 * Recently added features or bug fixes.
 * Other platform announcements.
