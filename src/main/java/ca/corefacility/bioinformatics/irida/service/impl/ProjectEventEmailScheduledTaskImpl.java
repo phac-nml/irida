@@ -17,7 +17,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- * Implementation of {@link ProjectEventEmailScheduledTask} which sends emails to users when they have new events
+ * Implementation of {@link ProjectEventEmailScheduledTask} which sends emails
+ * to users when they have new events
  */
 @Component
 public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailScheduledTask {
