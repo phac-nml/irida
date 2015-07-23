@@ -291,6 +291,6 @@ IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to 
 
 Displaying IRIDA Platform Updates
 =================================
-To display updates on the dashboard page, add an `updates.md` markdown file in the `/etc/irida/` directory (The location can be configured in the `configuration.properties` file);
+To display updates on the dashboard page, add an `updates.md` markdown file in the `/etc/irida/` directory.  The location of the updates file can be configured in the `/etc/irida/web.conf` file by uncommenting the `updates.file` key and setting the path to your markdown file.;
 
 ![IRIDA Platform Updates](images/updates.png)
