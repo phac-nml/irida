@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import ca.corefacility.bioinformatics.irida.ria.web.DashboardController;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 
-import static org.junit.Assert.assertEquals;
+import ca.corefacility.bioinformatics.irida.ria.web.DashboardController;
 
 /**
  * Unit Test for {@link DashboardController}
