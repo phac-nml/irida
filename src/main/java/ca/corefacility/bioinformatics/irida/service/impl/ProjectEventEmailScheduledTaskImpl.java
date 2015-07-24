@@ -33,8 +33,6 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 
 	EmailController emailController;
 
-	Long cooldown = 10 * 60 * 1000L; // 10 minutes
-
 	@Autowired
 	public ProjectEventEmailScheduledTaskImpl(UserService userService, ProjectEventService eventService,
 			EmailController emailController) {
