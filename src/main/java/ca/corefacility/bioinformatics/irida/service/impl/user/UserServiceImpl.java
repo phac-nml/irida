@@ -364,15 +364,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
 		projectJoinForUser.setEmailSubscription(subscribed);
 
-		/*
-		 * If we're adding a new subscription, update the last email date. This
-		 * is needed so that we don't send a user the events for a project since
-		 * the beginning of time.
-		 */
-		if (subscribed) {
-			update(user.getId(), ImmutableMap.of("lastSubscriptionEmail", new Date()));
-		}
-
 		return pujRepository.save(projectJoinForUser);
 	}
 
