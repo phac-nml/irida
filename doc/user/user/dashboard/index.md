@@ -20,7 +20,7 @@ The main IRIDA dashboard has several different areas:
 
 * The [main menu](#main-menu), for accessing and managing data and pipelines,
 * The [cart](#cart), for data selections,
-* The [settings](#settings) menu,
+* The [user settings](#user-settings) menu,
 * The [logout](#logout) button, and
 * The [recent activities](#recent-activities) section.
 
@@ -90,14 +90,14 @@ You will be shown an authorization page.  Read the details and click "Authorize"
 
 You will be shown a confirmation and your browser will reload the current page.  You should now be connected to the remote installation.
 
-Settings
---------
+User Settings
+-------------
 
-The settings menu allows you to view and edit the details of your own user account. You can find the settings menu in the top, right-hand corner of the page:
+The settings menu allows you to view and edit the details of your own user account. This menu also allows you to update your email subscription preferences.  You can find the settings menu in the top, right-hand corner of the page:
 
 ![The settings menu in the dashboard.](images/settings.png)
 
-User accounts with the administrator role can also use the settings menu to add and remove software client details from IRIDA. For more information about managing clients in IRIDA, please see the [managing system clients](../../administrator/#managing-system-clients) section in the [administrator guide](../../administrator).
+For more information about the user settings page, see the [user settings page](user.html).
 
 Logout
 ------
