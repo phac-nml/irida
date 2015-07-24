@@ -134,7 +134,7 @@
 								<th th:text="#{user.projects.name}">_NAME_</th>
 								<th th:text="#{user.projects.role}">_ROLE_</th>
 								<th th:text="#{user.projects.dateAdded}">_DATE_</th>
-                                <th th:if="${canEditUser}" th:text="#{user.projects.subscriptions}">_Subscribed_</th>
+                                <th th:if="${canEditUser and mailConfigured}" th:text="#{user.projects.subscriptions}">_Subscribed_</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -150,7 +150,7 @@
 								<td class="user-project-date"
 								    th:text="${#calendars.format(project.date, 'dd MMM yyyy')}">_DATE ADDED_
 								</td>
-                                <td align="center" th:if="${canEditUser}">
+                                <td align="center" th:if="${canEditUser and mailConfigured}">
                                   <input class="subcription-checkbox" type="checkbox" th:checked="${project.subscribed}" th:value="${project.identifier}" value="0"/>
                                 </td>
 							</tr>
