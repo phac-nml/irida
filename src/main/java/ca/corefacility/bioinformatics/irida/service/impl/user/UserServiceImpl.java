@@ -347,12 +347,18 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		return userGroupRepository.getUsersForGroup(g);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Override
 	public List<User> getUsersWithEmailSubscriptions() {
 		return pujRepository.getUsersWithSubscriptions();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#user, 'canUpdateUser')")
 	public ProjectUserJoin updateEmailSubscription(User user, Project project, boolean subscribed) {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);

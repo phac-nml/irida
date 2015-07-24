@@ -88,8 +88,26 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 */
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole);
 	
+	/**
+	 * Get a List of all {@link User}s that are subscribed to any
+	 * {@link Project}s
+	 * 
+	 * @return A List of {@link User}
+	 */
 	public List<User> getUsersWithEmailSubscriptions();
-	
+
+	/**
+	 * Update a {@link ProjectUserJoin} to subscribe or unsubscribe a
+	 * {@link User} to a given {@link Project}
+	 * 
+	 * @param user
+	 *            the {@link User} to subscribe
+	 * @param project
+	 *            the {@link Project} to subscribe to
+	 * @param subscribed
+	 *            whether to subscribe or unsubscribe the user
+	 * @return the updated {@link ProjectUserJoin}
+	 */
 	public ProjectUserJoin updateEmailSubscription(User user, Project project, boolean subscribed);
 
 	/**
