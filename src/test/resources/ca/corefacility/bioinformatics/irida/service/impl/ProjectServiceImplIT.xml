@@ -32,8 +32,8 @@
 	<user id="6" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="sequencer@nowhere.com" firstName="Seq" lastName="Uencer"
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
-		phoneNumber="867-5309" username="sequencer" enabled="true" system_role="ROLE_SEQUENCER"
-		credentialsNonExpired="true" />
+		phoneNumber="867-5309" username="sequencer" enabled="true"
+		system_role="ROLE_SEQUENCER" credentialsNonExpired="true" />
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" />
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" />
 	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" />
@@ -48,17 +48,23 @@
 	<reference_file id="1" filePath="/" createdDate="2013-07-18 14:20:19.0" />
 
 	<project_user id="1" project_id="2" user_id="3"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 	<project_user id="2" project_id="3" user_id="3"
-		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0" />
+		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 	<project_user id="3" project_id="6" user_id="4"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 	<project_user id="4" project_id="7" user_id="4"
-		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0" />
+		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 	<project_user id="5" project_id="8" user_id="4"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 	<project_user id="6" project_id="4" user_id="4"
-		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0" />
+		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 
 	<project_sample id="1" project_id="2" sample_id="1"
 		createdDate="2013-07-18 14:20:19.0" />
