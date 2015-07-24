@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
@@ -63,8 +61,6 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 				logger.trace("Sending subscription email to " + user.getUsername() + " with "
 						+ eventsToEmailToUser.size() + " events");
 				emailController.sendSubscriptionUpdateEmail(user, eventsToEmailToUser);
-
-				userService.update(user.getId(), ImmutableMap.of("lastSubscriptionEmail", new Date()));
 			}
 		}
 	}
