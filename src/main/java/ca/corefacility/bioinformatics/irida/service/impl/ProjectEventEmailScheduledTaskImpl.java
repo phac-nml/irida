@@ -45,22 +45,24 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 	 */
 	@Override
 	public void emailUserTasks() {
-		logger.trace("Checking for users with subscriptions");
-		List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
+		if (emailController.isMailConfigured()) {
+			logger.trace("Checking for users with subscriptions");
+			List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
 
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, -1);
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DATE, -1);
 
-		Date yesterday = cal.getTime();
+			Date yesterday = cal.getTime();
 
-		for (User user : usersWithEmailSubscriptions) {
-			logger.trace("Checking for events for user " + user.getUsername());
-			List<ProjectEvent> eventsToEmailToUser = eventService.getEventsForUserAfterDate(user, yesterday);
+			for (User user : usersWithEmailSubscriptions) {
+				logger.trace("Checking for events for user " + user.getUsername());
+				List<ProjectEvent> eventsToEmailToUser = eventService.getEventsForUserAfterDate(user, yesterday);
 
-			if (!eventsToEmailToUser.isEmpty()) {
-				logger.trace("Sending subscription email to " + user.getUsername() + " with "
-						+ eventsToEmailToUser.size() + " events");
-				emailController.sendSubscriptionUpdateEmail(user, eventsToEmailToUser);
+				if (!eventsToEmailToUser.isEmpty()) {
+					logger.trace("Sending subscription email to " + user.getUsername() + " with "
+							+ eventsToEmailToUser.size() + " events");
+					emailController.sendSubscriptionUpdateEmail(user, eventsToEmailToUser);
+				}
 			}
 		}
 	}
