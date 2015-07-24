@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -39,17 +40,15 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
 
 	/**
-	 * Get a list of events which occurred after the
-	 * {@link User#getLastSubscriptionEmail()}. This method will also ensure
-	 * that no events occurred in a cooldown period between the current date and
-	 * {@code cooldown} milliseconds ago.
+	 * Get a list of events for a {@link User} which occurred after the given
+	 * date.
 	 * 
 	 * @param user
 	 *            {@link User} to get events for
-	 * @param cooldown
-	 *            cooldown period in milliseconds
+	 * @param beginning
+	 *            Get events after this date
 	 * @return List of {@link ProjectEvent}
 	 */
-	public List<ProjectEvent> getEventsToEmailToUser(User user, long cooldown);
+	public List<ProjectEvent> getEventsForUserAfterDate(User user, Date beginning);
 
 }
