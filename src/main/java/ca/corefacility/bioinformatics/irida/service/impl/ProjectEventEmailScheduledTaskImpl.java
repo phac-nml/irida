@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -51,9 +52,14 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 		logger.trace("Checking for users with subscriptions");
 		List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
 
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -1);
+
+		Date yesterday = cal.getTime();
+
 		for (User user : usersWithEmailSubscriptions) {
 			logger.trace("Checking for events for user " + user.getUsername());
-			List<ProjectEvent> eventsToEmailToUser = eventService.getEventsToEmailToUser(user, cooldown);
+			List<ProjectEvent> eventsToEmailToUser = eventService.getEventsForUserAfterDate(user, yesterday);
 
 			if (!eventsToEmailToUser.isEmpty()) {
 				logger.trace("Sending subscription email to " + user.getUsername() + " with "

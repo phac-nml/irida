@@ -74,9 +74,6 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	private static final long CLEANUP_TASK_RATE = 60*60*1000; // 1 hour
 	
-	// Rate of subscription emails sent
-	private static final long SUBSCRIPTION_EMAIL_RATE = 10*60*1000; //10 minutes
-	
 	/**
 	 * Defines the time to clean up in number of days a submission must exist before it is cleaned up.
 	 */
@@ -136,7 +133,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 * Check for any new events for users who are subscribed to projects and
 	 * email them
 	 */
-	@Scheduled(fixedDelay = SUBSCRIPTION_EMAIL_RATE)
+	@Scheduled(cron=ProjectEventEmailScheduledTask.CRON_STRING)
 	public void emailProjectEvents() {
 		eventEmailTask.emailUserTasks();
 	}
