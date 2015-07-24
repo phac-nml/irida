@@ -56,7 +56,8 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 			List<ProjectEvent> eventsToEmailToUser = eventService.getEventsToEmailToUser(user, cooldown);
 
 			if (!eventsToEmailToUser.isEmpty()) {
-				logger.debug("Sending " + eventsToEmailToUser.size() + " to user.");
+				logger.trace("Sending subscription email to " + user.getUsername() + " with "
+						+ eventsToEmailToUser.size() + " events");
 				emailController.sendSubscriptionUpdateEmail(user, eventsToEmailToUser);
 
 				userService.update(user.getId(), ImmutableMap.of("lastSubscriptionEmail", new Date()));
