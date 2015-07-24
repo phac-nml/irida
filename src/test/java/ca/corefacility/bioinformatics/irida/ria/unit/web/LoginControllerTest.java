@@ -11,7 +11,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.ria.web.LoginController;
-import ca.corefacility.bioinformatics.irida.service.impl.EmailController;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 /**
  * Unit Tests for {@link LoginController}

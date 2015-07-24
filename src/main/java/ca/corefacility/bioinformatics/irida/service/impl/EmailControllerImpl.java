@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 /**
  * This class is responsible for all email sent to the server that are templated
@@ -41,8 +42,8 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  */
 @Component
 @Profile({ "prod", "dev" })
-public class EmailController {
-	private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
+public class EmailControllerImpl implements EmailController {
+	private static final Logger logger = LoggerFactory.getLogger(EmailControllerImpl.class);
 
 	public static final String WELCOME_TEMPLATE = "welcome-email";
 	public static final String RESET_TEMPLATE = "password-reset-link";
@@ -62,7 +63,7 @@ public class EmailController {
 			"data-added-event");
 
 	@Autowired
-	public EmailController(final ConfigurableJavaMailSender javaMailSender,
+	public EmailControllerImpl(final ConfigurableJavaMailSender javaMailSender,
 			@Qualifier("emailTemplateEngine") TemplateEngine templateEngine, MessageSource messageSource) {
 		this.javaMailSender = javaMailSender;
 		this.templateEngine = templateEngine;
@@ -70,15 +71,9 @@ public class EmailController {
 	}
 
 	/**
-	 * Send welcome email to a user who joined the platform
-	 * 
-	 * @param user
-	 *            The {@link User} that was just created
-	 * @param sender
-	 *            The {@link User} that created the new user
-	 * @param passwordReset
-	 *            A {@link PasswordReset} object to send an activation link
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void sendWelcomeEmail(User user, User sender, PasswordReset passwordReset) throws MailSendException {
 		logger.debug("Sending user creation email to " + user.getEmail());
 
@@ -109,13 +104,9 @@ public class EmailController {
 	}
 
 	/**
-	 * Send a {@link PasswordReset} link to a {@link User}
-	 * 
-	 * @param user
-	 *            The user for the reset
-	 * @param passwordReset
-	 *            the reset object
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void sendPasswordResetLinkEmail(User user, PasswordReset passwordReset) throws MailSendException {
 		logger.debug("Sending password reset email to " + user.getEmail());
 		final Context ctx = new Context();
@@ -146,14 +137,9 @@ public class EmailController {
 	}
 
 	/**
-	 * Send a subscription email to the given {@link User} containing the given
-	 * {@link ProjectEvent}s
-	 * 
-	 * @param user
-	 *            The user to email
-	 * @param events
-	 *            the events to send to the user
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void sendSubscriptionUpdateEmail(User user, List<ProjectEvent> events) {
 		logger.debug("Sending subscription email to " + user.getEmail());
 		final Context ctx = new Context();
@@ -188,10 +174,9 @@ public class EmailController {
 	}
 
 	/**
-	 * Is the mail server configured?
-	 * 
-	 * @return {@link Boolean#TRUE} if configured, {@link Boolean#FALSE} if not.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Boolean isMailConfigured() {
 		return javaMailSender.isConfigured();
 	}

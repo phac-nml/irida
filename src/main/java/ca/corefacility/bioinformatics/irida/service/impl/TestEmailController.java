@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.utilities;
+package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
 
@@ -14,11 +14,10 @@ import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig.Confi
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.impl.EmailController;
 
 @Component
 @Profile({ "it", "test" })
-public class TestEmailController extends EmailController {
+public class TestEmailController extends EmailControllerImpl {
 	private static final Logger logger = LoggerFactory.getLogger(TestEmailController.class);
 
 	@Autowired
