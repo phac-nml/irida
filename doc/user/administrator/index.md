@@ -288,3 +288,9 @@ The overrepresented sequences page displays all of the overrepresented sequences
 Uploading Data to IRIDA
 =======================
 IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to IRIDA using the REST API. Please see the [uploading data guide](uploader/) for more information on how to upload data.
+
+Displaying IRIDA Platform Updates
+=================================
+To display updates on the dashboard page, add an `updates.md` markdown file in the `/etc/irida/` directory.  The location of the updates file can be configured in the `/etc/irida/web.conf` file by uncommenting the `updates.file` key and setting the path to your markdown file.
+
+![IRIDA Platform Updates](images/updates.png)
