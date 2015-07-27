@@ -32,9 +32,9 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 	ProjectEventService eventService;
 
 	EmailController emailController;
-	
+
 	@Value("${irida.scheduled.subscription.cron}")
-	private String scheduledCronString;
+	private String scheduledCronString = "0 0 0 * * *";
 
 	@Autowired
 	public ProjectEventEmailScheduledTaskImpl(UserService userService, ProjectEventService eventService,
@@ -53,15 +53,9 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 		if (emailController.isMailConfigured()) {
 			logger.trace("Checking for users with subscriptions");
 			List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
-						
-			// find the number of milliseconds in the configured time
-			long timeInMillis = Calendar.getInstance().getTimeInMillis();
-			CronSequenceGenerator gen = new CronSequenceGenerator(scheduledCronString);
-			long futureTime = gen.next(new Date()).getTime();
-			long difference = futureTime - timeInMillis;
 
-			Date lastTime = new Date(timeInMillis - difference);
-			
+			Date lastTime = getPriorDateFromCronString(scheduledCronString);
+
 			logger.trace("Getting events after " + lastTime);
 
 			for (User user : usersWithEmailSubscriptions) {
@@ -77,4 +71,17 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 		}
 	}
 
+	public static Date getPriorDateFromCronString(String cron) {
+		// find the number of milliseconds in the configured time
+		long timeInMillis = Calendar.getInstance().getTimeInMillis();
+		CronSequenceGenerator gen = new CronSequenceGenerator(cron);
+		long futureTime = gen.next(new Date()).getTime();
+		long difference = futureTime - timeInMillis;
+
+		return new Date(timeInMillis - difference);
+	}
+	
+	public String getScheduledCronString() {
+		return scheduledCronString;
+	}
 }
