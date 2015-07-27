@@ -64,6 +64,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Autowired 	
 	private ProjectEventEmailScheduledTask eventEmailTask;
 	
+	@Value("${irida.scheduled.email.cron}")
+	private static String EMAIL_CRON;
+	
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
 	 */
@@ -133,7 +136,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 * Check for any new events for users who are subscribed to projects and
 	 * email them
 	 */
-	@Scheduled(cron=ProjectEventEmailScheduledTask.CRON_STRING)
+	@Scheduled(cron = "${irida.scheduled.subscription.cron}")
 	public void emailProjectEvents() {
 		eventEmailTask.emailUserTasks();
 	}

@@ -7,6 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -30,6 +32,9 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 	ProjectEventService eventService;
 
 	EmailController emailController;
+	
+	@Value("${irida.scheduled.subscription.cron}")
+	private String scheduledCronString;
 
 	@Autowired
 	public ProjectEventEmailScheduledTaskImpl(UserService userService, ProjectEventService eventService,
@@ -48,15 +53,20 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 		if (emailController.isMailConfigured()) {
 			logger.trace("Checking for users with subscriptions");
 			List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
+						
+			// find the number of milliseconds in the configured time
+			long timeInMillis = Calendar.getInstance().getTimeInMillis();
+			CronSequenceGenerator gen = new CronSequenceGenerator(scheduledCronString);
+			long futureTime = gen.next(new Date()).getTime();
+			long difference = futureTime - timeInMillis;
 
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.DATE, -1);
-
-			Date yesterday = cal.getTime();
+			Date lastTime = new Date(timeInMillis - difference);
+			
+			logger.trace("Getting events after " + lastTime);
 
 			for (User user : usersWithEmailSubscriptions) {
 				logger.trace("Checking for events for user " + user.getUsername());
-				List<ProjectEvent> eventsToEmailToUser = eventService.getEventsForUserAfterDate(user, yesterday);
+				List<ProjectEvent> eventsToEmailToUser = eventService.getEventsForUserAfterDate(user, lastTime);
 
 				if (!eventsToEmailToUser.isEmpty()) {
 					logger.trace("Sending subscription email to " + user.getUsername() + " with "
