@@ -26,7 +26,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Organization;
 @Table(name = "project")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Project extends IridaResourceSupport implements IridaThing, IridaProject, Comparable<Project> {
+public class Project extends IridaResourceSupport implements MutableIridaThing, IridaProject, Comparable<Project> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -107,8 +107,9 @@ public class Project extends IridaResourceSupport implements IridaThing, IridaPr
 	public Long getId() {
 		return id;
 	}
-
-	public void setId(Long id) {
+	
+	@Override
+	public void setId(final Long id) {
 		this.id = id;
 	}
 

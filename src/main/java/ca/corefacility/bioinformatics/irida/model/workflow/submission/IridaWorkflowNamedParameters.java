@@ -92,16 +92,6 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 	}
 
 	@Override
-	public Date getModifiedDate() {
-		return this.createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("IridaWorkflowNamedParameters cannot be modified.");
-	}
-
-	@Override
 	public String getLabel() {
 		return this.name;
 	}
@@ -109,11 +99,6 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 	@Override
 	public Long getId() {
 		return this.id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public final UUID getWorkflowId() {

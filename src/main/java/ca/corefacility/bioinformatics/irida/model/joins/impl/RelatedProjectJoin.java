@@ -52,8 +52,6 @@ public class RelatedProjectJoin implements Join<Project, Project> {
 	@NotNull
 	private Project relatedProject;
 
-	private Date modifiedDate;
-
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -79,39 +77,14 @@ public class RelatedProjectJoin implements Join<Project, Project> {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@Override
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-
-	}
-
 	@Override
 	public Project getSubject() {
 		return subject;
 	}
 
 	@Override
-	public void setSubject(Project subject) {
-		this.subject = subject;
-	}
-
-	@Override
 	public Project getObject() {
 		return relatedProject;
-	}
-
-	@Override
-	public void setObject(Project object) {
-		this.relatedProject = object;
 	}
 
 	@Override

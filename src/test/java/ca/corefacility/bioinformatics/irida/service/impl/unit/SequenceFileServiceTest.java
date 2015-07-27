@@ -68,8 +68,7 @@ public class SequenceFileServiceTest {
 	public void testCreateSequenceFileInSampleWrongType() {
 		Sample s = new Sample();
 		SequenceFile sf = new SequenceFile();
-		SequencingRun run = new MiseqRun();
-		run.setLayoutType(LayoutType.PAIRED_END);
+		SequencingRun run = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 
 		sf.setSequencingRun(run);
 
@@ -81,8 +80,7 @@ public class SequenceFileServiceTest {
 		Sample s = new Sample();
 		SequenceFile sf = new SequenceFile();
 		SequenceFile sf2 = new SequenceFile();
-		SequencingRun run = new MiseqRun();
-		run.setLayoutType(LayoutType.SINGLE_END);
+		SequencingRun run = new MiseqRun(LayoutType.SINGLE_END, "workflow");
 
 		sf.setSequencingRun(run);
 		sf2.setSequencingRun(run);

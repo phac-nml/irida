@@ -113,6 +113,7 @@ public class SequencingRunIT {
 		Map<String, String> run = new HashMap<>();
 		run.put("workflow", "a test workflow");
 		run.put("description", "a cool miseq run");
+		run.put("layoutType", "SINGLE_END");
 		return run;
 	}
 }

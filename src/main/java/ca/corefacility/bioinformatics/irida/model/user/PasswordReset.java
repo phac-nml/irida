@@ -76,15 +76,4 @@ public class PasswordReset implements Comparable<PasswordReset>, Timestamped {
 
 		return false;
 	}
-
-	@Override
-	public Date getModifiedDate() {
-		return createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("A PasswordReset cannot be updated");
-	}
-
 }
