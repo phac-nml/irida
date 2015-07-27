@@ -22,7 +22,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 
 /**
  * Logical organization for user accounts.
@@ -34,7 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 @Table(name = "logicalGroup")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Group implements IridaThing {
+public class Group implements MutableIridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

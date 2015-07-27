@@ -58,18 +58,8 @@ public class EntityJoin implements Join<IdentifiableTestEntity, OtherEntity>{
 	}
 
 	@Override
-	public void setSubject(IdentifiableTestEntity subject) {
-		identifiableTestEntity = subject;
-	}
-
-	@Override
 	public OtherEntity getObject() {
 		return otherEntity;	
-	}
-
-	@Override
-	public void setObject(OtherEntity object) {
-		otherEntity = object;
 	}
 
 	@Override

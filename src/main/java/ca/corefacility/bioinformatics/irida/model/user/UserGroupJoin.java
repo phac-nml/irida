@@ -92,18 +92,8 @@ public class UserGroupJoin implements Join<User, Group> {
 	}
 
 	@Override
-	public void setSubject(User subject) {
-		this.user = subject;
-	}
-
-	@Override
 	public Group getObject() {
 		return logicalGroup;
-	}
-
-	@Override
-	public void setObject(Group object) {
-		this.logicalGroup = object;
 	}
 
 	@Override

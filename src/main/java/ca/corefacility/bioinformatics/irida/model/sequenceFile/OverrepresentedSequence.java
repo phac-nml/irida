@@ -113,21 +113,9 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 		return id;
 	}
 
-	public void setId(Long id) {
-		throw new UnsupportedOperationException("OverrepresentedSequence is immutable.");
-	}
-
 	@Override
 	public String getLabel() {
 		return toString();
-	}
-
-	public Date getModifiedDate() {
-		return createdDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("OverrepresentedSequence is immutable.");
 	}
 
 	@Override

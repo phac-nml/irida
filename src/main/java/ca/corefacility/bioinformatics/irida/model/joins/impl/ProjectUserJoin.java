@@ -41,7 +41,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "project_id")
@@ -76,10 +76,6 @@ public class ProjectUserJoin implements Join<Project, User> {
 		return this.id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ProjectUserJoin) {
@@ -101,18 +97,8 @@ public class ProjectUserJoin implements Join<Project, User> {
 	}
 
 	@Override
-	public void setSubject(Project subject) {
-		this.project = subject;
-	}
-
-	@Override
 	public User getObject() {
 		return user;
-	}
-
-	@Override
-	public void setObject(User object) {
-		this.user = object;
 	}
 
 	@Override

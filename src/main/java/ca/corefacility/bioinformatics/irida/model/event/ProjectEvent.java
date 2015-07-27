@@ -60,23 +60,8 @@ public abstract class ProjectEvent implements IridaThing {
 	}
 
 	@Override
-	public Date getModifiedDate() {
-		return createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("Cannot update an event");
-	}
-
-	@Override
 	public Long getId() {
 		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Project getProject() {
