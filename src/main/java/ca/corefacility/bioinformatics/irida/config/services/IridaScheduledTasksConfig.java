@@ -64,9 +64,6 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Autowired 	
 	private ProjectEventEmailScheduledTask eventEmailTask;
 	
-	@Value("${irida.scheduled.email.cron}")
-	private static String EMAIL_CRON;
-	
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
 	 */
