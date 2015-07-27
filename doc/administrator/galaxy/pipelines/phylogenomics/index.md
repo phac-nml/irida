@@ -11,14 +11,7 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 | Tool Name            | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:--------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **msa_datatypes**    | 70227007b991  | 0 (2014-04-22)                | [Galaxy Main Shed][] |
-| **bcftools_view**    | 6572c40a8505  | 8 (2012-10-08)                | [Galaxy Main Shed][] |
-| **samtools_mpileup** | 973fea5b4bdf  | 3 (2014-03-27)                | [Galaxy Main Shed][] |
-| **sam_to_bam**       | c73bf16b45df  | 5 (2015-03-05)                | [Galaxy Main Shed][] |
-| **core_pipeline**    | 0737c0310cab  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
-| **freebayes**        | 386bc6e45b68  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
-| **phyml**            | b5867c5c7674  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
-| **smalt_collection** | de3e46eaf5ba  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
+| **suite_snvphyl**    | de3e46eaf5ba  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
@@ -31,7 +24,7 @@ Some of these tools require additional dependencies to be installed.  For a clus
 3. **Perl Modules**:  Please download and install dependency Perl modules with the command:
 
 ```bash
-cpanm Clone Parallel::ForkManager
+cpanm Readonly
 ```
 
 In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install:
