@@ -24,7 +24,7 @@ Some of these tools require additional dependencies to be installed.  For a clus
 3. **Perl Modules**:  Please download and install dependency Perl modules with the command:
 
 ```bash
-cpanm Readonly
+cpanm Readonly List::MoreUtils
 ```
 
 In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install:
