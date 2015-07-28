@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
+import ca.corefacility.bioinformatics.irida.service.ProjectEventEmailScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
@@ -59,6 +60,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired 	
+	private ProjectEventEmailScheduledTask eventEmailTask;
 	
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
@@ -123,6 +127,15 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Scheduled(initialDelay = 10000, fixedDelay = CLEANUP_TASK_RATE)
 	public void cleanupAnalysisSubmissions() {
 		analysisExecutionScheduledTask().cleanupAnalysisSubmissions();
+	}
+	
+	/**
+	 * Check for any new events for users who are subscribed to projects and
+	 * email them
+	 */
+	@Scheduled(cron = "${irida.scheduled.subscription.cron}")
+	public void emailProjectEvents() {
+		eventEmailTask.emailUserTasks();
 	}
 
 	/**

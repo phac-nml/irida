@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title th:text="#{email.subscription.title}">_Recent Events_</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <style type="text/css">
+    .list-group {
+      list-style: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 th:text="#{email.subscription.title}">_Recent Events_</h1>
+  <div>
+    <p th:text="#{email.subscription.description}">_The following events have occured on your subscribed projects:_</p>
+    <ul class="list-group">
+      <li th:each="event : ${events}">
+        <span th:replace="fragments/event :: ${event.name} (${event.event})"></span> - 
+        <span class="event-date" th:text="${#dates.format(event.event.createdDate, dateFormat)}"></span>
+      </li>
+    </ul>
+  </div>
+  <p><span th:text="#{email.welcome.homepagedescription}">_The IRIDA Platform home page can be found at_</span>
+    <a href="#" th:href="${serverURL}" th:text="${serverURL}">_http://localhost:8080_</a>
+  </p>
+  <p><span th:text="#{email.subscription.unsubscribe}">_Update your subscription preferences at_</span>
+    <a href="#" th:href="${serverURL + '/users/' + user.getId()}" th:text="${serverURL + '/users/' + user.getId()}">_http://localhost:8080_</a>
+  </p>
+
+</body>
+
+</html>

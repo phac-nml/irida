@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.config;
+package ca.corefacility.bioinformatics.irida.config.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 /**
@@ -30,7 +31,6 @@ public class WebEmailConfig {
 
 	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
 	private static final String TEMPLATE_SUFFIX = ".html";
-	private static final String TEMPLATE_MODE = "VALIDXHTML";
 	private static final String CHARACER_ENCODING = "UTF-8";
 
 	@Value("${mail.server.host}")
@@ -60,7 +60,7 @@ public class WebEmailConfig {
 		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
 		classLoaderTemplateResolver.setPrefix(MAIL_TEMPLATE_PREFIX);
 		classLoaderTemplateResolver.setSuffix(TEMPLATE_SUFFIX);
-		classLoaderTemplateResolver.setTemplateMode(TEMPLATE_MODE);
+		classLoaderTemplateResolver.setTemplateMode(StandardTemplateModeHandlers.XHTML.getTemplateModeName());
 		classLoaderTemplateResolver.setCharacterEncoding(CHARACER_ENCODING);
 		return classLoaderTemplateResolver;
 	}

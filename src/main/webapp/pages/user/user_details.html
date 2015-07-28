@@ -10,7 +10,6 @@
 	<input id="userId" type="hidden" th:value="${user.getId()}"/>
 	<div class="col-md-12">
 		<div th:if="${mailFailure}" class="alert alert-warning" th:text="#{user.creation.activation.mail.failure}">
-			
 		</div>
 		<div class="row">
 			<div class="col-md-12">
@@ -128,13 +127,14 @@
 					</div>
 
 					<div class="panel-body">
-						<table id="projectsTable" class="table table-striped table-hover" th:unless="${#lists.isEmpty(projects)}">
+						<table id="projectsTable" class="table table-striped table-hover" th:unless="${#lists.isEmpty(projects)}" ng-controller="SubscriptionController as sub">
 							<thead>
 							<tr>
 								<th th:text="#{user.projects.id}">_ID_</th>
 								<th th:text="#{user.projects.name}">_NAME_</th>
 								<th th:text="#{user.projects.role}">_ROLE_</th>
 								<th th:text="#{user.projects.dateAdded}">_DATE_</th>
+                                <th th:if="${canEditUser and mailConfigured}" th:text="#{user.projects.subscriptions}">_Subscribed_</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -150,6 +150,9 @@
 								<td class="user-project-date"
 								    th:text="${#calendars.format(project.date, 'dd MMM yyyy')}">_DATE ADDED_
 								</td>
+                                <td align="center" th:if="${canEditUser and mailConfigured}">
+                                  <input class="subcription-checkbox" type="checkbox" th:checked="${project.subscribed}" th:value="${project.identifier}" value="0"/>
+                                </td>
 							</tr>
 							</tbody>
 						</table>
@@ -184,7 +187,8 @@
 		var PAGE = {
 			urls: {
 				reset: /*[[@{/password_reset/ajax/create/{id}(id=${user.getId()})}]]*/ 'password_reset/ajax/create/'
-			}
+			},
+            userId: /*[[${user.getId()}]]*/ 1
 		};
 
 		var pwd = angular.module('PasswordRest', []);
@@ -204,6 +208,40 @@
 					});
 			}
 		}]);
+      
+        pwd.service('SubscriptionService', ['$http', function($http){
+          var svc = this;
+          
+          svc.updateSubscription = function(userId, projectId, subscribe){
+            var urlBase = /*[[@{/events/projects/}]]*/ '/events/projects/';
+            urlBase += projectId + '/subscribe/' + userId;
+            var params = {subscribe:subscribe};
+            
+            return $http.post(urlBase, params);
+          };
+        }]);
+      
+        pwd.controller('SubscriptionController', ['SubscriptionService','notifications', function (SubscriptionService, notifications) {
+          var sub = this;
+          var title = /*[[#{user.projects.subscriptions}]]*/ 'Subscriptions';
+          var errorMessage = /*[[#{user.projects.subscriptions.error}]]*/ 'Error';
+          
+          angular.element(".subcription-checkbox").on("change", function(){
+            var box = $(this);
+            var projectId = box.val();
+            var subscribe = false;
+            if(box.is(":checked")){
+              subscribe = true;
+            }
+            
+            SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).success(function (data){
+              notifications.show({type: 'success', msg: data.message, title: title});
+            }).error(function (data){
+              notifications.show({type: 'error', msg: errorMessage, title: title});
+              box.attr('checked', false); 
+            });
+          });
+        }]);
 
 		pwd.controller('DetailsCtrl', ['$modal', function ($modal) {
 			"use strict";

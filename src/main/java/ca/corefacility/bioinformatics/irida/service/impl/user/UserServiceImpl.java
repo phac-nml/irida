@@ -28,10 +28,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -40,8 +43,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoi
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Implementation of the {@link UserService}.
@@ -343,6 +344,26 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException {
 		return userGroupRepository.getUsersForGroup(g);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public List<User> getUsersWithEmailSubscriptions() {
+		return pujRepository.getUsersWithSubscriptions();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#user, 'canUpdateUser')")
+	public ProjectUserJoin updateEmailSubscription(User user, Project project, boolean subscribed) {
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
+		projectJoinForUser.setEmailSubscription(subscribed);
+
+		return pujRepository.save(projectJoinForUser);
 	}
 
 	/**

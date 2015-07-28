@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -38,4 +41,17 @@ public interface ProjectEventRepository extends IridaJpaRepository<ProjectEvent,
 	 */
 	@Query("SELECT e FROM ProjectEvent e INNER JOIN e.project as p INNER JOIN p.users as u WHERE u.user=?1")
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
+
+	/**
+	 * Get all {@link ProjectEvent}s for a given {@link User} that occurred
+	 * after a given {@link Date}
+	 * 
+	 * @param user
+	 *            The {@link User} to get events for
+	 * @param startTime
+	 *            The {@link Date} to get events after
+	 * @return a List of {@link ProjectEvent}s
+	 */
+	@Query("SELECT e FROM ProjectEvent e INNER JOIN e.project as p INNER JOIN p.users as u WHERE u.user=?1 AND e.createdDate > ?2")
+	public List<ProjectEvent> getEventsForUserAfterDate(User user, Date startTime);
 }
