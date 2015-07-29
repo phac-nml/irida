@@ -12,12 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  *
@@ -26,6 +30,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 @RequestMapping(value = "/api/sequencingrun")
 public class RESTSequencingRunController extends RESTGenericController<SequencingRun> {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSequencingRunController.class);
+
+	public static final String MISEQ_REL = "sequencingRun/miseq";
 
 	/**
 	 * Default constructor. Should not be used.
@@ -38,7 +44,8 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * {@link ProjectService}.
 	 *
 	 * @param service
-	 *            the {@link SequencingRunService} to be used by this controller.
+	 *            the {@link SequencingRunService} to be used by this
+	 *            controller.
 	 */
 	@Autowired
 	public RESTSequencingRunController(SequencingRunService service) {
@@ -51,6 +58,17 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	public ModelMap createMiseqRun(@RequestBody MiseqRun representation, HttpServletResponse response) {
 		logger.trace("creating miseq run");
 		return create(representation, response);
+	}
+
+	@Override
+	public ModelMap listAllResources() {
+		ModelMap allResources = super.listAllResources();
+		IridaResourceSupport object = (IridaResourceSupport) allResources.get(RESOURCE_NAME);
+
+		// adding the rel to the miseq endpoint
+		object.add(linkTo(methodOn(RESTSequencingRunController.class).createMiseqRun(null, null)).withRel(MISEQ_REL));
+
+		return allResources;
 	}
 
 }
