@@ -29,7 +29,7 @@
               <option value="100">100</option>
             </select>
           </div>
-          <input type="hidden" id="eventURL" value="/events/current_user" th:value="@{/events/current_user}"/>
+          <div id="user_events"></div>
         </md-content>
       </div>
       <div th:if="${updates}" flex-gt-sm="33" class="md-whiteframe-z1" ng-controller="updateController as updateCtrl">
@@ -47,6 +47,9 @@
   <th:block layout:fragment="page-scripts">
     <script th:inline="javascript">
       var PAGE = {
+          urls: {
+              events: /*[[@{/events/current_user}]]*/ '/events/current_user'
+          },
           updates: /*[[${updates}]]*/ '## Nothing Here!'
       };
     </script>
