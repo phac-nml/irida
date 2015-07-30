@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 
+import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 
 
@@ -288,6 +289,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return Collection of links to add to the {@link ResourceCollection}
 	 */
 	protected Collection<Link> constructCollectionResourceLinks(ResourceCollection<Type> list) {
-		return Collections.emptySet();
+		return Sets.newHashSet();
 	}
 }
