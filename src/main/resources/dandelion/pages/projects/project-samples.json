@@ -1,0 +1,25 @@
+{
+  "bundle": "project-samples",
+  "dependencies": [
+    "select2",
+    "angular-busy"
+  ],
+  "assets": [
+    {
+      "name": "project-samples",
+      "version": "0.0.1",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/pages/project_samples.css"
+      }
+    },
+    {
+      "name": "project-samples",
+      "version": "0.0.1",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/samples.js"
+      }
+    }
+  ]
+}
