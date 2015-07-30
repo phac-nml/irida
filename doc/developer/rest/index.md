@@ -693,7 +693,7 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 | Name | Description |
 |------|-------------|
 | `self` | A link to the collection of sequencing runs. |
-| `sequencingRun/miseq` | A link to the endpoint to POST new Miseq Runs. |
+| `sequencingRun/miseq` | A link to the endpoint to POST new MiSeq Runs. |
 
 ##### Example response
 {:.no_toc}
