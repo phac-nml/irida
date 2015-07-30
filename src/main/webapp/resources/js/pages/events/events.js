@@ -18,7 +18,7 @@
         Accept: 'text/html'
       },
       success: function(data, textStatus, jqXHR) {
-        $('#user_events').html(data);
+        $('#events').html(data);
       }
     });
   }
