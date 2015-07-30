@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +64,6 @@ public class ExportUploadService {
 
 			createXml(submission);
 
-
 			logger.trace("Finished sleep " + submission.getId());
 
 			submission = exportSubmissionService.update(submission.getId(),
@@ -79,16 +76,44 @@ public class ExportUploadService {
 		final Context ctx = new Context();
 		ctx.setVariable("submission", submission);
 
-		Map<Sample, SequenceFilePair> samplesAndPairs = new HashMap<>();
-		submission.getPairFiles().forEach((p) -> {
-			Join<Sample, SequenceFile> join = sampleService.getSampleForSequenceFile(p.getForwardSequenceFile());
-			samplesAndPairs.put(join.getSubject(), p);
+		List<FileContainer> files = new ArrayList<>();
+
+		submission.getBioSampleFiles().forEach((b) -> {
+			b.getPairs().forEach((f) -> {
+				Join<Sample, SequenceFile> join = sampleService.getSampleForSequenceFile(f.getForwardSequenceFile());
+				files.add(new FileContainer(b.getBioSample(), join.getSubject(), f));
+			});
 		});
 
-		ctx.setVariable("samplesForPairs", samplesAndPairs);
+		ctx.setVariable("samplesForPairs", files);
 
 		final String htmlContent = templateEngine.process(NCBI_TEMPLATE, ctx);
 
 		logger.debug(htmlContent);
+	}
+
+	private class FileContainer {
+		String bioSample;
+		Sample sample;
+		SequenceFilePair pair;
+
+		public FileContainer(String bioSample, Sample sample, SequenceFilePair pair) {
+			this.bioSample = bioSample;
+			this.sample = sample;
+			this.pair = pair;
+		}
+
+		public String getBioSample() {
+			return bioSample;
+		}
+
+		public SequenceFilePair getPair() {
+			return pair;
+		}
+
+		public Sample getSample() {
+			return sample;
+		}
+
 	}
 }

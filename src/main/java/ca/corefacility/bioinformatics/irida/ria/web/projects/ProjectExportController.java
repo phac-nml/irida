@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -153,12 +155,19 @@ public class ProjectExportController {
 	public Map<String, Object> submitToNcbi(@PathVariable Long projectId, @RequestBody SubmissionBody submission) {
 		Project project = projectService.read(projectId);
 
-		List<SequenceFile> singleFiles = Lists.newArrayList(sequenceFileService.readMultiple(submission.getSingle()));
-		List<SequenceFilePair> pairFiles = Lists
-				.newArrayList(sequenceFilePairService.readMultiple(submission.getPaired()));
+		List<NcbiBioSampleFiles> bioSampleFiles = new ArrayList<>();
+
+		for (BioSampleBody sample : submission.getSamples()) {
+			List<SequenceFile> singleFiles = Lists.newArrayList(sequenceFileService.readMultiple(sample.getSingle()));
+			List<SequenceFilePair> paired = Lists
+					.newArrayList(sequenceFilePairService.readMultiple(sample.getPaired()));
+
+			bioSampleFiles.add(new NcbiBioSampleFiles(sample.getBioSample(), singleFiles, paired));
+		}
 
 		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submission.getBioProject(),
-				submission.getNamespace(), singleFiles, pairFiles);
+				submission.getNamespace(), bioSampleFiles);
+
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 
 		return ImmutableMap.of("submissionId", ncbiExportSubmission.getId());
@@ -176,20 +185,9 @@ public class ProjectExportController {
 		String namespace;
 
 		@JsonProperty
-		List<Long> single;
-
-		@JsonProperty
-		List<Long> paired;
+		List<BioSampleBody> samples;
 
 		public SubmissionBody() {
-		}
-
-		public List<Long> getSingle() {
-			return single;
-		}
-
-		public List<Long> getPaired() {
-			return paired;
 		}
 
 		public String getBioProject() {
@@ -200,5 +198,32 @@ public class ProjectExportController {
 			return namespace;
 		}
 
+		public List<BioSampleBody> getSamples() {
+			return samples;
+		}
+
+	}
+
+	protected static class BioSampleBody {
+		@JsonProperty
+		String bioSample;
+
+		@JsonProperty
+		List<Long> single;
+
+		@JsonProperty
+		List<Long> paired;
+
+		public String getBioSample() {
+			return bioSample;
+		}
+
+		public List<Long> getPaired() {
+			return paired;
+		}
+
+		public List<Long> getSingle() {
+			return single;
+		}
 	}
 }

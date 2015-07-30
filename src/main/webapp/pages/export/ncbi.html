@@ -34,7 +34,10 @@
           <h3>
             <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
           </h3>
-
+          <div class="form-group">
+            <label>_BioSample ID_</label>
+            <input class="form-control biosample" />
+          </div>
           <th:block th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
 								hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
             <table class="table" th:if="${hasPaired or hasSingles}">
@@ -81,23 +84,40 @@
         $(this).attr("disabled", "disabled");
         var single = [];
         var paired = [];
-        
+
         var bioProject = $('#bioProject').val();
         var namespace = $('#namespace').val();
-
-        $('.paired_files:checked').each(function() {
-          paired.push($(this).val());
-        });
-
-        $('.single_files:checked').each(function() {
-          single.push($(this).val());
+        
+        var samples = [];
+        
+        $(".sample-container").each(function(){
+          var sample = $(this);
+          
+          var paired = [];
+          var single = [];
+          
+          var biosample = sample.find(".biosample").val();
+          
+          sample.find('.paired_files:checked').each(function() {
+            paired.push($(this).val());
+          });
+          
+          $('.single_files:checked').each(function() {
+            single.push($(this).val());
+          });
+          
+          samples.push({
+            bioSample: biosample,
+            single: single,
+            paired: paired
+          });
+          
         });
 
         var submission = {
-          single: single,
-          paired: paired,
           bioProject: bioProject,
-          namespace: namespace
+          namespace: namespace,
+          samples: samples
         };
 
         $.ajax({
