@@ -43,4 +43,9 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 	public AnalysisOutputFile getSnpTable() {
 		return getAnalysisOutputFile("table");
 	}
+	
+	@JsonIgnore
+	public AnalysisOutputFile getCoreGenomeLog() {
+		return getAnalysisOutputFile("core");
+	}
 }

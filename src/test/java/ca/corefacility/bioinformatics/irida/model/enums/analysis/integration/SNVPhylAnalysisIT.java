@@ -101,9 +101,11 @@ public class SNVPhylAnalysisIT {
 
 	private Path outputSnpTable1;
 	private Path outputSnpMatrix1;
+	private Path vcf2core1;
 	
 	private Path outputSnpTable2;
 	private Path outputSnpMatrix2;
+	private Path vcf2core2;
 
 	/**
 	 * Sets up variables for testing.
@@ -170,9 +172,11 @@ public class SNVPhylAnalysisIT {
 
 		outputSnpTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpTable.tsv").toURI());
 		outputSnpMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpMatrix.tsv").toURI());
+		vcf2core1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/vcf2core.csv").toURI());
 		
 		outputSnpTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpTable.tsv").toURI());
 		outputSnpMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpMatrix.tsv").toURI());
+		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.csv").toURI());
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -225,7 +229,7 @@ public class SNVPhylAnalysisIT {
 				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals("the phylogenomics pipeline should have 3 output files.", 3, analysisPhylogenomics
+		assertEquals("the phylogenomics pipeline should have 4 output files.", 4, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
@@ -244,6 +248,15 @@ public class SNVPhylAnalysisIT {
 				com.google.common.io.Files.equal(outputSnpTable1.toFile(), analysisPhylogenomics.getSnpTable().getFile()
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
+				.getCreatedByTool());
+		@SuppressWarnings("resource")
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+//		assertTrue(
+//				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
+//				com.google.common.io.Files.equal(vcf2core1.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+//						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
 				.getCreatedByTool());
 		// only test to make sure the file has a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
@@ -309,7 +322,7 @@ public class SNVPhylAnalysisIT {
 				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals("the phylogenomics pipeline should have 3 output files.", 3, analysisPhylogenomics
+		assertEquals("the phylogenomics pipeline should have 4 output files.", 4, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
@@ -328,6 +341,15 @@ public class SNVPhylAnalysisIT {
 				com.google.common.io.Files.equal(outputSnpTable2.toFile(), analysisPhylogenomics.getSnpTable().getFile()
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
+				.getCreatedByTool());
+		@SuppressWarnings("resource")
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+//		assertTrue(
+//				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
+//				com.google.common.io.Files.equal(vcf2core2.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+//						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
 				.getCreatedByTool());
 		// only test to make sure the file has a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
