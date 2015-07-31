@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 
+import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 
 
@@ -118,6 +119,11 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		resources.add(linkTo(getClass()).withSelfRel());
 
 		ModelMap model = new ModelMap();
+
+		// get custom links for the collection
+		Collection<Link> constructCollectionResourceLinks = constructCollectionResourceLinks(resources);
+		resources.add(constructCollectionResourceLinks);
+		
 		model.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 		return model;
 	}
@@ -270,5 +276,19 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		modelMap.addAttribute(RESOURCE_NAME, rootResource);
 		// respond to the client
 		return modelMap;
+	}
+	
+	
+	/**
+	 * Get custom links to the ResourceCollection being called by
+	 * {@link RESTGenericController#listAllResources()}. This method can be
+	 * overridden by extending classes to add links to the returned list.
+	 * 
+	 * @param list
+	 *            {@link ResourceCollection} to add links to
+	 * @return Collection of links to add to the {@link ResourceCollection}
+	 */
+	protected Collection<Link> constructCollectionResourceLinks(ResourceCollection<Type> list) {
+		return Sets.newHashSet();
 	}
 }

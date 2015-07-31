@@ -1,4 +1,4 @@
-(function($, tl) {
+(function($, page) {
   $(function() {
     getEvents($('#size').val());
 
@@ -8,10 +8,9 @@
   });
 
   function getEvents(size) {
-    var eventUrl = $('#eventURL').val();
     $.ajax({
       method: 'GET',
-      url: eventUrl,
+      url: page.urls.events,
       data: {
         size: size
       },
@@ -24,4 +23,4 @@
     });
   }
 
-})(window.jQuery, window.TL);
+})(window.jQuery, window.PAGE);
