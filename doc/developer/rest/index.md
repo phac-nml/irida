@@ -730,7 +730,7 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 
 #### Creating Sequencing Runs
 {:no_toc}
-Sequencing runs are created differently from other resources.  To differentiate between different sequencer models alternate endpoints are exposed to create runs for each model.  To create a Sequencing Run for a given sequencer, `POST` the resource to the spcific endpoint for that sequencer.  The following rels are enabled:
+Sequencing runs are created differently from other resources.  To differentiate between different sequencer models alternate endpoints are exposed to create runs for each model.  To create a Sequencing Run for a given sequencer, `POST` the resource to the specific endpoint for that sequencer.  The following rels are enabled:
 
 |Sequencer     | Rel |
 |--------------|-------------|
