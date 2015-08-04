@@ -29,14 +29,55 @@
       <label class="col-sm-2 control-label" th:text="#{project.export.files}">_Files_</label>
 
       <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
-        <div class="alert alert-info" role="alert" th:text="#{project.export.files.description}">_Select files_</div>
+        <div class="alert alert-info" role="alert" th:utext="#{project.export.files.description}">_Select files_</div>
         <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" class="sample-container" th:each="sample : ${samples}">
           <h3>
             <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
           </h3>
-          <div class="form-group">
-            <label>_BioSample ID_</label>
-            <input class="form-control biosample" />
+          <div class="row">
+            <form class="metadata-form">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>_BioSample ID_</label>
+                <input class="form-control biosample" name="biosample" tooltip="_NCBI BioSample to add files to.  This sample must be created in NCBI before submission._" />
+              </div>
+              <div class="form-group">
+                <label th:text="#{project.export.instrument_model.title}">_Instrument Model_</label>
+                <select class="form-control instrument_model" name="instrument_model" th:attr="tooltip=#{project.export.instrument_model.descripton}">
+                  <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label th:text="#{project.export.library_name.title}">_Library Name_</label>
+                <input class="form-control library_name" name="library_name" th:attr="tooltip=#{project.export.library_name.description}"/>
+              </div>
+              <div class="form-group">
+                <label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label>
+                <input class="form-control library_construction_protocol" name="library_construction_protocol" th:attr="tooltip=#{project.export.library_construction_protocol.description}"/>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label th:text="#{project.export.library_strategy.title}">_Library Strategy_</label>
+                <select class="form-control library_strategy" name="library_strategy" th:attr="tooltip=#{project.export.library_strategy.description}">
+                  <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label th:text="#{project.export.library_selection.title}">_Library Selection_</label>
+                <select class="form-control library_selection" name="library_selection" th:attr="tooltip=#{project.export.library_selection.description}">
+                  <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label th:text="#{project.export.library_source.title}">_Library Source_</label>
+                <select class="form-control library_source" name="library_source" th:attr="tooltip=#{project.export.library_source.description}">
+                  <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
+                </select>
+              </div>
+
+            </div>
+            </form>
           </div>
           <th:block th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
 								hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
@@ -87,31 +128,38 @@
 
         var bioProject = $('#bioProject').val();
         var namespace = $('#namespace').val();
-        
+
         var samples = [];
-        
-        $(".sample-container").each(function(){
+
+        $(".sample-container").each(function() {
           var sample = $(this);
           
+          var form = sample.find(".metadata-form");
+          
+          var data = {};
+          var val = form.serializeArray().map(function(x){data[x.name] = x.value;});
+
           var paired = [];
           var single = [];
-          
+
           var biosample = sample.find(".biosample").val();
-          
+          var instrument_model = sample.find(".instrument_model").val();
+
           sample.find('.paired_files:checked').each(function() {
             paired.push($(this).val());
           });
-          
+
           $('.single_files:checked').each(function() {
             single.push($(this).val());
           });
-          
+
           samples.push({
             bioSample: biosample,
+            instrument_model: instrument_model,
             single: single,
             paired: paired
           });
-          
+
         });
 
         var submission = {
@@ -128,10 +176,9 @@
           success: function(data, textStatus, jqXHR) {
             var url = /*[[@{/export/submission/}]]*/ '/export/submission/';
             url = url + data.submissionId;
-            window.location = url;
+            //window.location = url;
           }
         });
-        console.log(submission);
       });
 
       /*

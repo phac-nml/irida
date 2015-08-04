@@ -1,4 +1,54 @@
 <?xml version='1.0' encoding='utf-8'?>
+
+<Submission schema_version="2.0" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
+  <Description>
+    <Comment>BP(1.0)+BS(1.0)+SRA</Comment>
+    <Organization role="owner" type="institute">
+      <Name>Institute of Biology</Name>
+      <Contact email="jane.doe@domain.com">
+        <Name>
+          <First>jane</First>
+          <Last>doe</Last>
+        </Name>
+      </Contact>
+    </Organization>
+    <Hold release_date='2015-10-21'></Hold>
+  </Description>
+  
+  <Action>
+    <AddFiles target_db="SRA" >
+      <File file_path="file_name.fastq">
+        <DataType>generic-data</DataType>
+      </File>
+      <File file_path="file_name_2.fastq" >
+        <DataType>generic-data</DataType>
+      </File>
+      <Attribute name="instrument_model">Illumina HiSeq 2500</Attribute><!-- controlled vocabulary -->
+      <Attribute name="library_name">Salmonella enterica str. CFSAN006236_01 shotgun</Attribute>
+      <Attribute name="library_strategy">WGS</Attribute><!-- controlled vocabulary -->
+      <Attribute name="library_source">GENOMIC</Attribute><!-- controlled vocabulary -->
+      <Attribute name="library_selection">RANDOM</Attribute><!-- controlled vocabulary -->
+      <Attribute name="library_layout">PAIRED</Attribute> <!-- controlled vocabulary -->
+      <Attribute name="library_construction_protocol">Illumina Nextera XT library created for Salmonella enterica subsp. enterica serovar Newport str. CIES-13-0265.paired</Attribute>
+      <AttributeRefId name="BioProject">
+        <RefId>
+          <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+        </RefId>
+      </AttributeRefId>
+      <AttributeRefId name="BioSample">
+        <RefId>
+          <PrimaryId db="BioSample">SAMN02335374</PrimaryId>
+        </RefId>
+      </AttributeRefId>
+      <Identifier>
+        <SPUID spuid_namespace="CFSAN">CFSAN006236_01:3</SPUID>
+      </Identifier>
+    </AddFiles>
+  </Action>
+</Submission>
+
 <Submission schema_version="2.0" xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">

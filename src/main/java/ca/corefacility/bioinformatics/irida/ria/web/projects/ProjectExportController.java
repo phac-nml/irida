@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiInstrumentModel;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySelection;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySource;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -138,6 +142,11 @@ public class ProjectExportController {
 		model.addAttribute("newestSingles", checkedSingles);
 		model.addAttribute("newestPairs", checkedPairs);
 
+		model.addAttribute("instrument_model", NcbiInstrumentModel.values());
+		model.addAttribute("library_selection", NcbiLibrarySelection.values());
+		model.addAttribute("library_source", NcbiLibrarySource.values());
+		model.addAttribute("library_strategy",NcbiLibraryStrategy.values());
+
 		return NCBI_EXPORT_VIEW;
 	}
 
@@ -162,7 +171,9 @@ public class ProjectExportController {
 			List<SequenceFilePair> paired = Lists
 					.newArrayList(sequenceFilePairService.readMultiple(sample.getPaired()));
 
-			bioSampleFiles.add(new NcbiBioSampleFiles(sample.getBioSample(), singleFiles, paired));
+			NcbiBioSampleFiles sampleFiles = new NcbiBioSampleFiles(sample.getBioSample(), singleFiles, paired);
+			sampleFiles.setInstrument_model(sample.getInstrument_model());
+			bioSampleFiles.add(sampleFiles);
 		}
 
 		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submission.getBioProject(),
@@ -214,6 +225,9 @@ public class ProjectExportController {
 		@JsonProperty
 		List<Long> paired;
 
+		@JsonProperty
+		NcbiInstrumentModel instrument_model;
+
 		public String getBioSample() {
 			return bioSample;
 		}
@@ -224,6 +238,10 @@ public class ProjectExportController {
 
 		public List<Long> getSingle() {
 			return single;
+		}
+
+		public NcbiInstrumentModel getInstrument_model() {
+			return instrument_model;
 		}
 	}
 }

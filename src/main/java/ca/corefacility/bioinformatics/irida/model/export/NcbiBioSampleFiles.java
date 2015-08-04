@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,6 +38,9 @@ public class NcbiBioSampleFiles {
 
 	@ManyToMany
 	private List<SequenceFilePair> pairs;
+	
+	@Enumerated(EnumType.STRING)
+	NcbiInstrumentModel instrument_model;
 
 	public NcbiBioSampleFiles(String bioSample) {
 		this.bioSample = bioSample;
@@ -69,5 +74,13 @@ public class NcbiBioSampleFiles {
 
 	public void setPairs(List<SequenceFilePair> pairs) {
 		this.pairs = pairs;
+	}
+	
+	public NcbiInstrumentModel getInstrument_model() {
+		return instrument_model;
+	}
+	
+	public void setInstrument_model(NcbiInstrumentModel instrument_model) {
+		this.instrument_model = instrument_model;
 	}
 }
