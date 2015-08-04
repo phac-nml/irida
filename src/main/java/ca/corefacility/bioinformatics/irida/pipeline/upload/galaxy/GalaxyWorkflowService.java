@@ -3,76 +3,47 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
-
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.sun.jersey.api.client.ClientResponse;
 
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
+
 /**
  * Handles operating with workflows in Galaxy.
  *
  */
 public class GalaxyWorkflowService {
-			
-	private HistoriesClient historiesClient;
 	private WorkflowsClient workflowsClient;
 	
 	private final Charset workflowCharset;
 	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
-	 * @param historiesClient  The HistoriesClient used to connect to Galaxy histories.
 	 * @param workflowsClient  The WorkflowsClient used to connect to Galaxy workflows.
 	 * @param workflowCharset  The {@link Charset} to use for reading in workflows from files.
 	 */
-	public GalaxyWorkflowService(HistoriesClient historiesClient,
+	public GalaxyWorkflowService(
 			WorkflowsClient workflowsClient, Charset workflowCharset) {
-		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(workflowsClient, "workflowsClient is null");
 		checkNotNull(workflowCharset, "workflowCharset is null");
 		
-		this.historiesClient = historiesClient;
 		this.workflowsClient = workflowsClient;
 		this.workflowCharset = workflowCharset;
 	}
-	
-	/**
-	 * Checks whether or not the given workflow id is valid.
-	 * @param workflowId  A workflow id to check.
-	 * @return True if the workflow is valid, false otherwise.
-	 */
-	public boolean isWorkflowIdValid(String workflowId) {
 
-		if (workflowId != null) {
-			try {
-				return workflowsClient.showWorkflow(workflowId) != null;
-			} catch (Exception e) {
-			}
-		}
-
-		return false;
-	}
-	
 	/**
 	 * Uploads a workflow definined in the given file to Galaxy.
 	 * @param workflowFile  The file to upload.
@@ -117,33 +88,7 @@ public class GalaxyWorkflowService {
 			throw new WorkflowException("Cannot find workflowInputId for input label " + workflowInputLabel);
 		}
 	}
-
-	/**
-	 * Gets a list of download URLs for the given passed WorkflowOutputs.
-	 * @param workflowOutputs  A list of WorkflowOutputs to find the download URLs for.
-	 * @return  A list of download URLs for each workflow output.
-	 * @throws GalaxyOutputsForWorkflowException If there was an error getting information about
-	 * 	the workflow outputs.
-	 */
-	public List<URL> getWorkflowOutputDownloadURLs(
-			WorkflowOutputs workflowOutputs) throws GalaxyOutputsForWorkflowException {
-		checkNotNull(workflowOutputs, "workflowOutputs is null");
-		
-		List<URL> workflowDownloadURLs = new LinkedList<URL>();
-				
-		try {
-			for(String outputId : workflowOutputs.getOutputIds()) {
-				Dataset dataset = historiesClient.showDataset(workflowOutputs.getHistoryId(), outputId);
-				URL downloadURL = new URL(dataset.getFullDownloadUrl());
-				workflowDownloadURLs.add(downloadURL);
-			}
-			
-			return workflowDownloadURLs;
-		} catch (RuntimeException | MalformedURLException e) {
-			throw new GalaxyOutputsForWorkflowException(e);
-		}
-	}
-
+	
 	/**
 	 * Gets details about a given workflow.
 	 * 

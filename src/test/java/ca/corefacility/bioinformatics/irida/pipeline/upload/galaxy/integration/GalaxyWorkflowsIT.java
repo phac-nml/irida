@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,29 +32,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
-import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
@@ -70,6 +52,22 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatas
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.ImmutableMap;
+
+import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
 /**
  * Integration tests for managing workflows in Galaxy.
@@ -103,8 +101,6 @@ public class GalaxyWorkflowsIT {
 	private LibrariesClient librariesClient;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	private GalaxyHistoriesService galaxyHistory;
-	
-	private static final String INVALID_HISTORY_ID = "1";
 	
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	private static final InputFileType INVALID_FILE_TYPE = null;
@@ -168,13 +164,30 @@ public class GalaxyWorkflowsIT {
 		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
-			= new GalaxyWorkflowService(historiesClient, workflowsClient, StandardCharsets.UTF_8);		
+			= new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);		
 	}
 	
 	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
-		if (!galaxyWorkflowService.isWorkflowIdValid(workflowId)) {
+		if (isWorkflowIdValid(workflowId)) {
 			throw new WorkflowException("Workflow id " + workflowId + " is not valid");
 		}
+	}
+	
+	/**
+	 * Checks whether or not the given workflow id is valid.
+	 * @param workflowId  A workflow id to check.
+	 * @return True if the workflow is valid, false otherwise.
+	 */
+	public boolean isWorkflowIdValid(String workflowId) {
+
+		if (workflowId != null) {
+			try {
+				return workflowsClient.showWorkflow(workflowId) != null;
+			} catch (Exception e) {
+			}
+		}
+
+		return false;
 	}
 	
 	/**
@@ -724,47 +737,6 @@ public class GalaxyWorkflowsIT {
 	public void testGetWorkflowDetailsFail() throws WorkflowException {
 		String workflowId = localGalaxy.getInvalidWorkflowId();
 		assertNotNull(galaxyWorkflowService.getWorkflowDetails(workflowId));
-	}
-	
-	/**
-	 * Tests getting download URLs for workflow outputs. 
-	 * @throws ExecutionManagerException
-	 */
-	@Test
-	public void testGetWorkflowOutputFiles() throws ExecutionManagerException {
-		
-		String workflowId = localGalaxy.getSingleInputWorkflowId();
-		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		
-		WorkflowOutputs workflowOutput = 
-				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
-		
-		List<URL> outputURLs = galaxyWorkflowService.getWorkflowOutputDownloadURLs(workflowOutput);
-		assertNotNull(outputURLs);
-		assertEquals(1, outputURLs.size());
-		
-		URL singleOutputURL = outputURLs.get(0);
-		assertNotNull(singleOutputURL);
-	}
-	
-	/**
-	 * Tests getting download URLs for invalid workflow outputs.
-	 * @throws ExecutionManagerException
-	 */
-	@Test(expected=GalaxyOutputsForWorkflowException.class)
-	public void testGetWorkflowNoOutputFiles() throws ExecutionManagerException {
-		
-		String workflowId = localGalaxy.getSingleInputWorkflowId();
-		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		
-		WorkflowOutputs workflowOutput = 
-				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
-		
-		List<String> fakeOutputIds = new LinkedList<String>();
-		fakeOutputIds.add(INVALID_HISTORY_ID);
-		workflowOutput.setOutputIds(fakeOutputIds);
-		
-		galaxyWorkflowService.getWorkflowOutputDownloadURLs(workflowOutput);
 	}
 	
 	/**

@@ -206,7 +206,7 @@ public class ExecutionManagerConfig {
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() throws ExecutionManagerConfigurationException {
-		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), StandardCharsets.UTF_8);
+		return new GalaxyWorkflowService(workflowsClient(), StandardCharsets.UTF_8);
 	}
 
 	/**

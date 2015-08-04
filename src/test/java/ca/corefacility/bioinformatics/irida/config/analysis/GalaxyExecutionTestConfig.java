@@ -60,9 +60,8 @@ public class GalaxyExecutionTestConfig {
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 
-		return new GalaxyWorkflowService(historiesClient, workflowsClient, StandardCharsets.UTF_8);
+		return new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
 	}
 }
