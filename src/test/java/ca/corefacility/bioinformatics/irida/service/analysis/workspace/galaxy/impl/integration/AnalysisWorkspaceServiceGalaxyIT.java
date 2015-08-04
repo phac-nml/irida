@@ -76,7 +76,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Work
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -112,9 +111,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-
+	
 	@Autowired
-	private GalaxyLibraryContentSearch galaxyLibraryContentSearch;
+	private GalaxyLibrariesService galaxyLibrariesService;
 
 	private GalaxyHistoriesService galaxyHistoriesService;
 	
@@ -294,7 +293,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 		
 		// verify correct library is created
-		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibraryContentSearch
+		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibrariesService
 				.libraryContentAsMap(preparedWorkflow.getRemoteDataId());
 		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
 		String sequenceFileALibraryName = "/" + sequenceFilePathA.getFileName().toString();
@@ -400,7 +399,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 		
 		// verify correct library is created
-		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibraryContentSearch
+		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibrariesService
 				.libraryContentAsMap(preparedWorkflow.getRemoteDataId());
 		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
 		String sequenceFile1ALibraryName = "/" + sequenceFilePathA.getFileName().toString();

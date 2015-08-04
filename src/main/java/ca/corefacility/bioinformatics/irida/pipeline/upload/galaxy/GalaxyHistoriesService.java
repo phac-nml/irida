@@ -19,21 +19,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
-
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
@@ -53,6 +38,21 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
+
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
 
 /**
  * Class for working with Galaxy Histories.

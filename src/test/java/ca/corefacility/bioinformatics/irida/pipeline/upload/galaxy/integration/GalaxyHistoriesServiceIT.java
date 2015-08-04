@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,28 +29,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
-
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -67,6 +48,27 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.ClientResponse;
 
+import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
+
 /**
  * Tests for building Galaxy histories.
  *
@@ -85,6 +87,7 @@ public class GalaxyHistoriesServiceIT {
 	
 	private GalaxyHistoriesService galaxyHistory;
 	private GalaxyInstance galaxyInstanceAdmin;
+	private GalaxyLibrariesService galaxyLibrariesService;
 	
 	private Path dataFile;
 	private Path dataFile2;
@@ -119,7 +122,7 @@ public class GalaxyHistoriesServiceIT {
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
 				galaxyLibrariesService);
@@ -151,8 +154,6 @@ public class GalaxyHistoriesServiceIT {
 	 */
 	private String setupLibraries(Library testLibrary, GalaxyInstance galaxyInstanceAdmin) throws CreateLibraryException, ExecutionManagerObjectNotFoundException {
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyLibraryContentSearch galaxyLibraryContentSearch =
-				new GalaxyLibraryContentSearch(librariesClient, localGalaxy.getGalaxyURL());
 		
 		LibraryContent rootFolder = librariesClient.getRootFolder(testLibrary.getId());
 		assertNotNull(rootFolder);
@@ -170,7 +171,7 @@ public class GalaxyHistoriesServiceIT {
 				.getClientResponseStatus());
 		
 		Map<String, List<LibraryContent>> libraryContent = 
-				galaxyLibraryContentSearch.libraryContentAsMap(testLibrary.getId());
+				galaxyLibrariesService.libraryContentAsMap(testLibrary.getId());
 		LibraryContent fileContent = libraryContent.get("/" + dataFile.toFile().getName()).get(0);
 		assertNotNull(fileContent);
 		

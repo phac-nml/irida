@@ -19,11 +19,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 
-import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.galaxybootstrap.BootStrapper;
 import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
@@ -32,6 +27,10 @@ import com.github.jmchilton.galaxybootstrap.GalaxyData;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.google.common.base.Optional;
+
+import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
 /**
  * Builds a local running instance of Galaxy (requires mercurial and python) for integration testing.
@@ -96,18 +95,6 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	private static final String LATEST_REVISION_STRING = "latest";
 	private static final String DEFAULT_REPSITORY_URL = "https://bitbucket.org/galaxy/galaxy-dist";
 	private static final String DEFAULT_BRANCH = "default";
-	
-	/**
-	 * Builds a {@link GalaxyLibraryContentSearch} object for testing against a running Galaxy.
-	 * @return  A {@link GalaxyLibraryContentSearch} object connected to a running instance of Galaxy.
-	 * @throws Exception 
-	 */
-	@Lazy
-	@Bean
-	public GalaxyLibraryContentSearch galaxyLibraryContentSearch() throws Exception {
-		return new GalaxyLibraryContentSearch(localGalaxy().getGalaxyInstanceAdmin().getLibrariesClient(),
-				localGalaxy().getGalaxyURL());
-	}
 
 	/**
 	 * Builds a new LocalGalaxy allowing for connecting with a running Galaxy instance.
