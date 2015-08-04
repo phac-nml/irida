@@ -24,8 +24,8 @@ import com.github.jmchilton.galaxybootstrap.BootStrapper;
 import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
 import com.github.jmchilton.galaxybootstrap.DownloadProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData;
-import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
+import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 import com.google.common.base.Optional;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;

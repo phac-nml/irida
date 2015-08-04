@@ -11,16 +11,13 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.collect.ImmutableMap;
+import org.springframework.core.io.FileSystemResource;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -31,6 +28,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+
+import com.google.common.collect.ImmutableMap;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * REST controller to manage sharing of {@link AnalysisSubmission},

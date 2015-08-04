@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
@@ -22,14 +22,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
-import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
-import com.github.jmchilton.blend4j.galaxy.beans.Library;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
-import com.sun.jersey.api.client.ClientResponse;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
@@ -37,6 +29,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObject
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
+
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
+import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
+import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * A service class for dealing with Galaxy libraries.
@@ -121,6 +121,7 @@ public class GalaxyLibrariesService {
 	 * 
 	 * @param libraryId
 	 *            The library to get all contents from.
+	 *            
 	 * @return A Map mapping the path of the library content to a list of
 	 *         {@link LibraryContent} objects.
 	 * @throws ExecutionManagerObjectNotFoundException  if the library cannot be found

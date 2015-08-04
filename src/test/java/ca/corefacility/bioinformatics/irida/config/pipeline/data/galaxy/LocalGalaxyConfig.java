@@ -1,4 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
+
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
 /**
