@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -31,8 +30,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
@@ -48,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 
@@ -65,13 +61,6 @@ public class GalaxyHistoriesService {
 	private ToolsClient toolsClient;
 	
 	private GalaxyLibrariesService librariesService;
-	
-	private static final String FORWARD_PAIR_NAME = "forward";
-	private static final String REVERSE_PAIR_NAME = "reverse";
-	
-	private static final String BASE_NAME = "file";
-	
-	private static final String COLLECTION_NAME = "collection";
 	
 	/**
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
@@ -238,56 +227,6 @@ public class GalaxyHistoriesService {
 	}
 	
 	/**
-	 * Constructs a collection containing a list of files from the given datasets.
-	 * @param inputDatasetsForward  The forward datasets to construct a collection from.
-	 * @param inputDatasetsReverse  The reverse datasets to construct a collection from.
-	 * @param history  The history to construct the collection within.
-	 * @return  A CollectionResponse describing the dataset collection.
-	 * @throws ExecutionManagerException  If an exception occured constructing the collection.
-	 */
-	public CollectionResponse constructPairedFileCollection(List<Dataset> inputDatasetsForward,
-			List<Dataset> inputDatasetsReverse, History history) throws ExecutionManagerException {
-		checkNotNull(inputDatasetsForward, "inputDatasetsForward is null");
-		checkNotNull(inputDatasetsReverse, "inputDatasetsReverse is null");
-		checkNotNull(history, "history is null");
-		checkNotNull(history.getId(), "history does not have an associated id");
-		checkArgument(inputDatasetsForward.size() == inputDatasetsReverse.size(),
-				"inputDatasets do not have equal sizes");
-		
-		CollectionDescription collectionDescription = new CollectionDescription();
-		collectionDescription.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
-		collectionDescription.setName(COLLECTION_NAME);
-		
-		for (int i = 0; i < inputDatasetsForward.size(); i++) {
-			Dataset datasetForward = inputDatasetsForward.get(i);
-			Dataset datasetReverse = inputDatasetsReverse.get(i);
-			
-			HistoryDatasetElement elementForward = new HistoryDatasetElement();
-			elementForward.setId(datasetForward.getId());
-			elementForward.setName(FORWARD_PAIR_NAME);
-			
-			HistoryDatasetElement elementReverse = new HistoryDatasetElement();
-			elementReverse.setId(datasetReverse.getId());
-			elementReverse.setName(REVERSE_PAIR_NAME);
-			
-		    // Create an object to link together the forward and reverse reads for file2
-		    CollectionElement element = new CollectionElement();
-		    element.setName(BASE_NAME + i);
-		    element.setCollectionType(DatasetCollectionType.PAIRED.toString());
-		    element.addCollectionElement(elementForward);
-		    element.addCollectionElement(elementReverse);
-			
-			collectionDescription.addDatasetElement(element);
-		}
-		
-		try {
-			return historiesClient.createDatasetCollection(history.getId(), collectionDescription);
-		} catch (RuntimeException e) {
-			throw new ExecutionManagerException("Could not construct dataset collection", e);
-		}
-	}
-	
-	/**
 	 * Builds a new Dataset Collection given the description of this collection.
 	 * @param collectionDescription  A description of the collection to build.
 	 * @param history  The history to build the collection within.
@@ -304,36 +243,7 @@ public class GalaxyHistoriesService {
 		} catch (RuntimeException e) {
 			throw new ExecutionManagerException("Could not construct dataset collection", e);
 		}
-	}
-	
-	/**
-	 * Constructs a collection containing a list of datasets within a history.
-	 * @param datasets  The datasets to construct a collection around.
-	 * @param history  The history to construct the collection within.
-	 * @return  A CollectionResponse describing the dataset collection.
-	 * @throws ExecutionManagerException  If an exception occured constructing the collection.
-	 */
-	public CollectionResponse constructCollectionList(List<Dataset> datasets,
-			History history) throws ExecutionManagerException {
-		checkNotNull(datasets, "datasets is null");
-		checkNotNull(history, "history is null");
-		checkNotNull(history.getId(), "history does not have an associated id");
-		
-		CollectionDescription collectionDescription = new CollectionDescription();
-		collectionDescription.setCollectionType(DatasetCollectionType.LIST.toString());
-		collectionDescription.setName(COLLECTION_NAME);
-		
-		for (Dataset dataset : datasets) {
-			HistoryDatasetElement element = new HistoryDatasetElement();
-			element.setId(dataset.getId());
-			element.setName(dataset.getName());
-			
-			collectionDescription.addDatasetElement(element);
-		}
-		
-		return constructCollection(collectionDescription, history);
-	}
-	
+	}	
 	
 	/**
 	 * Gets a Dataset object for a file with the given name in the given history.

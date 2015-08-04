@@ -289,56 +289,6 @@ public class GalaxyHistoriesServiceTest {
 		
 		galaxyHistory.fileToHistory(dataFile, FILE_TYPE, createdHistory);
 	}
-		
-	/**
-	 * Tests successfull execution of constructing a list of paired-end files dataset collection.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testConstructPairedFileCollectionSuccess() throws ExecutionManagerException {
-		CollectionResponse collectionResponse = new CollectionResponse();
-		
-		History history = new History();
-		history.setId(HISTORY_ID);
-		
-		Dataset datasetForward = new Dataset();
-		datasetForward.setId(DATA_ID);
-		List<Dataset> inputDatasetsForward = Arrays.asList(datasetForward);
-		
-		Dataset datasetReverse = new Dataset();
-		datasetReverse.setId(DATA_ID_2);
-		List<Dataset> inputDatasetsReverse = Arrays.asList(datasetReverse);
-		
-		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
-			thenReturn(collectionResponse);
-		
-		assertEquals(collectionResponse,galaxyHistory.constructPairedFileCollection(
-				inputDatasetsForward, inputDatasetsReverse, history));
-	}
-	
-	/**
-	 * Tests failure to construct a list of paired-end files dataset collection.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=ExecutionManagerException.class)
-	public void testConstructPairedFileCollectionFail() throws ExecutionManagerException {	
-		History history = new History();
-		history.setId(HISTORY_ID);
-		
-		Dataset datasetForward = new Dataset();
-		datasetForward.setId(DATA_ID);
-		List<Dataset> inputDatasetsForward = Arrays.asList(datasetForward);
-		
-		Dataset datasetReverse = new Dataset();
-		datasetReverse.setId(DATA_ID_2);
-		List<Dataset> inputDatasetsReverse = Arrays.asList(datasetReverse);
-		
-		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
-			thenThrow(new RuntimeException());
-		
-		galaxyHistory.constructPairedFileCollection(inputDatasetsForward,
-				inputDatasetsReverse, history);
-	}
 	
 	/**
 	 * Tests successfull construction of a dataset collection.
@@ -381,47 +331,6 @@ public class GalaxyHistoriesServiceTest {
 			thenThrow(new RuntimeException());
 		
 		galaxyHistory.constructCollection(description, history);
-	}
-	
-	/**
-	 * Tests successfull construction of a list of datasets.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testConstructCollectionListSuccess() throws ExecutionManagerException {
-		CollectionResponse collectionResponse = new CollectionResponse();
-		
-		History history = new History();
-		history.setId(HISTORY_ID);
-		
-		Dataset datasetForward = new Dataset();
-		datasetForward.setId(DATA_ID);
-		List<Dataset> datasets = Arrays.asList(datasetForward);
-		
-		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
-			thenReturn(collectionResponse);
-		
-		assertEquals(collectionResponse,galaxyHistory.constructCollectionList(
-				datasets, history));
-	}
-	
-	/**
-	 * Tests failure to construct of a list of datasets.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=ExecutionManagerException.class)
-	public void testConstructCollectionListFail() throws ExecutionManagerException {		
-		History history = new History();
-		history.setId(HISTORY_ID);
-		
-		Dataset datasetForward = new Dataset();
-		datasetForward.setId(DATA_ID);
-		List<Dataset> datasets = Arrays.asList(datasetForward);
-		
-		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
-			thenThrow(new RuntimeException());
-		
-		galaxyHistory.constructCollectionList(datasets, history);
 	}
 	
 	/**

@@ -11,7 +11,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -275,40 +274,6 @@ public class GalaxyHistoriesServiceIT {
 		description.addDatasetElement(elementInvalid);
 		
 		galaxyHistory.constructCollection(description, history);
-	}
-	
-	/**
-	 * Tests out successfully constructing a collection list of datasets.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testConstructCollectionListSuccess() throws ExecutionManagerException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
-		Dataset dataset2 = galaxyHistory.fileToHistory(dataFile2, FILE_TYPE, history);
-		assertNotNull(dataset1);
-		assertNotNull(dataset2);
-		
-		CollectionResponse collectionResponse = 
-				galaxyHistory.constructCollectionList(Arrays.asList(dataset1, dataset2), history);
-		assertNotNull(collectionResponse);
-		assertEquals(DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType());
-		assertEquals(history.getId(), collectionResponse.getHistoryId());
-	}
-	
-	/**
-	 * Tests out failure to construct a collection list of datasets.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=ExecutionManagerException.class)
-	public void testConstructCollectionListFail() throws ExecutionManagerException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
-		Dataset datasetInvalid = new Dataset();
-		datasetInvalid.setId("invalidId");
-		assertNotNull(dataset1);
-		
-		galaxyHistory.constructCollectionList(Arrays.asList(dataset1, datasetInvalid), history);
 	}
 	
 	/**
