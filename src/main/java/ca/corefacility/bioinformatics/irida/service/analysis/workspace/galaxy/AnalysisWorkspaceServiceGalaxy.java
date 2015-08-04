@@ -98,7 +98,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            {@link SequenceFileService}
 	 * @param sequenceFilePairService
 	 *            {@link SequenceFilePairService}
-	 * @param libraryBuilder
+	 * @param galaxyLibrariesService
 	 *            An object for building libraries in Galaxy.
 	 * @param iridaWorkflowsService
 	 *            A service used for loading workflows from IRIDA.
