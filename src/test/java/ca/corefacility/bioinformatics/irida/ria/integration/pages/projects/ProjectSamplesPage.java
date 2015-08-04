@@ -54,6 +54,10 @@ public class ProjectSamplesPage extends AbstractPage {
 		return driver.findElements(By.className("sample-row")).size();
 	}
 
+	public int getNumberOfRemoteSamplesDisplayed() {
+		return driver.findElements(By.cssSelector(".sample-row.remote-sample")).size();
+	}
+
 	public int getGetSelectedPageNumber() {
 		return Integer.parseInt(driver.findElement(By.cssSelector(".pagination li.active")).getText());
 	}
@@ -136,6 +140,12 @@ public class ProjectSamplesPage extends AbstractPage {
 		List<WebElement> inputs = driver.findElements(By.className("large-checkbox"));
 		inputs.get(row).click();
 	}
+	
+	public void selectSampleByClass(String sampleClass){
+		List<WebElement> findElements = driver.findElements(By.cssSelector(".sample-row."+sampleClass));
+		WebElement checkbox = findElements.iterator().next().findElement(By.className("large-checkbox"));
+		checkbox.click();
+	}
 
 	public boolean isRowSelected(int row) {
 		List<WebElement> rows = driver.findElements(By.className("sample-row"));
@@ -184,6 +194,10 @@ public class ProjectSamplesPage extends AbstractPage {
 		return pageUtilities.checkSuccessNotification();
 	}
 
+	public boolean checkWarningNotification() {
+		return pageUtilities.checkWarningNotification();
+	}
+	
 	public int getTotalSelectedSamplesCount() {
 		return Integer.parseInt(driver.findElement(By.id("selected-count")).getText());
 	}
@@ -252,9 +266,15 @@ public class ProjectSamplesPage extends AbstractPage {
 		waitForTime(500);
 	}
 
+	public void enableRemoteProjects() throws InterruptedException {
+		driver.findElement(By.id("displayBtn")).click();
+		driver.findElement(By.id("displayRemote")).click();
+		waitForTime(500);
+	}
+
 	// Filtering
 	public int getTotalSampleCount() {
-		return Integer.parseInt(driver.findElement(By.id("samples-total")).getText());
+		return Integer.parseInt(driver.findElement(By.id("sample-count")).getText());
 	}
 
 	public int getFilteredSampleCount() {
@@ -289,5 +309,26 @@ public class ProjectSamplesPage extends AbstractPage {
 	public void addSamplesToGlobalCart() {
 		driver.findElement(By.id("cart-add-btn")).click();
 		waitForTime(500);
+	}
+
+	// Sample buttons
+	public void showSamplesDropdownMenu() {
+		driver.findElement(By.id("samplesOptionsBtn")).click();
+	}
+
+	public boolean isSampleMergeOptionEnabled() {
+		return !driver.findElement(By.id("merge-li")).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isSampleCopyOptionEnabled() {
+		return !driver.findElement(By.id("copy-li")).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isSampleMoveOptionEnabled() {
+		return !driver.findElement(By.id("move-li")).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isSampleRemoveOptionEnabled() {
+		return !driver.findElement(By.id("remove-li")).getAttribute("class").contains("disabled");
 	}
 }

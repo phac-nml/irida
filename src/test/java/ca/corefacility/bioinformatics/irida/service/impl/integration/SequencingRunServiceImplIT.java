@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,6 +24,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
@@ -32,18 +36,15 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
@@ -71,7 +72,7 @@ public class SequencingRunServiceImplIT {
 	@Autowired
 	private SampleService sampleService;
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private SequenceFilePairService pairService;
 
 	@Autowired
 	private AnalysisService analysisService;
@@ -118,7 +119,7 @@ public class SequencingRunServiceImplIT {
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
 
-		AnalysisFastQC analysis = savedFile.getFastQCAnalysis();
+		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(savedFile);
 		assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
 	}
 
@@ -139,8 +140,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
-		MiseqRun mr = new MiseqRun();
-		mr.setWorkflow("Workflow name.");
+		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
@@ -155,8 +155,7 @@ public class SequencingRunServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testCreateMiseqRunAsUserFail() {
-		MiseqRun mr = new MiseqRun();
-		mr.setWorkflow("Workflow name.");
+		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		miseqRunService.create(mr);
 	}
 
@@ -179,17 +178,19 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testCreateMiseqRunAsAdmin() {
-		MiseqRun r = new MiseqRun();
-		r.setWorkflow("some workflow");
+		MiseqRun r = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		miseqRunService.create(r);
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	public void testDeleteCascadeToSequenceFile() {
+	public void testDeleteCascade() {
 		assertTrue("Sequence file should exist before", sequenceFileService.exists(2L));
+		assertTrue("file pair should exist before", pairService.exists(1L));
 		miseqRunService.delete(2L);
 		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(2L));
+		assertFalse("file pair should not exist after", pairService.exists(1L));
+		assertTrue("file 7 should not be deleted because it's in an analysis", sequenceFileService.exists(7L));
 	}
 
 	@Test
@@ -249,7 +250,7 @@ public class SequencingRunServiceImplIT {
 
 		miseqRunService.addSequenceFileToSequencingRun(run, sf);
 
-		AnalysisFastQC analysis = sf.getFastQCAnalysis();
+		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
 	}
 }

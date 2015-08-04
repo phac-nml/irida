@@ -1,0 +1,19 @@
+/* line 1, ../../../styles/pages/project_samples.scss */
+.sample-row, .sample-type-selector {
+  border-left: 1rem solid transparent;
+}
+
+/* line 4, ../../../styles/pages/project_samples.scss */
+.local-sample {
+  border-color: #133b54;
+}
+
+/* line 7, ../../../styles/pages/project_samples.scss */
+.associated-sample {
+  border-color: #43ac6a;
+}
+
+/* line 10, ../../../styles/pages/project_samples.scss */
+.remote-sample {
+  border-color: #a3a300;
+}

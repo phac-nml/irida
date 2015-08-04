@@ -4,8 +4,8 @@
       layout:decorator="template/page">
 <head>
     <title th:text="#{projects.title}">_USER LIST TITLE_</title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-          href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
+          href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <div layout:fragment="page">
@@ -31,8 +31,8 @@
     </main>
 </div>
 <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
-            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+    <script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
+            src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
     <script th:src="@{/resources/bower_components/moment/moment.js}"
             src="/resources/bower_components/moment/moment.js"></script>
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"

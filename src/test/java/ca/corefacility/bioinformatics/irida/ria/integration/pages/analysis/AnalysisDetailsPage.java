@@ -109,7 +109,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	private void setCurrentFile() {
 		this.currentFile = null;
 		for (WebElement fileDiv : fileInfo) {
-			WebElement filename = fileDiv.findElement(By.cssSelector(".accordion-toggle span"));
+			WebElement filename = fileDiv.findElement(By.className("name"));
 			if (filename.getText().contains("tree")) {
 				this.currentFile = fileDiv;
 				break;

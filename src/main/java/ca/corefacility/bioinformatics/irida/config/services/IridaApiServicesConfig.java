@@ -12,7 +12,9 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,7 +22,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
@@ -37,6 +41,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
@@ -66,10 +71,16 @@ import com.google.common.collect.Lists;
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
 		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
-		IridaCachingConfig.class, IridaWorkflowsConfig.class })
+		IridaCachingConfig.class, IridaWorkflowsConfig.class, WebEmailConfig.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
+	
+	private static final String DEFAULT_ENCODING = "UTF-8";
+	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
+	
+	@Autowired
+	private Environment env;
 
 	@Value("${taxonomy.location}")
 	private ClassPathResource taxonomyFileLocation;
@@ -79,18 +90,34 @@ public class IridaApiServicesConfig {
 
 	@Value("${file.processing.decompress.remove.compressed.file}")
 	private Boolean removeCompressedFiles;
+	
+	@Bean
+	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
+		return new ForbidJpqlUpdateDeletePostProcessor();
+	}
 
 	@Bean
-	public MessageSource apiMessageSource() {
-		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-		messageSource.setBasename("ca.corefacility.bioinformatics.irida.messages.messages");
-		return messageSource;
+	public MessageSource messageSource() {
+		logger.info("Configuring ReloadableResourceBundleMessageSource.");
+
+		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+		source.setBasenames(RESOURCE_LOCATIONS);
+		source.setFallbackToSystemLocale(false);
+		source.setDefaultEncoding(DEFAULT_ENCODING);
+
+		// Set template cache timeout if in production
+		// Don't cache at all if in development
+		if (!env.acceptsProfiles("prod")) {
+			source.setCacheSeconds(0);
+		}
+
+		return source;
 	}
 
 	@Bean
 	public FileProcessingChain fileProcessorChain(SequenceFileRepository sequenceFileRepository) {
 		final FileProcessor gzipFileProcessor = new GzipFileProcessor(sequenceFileRepository, removeCompressedFiles);
-		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(apiMessageSource(), sequenceFileRepository);
+		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(messageSource(), sequenceFileRepository);
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor);
 
 		if (!decompressFiles) {

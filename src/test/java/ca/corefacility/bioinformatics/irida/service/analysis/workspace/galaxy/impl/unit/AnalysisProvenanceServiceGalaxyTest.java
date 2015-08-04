@@ -22,9 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecutio
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
+import com.github.jmchilton.blend4j.galaxy.beans.JobDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Tool;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -42,12 +44,14 @@ public class AnalysisProvenanceServiceGalaxyTest {
 	private AnalysisProvenanceServiceGalaxy provenanceService;
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private ToolsClient toolsClient;
+	private JobsClient jobsClient;
 
 	@Before
 	public void setUp() {
 		this.galaxyHistoriesService = mock(GalaxyHistoriesService.class);
 		this.toolsClient = mock(ToolsClient.class);
-		this.provenanceService = new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient);
+		this.jobsClient = mock(JobsClient.class);
+		this.provenanceService = new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient, jobsClient);
 	}
 
 	@Test(expected = ExecutionManagerException.class)
@@ -99,9 +103,12 @@ public class AnalysisProvenanceServiceGalaxyTest {
 		hc.setName(FILENAME);
 		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
 		hcp.setParameters(ImmutableMap.of("akey", (Object) "avalue"));
+		final JobDetails jd = new JobDetails();
+		jd.setCommandLine("");
 		when(galaxyHistoriesService.showHistoryContents(any(String.class))).thenReturn(Lists.newArrayList(hc));
 		when(galaxyHistoriesService.showProvenance(any(String.class), any(String.class))).thenReturn(hcp);
 		when(toolsClient.showTool(any(String.class))).thenReturn(new Tool());
+		when(jobsClient.showJob(any(String.class))).thenReturn(jd);
 		final ToolExecution toolExecution = provenanceService.buildToolExecutionForOutputFile(analysisSubmission(),
 				analysisOutputFile());
 		assertTrue("tool execution should have the specified parameter.", toolExecution.getExecutionTimeParameters()
@@ -132,6 +139,7 @@ public class AnalysisProvenanceServiceGalaxyTest {
 		when(galaxyHistoriesService.showHistoryContents(any(String.class))).thenReturn(Lists.newArrayList(hc));
 		when(galaxyHistoriesService.showProvenance(any(String.class), any(String.class))).thenReturn(hcp);
 		when(toolsClient.showTool(any(String.class))).thenReturn(new Tool());
+		when(jobsClient.showJob(any(String.class))).thenReturn(new JobDetails());
 		final ToolExecution toolExecution = provenanceService.buildToolExecutionForOutputFile(analysisSubmission(),
 				analysisOutputFile());
 		final Map<String, String> params = toolExecution.getExecutionTimeParameters();
@@ -182,6 +190,7 @@ public class AnalysisProvenanceServiceGalaxyTest {
 				hcpWithPredecessor);
 		when(galaxyHistoriesService.showProvenance(any(String.class), eq("previousKey"))).thenReturn(
 				hcpWithoutPredecessor);
+		when(jobsClient.showJob(any(String.class))).thenReturn(new JobDetails());
 		when(toolsClient.showTool(any(String.class))).thenReturn(new Tool());
 		final ToolExecution toolExecution = provenanceService.buildToolExecutionForOutputFile(analysisSubmission(),
 				analysisOutputFile());

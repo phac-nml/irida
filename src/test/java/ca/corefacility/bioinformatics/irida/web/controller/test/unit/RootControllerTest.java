@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
 
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTRootController;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -13,10 +15,9 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Map;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTRootController;
 
 /**
  * Test for the {@link RESTRootController}.
@@ -35,8 +36,8 @@ public class RootControllerTest {
 
     @Test
     public void testGetLinks() {
-        Map<String, Class<?>> controllers = RESTRootController.CONTROLLERS;
-        ModelMap map = controller.getLinks();
+        Map<String, Class<?>> controllers = RESTRootController.PUBLIC_CONTROLLERS;
+        ModelMap map = controller.getLinks(new MockHttpServletRequest());
         Object o = map.get(RESTGenericController.RESOURCE_NAME);
         assertNotNull(o);
         assertTrue(o instanceof RootResource);

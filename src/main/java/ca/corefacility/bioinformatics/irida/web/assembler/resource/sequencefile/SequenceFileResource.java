@@ -1,67 +1,41 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile;
 
-import java.nio.file.Path;
-import java.util.Map;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
- * Resource wrapper for {@link SequenceFile}.
+ * Resource wrapper for {@link SequenceFile}. This file is required because the
+ * sequencing run id is passed as a parameter of SequenceFile when a file is
+ * added to a run.
  * 
  */
-@XmlRootElement(name = "sequenceFile")
-public class SequenceFileResource extends IdentifiableResource<SequenceFile> {
-	
+public class SequenceFileResource {
+
 	private Long miseqRunId;
-   
-    public SequenceFileResource() {
-            super(new SequenceFile());
-    }
 
-    public SequenceFileResource(SequenceFile sequenceFile) {
-            super(sequenceFile);
-    }
+	private SequenceFile resource;
 
-    @XmlElement
-    public String getFile() {
-            return resource.getFile().toString();
-    }
-
-    @XmlElement
-    public String getFileName() {
-            return resource.getFile().getFileName().toString();
-    }
-
-
-    @JsonIgnore
-    public Path getPath() {
-            return resource.getFile();
-    }
-    
-	@JsonAnySetter
-	public void addAttribute(String key, String value) {
-			resource.addOptionalProperty(key, value);
+	public SequenceFileResource() {
+		resource = new SequenceFile();
 	}
-	
-	@JsonAnyGetter
-	public Map<String,String> getAttributes(){
-		return resource.getOptionalProperties();
+
+	public SequenceFileResource(SequenceFile sequenceFile) {
+		this.resource = sequenceFile;
+	}
+
+	@JsonUnwrapped
+	public SequenceFile getResource() {
+		return resource;
 	}
 
 	@JsonIgnore
 	public Long getMiseqRunId() {
 		return miseqRunId;
 	}
-	
+
 	@JsonProperty
 	public void setMiseqRunId(Long miseqRunId) {
 		this.miseqRunId = miseqRunId;

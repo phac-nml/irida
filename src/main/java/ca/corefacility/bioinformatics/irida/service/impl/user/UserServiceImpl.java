@@ -10,12 +10,17 @@ import java.util.regex.Pattern;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,10 +28,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -35,8 +43,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoi
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Implementation of the {@link UserService}.
@@ -77,6 +83,33 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	private UserGroupJoinRepository userGroupRepository;
 
 	private static final Pattern USER_CONSTRAINT_PATTERN;
+	
+	/**
+	 * A user is permitted to change their own password if they did not
+	 * successfully log in, but the reason for the login failure is that their
+	 * credentials are expired. This permission checks to see that the user is
+	 * authenticated, or that the principle in the security context has an
+	 * expired password.
+	 */
+	private static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
+			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.user.User) and !principal.isCredentialsNonExpired())";
+
+	/**
+	 * If a user is an administrator, they are permitted to create a user
+	 * account with any role. If a user is a manager, then they are only
+	 * permitted to create user accounts with a ROLE_USER role.
+	 */
+	private static final String CREATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.user.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
+
+	/**
+	 * If a user is an administrator, they are permitted to update any user
+	 * property. If a manager or user is updating an account, they should not be
+	 * permitted to change the role of the user (only administrators can create
+	 * users with role other than Role.ROLE_USER).
+	 */
+	static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "(!#properties.containsKey('systemRole') and hasPermission(#uid, 'canUpdateUser'))";
 
 	static {
 		String regex = "^USER_(.*)_CONSTRAINT$";
@@ -111,6 +144,16 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public User read(final Long id) {
+		return super.read(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Iterable<User> findAll() {
 		return super.findAll();
 	}
@@ -118,6 +161,26 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_MANAGER')")
+	public void delete(final Long id) {
+		super.delete(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<User> search(Specification<User> specification, int page, int size, Direction order,
+			String... sortProperties) {
+		return super.search(specification, page, size, order, sortProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize(CHANGE_PASSWORD_PERMISSIONS)
 	public User changePassword(Long userId, String password) {
 		Set<ConstraintViolation<User>> violations = validatePassword(password);
 		if (violations.isEmpty()) {
@@ -133,7 +196,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
-	public User create(User u) {
+	@PreAuthorize(CREATE_USER_PERMISSIONS)
+	public User create(@Valid User u) {
 		String password = u.getPassword();
 		u.setPassword(passwordEncoder.encode(password));
 		try {
@@ -156,6 +220,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize(UPDATE_USER_PERMISSIONS)
 	public User update(Long uid, Map<String, Object> properties) {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
@@ -175,6 +240,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("permitAll")
 	public User getUserByUsername(String username) throws EntityNotFoundException {
 		User u = userRepository.loadUserByUsername(username);
 		if (u == null) {
@@ -188,8 +254,19 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Collection<Join<Project, User>> getUsersForProject(Project project) {
 		return pujRepository.getUsersForProject(project);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional(readOnly = true)
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Long countUsersForProject(Project project) {
+		return pujRepository.countUsersForProject(project);
 	}
 
 	/**
@@ -197,6 +274,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("permitAll")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		logger.trace("Loading user with username: [" + username + "].");
 		org.springframework.security.core.userdetails.User userDetails = null;
@@ -216,6 +294,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("permitAll")
 	public User loadUserByEmail(String email) throws EntityNotFoundException {
 		logger.trace("Loading user with email " + email);
 		User loadUserByEmail = userRepository.loadUserByEmail(email);
@@ -242,6 +321,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<User> getUsersAvailableForProject(Project project) {
 		return userRepository.getUsersAvailableForProject(project);
 	}
@@ -251,6 +331,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
 		return pujRepository.getUsersForProjectByRole(project, projectRole);
 	}
@@ -260,8 +341,29 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException {
 		return userGroupRepository.getUsersForGroup(g);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public List<User> getUsersWithEmailSubscriptions() {
+		return pujRepository.getUsersWithSubscriptions();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#user, 'canUpdateUser')")
+	public ProjectUserJoin updateEmailSubscription(User user, Project project, boolean subscribed) {
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
+		projectJoinForUser.setEmailSubscription(subscribed);
+
+		return pujRepository.save(projectJoinForUser);
 	}
 
 	/**

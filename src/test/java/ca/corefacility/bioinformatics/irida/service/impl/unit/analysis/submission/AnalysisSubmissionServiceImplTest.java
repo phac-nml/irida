@@ -95,7 +95,8 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStatePreparing() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
 
-		assertEquals("invalid percent complete", 0.0f,
+		assertEquals("invalid percent complete",
+				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.PREPARING),
 				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
 	}
 
@@ -109,7 +110,8 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStatePrepared() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARED);
 
-		assertEquals("invalid percent complete", 1.0f,
+		assertEquals("invalid percent complete",
+				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.PREPARED),
 				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
 	}
 
@@ -123,7 +125,8 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateSubmitting() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
 
-		assertEquals("invalid percent complete", 5.0f,
+		assertEquals("invalid percent complete",
+				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.SUBMITTING),
 				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
 	}
 
@@ -141,7 +144,8 @@ public class AnalysisSubmissionServiceImplTest {
 		when(galaxyHistoriesService.getStatusForHistory(HISTORY_ID)).thenReturn(galaxyWorkflowStatus);
 		when(galaxyWorkflowStatus.getProportionComplete()).thenReturn(0.0f);
 
-		assertEquals("invalid percent complete", 10.0f,
+		assertEquals("invalid percent complete",
+				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.RUNNING),
 				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
 	}
 
@@ -159,8 +163,10 @@ public class AnalysisSubmissionServiceImplTest {
 		when(galaxyHistoriesService.getStatusForHistory(HISTORY_ID)).thenReturn(galaxyWorkflowStatus);
 		when(galaxyWorkflowStatus.getProportionComplete()).thenReturn(0.5f);
 
-		assertEquals("invalid percent complete", 50.0f, // half-way between 10
-														// and 90
+		Float runningState = AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.RUNNING);
+		Float finishedState = AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.FINISHED_RUNNING);
+		// check that it's half done
+		assertEquals("invalid percent complete", (runningState + finishedState) / 2,
 				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
 	}
 

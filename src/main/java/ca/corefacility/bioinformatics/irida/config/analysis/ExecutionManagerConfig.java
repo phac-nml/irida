@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -296,6 +297,16 @@ public class ExecutionManagerConfig {
 	@Bean
 	public ToolsClient toolsClient() throws ExecutionManagerConfigurationException {
 		return galaxyInstance().getToolsClient();
+	}
+	
+	/**
+	 * @return A JobsClient for interacting with Galaxy jobs.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public JobsClient jobsClient() throws ExecutionManagerConfigurationException {
+		return galaxyInstance().getJobsClient();
 	}
 
 	/**

@@ -9,9 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
@@ -21,21 +19,11 @@ import org.springframework.mock.http.MockHttpInputMessage;
 
 public class SequenceFileMessageConverterTest {
 	private SequenceFileMessageConverter converter;
-	private static Path tempDirectory;
-
-	@BeforeClass
-	public static void beforeClass() throws IOException {
-		tempDirectory = Files.createTempDirectory("message-converter-test");
-	}
-
-	@AfterClass
-	public static void afterClass() throws IOException {
-		Files.deleteIfExists(tempDirectory);
-	}
+	private String fileName = "testFile";
 
 	@Before
 	public void setUp() {
-		converter = new SequenceFileMessageConverter(tempDirectory);
+		converter = new SequenceFileMessageConverter(fileName);
 	}
 
 	@Test

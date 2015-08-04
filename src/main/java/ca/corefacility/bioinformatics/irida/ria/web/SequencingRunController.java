@@ -111,7 +111,7 @@ public class SequencingRunController {
 		List<Map<String, Object>> list = new ArrayList<>();
 		for (SequencingRun run : sequencingRunService.findAll()) {
 			Map<String, Object> runMap = new HashMap<>();
-			runMap.put("id", run.getId());
+			runMap.put("identifier", run.getId());
 			runMap.put("createdDate", run.getCreatedDate());
 			runMap.put("sequencerType", run.getSequencerType());
 			runMap.put("uploadStatus", messageSource.getMessage(UPLOAD_STATUS_MESSAGE_BASE

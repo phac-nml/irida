@@ -7,12 +7,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
@@ -26,9 +27,9 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 
 /**
  * Configuration for an AnalysisExecutionService class.
@@ -47,9 +48,6 @@ public class AnalysisExecutionServiceConfig {
 	public static final int ASYNC_ORDER = AnalysisExecutionServiceAspect.ANALYSIS_EXECUTION_ASPECT_ORDER - 1;
 
 	@Autowired
-	private ExecutionManagerGalaxy executionManager;
-
-	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
 
 	@Autowired
@@ -61,9 +59,6 @@ public class AnalysisExecutionServiceConfig {
 	@Autowired
 	private SequenceFilePairService sequenceFilePairService;
 
-	@Autowired
-	private SequenceFileRepository sequenceFileRepository;
-	
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
 	
@@ -80,10 +75,19 @@ public class AnalysisExecutionServiceConfig {
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	@Autowired
+	private SequenceFileSnapshotService sequenceFileSnapshotService;
+	
+	@Autowired
 	private GalaxyLibraryBuilder galaxyLibraryBuilder;
 	
 	@Autowired
+	SampleRemoteService sampleRemoteService;
+	
+	@Autowired
 	private ToolsClient toolsClient;
+	
+	@Autowired
+	private JobsClient jobsClient;
 	
 	@Lazy
 	@Bean
@@ -96,7 +100,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, sequenceFileSnapshotService);
 	}
 	
 	@Lazy
@@ -111,13 +115,13 @@ public class AnalysisExecutionServiceConfig {
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder, iridaWorkflowsService,
-				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy);
+				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy, sampleRemoteService);
 	}
 
 	@Lazy
 	@Bean
 	public AnalysisProvenanceServiceGalaxy analysisProvenanceService() {
-		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient);
+		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient, jobsClient);
 	}
 	
 	@Lazy

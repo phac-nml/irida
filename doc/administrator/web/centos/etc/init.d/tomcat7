@@ -24,6 +24,8 @@
 if [ -r /lib/lsb/init-functions ]; then
     . /lib/lsb/init-functions
 else
+    echo "No LSB function library /lib/lsb/init-functions found.  You may have to install the package 'redhat-lsb'."
+    echo "Try running 'yum install redhat-lsb'."
     exit 1
 fi
 

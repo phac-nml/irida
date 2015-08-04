@@ -20,7 +20,7 @@ The main IRIDA dashboard has several different areas:
 
 * The [main menu](#main-menu), for accessing and managing data and pipelines,
 * The [cart](#cart), for data selections,
-* The [settings](#settings) menu,
+* The [user settings](#user-settings) menu,
 * The [logout](#logout) button, and
 * The [recent activities](#recent-activities) section.
 
@@ -64,14 +64,40 @@ You can click on the cart button to reveal more information about the contents o
 
 For more information about using the cart, please see the [launching pipelines](../pipelines) section, and the [managing samples](../samples) section.
 
-Settings
---------
+Remote APIs
+-----------
+Remote IRIDA installations can be used as data sources for associated projects and worklows.  The "Remote APIs" section allows users to connect to remote IRIDA installations.  
 
-The settings menu allows you to view and edit the details of your own user account. You can find the settings menu in the top, right-hand corner of the page:
+**Note**: You must have been provided with a username and password for a remote instance of IRIDA before you can use the data located on that instance.
+
+![Remote API button](images/remote-api-dash.png)
+
+Adminstrators can add or remove available Remote APIs from this menu.  Details can be found in the [administrator guide](../../administrator/#managing-remote-apis).
+
+### Connecting to Remote APIs
+
+The Remote APIs list will show you all configured Remote APIs.  To connect, click the "Connect" button next to an API.
+
+![Remote API list](images/api-list.png)
+
+If you have never connected to the remote API before, or your login has expired, you will be shown a login window for the remote site.  Enter your login credentials for that site.  The username and password that you use to connect to a remote instance of IRIDA are different than the username and password that you used to log in to the local site.
+
+![Remote API login page](images/remote-login.png)
+
+You will be shown an authorization page.  Read the details and click "Authorize" to connect to the API.
+
+![OAuth2 approval](images/oauth-approval.png)
+
+You will be shown a confirmation and your browser will reload the current page.  You should now be connected to the remote installation.
+
+User Settings
+-------------
+
+The settings menu allows you to view and edit the details of your own user account. This menu also allows you to update your email subscription preferences.  You can find the settings menu in the top, right-hand corner of the page:
 
 ![The settings menu in the dashboard.](images/settings.png)
 
-User accounts with the administrator role can also use the settings menu to add and remove software client details from IRIDA. For more information about managing clients in IRIDA, please see the [managing system clients](../../administrator/#managing-system-clients) section in the [administrator guide](../../administrator).
+For more information about the user settings page, see the [user settings page](user.html).
 
 Logout
 ------
@@ -85,7 +111,7 @@ You can log out of IRIDA by clicking on the <img src="images/logout-icon.png" al
 Recent Activities
 -----------------
 
-The recent activities panel appears in the middle of the dashboard:
+The recent activities panel appears on the left panel of the dashboard:
 
 ![Recent activities section.](images/recent-activities.png)
 
@@ -95,3 +121,16 @@ The recent activities section will show you things like:
 * Samples being added to projects.
 
 All activities in the recent activities section will link to the project or user account that has been modified by the activity.
+
+IRIDA Platform Updates
+----------------------
+
+Updates to the IRIDA Platform will be announced on the right panel the dashboard.
+
+![Platform Update section.](images/platform-updates.png)
+
+The platform updates section will show you things like:
+
+* When scheduled downtime will happen.
+* Recently added features or bug fixes.
+* Other platform announcements.

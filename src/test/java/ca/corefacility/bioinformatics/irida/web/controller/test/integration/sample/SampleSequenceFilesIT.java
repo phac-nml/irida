@@ -6,6 +6,7 @@ import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,6 +31,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -93,7 +95,7 @@ public class SampleSequenceFilesIT {
 		String sequenceFileUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
 
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFilePairs";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/pairs";
 
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -182,5 +184,40 @@ public class SampleSequenceFilesIT {
 		assertNotNull(sampleLocation);
 		assertEquals(sampleUri, sampleLocation);
 	}
+
+	@Test
+	public void testSequenceFilePermissionInInvalidSample() {
+		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/100/samples/1/sequenceFiles";
+		asAdmin().expect().statusCode(HttpStatus.NOT_FOUND.value()).when().get(sampleUri);
+	}
 	
+	@Test
+	public void testReadPairedSequenceFiles() {
+		String pairsRel = RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS;
+
+		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
+		String sampleBody = response.getBody().asString();
+				
+		String sequenceFilePairsUri = from(sampleBody).getString(
+				"resource.links.find{it.rel == '" + pairsRel + "'}.href");
+		
+		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(2)).when()
+				.get(sequenceFilePairsUri);
+	}
+	
+	@Test
+	public void testReadUnPairedSequenceFiles() {
+		String unpairedRel = RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED;
+
+		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
+		String sampleBody = response.getBody().asString();
+		String sequenceFilePairsUri = from(sampleBody).getString(
+				"resource.links.find{it.rel == '" + unpairedRel + "'}.href");
+
+		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources.files", hasSize(1)).when()
+				.get(sequenceFilePairsUri);
+	}
+
 }

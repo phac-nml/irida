@@ -35,7 +35,7 @@ The projects list provides a high-level overview of project details, including:
 * The date that the project was created in IRIDA,
 * The time that the project was last modified.
 
-You have **read-only** permissions on projects where you have a <img src="images/collaborator-icon.png" class="inline" alt="Collaborator role icon."> **Collaborator** role. You have **modify** permissions on projects where you have a <img src="images/manager-icon.png" class="inline" alt="Manager role icon"> **Manager** role. You can view the role that you have on a project in the **Role** column.
+You have **read-only** permissions on projects where you are listed as a **Collaborator** role. You have **modify** permissions on projects where you are listed as **Manager** role. You can view the role that you have on a project in the **Role** column.
 
 Creating a new project
 ----------------------
@@ -151,6 +151,45 @@ When you click the "Remove" button, you will be asked to confirm the project mem
 ![Remove project member confirmation dialog.](images/remove-project-member-confirm.png)
 
 To confirm, click the "Ok" button.
+
+Associated Projects
+-------------------
+
+Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.  Associated projects can also be added from projects from remote IRIDA installations.
+
+### Viewing associated projects
+
+Click the "Associated Projects" tab at the top of the project page.
+
+![Associated projects tab](images/associated-tab.png)
+
+The "Projects" list will display the projects associated with this project. The associated projects list will also display whether the project is on the local installation or if the project exists on a remote IRIDA installation.
+
+The "Remote APIs" section displays your connection status to remote IRIDA installations that have projects associated to this project.
+
+![Associated projects list](images/associated-list.png)
+
+### Adding or removing associated projects
+
+Project Managers can add or remove associated projects for a project.  From the "Associated Projects" page, click the "Edit" button.
+
+**Note:** To add or remove a project to the list of associated projects, the manager must *at least* be able to read the data in the project to be added in the associated projects list.
+
+#### Local Projects
+
+Click the "Local" tab on the edit associated projects page.  You will be presented with a list of all projects you have access to in the local installation.  To add or remove an associated project, click the "On/Off" switch.
+
+![Edit local associated projects](images/associated-local.png)
+
+#### Remote Projects
+
+To add or remove remote associated projects, click the "Remote" tab. You can choose the remote instance of IRIDA that you want to list projects from by selecting an entry in the dropdown menu. If you are not connected to the API, you must click the "Connect" button before you will see the list of projects on the remote site.
+
+![Disconnected remote api](images/associated-remote-disconnected.png)
+
+To add or remove an associated project from the API, click the "On/Off" switch next to the project name.
+
+![Remote api projects](images/associated-remote.png)
 
 Adding reference files to a project
 -----------------------------------

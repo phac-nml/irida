@@ -35,6 +35,7 @@ import com.google.common.collect.Sets;
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
 	
+	private Object downloadFilesLock = new Object();
 	private Object prepareAnalysesLock = new Object();
 	private Object executeAnalysesLock = new Object();
 	private Object monitorRunningAnalysesLock = new Object();
@@ -66,6 +67,27 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Future<AnalysisSubmission>> downloadFiles() {
+		synchronized (downloadFilesLock) {
+			logger.trace("Running downloadFiles");
+
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.NEW);
+
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+
+			for (AnalysisSubmission submission : analysisSubmissions) {
+				submissions.add(analysisExecutionService.downloadSubmissionFiles(submission));
+			}
+
+			return submissions;
+		}
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -76,7 +98,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			logger.trace("Running prepareAnalyses");
 			
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.NEW);
+					.findByAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
 	
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 	

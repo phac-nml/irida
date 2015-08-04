@@ -1,10 +1,15 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
+import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.LocaleResolver;
@@ -27,6 +31,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.thymeleaf.cache.StandardCacheManager;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
@@ -34,18 +39,25 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
-
+import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
+import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  */
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
-@Import({WebEmailConfig.class, IridaApiSecurityConfig.class})
+@Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
@@ -53,13 +65,14 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String TEMPLATE_MODE = "HTML5";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final String LOCALE_CHANGE_PARAMETER = "lang";
-	private static final String DEFAULT_ENCODING = "UTF-8";
-	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
-	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
+	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private MessageSource messageSource;
 
 	@Bean
 	public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -67,6 +80,26 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
 		return localeChangeInterceptor;
+	}
+
+	@Bean
+	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
+		Path analyticsPath = Paths.get(ANALYTICS_DIR);
+		StringBuilder analytics = new StringBuilder();
+		if (Files.exists(analyticsPath)) {
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
+				for (Path entry : stream) {
+					List<String> lines = Files.readAllLines(entry);
+					analytics.append(Joiner.on("\n").join(lines));
+					analytics.append("\n");
+				}
+			} catch (DirectoryIteratorException ex) {
+				logger.error("Error reading analytics directory: ", ex);
+			} catch (IOException e) {
+				logger.error("Error readin analytics file: ", e);
+			}
+		}
+		return new AnalyticsHandlerInterceptor(analytics.toString());
 	}
 
 	@Bean(name = "localeResolver")
@@ -78,21 +111,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
-	public MessageSource messageSource() {
-		logger.info("Configuring ReloadableResourceBundleMessageSource.");
-
-		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasenames(RESOURCE_LOCATIONS);
-		source.setFallbackToSystemLocale(false);
-		source.setDefaultEncoding(DEFAULT_ENCODING);
-
-		// Set template cache timeout if in production
-		// Don't cache at all if in development
-		if (!env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
-			source.setCacheSeconds(0);
-		}
-
-		return source;
+	public BreadCrumbInterceptor breadCrumbInterceptor() {
+		return new BreadCrumbInterceptor(messageSource);
 	}
 
 	@Override
@@ -102,6 +122,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		// production.
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
+		registry.addResourceHandler("/dandelion-assets/**").addResourceLocations("/dandelion-assets/");
 	}
 
 	@Override
@@ -109,9 +130,10 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		registry.addViewController("/projects/templates/merge").setViewName("projects/templates/merge");
 		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
 		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
+		registry.addViewController("/projects/templates/remove").setViewName("projects/templates/remove");
 		registry.addViewController("/cart/templates/galaxy").setViewName("cart/templates/galaxy");
-		registry.addViewController("/projects/templates/referenceFiles/delete").setViewName(
-				"projects/templates/referenceFiles/delete");
+		registry.addViewController("/projects/templates/referenceFiles/delete")
+				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
 	@Bean
@@ -138,6 +160,16 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.setTemplateResolver(templateResolver());
 		engine.setAdditionalDialects(additionalDialects());
+
+		// straight up disable the thymeleaf expression cache. The problem with
+		// ${object.member} sometimes working and sometimes not working comes
+		// from using the same expression in two different contexts (i.e.,
+		// object is a Map in one case, and a Project in another). Thymeleaf
+		// caches the expressions, and something is happening between uses of
+		// the expression.
+		final StandardCacheManager cacheManager = (StandardCacheManager) engine.getCacheManager();
+		cacheManager.setExpressionCacheMaxSize(0);
+
 		return engine;
 	}
 
@@ -163,6 +195,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(localeChangeInterceptor());
+		registry.addInterceptor(analyticsHandlerInterceptor());
+		registry.addInterceptor(breadCrumbInterceptor());
 	}
 
 	/**
@@ -176,6 +210,9 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		dialects.add(new LayoutDialect());
 		dialects.add(new ConditionalCommentsDialect());
 		dialects.add(new DataAttributeDialect());
+		dialects.add(new DandelionDialect());
+		dialects.add(new DataTablesDialect());
+		dialects.add(new FontAwesomeDialect());
 		return dialects;
 	}
 

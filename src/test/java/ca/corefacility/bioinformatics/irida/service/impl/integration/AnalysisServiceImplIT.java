@@ -22,6 +22,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
@@ -31,12 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -50,9 +49,6 @@ public class AnalysisServiceImplIT {
 
 	@Autowired
 	private AnalysisService analysisService;
-
-	@Autowired
-	private SequenceFileService sequenceFileService;
 
 	@Autowired
 	@Qualifier("outputFileBaseDirectory")
@@ -69,9 +65,9 @@ public class AnalysisServiceImplIT {
 
 		Map<String, String> params = new HashMap<>();
 		params.put("param", "value");
-		ToolExecution toolExecutionTree = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionTable = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionMatrix = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionTree = new ToolExecution(null, "ls", "1.0", "executionManagerId", params, "/bin/ls -lrth");
+		ToolExecution toolExecutionTable = new ToolExecution(null, "ls", "1.0", "executionManagerId", params, "/bin/ls -lrth");
+		ToolExecution toolExecutionMatrix = new ToolExecution(null, "ls", "1.0", "executionManagerId", params, "/bin/ls -lrth");
 
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", toolExecutionTree);
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", toolExecutionTable);

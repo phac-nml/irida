@@ -5,18 +5,27 @@ import static org.mockito.Mockito.mock;
 
 import javax.servlet.http.HttpSession;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.ria.web.LoginController;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 /**
  * Unit Tests for {@link LoginController}
  *
  */
 public class LoginControllerTest {
-	private LoginController controller = new LoginController();
+	private LoginController controller;
+	private EmailController emailController;
+	
+	@Before
+	public void setUp() {
+		this.emailController = mock(EmailController.class);
+		controller = new LoginController(emailController);
+	}
 
 	@Test
 	public void testShowLoginPage() {

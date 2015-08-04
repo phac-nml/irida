@@ -7,11 +7,14 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<link rel="stylesheet" href="/resources/css/main.css" th:href="@{/resources/css/main.css}"/>
 	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" ng-app="irida">
 <th:block layout:fragment="content">
+</th:block>
+
+<th:block th:if="${analytics}">
+	<th:block th:utext="${analytics}"></th:block>
 </th:block>
 </body>
 </html>

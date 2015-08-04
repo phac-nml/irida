@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -108,6 +110,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	@Mock
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+	
+	@Mock
+	private SampleRemoteService sampleRemoteService;
 
 	private AnalysisWorkspaceServiceGalaxy workflowPreparation;
 
@@ -210,7 +215,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				sequenceFileService, sequenceFilePairService, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy,
-				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy);
+				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy, sampleRemoteService);
 
 		output1Dataset = new Dataset();
 		output1Dataset.setId("1");
@@ -301,11 +306,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				REFERENCE_FILE_ID);
 
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(sampleSequenceFileMap, workflowHistory,
-						workflowLibrary)).thenReturn(collectionResponseSingle);
+				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(any(Map.class), eq(workflowHistory),
+						eq(workflowLibrary))).thenReturn(collectionResponseSingle);
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairMap, workflowHistory,
-						workflowLibrary)).thenReturn(collectionResponsePaired);
+				analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(any(Map.class), eq(workflowHistory),
+						eq(workflowLibrary))).thenReturn(collectionResponsePaired);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 
@@ -367,8 +372,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				REFERENCE_FILE_ID);
 
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(sampleSequenceFileMap, workflowHistory,
-						workflowLibrary)).thenReturn(collectionResponseSingle);
+				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(any(Map.class), eq(workflowHistory),
+						eq(workflowLibrary))).thenReturn(collectionResponseSingle);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 
@@ -430,8 +435,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				REFERENCE_FILE_ID);
 
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairMap, workflowHistory,
-						workflowLibrary)).thenReturn(collectionResponsePaired);
+				analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(any(Map.class), eq(workflowHistory),
+						eq(workflowLibrary))).thenReturn(collectionResponsePaired);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 

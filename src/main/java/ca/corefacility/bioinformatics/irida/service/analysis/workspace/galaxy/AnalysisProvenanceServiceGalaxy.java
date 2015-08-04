@@ -19,9 +19,11 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
+import com.github.jmchilton.blend4j.galaxy.beans.JobDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Tool;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -45,11 +47,13 @@ public class AnalysisProvenanceServiceGalaxy {
 
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final ToolsClient toolsClient;
+	private final JobsClient jobsClient;
 
 	public AnalysisProvenanceServiceGalaxy(final GalaxyHistoriesService galaxyHistoriesService,
-			final ToolsClient toolsClient) {
+			final ToolsClient toolsClient, final JobsClient jobsClient) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.toolsClient = toolsClient;
+		this.jobsClient = jobsClient;
 	}
 	
 	public static String emptyValuePlaceholder() {
@@ -143,6 +147,8 @@ public class AnalysisProvenanceServiceGalaxy {
 		final String toolName = toolDetails.getName();
 		final String toolVersion = toolDetails.getVersion();
 		final String jobId = currentProvenance.getJobId();
+		final JobDetails jobDetails = jobsClient.showJob(jobId);
+		final String commandLine = jobDetails.getCommandLine();
 		final Map<String, String> paramStrings = buildParamMap(paramValues);
 
 		for (final String predecessorKey : predecessors.keySet()) {
@@ -157,7 +163,7 @@ public class AnalysisProvenanceServiceGalaxy {
 					previousProvenance, historyId);
 			prevSteps.add(toolExecution);
 		}
-		return new ToolExecution(prevSteps, toolName, toolVersion, jobId, paramStrings);
+		return new ToolExecution(prevSteps, toolName, toolVersion, jobId, paramStrings, commandLine);
 	}
 
 	/**

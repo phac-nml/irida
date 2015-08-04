@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteExcep
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -70,15 +73,17 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * an {@link AnalysisSubmission}.
 	 */
 	// @formatter:off
-	private static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
-			put(AnalysisState.NEW,              0.0f).
-			put(AnalysisState.PREPARING,        0.0f).
-			put(AnalysisState.PREPARED,         1.0f).
-			put(AnalysisState.SUBMITTING,       5.0f).
-			put(AnalysisState.RUNNING,          10.0f).
-			put(AnalysisState.FINISHED_RUNNING, 90.0f).
-			put(AnalysisState.COMPLETING,       95.0f).
-			put(AnalysisState.COMPLETED,        100.0f).
+	public static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
+			put(AnalysisState.NEW,                  0.0f).
+			put(AnalysisState.DOWNLOADING,          5.0f).
+			put(AnalysisState.FINISHED_DOWNLOADING, 10.0f).
+			put(AnalysisState.PREPARING,            10.0f).
+			put(AnalysisState.PREPARED,             11.0f).
+			put(AnalysisState.SUBMITTING,           15.0f).
+			put(AnalysisState.RUNNING,              20.0f).
+			put(AnalysisState.FINISHED_RUNNING,     90.0f).
+			put(AnalysisState.COMPLETING,           95.0f).
+			put(AnalysisState.COMPLETED,            100.0f).
 			build();
 	// @formatter:on
 	
@@ -128,6 +133,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#analysisSubmissionId, 'canReadAnalysisSubmission')")
 	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException {
 		checkNotNull(analysisSubmissionId, "analysisSubmissionId is null");
 
@@ -140,6 +146,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public AnalysisSubmission read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
@@ -148,6 +155,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadAnalysisSubmission')")
 	public Iterable<AnalysisSubmission> readMultiple(Iterable<Long> idents) {
 		return super.readMultiple(idents);
 	}
@@ -156,6 +164,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Iterable<AnalysisSubmission> findAll() {
 		return super.findAll();
 	}
@@ -164,6 +173,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Boolean exists(Long id) {
 		return super.exists(id);
 	}
@@ -172,6 +182,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) throws EntityRevisionDeletedException {
 		return super.findRevisions(id);
 	}
@@ -180,6 +191,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable)
 			throws EntityRevisionDeletedException {
 		return super.findRevisions(id, pageable);
@@ -189,6 +201,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<AnalysisSubmission> list(int page, int size, Direction order, String... sortProperties)
 			throws IllegalArgumentException {
 		return super.list(page, size, order, sortProperties);
@@ -198,6 +211,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<AnalysisSubmission> list(int page, int size, Direction order) {
 		return super.list(page, size, order);
 	}
@@ -206,6 +220,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public long count() {
 		return super.count();
 	}
@@ -214,6 +229,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void delete(Long id) throws EntityNotFoundException {
 		super.delete(id);
 	}
@@ -222,6 +238,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public AnalysisSubmission update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
 			EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
@@ -231,6 +248,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission create(AnalysisSubmission analysisSubmission) throws ConstraintViolationException,
 			EntityExistsException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -262,6 +280,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, int page, int size,
 			Direction order, String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);
@@ -271,6 +290,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
 	public Set<AnalysisSubmission> getAnalysisSubmissionsForUser(User user) {
 		checkNotNull(user, "user is null");
 
@@ -281,6 +301,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Set<AnalysisSubmission> getAnalysisSubmissionsForCurrentUser() {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
@@ -293,12 +314,17 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
+			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
+			List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
 			IridaWorkflowNamedParameters namedParameters, String name) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
+		
+		
+		
 		if (description.acceptsSingleSequenceFiles()) {
 			final Map<Sample, SequenceFile> samplesMap = sequenceFileService.getUniqueSamplesForSequenceFiles(Sets
 					.newHashSet(sequenceFiles));
@@ -331,6 +357,40 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
 			}
+
+			if (!remoteFiles.isEmpty()) {
+				for (SequenceFileSnapshot file : remoteFiles) {
+					AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+					builder.name(name + "_" + file.getId());
+					builder.remoteFilesSingle(ImmutableSet.of(file));
+
+					// Add reference file
+					if (ref != null && description.requiresReference()) {
+						// Note: This cannot be empty if through the UI if the
+						// pipeline required a reference file.
+						ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+						builder.referenceFile(referenceFile);
+					}
+
+					if (description.acceptsParameters()) {
+						if (namedParameters != null) {
+							builder.withNamedParameters(namedParameters);
+						} else {
+							if (!params.isEmpty()) {
+								// Note: This cannot be empty if through the UI
+								// if
+								// the pipeline required params.
+								builder.inputParameters(params);
+							}
+						}
+					}
+
+					// Create the submission
+					createdSubmissions.add(create(builder.build()));
+				}
+
+			}
+			
 		}
 
 		// Paired end reads
@@ -364,6 +424,39 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
 			}
+			
+			if (!remotePairs.isEmpty()) {
+				for (SequenceFilePairSnapshot pair : remotePairs) {
+					AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+					builder.name(name + "_" + pair.getId());
+					builder.remoteFilesPaired(ImmutableSet.of(pair));
+
+					// Add reference file
+					if (ref != null && description.requiresReference()) {
+						// Note: This cannot be empty if through the UI if the
+						// pipeline required a reference file.
+						ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+						builder.referenceFile(referenceFile);
+					}
+
+					if (description.acceptsParameters()) {
+						if (namedParameters != null) {
+							builder.withNamedParameters(namedParameters);
+						} else {
+							if (!params.isEmpty()) {
+								// Note: This cannot be empty if through the UI
+								// if
+								// the pipeline required params.
+								builder.inputParameters(params);
+							}
+						}
+					}
+
+					// Create the submission
+					createdSubmissions.add(create(builder.build()));
+				}
+
+			}
 		}
 		
 		return createdSubmissions;
@@ -373,8 +466,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
+			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
 			IridaWorkflowNamedParameters namedParameters, String name) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
@@ -387,13 +481,29 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		}
 
 		// Add any single end sequencing files.
-		if (!sequenceFiles.isEmpty() && description.acceptsSingleSequenceFiles()) {
-			builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+		if (description.acceptsSingleSequenceFiles()) {
+			if (!sequenceFiles.isEmpty()) {
+				builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+			}
+
+			// add remote files
+			if (!remoteFiles.isEmpty()) {
+				builder.remoteFilesSingle(new HashSet<>(remoteFiles));
+			}
 		}
 
 		// Add any paired end sequencing files.
-		if (!sequenceFilePairs.isEmpty() && description.acceptsPairedSequenceFiles()) {
-			builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+		if (description.acceptsPairedSequenceFiles()) {
+			if (!sequenceFilePairs.isEmpty())
+			{
+				builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+			}
+			
+			// add remote files
+			if (!remotePairs.isEmpty()) {
+				builder.remoteFilesPaired(new HashSet<>(remotePairs));
+			}
+
 		}
 
 		if (description.acceptsParameters()) {
@@ -416,6 +526,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
 			ExecutionManagerException, NoPercentageCompleteException {
 		AnalysisSubmission analysisSubmission = read(id);
@@ -423,6 +534,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		switch (analysisState) {
 		case NEW:
+		case DOWNLOADING:
+		case FINISHED_DOWNLOADING:
 		case PREPARING:
 		case PREPARED:
 		case SUBMITTING:

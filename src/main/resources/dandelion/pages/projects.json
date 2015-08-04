@@ -1,0 +1,14 @@
+{
+  "bundle": "projects",
+  "dependencies": [
+    "momentjs",
+    "irida-datatables",
+    "yadcf",
+    "natural"
+  ],
+  "assets": [
+    { "locations": { "webapp": "/resources/js/pages/projects/samples.js" } },
+    { "locations": { "webapp": "/resources/js/pages/projects/reference.js" } },
+    { "locations": { "webapp": "/resources/js/pages/projects/add-samples.js" } }
+  ]
+}

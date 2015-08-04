@@ -26,15 +26,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
@@ -53,14 +49,12 @@ public class ProjectSamplesControllerTest {
 	private RESTProjectSamplesController controller;
 	private ProjectService projectService;
 	private SampleService sampleService;
-	private SequenceFileService sequenceFileService;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
-		sequenceFileService = mock(SequenceFileService.class);
-		controller = new RESTProjectSamplesController(projectService, sampleService, sequenceFileService);
+		controller = new RESTProjectSamplesController(projectService, sampleService);
 	}
 
 	@Test
@@ -68,25 +62,23 @@ public class ProjectSamplesControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         Sample s = TestDataFactory.constructSample();
         Project p = TestDataFactory.constructProject();
-		SampleResource sr = new SampleResource();
-		sr.setResource(s);
 		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
 		
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(projectService.addSampleToProject(p, s)).thenReturn(r);
         
-        ModelMap modelMap = controller.addSampleToProject(p.getId(), sr, response);
+        ModelMap modelMap = controller.addSampleToProject(p.getId(), s, response);
         
         Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
         
-		assertTrue("ModelMap should contan a SampleResource",o instanceof SampleResource);
+		assertTrue("ModelMap should contan a SampleResource",o instanceof Sample);
 		 
         verify(projectService, times(1)).read(p.getId());
         verify(projectService, times(1)).addSampleToProject(p, s);
         
-        Link selfLink = sr.getLink(Link.REL_SELF);
-        Link sequenceFilesLink = sr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-        Link projectLink = sr.getLink(RESTProjectSamplesController.REL_PROJECT);
+        Link selfLink = s.getLink(Link.REL_SELF);
+        Link sequenceFilesLink = s.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+        Link projectLink = s.getLink(RESTProjectSamplesController.REL_PROJECT);
         String projectLocation = "http://localhost/api/projects/" + p.getId();
         String sampleLocation = projectLocation + "/samples/" + s.getId();
         assertNotNull("Sample resource's self link should not be null",selfLink);
@@ -137,36 +129,32 @@ public class ProjectSamplesControllerTest {
 	public void testGetProjectSamples() {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile file = new SequenceFile();
 		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
-		SampleSequenceFileJoin sampleSequenceFileJoin = new SampleSequenceFileJoin(s, file);
 
 		@SuppressWarnings("unchecked")
 		List<Join<Project, Sample>> relationships = Lists.newArrayList(r);
 
 		when(sampleService.getSamplesForProject(p)).thenReturn(relationships);
 		when(projectService.read(p.getId())).thenReturn(p);
-		when(sequenceFileService.getSequenceFilesForSample(s)).thenReturn(Lists.newArrayList(sampleSequenceFileJoin));
 
 		ModelMap modelMap = controller.getProjectSamples(p.getId());
 
 		verify(sampleService, times(1)).getSamplesForProject(p);
 		verify(projectService, times(1)).read(p.getId());
-		verify(sequenceFileService).getSequenceFilesForSample(s);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
 		@SuppressWarnings("unchecked")
-		ResourceCollection<SampleResource> samples = (ResourceCollection<SampleResource>) o;
+		ResourceCollection<Sample> samples = (ResourceCollection<Sample>) o;
 		assertEquals(1, samples.size());
 		List<Link> resourceLinks = samples.getLinks();
 		assertEquals(1, resourceLinks.size());
 		Link self = resourceLinks.iterator().next();
 		assertEquals("self", self.getRel());
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
-		SampleResource resource = samples.iterator().next();
+		Sample resource= samples.iterator().next();
 		assertEquals(s.getSampleName(), resource.getSampleName());
-		assertEquals(1, resource.getSequenceFileCount());
+		//assertEquals(1, resource.getSequenceFileCount());
 		List<Link> links = resource.getLinks();
 		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
 				RESTProjectSamplesController.REL_PROJECT);
@@ -192,8 +180,8 @@ public class ProjectSamplesControllerTest {
 		verify(projectService).read(p.getId());
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertTrue(o instanceof SampleResource);
-		SampleResource sr = (SampleResource) o;
+		assertTrue(o instanceof Sample);
+		Sample sr = (Sample) o;
 
 		Link selfLink = sr.getLink(Link.REL_SELF);
 		Link sequenceFilesLink = sr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);

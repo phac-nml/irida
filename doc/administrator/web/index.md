@@ -4,7 +4,7 @@ search_title: "IRIDA Web Interface Install Guide"
 description: "Install guide for setting up the IRIDA web interface."
 ---
 
-This document describes how to install the IRIDA web interface. We assume that you have either downloaded IRIDA as a `WAR` file distributable, or have [built IRIDA from source](../building), and also assume that you have completed [installing and configuring Galaxy](../galaxy).
+This document describes how to install the IRIDA web interface. We assume that you have either downloaded IRIDA as a `WAR` file distributable, or have [built IRIDA from source](./building), and also assume that you have completed [installing and configuring Galaxy](../galaxy).
 
 * This comment becomes the table of contents
 {:toc}
@@ -45,7 +45,7 @@ We provide *some* instructions for installing and setting up your production env
 
 Deploying IRIDA
 ===============
-Whether you are [building IRIDA from source](../building) or installing a pre-built `WAR` file, you need to follow the instructions immediately below to configure your system.
+Whether you are [building IRIDA from source](./building) or installing a pre-built `WAR` file, you need to follow the instructions immediately below to configure your system.
 
 Core Configuration
 ------------------
@@ -57,6 +57,22 @@ All IRIDA configuration files are stored in `/etc/irida/`. The main IRIDA config
 
 If this file does not exist, the platform will use internal configuration values. The internal configuration values point at a local instance of the database server. The likelihood of the internal configuration values correspond to your production environment is alarmingly low (or at least, should be).
 
+The main configuration parameters you will need to change are:
+
+1. **Directories to store files managed by IRIDA:**
+  * `sequence.file.base.directory=/opt/irida/data/sequence` - Sequence files managed by IRIDA.
+  * `reference.file.base.directory=/opt/irida/data/reference` - Reference files assigned to projects in IRIDA.
+  * `output.file.base.directory=/opt/irida/data/output` - Results of analysis pipelines.
+  * `snapshot.file.base.directory=/opt/irida/data/snapshot` - Sequence files transferred from remote IRIDA installations.
+2. **Database connection information:**
+  * `jdbc.url=jdbc:mysql://localhost:3306/irida_test`
+  * `jdbc.username=test`
+  * `jdbc.password=test`
+3. **Galaxy connection information for executing pipelines:**
+  * `galaxy.execution.url=http://localhost/`
+  * `galaxy.execution.apiKey=xxxx`
+  * `galaxy.execution.email=user@localhost`
+
 Web Configuration
 -----------------
 The IRIDA platform also looks for a web application configuration file at `/etc/irida/web.conf`.  Similar to the irida.conf file, this file is a plain Java configuration file.  The properties in this file will be used to configure parameters of the web application component of the IRIDA platform.  You can download the file from [config/web.conf](config/web.conf), or you can find an example below:
@@ -66,6 +82,30 @@ The IRIDA platform also looks for a web application configuration file at `/etc/
 {% endhighlight %}
     
 If this file does not exist the platform will use internal configuration values which will probably not correspond to your production environment.
+
+The `mail.server.*` configuration parameters will need to correspond to a configured mail server, such as [Postfix][].  This will be used by IRIDA to send email notifications to users on the creation of an account or on password resets.
+
+Analytics
+---------
+The IRIDA platform supports web analytics.  Include the analytic snippet inside a file in `/etc/irida/analytics/`.  The snippet will be injected into the page.
+
+E.g. In `/etc/irida/analytics/google-analytics.html`.
+
+{% highlight javascript %}
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-XXXXX-X']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+{% endhighlight %}
 
 Deploy the `WAR` File
 ---------------------
@@ -94,3 +134,5 @@ The default administrator username and password are:
 You will be required to change the password the first time you log-in with these credentials.
 
 Once you've logged in for the first time, you will probably want to create some user accounts. User account creation is outlined in our [Administrative User Guide]({{ site.url }}/user/administrator).
+
+[Postfix]: http://www.postfix.org/

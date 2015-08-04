@@ -5,8 +5,10 @@
 <head>
 	<title th:text="#{project.associated.heading(${project.label})}"></title>
 	<script>
-		window.dependencies = ['irida.datatables', 'restangular'];
+		window.dependencies = ['associated.edit'];
 	</script>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css}"
+	      href="/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css"/>
 </head>
 <body>
 
@@ -20,7 +22,7 @@
 	</div>
 
 	<div tabset="">
-		<div tab="" th:attr="heading=#{project.associated.local.tab}">
+		<div id="local-tab" tab="" th:attr="heading=#{project.associated.local.tab}">
 			<div ng-controller="AssociatedTableCtrl">
 				<div class="form-inline">
 					<button id="filterBtn" class="btn btn-info"
@@ -59,7 +61,7 @@
 						    sortedby="filterCriteria.sortedBy"
 						    sortValue="createdDate" th:text="#{project.created}">_Created_
 						</th>
-						<th></th>
+						<th th:text="#{project.associated.table.associated}">_Associated_</th>
 					</tr>
 					<tr>
 						<td id="table-filter" colspan="5">
@@ -82,10 +84,15 @@
 						<td>{{project.organism}}</td>
 						<td>{{project.createdDate}}</td>
 						<td>
-							<button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
-							        ng-class="{'btn-success': project.associated}"
-							        th:text="#{project.associated.edit.button}">Hello
-							</button>
+                            <input
+                              bs-switch="bs-switch"
+                              class="associated-switch"
+                              ng-model="project.associated"
+                              ng-change="updateAssociated(project)"
+                              switch-size="mini"
+                              type="checkbox"
+                              ng-true-value="'associated'"
+                              ng-false-value="false"/>
 						</td>
 					</tr>
 					</tbody>
@@ -102,8 +109,7 @@
 				</div>
 			</div>
 		</div>
-        <!--/* TODO: Re-enable for federated data
-		<div tab="" th:attr="heading=#{project.associated.remote.tab}">
+		<div id="remote-tab" tab="" th:attr="heading=#{project.associated.remote.tab}">
 			<div th:unless="${#lists.isEmpty(apis)}" class="panel panel-default" ng-controller="RemoteAssociatedCtrl">
                  <button id="filterBtn" class="btn btn-info"
                         ng-click="filter.isCollapsed = !filter.isCollapsed"
@@ -143,22 +149,25 @@
     						<th th:text="#{projects.table.name}">_Name_</th>
     						<th th:text="#{projects.table.organism}">_State_</th>
                             <th th:text="#{project.created}">_Created_</th>
-    						<th></th>
+    						<th th:text="#{project.associated.table.associated}"></th>
     					</tr>
 					</thead>
 					<tbody cg-busy="filterPromise">
 					<tr class="associated-project-row" ng-repeat="project in remoteAssociated | filter:filterCriteria">
 						<td class="project-id">{{project.id}}</td>
-						<td class="project-name">
-                            <a href="#" th:href="@{/projects/remote/} + '{{project.remoteId}}'">{{project.name}}</a>
-                        </td>
+						<td class="project-name">{{project.name}}</td>
 						<td>{{project.organism}}</td>
                         <td>{{project.createdDate}}</td>
 						<td>
-                            <button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
-							        ng-class="{'btn-success': project.associated}"
-							        th:text="#{project.associated.edit.button}">Hello
-							</button>
+                            <input
+                              bs-switch="bs-switch"
+                              ng-model="project.associated"
+                              ng-change="updateAssociated(project)"
+                              class="associated-switch"
+                              switch-size="mini"
+                              type="checkbox"
+                              ng-true-value="'associated'"
+                              ng-false-value="false"/>
                         </td>
 					</tr>
 					</tbody>
@@ -168,8 +177,6 @@
             </div>
             <div th:if="${#lists.isEmpty(apis)}" th:text="#{project.associated.remote.no_api}">_No APIs_</div>
 		</div>
-        */-->
-
 	</div>
 </main>
 
@@ -178,41 +185,59 @@
         src="/resources/js/directives/datatables/irida-datatable-min.js"></script>
 <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
         src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
+<script th:src="@{/resources/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js}" 
+        src="/resources/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
+<script th:src="@{/resources/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js}"
+        src="/resources/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
 <script th:replace="remote_apis/remote_api_connect"></script>
 <script th:inline="javascript">
-	var app = angular.module('irida');
-	app.config(function (RestangularProvider) {
-		RestangularProvider.setBaseUrl(/*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/');
-	});
+	var PAGE = {
+			urls: {
+				local: {
+					get: /*[[@{/projects/{id}/associated/ajax/available(id=${project.getId()})}]]*/ '/projects/1/associated/ajax/available',
+					add: /*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/',
+					remove: /*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
+				},
+				remote: {
+					get: /*[[@{/projects/{id}/associated/remote/(id=${project.getId()})}]]*/ '/projects/1/associated/remote/',
+					add: /*[[@{/projects/{id}/associated/remote/(id=${project.getId()})}]]*/ '/projects/1/associated/remote/',
+					remove: /*[[@{/projects/{id}/associated/remote/remove(id=${project.getId()})}]]*/ '/projects/1/associated/remote/remove'
+				}
+			}
+		},
+		app = angular.module('associated.edit', ['irida.datatables', 'frapontillo.bootstrap-switch']);
 
-	app.factory('AssociatedService', function (Restangular) {
+	app.factory('AssociatedService', function ($http) {
 		'use strict';
-		var base = Restangular.all("");
 
 		function AssociatedService() {
 			var self = this;
 			self.getAssociated = function (params) {
-				return base.customGET("ajax/available", params);
+				return $http.get( PAGE.urls.local.get, {
+					params: params
+				});
 			};
 			
 			self.getRemoteAssociated = function (apiId) {
-				return base.customGET("remote/"+apiId+"/available");
+				return $http.get(PAGE.urls.remote.get + apiId + '/available');
 			};
 
 			self.removeAssociatedStatus = function (params) {
-				return base.remove(params);
+				return $http.delete (PAGE.urls.local.remove, {
+					params: params
+				});
 			};
 
 			self.addAssociatedProject = function (params) {
-				return base.customPOST(params);
+				return $http.post(PAGE.urls.local.add, params);
 			};
 			
 			self.addRemoteAssociatedProject = function (params) {
-				return base.customPOST(params, "remote/");
+				return $http.post(PAGE.urls.remote.add, params);
 			};
 			
-			self.removeRemoteAssociatedStatus = function (remoteProjectId) {
-				return base.customDELETE("remote/"+remoteProjectId);
+			self.removeRemoteAssociatedStatus = function (params) {
+				return $http.post(PAGE.urls.remote.remove, params);
 			};
 		}
 
@@ -225,7 +250,7 @@
 		/*[- */
 		// paging: handle all things to do with the paging of the
 		//  - page = the current page being displayed.
-		//  - totalAssociated = the total number of assocaited projects for this project
+		//  - totalAssociated = the total number of associated projects for this project
 		//  - totalPages = the total number of pages (totalAssociated / num per page)
 		/* -]*/
 		$scope.paging = {
@@ -260,13 +285,12 @@
 		$scope.filterCriteria = _.clone(defaultCriteria);
 
 		/*[- */
-		// This uses Restangular to call the server with the filterCriteria.
 		// When the ajax call is complete the table is recreated.
 		/* -]*/
 		$scope.fetchResult = function () {
 			$scope.filterPromise = AssociatedService.getAssociated($scope.filterCriteria);
 
-			return $scope.filterPromise.then(function (data) {
+			return $scope.filterPromise.success(function (data) {
 				if (data.hasOwnProperty('associated')) {
 					$scope.associated = data.associated;
 					$scope.paging.totalAssociated = data.totalAssociated;
@@ -275,7 +299,7 @@
 					// Normally will only hit on bad credentials.
 					window.location = window.location;
 				}
-			}, function () {
+			}).error(function () {
 				$scope.associated = [];
 			});
 		};
@@ -329,24 +353,31 @@
 			var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
 			if (project.associated) {
-				AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function (data) {
+                AssociatedService.addAssociatedProject({associatedProjectId: project.id}).success(function (data) {
 					if (data.result === 'success') {
-						delete project.associated;
-						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
-						titleElem.html(--titleVal);
-					}
-					else
-						notyError();
-				});
-			}
-			else {
-				AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function (data) {
-					if (data.result === 'success') {
-						project.associated = 'associated';
 						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
 						titleElem.html(++titleVal);
 					}
-					else notyError();
+					else{
+                      notyError();
+                      project.associated='associated';
+                    }
+				}).error(function () {
+	                notyError();
+                });
+			}
+			else {
+				AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).success(function (data) {
+					if (data.result === 'success') {
+						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+						titleElem.html(--titleVal);
+					}
+					else{
+						notyError();
+                        project.associated=false;
+                    }
+				}).error(function () {
+					notyError();
 				});
 			}
 		};
@@ -379,7 +410,7 @@
 		$scope.fetchResult = function () {
 			$scope.filterPromise = AssociatedService.getRemoteAssociated($scope.apiSelection);
 
-			return $scope.filterPromise.then(function (data) {
+			return $scope.filterPromise.success(function (data) {
 					$scope.remoteAssociated = data;
 			}, function () {
 				$scope.remoteAssociated = [];
@@ -389,25 +420,32 @@
 		$scope.updateAssociated = function (project) {
 			var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
-			if (project.associated) {
-				AssociatedService.removeRemoteAssociatedStatus(project.remoteId).then(function (data) {
+			if (project.associated) {				
+                AssociatedService.addRemoteAssociatedProject({projectUrl: project.selfRel}).success(function (data) {
 					if (data.result === 'success') {
-						delete project.associated;
-						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
-						titleElem.html(--titleVal);
-					}
-					else
-						notyError();
-				});
-			}
-			else {
-				AssociatedService.addRemoteAssociatedProject({associatedProjectId: project.remoteId, apiId: $scope.apiSelection}).then(function (data) {
-					if (data.result === 'success') {
-						project.associated = 'associated';
 						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
 						titleElem.html(++titleVal);
 					}
-					else notyError();
+					else {
+                      notyError();
+                      project.associated = false;
+                    }
+				}).error(function () {
+	                notyError();
+                });
+			}
+			else {
+				AssociatedService.removeRemoteAssociatedStatus({projectUrl: project.selfRel}).success(function (data) {
+					if (data.result === 'success') {
+						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+						titleElem.html(--titleVal);
+					}
+					else {
+                        project.associated = 'associated';
+						notyError();
+                    }
+				}).error(function () {
+					notyError();
 				});
 			}
 		};

@@ -1,15 +1,15 @@
-(function (angular, $, _) {
+(function (angular, $, _, page, project) {
 
-  function ProjectFileService($rootScope, R) {
+  function ProjectFileService($rootScope, $http) {
     "use strict";
-    var svc = this,
-        base = R.all('projects/' + project.id + '/ajax/reference');
+    var svc = this;
       svc.files = [];
 
     svc.getFiles = function getFiles() {
-      return base.customGET("all").then(function (data) {
-        angular.copy(data.files, svc.files);
-      });
+      return $http.get(page.urls.get)
+        .success(function(data){
+          angular.copy(data.files, svc.files);
+        });
     };
 
     $rootScope.$on('FILE_DELETED', function (e, args) {
@@ -24,21 +24,20 @@
     });
   }
 
-  function FileService($rootScope, $modal, R, notifications) {
+  function ReferenceFileService($rootScope, $modal, $http, notifications) {
     "use strict";
-    var svc = this,
-        api = R.all('referenceFiles');
+    var svc = this;
 
     svc.download = function (id) {
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "referenceFiles/download/" + id;
+      iframe.src = page.urls.download + id;
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
 
     svc.deleteFile = function (file) {
       var modalInstance = $modal.open({
-        templateUrl: TL.BASE_URL + 'projects/templates/referenceFiles/delete',
+        templateUrl: '/delete-modal.html',
         controller : 'DeleteCtrl as dCtrl',
         resolve    : {
           file: function () {
@@ -48,45 +47,14 @@
       });
 
       modalInstance.result.then(function () {
-        api.customPOST({
-          fileId   : file.id,
+        $http.post(page.urls.remove, {
+          fileId: file.id,
           projectId: project.id
-        }, "delete").then(function (data) {
+        }).success(function(data) {
           notifications.show({msg: data.msg, type: data.result});
-          $rootScope.$broadcast("FILE_DELETED", {id: file.id});
+          $rootScope.$broadcast('FILE_DELETED', {id: file.id});
         });
       });
-    }
-  }
-
-  function FileUploadService($rootScope, $upload, notifications) {
-    "use strict";
-    var svc = this;
-
-    svc.uploadFiles = function ($files) {
-      // TODO: add a check to see if this file has already been upload and give a warning if it has.
-      _.each($files, function (file) {
-        $upload.upload({
-          url: TL.BASE_URL + "referenceFiles/project/" + project.id + "/new",
-          file: file
-        }).success(function (data) {
-          if (data.error) {
-            notifications.show({type: 'error', msg: data.error});
-          } else {
-            $rootScope.$broadcast('NEW_FILE', {file: data.result});
-          }
-        });
-      });
-    };
-  }
-
-  function bytes() {
-    return function (bytes, precision) {
-      if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {return bytes;}
-      if (typeof precision === 'undefined') {precision = 1;}
-      var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
-          number = Math.floor(Math.log(bytes) / Math.log(1024));
-      return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
     };
   }
 
@@ -104,7 +72,7 @@
     };
   }
 
-  function FilesCtrl(ProjectFileService, FileService) {
+  function FilesCtrl(ProjectFileService, projectFilesService) {
     "use strict";
     var vm = this;
 
@@ -120,11 +88,11 @@
     };
 
     vm.download = function (id) {
-      FileService.download(id);
+      projectFilesService.download(id);
     };
 
     vm.deleteFile = function (file) {
-      FileService.deleteFile(file);
+      projectFilesService.deleteFile(file);
     };
 
     ProjectFileService.getFiles().then(function () {
@@ -132,22 +100,25 @@
     });
   }
 
-  function FileUploadCtrl(FileUploadService) {
-    "use strict";
+  function FileUploadCtrl($timeout, fileService) {
     var vm = this;
 
     vm.onFileSelect = function ($files) {
-      FileUploadService.uploadFiles($files);
+      if ($files && $files.length) {
+        fileService.upload(page.urls.upload, $files).then(function () {
+          $timeout(function () {
+            window.location.href = window.location.href;
+          }, 500);
+        });
+      }
     };
   }
 
-  angular.module('References', ['angularFileUpload'])
-    .service('ProjectFileService', ['$rootScope', 'Restangular', ProjectFileService])
-    .service('FileService', ['$rootScope', '$modal', 'Restangular', 'notifications', FileService])
-    .service('FileUploadService', ['$rootScope', '$upload', 'notifications', FileUploadService])
-    .filter('bytes', [bytes])
-    .controller('FilesCtrl', ['ProjectFileService', 'FileService', FilesCtrl])
+  angular.module('References', ['file.utils'])
+    .service('ProjectFileService', ['$rootScope', '$http', ProjectFileService])
+    .service('ReferenceFileService', ['$rootScope', '$modal', '$http', 'notifications', ReferenceFileService])
+    .controller('FilesCtrl', ['ProjectFileService', 'ReferenceFileService', FilesCtrl])
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
-    .controller('FileUploadCtrl', ['FileUploadService', FileUploadCtrl])
+    .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl])
   ;
-})(angular, jQuery, _);
+})(window.angular, window.jQuery, window._, window.PAGE, window.project);

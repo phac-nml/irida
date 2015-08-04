@@ -141,10 +141,8 @@ public class ProjectSamplesControllerTest {
 			verify(sampleService).read(x);
 		}
 
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService).removeSampleFromProject(oldProject, s2);
-		verify(projectService).removeSampleFromProject(oldProject, s3);
+		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s2);
+		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s3);
 	}
 
 	@Test
@@ -219,8 +217,8 @@ public class ProjectSamplesControllerTest {
 		idList.add(1L);
 		when(projectService.read(PROJECT_ID)).thenReturn(project1);
 		when(sampleService.read(anyLong())).thenReturn(sample);
-		Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
-		assertTrue("Result contains the word success", result.containsKey("success"));
+		Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList, Locale.US);
+		assertTrue("Result contains the word success", result.containsKey("result"));
 		verify(projectService).removeSampleFromProject(project1, sample);
 	}
 

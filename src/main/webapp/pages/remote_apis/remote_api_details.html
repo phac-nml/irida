@@ -25,7 +25,7 @@
                       <i class="glyphicon glyphicon-barcode"></i>
                     </div>
                     <div th:text="#{iridaThing.id}">_ID_</div>
-                    <div class="sidebar__value" id="remoteapi-id" th:text="${remoteApi.id}">_ID_</div>
+                    <div class="sidebar__value" id="remoteapi-id" th:text="${remoteApi.getId()}">_ID_</div>
                   </div>
 
                   <div class="sidebar__item">
@@ -77,7 +77,7 @@
                     <h3 class="panel-title pull-left">Connection Status</h3>
                     <div class="btn-group-xs pull-right">
                         <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button"
-                            th:attr="data-api-id=${remoteApi.id}"
+                            th:attr="data-api-id=${remoteApi.getId()}"
                             th:text="#{remoteapi.status.connect.button}">_Connect_</button>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
        </div>
     <section>
         <form id="removeForm" action="/remote_api/remove" th:action="@{/remote_api/remove}" method="POST">
-            <input type="hidden" th:value="${remoteApi.id}" name="id"/>
+            <input type="hidden" th:value="${remoteApi.getId()}" name="id"/>
         </form>
     </section>
 </main>
@@ -138,7 +138,7 @@
 
     		});
 
-    		var apiId = /*[[${remoteApi.id}]]*/ 1;
+    		var apiId = /*[[${remoteApi.getId()}]]*/ 1;
     		getApiStatus(apiId,"#connection-status","#connect-button");
     	});
 

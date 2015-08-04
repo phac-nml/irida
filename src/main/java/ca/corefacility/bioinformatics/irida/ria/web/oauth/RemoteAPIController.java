@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.HandlerMapping;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
@@ -338,7 +339,7 @@ public class RemoteAPIController extends BaseController {
 	@ExceptionHandler(IridaOAuthException.class)
 	public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) throws OAuthSystemException {
 		logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
-		String requestURI = request.getRequestURI();
+		String requestURI = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 
 		return authController.authenticate(ex.getRemoteAPI(), requestURI);
 	}

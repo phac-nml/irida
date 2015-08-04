@@ -10,4 +10,5 @@
 	<include file="analysis-submission-cleanup.xml" relativeToChangelogFile="true"/>
 	<include file="unique-sequencefile-sample.xml" relativeToChangelogFile="true"/>
 	<include file="oauth-auto-approvable-scopes.xml" relativeToChangelogFile="true"/>
+	<include file="remove-snapshots.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

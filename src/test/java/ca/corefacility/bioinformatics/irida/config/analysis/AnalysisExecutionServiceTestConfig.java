@@ -41,9 +41,12 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.google.common.collect.Lists;
 
@@ -102,6 +105,12 @@ public class AnalysisExecutionServiceTestConfig {
 	
 	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
+	
+	@Autowired
+	SampleRemoteService sampleRemoteService;
+	
+	@Autowired
+	private SequenceFileSnapshotService sequenceFileSnapshotService;
 
 	@Lazy
 	@Bean
@@ -114,7 +123,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService,sequenceFileSnapshotService);
 	}
 	
 	@Lazy
@@ -130,7 +139,7 @@ public class AnalysisExecutionServiceTestConfig {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder,
 				iridaWorkflowsService,
-				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy);
+				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy,sampleRemoteService);
 	}
 	
 	@Lazy
@@ -142,8 +151,9 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy() {
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
-		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient);
+		final ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+		final JobsClient jobsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getJobsClient();
+		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient, jobsClient);
 	}
 
 	/**

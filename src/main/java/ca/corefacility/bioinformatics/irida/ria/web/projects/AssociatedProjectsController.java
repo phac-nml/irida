@@ -6,10 +6,14 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,28 +34,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
-import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -60,6 +63,8 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("/projects")
 @Scope("session")
 public class AssociatedProjectsController {
+	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectsController.class);
+
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_ASSOCIATED_PROJECTS = "associated";
 	public static final String ASSOCIATED_PROJECTS_PAGE = ProjectsController.PROJECTS_DIR + "associated_projects";
@@ -72,18 +77,17 @@ public class AssociatedProjectsController {
 	private final RemoteAPIService apiService;
 	private final UserService userService;
 	private final ProjectRemoteService projectRemoteService;
+	private SampleRemoteService sampleRemoteService;
 
 	private final SampleService sampleService;
 
 	private final Formatter<Date> dateFormatter;
 
-	private RemoteObjectCache<RemoteProject> remoteProjectCache;
-
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
 			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService,
-			RemoteObjectCache<RemoteProject> remoteProjectCache) {
+			SampleRemoteService sampleRemoteService) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectService = projectService;
@@ -91,8 +95,8 @@ public class AssociatedProjectsController {
 		this.userService = userService;
 		this.apiService = apiService;
 		this.projectRemoteService = projectRemoteService;
-		this.remoteProjectCache = remoteProjectCache;
 		this.sampleService = sampleService;
+		this.sampleRemoteService = sampleRemoteService;
 		dateFormatter = new DateFormatter();
 	}
 
@@ -125,6 +129,8 @@ public class AssociatedProjectsController {
 
 		Map<RemoteAPI, List<RemoteRelatedProject>> remoteRelatedProjectsByApi = getRemoteRelatedProjectsByApi(project);
 		model.addAttribute("remoteProjectsByApi", remoteRelatedProjectsByApi);
+		
+		model.addAttribute("noAssociated", associatedProjects.isEmpty() && remoteRelatedProjectsByApi.isEmpty());
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ASSOCIATED_PROJECTS);
 
@@ -294,7 +300,7 @@ public class AssociatedProjectsController {
 
 		Project project = projectService.read(projectId);
 		RemoteAPI api = apiService.read(apiId);
-		List<RemoteProject> listProjectsForAPI = projectRemoteService.listProjectsForAPI(api);
+		List<Project> listProjectsForAPI = projectRemoteService.listProjectsForAPI(api);
 		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
 				.getRemoteProjectsForProject(project);
 
@@ -306,24 +312,20 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            The ID of the owning project
-	 * @param associatedProjectId
-	 *            The Cache ID of the {@link RemoteProject}
-	 * @param apiId
-	 *            The ID of the api this project resides on
+	 * @param projectUrl
+	 *            The URL of the remote {@link Project}
 	 * @return a Map representation of the status of adding the associated
 	 *         project.
 	 */
 	@RequestMapping(value = "/{projectId}/associated/remote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId,
-			@RequestParam Integer associatedProjectId, @RequestParam Long apiId) {
+	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId, @RequestParam String projectUrl) {
 		Project project = projectService.read(projectId);
-		RemoteAPI remoteAPI = apiService.read(apiId);
-		CacheObject<RemoteProject> cacheObject = remoteProjectCache.readResource(associatedProjectId);
-		RemoteProject readResource = cacheObject.getResource();
+		Project readResource = projectRemoteService.read(projectUrl);
 
-		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI,
-				readResource.getHrefForRel("self"));
+		Link selfLink = readResource.getLink(Link.REL_SELF);
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, readResource.getRemoteAPI(),
+				selfLink.getHref());
 		remoteRelatedProjectService.create(remoteRelatedProject);
 
 		return ImmutableMap.of("result", "success");
@@ -334,21 +336,19 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            The ID of the project to remove the association from
-	 * @param associatedProjectId
-	 *            The cache identifier for the remote element
+	 * @param projectUrl
+	 *            The url for the remote element
 	 * @return a Map representation of the status of removing the associated
 	 *         project.
 	 */
-	@RequestMapping(value = "/{projectId}/associated/remote/{associatedProjectId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{projectId}/associated/remote/remove", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> removeRemoteAssociatedProject(@PathVariable Long projectId,
-			@PathVariable Integer associatedProjectId) {
+			@RequestParam String projectUrl) {
 		Project project = projectService.read(projectId);
-		CacheObject<RemoteProject> cacheObject = remoteProjectCache.readResource(associatedProjectId);
-		RemoteProject readResource = cacheObject.getResource();
 
 		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = remoteRelatedProjectService
-				.getRemoteRelatedProjectForProjectAndURI(project, readResource.getHrefForRel(RemoteResource.SELF_REL));
+				.getRemoteRelatedProjectForProjectAndURI(project, projectUrl);
 		remoteRelatedProjectService.delete(remoteRelatedProjectForProjectAndURI.getId());
 
 		return ImmutableMap.of("result", "success");
@@ -389,16 +389,69 @@ public class AssociatedProjectsController {
 	}
 
 	/**
-	 * Get a list of the {@link RemoteProject} parameters
+	 * Get the samples from {@link RemoteRelatedProject}s for a given project
+	 * 
+	 * @param projectId
+	 *            The ID of the current project
+	 * @return A {@code Map<String,Object>} containing a list of remote samples,
+	 *         the number of projects from unauthorized APIs, and the number of
+	 *         projects the user does not have access to.
+	 */
+	@RequestMapping(value = "/{projectId}/associated/remote/samples")
+	public Map<String, Object> getRemoteAssociatedSamplesForProject(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+
+		// Get the list of remote related projects
+		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
+				.getRemoteProjectsForProject(project);
+
+		Set<RemoteAPI> disconnectedApis = new HashSet<>();
+		List<Map<String, Object>> sampleList = new ArrayList<>();
+		for (RemoteRelatedProject rrp : remoteProjectsForProject) {
+			try {
+				// read the projects from their APIs
+				Project read = projectRemoteService.read(rrp);
+
+				// list samples for project
+				List<Sample> samplesForProject = sampleRemoteService.getSamplesForProject(read);
+
+				// compile json response map
+				List<Map<String, Object>> collect = samplesForProject
+						.stream()
+						.map((s) -> ProjectSamplesController.getSampleMap(s, read,
+								ProjectSamplesController.SampleType.REMOTE, s.getLink(Link.REL_SELF).getHref()))
+						.collect(Collectors.toList());
+
+				sampleList.addAll(collect);
+			} catch (IridaOAuthException ex) {
+				logger.debug("User couldn't read samples for project: " + ex.getMessage());
+				disconnectedApis.add(rrp.getRemoteAPI());
+			} catch (HttpClientErrorException ex) {
+				if (ex.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+					logger.debug("User couldn't read samples as they don't have access to the project: "
+							+ ex.getMessage());
+				} else {
+					throw ex;
+				}
+			}
+		}
+
+		return ImmutableMap.of("samples", sampleList, "notConnected", disconnectedApis);
+	}
+
+	/**
+	 * Get a list of the {@link Project} parameters
 	 * 
 	 * @param projects
-	 *            A list of the {@link RemoteProject}s to display
+	 *            A list of the {@link Project}s to display
 	 * @param associatedProjects
 	 *            The {@link RemoteRelatedProject}s associated with the current
 	 *            project
+	 * @param api
+	 *            The Remote API to get projects for
 	 * @return
 	 */
-	private List<Map<String, String>> getRemoteAssociatedProjectsMap(List<RemoteProject> projects,
+	private List<Map<String, String>> getRemoteAssociatedProjectsMap(List<Project> projects,
 			List<RemoteRelatedProject> associatedProjects, RemoteAPI api) {
 		List<Map<String, String>> list = new ArrayList<>();
 
@@ -408,16 +461,17 @@ public class AssociatedProjectsController {
 			remoteUrls.put(remoteProjectURI, true);
 		}
 
-		for (RemoteProject project : projects) {
+		for (Project project : projects) {
 			Map<String, String> pmap = new HashMap<>();
-			Integer remoteId = remoteProjectCache.addResource(project, api);
 
 			pmap.put("id", project.getId().toString());
-			pmap.put("remoteId", remoteId.toString());
+			pmap.put("selfRel", project.getLink(Link.REL_SELF).getHref());
 			pmap.put("name", project.getName());
 			pmap.put("organism", project.getOrganism());
 			pmap.put("createdDate", dateFormatter.print(project.getCreatedDate(), LocaleContextHolder.getLocale()));
-			if (remoteUrls.containsKey(project.getHrefForRel(RemoteResource.SELF_REL))) {
+
+			Link selfLink = project.getLink(Link.REL_SELF);
+			if (remoteUrls.containsKey(selfLink.getHref())) {
 				pmap.put("associated", "associated");
 			}
 
@@ -481,21 +535,11 @@ public class AssociatedProjectsController {
 	}
 
 	/**
-	 * Generates a map of project information for the {@link ProjectsDataTable}
+	 * Generates a map of project information.
 	 *
 	 * @param projectList
 	 *            a List of {@link ProjectUserJoin} for the current user.
-	 * @param draw
-	 *            property sent from {@link ProjectsDataTable} as the table to
-	 *            render information to.
-	 * @param totalElements
-	 *            Total number of elements that could go into the table.
-	 * @param sortColumn
-	 *            Column to sort by.
-	 * @param sortDirection
-	 *            Direction to sort the column
-	 * @return Map containing the information to put into the
-	 *         {@link ProjectsDataTable}
+	 * @return Map containing the information to put the projects table
 	 */
 	private Map<String, Object> getProjectsDataMap(Iterable<Project> projectList,
 			List<RelatedProjectJoin> relatedProjectJoins) {
@@ -528,7 +572,8 @@ public class AssociatedProjectsController {
 	/**
 	 * Handle entity exists exceptions for creating {@link RelatedProjectJoin}s
 	 * 
-	 * @param ex the exception to handle.
+	 * @param ex
+	 *            the exception to handle.
 	 * @return a {@link ResponseEntity} to render the exception to the client.
 	 */
 	@ExceptionHandler(EntityExistsException.class)

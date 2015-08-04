@@ -35,4 +35,17 @@ public interface SequenceFilePairRepository extends IridaJpaRepository<SequenceF
 	 */
 	@Query("SELECT distinct p FROM SequenceFilePair p, SampleSequenceFileJoin j WHERE j.sample=?1 AND j.sequenceFile in elements(p.files)")
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
+
+	/**
+	 * Read a specific {@link SequenceFilePair} that's associated with a given
+	 * {@link Sample}
+	 * 
+	 * @param sample
+	 *            The {@link Sample} to read from
+	 * @param id
+	 *            the ID of the pair
+	 * @return A {@link SequenceFilePair}
+	 */
+	@Query("SELECT p FROM SequenceFilePair p, SampleSequenceFileJoin j WHERE j.sample=?1 AND j.sequenceFile in elements(p.files) AND p.id=?2")
+	public SequenceFilePair readSequenceFilePairForSample(Sample sample, Long id);
 }

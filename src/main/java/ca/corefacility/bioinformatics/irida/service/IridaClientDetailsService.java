@@ -1,17 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.util.Map;
-
-import javax.validation.ConstraintViolationException;
-
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 
 /**
@@ -21,27 +13,35 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
  */
 public interface IridaClientDetailsService extends ClientDetailsService, CRUDService<Long, IridaClientDetails> {
 
-	@PreAuthorize("permitAll()")
+	/**
+	 * {@inheritDoc}
+	 */
 	public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException;
 
 	/**
-	 * {@inheritDoc}
+	 * Get the number of tokens issued for a given {@link IridaClientDetails}
+	 * 
+	 * @param client
+	 *            Client to count tokens for
+	 * @return Number of tokens issued for the given client
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public IridaClientDetails create(IridaClientDetails entity);
+	public int countTokensForClient(IridaClientDetails client);
 
 	/**
-	 * {@inheritDoc}
+	 * Revoke all OAuth2 tokens for a given {@link IridaClientDetails}
+	 * 
+	 * @param client
+	 *            The client to revoke tokens for
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@Override
-	public IridaClientDetails update(Long id, Map<String, Object> updatedProperties) throws EntityExistsException,
-			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException;
+	public void revokeTokensForClient(IridaClientDetails client);
 
 	/**
-	 * {@inheritDoc}
+	 * Get the number of all tokens defined for a given
+	 * {@link IridaClientDetails} that are valid and not expired.
+	 * 
+	 * @param client
+	 *            the {@link IridaClientDetails} to get tokens for
+	 * @return number of tokens defined for the client.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void delete(Long id) throws EntityNotFoundException;
-
+	public int countActiveTokensForClient(IridaClientDetails client);
 }

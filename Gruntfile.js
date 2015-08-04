@@ -1,13 +1,13 @@
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
 
-  var app_path = require('./bower.json').appPath;
+  var appPath = require('./bower.json').appPath;
   grunt.initConfig({
     paths  : {
-      html: app_path + '/pages',
-      scss: app_path + '/styles',
-      css : app_path + '/resources/css',
-      js  : app_path + '/resources/js'
+      html: appPath + '/pages',
+      scss: appPath + '/styles',
+      css : appPath + '/resources/css',
+      js  : appPath + '/resources/js'
     },
     autoprefixer: {
       dev: {
@@ -55,7 +55,7 @@ module.exports = function (grunt) {
     jshint : {
       options: {
         reporter  : require('jshint-stylish'),
-        'jshintrc': true
+        'jshintrc': appPath + '/.jshintrc'
       },
       target : ['<%= paths.js %>/**/*.js', '!<%= paths.js %>/**/*-min.js', '!<%= paths.js %>/vendor/**/*.js']
     },

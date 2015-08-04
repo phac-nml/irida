@@ -1,38 +1,26 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -41,43 +29,66 @@ import com.google.common.collect.ImmutableList;
  * </p>
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
-@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectSamplesPageIT {
+public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPageIT.class);
 
-	private WebDriver driver;
 	private ProjectSamplesPage page;
 
 	@Before
-	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		this.page = new ProjectSamplesPage(driver);
+	public void setUpTest() {
+		this.page = new ProjectSamplesPage(driver());
 	}
 
-	@After
-	public void destroy() {
-		driver.quit();
+	@Test(expected = AssertionError.class)
+	public void testGoingToInvalidPage() {
+		logger.debug("Testing going to an invalid sample id");
+		LoginPage.loginAsManager(driver());
+		page.goToPage("112423");
+	}
+
+	@Test(expected = AssertionError.class)
+	public void testGoingToNonLongProjectId() {
+		logger.debug("Testing going to an invalid sample id");
+		LoginPage.loginAsManager(driver());
+		page.goToPage("not_a_long");
 	}
 
 	@Test
 	public void testInitialPageSetUp() {
 		logger.info("Testing page set up for: Project Samples");
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 		assertTrue(page.getTitle().contains("Samples"));
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
+
+		page.showSamplesDropdownMenu();
+		assertFalse("Merge should be disabled", page.isSampleMergeOptionEnabled());
+		assertFalse("Copy should be disabled", page.isSampleCopyOptionEnabled());
+		assertFalse("Move should be disabled", page.isSampleMoveOptionEnabled());
+		assertFalse("Remove should be disabled", page.isSampleRemoveOptionEnabled());
+
+		// Check when selecting a sample
+		page.selectSampleByRow(1);
+		page.showSamplesDropdownMenu();
+		assertFalse("Merge should be disabled", page.isSampleMergeOptionEnabled());
+		assertTrue("Copy should be enabled", page.isSampleCopyOptionEnabled());
+		assertTrue("Move should be enabled", page.isSampleMoveOptionEnabled());
+		assertTrue("Remove should be enabled", page.isSampleRemoveOptionEnabled());
+
+		// Check when selecting a second sample
+		page.selectSampleByRow(2);
+		page.showSamplesDropdownMenu();
+		assertTrue("Merge should be enabled", page.isSampleMergeOptionEnabled());
+		assertTrue("Copy should be enabled", page.isSampleCopyOptionEnabled());
+		assertTrue("Move should be enabled", page.isSampleMoveOptionEnabled());
+		assertTrue("Remove should be enabled", page.isSampleRemoveOptionEnabled());
 	}
 
 	@Test
 	public void testPaging() {
 		logger.info("Testing paging for: Project Samples");
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		// Initial setup
@@ -131,7 +142,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testSelectSamples() {
 		logger.info("Testing selecting samples for: Project Samples");
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		assertEquals(0, page.getNumberOfSamplesSelected());
@@ -145,7 +156,7 @@ public class ProjectSamplesPageIT {
 	public void testPagingWithSelectingSamples() {
 		logger.info("Testing paging with selecting samples for: Project Samples");
 		List<Integer> page1 = ImmutableList.of(0, 1, 6);
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		assertEquals(0, page.getNumberOfSamplesSelected());
@@ -183,7 +194,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testSelectedSampleCount() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		page.selectSampleByRow(0);
@@ -210,10 +221,10 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testDefaultMerge() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
-		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
+
 		page.selectSampleByRow(0);
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getTotalSelectedSamplesCount());
@@ -228,10 +239,10 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testRenameMerge() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
-		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
+
 		page.selectSampleByRow(0);
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getTotalSelectedSamplesCount());
@@ -266,7 +277,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testProjectUserCannotCopyOrMoveFilesToAnotherProject() {
-		LoginPage.loginAsUser(driver);
+		LoginPage.loginAsUser(driver());
 		page.goToPage();
 		assertFalse(page.isElementOnScreen("copyBtn"));
 		assertFalse(page.isElementOnScreen("moveBtn"));
@@ -274,7 +285,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testCopySamplesAsManagerToManagedProject() {
-		LoginPage.login(driver, "project1Manager", "Password1");
+		LoginPage.login(driver(), "project1Manager", "Password1");
 		// Make sure the project to copy to is empty to begin with
 		page.goToPage("2");
 		assertEquals(0, page.getNumberOfSamplesDisplayed());
@@ -300,7 +311,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testMoveSamplesAsManagerToManagedProject() {
-		LoginPage.login(driver, "project1Manager", "Password1");
+		LoginPage.login(driver(), "project1Manager", "Password1");
 		// Make sure the project to copy to is empty to begin with
 		page.goToPage("2");
 		assertEquals(0, page.getNumberOfSamplesDisplayed());
@@ -325,9 +336,8 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testCopySamplesAsManagerToUnmanagedProject() {
-		LoginPage.login(driver, "project1Manager", "Password1");
+		LoginPage.login(driver(), "project1Manager", "Password1");
 		page.goToPage();
-		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
 
 		// Should be able to copy files to a project that they are a manager of.
 		selectFirstThreeSamples();
@@ -340,8 +350,28 @@ public class ProjectSamplesPageIT {
 	}
 
 	@Test
+	public void testRemoveSamples() {
+		LoginPage.login(driver(), "project1Manager", "Password1");
+		page.goToPage();
+
+		int totalSampleCount = page.getTotalSampleCount();
+
+		selectFirstThreeSamples();
+		page.clickBtn("samplesOptionsBtn");
+		page.clickBtn("removeBtn");
+		assertTrue(page.isItemVisible("remove-samples-modal"));
+		page.clickBtn("confirmRemoveBtn");
+		assertTrue(page.checkSuccessNotification());
+
+		page.goToPage();
+		int newSampleCount = page.getTotalSampleCount();
+
+		assertEquals("should be 3 less samples that we started with", totalSampleCount - 3, newSampleCount);
+	}
+
+	@Test
 	public void testAdminCopyFromAnyProjectToAnyProject() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		selectFirstThreeSamples();
@@ -352,7 +382,7 @@ public class ProjectSamplesPageIT {
 		page.selectProjectByName("5", "confirm-copy-samples");
 		assertTrue(page.isBtnEnabled("confirm-copy-samples"));
 		page.clickBtn("confirm-copy-samples");
-		page.checkSuccessNotification();
+		assertTrue(page.checkSuccessNotification());
 
 		// Check to make sure the samples where copied there
 		page.goToPage("5");
@@ -360,8 +390,26 @@ public class ProjectSamplesPageIT {
 	}
 
 	@Test
+	public void testMoveSampleToProjectConflict() {
+		LoginPage.loginAsManager(driver());
+		page.goToPage();
+
+		// try to move to existing project
+		page.selectSampleByRow(0);
+		page.clickBtn("samplesOptionsBtn");
+		page.clickBtn("moveBtn");
+		assertTrue(page.isItemVisible("move-samples-modal"));
+		page.selectProjectByName("3", "confirm-move-samples");
+		assertTrue(page.isBtnEnabled("confirm-move-samples"));
+		page.clickBtn("confirm-move-samples");
+		assertTrue(page.checkWarningNotification());
+
+		assertEquals(1, page.getTotalNumberOfSamplesSelected());
+	}
+
+	@Test
 	public void testMultiSelection() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		// Test selecting a page
@@ -399,7 +447,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testExportLinker() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		assertFalse(page.isBtnEnabled("exportOptionsBtn"));
@@ -430,7 +478,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testTableSorts() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		// Page should be sorted by creation date first
@@ -449,7 +497,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testSampleFilter() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		// Filter by name
@@ -468,7 +516,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testChangingTableSize() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
@@ -480,13 +528,8 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testCart() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
-
-		assertFalse(page.isCartVisible());
-		assertEquals(0, page.getCartCount());
-		page.showCart();
-		assertTrue(page.isCartVisible());
 
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
@@ -499,21 +542,17 @@ public class ProjectSamplesPageIT {
 		assertEquals(1, page.getCartProjectCount());
 		page.clickBtn("cart-show-btn");
 		page.clickBtn("go-to-pipeline-btn");
-		assertTrue(driver.getCurrentUrl().contains("/pipelines"));
+		assertTrue(driver().getCurrentUrl().contains("/pipelines"));
 	}
 
 	@Test
 	public void testClearCart() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
-
-		assertFalse(page.isCartVisible());
-		assertEquals(0, page.getCartCount());
-		page.showCart();
-		assertTrue(page.isCartVisible());
 
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
+		page.showCart();
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
@@ -525,16 +564,15 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testDeleteProjectFromCart() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
 
 		assertFalse(page.isCartVisible());
 		assertEquals(0, page.getCartCount());
-		page.showCart();
-		assertTrue(page.isCartVisible());
 
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
+		page.showCart();
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
@@ -543,19 +581,15 @@ public class ProjectSamplesPageIT {
 		assertEquals("cart should have been emptied", 0, page.getCartCount());
 		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
 	}
-	
+
 	@Test
 	public void testDeleteSampleFromCart() {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage();
-
-		assertFalse(page.isCartVisible());
-		assertEquals(0, page.getCartCount());
-		page.showCart();
-		assertTrue(page.isCartVisible());
 
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
+		page.showCart();
 		assertEquals("cart should have 3 samples", 3, page.getCartCount());
 		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
 
@@ -567,7 +601,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testShowAssociatedSamples() throws InterruptedException {
-		LoginPage.loginAsAdmin(driver);
+		LoginPage.loginAsManager(driver());
 		page.goToPage("6");
 		int initialNumber = page.getNumberOfSamplesDisplayed();
 
@@ -576,6 +610,46 @@ public class ProjectSamplesPageIT {
 		int laterNumber = page.getNumberOfSamplesDisplayed();
 
 		assertNotEquals("page should have associated samples displayed", initialNumber, laterNumber);
+	}
+
+	@Test
+	public void testAddAssociatedToCart() throws InterruptedException {
+		LoginPage.loginAsManager(driver());
+		page.goToPage("6");
+		page.enableAssociatedProjects();
+
+		page.selectSampleByClass("associated-sample");
+		page.addSamplesToGlobalCart();
+		int cartCount = page.getCartCount();
+
+		assertEquals(1, cartCount);
+	}
+
+	@Test
+	public void testShowRemoteSamples() throws InterruptedException {
+		LoginPage.loginAsAdmin(driver());
+		// add the api
+		RemoteApiUtilities.addRemoteApi(driver());
+
+		// associate a project from that api
+		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
+		apEditPage.goTo(2L);
+		apEditPage.viewRemoteTab();
+		apEditPage.clickAssociatedButton(6L);
+		apEditPage.checkNotyStatus("success");
+
+		// go to project
+		page.goToPage("2");
+
+		assertEquals("no remote samples should be displayed", 0, page.getNumberOfRemoteSamplesDisplayed());
+
+		page.enableRemoteProjects();
+
+		assertEquals("1 remote sample sould be displayed", 1, page.getNumberOfRemoteSamplesDisplayed());
+
+		page.selectSampleByClass("remote-sample");
+		page.addSamplesToGlobalCart();
+		assertEquals(1, page.getCartCount());
 	}
 
 	private int getSampleFlagCount(String command) {

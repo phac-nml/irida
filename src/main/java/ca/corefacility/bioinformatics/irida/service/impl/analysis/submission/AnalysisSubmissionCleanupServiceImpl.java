@@ -6,6 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -52,6 +53,7 @@ public class AnalysisSubmissionCleanupServiceImpl implements AnalysisSubmissionC
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public int switchInconsistentSubmissionsToError() {
 		if (ranSwitchInconsistentSubmissionsToError) {
 			throw new RuntimeException("already ran this method once");

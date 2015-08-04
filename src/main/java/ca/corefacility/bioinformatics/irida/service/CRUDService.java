@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.Timestamped;
  * @param <Type>
  *            The object type being stored in this service
  */
-@PreAuthorize("isAuthenticated()")
+@PreAuthorize("denyAll()")
 public interface CRUDService<IdentifierType extends Serializable, Type extends Timestamped> {
 
 	/**
@@ -47,7 +47,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *             If the object being persisted cannot be validated by
 	 *             validation rules associated with the object.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public Type create(@Valid Type object) throws EntityExistsException, ConstraintViolationException;
 
 	/**
@@ -59,7 +58,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 * @throws EntityNotFoundException
 	 *             If the identifier does not exist in the database.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public Type read(IdentifierType id) throws EntityNotFoundException;
 
 	/**
@@ -69,7 +67,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *            The unique identifiers of the objects to read
 	 * @return A collection of the requested objects
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public Iterable<Type> readMultiple(Iterable<IdentifierType> idents);
 
 	/**
@@ -95,7 +92,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *             If the updated properties map contains a property name that
 	 *             does not exist on the domain model.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public Type update(IdentifierType id, Map<String, Object> updatedProperties) throws EntityExistsException,
 			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException;
 
@@ -108,7 +104,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *             If no object with the specified identifier exists in the
 	 *             database.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public void delete(IdentifierType id) throws EntityNotFoundException;
 
 	/**
@@ -116,7 +111,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *
 	 * @return All objects of the specified <code>Type</code> in the database.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Iterable<Type> findAll();
 
 	/**
@@ -136,7 +130,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *             If the <code>Type</code> has no public property
 	 *             <code>sortProperty</code>.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<Type> list(int page, int size, Direction order, String... sortProperty) throws IllegalArgumentException;
 
 	/**
@@ -152,7 +145,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *            the order of the sort.
 	 * @return the list of users within the specified range.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<Type> list(int page, int size, Direction order);
 
 	/**
@@ -164,7 +156,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 * @return <code>true</code> if the identifier exists, <code>false</code>
 	 *         otherwise.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public Boolean exists(IdentifierType id);
 
 	/**
@@ -172,7 +163,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 * 
 	 * @return the number of entities in the database.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public long count();
 
 	/**
@@ -203,7 +193,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *             if the resource corresponding to the identifier was
 	 *             previously deleted.
 	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
 	public Revisions<Integer, Type> findRevisions(IdentifierType id) throws EntityRevisionDeletedException;
 
 	/**

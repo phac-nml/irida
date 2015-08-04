@@ -30,6 +30,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
+import org.springframework.web.servlet.HandlerMapping;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
@@ -93,9 +94,8 @@ public class RemoteAPIControllerTest {
 
 		Page<RemoteAPI> apiPage = new PageImpl<>(Lists.newArrayList(api1, api2));
 
-		when(
-				remoteAPIService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
-						any(String.class))).thenReturn(apiPage);
+		when(remoteAPIService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
+				any(String.class))).thenReturn(apiPage);
 
 		Map<String, Object> ajaxAPIList = remoteAPIController.getAjaxAPIList(page, size, draw, sortColumn, direction,
 				searchValue, principal, locale);
@@ -153,8 +153,8 @@ public class RemoteAPIControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = LocaleContextHolder.getLocale();
 
-		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
-				+ RemoteAPI.SERVICE_URI_CONSTRAINT_NAME);
+		DataIntegrityViolationException ex = new DataIntegrityViolationException(
+				"Error: " + RemoteAPI.SERVICE_URI_CONSTRAINT_NAME);
 
 		when(remoteAPIService.create(client)).thenThrow(ex);
 
@@ -257,7 +257,7 @@ public class RemoteAPIControllerTest {
 	public void testHandleOAuthException() throws MalformedURLException, OAuthSystemException {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		String redirect = "http://request";
-		when(request.getRequestURI()).thenReturn(redirect);
+		when(request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE)).thenReturn(redirect);
 
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		IridaOAuthException ex = new IridaOAuthException("msg", client);

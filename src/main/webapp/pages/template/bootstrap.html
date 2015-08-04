@@ -57,10 +57,10 @@
 						<li>
 							<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
 						<li>
-							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-admin-user}">Your Analysis</a>
+							<a th:href="@{/analysis}" href="/analysis" th:text="#{nav.main.analysis-admin-user}">Your Analysis</a>
 						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
-							<a th:href="@{/analysis/list/all}" href="/analysis/list/all"
+							<a th:href="@{/analysis/all}" href="/analysis/all"
 							   th:text="#{nav.main.analysis-admin-all}">List All Analysis
 							</a>
 						</li>
@@ -158,6 +158,10 @@
 						<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
 					</button>
 				</li>
+                <li ng-hide="uiGalaxyCtrl.inGalaxy">
+                    <a href="#" th:href="@{/remote_api}" data:tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom"><i class="glyphicon glyphicon-transfer"></i></a>
+                </li>
+                
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a href="#" th:href="@{/users/current}" data:tooltip="#{nav.main.account}" tooltip-placement="bottom"><i class="fa fa-fw fa-user"></i></a></li>
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">

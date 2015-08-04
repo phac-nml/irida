@@ -22,6 +22,7 @@ public class ITestAuthUtils {
 	private static final String ROLE_MANAGER = "manager";
 	private static final String ROLE_ADMIN = "admin";
 	private static final String ROLE_SEQUENCER = "sequencer";
+	private static final String ROLE_OTHER_USER = "other";
 	public static final String BAD_USERNAME = "bad_username";
 	public static final String BAD_PASSWORD = "bad_password";
 	
@@ -35,6 +36,7 @@ public class ITestAuthUtils {
 		ROLE_TO_USER.put(ROLE_USER, new UsernamePasswordPair("fbristow", "password1"));
 		ROLE_TO_USER.put(ROLE_MANAGER, new UsernamePasswordPair("manager", "password1"));
 		ROLE_TO_USER.put(ROLE_SEQUENCER, new UsernamePasswordPair("uploader", "password1"));
+		ROLE_TO_USER.put(ROLE_OTHER_USER, new UsernamePasswordPair("other", "password1"));
 		ROLE_TO_USER.put(BAD_USERNAME, new UsernamePasswordPair("bad", "bad"));
 		ROLE_TO_USER.put(BAD_PASSWORD, new UsernamePasswordPair("admin", "bad"));
 	}
@@ -65,6 +67,15 @@ public class ITestAuthUtils {
 	 */
 	public static RequestSpecification asUser() {
 		return asRole(ROLE_USER);
+	}
+	
+	/**
+	 * Execute an HTTP request as a *different* user.
+	 * 
+	 * @return a {@link RequestSpecification} with user privileges.
+	 */
+	public static RequestSpecification asOtherUser() {
+		return asRole(ROLE_OTHER_USER);
 	}
 
 	/**

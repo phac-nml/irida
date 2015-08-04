@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
@@ -19,6 +17,5 @@ public interface AnalysisSubmissionCleanupService {
 	 * 
 	 * @return The number of submissions switched over to {@link AnalysisState#ERROR}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public int switchInconsistentSubmissionsToError();
 }

@@ -71,8 +71,8 @@
 				</div>
 			</script>
 
-			<script type="text/ng-template" id="inputs.html" th:with="hasPaired=${#lists.size(paired_end) > 0}">
-				<table th:if="${hasPaired}" class="table">
+			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end) + #lists.size(remote_paired)}">
+				<table th:if="${fileCount > 0}" class="table">
 					<th:block th:each="pair : ${paired_end}">
 						<tr class="paired_end paired_end__forward">
 							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
@@ -81,18 +81,31 @@
 							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
 						</tr>
 					</th:block>
+                    <th:block th:each="pair : ${remote_paired}" th:if="${pair.isMirrored()}">
+                          <tr class="paired_end paired_end__forward">
+                              <td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward')"></td>
+                          </tr>
+                          <tr class="paired_end paired_end__reverse">
+                              <td th:replace="templates/_sequenceFile :: remoteSequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+                          </tr>
+                      </th:block>
+                      <tr class="file_info" th:if="${mirroringCount} > 0">
+                              <td colspan="4" th:text="#{analysis.mirroring(${mirroringCount})}">_Mirroring Files_</td>
+                          </tr>
 				</table>
-				<div class="alert alert-info" th:unless="${hasPaired}" th:text="#{analysis.input-files.no-paired-end}">
+				<div class="alert alert-info" th:unless="${fileCount > 0}" th:text="#{analysis.input-files.no-paired-end}">
 					__NO_PAIRED_END_DATA_
 				</div>
+                      
 			</script>
 
 			<script type="text/ng-template" id="provenance.html">
 				<div th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">
 					<accordion>
 						<accordion-group class="file-info" th:each="file : ${files}">
-							<accordion-heading class="filename"><i class="fa fa-fw fa-file-o"></i>&nbsp;
-								<th:block th:text="${file.getLabel()}"></th:block>
+							<accordion-heading class="filename">
+								<fa:icon type="file" />&nbsp;
+								<span class="name" th:text="${file.getLabel()}"></span>
 							</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
 						</accordion-group>
@@ -102,9 +115,9 @@
 						     th:with="toolId=${'tool' + tool.getId()}"
 						     data:ng-init="${toolId + '=false'}">
 							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
-								<i data:ng-hide="${toolId}" class="fa fa-fw fa-chevron-right"></i> <i
-								data:ng-show="${toolId}" class="fa fa-fw fa-chevron-down"></i>
-								<span th:text="${tool.getLabel()}"></span>
+								<fa:icon data:ng-hide="${toolId}" type="show" />
+								<fa:icon data:ng-show="${toolId}" type="hide" />
+								&nbsp;<span th:text="${tool.getLabel()}"></span>
 							</button>
 
 							<!--/*

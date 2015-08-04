@@ -64,8 +64,7 @@ public class AnalysisFastQC extends Analysis {
 	/**
 	 * Required for hibernate, should not be used anywhere else, so private.
 	 */
-	@SuppressWarnings("unused")
-	private AnalysisFastQC() {
+	protected AnalysisFastQC() {
 		super();
 		this.fileType = null;
 		this.encoding = null;

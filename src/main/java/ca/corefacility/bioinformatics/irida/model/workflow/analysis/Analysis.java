@@ -25,8 +25,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -38,7 +40,7 @@ import com.google.common.collect.ImmutableSet;
 @Entity
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Analysis implements IridaThing {
+public class Analysis extends IridaResourceSupport implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -102,7 +104,7 @@ public class Analysis implements IridaThing {
 
 	/**
 	 * Builds a new {@link Analysis} object with the given information.
-
+	 * 
 	 * @param executionManagerAnalysisId
 	 *            The id for an execution manager used with this analysis.
 	 * @param analysisOutputFilesMap
@@ -169,6 +171,7 @@ public class Analysis implements IridaThing {
 	 * 
 	 * @return the set of all output files produced by the {@link Analysis}.
 	 */
+	@JsonIgnore
 	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
 		return ImmutableSet.copyOf(analysisOutputFilesMap.values());
 	}
@@ -199,22 +202,17 @@ public class Analysis implements IridaThing {
 		return this.id;
 	}
 
-	@Override
-	public Date getModifiedDate() {
-		return this.createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("Analysis types cannot be modified.");
-	}
-
 	public Map<String, String> getAdditionalProperties() {
 		return ImmutableMap.copyOf(additionalProperties);
 	}
 
-	@Override
-	public void setId(Long id) {
-		throw new UnsupportedOperationException("Analysis types cannot be modified.");
+	/**
+	 * Return the names of available output files from this analysis
+	 * 
+	 * @return Set of names
+	 */
+	@JsonIgnore
+	public Set<String> getAnalysisOutputFileNames() {
+		return analysisOutputFilesMap.keySet();
 	}
 }

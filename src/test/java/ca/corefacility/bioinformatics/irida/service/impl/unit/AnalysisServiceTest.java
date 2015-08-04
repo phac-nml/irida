@@ -36,8 +36,7 @@ public class AnalysisServiceTest {
 	@Before
 	public void setUp() {
 		this.analysisRepository = mock(AnalysisRepository.class);
-		this.analysisOutputFileRepository = mock(AnalysisOutputFileRepository.class);
-		this.validator = mock(Validator.class);
+		this.analysisOutputFileRepository = mock(AnalysisOutputFileRepository.class);		this.validator = mock(Validator.class);
 
 		this.analysisService = new AnalysisServiceImpl(analysisRepository, analysisOutputFileRepository, validator);
 	}

@@ -3,8 +3,9 @@ package ca.corefacility.bioinformatics.irida.service.remote;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
 /**
  * Service for communicating with a remote IRIDA instance
@@ -13,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
  * @param <Type>
  *            The type of object this repository will store
  */
-public interface RemoteService<Type extends RemoteResource> {
+public interface RemoteService<Type extends IridaResourceSupport & IridaThing> {
 
 	/**
 	 * Read an individual resource
@@ -25,6 +26,16 @@ public interface RemoteService<Type extends RemoteResource> {
 	 * @return An object of Type
 	 */
 	public Type read(String uri, RemoteAPI remoteAPI);
+
+	/**
+	 * Read individual resource at the given URI. The required {@link RemoteAPI}
+	 * will be found using the given resource URI.
+	 * 
+	 * @param uri
+	 *            The URI of the resource
+	 * @return an object of Type
+	 */
+	public Type read(String uri);
 
 	/**
 	 * List the resources available from this service

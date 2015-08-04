@@ -116,7 +116,7 @@
 
 					</div>
 					<div class="panel-footer text-right">
-						<a type="reset" class="btn btn-default" href="#" th:href="@{/clients/{id}(id=${client.id})}">Cancel</a>
+						<a type="reset" class="btn btn-default" href="#" th:href="@{/clients/{id}(id=${client.getId()})}">Cancel</a>
 						<button id="edit-client-submit" type="submit" th:text="#{client.edit.button}"
 						        class="btn btn-primary submit">_EDIT_CLIENT_
 						</button>

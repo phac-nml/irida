@@ -1,0 +1,10 @@
+{
+  "assets": [
+    {
+      "version": "4.3.0",
+      "locations": {
+        "webapp": "/resources/bower_components/font-awesome/css/font-awesome.css"
+      }
+    }
+  ]
+}

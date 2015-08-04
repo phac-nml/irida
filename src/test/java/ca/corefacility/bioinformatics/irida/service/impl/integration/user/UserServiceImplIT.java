@@ -5,8 +5,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +14,6 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +35,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
@@ -50,16 +53,9 @@ import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.GroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -79,20 +75,6 @@ public class UserServiceImplIT {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private GroupService groupService;
-	@Autowired
-	private CRUDService<Long, User> crudUserService;
-
-	@Before
-	public void setUp() {
-		User u = new User();
-		u.setUsername("fbristow");
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(Role.ROLE_MANAGER);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(Role.ROLE_MANAGER));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-	}
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
@@ -105,18 +87,21 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testEditAdministratorAsManagerFail() {
 		// managers should *not* be able to edit administrator accounts.
 		userService.update(3L, ImmutableMap.of("enabled", (Object) Boolean.FALSE));
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testChangeSelfToAdministrator() {
 		// I should not be able to elevate myself to administrator.
-		asUser().userService.update(2L, ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN));
+		userService.update(2L, ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN));
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateManagerAsManagerFail() {
 		User u = new User();
 		u.setSystemRole(Role.ROLE_MANAGER);
@@ -125,6 +110,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateAdministratorAsManagerFail() {
 		User u = new User();
 		u.setSystemRole(Role.ROLE_ADMIN);
@@ -133,6 +119,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateUserAsManagerSucceed() {
 		User u = new User("user", "user@user.us", "Password1", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
@@ -140,8 +127,9 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testCreateUserAsUserFail() {
-		asUser().userService.create(new User());
+		userService.create(new User());
 	}
 
 	@Test
@@ -165,30 +153,35 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdateToAdministratorAsManagerFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN);
 		userService.update(1L, properties);
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdateToManagerAsManagerFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_MANAGER);
 		userService.update(1L, properties);
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateToAdminAsUserFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN);
-		asUser().userService.update(1L, properties);
+		userService.update(1L, properties);
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateToManagerAsUserFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_MANAGER);
-		asUser().userService.update(1L, properties);
+		userService.update(1L, properties);
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdateUserAsManagerSucceed() {
 		String updatedPhoneNumber = "123-4567";
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
@@ -197,6 +190,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdateOwnAccountSucceed() {
 		String updatedPhoneNumber = "456-7890";
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
@@ -211,6 +205,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdatePasswordWithCompleteLoginDetails() {
 		String updatedPassword = "NewPassword1";
 		User updated = userService.changePassword(1L, updatedPassword);
@@ -220,8 +215,16 @@ public class UserServiceImplIT {
 
 	@Test
 	public void testUpdatePasswordWithExpiredPassword() {
-		((User) SecurityContextHolder.getContext().getAuthentication().getDetails()).setCredentialsNonExpired(false);
-		SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+		User u = new User();
+		u.setUsername("fbristow");
+		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setSystemRole(Role.ROLE_MANAGER);
+		u.setCredentialsNonExpired(false);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+				ImmutableList.of(Role.ROLE_MANAGER));
+		auth.setDetails(u);
+		auth.setAuthenticated(false);
+		SecurityContextHolder.getContext().setAuthentication(auth);
 		String updatedPassword = "NewPassword1";
 		User updated = userService.changePassword(1L, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
@@ -237,6 +240,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateDuplicateEmail() {
 		User u = new User("user", "manager@nowhere.com", "Password1", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
@@ -244,6 +248,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateDuplicateUsername() {
 		User u = new User("fbristow", "distinct@nowhere.com", "Password1", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
@@ -251,6 +256,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testGetUserByUsername() {
 		String username = "fbristow";
 		User u = userService.getUserByUsername(username);
@@ -258,9 +264,19 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = UsernameNotFoundException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testGetUserByInvalidUsername() {
 		String username = "random garbage";
 		userService.getUserByUsername(username);
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUsersWithEmailSubscriptions() {
+		List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
+		assertEquals("Should be 1 user", 1, usersWithEmailSubscriptions.size());
+		User user = usersWithEmailSubscriptions.iterator().next();
+		assertEquals("should be fbristow", "fbristow", user.getUsername());
 	}
 
 	@Test
@@ -276,11 +292,12 @@ public class UserServiceImplIT {
 	public void testLoadUserByEmailNotFound() {
 		String email = "bademail@nowhere.com";
 
-		userService.loadUserByEmail(email);
+		asAnonymous().userService.loadUserByEmail(email);
 
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testGetUsersForProject() {
 		Project p = projectService.read(1L);
 		Collection<Join<Project, User>> projectUsers = userService.getUsersForProject(p);
@@ -291,6 +308,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testGetUsersAvailableForProject() {
 		Project p = projectService.read(1L);
 		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(p);
@@ -300,6 +318,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "differentUser", roles = "USER")
 	public void testBadPasswordUpdate() {
 		// a user should not be persisted with a bad password (like password1)
 		String password = "password1";
@@ -307,7 +326,7 @@ public class UserServiceImplIT {
 		properties.put("password", password);
 
 		try {
-			asUser().userService.update(2L, properties);
+			userService.update(2L, properties);
 			fail();
 		} catch (ConstraintViolationException e) {
 			Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
@@ -321,12 +340,14 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = ConstraintViolationException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdatePasswordBadPassword() {
 		String password = "arguablynotagoodpassword";
-		asUser().userService.changePassword(1L, password);
+		userService.changePassword(1L, password);
 	}
 
 	@Test(expected = ConstraintViolationException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateBadPassword() {
 		User u = new User();
 		u.setPassword("not a good password");
@@ -341,6 +362,7 @@ public class UserServiceImplIT {
 	}
 	
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testSearchUser(){
 		String search = "Mr";
 		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), 0, 10, Direction.ASC, "id");
@@ -352,37 +374,6 @@ public class UserServiceImplIT {
 		search = "User";
 		searchUser = userService.search(UserSpecification.searchUser(search), 0, 10, Direction.ASC, "id");
 		assertEquals(2,searchUser.getContent().size());
-	}
-
-	@Test(expected = AccessDeniedException.class)
-	// @Ignore("This test is disabled because it shows a (possibly) language-level issue with dynamic JDK proxys.")
-	public void testReferenceTypeChangesBehaviourAtRuntime() {
-		assertEquals("The two services are the same instance.", userService, crudUserService);
-		// asUser().userService.create(new User());
-		asUser().crudUserService.create(new User());
-	}
-
-	private UserServiceImplIT asUser() {
-		User u = new User();
-		u.setUsername("differentUser");
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(Role.ROLE_USER);
-		u.setFirstName("Mr.");
-		u.setLastName("User");
-		u.setPhoneNumber("867-5309");
-		u.setEmail("differentUser@nowhere.com");
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-			u.setModifiedDate(sdf.parse("2013-07-18 14:20:19.0"));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(Role.ROLE_USER));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		return this;
 	}
 
 	private UserServiceImplIT asAnonymous() {

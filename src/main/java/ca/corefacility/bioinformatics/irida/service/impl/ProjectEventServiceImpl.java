@@ -1,10 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -20,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
  *
  */
 @Service
-public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent> implements ProjectEventService {
+public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>implements ProjectEventService {
 
 	private ProjectEventRepository repository;
 
@@ -33,6 +39,7 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<ProjectEvent> getEventsForProject(Project project, Pageable pageable) {
 		return repository.getEventsForProject(project, pageable);
 	}
@@ -40,8 +47,30 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #user.username")
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable) {
 		return repository.getEventsForUser(user, pageable);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public Page<ProjectEvent> list(int page, int size, Direction order, String... sortProperties)
+			throws IllegalArgumentException {
+		return super.list(page, size, order, sortProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Transactional
+	public List<ProjectEvent> getEventsForUserAfterDate(User user, Date beginning) {
+		List<ProjectEvent> eventsForUserAfterDate = repository.getEventsForUserAfterDate(user, beginning);
+
+		return eventsForUserAfterDate;
 	}
 
 }

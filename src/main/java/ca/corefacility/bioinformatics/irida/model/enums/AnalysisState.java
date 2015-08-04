@@ -18,6 +18,16 @@ public enum AnalysisState {
 	 * Occurs when an analysis is first entered for submission.
 	 */
 	NEW("NEW"),
+	
+	/**
+	 * Occurs when an analysis is downloading remote files
+	 */
+	DOWNLOADING("DOWNLOADING"),
+	
+	/**
+	 * Occurs when an analysis has completed downloading remote files
+	 */
+	FINISHED_DOWNLOADING("FINISHED_DOWNLOADING"),
 
 	/**
 	 * Occurs when an analysis is starting to be submitted.

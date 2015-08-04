@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import javax.sql.DataSource;
+import java.lang.reflect.Field;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -29,17 +31,21 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.error.AbstractOAuth2SecurityExceptionHandler;
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
+import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
 import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomOAuth2ExceptionTranslator;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
 
 /**
@@ -50,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousA
 @Configuration
 @EnableWebSecurity
 public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
+	private static final Logger logger = LoggerFactory.getLogger(IridaWebSecurityConfig.class);
 
 	@Configuration
 	@EnableResourceServer
@@ -60,9 +67,13 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Autowired
 		private ResourceServerTokenServices tokenServices;
 
+		@Autowired
+		private WebResponseExceptionTranslator exceptionTranslator;
+
 		@Override
 		public void configure(final ResourceServerSecurityConfigurer resources) {
 			resources.resourceId("NmlIrida").tokenServices(tokenServices);
+			forceExceptionTranslator(resources, exceptionTranslator);
 		}
 
 		@Override
@@ -117,6 +128,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
 		@Autowired
+		@Qualifier("iridaTokenStore")
 		private TokenStore tokenStore;
 
 		@Autowired
@@ -126,6 +138,9 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Autowired
 		@Qualifier("clientDetails")
 		private ClientDetailsService clientDetailsService;
+
+		@Autowired
+		private WebResponseExceptionTranslator exceptionTranslator;
 
 		@Override
 		public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
@@ -147,6 +162,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Override
 		public void configure(final AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
 			oauthServer.allowFormAuthenticationForClients();
+			forceExceptionTranslator(oauthServer, exceptionTranslator);
 		}
 
 		@Bean
@@ -164,7 +180,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
-			web.ignoring().antMatchers("/resources/**").antMatchers("/public/**");
+			web.ignoring().antMatchers("/resources/**").antMatchers("/public/**").antMatchers("/dandelion/**").antMatchers("/ddl-debugger/**");
 		}
 
 		@Override
@@ -197,6 +213,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and().addFilterAfter(getSessionModelFilter(), SecurityContextHolderAwareRequestFilter.class);
 			// @formatter:on
 		}
+
 		
 		@Bean
 		public GenericFilterBean getSessionModelFilter() {
@@ -206,19 +223,13 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	@Primary
-	public ResourceServerTokenServices tokenServices(@Qualifier("clientDetails") ClientDetailsService clientDetails,
+	public ResourceServerTokenServices tokenServices(@Qualifier("clientDetails") ClientDetailsService clientDetails, @Qualifier("iridaTokenStore")
 			TokenStore tokenStore) {
 		DefaultTokenServices services = new DefaultTokenServices();
 		services.setTokenStore(tokenStore);
 		services.setSupportRefreshToken(true);
 		services.setClientDetailsService(clientDetails);
 		return services;
-	}
-
-	@Bean
-	public TokenStore tokenStore(DataSource dataSource) {
-		TokenStore store = new JdbcTokenStore(dataSource);
-		return store;
 	}
 
 	@Bean
@@ -230,4 +241,37 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return clientDetailsUserDetailsService;
 	}
 
+	@Bean
+	public WebResponseExceptionTranslator exceptionTranslator() {
+		return new CustomOAuth2ExceptionTranslator();
+	}
+	
+	/**
+	 * Forcibly set the exception translator on the `authenticationEntryPoint`
+	 * so that we can supply our own errors on authentication failure. The
+	 * `authenticationEntryPoint` field on
+	 * {@link AbstractOAuth2SecurityExceptionHandler} is marked `private`, and
+	 * is not accessible for customizing.
+	 * 
+	 * @param configurer
+	 *            the instance of the configurer that we're customizing
+	 * @param exceptionTranslator
+	 *            the {@link WebResponseExceptionTranslator} that we want to
+	 *            set.
+	 */
+	private static <T> void forceExceptionTranslator(final T configurer,
+			final WebResponseExceptionTranslator exceptionTranslator) {
+		try {
+			final Field authenticationEntryPointField = ReflectionUtils.findField(configurer.getClass(),
+					"authenticationEntryPoint");
+			ReflectionUtils.makeAccessible(authenticationEntryPointField);
+			final OAuth2AuthenticationEntryPoint authenticationEntryPoint = (OAuth2AuthenticationEntryPoint) authenticationEntryPointField
+					.get(configurer);
+
+			logger.debug("Customizing the authentication entry point by brute force.");
+			authenticationEntryPoint.setExceptionTranslator(exceptionTranslator);
+		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			logger.error("Failed to configure the authenticationEntryPoint on ResourceServerSecurityConfigurer.", e);
+		}
+	}
 }

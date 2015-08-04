@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -142,11 +143,16 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 	 *            the object the user is requesting to perform an action on.
 	 * @return true if the action is allowed, false otherwise.
 	 */
-	public final boolean isAllowed(Authentication authentication, Object targetDomainObject) {
+	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
 		// fast pass for administrators -- administrators are allowed to access
 		// everything.
 		if (authentication.getAuthorities().stream().anyMatch(g -> g.getAuthority().equals(ADMIN_AUTHORITY))) {
 			return true;
+		}
+		
+		// fast fail on anonymous users:
+		if (authentication instanceof AnonymousAuthenticationToken) {
+			return false;
 		}
 
 		if (targetDomainObject instanceof Collection<?>) {

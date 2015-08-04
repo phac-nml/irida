@@ -59,7 +59,7 @@
                                th:text="#{projects.create.form.description}">Project
                             Description</label>
                         <textarea class="form-control input-full" name="projectDescription" id="projectDescription"
-                                  rows="3"></textarea>
+                                  rows="3" th:text="${project}? ${project.getProjectDescription()} : ''"></textarea>
                         <small id="error-desc-server" th:if="${#maps.containsKey(errors, 'description')}"
                                th:text="${errors.description}"></small>
                     </div>
@@ -97,7 +97,6 @@
     <script>
         $("#new-organism-warning").hide();
         $(".organism-select").select2({
-            placeholder: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
             minimumInputLength: 2,
             ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
                 url: /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',
@@ -111,6 +110,17 @@
                     // since we are using custom formatting functions we do not need to alter remote JSON data
                     return {results: data};
                 }
+            },
+            initSelection: function(element, callback) {
+            	var organism = $(element).val();
+            	if (organism !== "") {
+            		$.ajax(/*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search', {
+            			data: { searchTerm: organism },
+            			dataType: "json"
+            		}).done(function(data) {
+            			callback(data[0])
+            		});
+            	}
             }
 
         }).on("change", function(data){
@@ -120,7 +130,7 @@
           else{
             $("#new-organism-warning").hide();
           }
-        });
+        }).select2('val', /*[[${project} ? ${project.getOrganism()} : '']]*/ '');
 
         (function() {
 	        "use strict";
@@ -128,7 +138,10 @@
 	        var app = angular.module('irida');
 	        app.controller('NewProjectController', function () {
 		        var vm = this;
-	            vm.project = {};
+	            vm.project = {
+	            	name: /*[[${project} ? ${project.getName()} : '']]*/ '',
+	            	remoteURL: /*[[${project} ? ${project.getRemoteURL()} : '']]*/ '',
+	            };
 	        });
         })();
     </script>

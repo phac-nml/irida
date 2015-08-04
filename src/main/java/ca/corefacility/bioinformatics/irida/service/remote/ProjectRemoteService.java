@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.remote;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 
 /**
@@ -11,22 +11,22 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
  * 
  *
  */
-public interface ProjectRemoteService extends RemoteService<RemoteProject> {
+public interface ProjectRemoteService extends RemoteService<Project> {
 	/**
-	 * Read a {@link RemoteProject} for a given {@link RemoteRelatedProject}
+	 * Read a {@link Project} for a given {@link RemoteRelatedProject}
 	 * 
 	 * @param project
 	 *            The RemoteRelatedProject to read
-	 * @return a {@link RemoteProject}
+	 * @return a {@link Project}
 	 */
-	public RemoteProject read(RemoteRelatedProject project);
+	public Project read(RemoteRelatedProject project);
 
 	/**
 	 * List all of the projects for a given {@link RemoteAPI}
 	 * 
 	 * @param api
 	 *            The remote API to list projects for
-	 * @return A List of {@link RemoteProject}s
+	 * @return A List of {@link Project}s
 	 */
-	public List<RemoteProject> listProjectsForAPI(RemoteAPI api);
+	public List<Project> listProjectsForAPI(RemoteAPI api);
 }

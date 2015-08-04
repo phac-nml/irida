@@ -37,8 +37,20 @@ public class SampleFilesPage extends AbstractPage {
 		return driver.findElements(By.cssSelector("tr")).size();
 	}
 	
+	public String getSampleName(){
+		return driver.findElement(By.id("sample-name")).getText();
+	}
+	
 	public void deleteFirstFile(){
 		WebElement removeButton = driver.findElements(By.className("remove-file")).iterator().next();
+		removeButton.click();
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
+				.id("remove-file-confirm")));
+		confirmRemoveButton.click();
+	}
+	
+	public void deleteFirstPair(){
+		WebElement removeButton = driver.findElements(By.className("remove-pair")).iterator().next();
 		removeButton.click();
 		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
 				.id("remove-file-confirm")));

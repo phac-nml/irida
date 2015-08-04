@@ -21,11 +21,14 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Organization;
@@ -45,7 +48,7 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Sample implements IridaThing, IridaSample, Comparable<Sample> {
+public class Sample extends IridaResourceSupport implements MutableIridaThing, IridaSample, Comparable<Sample> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -203,6 +206,10 @@ public class Sample implements IridaThing, IridaSample, Comparable<Sample> {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;
+	
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE, mappedBy="sample")
+	@NotAudited
+	private List<SampleAddedProjectEvent> events;
 
 	public Sample() {
 		createdDate = new Date();

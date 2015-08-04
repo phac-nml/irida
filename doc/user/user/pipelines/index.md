@@ -43,6 +43,17 @@ You can remove individual samples or all selected samples from a project by clic
 
 ![Cart clear button.](images/cart-clear-button.png)
 
+Searching samples in the cart
+-----------------------------
+
+You can search for individual samples within the cart use the 'cart search' field.
+
+![Cart search field](images/cart-filter-input.png)
+
+Search terms can match partial samples names.  Note: projects that do not contain any samples that match the filter are hidden.  The blue label displays the number of samples that match the filter and the total number of samples in the project.
+
+![Cart search active](images/cart-filter-active.png)
+
 Selecting a pipeline
 --------------------
 

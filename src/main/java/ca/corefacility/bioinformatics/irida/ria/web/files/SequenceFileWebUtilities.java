@@ -55,7 +55,7 @@ public class SequenceFileWebUtilities {
 		}
 		String size = fileSizeConverter.convert(realSize);
 		Map<String, Object> m = new HashMap<>();
-		m.put("id", file.getId().toString());
+		m.put("identifier", file.getId().toString());
 		m.put("label", file.getLabel());
 		m.put("realCreatedDate", file.getCreatedDate());
 		m.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));

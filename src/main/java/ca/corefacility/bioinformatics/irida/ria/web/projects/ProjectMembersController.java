@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
+import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -213,7 +213,7 @@ public class ProjectMembersController {
 		try {
 			Project project = projectService.read(projectId);
 			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
-			data.put(ProjectsDataTable.RESPONSE_PARAM_DATA, users);
+			data.put(DataTable.RESPONSE_PARAM_DATA, users);
 		} catch (Exception e) {
 			logger.error("Trying to access a project that does not exist.");
 		}

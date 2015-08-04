@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -11,12 +11,14 @@ import javax.xml.bind.annotation.XmlElement;
  * 
  */
 public class LabelledRelationshipResource<Owner extends IridaThing, Child extends IridaThing> extends
-		Resource<Join<Owner, Child>> {
+		IridaResourceSupport {
 	@XmlElement
 	private String label;
 
+	private Join<Owner, Child> resource;
+
 	public LabelledRelationshipResource(String label, Join<Owner, Child> r) {
-		super(r);
+		this.resource = r;
 		this.label = label;
 	}
 
@@ -34,8 +36,11 @@ public class LabelledRelationshipResource<Owner extends IridaThing, Child extend
 	 * 
 	 * @return the id for the object of the relationship.
 	 */
-	@Override
 	public String getIdentifier() {
 		return resource.getObject().getId().toString();
+	}
+	
+	public Join<Owner, Child> getResource() {
+		return resource;
 	}
 }

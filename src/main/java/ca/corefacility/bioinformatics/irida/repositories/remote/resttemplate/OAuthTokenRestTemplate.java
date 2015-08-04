@@ -5,9 +5,13 @@ import java.net.URI;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
@@ -39,6 +43,15 @@ public class OAuthTokenRestTemplate extends RestTemplate {
 	 */
 	public OAuthTokenRestTemplate(RemoteAPITokenService tokenService, RemoteAPI remoteAPI) {
 		super();
+		
+		//enable Path deserialization
+		for(HttpMessageConverter<?> conv : getMessageConverters()){
+			if(conv instanceof MappingJackson2HttpMessageConverter){
+				((MappingJackson2HttpMessageConverter) conv).getObjectMapper().registerModule(new Jdk7Module());
+			}
+		}
+		
+		
 		this.tokenService = tokenService;
 		this.setRemoteAPI(remoteAPI);
 		this.setErrorHandler(errorHandler);
