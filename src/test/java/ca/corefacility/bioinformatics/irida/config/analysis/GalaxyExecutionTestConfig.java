@@ -11,14 +11,12 @@ import org.springframework.context.annotation.Profile;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
@@ -57,13 +55,6 @@ public class GalaxyExecutionTestConfig {
 	public GalaxyLibrariesService galaxyLibrariesService() {
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
 		return new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
-	}
-
-	@Lazy
-	@Bean
-	public GalaxyRoleSearch galaxyRoleSearch() {
-		RolesClient rolesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getRolesClient();
-		return new GalaxyRoleSearch(rolesClient, localGalaxy.getGalaxyURL());
 	}
 	
 	@Lazy
