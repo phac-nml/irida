@@ -502,26 +502,6 @@ public class GalaxyHistoriesServiceIT {
 	}
 	
 	/**
-	 * Tests successfully checking for existence of a history by an id (history exists).
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test
-	public void testExistsTrue() {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		
-		assertTrue(galaxyHistory.exists(history.getId()));
-	}
-	
-	/**
-	 * Tests checking for existence of a history by an id (history does not exist).
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test
-	public void testExistsFalse() {
-		assertFalse(galaxyHistory.exists("invalid"));
-	}
-	
-	/**
 	 * Tests moving a library dataset to a history success.
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 * @throws CreateLibraryException 

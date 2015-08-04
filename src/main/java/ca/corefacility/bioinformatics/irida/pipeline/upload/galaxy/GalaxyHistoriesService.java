@@ -52,13 +52,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileTy
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
 
 /**
  * Class for working with Galaxy Histories.
  *
  */
-public class GalaxyHistoriesService implements ExecutionManagerSearch<History, String> {
+public class GalaxyHistoriesService {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyHistoriesService.class);
@@ -91,7 +90,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		this.toolsClient = toolsClient;
 		this.librariesService = librariesService;
 	}
-	
+
 	/**
 	 * Creates a new History for running a workflow.
 	 * @return  A new History for running a workflow.
@@ -404,9 +403,11 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Finds the history by it's ID.
+	 * @param id  The ID to search for.
+	 * @return  a history.
+	 * @throws ExecutionManagerObjectNotFoundException  If the specific object could not be found.
 	 */
-	@Override
 	public History findById(String id)
 			throws ExecutionManagerObjectNotFoundException {
 		checkNotNull(id, "id is null");
@@ -422,18 +423,6 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		}
 		
 		throw new NoGalaxyHistoryException("No history for id " + id);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean exists(String id) {
-		try {
-			return findById(id) != null;
-		} catch (ExecutionManagerObjectNotFoundException e) {
-			return false;
-		}
 	}
 
 	/**
