@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.Execut
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
@@ -209,16 +208,6 @@ public class ExecutionManagerConfig {
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() throws ExecutionManagerConfigurationException {
 		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), StandardCharsets.UTF_8);
-	}
-
-	/**
-	 * @return A GalaxyLibraryBuilder for building libraries.
-	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
-	 */
-	@Lazy
-	@Bean
-	public GalaxyLibraryBuilder galaxyLibraryBuilder() throws ExecutionManagerConfigurationException {
-		return new GalaxyLibraryBuilder(librariesClient(), galaxyRoleSearch(), executionManager().getLocation());
 	}
 
 	/**

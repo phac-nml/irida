@@ -66,8 +66,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 
 /**
  * Tests for building Galaxy histories.
@@ -135,13 +133,7 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws CreateLibraryException
 	 */
 	private Library buildEmptyLibrary(String name) throws CreateLibraryException {
-		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyRoleSearch galaxyRoleSearch = new GalaxyRoleSearch(galaxyInstanceAdmin.getRolesClient(),
-				localGalaxy.getGalaxyURL());
-		GalaxyLibraryBuilder libraryBuilder = new GalaxyLibraryBuilder(librariesClient, galaxyRoleSearch,
-				localGalaxy.getGalaxyURL());
-		
-		return libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(name));
+		return galaxyLibrariesService.buildEmptyLibrary(new GalaxyProjectName(name));
 	}
 	
 	/**

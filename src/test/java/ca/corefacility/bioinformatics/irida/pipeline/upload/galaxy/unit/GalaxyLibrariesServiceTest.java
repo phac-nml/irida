@@ -1,12 +1,20 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 
 /**
@@ -18,13 +26,28 @@ public class GalaxyLibrariesServiceTest {
 	@Mock
 	private LibrariesClient librariesClient;
 	
+	private final static String LIBRARY_ID = "1";
+	
+	private Library testLibrary;
+	
 	/**
 	 * Setup for tests.
 	 */
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
+		setupLibrariesTest();
 	}
+	
+	/**
+	 * Setup libraries for test.
+	 */
+	private void setupLibrariesTest() {
+		testLibrary = new Library();
+		testLibrary.setName("test");
+		testLibrary.setId(LIBRARY_ID);
+	}
+
 
 	/**
 	 * Tests failing when passing a zero polling time.
@@ -56,5 +79,22 @@ public class GalaxyLibrariesServiceTest {
 	@Test
 	public void testSuccessfullTimeoutValues() {
 		new GalaxyLibrariesService(librariesClient, 1, 2);
+	}
+	
+	/**
+	 * Tests create empty library.
+	 * @throws CreateLibraryException
+	 */
+	@Test
+	public void testBuildEmptyLibrary() throws CreateLibraryException {
+		when(librariesClient.createLibrary(any(Library.class))).thenReturn(
+				testLibrary);
+
+		Library library = new GalaxyLibrariesService(librariesClient, 1, 2).buildEmptyLibrary(new GalaxyProjectName(
+				"test"));
+
+		assertNotNull(library);
+		assertEquals("test", library.getName());
+		assertEquals(LIBRARY_ID, library.getId());
 	}
 }
