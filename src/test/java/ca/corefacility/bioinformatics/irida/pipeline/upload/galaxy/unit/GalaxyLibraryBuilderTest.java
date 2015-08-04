@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
@@ -17,14 +20,11 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryPermissions;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -177,82 +177,6 @@ public class GalaxyLibraryBuilderTest {
 		assertNotNull(newFolder);
 		assertEquals("folder_name", newFolder.getName());
 		assertEquals("1", newFolder.getId());
-	}
-
-	/**
-	 * Tests change the library owner.
-	 * @throws ChangeLibraryPermissionsException
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test
-	public void testChangeLibraryOwner()
-			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
-		when(
-				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
-						any(LibraryPermissions.class)))
-				.thenReturn(okayResponse);
-
-		Library library = galaxyLibrary.changeLibraryOwner(testLibrary,
-				USER_EMAIL, ADMIN_EMAIL);
-		assertNotNull(library);
-		assertEquals(testLibrary.getName(), library.getName());
-		assertEquals(testLibrary.getId(), library.getId());
-		verify(librariesClient).setLibraryPermissions(eq(LIBRARY_ID),
-				any(LibraryPermissions.class));
-	}
-
-	/**
-	 * Test change library owner to invalid user.
-	 * @throws ChangeLibraryPermissionsException
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test(expected = GalaxyUserNoRoleException.class)
-	public void testChangeLibraryOwnerInvalidUser()
-			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
-		when(
-				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
-						any(LibraryPermissions.class)))
-				.thenReturn(okayResponse);
-		when(galaxyRoleSearch.findById(INVALID_EMAIL))
-			.thenThrow(new GalaxyUserNoRoleException());
-
-		galaxyLibrary.changeLibraryOwner(testLibrary, INVALID_EMAIL,
-				ADMIN_EMAIL);
-	}
-
-	/**
-	 * Tests change library owner with invalid admin user.
-	 * @throws ChangeLibraryPermissionsException
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test(expected = GalaxyUserNoRoleException.class)
-	public void testChangeLibraryOwnerInvalidAdmin()
-			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
-		when(
-				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
-						any(LibraryPermissions.class)))
-				.thenReturn(okayResponse);
-		when(galaxyRoleSearch.findById(INVALID_EMAIL))
-			.thenThrow(new GalaxyUserNoRoleException());
-
-		galaxyLibrary
-				.changeLibraryOwner(testLibrary, USER_EMAIL, INVALID_EMAIL);
-	}
-
-	/**
-	 * Tests error changing library owner.
-	 * @throws ChangeLibraryPermissionsException
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test(expected = ChangeLibraryPermissionsException.class)
-	public void testChangeLibraryOwnerInvalidResponse()
-			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
-		when(
-				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
-						any(LibraryPermissions.class))).thenReturn(
-				invalidResponse);
-
-		galaxyLibrary.changeLibraryOwner(testLibrary, USER_EMAIL, ADMIN_EMAIL);
 	}
 
 	/**
