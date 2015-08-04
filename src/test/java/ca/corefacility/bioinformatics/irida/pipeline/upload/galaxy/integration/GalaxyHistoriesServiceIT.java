@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -310,50 +309,6 @@ public class GalaxyHistoriesServiceIT {
 		assertNotNull(dataset1);
 		
 		galaxyHistory.constructCollectionList(Arrays.asList(dataset1, datasetInvalid), history);
-	}
-	
-	/**
-	 * Tests direct upload of a list of files to a Galaxy history.
-	 * @throws UploadException 
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test
-	public void testUploadFilesListToHistory() throws UploadException, GalaxyDatasetException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		String filename1 = dataFile.toFile().getName();
-		String filename2 = dataFile2.toFile().getName();
-		List<Path> dataFiles = new LinkedList<>();
-		dataFiles.add(dataFile);
-		dataFiles.add(dataFile2);
-		
-		List<Dataset> datasets = galaxyHistory.uploadFilesListToHistory(dataFiles, FILE_TYPE, history);
-		assertNotNull(datasets);
-		assertEquals(2, datasets.size());
-		
-		Dataset dataset1 = datasets.get(0);
-		String dataId1 = Util.getIdForFileInHistory(filename1, history.getId(),
-				localGalaxy.getGalaxyInstanceAdmin());
-		assertEquals(dataId1, dataset1.getId());
-		
-		Dataset dataset2 = datasets.get(1);
-		String dataId2 = Util.getIdForFileInHistory(filename2, history.getId(),
-				localGalaxy.getGalaxyInstanceAdmin());
-		assertEquals(dataId2, dataset2.getId());
-	}
-	
-	/**
-	 * Tests direct upload of a list of files to a Galaxy history (fail to upload).
-	 * @throws UploadException 
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test(expected=IllegalStateException.class)
-	public void testUploadFilesListToHistoryFail() throws UploadException, GalaxyDatasetException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		List<Path> dataFiles = new LinkedList<>();
-		dataFiles.add(dataFile);
-		dataFiles.add(dataFileInvalid);
-		
-		galaxyHistory.uploadFilesListToHistory(dataFiles, FILE_TYPE, history);
 	}
 	
 	/**

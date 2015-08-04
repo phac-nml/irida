@@ -82,7 +82,6 @@ public class GalaxyHistoriesServiceTest {
 	private History history;
 	
 	private Path dataFile;
-	private Path dataFile2;
 	
 	private Dataset datasetForFile;
 	
@@ -103,7 +102,6 @@ public class GalaxyHistoriesServiceTest {
 				galaxyLibrariesService);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq").toURI());
-		dataFile2 = Paths.get(this.getClass().getResource("testData2.fastq").toURI());
 
 		history = new History();
 		history.setId(HISTORY_ID);
@@ -291,56 +289,7 @@ public class GalaxyHistoriesServiceTest {
 		
 		galaxyHistory.fileToHistory(dataFile, FILE_TYPE, createdHistory);
 	}
-	
-	/**
-	 * Tests uploading a list of files to a history.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test
-	public void testFilesListToHistorySuccess() throws UploadException, GalaxyDatasetException {
-		List<Path> files = new LinkedList<Path>();
-		files.add(dataFile);
-		files.add(dataFile2);
 		
-		List<Dataset> datasets = new LinkedList<Dataset>();
-		
-		String filename = dataFile.toFile().getName();
-		String filename2 = dataFile2.toFile().getName();
-		History createdHistory = new History();
-		Dataset dataset = new Dataset();
-		createdHistory.setId(HISTORY_ID);
-		Dataset dataset2 = new Dataset();
-		List<HistoryContents> historyContentsList = buildHistoryContentsList(filename, DATA_ID,
-				filename2, DATA_ID_2);
-		
-		datasets.add(dataset);
-		datasets.add(dataset2);
-		
-		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).thenReturn(okayResponse);
-		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(historyContentsList);
-		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
-		when(historiesClient.showDataset(HISTORY_ID, DATA_ID_2)).thenReturn(dataset2);
-		
-		assertEquals(datasets, galaxyHistory.uploadFilesListToHistory(files, FILE_TYPE, createdHistory));
-	}
-	
-	/**
-	 * Tests failing to upload a file list to a history.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test(expected=UploadException.class)
-	public void testFilesListToHistoryFailUpload() throws UploadException, GalaxyDatasetException {
-		History createdHistory = new History();
-		createdHistory.setId(HISTORY_ID);
-		
-		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).
-			thenReturn(invalidResponse);
-		
-		galaxyHistory.uploadFilesListToHistory(Arrays.asList(dataFile), FILE_TYPE, createdHistory);
-	}
-	
 	/**
 	 * Tests successfull execution of constructing a list of paired-end files dataset collection.
 	 * @throws ExecutionManagerException 

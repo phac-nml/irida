@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -236,32 +235,6 @@ public class GalaxyHistoriesService {
 		}
 
 		return datasetIdsMap;
-	}
-	
-	/**
-	 * Uploads a list of files into the given history.
-	 * @param dataFiles  The list of files to upload.
-	 * @param inputFileType  The type of files to upload.
-	 * @param history  The history to upload the files into.String
-	 * @return  A list of Datasets describing each uploaded file.
-	 * @throws UploadException  If an error occured uploading the file.
-	 * @throws GalaxyDatasetException If there was an issue finding the corresponding dataset for
-	 * 	the file in the history
-	 */
-	public List<Dataset> uploadFilesListToHistory(List<Path> dataFiles,
-			InputFileType inputFileType, History history) throws UploadException, GalaxyDatasetException {
-		checkNotNull(dataFiles, "dataFiles is null");
-		checkNotNull(inputFileType, "inputFileType is null");
-		checkNotNull(history, "history is null");
-		
-		List<Dataset> inputDatasets = new LinkedList<Dataset>();
-		
-		for (Path file : dataFiles) {
-			Dataset inputDataset = fileToHistory(file, inputFileType, history);
-			inputDatasets.add(inputDataset);
-		}
-		
-		return inputDatasets;
 	}
 	
 	/**

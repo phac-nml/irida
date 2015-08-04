@@ -36,6 +36,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
@@ -197,9 +198,9 @@ public class GalaxyWorkflowsIT {
 		
 		// upload dataset to history
 		List<Dataset> inputDatasetsForward = 
-				galaxyHistory.uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
+				uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
 		List<Dataset> inputDatasetsReverse = 
-				galaxyHistory.uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
+				uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
 		assertEquals(inputFilesForward.size(), inputDatasetsForward.size());
 		assertEquals(inputDatasetsForward.size(), inputDatasetsReverse.size());
 		
@@ -222,6 +223,33 @@ public class GalaxyWorkflowsIT {
 		logger.debug("Running workflow in history " + output.getHistoryId());
 		
 		return output;
+	}
+	
+	
+	/**
+	 * Uploads a list of files into the given history.
+	 * @param dataFiles  The list of files to upload.
+	 * @param inputFileType  The type of files to upload.
+	 * @param history  The history to upload the files into.String
+	 * @return  A list of Datasets describing each uploaded file.
+	 * @throws UploadException  If an error occured uploading the file.
+	 * @throws GalaxyDatasetException If there was an issue finding the corresponding dataset for
+	 * 	the file in the history
+	 */
+	private List<Dataset> uploadFilesListToHistory(List<Path> dataFiles,
+			InputFileType inputFileType, History history) throws UploadException, GalaxyDatasetException {
+		checkNotNull(dataFiles, "dataFiles is null");
+		checkNotNull(inputFileType, "inputFileType is null");
+		checkNotNull(history, "history is null");
+		
+		List<Dataset> inputDatasets = new LinkedList<Dataset>();
+		
+		for (Path file : dataFiles) {
+			Dataset inputDataset = galaxyHistory.fileToHistory(file, inputFileType, history);
+			inputDatasets.add(inputDataset);
+		}
+		
+		return inputDatasets;
 	}
 	
 	/**
