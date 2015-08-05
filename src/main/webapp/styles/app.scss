@@ -32,6 +32,13 @@
 @import "pages/sequenceFile";
 @import "pages/remoteApi";
 
+.nav-gravatar {
+  padding: 12px 5px!important;
+  img {
+    border-radius: $border-radius-small;
+  }
+}
+
 // Bootstrap override
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
