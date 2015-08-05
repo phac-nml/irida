@@ -20,6 +20,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -167,29 +168,6 @@ public class GalaxyWorkflowsIT {
 			= new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);		
 	}
 	
-	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
-		if (isWorkflowIdValid(workflowId)) {
-			throw new WorkflowException("Workflow id " + workflowId + " is not valid");
-		}
-	}
-	
-	/**
-	 * Checks whether or not the given workflow id is valid.
-	 * @param workflowId  A workflow id to check.
-	 * @return True if the workflow is valid, false otherwise.
-	 */
-	public boolean isWorkflowIdValid(String workflowId) {
-
-		if (workflowId != null) {
-			try {
-				return workflowsClient.showWorkflow(workflowId) != null;
-			} catch (Exception e) {
-			}
-		}
-
-		return false;
-	}
-	
 	/**
 	 * Starts the execution of a workflow with a list of fastq files and the given workflow id.
 	 * @param inputFilesForward  A list of forward read fastq files start the workflow.
@@ -217,8 +195,6 @@ public class GalaxyWorkflowsIT {
 			checkArgument(Files.exists(file), "inputFilesReverse " + file + " does not exist");
 		}
 		
-		checkWorkflowIdValid(workflowId);
-				
 		History workflowHistory = galaxyHistory.newHistoryForWorkflow();
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
 		
@@ -421,7 +397,6 @@ public class GalaxyWorkflowsIT {
 		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
 				
 		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
-		checkWorkflowIdValid(workflowId);
 				
 		History workflowHistory = galaxyHistory.newHistoryForWorkflow();
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
@@ -518,7 +493,6 @@ public class GalaxyWorkflowsIT {
 			Path inputFile, String toolName, ToolParameter toolParameter) throws ExecutionManagerException {
 
 		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
-		checkWorkflowIdValid(workflowId);
 
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
 
@@ -744,6 +718,7 @@ public class GalaxyWorkflowsIT {
 	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=WorkflowException.class)
+	@Ignore("**only tests in this class tested valid vs. invalid workflows.")
 	public void testInvalidWorkflow() throws ExecutionManagerException {
 		String invalidWorkflowId = localGalaxy.getInvalidWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
