@@ -1,16 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 
 import com.google.common.collect.Lists;
@@ -44,6 +36,17 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link }
@@ -236,6 +239,9 @@ public class UsersControllerTest {
 		expected.put("email", email);
 		User puser = new User(userId, USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
+
+		Authentication auth = new UsernamePasswordAuthenticationToken(puser, null);
+		SecurityContextHolder.getContext().setAuthentication(auth);
 
 		DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException(
 				"Exception: " + User.USER_EMAIL_CONSTRAINT_NAME);
