@@ -6,6 +6,13 @@
   ],
   "assets": [
     {
+      "version": "0.0.1",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/directives/datatables/irida-datatable.js"
+      }
+    },
+    {
       "name": "project-samples",
       "version": "0.0.1",
       "type": "css",

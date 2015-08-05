@@ -311,25 +311,20 @@
 	</div>
 </main>
 
-<th:block layout:fragment="scripts" th:inline="javascript">
-	<script th:inline="javascript">
-		var PAGE = {
-			urls: {
-				local: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
-				associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '',
-				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
-				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
-				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
-				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
-			},
-			i18n: {
-				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
-			}
-		};
-	</script>
-	<!-- TODO: This is to be removed once table updated -->
-	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
-	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
-</th:block>
+<script layout:fragment="scripts" th:inline="javascript">
+	var PAGE = {
+		urls: {
+			local     : /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
+			associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '',
+			remote    : /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
+			merge     : /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
+			remove    : /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
+			copy      : /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
+		},
+		i18n: {
+			associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
+		}
+	};
+</script>
 </body>
 </html>
