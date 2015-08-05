@@ -36,10 +36,10 @@
     "angular-bootstrap-switch": "0.4.0",
     "font-awesome": "4.3.0",
     "ng-file-upload": "5.0.8",
-    "angular-material": "0.10.0",
     "marked": "0.3.3",
     "angular-marked": "0.0.18",
-    "angular-gravatar": "~0.4.0"
+    "angular-gravatar": "~0.4.0",
+    "angular-material": "0.10.1-rc5-master-f5a9101"
   },
   "devDependencies": {},
   "resolutions": {
