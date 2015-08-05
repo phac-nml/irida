@@ -5648,9 +5648,9 @@ iframe.remote-api-frame {
   height: 450px; }
 
 .nav-gravatar {
-  padding: 12px 5px !important; }
+  padding: 12px 5px 10px 5px !important; }
   .nav-gravatar img {
-    border-radius: 3px; }
+    border-radius: 50%; }
 
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer; }
