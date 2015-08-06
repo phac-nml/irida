@@ -6,32 +6,10 @@
       layout:decorator="template/page">
 <head>
     <title th:text="#{projects.title}">List of Projects</title>
-    <style>
-        .container {
-            width: 1300px !important;
-        }
-    	table tr th {
-    		vertical-align: top !important;
-    	}
-    	
-    	.yadcf-filter-reset-button {
-    		display: none !important;
-    	}
-    	
-    	.yadcf-filter-wrapper {
-    		display: block !important;
-    	}
-        .table-cell-override {
-            width: 200px!important;
-            wrap:nowrap;
-            white-space:nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    </style>
 </head>
 <body>
-<div layout:fragment="page">
+<div layout:fragment="page"
+     ddl:bundle-includes="projects">
     <main class="col-md-12" role="main" property="mainContentOfPage">
         <h1 th:text="#{projects.title}"></h1>
 		<div dt:conf="projectsTable">
