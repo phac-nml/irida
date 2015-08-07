@@ -39,7 +39,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>_BioSample ID_</label>
-                <input class="form-control biosample" name="biosample" tooltip="_NCBI BioSample to add files to.  This sample must be created in NCBI before submission._" />
+                <input class="form-control biosample" name="bioSample" tooltip="_NCBI BioSample to add files to.  This sample must be created in NCBI before submission._" />
               </div>
               <div class="form-group">
                 <label th:text="#{project.export.instrument_model.title}">_Instrument Model_</label>
@@ -137,13 +137,14 @@
           var form = sample.find(".metadata-form");
           
           var data = {};
-          var val = form.serializeArray().map(function(x){data[x.name] = x.value;});
+          var sampleElements = ["bioSample", "instrument_model", "library_name", "library_construction_protocol", "library_strategy", "library_selection", "library_source"];
 
           var paired = [];
           var single = [];
-
-          var biosample = sample.find(".biosample").val();
-          var instrument_model = sample.find(".instrument_model").val();
+          
+          _.forEach(sampleElements, function(ele){
+            data[ele] = sample.find("."+ele).val();
+          });
 
           sample.find('.paired_files:checked').each(function() {
             paired.push($(this).val());
@@ -152,13 +153,11 @@
           $('.single_files:checked').each(function() {
             single.push($(this).val());
           });
+          
+          data.single = single;
+          data.paired = paired;
 
-          samples.push({
-            bioSample: biosample,
-            instrument_model: instrument_model,
-            single: single,
-            paired: paired
-          });
+          samples.push(data);
 
         });
 

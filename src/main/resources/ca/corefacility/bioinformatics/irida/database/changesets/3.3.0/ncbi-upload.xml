@@ -30,6 +30,12 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="bioSample" type="varchar(255)" />
+			<column name="instrument_model" type="varchar(255)" />
+			<column name="library_name" type="varchar(255)" />
+			<column name="library_selection" type="varchar(255)" />
+			<column name="library_source" type="varchar(255)" />
+			<column name="library_strategy" type="varchar(255)" />
+			<column name="library_construction_protocol" type="varchar(255)" />
 		</createTable>
 
 		<createTable tableName="ncbi_export_submission_biosample">

@@ -76,17 +76,6 @@ public class ExportUploadService {
 		final Context ctx = new Context();
 		ctx.setVariable("submission", submission);
 
-		List<FileContainer> files = new ArrayList<>();
-
-		submission.getBioSampleFiles().forEach((b) -> {
-			b.getPairs().forEach((f) -> {
-				Join<Sample, SequenceFile> join = sampleService.getSampleForSequenceFile(f.getForwardSequenceFile());
-				files.add(new FileContainer(b.getBioSample(), join.getSubject(), f));
-			});
-		});
-
-		ctx.setVariable("samplesForPairs", files);
-
 		final String htmlContent = templateEngine.process(NCBI_TEMPLATE, ctx);
 
 		logger.debug(htmlContent);
