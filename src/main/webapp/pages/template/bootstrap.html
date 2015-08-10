@@ -166,9 +166,9 @@
 				</li>
 
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
-					<a class="nav-gravatar" href="#" th:href="@{/users/current}">
+					<a class="nav-gravatar" href="#" th:href="@{/users/current}" th:with="email=${currentUser != null} ? currentUser.email : 'anonymous@anonymous.ca'">
 						<md-tooltip th:text="#{nav.main.account}">Refresh</md-tooltip>
-						<img data:gravatar-src-once="'\'' + ${currentUser.email} + '\''"
+						<img data:gravatar-src-once="'\'' + ${email} + '\''"
 						     gravatar-size="28"/>
 					</a>
 				</li>

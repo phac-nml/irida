@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -28,14 +24,11 @@ public class UserSecurityInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		if (modelAndView != null) {
+		if (hasGoodModelAndView(modelAndView)) {
 			ServletRequest req = (ServletRequest) request;
 			ServletResponse resp = (ServletResponse) response;
-			FilterInvocation filterInvocation = new FilterInvocation(req, resp, new FilterChain() {
-				public void doFilter(ServletRequest request, ServletResponse response) throws IOException,
-						ServletException {
-					throw new UnsupportedOperationException();
-				}
+			FilterInvocation filterInvocation = new FilterInvocation(req, resp, (request1, response1) -> {
+				throw new UnsupportedOperationException();
 			});
 
 			if (isAuthenticated()) {
@@ -49,5 +42,17 @@ public class UserSecurityInterceptor extends HandlerInterceptorAdapter {
 
 	private boolean isAuthenticated() {
 		return SecurityContextHolder.getContext().getAuthentication() instanceof UsernamePasswordAuthenticationToken;
+	}
+
+	/**
+	 * Check to ensure that the {@link ModelAndView} exists and is not in a redirect
+	 *
+	 * @param modelAndView
+	 * 		{@link ModelAndView}
+	 *
+	 * @return true if the {@link ModelAndView} is good for breadcrumbs
+	 */
+	private boolean hasGoodModelAndView(ModelAndView modelAndView) {
+		return modelAndView != null && !modelAndView.getViewName().contains("redirect:");
 	}
 }
