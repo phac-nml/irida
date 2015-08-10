@@ -62,12 +62,6 @@
 			<revision>71e3f4bfd1a9</revision>
 		</repository>
 		<repository>
-			<name>concat_fastq_collection</name>
-			<owner>phil</owner>
-			<url>http://galaxy-toolshed.corefacility.ca</url>
-			<revision>f449c404732f</revision>
-		</repository>
-		<repository>
 			<name>package_zlib_1_2_8</name>
 			<owner>ericenns</owner>
 			<url>http://galaxy-toolshed.corefacility.ca</url>
