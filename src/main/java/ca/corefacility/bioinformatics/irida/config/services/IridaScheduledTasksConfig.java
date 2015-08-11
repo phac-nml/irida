@@ -53,39 +53,35 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-
+	
 	@Autowired
 	private AnalysisExecutionService analysisExecutionService;
 
 	@Autowired
 	private UserService userService;
-
+	
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
 	 */
-	// default 15 seconds
-	private static final long ANALYSIS_EXECUTION_TASK_RATE = 15000;
-
+	private static final long ANALYSIS_EXECUTION_TASK_RATE = 15000; // 15 seconds
+	
 	/**
 	 * Rate in milliseconds of the cleanup task.
 	 */
-	// default 1 hour
-	private static final long CLEANUP_TASK_RATE = 60 * 60 * 1000;
-
+	private static final long CLEANUP_TASK_RATE = 60*60*1000; // 1 hour
+	
 	/**
-	 * Defines the time to clean up in number of days a submission must exist
-	 * before it is cleaned up.
+	 * Defines the time to clean up in number of days a submission must exist before it is cleaned up.
 	 */
 	@Value("${irida.analysis.cleanup.days}")
 	private Double daysToCleanup;
-
+	
 	/**
 	 * Cycle through any newly created submissions and download any required
 	 * {@link SequenceFileSnapshot}s.
 	 */
 	@Scheduled(initialDelay = 1000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void downloadFiles() {
-		SecurityContextHolder.setContext(createSchedulerSecurityContext());
 		analysisExecutionScheduledTask().downloadFiles();
 	}
 
@@ -94,7 +90,6 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	@Scheduled(initialDelay = 2000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void prepareAnalyses() {
-		SecurityContextHolder.setContext(createSchedulerSecurityContext());
 		analysisExecutionScheduledTask().prepareAnalyses();
 	}
 
@@ -103,7 +98,6 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	@Scheduled(initialDelay = 3000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void executeAnalyses() {
-		SecurityContextHolder.setContext(createSchedulerSecurityContext());
 		analysisExecutionScheduledTask().executeAnalyses();
 	}
 
@@ -112,7 +106,6 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	@Scheduled(initialDelay = 4000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void monitorRunningAnalyses() {
-		SecurityContextHolder.setContext(createSchedulerSecurityContext());
 		analysisExecutionScheduledTask().monitorRunningAnalyses();
 	}
 
@@ -121,17 +114,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	@Scheduled(initialDelay = 5000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
 	public void transferAnalysesResults() {
-		SecurityContextHolder.setContext(createSchedulerSecurityContext());
 		analysisExecutionScheduledTask().transferAnalysesResults();
 	}
-
+	
 	/**
-	 * Cycle through any completed or error submissions and clean up results
-	 * from the execution manager.
+	 * Cycle through any completed or error submissions and clean up results from the execution manager.
 	 */
 	@Scheduled(initialDelay = 10000, fixedRate = CLEANUP_TASK_RATE)
 	public void cleanupAnalysisSubmissions() {
-		SecurityContextHolder.setContext(createSchedulerSecurityContext());
 		analysisExecutionScheduledTask().cleanupAnalysisSubmissions();
 	}
 
@@ -161,7 +151,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 			return CleanupAnalysisSubmissionCondition.NEVER_CLEANUP;
 		} else {
 			logger.info("Setting daysToCleanup to be irida.analysis.cleanup.time=" + daysToCleanup);
-
+			
 			// Converts fraction of day to a millisecond value
 			long millisToCleanup = Math.round(daysToCleanup * TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
 			return new CleanupAnalysisSubmissionConditionAge(Duration.ofMillis(millisToCleanup));
@@ -178,13 +168,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	/**
 	 * Builds a new Executor for scheduled tasks.
-	 * 
 	 * @return A new Executor for scheduled tasks.
 	 */
 	private Executor taskExecutor() {
-		ScheduledExecutorService delegateExecutor = Executors.newSingleThreadScheduledExecutor();
+		ScheduledExecutorService delegateExecutor = Executors
+				.newSingleThreadScheduledExecutor();
 		SecurityContext schedulerContext = createSchedulerSecurityContext();
-		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
+		return new DelegatingSecurityContextScheduledExecutorService(
+				delegateExecutor, schedulerContext);
 	}
 
 	/**
@@ -195,16 +186,16 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private SecurityContext createSchedulerSecurityContext() {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-		Authentication anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
-				ImmutableList.of(Role.ROLE_ANONYMOUS));
-
+		Authentication anonymousToken = new AnonymousAuthenticationToken(
+				"nobody", "nobody", ImmutableList.of(Role.ROLE_ANONYMOUS));
+		
 		Authentication oldAuthentication = SecurityContextHolder.getContext().getAuthentication();
 		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
 		User admin = userService.getUserByUsername("admin");
 		SecurityContextHolder.getContext().setAuthentication(oldAuthentication);
 
-		Authentication adminAuthentication = new PreAuthenticatedAuthenticationToken(admin, null,
-				Lists.newArrayList(Role.ROLE_ADMIN));
+		Authentication adminAuthentication = new PreAuthenticatedAuthenticationToken(
+				admin, null, Lists.newArrayList(Role.ROLE_ADMIN));
 
 		context.setAuthentication(adminAuthentication);
 
