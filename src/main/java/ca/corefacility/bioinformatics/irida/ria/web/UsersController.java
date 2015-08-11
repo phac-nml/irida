@@ -10,6 +10,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -25,10 +27,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,10 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -53,12 +47,17 @@ import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * Controller for all {@link User} related views
@@ -227,7 +226,7 @@ public class UsersController {
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
 			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
 			@RequestParam(required = false) String password, @RequestParam(required = false) String enabled,
-			@RequestParam(required = false) String confirmPassword, Model model, Principal principal) {
+			@RequestParam(required = false) String confirmPassword, Model model, Principal principal, HttpServletRequest request) {
 		logger.debug("Updating user " + userId);
 
 		Locale locale = LocaleContextHolder.getLocale();
@@ -281,10 +280,12 @@ public class UsersController {
 				User user = userService.update(userId, updatedValues);
 				returnView = "redirect:/users/" + userId;
 
-				// This will update the UserDetails object in spring security so that the gravatar gets updated on the page.
-				UserDetails currentUserDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-				Authentication authentication = new UsernamePasswordAuthenticationToken(user, currentUserDetails.getPassword(), currentUserDetails.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(authentication);
+				// If the user is updating their account make sure you update it in the sesion variable
+				// this will update the users gravatar!
+				if (principal.getName().equals(user.getUsername())) {
+					HttpSession session = request.getSession();
+					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
+				}
 
 			} catch (ConstraintViolationException | DataIntegrityViolationException ex) {
 				errors = handleCreateUpdateException(ex, locale);
