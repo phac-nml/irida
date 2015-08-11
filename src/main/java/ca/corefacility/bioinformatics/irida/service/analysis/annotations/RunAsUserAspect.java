@@ -68,8 +68,8 @@ public class RunAsUserAspect {
 		Expression parseExpression = parser.parseExpression(expression);
 
 		Object expressionValue = parseExpression.getValue(evaluationContext);
-		
-		if (! (expressionValue instanceof User)) {
+
+		if (!(expressionValue instanceof User)) {
 			throw new IllegalArgumentException("RunAsUser value must refer to a User");
 		}
 
@@ -79,9 +79,7 @@ public class RunAsUserAspect {
 		logger.trace("Updating user authentication");
 		SecurityContext context = SecurityContextHolder.getContext();
 
-		Authentication originalAuthentication = context.getAuthentication();
-
-		logger.trace("Original user: " + originalAuthentication.getName());
+		logger.trace("Original user: " + context.getAuthentication().getName());
 
 		// set the new user authentication
 		logger.trace("Setting user " + submitter.getUsername());
@@ -89,8 +87,9 @@ public class RunAsUserAspect {
 		PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
 				submitter, null, Lists.newArrayList(submitter.getSystemRole()));
 
-		context.setAuthentication(submitterAuthenticationToken);
-		SecurityContextHolder.setContext(context);
+		SecurityContext newContext = SecurityContextHolder.createEmptyContext();
+		newContext.setAuthentication(submitterAuthenticationToken);
+		SecurityContextHolder.setContext(newContext);
 
 		// run the method
 		Object returnValue = null;
@@ -98,9 +97,8 @@ public class RunAsUserAspect {
 			returnValue = jp.proceed();
 		} finally {
 			// return the old authentication
-			logger.trace("Resetting authentication to " + originalAuthentication.getName());
+			logger.trace("Resetting authentication to " + context.getAuthentication().getName());
 
-			context.setAuthentication(originalAuthentication);
 			SecurityContextHolder.setContext(context);
 		}
 
