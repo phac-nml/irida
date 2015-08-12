@@ -74,31 +74,29 @@ public class RunAsUserAspect {
 
 		User submitter = (User) expressionValue;
 
-		// get the original authentication
+		// get the original security context
 		logger.trace("Updating user authentication");
-		SecurityContext context = SecurityContextHolder.getContext();
+		SecurityContext originalConext = SecurityContextHolder.getContext();
 
-		logger.trace("Original user: " + context.getAuthentication().getName());
-
-		// set the new user authentication
+		logger.trace("Original user: " + originalConext.getAuthentication().getName());
 		logger.trace("Setting user " + submitter.getUsername());
 
-		PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
-				submitter, null, Lists.newArrayList(submitter.getSystemRole()));
-
-		SecurityContext newContext = SecurityContextHolder.createEmptyContext();
-		newContext.setAuthentication(submitterAuthenticationToken);
-		SecurityContextHolder.setContext(newContext);
-
-		// run the method
 		Object returnValue = null;
 		try {
+			// set the new user authentication
+			PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
+					submitter, null, Lists.newArrayList(submitter.getSystemRole()));
+			SecurityContext newContext = SecurityContextHolder.createEmptyContext();
+			newContext.setAuthentication(submitterAuthenticationToken);
+			SecurityContextHolder.setContext(newContext);
+
+			// run the method
 			returnValue = jp.proceed();
 		} finally {
 			// return the old authentication
-			logger.trace("Resetting authentication to " + context.getAuthentication().getName());
+			logger.trace("Resetting authentication to " + originalConext.getAuthentication().getName());
 
-			SecurityContextHolder.setContext(context);
+			SecurityContextHolder.setContext(originalConext);
 		}
 
 		return returnValue;
