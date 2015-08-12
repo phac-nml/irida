@@ -85,11 +85,12 @@ public class RunAsUserAspect {
 				submitter, null, Lists.newArrayList(submitter.getSystemRole()));
 		SecurityContext newContext = SecurityContextHolder.createEmptyContext();
 		newContext.setAuthentication(submitterAuthenticationToken);
-
+		SecurityContextHolder.setContext(newContext);
+		
 		Object returnValue = null;
 		try {
 			// set the new user authentication
-			SecurityContextHolder.setContext(newContext);
+			
 
 			// run the method
 			returnValue = jp.proceed();
