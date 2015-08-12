@@ -282,7 +282,7 @@ public class UsersController {
 
 				// If the user is updating their account make sure you update it in the sesion variable
 				// this will update the users gravatar!
-				if (principal.getName().equals(user.getUsername())) {
+				if (user != null && principal.getName().equals(user.getUsername())) {
 					HttpSession session = request.getSession();
 					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 				}
