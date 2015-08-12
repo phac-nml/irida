@@ -81,13 +81,14 @@ public class RunAsUserAspect {
 		logger.trace("Original user: " + originalConext.getAuthentication().getName());
 		logger.trace("Setting user " + submitter.getUsername());
 
+		PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
+				submitter, null, Lists.newArrayList(submitter.getSystemRole()));
+		SecurityContext newContext = SecurityContextHolder.createEmptyContext();
+		newContext.setAuthentication(submitterAuthenticationToken);
+
 		Object returnValue = null;
 		try {
 			// set the new user authentication
-			PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
-					submitter, null, Lists.newArrayList(submitter.getSystemRole()));
-			SecurityContext newContext = SecurityContextHolder.createEmptyContext();
-			newContext.setAuthentication(submitterAuthenticationToken);
 			SecurityContextHolder.setContext(newContext);
 
 			// run the method
