@@ -49,7 +49,9 @@ import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConf
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
+
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
@@ -100,6 +102,11 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 			}
 		}
 		return new AnalyticsHandlerInterceptor(analytics.toString());
+	}
+
+	@Bean
+	public UserSecurityInterceptor userSecurityInterceptor() {
+		return new UserSecurityInterceptor();
 	}
 
 	@Bean(name = "localeResolver")
@@ -197,6 +204,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
+		registry.addInterceptor(userSecurityInterceptor());
 	}
 
 	/**
