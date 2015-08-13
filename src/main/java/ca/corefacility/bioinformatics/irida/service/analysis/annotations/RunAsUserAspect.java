@@ -10,7 +10,6 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -68,40 +67,36 @@ public class RunAsUserAspect {
 		Expression parseExpression = parser.parseExpression(expression);
 
 		Object expressionValue = parseExpression.getValue(evaluationContext);
-		
-		if (! (expressionValue instanceof User)) {
+
+		if (!(expressionValue instanceof User)) {
 			throw new IllegalArgumentException("RunAsUser value must refer to a User");
 		}
 
 		User submitter = (User) expressionValue;
 
-		// get the original authentication
+		// get the original security context
 		logger.trace("Updating user authentication");
-		SecurityContext context = SecurityContextHolder.getContext();
+		SecurityContext originalConext = SecurityContextHolder.getContext();
 
-		Authentication originalAuthentication = context.getAuthentication();
-
-		logger.trace("Original user: " + originalAuthentication.getName());
-
-		// set the new user authentication
+		logger.trace("Original user: " + originalConext.getAuthentication().getName());
 		logger.trace("Setting user " + submitter.getUsername());
 
-		PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
-				submitter, null, Lists.newArrayList(submitter.getSystemRole()));
-
-		context.setAuthentication(submitterAuthenticationToken);
-		SecurityContextHolder.setContext(context);
-
-		// run the method
 		Object returnValue = null;
 		try {
+			// set the new user authentication
+			PreAuthenticatedAuthenticationToken submitterAuthenticationToken = new PreAuthenticatedAuthenticationToken(
+					submitter, null, Lists.newArrayList(submitter.getSystemRole()));
+			SecurityContext newContext = SecurityContextHolder.createEmptyContext();
+			newContext.setAuthentication(submitterAuthenticationToken);
+			SecurityContextHolder.setContext(newContext);
+
+			// run the method
 			returnValue = jp.proceed();
 		} finally {
 			// return the old authentication
-			logger.trace("Resetting authentication to " + originalAuthentication.getName());
+			logger.trace("Resetting authentication to " + originalConext.getAuthentication().getName());
 
-			context.setAuthentication(originalAuthentication);
-			SecurityContextHolder.setContext(context);
+			SecurityContextHolder.setContext(originalConext);
 		}
 
 		return returnValue;
