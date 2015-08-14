@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -155,10 +156,10 @@ public class GalaxyHistoriesServiceIT {
 
 		assertEquals(ClientResponse.Status.OK,
 				librariesClient.uploadFilesystemPathsRequest(testLibrary.getId(), upload)
-				.getClientResponseStatus());
 		
-		Map<String, List<LibraryContent>> libraryContent = 
-				galaxyLibrariesService.libraryContentAsMap(testLibrary.getId());
+				.getClientResponseStatus());
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(testLibrary.getId());
+		Map<String, List<LibraryContent>> libraryContent = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
 		LibraryContent fileContent = libraryContent.get("/" + dataFile.toFile().getName()).get(0);
 		assertNotNull(fileContent);
 		

@@ -7,7 +7,6 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -17,12 +16,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
@@ -113,25 +110,6 @@ public class GalaxyLibrariesService {
 			throw new CreateLibraryException("Could not create library named "
 					+ libraryName);
 		}
-	}
-	
-	/**
-	 * Gets a Map listing all contents of the passed Galaxy library to the
-	 * LibraryContent object.
-	 * 
-	 * @param libraryId
-	 *            The library to get all contents from.
-	 *            
-	 * @return A Map mapping the path of the library content to a list of
-	 *         {@link LibraryContent} objects.
-	 * @throws ExecutionManagerObjectNotFoundException  if the library cannot be found
-	 */
-	public Map<String, List<LibraryContent>> libraryContentAsMap(String libraryId)
-			throws ExecutionManagerObjectNotFoundException {
-		checkNotNull(libraryId, "libraryId is null");
-
-		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
-		return libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
 	}
 
 	/**
