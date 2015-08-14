@@ -20,7 +20,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -711,18 +710,6 @@ public class GalaxyWorkflowsIT {
 	public void testGetWorkflowDetailsFail() throws WorkflowException {
 		String workflowId = localGalaxy.getInvalidWorkflowId();
 		assertNotNull(galaxyWorkflowService.getWorkflowDetails(workflowId));
-	}
-	
-	/**
-	 * Tests attempting to run a workflow that does not exist.
-	 * @throws ExecutionManagerException
-	 */
-	@Test(expected=WorkflowException.class)
-	@Ignore("**only tests in this class tested valid vs. invalid workflows.")
-	public void testInvalidWorkflow() throws ExecutionManagerException {
-		String invalidWorkflowId = localGalaxy.getInvalidWorkflowId();
-		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		runSingleFileWorkflow(dataFile1, FILE_TYPE, invalidWorkflowId, workflowInputLabel);
 	}
 	
 	/**
