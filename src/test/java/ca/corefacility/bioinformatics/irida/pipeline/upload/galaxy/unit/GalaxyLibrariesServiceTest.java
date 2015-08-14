@@ -97,4 +97,16 @@ public class GalaxyLibrariesServiceTest {
 		assertEquals("test", library.getName());
 		assertEquals(LIBRARY_ID, library.getId());
 	}
+
+	/**
+	 * Tests create empty library.
+	 * 
+	 * @throws CreateLibraryException
+	 */
+	@Test(expected = CreateLibraryException.class)
+	public void testBuildEmptyLibraryFail() throws CreateLibraryException {
+		when(librariesClient.createLibrary(any(Library.class))).thenReturn(null);
+
+		new GalaxyLibrariesService(librariesClient, 1, 2).buildEmptyLibrary(new GalaxyProjectName("test"));
+	}
 }
