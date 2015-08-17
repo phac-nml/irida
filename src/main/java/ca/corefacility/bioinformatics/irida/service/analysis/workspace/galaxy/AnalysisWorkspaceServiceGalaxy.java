@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Prep
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -71,8 +71,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	private SequenceFileService sequenceFileService;
 	private SequenceFilePairService sequenceFilePairService;
 
-	private GalaxyLibraryBuilder libraryBuilder;
-
 	private GalaxyHistoriesService galaxyHistoriesService;
 
 	private IridaWorkflowsService iridaWorkflowsService;
@@ -84,6 +82,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
 	
 	private SampleRemoteService sampleRemoteService;
+
+	private GalaxyLibrariesService galaxyLibrariesService;
 
 	/**
 	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
@@ -98,7 +98,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            {@link SequenceFileService}
 	 * @param sequenceFilePairService
 	 *            {@link SequenceFilePairService}
-	 * @param libraryBuilder
+	 * @param galaxyLibrariesService
 	 *            An object for building libraries in Galaxy.
 	 * @param iridaWorkflowsService
 	 *            A service used for loading workflows from IRIDA.
@@ -113,7 +113,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService, SequenceFileService sequenceFileService,
-			SequenceFilePairService sequenceFilePairService, GalaxyLibraryBuilder libraryBuilder,
+			SequenceFilePairService sequenceFilePairService, GalaxyLibrariesService galaxyLibrariesService,
 			IridaWorkflowsService iridaWorkflowsService,
 			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
 			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy,
@@ -122,7 +122,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
-		this.libraryBuilder = libraryBuilder;
+		this.galaxyLibrariesService = galaxyLibrariesService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.analysisCollectionServiceGalaxy = analysisCollectionServiceGalaxy;
 		this.analysisProvenanceServiceGalaxy = analysisProvenanceServiceGalaxy;
@@ -215,7 +215,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		String temporaryLibraryName = AnalysisSubmission.class.getSimpleName() + "-" + UUID.randomUUID().toString();
 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
-		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
+		Library workflowLibrary = galaxyLibrariesService.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
 		Map<Sample, SequenceFile> sampleSequenceFilesSingle = sequenceFileService.getUniqueSamplesForSequenceFiles(
 				analysisSubmission

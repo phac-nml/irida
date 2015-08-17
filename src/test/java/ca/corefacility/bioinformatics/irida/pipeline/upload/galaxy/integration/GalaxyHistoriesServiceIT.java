@@ -8,11 +8,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -41,12 +40,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileTy
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
@@ -85,6 +81,7 @@ public class GalaxyHistoriesServiceIT {
 	
 	private GalaxyHistoriesService galaxyHistory;
 	private GalaxyInstance galaxyInstanceAdmin;
+	private GalaxyLibrariesService galaxyLibrariesService;
 	
 	private Path dataFile;
 	private Path dataFile2;
@@ -119,7 +116,7 @@ public class GalaxyHistoriesServiceIT {
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
 				galaxyLibrariesService);
@@ -132,13 +129,7 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws CreateLibraryException
 	 */
 	private Library buildEmptyLibrary(String name) throws CreateLibraryException {
-		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyRoleSearch galaxyRoleSearch = new GalaxyRoleSearch(galaxyInstanceAdmin.getRolesClient(),
-				localGalaxy.getGalaxyURL());
-		GalaxyLibraryBuilder libraryBuilder = new GalaxyLibraryBuilder(librariesClient, galaxyRoleSearch,
-				localGalaxy.getGalaxyURL());
-		
-		return libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(name));
+		return galaxyLibrariesService.buildEmptyLibrary(new GalaxyProjectName(name));
 	}
 	
 	/**
@@ -151,8 +142,6 @@ public class GalaxyHistoriesServiceIT {
 	 */
 	private String setupLibraries(Library testLibrary, GalaxyInstance galaxyInstanceAdmin) throws CreateLibraryException, ExecutionManagerObjectNotFoundException {
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyLibraryContentSearch galaxyLibraryContentSearch =
-				new GalaxyLibraryContentSearch(librariesClient, localGalaxy.getGalaxyURL());
 		
 		LibraryContent rootFolder = librariesClient.getRootFolder(testLibrary.getId());
 		assertNotNull(rootFolder);
@@ -167,10 +156,10 @@ public class GalaxyHistoriesServiceIT {
 
 		assertEquals(ClientResponse.Status.OK,
 				librariesClient.uploadFilesystemPathsRequest(testLibrary.getId(), upload)
-				.getClientResponseStatus());
 		
-		Map<String, List<LibraryContent>> libraryContent = 
-				galaxyLibraryContentSearch.libraryContentAsMap(testLibrary.getId());
+				.getClientResponseStatus());
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(testLibrary.getId());
+		Map<String, List<LibraryContent>> libraryContent = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
 		LibraryContent fileContent = libraryContent.get("/" + dataFile.toFile().getName()).get(0);
 		assertNotNull(fileContent);
 		
@@ -183,10 +172,10 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws IOException 
 	 */
 	private void setupDataFiles() throws URISyntaxException, IOException {
-		dataFile = Paths.get(GalaxyAPIIT.class.getResource(
+		dataFile = Paths.get(GalaxyHistoriesServiceIT.class.getResource(
 				"testData1.fastq").toURI());
 		
-		dataFile2 = Paths.get(GalaxyAPIIT.class.getResource(
+		dataFile2 = Paths.get(GalaxyHistoriesServiceIT.class.getResource(
 				"testData2.fastq").toURI());
 		
 		File invalidFile = File.createTempFile("galaxy-test", ".fastq");
@@ -283,84 +272,6 @@ public class GalaxyHistoriesServiceIT {
 		description.addDatasetElement(elementInvalid);
 		
 		galaxyHistory.constructCollection(description, history);
-	}
-	
-	/**
-	 * Tests out successfully constructing a collection list of datasets.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testConstructCollectionListSuccess() throws ExecutionManagerException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
-		Dataset dataset2 = galaxyHistory.fileToHistory(dataFile2, FILE_TYPE, history);
-		assertNotNull(dataset1);
-		assertNotNull(dataset2);
-		
-		CollectionResponse collectionResponse = 
-				galaxyHistory.constructCollectionList(Arrays.asList(dataset1, dataset2), history);
-		assertNotNull(collectionResponse);
-		assertEquals(DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType());
-		assertEquals(history.getId(), collectionResponse.getHistoryId());
-	}
-	
-	/**
-	 * Tests out failure to construct a collection list of datasets.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=ExecutionManagerException.class)
-	public void testConstructCollectionListFail() throws ExecutionManagerException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
-		Dataset datasetInvalid = new Dataset();
-		datasetInvalid.setId("invalidId");
-		assertNotNull(dataset1);
-		
-		galaxyHistory.constructCollectionList(Arrays.asList(dataset1, datasetInvalid), history);
-	}
-	
-	/**
-	 * Tests direct upload of a list of files to a Galaxy history.
-	 * @throws UploadException 
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test
-	public void testUploadFilesListToHistory() throws UploadException, GalaxyDatasetException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		String filename1 = dataFile.toFile().getName();
-		String filename2 = dataFile2.toFile().getName();
-		List<Path> dataFiles = new LinkedList<>();
-		dataFiles.add(dataFile);
-		dataFiles.add(dataFile2);
-		
-		List<Dataset> datasets = galaxyHistory.uploadFilesListToHistory(dataFiles, FILE_TYPE, history);
-		assertNotNull(datasets);
-		assertEquals(2, datasets.size());
-		
-		Dataset dataset1 = datasets.get(0);
-		String dataId1 = Util.getIdForFileInHistory(filename1, history.getId(),
-				localGalaxy.getGalaxyInstanceAdmin());
-		assertEquals(dataId1, dataset1.getId());
-		
-		Dataset dataset2 = datasets.get(1);
-		String dataId2 = Util.getIdForFileInHistory(filename2, history.getId(),
-				localGalaxy.getGalaxyInstanceAdmin());
-		assertEquals(dataId2, dataset2.getId());
-	}
-	
-	/**
-	 * Tests direct upload of a list of files to a Galaxy history (fail to upload).
-	 * @throws UploadException 
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test(expected=IllegalStateException.class)
-	public void testUploadFilesListToHistoryFail() throws UploadException, GalaxyDatasetException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		List<Path> dataFiles = new LinkedList<>();
-		dataFiles.add(dataFile);
-		dataFiles.add(dataFileInvalid);
-		
-		galaxyHistory.uploadFilesListToHistory(dataFiles, FILE_TYPE, history);
 	}
 	
 	/**
@@ -506,26 +417,6 @@ public class GalaxyHistoriesServiceIT {
 	@Test(expected=NoGalaxyHistoryException.class)
 	public void testFindByIdFail() throws ExecutionManagerObjectNotFoundException {
 		galaxyHistory.findById("invalid");
-	}
-	
-	/**
-	 * Tests successfully checking for existence of a history by an id (history exists).
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test
-	public void testExistsTrue() {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		
-		assertTrue(galaxyHistory.exists(history.getId()));
-	}
-	
-	/**
-	 * Tests checking for existence of a history by an id (history does not exist).
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test
-	public void testExistsFalse() {
-		assertFalse(galaxyHistory.exists("invalid"));
 	}
 	
 	/**

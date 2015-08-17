@@ -12,7 +12,6 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -76,10 +75,7 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private SequenceFileSnapshotService sequenceFileSnapshotService;
-	
-	@Autowired
-	private GalaxyLibraryBuilder galaxyLibraryBuilder;
-	
+		
 	@Autowired
 	SampleRemoteService sampleRemoteService;
 	
@@ -114,7 +110,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder, iridaWorkflowsService,
+				sequenceFileService, sequenceFilePairService, galaxyLibrariesService, iridaWorkflowsService,
 				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy, sampleRemoteService);
 	}
 
