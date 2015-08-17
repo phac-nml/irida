@@ -1,13 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -25,18 +24,18 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 @Entity
 @Table(name = "ncbi_export_biosample")
 public class NcbiBioSampleFiles {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private String id;
 
 	private String bioSample;
 
-	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<SequenceFile> files;
 
-	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<SequenceFilePair> pairs;
-	
+
 	@Enumerated(EnumType.STRING)
 	NcbiInstrumentModel instrument_model;
 
@@ -52,24 +51,22 @@ public class NcbiBioSampleFiles {
 	NcbiLibraryStrategy library_strategy;
 
 	String library_construction_protocol;
-	
+
 	public NcbiBioSampleFiles() {
 	}
 
-	public NcbiBioSampleFiles(String bioSample) {
-		this.bioSample = bioSample;
-	}
+	public NcbiBioSampleFiles(String namespace) {
+		StringBuilder builder = new StringBuilder(namespace);
+		builder.append(new Date().getTime());
+		id = builder.toString();
 
-	public NcbiBioSampleFiles(String bioSample, List<SequenceFile> files, List<SequenceFilePair> pairs) {
-		this(bioSample);
-		this.files = files;
-		this.pairs = pairs;
 	}
 
 	public NcbiBioSampleFiles(String bioSample, List<SequenceFile> files, List<SequenceFilePair> pairs,
 			NcbiInstrumentModel instrument_model, String library_name, NcbiLibrarySelection library_selection,
 			NcbiLibrarySource library_source, NcbiLibraryStrategy library_strategy,
-			String library_construction_protocol) {
+			String library_construction_protocol, String namespace) {
+		this(namespace);
 		this.bioSample = bioSample;
 		this.files = files;
 		this.pairs = pairs;
@@ -92,6 +89,7 @@ public class NcbiBioSampleFiles {
 		private NcbiLibrarySource library_source;
 		private NcbiLibraryStrategy library_strategy;
 		private String library_construction_protocol;
+		private String namespace;
 
 		public Builder files(List<SequenceFile> files) {
 			this.files = files;
@@ -138,9 +136,14 @@ public class NcbiBioSampleFiles {
 			return this;
 		}
 
+		public Builder namespace(String namespace) {
+			this.namespace = namespace;
+			return this;
+		}
+
 		public NcbiBioSampleFiles build() {
 			return new NcbiBioSampleFiles(bioSample, files, pairs, instrument_model, library_name, library_selection,
-					library_source, library_strategy, library_construction_protocol);
+					library_source, library_strategy, library_construction_protocol, namespace);
 		}
 	}
 
@@ -152,7 +155,7 @@ public class NcbiBioSampleFiles {
 		return files;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 

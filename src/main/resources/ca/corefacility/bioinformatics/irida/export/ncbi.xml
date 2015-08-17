@@ -22,11 +22,11 @@
 			<File th:attr="file_path=${file.getFileName()}">
 				<DataType>generic-data</DataType>
 			</File>
-			<Attribute name="instrument_model" th:text="${sample.instrument_model}">_Model_</Attribute>
+			<Attribute name="instrument_model" th:text="${sample.instrument_model.value}">_Model_</Attribute>
 			<Attribute name="library_name" th:text="${sample.library_name}">_name_</Attribute>
-			<Attribute name="library_strategy" th:text="${sample.library_strategy}">_Strategy_</Attribute>
-			<Attribute name="library_source" th:text="${sample.library_source}">_Source_</Attribute>
-			<Attribute name="library_selection" th:text="${sample.library_selection}">_Selection_</Attribute>
+			<Attribute name="library_strategy" th:text="${sample.library_strategy.value}">_Strategy_</Attribute>
+			<Attribute name="library_source" th:text="${sample.library_source.value}">_Source_</Attribute>
+			<Attribute name="library_selection" th:text="${sample.library_selection.value}">_Selection_</Attribute>
 			<Attribute name="library_layout">SINGLE</Attribute>
 			<Attribute name="library_construction_protocol" th:text="${sample.library_construction_protocol}">_Protocol_</Attribute>
 			<AttributeRefId name="BioProject">
@@ -40,7 +40,7 @@
 				</RefId>
 			</AttributeRefId>
 			<Identifier>
-				<SPUID spuid_namespace="CFSAN">CFSAN006236_01:3</SPUID>
+				<SPUID th:attr="spuid_namespace=${submission.ncbiNamespace}" th:text="${sample.id}">_spuid_</SPUID>
 			</Identifier>
 		</AddFiles>
 		<AddFiles target_db="SRA" th:each="pair : ${sample.pairs}">
@@ -50,11 +50,11 @@
 			<File th:attr="file_path=${pair.getReverseSequenceFile().getFileName()}">
 				<DataType>generic-data</DataType>
 			</File>
-			<Attribute name="instrument_model" th:text="${sample.instrument_model}">_Model_</Attribute>
+			<Attribute name="instrument_model" th:text="${sample.instrument_model.value}">_Model_</Attribute>
 			<Attribute name="library_name" th:text="${sample.library_name}">_name_</Attribute>
-			<Attribute name="library_strategy" th:text="${sample.library_strategy}">_Strategy_</Attribute>
-			<Attribute name="library_source" th:text="${sample.library_source}">_Source_</Attribute>
-			<Attribute name="library_selection" th:text="${sample.library_selection}">_Selection_</Attribute>
+			<Attribute name="library_strategy" th:text="${sample.library_strategy.value}">_Strategy_</Attribute>
+			<Attribute name="library_source" th:text="${sample.library_source.value}">_Source_</Attribute>
+			<Attribute name="library_selection" th:text="${sample.library_selection.value}">_Selection_</Attribute>
 			<Attribute name="library_layout">PAIRED</Attribute>
 			<Attribute name="library_construction_protocol" th:text="${sample.library_construction_protocol}">_Protocol_</Attribute>
 			<AttributeRefId name="BioProject">
@@ -68,7 +68,7 @@
 				</RefId>
 			</AttributeRefId>
 			<Identifier>
-				<SPUID spuid_namespace="CFSAN">CFSAN006236_01:3</SPUID>
+				<SPUID th:attr="spuid_namespace=${submission.ncbiNamespace}" th:text="${sample.id}">_spuid_</SPUID>
 			</Identifier>
 		</AddFiles>
 	</Action>
