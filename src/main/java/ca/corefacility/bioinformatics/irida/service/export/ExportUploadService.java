@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,11 +14,6 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
@@ -32,14 +26,12 @@ public class ExportUploadService {
 
 	private NcbiExportSubmissionService exportSubmissionService;
 	private TemplateEngine templateEngine;
-	private SampleService sampleService;
 
 	@Autowired
 	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
-			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine, SampleService sampleService) {
+			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine) {
 		this.exportSubmissionService = exportSubmissionService;
 		this.templateEngine = templateEngine;
-		this.sampleService = sampleService;
 	}
 
 	/**
@@ -79,30 +71,5 @@ public class ExportUploadService {
 		final String htmlContent = templateEngine.process(NCBI_TEMPLATE, ctx);
 
 		logger.debug(htmlContent);
-	}
-
-	private class FileContainer {
-		String bioSample;
-		Sample sample;
-		SequenceFilePair pair;
-
-		public FileContainer(String bioSample, Sample sample, SequenceFilePair pair) {
-			this.bioSample = bioSample;
-			this.sample = sample;
-			this.pair = pair;
-		}
-
-		public String getBioSample() {
-			return bioSample;
-		}
-
-		public SequenceFilePair getPair() {
-			return pair;
-		}
-
-		public Sample getSample() {
-			return sample;
-		}
-
 	}
 }
