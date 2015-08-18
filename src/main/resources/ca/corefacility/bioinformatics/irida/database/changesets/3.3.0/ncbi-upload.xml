@@ -18,6 +18,10 @@
 				<constraints foreignKeyName="FK_NCBI_SUBMISSION_PROJECT"
 					referencedColumnNames="id" referencedTableName="project" />
 			</column>
+			<column name="submitter" type="bigint(20)">
+				<constraints foreignKeyName="FK_NCBI_SUBMISSION_SUBMITTER"
+					referencedColumnNames="id" referencedTableName="user" />
+			</column>
 			<column name="upload_state" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>

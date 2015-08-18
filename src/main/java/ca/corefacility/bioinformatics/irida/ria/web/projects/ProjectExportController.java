@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,11 +38,13 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
  * Controller managing requests to export project data to external sources.
@@ -57,16 +60,18 @@ public class ProjectExportController {
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
 	private final NcbiExportSubmissionService exportSubmissionService;
+	private final UserService userService;
 
 	@Autowired
 	public ProjectExportController(ProjectService projectService, SampleService sampleService,
 			SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
-			NcbiExportSubmissionService exportSubmissionService) {
+			NcbiExportSubmissionService exportSubmissionService, UserService userService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.exportSubmissionService = exportSubmissionService;
+		this.userService = userService;
 	}
 
 	/**
@@ -163,9 +168,10 @@ public class ProjectExportController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> submitToNcbi(@PathVariable Long projectId, @RequestBody SubmissionBody submission)
-			throws InterruptedException {
+	public Map<String, Object> submitToNcbi(@PathVariable Long projectId, @RequestBody SubmissionBody submission,
+			Principal principal) throws InterruptedException {
 		Project project = projectService.read(projectId);
+		User submitter = userService.getUserByUsername(principal.getName());
 
 		List<NcbiBioSampleFiles> bioSampleFiles = new ArrayList<>();
 
@@ -186,8 +192,8 @@ public class ProjectExportController {
 			Thread.sleep(1);
 		}
 
-		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submission.getBioProject(),
-				submission.getNamespace(), submission.getRelease_date(), bioSampleFiles);
+		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submitter,
+				submission.getBioProject(), submission.getNamespace(), submission.getRelease_date(), bioSampleFiles);
 
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 

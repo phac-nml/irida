@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,6 +27,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Class storing a request to upload sequence data to NCBI.
@@ -48,8 +50,8 @@ public class NcbiExportSubmission implements IridaThing {
 	@Column(name = "namespace", nullable = false)
 	private String ncbiNamespace;
 
-	@OneToMany(cascade=CascadeType.ALL)
-	@JoinTable(name="ncbi_export_submission_biosample")
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "ncbi_export_submission_biosample")
 	private List<NcbiBioSampleFiles> bioSampleFiles;
 
 	@Column(name = "created_date", nullable = false)
@@ -60,8 +62,8 @@ public class NcbiExportSubmission implements IridaThing {
 	@Column(name = "modified_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-	
-	@Column(name="release_date")
+
+	@Column(name = "release_date")
 	@Temporal(TemporalType.DATE)
 	private Date release_date;
 
@@ -69,15 +71,20 @@ public class NcbiExportSubmission implements IridaThing {
 	@Enumerated(EnumType.STRING)
 	private ExportUploadState uploadState;
 
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name = "submitter")
+	private User submitter;
+
 	public NcbiExportSubmission() {
 		uploadState = ExportUploadState.NEW;
 		createdDate = new Date();
 	}
 
-	public NcbiExportSubmission(Project project, String bioProjectId, String ncbiNamespace, Date release_date,
-			List<NcbiBioSampleFiles> bioSampleFiles) {
+	public NcbiExportSubmission(Project project, User submitter, String bioProjectId, String ncbiNamespace,
+			Date release_date, List<NcbiBioSampleFiles> bioSampleFiles) {
 		this();
 		this.project = project;
+		this.submitter = submitter;
 		this.bioProjectId = bioProjectId;
 		this.ncbiNamespace = ncbiNamespace;
 		this.release_date = release_date;
@@ -145,8 +152,12 @@ public class NcbiExportSubmission implements IridaThing {
 	public void setBioProjectId(String bioProjectId) {
 		this.bioProjectId = bioProjectId;
 	}
-	
+
 	public Date getRelease_date() {
 		return release_date;
+	}
+
+	public User getSubmitter() {
+		return submitter;
 	}
 }

@@ -4,13 +4,12 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
 	<Description>
-		<Comment>BP(1.0)+BS(1.0)+SRA</Comment>
 		<Organization role="owner" type="institute">
-			<Name>Institute of Biology</Name>
-			<Contact email="jane.doe@domain.com">
+			<Name>IRIDA</Name>
+			<Contact th:attr="email=${submission.submitter.email}">
 				<Name>
-					<First>jane</First>
-					<Last>doe</Last>
+					<First th:text="${submission.submitter.firstName}">_jane_</First>
+					<Last th:text="${submission.submitter.lastName}">_doe_</Last>
 				</Name>
 			</Contact>
 		</Organization>
@@ -36,7 +35,7 @@
 			</AttributeRefId>
 			<AttributeRefId name="BioSample">
 				<RefId>
-					<PrimaryId db="BioSample" th:text="${sample.bioSample}">_Sample_</PrimaryId>
+					<PrimaryId db="BioSample" th:text="${sample.getBioSample()}">_Sample_</PrimaryId>
 				</RefId>
 			</AttributeRefId>
 			<Identifier>
@@ -65,7 +64,7 @@
 			</AttributeRefId>
 			<AttributeRefId name="BioSample">
 				<RefId>
-					<PrimaryId db="BioSample" th:text="${sample.bioSample}">_Sample_</PrimaryId>
+					<PrimaryId db="BioSample" th:text="${sample.getBioSample()}">_Sample_</PrimaryId>
 				</RefId>
 			</AttributeRefId>
 			<Identifier>

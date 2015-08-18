@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -135,7 +136,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	}
 
 	@Override
-	@PreAuthorize("hasPermission('#idents', 'canReadSequenceFile')")
+	@PreAuthorize("permitAll()")
+	@PostFilter("hasPermission(filterObject, 'canReadSequenceFile')")
 	public Iterable<SequenceFile> readMultiple(Iterable<Long> idents) {
 		return super.readMultiple(idents);
 	}
