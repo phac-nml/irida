@@ -14,7 +14,7 @@
     </div>
     <div class="form-group">
       <label class="col-sm-2 control-label">_Metadata_</label>
-      <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
+      <div class="col-sm-10">
         <div class="form-group">
           <label for="bioProject">_BioProject ID_</label>
           <input class="form-control" id="bioProject" />
@@ -22,6 +22,10 @@
         <div class="form-group">
           <label for="namespace">_SRA Namespace_</label>
           <input class="form-control" id="namespace" />
+        </div>
+        <div class="form-group">
+          <label for="namespace">_Release Date_</label>
+          <input class="form-control" type="date" id="release_date" th:with="today=${#dates.createToday()}" th:value="${#calendars.format(today,'YYYY-MM-dd')}"/>
         </div>
       </div>
     </div>
@@ -128,20 +132,21 @@
 
         var bioProject = $('#bioProject').val();
         var namespace = $('#namespace').val();
+        var release_date = $('#release_date').val();
 
         var samples = [];
 
         $(".sample-container").each(function() {
           var sample = $(this);
-          
+
           var form = sample.find(".metadata-form");
-          
+
           var data = {};
           var sampleElements = ["bioSample", "instrument_model", "library_name", "library_construction_protocol", "library_strategy", "library_selection", "library_source"];
 
           var paired = [];
           var single = [];
-          
+
           _.forEach(sampleElements, function(ele){
             data[ele] = sample.find("."+ele).val();
           });
@@ -153,7 +158,7 @@
           $('.single_files:checked').each(function() {
             single.push($(this).val());
           });
-          
+
           data.single = single;
           data.paired = paired;
 
@@ -164,6 +169,7 @@
         var submission = {
           bioProject: bioProject,
           namespace: namespace,
+          release_date: release_date,
           samples: samples
         };
 

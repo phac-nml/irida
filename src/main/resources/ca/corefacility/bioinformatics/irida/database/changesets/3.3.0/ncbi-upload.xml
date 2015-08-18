@@ -23,6 +23,7 @@
 			</column>
 			<column name="bio_project_id" type="varchar(255)" />
 			<column name="namespace" type="varchar(255)" />
+			<column name="release_date" type="date" />
 		</createTable>
 
 		<createTable tableName="ncbi_export_biosample">

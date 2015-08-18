@@ -60,6 +60,10 @@ public class NcbiExportSubmission implements IridaThing {
 	@Column(name = "modified_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
+	
+	@Column(name="release_date")
+	@Temporal(TemporalType.DATE)
+	private Date release_date;
 
 	@Column(name = "upload_state", nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -70,12 +74,13 @@ public class NcbiExportSubmission implements IridaThing {
 		createdDate = new Date();
 	}
 
-	public NcbiExportSubmission(Project project, String bioProjectId, String ncbiNamespace,
+	public NcbiExportSubmission(Project project, String bioProjectId, String ncbiNamespace, Date release_date,
 			List<NcbiBioSampleFiles> bioSampleFiles) {
 		this();
 		this.project = project;
 		this.bioProjectId = bioProjectId;
 		this.ncbiNamespace = ncbiNamespace;
+		this.release_date = release_date;
 		this.bioSampleFiles = bioSampleFiles;
 	}
 
@@ -139,5 +144,9 @@ public class NcbiExportSubmission implements IridaThing {
 
 	public void setBioProjectId(String bioProjectId) {
 		this.bioProjectId = bioProjectId;
+	}
+	
+	public Date getRelease_date() {
+		return release_date;
 	}
 }

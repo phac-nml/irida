@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -158,11 +159,12 @@ public class ProjectExportController {
 	 * @param submission
 	 *            A {@link SubmissionBody} describing the files to upload
 	 * @return ID of the submission if successful
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> submitToNcbi(@PathVariable Long projectId, @RequestBody SubmissionBody submission) throws InterruptedException {
+	public Map<String, Object> submitToNcbi(@PathVariable Long projectId, @RequestBody SubmissionBody submission)
+			throws InterruptedException {
 		Project project = projectService.read(projectId);
 
 		List<NcbiBioSampleFiles> bioSampleFiles = new ArrayList<>();
@@ -177,14 +179,15 @@ public class ProjectExportController {
 					.instrument_model(sample.getInstrument_model())
 					.library_construction_protocol(sample.getLibrary_construction_protocol())
 					.library_name(sample.getLibrary_name()).library_selection(sample.getLibrary_selection())
-					.library_source(sample.getLibrary_source()).library_strategy(sample.getLibrary_strategy()).namespace(submission.getNamespace());
+					.library_source(sample.getLibrary_source()).library_strategy(sample.getLibrary_strategy())
+					.namespace(submission.getNamespace());
 			NcbiBioSampleFiles build = sampleBuilder.build();
 			bioSampleFiles.add(build);
 			Thread.sleep(1);
 		}
 
 		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submission.getBioProject(),
-				submission.getNamespace(), bioSampleFiles);
+				submission.getNamespace(), submission.getRelease_date(), bioSampleFiles);
 
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 
@@ -203,6 +206,9 @@ public class ProjectExportController {
 		String namespace;
 
 		@JsonProperty
+		Date release_date;
+
+		@JsonProperty
 		List<BioSampleBody> samples;
 
 		public SubmissionBody() {
@@ -218,6 +224,10 @@ public class ProjectExportController {
 
 		public List<BioSampleBody> getSamples() {
 			return samples;
+		}
+
+		public Date getRelease_date() {
+			return release_date;
 		}
 
 	}

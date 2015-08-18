@@ -14,7 +14,7 @@
 				</Name>
 			</Contact>
 		</Organization>
-		<Hold release_date='2015-10-21'></Hold>
+		<Hold th:attr="release_date=${submission.release_date}"></Hold>
 	</Description>
 
 	<Action th:each="sample : ${submission.bioSampleFiles}">
@@ -40,7 +40,8 @@
 				</RefId>
 			</AttributeRefId>
 			<Identifier>
-				<SPUID th:attr="spuid_namespace=${submission.ncbiNamespace}" th:text="${sample.id}">_spuid_</SPUID>
+				<SPUID th:attr="spuid_namespace=${submission.ncbiNamespace}"
+					th:text="${sample.id}">_spuid_</SPUID>
 			</Identifier>
 		</AddFiles>
 		<AddFiles target_db="SRA" th:each="pair : ${sample.pairs}">
@@ -68,7 +69,8 @@
 				</RefId>
 			</AttributeRefId>
 			<Identifier>
-				<SPUID th:attr="spuid_namespace=${submission.ncbiNamespace}" th:text="${sample.id}">_spuid_</SPUID>
+				<SPUID th:attr="spuid_namespace=${submission.ncbiNamespace}"
+					th:text="${sample.id}">_spuid_</SPUID>
 			</Identifier>
 		</AddFiles>
 	</Action>
