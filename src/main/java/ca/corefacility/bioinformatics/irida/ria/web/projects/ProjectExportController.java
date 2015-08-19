@@ -192,6 +192,12 @@ public class ProjectExportController {
 					.namespace(submission.getNamespace());
 			NcbiBioSampleFiles build = sampleBuilder.build();
 			bioSampleFiles.add(build);
+
+			/*
+			 * NcbiBioSampleFiles identifier uses the epoch time to ensure we're
+			 * creating a unique submission id. Taking a quick nap so that the
+			 * next NcbiBioSampleFiles identifier doesn't collide
+			 */
 			Thread.sleep(1);
 		}
 
