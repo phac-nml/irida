@@ -17,6 +17,7 @@ import org.thymeleaf.context.Context;
 
 import com.google.common.collect.ImmutableMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
@@ -34,7 +35,7 @@ public class ExportUploadService {
 
 	private NcbiExportSubmissionService exportSubmissionService;
 	private TemplateEngine templateEngine;
-	
+
 	private String ftpHost = "localhost";
 	private String ftpUser = "tom";
 	private String ftpPassword = "xxx";
@@ -66,26 +67,36 @@ public class ExportUploadService {
 
 			logger.trace("Going to sleep " + submission.getId());
 
-			createXml(submission);
+			String xmlContent = createXml(submission);
 
 			logger.trace("Finished sleep " + submission.getId());
 
-			submission = exportSubmissionService.update(submission.getId(),
-					ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
+			boolean success = uploadSubmission(submission, xmlContent);
+
+			if (success) {
+				submission = exportSubmissionService.update(submission.getId(),
+						ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
+			} else {
+				submission = exportSubmissionService.update(submission.getId(),
+						ImmutableMap.of("uploadState", ExportUploadState.ERROR));
+			}
 		}
 
 	}
 
-	public void createXml(NcbiExportSubmission submission) {
+	public String createXml(NcbiExportSubmission submission) {
 		final Context ctx = new Context();
 		ctx.setVariable("submission", submission);
 
-		final String htmlContent = templateEngine.process(NCBI_TEMPLATE, ctx);
+		String xmlContent = templateEngine.process(NCBI_TEMPLATE, ctx);
 
-		logger.debug(htmlContent);
+		return xmlContent;
 	}
-	
-	public void uploadXml(NcbiExportSubmission submission, String xml) {
+
+	public boolean uploadSubmission(NcbiExportSubmission submission, String xml) {
+
+		boolean success = true;
+
 		FTPClient client = new FTPClient();
 		try {
 
@@ -101,13 +112,20 @@ public class ExportUploadService {
 
 			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
 
-			boolean storeFile = client.storeFile("submission.xml", stream);
+			success = client.storeFile("submission.xml", stream);
+
+			if (!success) {
+				throw new UploadException("submission.xml file was not uploaded");
+			}
 
 			for (NcbiBioSampleFiles bsFile : submission.getBioSampleFiles()) {
 				for (SequenceFile file : bsFile.getFiles()) {
 					InputStream fileStream = Files.newInputStream(file.getFile());
 
-					client.storeFile(file.getFileName(), fileStream);
+					success = client.storeFile(file.getFileName(), fileStream);
+					if (!success) {
+						throw new UploadException("Couldn't upload file " + file.getFileName());
+					}
 
 					fileStream.close();
 				}
@@ -116,12 +134,22 @@ public class ExportUploadService {
 
 					SequenceFile file = pair.getForwardSequenceFile();
 					InputStream fileStream = Files.newInputStream(file.getFile());
-					client.storeFile(file.getFileName(), fileStream);
+					success = client.storeFile(file.getFileName(), fileStream);
+
+					if (!success) {
+						throw new UploadException("Couldn't upload file " + file.getFileName());
+					}
+
 					fileStream.close();
 
 					file = pair.getReverseSequenceFile();
 					fileStream = Files.newInputStream(file.getFile());
-					client.storeFile(file.getFileName(), fileStream);
+					success = client.storeFile(file.getFileName(), fileStream);
+
+					if (!success) {
+						throw new UploadException("Couldn't upload file " + file.getFileName());
+					}
+
 					fileStream.close();
 				}
 
@@ -130,10 +158,12 @@ public class ExportUploadService {
 			stream.close();
 
 			client.disconnect();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException | UploadException e) {
+			logger.error("Error in upload", e);
+			success = false;
 		}
+
+		return success;
 
 	}
 }
