@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 
 /**
  *
@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 @Entity
 @Table(name = "miseq_run")
 @Audited
-public class MiseqRun extends SequencingRun implements IridaThing {
+public class MiseqRun extends SequencingRun {
 
 	private String investigatorName;
 
@@ -30,7 +30,7 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 	 * Sheet reference guide.
 	 */
 	@NotNull
-	private String workflow;
+	private final String workflow;
 
 	private String application;
 
@@ -40,69 +40,55 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 
 	@Column(name = "read_lengths")
 	private Integer readLengths;
+	
+	/**
+	 * For hibernate
+	 */
+	@SuppressWarnings("unused")
+	private MiseqRun() {
+		this(null, null);
+	}
+	
+	public MiseqRun(final LayoutType layoutType, final String workflow) {
+		super(layoutType, SequencingRunUploadStatus.UPLOADING);
+		this.workflow = workflow;
+	}
+	
+	public MiseqRun(final LayoutType layoutType, final String workflow, final SequencingRunUploadStatus uploadStatus) {
+		super(layoutType, uploadStatus);
+		this.workflow = workflow;
+	}
 
 	public String getInvestigatorName() {
 		return investigatorName;
-	}
-
-	public void setInvestigatorName(String investigatorName) {
-		this.investigatorName = investigatorName;
 	}
 
 	public String getProjectName() {
 		return projectName;
 	}
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
-
 	public String getExperimentName() {
 		return experimentName;
-	}
-
-	public void setExperimentName(String experimentName) {
-		this.experimentName = experimentName;
 	}
 
 	public String getWorkflow() {
 		return workflow;
 	}
 
-	public void setWorkflow(String workflow) {
-		this.workflow = workflow;
-	}
-
 	public String getApplication() {
 		return application;
-	}
-
-	public void setApplication(String application) {
-		this.application = application;
 	}
 
 	public String getAssay() {
 		return assay;
 	}
 
-	public void setAssay(String assay) {
-		this.assay = assay;
-	}
-
 	public String getChemistry() {
 		return chemistry;
 	}
 
-	public void setChemistry(String chemistry) {
-		this.chemistry = chemistry;
-	}
-
 	public Integer getReadLengths() {
 		return readLengths;
-	}
-
-	public void setReadLengths(Integer readLengths) {
-		this.readLengths = readLengths;
 	}
 
 	@Override
@@ -146,6 +132,11 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 	@Override
 	public String getSequencerType() {
 		return "MiSeq";
+	}
+
+	@Override
+	public int compareTo(SequencingRun o) {
+		return this.getCreatedDate().compareTo(o.getCreatedDate());
 	}
 
 }

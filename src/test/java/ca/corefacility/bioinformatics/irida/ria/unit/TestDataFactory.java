@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
-import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -26,8 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -41,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -151,50 +146,6 @@ public class TestDataFactory {
 		project.setOrganism(PROJECT_ORGANISM);
 		project.setModifiedDate(new Date(PROJECT_MODIFIED_DATE));
 		return project;
-	}
-
-	public static UploadWorker constructUploadWorker() {
-		return new UploadWorker() {
-			@Override public UploadResult getUploadResult() {
-				return null;
-			}
-
-			@Override public UploadException getUploadException() {
-				return null;
-			}
-
-			@Override public float getProportionComplete() {
-				return 33.3f;
-			}
-
-			@Override public boolean exceptionOccured() {
-				return false;
-			}
-
-			@Override public boolean isFinished() {
-				return false;
-			}
-
-			@Override public int getTotalSamples() throws NoSuchValueException {
-				return 0;
-			}
-
-			@Override public int getCurrentSample() throws NoSuchValueException {
-				return 0;
-			}
-
-			@Override public UploadFolderName getSampleName() throws NoSuchValueException {
-				return null;
-			}
-
-			@Override public void run() {
-
-			}
-
-			@Override public void sampleProgressUpdate(int i, int i1, UploadFolderName uploadFolderName) {
-
-			}
-		};
 	}
 
 	public static IridaWorkflow getIridaWorkflow(UUID id) {

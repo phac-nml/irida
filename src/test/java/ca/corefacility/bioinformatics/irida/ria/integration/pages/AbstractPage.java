@@ -58,7 +58,7 @@ public class AbstractPage {
 				determineError(error);
 			}
 		} catch (NoSuchElementException e) {
-			logger.debug("No page element on page.");
+			logger.trace("Did not find `main` element on page when checking for errors, everything is *probably* OK.");
 		}
 	}
 

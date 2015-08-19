@@ -4,9 +4,11 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
@@ -49,13 +52,15 @@ public class ProjectEventsController {
 	private final ProjectEventService eventService;
 	private final ProjectService projectService;
 	private final UserService userService;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public ProjectEventsController(ProjectEventService eventService, ProjectService projectService,
-			UserService userService) {
+			UserService userService, MessageSource messageSource) {
 		this.eventService = eventService;
 		this.projectService = projectService;
 		this.userService = userService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -77,8 +82,8 @@ public class ProjectEventsController {
 			@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
 		Project project = projectService.read(projectId);
 
-		Page<ProjectEvent> events = eventService.getEventsForProject(project, new PageRequest(0, size, Direction.DESC,
-				"createdDate"));
+		Page<ProjectEvent> events = eventService.getEventsForProject(project,
+				new PageRequest(0, size, Direction.DESC, "createdDate"));
 		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
 
 		model.addAttribute("events", eventInfo);
@@ -106,8 +111,8 @@ public class ProjectEventsController {
 		String userName = principal.getName();
 		User user = userService.getUserByUsername(userName);
 
-		Page<ProjectEvent> events = eventService.getEventsForUser(user, new PageRequest(0, size, Direction.DESC,
-				"createdDate"));
+		Page<ProjectEvent> events = eventService.getEventsForUser(user,
+				new PageRequest(0, size, Direction.DESC, "createdDate"));
 		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
 
 		model.addAttribute("events", eventInfo);
@@ -144,6 +149,39 @@ public class ProjectEventsController {
 	@RequestMapping("/admin")
 	public String getAdminEventsPage() {
 		return "events/admin";
+	}
+
+	/**
+	 * Update the subscription status on a {@link Project} for a {@link User}
+	 * 
+	 * @param userId
+	 *            The {@link User} id to update
+	 * @param projectId
+	 *            the {@link Project} to subscribe to
+	 * @param subscribe
+	 *            boolean whether to be subscribed to the project or not
+	 * @param locale
+	 *            locale of the request
+	 * @return Map success message if the subscription status was updated
+	 */
+	@RequestMapping(value = "/projects/{projectId}/subscribe/{userId}", method = RequestMethod.POST)
+	public Map<String, String> addSubscription(@PathVariable Long userId, @PathVariable Long projectId,
+			@RequestParam boolean subscribe, Locale locale) {
+		User user = userService.read(userId);
+		Project project = projectService.read(projectId);
+
+		userService.updateEmailSubscription(user, project, subscribe);
+
+		String message;
+		if (subscribe) {
+			message = messageSource.getMessage("user.projects.subscriptions.added", new Object[] { project.getLabel() },
+					locale);
+		} else {
+			message = messageSource.getMessage("user.projects.subscriptions.removed",
+					new Object[] { project.getLabel() }, locale);
+		}
+
+		return ImmutableMap.of("success", "true", "message", message);
 	}
 
 	/**

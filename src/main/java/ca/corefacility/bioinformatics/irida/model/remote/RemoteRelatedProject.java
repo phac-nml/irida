@@ -25,7 +25,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 @Table(name = "remote_related_project", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
 		"remote_api_id", "remote_project_uri" }, name = "UK_REMOTE_RELATED_PROJECT"))
 @EntityListeners(AuditingEntityListener.class)
-public class RemoteRelatedProject implements IridaThing {
+public class RemoteRelatedProject implements MutableIridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -138,6 +138,7 @@ public class RemoteRelatedProject implements IridaThing {
 		return id;
 	}
 	
+	@Override
 	public void setId(Long id){
 		this.id = id;
 	}

@@ -241,16 +241,6 @@ public class ToolExecution implements IridaThing {
 	}
 
 	@Override
-	public Date getModifiedDate() {
-		return this.createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("ToolExecution cannot be modified.");
-	}
-
-	@Override
 	public String getLabel() {
 		return this.toolName;
 	}
@@ -258,11 +248,6 @@ public class ToolExecution implements IridaThing {
 	@Override
 	public Long getId() {
 		return this.id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		throw new UnsupportedOperationException("ToolExecution is immutable.");
 	}
 
 	/**

@@ -23,7 +23,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
@@ -35,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 @Table(name = "reference_file")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
+public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -95,7 +95,8 @@ public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
 	public Long getId() {
 		return this.id;
 	}
-
+	
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

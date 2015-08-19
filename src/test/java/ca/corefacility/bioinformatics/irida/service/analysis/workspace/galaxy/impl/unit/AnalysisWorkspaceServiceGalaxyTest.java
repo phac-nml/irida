@@ -47,7 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Prep
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -82,7 +82,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Mock
 	private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock
-	private GalaxyLibraryBuilder libraryBuilder;
+	private GalaxyLibrariesService galaxyLibrariesService;
 	@Mock
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
 	@Mock
@@ -214,7 +214,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		workflowDetails.setId(WORKFLOW_ID);
 
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				sequenceFileService, sequenceFilePairService, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy,
+				sequenceFileService, sequenceFilePairService, galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy,
 				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy, sampleRemoteService);
 
 		output1Dataset = new Dataset();
@@ -286,7 +286,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSinglePaired);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
@@ -354,7 +354,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
@@ -417,7 +417,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowPaired);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
@@ -478,7 +478,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenThrow(new CreateLibraryException(""));
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenThrow(new CreateLibraryException(""));
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
@@ -506,7 +506,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSinglePaired);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
@@ -538,7 +538,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
@@ -570,7 +570,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowPaired);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
@@ -601,7 +601,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowPaired);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
@@ -677,7 +677,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowPaired);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
@@ -705,7 +705,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
 
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
-		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
 		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);

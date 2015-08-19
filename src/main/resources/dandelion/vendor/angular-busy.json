@@ -1,0 +1,16 @@
+{
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-busy/dist/angular-busy.css"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-busy/dist/angular-busy.js"
+      }
+    }
+  ]
+}

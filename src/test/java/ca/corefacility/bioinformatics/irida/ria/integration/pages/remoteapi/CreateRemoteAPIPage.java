@@ -32,9 +32,11 @@ public class CreateRemoteAPIPage extends AbstractPage {
 	}
 
 	public boolean checkSuccess() {
-		if (driver.getCurrentUrl().matches(BASE_URL + SUCCESS_PAGE)) {
+		try {
+			// if there's a remove button, we succeeded!
+			driver.findElement(By.id("remove-btn")); 
 			return true;
-		} else {
+		} catch (final Exception e) {
 			return false;
 		}
 	}

@@ -95,16 +95,6 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 	}
 
 	@Override
-	public Date getModifiedDate() {
-		return createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("cannot update a SequenceFilePair");
-	}
-
-	@Override
 	public String getLabel() {
 		return toString();
 	}
@@ -115,11 +105,6 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 		Iterator<SequenceFileSnapshot> iterator = files.iterator();
 		builder.append(iterator.next().getLabel()).append(", ").append(iterator.next().getLabel());
 		return builder.toString();
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	/**

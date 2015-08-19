@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
@@ -139,8 +140,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
-		MiseqRun mr = new MiseqRun();
-		mr.setWorkflow("Workflow name.");
+		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
@@ -155,8 +155,7 @@ public class SequencingRunServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testCreateMiseqRunAsUserFail() {
-		MiseqRun mr = new MiseqRun();
-		mr.setWorkflow("Workflow name.");
+		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		miseqRunService.create(mr);
 	}
 
@@ -179,8 +178,7 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testCreateMiseqRunAsAdmin() {
-		MiseqRun r = new MiseqRun();
-		r.setWorkflow("some workflow");
+		MiseqRun r = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		miseqRunService.create(r);
 	}
 

@@ -269,6 +269,15 @@ public class UserServiceImplIT {
 		String username = "random garbage";
 		userService.getUserByUsername(username);
 	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUsersWithEmailSubscriptions() {
+		List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
+		assertEquals("Should be 1 user", 1, usersWithEmailSubscriptions.size());
+		User user = usersWithEmailSubscriptions.iterator().next();
+		assertEquals("should be fbristow", "fbristow", user.getUsername());
+	}
 
 	@Test
 	public void testLoadUserByEmail() {

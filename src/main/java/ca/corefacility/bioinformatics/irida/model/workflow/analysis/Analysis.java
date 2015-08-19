@@ -202,23 +202,8 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		return this.id;
 	}
 
-	@Override
-	public Date getModifiedDate() {
-		return this.createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("Analysis types cannot be modified.");
-	}
-
 	public Map<String, String> getAdditionalProperties() {
 		return ImmutableMap.copyOf(additionalProperties);
-	}
-
-	@Override
-	public void setId(Long id) {
-		throw new UnsupportedOperationException("Analysis types cannot be modified.");
 	}
 
 	/**

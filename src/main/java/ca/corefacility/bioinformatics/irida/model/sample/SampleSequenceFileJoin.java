@@ -36,7 +36,7 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sequencefile_id")
@@ -65,10 +65,6 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof SampleSequenceFileJoin) {
@@ -89,18 +85,8 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	}
 
 	@Override
-	public void setSubject(Sample subject) {
-		this.sample = subject;
-	}
-
-	@Override
 	public SequenceFile getObject() {
 		return sequenceFile;
-	}
-
-	@Override
-	public void setObject(SequenceFile object) {
-		this.sequenceFile = object;
 	}
 
 	@Override

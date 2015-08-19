@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
+import ca.corefacility.bioinformatics.irida.service.ProjectEventEmailScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.export.ExportUploadService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
@@ -63,7 +64,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	
 	@Autowired
 	private ExportUploadService uploadService;
-	
+
+	@Autowired 	
+	private ProjectEventEmailScheduledTask eventEmailTask;
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
 	 */
@@ -87,7 +90,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 * Cycle through any newly created submissions and download any required
 	 * {@link SequenceFileSnapshot}s.
 	 */
-	@Scheduled(initialDelay = 1000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 1000, fixedDelay = ANALYSIS_EXECUTION_TASK_RATE)
 	public void downloadFiles() {
 		analysisExecutionScheduledTask().downloadFiles();
 	}
@@ -95,7 +98,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any submissions and prepare them for execution.
 	 */
-	@Scheduled(initialDelay = 2000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 2000, fixedDelay = ANALYSIS_EXECUTION_TASK_RATE)
 	public void prepareAnalyses() {
 		analysisExecutionScheduledTask().prepareAnalyses();
 	}
@@ -103,7 +106,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any outstanding submissions and execute them.
 	 */
-	@Scheduled(initialDelay = 3000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 3000, fixedDelay = ANALYSIS_EXECUTION_TASK_RATE)
 	public void executeAnalyses() {
 		analysisExecutionScheduledTask().executeAnalyses();
 	}
@@ -111,7 +114,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any submissions running in Galaxy and monitor the status.
 	 */
-	@Scheduled(initialDelay = 4000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 4000, fixedDelay = ANALYSIS_EXECUTION_TASK_RATE)
 	public void monitorRunningAnalyses() {
 		analysisExecutionScheduledTask().monitorRunningAnalyses();
 	}
@@ -119,7 +122,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any completed submissions and transfer the results.
 	 */
-	@Scheduled(initialDelay = 5000, fixedRate = ANALYSIS_EXECUTION_TASK_RATE)
+	@Scheduled(initialDelay = 5000, fixedDelay = ANALYSIS_EXECUTION_TASK_RATE)
 	public void transferAnalysesResults() {
 		analysisExecutionScheduledTask().transferAnalysesResults();
 	}
@@ -127,7 +130,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	/**
 	 * Cycle through any completed or error submissions and clean up results from the execution manager.
 	 */
-	@Scheduled(initialDelay = 10000, fixedRate = CLEANUP_TASK_RATE)
+	@Scheduled(initialDelay = 10000, fixedDelay = CLEANUP_TASK_RATE)
 	public void cleanupAnalysisSubmissions() {
 		analysisExecutionScheduledTask().cleanupAnalysisSubmissions();
 	}
@@ -138,6 +141,15 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Scheduled(initialDelay = 1000, fixedDelay = UPLOAD_EXECUTION_TASK_RATE)
 	public void ncbiUpload() {
 		uploadService.launchUpload();
+	}
+
+	/**
+	 * Check for any new events for users who are subscribed to projects and
+	 * email them
+	 */
+	@Scheduled(cron = "${irida.scheduled.subscription.cron}")
+	public void emailProjectEvents() {
+		eventEmailTask.emailUserTasks();
 	}
 
 	/**
