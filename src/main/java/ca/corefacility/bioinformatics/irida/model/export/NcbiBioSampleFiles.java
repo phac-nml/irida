@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.export;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -37,25 +38,30 @@ public class NcbiBioSampleFiles {
 	private List<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)
-	NcbiInstrumentModel instrument_model;
+	private NcbiInstrumentModel instrumentModel;
 
-	String library_name;
-
-	@Enumerated(EnumType.STRING)
-	NcbiLibrarySelection library_selection;
+	private String libraryName;
 
 	@Enumerated(EnumType.STRING)
-	NcbiLibrarySource library_source;
+	@Column(name = "library_selection")
+	private NcbiLibrarySelection librarySelection;
 
 	@Enumerated(EnumType.STRING)
-	NcbiLibraryStrategy library_strategy;
+	@Column(name = "library_source")
+	private NcbiLibrarySource librarySource;
 
-	String library_construction_protocol;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "library_strategy")
+	private NcbiLibraryStrategy libraryStrategy;
+
+	@Column(name = "library_construction_protocol")
+	private String libraryConstructionProtocol;
 
 	public NcbiBioSampleFiles() {
 	}
 
 	public NcbiBioSampleFiles(String namespace) {
+		// Creating a new SRA upload identifier using the current time
 		StringBuilder builder = new StringBuilder(namespace);
 		builder.append(new Date().getTime());
 		id = builder.toString();
@@ -70,12 +76,12 @@ public class NcbiBioSampleFiles {
 		this.bioSample = bioSample;
 		this.files = files;
 		this.pairs = pairs;
-		this.instrument_model = instrument_model;
-		this.library_name = library_name;
-		this.library_selection = library_selection;
-		this.library_source = library_source;
-		this.library_strategy = library_strategy;
-		this.library_construction_protocol = library_construction_protocol;
+		this.instrumentModel = instrument_model;
+		this.libraryName = library_name;
+		this.librarySelection = library_selection;
+		this.librarySource = library_source;
+		this.libraryStrategy = library_strategy;
+		this.libraryConstructionProtocol = library_construction_protocol;
 	}
 
 	public static class Builder {
@@ -83,12 +89,12 @@ public class NcbiBioSampleFiles {
 
 		private List<SequenceFile> files;
 		private List<SequenceFilePair> pairs;
-		private NcbiInstrumentModel instrument_model;
-		private String library_name;
-		private NcbiLibrarySelection library_selection;
-		private NcbiLibrarySource library_source;
-		private NcbiLibraryStrategy library_strategy;
-		private String library_construction_protocol;
+		private NcbiInstrumentModel instrumentModel;
+		private String libraryName;
+		private NcbiLibrarySelection librarySelection;
+		private NcbiLibrarySource librarySource;
+		private NcbiLibraryStrategy libraryStrategy;
+		private String libraryConstructionProtocol;
 		private String namespace;
 
 		public Builder files(List<SequenceFile> files) {
@@ -101,33 +107,33 @@ public class NcbiBioSampleFiles {
 			return this;
 		}
 
-		public Builder instrument_model(NcbiInstrumentModel instrument_model) {
-			this.instrument_model = instrument_model;
+		public Builder instrumentModel(NcbiInstrumentModel instrument_model) {
+			this.instrumentModel = instrument_model;
 			return this;
 		}
 
-		public Builder library_name(String library_name) {
-			this.library_name = library_name;
+		public Builder libraryName(String library_name) {
+			this.libraryName = library_name;
 			return this;
 		}
 
-		public Builder library_selection(NcbiLibrarySelection library_selection) {
-			this.library_selection = library_selection;
+		public Builder librarySelection(NcbiLibrarySelection library_selection) {
+			this.librarySelection = library_selection;
 			return this;
 		}
 
-		public Builder library_source(NcbiLibrarySource library_source) {
-			this.library_source = library_source;
+		public Builder librarySource(NcbiLibrarySource library_source) {
+			this.librarySource = library_source;
 			return this;
 		}
 
-		public Builder library_strategy(NcbiLibraryStrategy library_strategy) {
-			this.library_strategy = library_strategy;
+		public Builder libraryStrategy(NcbiLibraryStrategy library_strategy) {
+			this.libraryStrategy = library_strategy;
 			return this;
 		}
 
-		public Builder library_construction_protocol(String library_construction_protocol) {
-			this.library_construction_protocol = library_construction_protocol;
+		public Builder libraryConstructionProtocol(String library_construction_protocol) {
+			this.libraryConstructionProtocol = library_construction_protocol;
 			return this;
 		}
 
@@ -142,8 +148,8 @@ public class NcbiBioSampleFiles {
 		}
 
 		public NcbiBioSampleFiles build() {
-			return new NcbiBioSampleFiles(bioSample, files, pairs, instrument_model, library_name, library_selection,
-					library_source, library_strategy, library_construction_protocol, namespace);
+			return new NcbiBioSampleFiles(bioSample, files, pairs, instrumentModel, libraryName, librarySelection,
+					librarySource, libraryStrategy, libraryConstructionProtocol, namespace);
 		}
 	}
 
@@ -171,31 +177,27 @@ public class NcbiBioSampleFiles {
 		this.pairs = pairs;
 	}
 
-	public NcbiInstrumentModel getInstrument_model() {
-		return instrument_model;
+	public NcbiInstrumentModel getInstrumentModel() {
+		return instrumentModel;
 	}
 
-	public void setInstrument_model(NcbiInstrumentModel instrument_model) {
-		this.instrument_model = instrument_model;
+	public String getLibraryConstructionProtocol() {
+		return libraryConstructionProtocol;
 	}
 
-	public String getLibrary_construction_protocol() {
-		return library_construction_protocol;
+	public String getLibraryName() {
+		return libraryName;
 	}
 
-	public String getLibrary_name() {
-		return library_name;
+	public NcbiLibrarySelection getLibrarySelection() {
+		return librarySelection;
 	}
 
-	public NcbiLibrarySelection getLibrary_selection() {
-		return library_selection;
+	public NcbiLibrarySource getLibrarySource() {
+		return librarySource;
 	}
 
-	public NcbiLibrarySource getLibrary_source() {
-		return library_source;
-	}
-
-	public NcbiLibraryStrategy getLibrary_strategy() {
-		return library_strategy;
+	public NcbiLibraryStrategy getLibraryStrategy() {
+		return libraryStrategy;
 	}
 }
