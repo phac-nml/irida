@@ -25,27 +25,11 @@ public interface Join<SubjectType extends IridaThing, ObjectType extends IridaTh
 	public SubjectType getSubject();
 
 	/**
-	 * Set the owning object in the relationship.
-	 * 
-	 * @param subject
-	 *            the owning object in the relationship.
-	 */
-	public void setSubject(SubjectType subject);
-
-	/**
 	 * Get the owned object in the relationship.
 	 * 
 	 * @return the owned object of the relationship.
 	 */
 	public ObjectType getObject();
-
-	/**
-	 * Set the owned object in the relationship.
-	 * 
-	 * @param object
-	 *            the owned object in the relationship.
-	 */
-	public void setObject(ObjectType object);
 
 	/**
 	 * Get the timestamp for this object
@@ -59,22 +43,5 @@ public interface Join<SubjectType extends IridaThing, ObjectType extends IridaTh
 	 */
 	public default String getLabel() {
 		return getSubject().getLabel();
-	}
-
-	/**
-	 * Once created, a Join can't technically be modified, only deleted, so the
-	 * modified date is the same as the timestamp.
-	 */
-	public default Date getModifiedDate() {
-		return getTimestamp();
-	}
-
-	/**
-	 * Once created, a Join can't technically be modified, only deleted, so
-	 * trying to modify the modified date will throw an
-	 * UnsupportedOperationException.
-	 */
-	public default void setModifiedDate(Date date) {
-		throw new UnsupportedOperationException("Join types cannot be modified.");
 	}
 }

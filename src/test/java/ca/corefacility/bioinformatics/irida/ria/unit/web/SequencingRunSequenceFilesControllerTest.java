@@ -22,6 +22,7 @@ import org.springframework.ui.ModelMap;
 import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -52,7 +53,7 @@ public class SequencingRunSequenceFilesControllerTest {
 		Long sequencingrunId =2L;
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		SequenceFile file = TestDataFactory.constructSequenceFile();
-		MiseqRun run = new MiseqRun();
+		MiseqRun run = new MiseqRun(LayoutType.SINGLE_END, "workflow");
 		Map<String, String> representation = new HashMap<String, String>();
 		representation.put(RESTSequencingRunSequenceFilesController.SEQUENCEFILE_ID_KEY, ""+seqId);
 		

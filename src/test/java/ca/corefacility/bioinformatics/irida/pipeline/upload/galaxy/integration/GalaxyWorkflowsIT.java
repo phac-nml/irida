@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,12 +35,13 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -62,6 +62,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.ToolParameter;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.ImmutableMap;
@@ -99,8 +102,6 @@ public class GalaxyWorkflowsIT {
 	private GalaxyWorkflowService galaxyWorkflowService;
 	private GalaxyHistoriesService galaxyHistory;
 	
-	private static final String INVALID_HISTORY_ID = "1";
-	
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	private static final InputFileType INVALID_FILE_TYPE = null;
 	
@@ -117,6 +118,15 @@ public class GalaxyWorkflowsIT {
 	
 	private static final String VALID_FILTER_PARAMETER = "c1==''";
 	private static final String INVALID_FILTER_PARAMETER = "c2==''";
+	
+	
+	private static final String FORWARD_PAIR_NAME = "forward";
+	private static final String REVERSE_PAIR_NAME = "reverse";
+	
+	private static final String BASE_NAME = "file";
+	
+
+	private static final String COLLECTION_NAME = "collection";
 
 	/**
 	 * Sets up files and objects for workflow tests.
@@ -154,13 +164,7 @@ public class GalaxyWorkflowsIT {
 		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
-			= new GalaxyWorkflowService(historiesClient, workflowsClient, StandardCharsets.UTF_8);		
-	}
-	
-	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
-		if (!galaxyWorkflowService.isWorkflowIdValid(workflowId)) {
-			throw new WorkflowException("Workflow id " + workflowId + " is not valid");
-		}
+			= new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);		
 	}
 	
 	/**
@@ -190,21 +194,19 @@ public class GalaxyWorkflowsIT {
 			checkArgument(Files.exists(file), "inputFilesReverse " + file + " does not exist");
 		}
 		
-		checkWorkflowIdValid(workflowId);
-				
 		History workflowHistory = galaxyHistory.newHistoryForWorkflow();
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
 		
 		// upload dataset to history
 		List<Dataset> inputDatasetsForward = 
-				galaxyHistory.uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
+				uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
 		List<Dataset> inputDatasetsReverse = 
-				galaxyHistory.uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
+				uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
 		assertEquals(inputFilesForward.size(), inputDatasetsForward.size());
 		assertEquals(inputDatasetsForward.size(), inputDatasetsReverse.size());
 		
 		// construct list of datasets
-		CollectionResponse collection = galaxyHistory.constructPairedFileCollection(inputDatasetsForward,
+		CollectionResponse collection = constructPairedFileCollection(inputDatasetsForward,
 				inputDatasetsReverse, workflowHistory);
 		logger.debug("Constructed dataset collection: id=" + collection.getId() + ", " + collection.getName());
 		
@@ -222,6 +224,83 @@ public class GalaxyWorkflowsIT {
 		logger.debug("Running workflow in history " + output.getHistoryId());
 		
 		return output;
+	}
+
+	/**
+	 * Constructs a collection containing a list of files from the given datasets.
+	 * @param inputDatasetsForward  The forward datasets to construct a collection from.
+	 * @param inputDatasetsReverse  The reverse datasets to construct a collection from.
+	 * @param history  The history to construct the collection within.
+	 * @return  A CollectionResponse describing the dataset collection.
+	 * @throws ExecutionManagerException  If an exception occured constructing the collection.
+	 */
+	public CollectionResponse constructPairedFileCollection(List<Dataset> inputDatasetsForward,
+			List<Dataset> inputDatasetsReverse, History history) throws ExecutionManagerException {
+		checkNotNull(inputDatasetsForward, "inputDatasetsForward is null");
+		checkNotNull(inputDatasetsReverse, "inputDatasetsReverse is null");
+		checkNotNull(history, "history is null");
+		checkNotNull(history.getId(), "history does not have an associated id");
+		checkArgument(inputDatasetsForward.size() == inputDatasetsReverse.size(),
+				"inputDatasets do not have equal sizes");
+		
+		CollectionDescription collectionDescription = new CollectionDescription();
+		collectionDescription.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
+		collectionDescription.setName(COLLECTION_NAME);
+		
+		for (int i = 0; i < inputDatasetsForward.size(); i++) {
+			Dataset datasetForward = inputDatasetsForward.get(i);
+			Dataset datasetReverse = inputDatasetsReverse.get(i);
+			
+			HistoryDatasetElement elementForward = new HistoryDatasetElement();
+			elementForward.setId(datasetForward.getId());
+			elementForward.setName(FORWARD_PAIR_NAME);
+			
+			HistoryDatasetElement elementReverse = new HistoryDatasetElement();
+			elementReverse.setId(datasetReverse.getId());
+			elementReverse.setName(REVERSE_PAIR_NAME);
+			
+		    // Create an object to link together the forward and reverse reads for file2
+		    CollectionElement element = new CollectionElement();
+		    element.setName(BASE_NAME + i);
+		    element.setCollectionType(DatasetCollectionType.PAIRED.toString());
+		    element.addCollectionElement(elementForward);
+		    element.addCollectionElement(elementReverse);
+			
+			collectionDescription.addDatasetElement(element);
+		}
+		
+		try {
+			return historiesClient.createDatasetCollection(history.getId(), collectionDescription);
+		} catch (RuntimeException e) {
+			throw new ExecutionManagerException("Could not construct dataset collection", e);
+		}
+	}
+	
+	
+	/**
+	 * Uploads a list of files into the given history.
+	 * @param dataFiles  The list of files to upload.
+	 * @param inputFileType  The type of files to upload.
+	 * @param history  The history to upload the files into.String
+	 * @return  A list of Datasets describing each uploaded file.
+	 * @throws UploadException  If an error occured uploading the file.
+	 * @throws GalaxyDatasetException If there was an issue finding the corresponding dataset for
+	 * 	the file in the history
+	 */
+	private List<Dataset> uploadFilesListToHistory(List<Path> dataFiles,
+			InputFileType inputFileType, History history) throws UploadException, GalaxyDatasetException {
+		checkNotNull(dataFiles, "dataFiles is null");
+		checkNotNull(inputFileType, "inputFileType is null");
+		checkNotNull(history, "history is null");
+		
+		List<Dataset> inputDatasets = new LinkedList<Dataset>();
+		
+		for (Path file : dataFiles) {
+			Dataset inputDataset = galaxyHistory.fileToHistory(file, inputFileType, history);
+			inputDatasets.add(inputDataset);
+		}
+		
+		return inputDatasets;
 	}
 	
 	/**
@@ -317,7 +396,6 @@ public class GalaxyWorkflowsIT {
 		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
 				
 		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
-		checkWorkflowIdValid(workflowId);
 				
 		History workflowHistory = galaxyHistory.newHistoryForWorkflow();
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
@@ -414,7 +492,6 @@ public class GalaxyWorkflowsIT {
 			Path inputFile, String toolName, ToolParameter toolParameter) throws ExecutionManagerException {
 
 		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
-		checkWorkflowIdValid(workflowId);
 
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
 
@@ -633,58 +710,6 @@ public class GalaxyWorkflowsIT {
 	public void testGetWorkflowDetailsFail() throws WorkflowException {
 		String workflowId = localGalaxy.getInvalidWorkflowId();
 		assertNotNull(galaxyWorkflowService.getWorkflowDetails(workflowId));
-	}
-	
-	/**
-	 * Tests getting download URLs for workflow outputs. 
-	 * @throws ExecutionManagerException
-	 */
-	@Test
-	public void testGetWorkflowOutputFiles() throws ExecutionManagerException {
-		
-		String workflowId = localGalaxy.getSingleInputWorkflowId();
-		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		
-		WorkflowOutputs workflowOutput = 
-				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
-		
-		List<URL> outputURLs = galaxyWorkflowService.getWorkflowOutputDownloadURLs(workflowOutput);
-		assertNotNull(outputURLs);
-		assertEquals(1, outputURLs.size());
-		
-		URL singleOutputURL = outputURLs.get(0);
-		assertNotNull(singleOutputURL);
-	}
-	
-	/**
-	 * Tests getting download URLs for invalid workflow outputs.
-	 * @throws ExecutionManagerException
-	 */
-	@Test(expected=GalaxyOutputsForWorkflowException.class)
-	public void testGetWorkflowNoOutputFiles() throws ExecutionManagerException {
-		
-		String workflowId = localGalaxy.getSingleInputWorkflowId();
-		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		
-		WorkflowOutputs workflowOutput = 
-				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
-		
-		List<String> fakeOutputIds = new LinkedList<String>();
-		fakeOutputIds.add(INVALID_HISTORY_ID);
-		workflowOutput.setOutputIds(fakeOutputIds);
-		
-		galaxyWorkflowService.getWorkflowOutputDownloadURLs(workflowOutput);
-	}
-	
-	/**
-	 * Tests attempting to run a workflow that does not exist.
-	 * @throws ExecutionManagerException
-	 */
-	@Test(expected=WorkflowException.class)
-	public void testInvalidWorkflow() throws ExecutionManagerException {
-		String invalidWorkflowId = localGalaxy.getInvalidWorkflowId();
-		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		runSingleFileWorkflow(dataFile1, FILE_TYPE, invalidWorkflowId, workflowInputLabel);
 	}
 	
 	/**

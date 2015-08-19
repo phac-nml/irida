@@ -126,26 +126,12 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		return this.id;
 	}
 
-	@Override
-	public Date getModifiedDate() {
-		return this.createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("AnalysisOutputFile is immutable.");
-	}
-
 	public Path getFile() {
 		return file;
 	}
 
 	public String getExecutionManagerFileId() {
 		return executionManagerFileId;
-	}
-
-	public void setId(Long id) {
-		throw new UnsupportedOperationException("AnalysisOutputFile is immutable.");
 	}
 
 	@com.fasterxml.jackson.annotation.JsonIgnore

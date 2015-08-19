@@ -4,6 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,5 +211,31 @@ public class ProjectEventServiceImplIT {
 		Page<ProjectEvent> events1 = projectEventService.getEventsForUser(user1, new PageRequest(0, 10));
 		
 		assertEquals(1L, events1.getTotalElements());
+	}
+	
+	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
+	@Test
+	public void testGetEventsAfterDate() throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date beginning = formatter.parse("2013-07-18 14:00:00");
+
+		User user = userService.read(3L);
+
+		List<ProjectEvent> events = projectEventService.getEventsForUserAfterDate(user, beginning);
+
+		assertEquals("1 event should be returned", 1, events.size());
+	}
+	
+	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
+	@Test
+	public void testGetEmptyEventsAfterDate() throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date beginning = formatter.parse("2013-07-18 15:00:00");
+
+		User user = userService.read(3L);
+
+		List<ProjectEvent> events = projectEventService.getEventsForUserAfterDate(user, beginning);
+
+		assertTrue("no events should be found", events.isEmpty());
 	}
 }

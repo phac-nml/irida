@@ -1,32 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page" ddl:bundle-includes="dashboard">
 
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-
+  <script>window.dependencies = ['irida.dashboard'];</script>
 </head>
 
 <body>
   <div class="row" layout:fragment="page">
-    <main class="container" role="main" property="mainContentOfPage" ddl:bundle-includes="dashboard">
-      <h1 th:text="#{event.title}">_Recent Activities_</h1>
-      <a th:href="@{/events/admin}" href="/events/admin" sec:authorize="hasRole('ROLE_ADMIN')" th:text="#{event.admin.link}">_View All Events_</a>
-      <div class="row">
-        <div class="col-xs-2">
-          <label for="size" th:text="#{event.size}">_Activities to show:_</label>
-          <select id="size" class="form-control event-count">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
+    <div layout-gt-md="row" layout-sm="column" layout-margin="" layout-fill="">
+      <div flex="" class="md-whiteframe-z1">
+        <md-toolbar class="md-primary">
+          <div class="md-toolbar-tools">
+            <h2 th:text="#{event.title}">_Recent Activities_</h2>
+            <span flex=""></span>
+            <md-button th:href="@{/events/admin}" sec:authorize="hasRole('ROLE_ADMIN')"
+                       th:text="#{event.admin.link}">_All Projects_
+            </md-button>
+          </div>
+        </md-toolbar>
+        <md-content layout-padding="">
+          <div class="form-group">
+            <label for="size" th:text="#{event.size}">_Activities to show:_</label>
+            <select style="width:100px;" id="size" class="form-control event-count">
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+          <div id="events"></div>
+        </md-content>
       </div>
-      <div id="events"></div>
-      <input type="hidden" id="eventURL" value="/events/current_user" th:value="@{/events/current_user}" />
-    </main>
+      <div th:if="${updates}" flex-gt-sm="33" class="md-whiteframe-z1" ng-controller="updateController as updateCtrl">
+        <md-toolbar class="md-accent md-hue-1">
+          <div class="md-toolbar-tools">
+            <h2 th:text="#{updates.title}">_UPDATES_</h2>
+          </div>
+        </md-toolbar>
+        <md-content layout-padding="" class="updates" ng-show="updateCtrl.content">
+          <div class="updates-content" marked="updateCtrl.content"></div>
+        </md-content>
+      </div>
+    </div>
   </div>
   <th:block layout:fragment="page-scripts">
+    <script th:inline="javascript">
+      var PAGE = {
+          urls: {
+              events: /*[[@{/events/current_user}]]*/ '/events/current_user'
+          },
+          updates: /*[[${updates}]]*/ '## Nothing Here!'
+      };
+    </script>
   </th:block>
 </body>
 

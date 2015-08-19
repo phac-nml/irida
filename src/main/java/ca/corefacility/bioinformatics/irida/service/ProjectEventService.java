@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -35,5 +38,17 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
+
+	/**
+	 * Get a list of events for a {@link User} which occurred after the given
+	 * date.
+	 * 
+	 * @param user
+	 *            {@link User} to get events for
+	 * @param beginning
+	 *            Get events after this date
+	 * @return List of {@link ProjectEvent}
+	 */
+	public List<ProjectEvent> getEventsForUserAfterDate(User user, Date beginning);
 
 }

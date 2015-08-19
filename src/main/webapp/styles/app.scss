@@ -32,6 +32,13 @@
 @import "pages/sequenceFile";
 @import "pages/remoteApi";
 
+.nav-gravatar {
+  padding: 11px 5px!important;
+  img {
+    border-radius: 50%;
+  }
+}
+
 // Bootstrap override
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
@@ -49,10 +56,6 @@
 
 .nav-tabs li {
   cursor: pointer;
-}
-
-.container {
-  width: 1300px!important;
 }
 
 // Material overide, conflicts with bootstrap.

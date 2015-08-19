@@ -26,10 +26,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObject
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -85,10 +83,10 @@ public class GalaxyLibrariesServiceIT {
 		
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		
-		dataFile = Paths.get(GalaxyAPIIT.class.getResource(
+		dataFile = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData1.fastq").toURI());
 		
-		dataFile2 = Paths.get(GalaxyAPIIT.class.getResource(
+		dataFile2 = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData2.fastq").toURI());			
 	}
 	
@@ -99,13 +97,7 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws CreateLibraryException
 	 */
 	private Library buildEmptyLibrary(String name) throws CreateLibraryException {
-		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyRoleSearch galaxyRoleSearch = new GalaxyRoleSearch(galaxyInstanceAdmin.getRolesClient(),
-				localGalaxy.getGalaxyURL());
-		GalaxyLibraryBuilder libraryBuilder = new GalaxyLibraryBuilder(librariesClient, galaxyRoleSearch,
-				localGalaxy.getGalaxyURL());
-		
-		return libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(name));
+		return galaxyLibrariesService.buildEmptyLibrary(new GalaxyProjectName(name));
 	}
 	
 	/**

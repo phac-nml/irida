@@ -48,7 +48,7 @@ import com.google.common.collect.Maps;
 @Table(name = "client_details", uniqueConstraints = { @UniqueConstraint(columnNames = "clientId", name = IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME) })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class IridaClientDetails implements ClientDetails, IridaThing {
+public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 	private static final long serialVersionUID = -1593194281520695701L;
 
 	public final static String CLIENT_ID_CONSTRAINT_NAME = "UK_CLIENT_DETAILS_CLIENT_ID";
@@ -58,7 +58,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+	private Long id;
 
 	@NotNull
 	private String clientId;

@@ -6,6 +6,7 @@
     'ngMaterial',
     'ngMessages',
     'ui.bootstrap',
+    'ui.gravatar',
     'irida.session',
     'irida.notifications',
     'irida.cart'
@@ -27,6 +28,13 @@
   }
 
   angular.module('irida', deps)
+    .config(function($mdThemingProvider) {
+      $mdThemingProvider.theme('default')
+        .primaryPalette('blue')
+        .accentPalette('blue-grey', {
+          'hue-1': '50'
+        });
+    })
     .config(function($httpProvider) {
       $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
@@ -38,6 +46,13 @@
         return $.param(data);
       };
     })
+    .config([
+      'gravatarServiceProvider', function(gravatarServiceProvider) {
+        gravatarServiceProvider.defaults = {
+          "default": 'mm'  // Mystery man as default for missing avatars
+        };
+      }
+    ])
     .run(function(paginationConfig) {
       paginationConfig.firstText = TL.lang.page.first;
       paginationConfig.previousText = TL.lang.page.prev;

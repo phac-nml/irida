@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * An interface for all model classes in the IRIDA system
+ * An interface for all model classes in the IRIDA system. By default, all
+ * objects in IRIDA are considered to be immutable. If your object allows
+ * mutation, please extend {@link MutableIridaThing}.
  * 
  */
 public interface IridaThing extends Timestamped {
@@ -18,7 +20,7 @@ public interface IridaThing extends Timestamped {
 	@NotNull(message = "{irida.label.notnull}")
 	@JsonProperty
 	public String getLabel();
-
+	
 	/**
 	 * Method supporting JSON deserialzation. This method should not be used and
 	 * will throw UnsupportedOperationException when called.
@@ -41,15 +43,6 @@ public interface IridaThing extends Timestamped {
 	 */
 	@JsonIgnore
 	public Long getId();
-
-	/**
-	 * Set the numerical identifier for this object
-	 * 
-	 * @param id
-	 *            The ID to set
-	 */
-	@JsonProperty("identifier")
-	public void setId(Long id);
 
 	/**
 	 * Get the id parameter as a string. This method is here to ensure

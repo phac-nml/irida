@@ -30,13 +30,6 @@ import com.google.common.base.Optional;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
 /**
@@ -102,59 +95,6 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	private static final String LATEST_REVISION_STRING = "latest";
 	private static final String DEFAULT_REPSITORY_URL = "https://bitbucket.org/galaxy/galaxy-dist";
 	private static final String DEFAULT_BRANCH = "default";
-
-	/**
-	 * Builds a GalaxyUploader to connect to a running instance of Galaxy.
-	 * @return  An Uploader connected to a running instance of Galaxy.
-	 * @throws Exception 
-	 */
-	@Lazy
-	@Bean
-	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() throws Exception {
-		GalaxyUploader galaxyUploader = new GalaxyUploader();
-		galaxyUploader.connectToGalaxy(galaxyConnector());
-
-		return galaxyUploader;
-	}
-	
-	/**
-	 * Creates a new GalaxyConnector to connect to the local Galaxy instance.
-	 * @return  A GalaxyConnector to connect to the local Galaxy instance.
-	 * @throws Exception 
-	 */
-	@Lazy
-	@Bean
-	public GalaxyConnector galaxyConnector() throws Exception {
-		GalaxyConnector galaxyConnector = new GalaxyConnector(localGalaxy().getGalaxyURL(),
-				localGalaxy().getAdminName(), localGalaxy().getAdminAPIKey());
-		galaxyConnector.setDataStorage(DataStorage.REMOTE);
-		
-		return galaxyConnector;
-	}
-
-	/**
-	 * Builds a GalaxyAPI object to connect to a running instance of Galaxy.
-	 * @return  A GalaxyAPI object connected to a running instance of Galaxy.
-	 * @throws Exception 
-	 */
-	@Lazy
-	@Bean
-	public GalaxyUploaderAPI galaxyAPI() throws Exception {
-		return new GalaxyUploaderAPI(localGalaxy().getGalaxyURL(), localGalaxy()
-				.getAdminName(), localGalaxy().getAdminAPIKey());
-	}
-	
-	/**
-	 * Builds a {@link GalaxyLibraryContentSearch} object for testing against a running Galaxy.
-	 * @return  A {@link GalaxyLibraryContentSearch} object connected to a running instance of Galaxy.
-	 * @throws Exception 
-	 */
-	@Lazy
-	@Bean
-	public GalaxyLibraryContentSearch galaxyLibraryContentSearch() throws Exception {
-		return new GalaxyLibraryContentSearch(localGalaxy().getGalaxyInstanceAdmin().getLibrariesClient(),
-				localGalaxy().getGalaxyURL());
-	}
 
 	/**
 	 * Builds a new LocalGalaxy allowing for connecting with a running Galaxy instance.

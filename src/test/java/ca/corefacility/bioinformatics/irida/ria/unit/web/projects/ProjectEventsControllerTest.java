@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ public class ProjectEventsControllerTest {
 	private ProjectEventService eventService;
 	private ProjectService projectService;
 	private UserService userService;
+	private MessageSource messageSource;
 
 	private ProjectEventsController controller;
 
@@ -43,7 +45,7 @@ public class ProjectEventsControllerTest {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
 
-		controller = new ProjectEventsController(eventService, projectService, userService);
+		controller = new ProjectEventsController(eventService, projectService, userService, messageSource);
 	}
 
 	@Test
