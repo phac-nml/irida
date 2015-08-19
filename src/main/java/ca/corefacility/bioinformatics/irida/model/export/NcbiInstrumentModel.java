@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
 /**
- * Instrument model for NCBI Upload. Fields from
+ * Instrument model for NCBI Upload.
  * 
- * {@link http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._platform_descriptor_t/?report=objectonly}
+ * @see <a href=
+ *      "http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._platform_descriptor_t/?report=objectonly">
+ *      NCBI Docs</a>
  */
 public enum NcbiInstrumentModel {
 

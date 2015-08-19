@@ -163,8 +163,11 @@ public class ProjectExportController {
 	 *            the ID of the {@link Project} for the submission
 	 * @param submission
 	 *            A {@link SubmissionBody} describing the files to upload
+	 * @param principal
+	 *            the user submitting the upload
 	 * @return ID of the submission if successful
 	 * @throws InterruptedException
+	 *             if thread was not successfully put to sleep
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.POST)
 	@ResponseBody

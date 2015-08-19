@@ -226,7 +226,7 @@ public class IridaApiServicesConfig {
 		return jaxb2marshaller;
 	}
 
-	/**
+	/*
 	 * Template engine for constructing ncbi export submissions
 	 */
 	@Bean(name = "exportUploadTemplateEngine")
