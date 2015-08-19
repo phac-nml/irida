@@ -35,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Entity
 @Table(name = "ncbi_export_submission")
 @EntityListeners(AuditingEntityListener.class)
-public class NcbiExportSubmission implements IridaThing {
+public class NcbiExportSubmission implements MutableIridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
