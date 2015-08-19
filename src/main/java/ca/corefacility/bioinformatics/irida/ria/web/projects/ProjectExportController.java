@@ -185,10 +185,10 @@ public class ProjectExportController {
 
 			Builder sampleBuilder = new NcbiBioSampleFiles.Builder();
 			sampleBuilder.bioSample(sample.getBioSample()).files(singleFiles).pairs(paired)
-					.instrument_model(sample.getInstrument_model())
-					.library_construction_protocol(sample.getLibrary_construction_protocol())
-					.library_name(sample.getLibrary_name()).library_selection(sample.getLibrary_selection())
-					.library_source(sample.getLibrary_source()).library_strategy(sample.getLibrary_strategy())
+					.instrumentModel(sample.getInstrumentModel())
+					.libraryConstructionProtocol(sample.getLibraryConstructionProtocol())
+					.libraryName(sample.getLibraryName()).librarySelection(sample.getLibrarySelection())
+					.librarySource(sample.getLibrarySource()).libraryStrategy(sample.getLibraryStrategy())
 					.namespace(submission.getNamespace());
 			NcbiBioSampleFiles build = sampleBuilder.build();
 			bioSampleFiles.add(build);
@@ -196,7 +196,7 @@ public class ProjectExportController {
 		}
 
 		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submitter,
-				submission.getBioProject(), submission.getNamespace(), submission.getRelease_date(), bioSampleFiles);
+				submission.getBioProject(), submission.getNamespace(), submission.getReleaseDate(), bioSampleFiles);
 
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 
@@ -214,8 +214,8 @@ public class ProjectExportController {
 		@JsonProperty
 		String namespace;
 
-		@JsonProperty
-		Date release_date;
+		@JsonProperty("release_date")
+		Date releaseDate;
 
 		@JsonProperty
 		List<BioSampleBody> samples;
@@ -235,8 +235,8 @@ public class ProjectExportController {
 			return samples;
 		}
 
-		public Date getRelease_date() {
-			return release_date;
+		public Date getReleaseDate() {
+			return releaseDate;
 		}
 
 	}
@@ -245,23 +245,23 @@ public class ProjectExportController {
 		@JsonProperty
 		String bioSample;
 
-		@JsonProperty
-		String library_name;
+		@JsonProperty("library_name")
+		String libraryName;
 
-		@JsonProperty
-		NcbiLibrarySelection library_selection;
+		@JsonProperty("library_selection")
+		NcbiLibrarySelection librarySelection;
 
-		@JsonProperty
-		NcbiLibrarySource library_source;
+		@JsonProperty("library_source")
+		NcbiLibrarySource librarySource;
 
-		@JsonProperty
-		NcbiLibraryStrategy library_strategy;
+		@JsonProperty("library_strategy")
+		NcbiLibraryStrategy libraryStrategy;
 
-		@JsonProperty
-		String library_construction_protocol;
+		@JsonProperty("library_construction_protocol")
+		String libraryConstructionProtocol;
 
-		@JsonProperty
-		NcbiInstrumentModel instrument_model;
+		@JsonProperty("instrument_model")
+		NcbiInstrumentModel instrumentModel;
 
 		@JsonProperty
 		List<Long> single;
@@ -281,28 +281,28 @@ public class ProjectExportController {
 			return single;
 		}
 
-		public NcbiInstrumentModel getInstrument_model() {
-			return instrument_model;
+		public NcbiInstrumentModel getInstrumentModel() {
+			return instrumentModel;
 		}
 
-		public String getLibrary_construction_protocol() {
-			return library_construction_protocol;
+		public String getLibraryConstructionProtocol() {
+			return libraryConstructionProtocol;
 		}
 
-		public String getLibrary_name() {
-			return library_name;
+		public String getLibraryName() {
+			return libraryName;
 		}
 
-		public NcbiLibrarySelection getLibrary_selection() {
-			return library_selection;
+		public NcbiLibrarySelection getLibrarySelection() {
+			return librarySelection;
 		}
 
-		public NcbiLibrarySource getLibrary_source() {
-			return library_source;
+		public NcbiLibrarySource getLibrarySource() {
+			return librarySource;
 		}
 
-		public NcbiLibraryStrategy getLibrary_strategy() {
-			return library_strategy;
+		public NcbiLibraryStrategy getLibraryStrategy() {
+			return libraryStrategy;
 		}
 	}
 }

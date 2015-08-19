@@ -65,7 +65,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 
 	@Column(name = "release_date")
 	@Temporal(TemporalType.DATE)
-	private Date release_date;
+	private Date releaseDate;
 
 	@Column(name = "upload_state", nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -81,13 +81,13 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	}
 
 	public NcbiExportSubmission(Project project, User submitter, String bioProjectId, String ncbiNamespace,
-			Date release_date, List<NcbiBioSampleFiles> bioSampleFiles) {
+			Date releaseDate, List<NcbiBioSampleFiles> bioSampleFiles) {
 		this();
 		this.project = project;
 		this.submitter = submitter;
 		this.bioProjectId = bioProjectId;
 		this.ncbiNamespace = ncbiNamespace;
-		this.release_date = release_date;
+		this.releaseDate = releaseDate;
 		this.bioSampleFiles = bioSampleFiles;
 	}
 
@@ -153,8 +153,8 @@ public class NcbiExportSubmission implements MutableIridaThing {
 		this.bioProjectId = bioProjectId;
 	}
 
-	public Date getRelease_date() {
-		return release_date;
+	public Date getReleaseDate() {
+		return releaseDate;
 	}
 
 	public User getSubmitter() {

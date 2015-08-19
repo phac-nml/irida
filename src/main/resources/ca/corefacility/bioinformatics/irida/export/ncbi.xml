@@ -13,7 +13,7 @@
 				</Name>
 			</Contact>
 		</Organization>
-		<Hold th:attr="release_date=${submission.release_date}"></Hold>
+		<Hold th:attr="release_date=${submission.releaseDate}"></Hold>
 	</Description>
 
 	<Action th:each="sample : ${submission.bioSampleFiles}">
@@ -21,13 +21,13 @@
 			<File th:attr="file_path=${file.getFileName()}">
 				<DataType>generic-data</DataType>
 			</File>
-			<Attribute name="instrument_model" th:text="${sample.instrument_model.value}">_Model_</Attribute>
-			<Attribute name="library_name" th:text="${sample.library_name}">_name_</Attribute>
-			<Attribute name="library_strategy" th:text="${sample.library_strategy.value}">_Strategy_</Attribute>
-			<Attribute name="library_source" th:text="${sample.library_source.value}">_Source_</Attribute>
-			<Attribute name="library_selection" th:text="${sample.library_selection.value}">_Selection_</Attribute>
+			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
+			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
+			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
+			<Attribute name="library_source" th:text="${sample.librarySource.value}">_Source_</Attribute>
+			<Attribute name="library_selection" th:text="${sample.librarySelection.value}">_Selection_</Attribute>
 			<Attribute name="library_layout">SINGLE</Attribute>
-			<Attribute name="library_construction_protocol" th:text="${sample.library_construction_protocol}">_Protocol_</Attribute>
+			<Attribute name="library_construction_protocol" th:text="${sample.libraryConstructionProtocol}">_Protocol_</Attribute>
 			<AttributeRefId name="BioProject">
 				<RefId>
 					<PrimaryId db="BioProject" th:text="${submission.bioProjectId}">_Project_</PrimaryId>
@@ -50,13 +50,13 @@
 			<File th:attr="file_path=${pair.getReverseSequenceFile().getFileName()}">
 				<DataType>generic-data</DataType>
 			</File>
-			<Attribute name="instrument_model" th:text="${sample.instrument_model.value}">_Model_</Attribute>
-			<Attribute name="library_name" th:text="${sample.library_name}">_name_</Attribute>
-			<Attribute name="library_strategy" th:text="${sample.library_strategy.value}">_Strategy_</Attribute>
-			<Attribute name="library_source" th:text="${sample.library_source.value}">_Source_</Attribute>
-			<Attribute name="library_selection" th:text="${sample.library_selection.value}">_Selection_</Attribute>
+			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
+			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
+			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
+			<Attribute name="library_source" th:text="${sample.librarySource.value}">_Source_</Attribute>
+			<Attribute name="library_selection" th:text="${sample.librarySelection.value}">_Selection_</Attribute>
 			<Attribute name="library_layout">PAIRED</Attribute>
-			<Attribute name="library_construction_protocol" th:text="${sample.library_construction_protocol}">_Protocol_</Attribute>
+			<Attribute name="library_construction_protocol" th:text="${sample.libraryConstructionProtocol}">_Protocol_</Attribute>
 			<AttributeRefId name="BioProject">
 				<RefId>
 					<PrimaryId db="BioProject" th:text="${submission.bioProjectId}">_Project_</PrimaryId>
