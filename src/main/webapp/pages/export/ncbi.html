@@ -75,39 +75,39 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label th:text="#{project.export.biosample.title}">_BioSample ID_</label>
-                <input class="form-control bioSample" name="bioSample" tooltip="_NCBI BioSample to add files to.  This sample must be created in NCBI before submission._" />
+                <input class="form-control bioSample" name="bioSample" />
               </div>
               <div class="form-group">
                 <label th:text="#{project.export.instrument_model.title}">_Instrument Model_</label>
-                <select class="form-control instrument_model" name="instrument_model" th:attr="tooltip=#{project.export.instrument_model.descripton}">
+                <select class="form-control instrument_model" name="instrument_model">
                   <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
                 </select>
               </div>
               <div class="form-group">
                 <label th:text="#{project.export.library_name.title}">_Library Name_</label>
-                <input class="form-control library_name" name="library_name" th:attr="tooltip=#{project.export.library_name.description}"/>
+                <input class="form-control library_name" name="library_name"/>
               </div>
               <div class="form-group">
                 <label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label>
-                <input class="form-control library_construction_protocol" name="library_construction_protocol" th:attr="tooltip=#{project.export.library_construction_protocol.description}"/>
+                <input class="form-control library_construction_protocol" name="library_construction_protocol"/>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label th:text="#{project.export.library_strategy.title}">_Library Strategy_</label>
-                <select class="form-control library_strategy" name="library_strategy" th:attr="tooltip=#{project.export.library_strategy.description}">
+                <select class="form-control library_strategy" name="library_strategy">
                   <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
                 </select>
               </div>
               <div class="form-group">
                 <label th:text="#{project.export.library_selection.title}">_Library Selection_</label>
-                <select class="form-control library_selection" name="library_selection" th:attr="tooltip=#{project.export.library_selection.description}">
+                <select class="form-control library_selection" name="library_selection">
                   <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
                 </select>
               </div>
               <div class="form-group">
                 <label th:text="#{project.export.library_source.title}">_Library Source_</label>
-                <select class="form-control library_source" name="library_source" th:attr="tooltip=#{project.export.library_source.description}">
+                <select class="form-control library_source" name="library_source">
                   <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
                 </select>
               </div>
