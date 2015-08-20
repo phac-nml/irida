@@ -41,6 +41,7 @@ public class NcbiBioSampleFiles {
 	@Column(name = "instrument_model")
 	private NcbiInstrumentModel instrumentModel;
 
+	@Column(name="library_name")
 	private String libraryName;
 
 	@Enumerated(EnumType.STRING)
