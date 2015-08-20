@@ -38,6 +38,7 @@ public class NcbiBioSampleFiles {
 	private List<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "instrument_model")
 	private NcbiInstrumentModel instrumentModel;
 
 	private String libraryName;
