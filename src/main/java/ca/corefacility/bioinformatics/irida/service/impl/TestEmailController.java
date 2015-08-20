@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,8 @@ public class TestEmailController extends EmailControllerImpl {
 	private static final Logger logger = LoggerFactory.getLogger(TestEmailController.class);
 
 	@Autowired
-	public TestEmailController(ConfigurableJavaMailSender javaMailSender, TemplateEngine templateEngine,
-			MessageSource messageSource) {
+	public TestEmailController(ConfigurableJavaMailSender javaMailSender,
+			@Qualifier("emailTemplateEngine") TemplateEngine templateEngine, MessageSource messageSource) {
 		super(javaMailSender, templateEngine, messageSource);
 		logger.info("TestEmailController overriding EmailController");
 	}
