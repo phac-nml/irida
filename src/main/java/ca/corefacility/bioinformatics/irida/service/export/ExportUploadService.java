@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -36,8 +37,13 @@ public class ExportUploadService {
 	private NcbiExportSubmissionService exportSubmissionService;
 	private TemplateEngine templateEngine;
 
+	@Value("${ncbi.upload.host}")
 	private String ftpHost = "localhost";
+
+	@Value("${ncbi.upload.user}")
 	private String ftpUser = "tom";
+
+	@Value("${ncbi.upload.password}")
 	private String ftpPassword = "xxx";
 
 	@Autowired
