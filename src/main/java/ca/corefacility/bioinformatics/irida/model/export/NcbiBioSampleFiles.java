@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,8 +38,10 @@ public class NcbiBioSampleFiles {
 	private List<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "instrument_model")
 	private NcbiInstrumentModel instrumentModel;
 
+	@Column(name = "library_name")
 	private String libraryName;
 
 	@Enumerated(EnumType.STRING)
@@ -63,7 +65,7 @@ public class NcbiBioSampleFiles {
 	public NcbiBioSampleFiles(String namespace) {
 		// Creating a new SRA upload identifier using the current time
 		StringBuilder builder = new StringBuilder(namespace);
-		builder.append(new Date().getTime());
+		builder.append(UUID.randomUUID().toString());
 		id = builder.toString();
 
 	}
@@ -107,16 +109,37 @@ public class NcbiBioSampleFiles {
 			return this;
 		}
 
+		/**
+		 * Sequencer model that created these files
+		 * 
+		 * @param instrument_model
+		 *            {@link NcbiInstrumentModel} instance
+		 * @return {@link Builder}
+		 */
 		public Builder instrumentModel(NcbiInstrumentModel instrument_model) {
 			this.instrumentModel = instrument_model;
 			return this;
 		}
 
+		/**
+		 * Name of the library for these files
+		 * 
+		 * @param library_name
+		 *            String name
+		 * @return {@link Builder}
+		 */
 		public Builder libraryName(String library_name) {
 			this.libraryName = library_name;
 			return this;
 		}
 
+		/**
+		 * Method used to select the library for these files
+		 * 
+		 * @param library_selection
+		 *            {@link NcbiLibrarySelection}
+		 * @return {@link Builder}
+		 */
 		public Builder librarySelection(NcbiLibrarySelection library_selection) {
 			this.librarySelection = library_selection;
 			return this;
@@ -127,26 +150,59 @@ public class NcbiBioSampleFiles {
 			return this;
 		}
 
+		/**
+		 * Strategy used for generating this library
+		 * 
+		 * @param library_strategy
+		 *            {@link NcbiLibraryStrategy}
+		 * @return {@link Builder}
+		 */
 		public Builder libraryStrategy(NcbiLibraryStrategy library_strategy) {
 			this.libraryStrategy = library_strategy;
 			return this;
 		}
 
+		/**
+		 * String describing the library construction protocol
+		 * 
+		 * @param library_construction_protocol
+		 *            String protocol description
+		 * @return {@link Builder}
+		 */
 		public Builder libraryConstructionProtocol(String library_construction_protocol) {
 			this.libraryConstructionProtocol = library_construction_protocol;
 			return this;
 		}
 
+		/**
+		 * BioSample identifier for these files
+		 * 
+		 * @param bioSample
+		 *            String BioSample id
+		 * @return {@link Builder}
+		 */
 		public Builder bioSample(String bioSample) {
 			this.bioSample = bioSample;
 			return this;
 		}
 
+		/**
+		 * Namespace for generating the submission identifier
+		 * 
+		 * @param namespace
+		 *            String namespace
+		 * @return {@link Builder}
+		 */
 		public Builder namespace(String namespace) {
 			this.namespace = namespace;
 			return this;
 		}
 
+		/**
+		 * Build an instance of {@link NcbiBioSampleFiles}
+		 * 
+		 * @return Newly constructd {@link NcbiBioSampleFiles}
+		 */
 		public NcbiBioSampleFiles build() {
 			return new NcbiBioSampleFiles(bioSample, files, pairs, instrumentModel, libraryName, librarySelection,
 					librarySource, libraryStrategy, libraryConstructionProtocol, namespace);

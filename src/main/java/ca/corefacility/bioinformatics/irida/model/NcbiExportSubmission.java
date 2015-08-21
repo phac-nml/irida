@@ -31,6 +31,10 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Class storing a request to upload sequence data to NCBI.
+ * 
+ * @see <a href=
+ *      "http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Experiment_">
+ *      Ncbi SRA experiment guide</a>
  */
 @Entity
 @Table(name = "ncbi_export_submission")
@@ -71,7 +75,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	@Enumerated(EnumType.STRING)
 	private ExportUploadState uploadState;
 
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "submitter")
 	private User submitter;
 

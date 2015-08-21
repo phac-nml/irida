@@ -104,15 +104,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return A {@link Sample} with the given ID
 	 */
 	public Sample getSampleBySequencerSampleId(Project project, String sampleId);
-	
-	/**
-	 * Get the {@link Sample} associated with the given {@link SequenceFile}
-	 * 
-	 * @param file
-	 *            {@link SequenceFile} to get the {@link Sample} for
-	 * @return {@code Join<Sample,SequenceFile>} describing relationship between the {@link SequenceFile} and {@link Sample}
-	 */
-	public Join<Sample, SequenceFile> getSampleForSequenceFile(SequenceFile file);
 
 	/**
 	 * Move an instance of a {@link SequenceFile} associated with a

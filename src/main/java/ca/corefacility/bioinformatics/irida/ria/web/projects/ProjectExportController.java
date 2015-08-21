@@ -192,7 +192,6 @@ public class ProjectExportController {
 					.namespace(submission.getNamespace());
 			NcbiBioSampleFiles build = sampleBuilder.build();
 			bioSampleFiles.add(build);
-			Thread.sleep(1);
 		}
 
 		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submitter,
