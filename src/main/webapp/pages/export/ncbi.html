@@ -55,7 +55,7 @@
               <div class="form-group col-md-6">
                 <label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label>
                 <input class="form-control library_construction_protocol" name="library_construction_protocol" />
-                <p class="help-block" th:text="#{project.export.library_construction_protocol.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_construction_protocol.description}">Example block-level help text here.</p>
               </div>
 
             </div>
@@ -63,7 +63,7 @@
               <div class="form-group col-md-6">
                 <label th:text="#{project.export.library_name.title}">_Library Name_</label>
                 <input class="form-control library_name" name="library_name" th:value="${sample.name}" />
-                <p class="help-block" th:text="#{project.export.library_name.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_name.description}">Example block-level help text here.</p>
               </div>
 
               <div class="form-group col-md-6">
@@ -71,7 +71,7 @@
                 <select class="form-control instrument_model" name="instrument_model">
                   <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
                 </select>
-                <p class="help-block" th:text="#{project.export.instrument_model.descripton}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.instrument_model.descripton}">Example block-level help text here.</p>
               </div>
 
             </div>
@@ -81,7 +81,7 @@
                 <select class="form-control library_strategy" name="library_strategy">
                   <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
                 </select>
-                <p class="help-block" th:text="#{project.export.library_strategy.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_strategy.description}">Example block-level help text here.</p>
               </div>
 
               <div class="form-group col-md-6">
@@ -89,7 +89,7 @@
                 <select class="form-control library_selection" name="library_selection">
                   <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
                 </select>
-                <p class="help-block" th:text="#{project.export.library_selection.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_selection.description}">Example block-level help text here.</p>
               </div>
             </div>
             <div class="row">
@@ -98,7 +98,7 @@
                 <select class="form-control library_source" name="library_source">
                   <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
                 </select>
-                <p class="help-block" th:text="#{project.export.library_source.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_source.description}">Example block-level help text here.</p>
               </div>
             </div>
           </form>
