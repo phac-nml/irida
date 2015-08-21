@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,7 +41,7 @@ public class NcbiBioSampleFiles {
 	@Column(name = "instrument_model")
 	private NcbiInstrumentModel instrumentModel;
 
-	@Column(name="library_name")
+	@Column(name = "library_name")
 	private String libraryName;
 
 	@Enumerated(EnumType.STRING)
@@ -65,7 +65,7 @@ public class NcbiBioSampleFiles {
 	public NcbiBioSampleFiles(String namespace) {
 		// Creating a new SRA upload identifier using the current time
 		StringBuilder builder = new StringBuilder(namespace);
-		builder.append(new Date().getTime());
+		builder.append(UUID.randomUUID().toString());
 		id = builder.toString();
 
 	}
