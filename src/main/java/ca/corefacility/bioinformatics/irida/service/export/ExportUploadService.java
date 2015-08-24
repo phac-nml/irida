@@ -41,10 +41,13 @@ public class ExportUploadService {
 	private String ftpHost = "localhost";
 
 	@Value("${ncbi.upload.user}")
-	private String ftpUser = "tom";
+	private String ftpUser = "test";
 
 	@Value("${ncbi.upload.password}")
-	private String ftpPassword = "xxx";
+	private String ftpPassword = "xxxx";
+
+	@Value("${ncbi.upload.baseDirectory}")
+	private String baseDirectory = "tmp";
 
 	@Autowired
 	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
@@ -108,30 +111,36 @@ public class ExportUploadService {
 
 			String directoryName = submission.getId().toString();
 
+			logger.trace("Logging in to " + ftpHost + " as " + ftpUser);
 			client.connect(ftpHost);
 			client.login(ftpUser, ftpPassword);
-			logger.debug(client.getStatus());
+			logger.trace(client.getStatus());
 
-			client.changeWorkingDirectory("tmp");
-			client.makeDirectory(directoryName);
-			client.changeWorkingDirectory(directoryName);
+			if (!client.changeWorkingDirectory(baseDirectory)) {
+				throw new UploadException(
+						"Couldn't change to base directory " + baseDirectory + " : " + client.getReplyString());
+			}
+
+			if (!client.makeDirectory(directoryName)) {
+				throw new UploadException(
+						"Couldn't create new upload directory " + directoryName + " : " + client.getReplyString());
+			}
+
+			if (!client.changeWorkingDirectory(directoryName)) {
+				throw new UploadException(
+						"Couldn't change to upload directory " + directoryName + " : " + client.getReplyString());
+			}
 
 			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
 
-			success = client.storeFile("submission.xml", stream);
-
-			if (!success) {
-				throw new UploadException("submission.xml file was not uploaded");
-			}
+			uploadFile(client, "submission.xml", stream);
+			stream.close();
 
 			for (NcbiBioSampleFiles bsFile : submission.getBioSampleFiles()) {
 				for (SequenceFile file : bsFile.getFiles()) {
 					InputStream fileStream = Files.newInputStream(file.getFile());
 
-					success = client.storeFile(file.getFileName(), fileStream);
-					if (!success) {
-						throw new UploadException("Couldn't upload file " + file.getFileName());
-					}
+					uploadFile(client, file.getFileName(), fileStream);
 
 					fileStream.close();
 				}
@@ -140,21 +149,13 @@ public class ExportUploadService {
 
 					SequenceFile file = pair.getForwardSequenceFile();
 					InputStream fileStream = Files.newInputStream(file.getFile());
-					success = client.storeFile(file.getFileName(), fileStream);
-
-					if (!success) {
-						throw new UploadException("Couldn't upload file " + file.getFileName());
-					}
+					uploadFile(client, file.getFileName(), fileStream);
 
 					fileStream.close();
 
 					file = pair.getReverseSequenceFile();
 					fileStream = Files.newInputStream(file.getFile());
-					success = client.storeFile(file.getFileName(), fileStream);
-
-					if (!success) {
-						throw new UploadException("Couldn't upload file " + file.getFileName());
-					}
+					uploadFile(client, file.getFileName(), fileStream);
 
 					fileStream.close();
 				}
@@ -163,12 +164,29 @@ public class ExportUploadService {
 
 			stream.close();
 
+			// create submit.ready file
+			ByteArrayInputStream readyStream = new ByteArrayInputStream(new byte[0]);
+			client.storeFile("submit.ready", readyStream);
+			readyStream.close();
+
 			client.disconnect();
 		} catch (IOException | UploadException e) {
 			logger.error("Error in upload", e);
 			success = false;
 		}
 
+		return success;
+
+	}
+
+	private boolean uploadFile(FTPClient client, String filename, InputStream stream)
+			throws UploadException, IOException {
+		boolean success = client.storeFile("submission.xml", stream);
+
+		if (!success) {
+			String reply = client.getReplyString();
+			throw new UploadException("Could not upload file " + filename + " : " + reply);
+		}
 		return success;
 
 	}
