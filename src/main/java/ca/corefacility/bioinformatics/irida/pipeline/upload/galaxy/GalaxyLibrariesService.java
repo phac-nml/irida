@@ -21,9 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
@@ -79,6 +81,35 @@ public class GalaxyLibrariesService {
 		this.librariesClient = librariesClient;
 		this.libraryPollingTime = libraryPollingTime;
 		this.libraryUploadTimeout = libraryUploadTimeout;
+	}
+	
+	/**
+	 * Builds a new empty library with the given name.
+	 * 
+	 * @param libraryName
+	 *            The name of the new library.
+	 * @return A Library object for the newly created library.
+	 * @throws CreateLibraryException
+	 *             If no library could be created.
+	 */
+	public Library buildEmptyLibrary(GalaxyProjectName libraryName)
+			throws CreateLibraryException {
+		checkNotNull(libraryName, "libraryName is null");
+
+		Library persistedLibrary;
+
+		Library library = new Library(libraryName.getName());
+		persistedLibrary = librariesClient.createLibrary(library);
+
+		if (persistedLibrary != null) {
+			logger.debug("Created library=" + library.getName() + " libraryId="
+					+ persistedLibrary.getId());
+
+			return persistedLibrary;
+		} else {
+			throw new CreateLibraryException("Could not create library named "
+					+ libraryName);
+		}
 	}
 
 	/**

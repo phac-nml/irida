@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -84,7 +82,6 @@ public class GalaxyHistoriesServiceTest {
 	private History history;
 	
 	private Path dataFile;
-	private Path dataFile2;
 	
 	private Dataset datasetForFile;
 	
@@ -105,7 +102,6 @@ public class GalaxyHistoriesServiceTest {
 				galaxyLibrariesService);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq").toURI());
-		dataFile2 = Paths.get(this.getClass().getResource("testData2.fastq").toURI());
 
 		history = new History();
 		history.setId(HISTORY_ID);
@@ -295,105 +291,6 @@ public class GalaxyHistoriesServiceTest {
 	}
 	
 	/**
-	 * Tests uploading a list of files to a history.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test
-	public void testFilesListToHistorySuccess() throws UploadException, GalaxyDatasetException {
-		List<Path> files = new LinkedList<Path>();
-		files.add(dataFile);
-		files.add(dataFile2);
-		
-		List<Dataset> datasets = new LinkedList<Dataset>();
-		
-		String filename = dataFile.toFile().getName();
-		String filename2 = dataFile2.toFile().getName();
-		History createdHistory = new History();
-		Dataset dataset = new Dataset();
-		createdHistory.setId(HISTORY_ID);
-		Dataset dataset2 = new Dataset();
-		List<HistoryContents> historyContentsList = buildHistoryContentsList(filename, DATA_ID,
-				filename2, DATA_ID_2);
-		
-		datasets.add(dataset);
-		datasets.add(dataset2);
-		
-		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).thenReturn(okayResponse);
-		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(historyContentsList);
-		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
-		when(historiesClient.showDataset(HISTORY_ID, DATA_ID_2)).thenReturn(dataset2);
-		
-		assertEquals(datasets, galaxyHistory.uploadFilesListToHistory(files, FILE_TYPE, createdHistory));
-	}
-	
-	/**
-	 * Tests failing to upload a file list to a history.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test(expected=UploadException.class)
-	public void testFilesListToHistoryFailUpload() throws UploadException, GalaxyDatasetException {
-		History createdHistory = new History();
-		createdHistory.setId(HISTORY_ID);
-		
-		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).
-			thenReturn(invalidResponse);
-		
-		galaxyHistory.uploadFilesListToHistory(Arrays.asList(dataFile), FILE_TYPE, createdHistory);
-	}
-	
-	/**
-	 * Tests successfull execution of constructing a list of paired-end files dataset collection.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testConstructPairedFileCollectionSuccess() throws ExecutionManagerException {
-		CollectionResponse collectionResponse = new CollectionResponse();
-		
-		History history = new History();
-		history.setId(HISTORY_ID);
-		
-		Dataset datasetForward = new Dataset();
-		datasetForward.setId(DATA_ID);
-		List<Dataset> inputDatasetsForward = Arrays.asList(datasetForward);
-		
-		Dataset datasetReverse = new Dataset();
-		datasetReverse.setId(DATA_ID_2);
-		List<Dataset> inputDatasetsReverse = Arrays.asList(datasetReverse);
-		
-		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
-			thenReturn(collectionResponse);
-		
-		assertEquals(collectionResponse,galaxyHistory.constructPairedFileCollection(
-				inputDatasetsForward, inputDatasetsReverse, history));
-	}
-	
-	/**
-	 * Tests failure to construct a list of paired-end files dataset collection.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=ExecutionManagerException.class)
-	public void testConstructPairedFileCollectionFail() throws ExecutionManagerException {	
-		History history = new History();
-		history.setId(HISTORY_ID);
-		
-		Dataset datasetForward = new Dataset();
-		datasetForward.setId(DATA_ID);
-		List<Dataset> inputDatasetsForward = Arrays.asList(datasetForward);
-		
-		Dataset datasetReverse = new Dataset();
-		datasetReverse.setId(DATA_ID_2);
-		List<Dataset> inputDatasetsReverse = Arrays.asList(datasetReverse);
-		
-		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
-			thenThrow(new RuntimeException());
-		
-		galaxyHistory.constructPairedFileCollection(inputDatasetsForward,
-				inputDatasetsReverse, history);
-	}
-	
-	/**
 	 * Tests successfull construction of a dataset collection.
 	 * @throws ExecutionManagerException 
 	 */
@@ -437,47 +334,6 @@ public class GalaxyHistoriesServiceTest {
 	}
 	
 	/**
-	 * Tests successfull construction of a list of datasets.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testConstructCollectionListSuccess() throws ExecutionManagerException {
-		CollectionResponse collectionResponse = new CollectionResponse();
-		
-		History history = new History();
-		history.setId(HISTORY_ID);
-		
-		Dataset datasetForward = new Dataset();
-		datasetForward.setId(DATA_ID);
-		List<Dataset> datasets = Arrays.asList(datasetForward);
-		
-		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
-			thenReturn(collectionResponse);
-		
-		assertEquals(collectionResponse,galaxyHistory.constructCollectionList(
-				datasets, history));
-	}
-	
-	/**
-	 * Tests failure to construct of a list of datasets.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=ExecutionManagerException.class)
-	public void testConstructCollectionListFail() throws ExecutionManagerException {		
-		History history = new History();
-		history.setId(HISTORY_ID);
-		
-		Dataset datasetForward = new Dataset();
-		datasetForward.setId(DATA_ID);
-		List<Dataset> datasets = Arrays.asList(datasetForward);
-		
-		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
-			thenThrow(new RuntimeException());
-		
-		galaxyHistory.constructCollectionList(datasets, history);
-	}
-	
-	/**
 	 * Tests getting a History.
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
@@ -502,26 +358,6 @@ public class GalaxyHistoriesServiceTest {
 		galaxyHistory.findById(INVALID_HISTORY_ID);
 	}
 	
-	/**
-	 * Tests checking for the existence of a history.
-	 */
-	@Test
-	public void testHistoryExists() {
-		List<History> historyList = new LinkedList<History>();
-		historyList.add(history);
-		
-		when(historiesClient.getHistories()).thenReturn(historyList);
-		
-		assertTrue(galaxyHistory.exists(HISTORY_ID));
-	}
-	
-	/**
-	 * Tests checking for non-existence of a galaxy history.
-	 */
-	@Test
-	public void testNoHistoryExists() {
-		assertFalse(galaxyHistory.exists(INVALID_HISTORY_ID));
-	}
 	
 	/**
 	 * Tests getting a valid history dataset given a file name and history.

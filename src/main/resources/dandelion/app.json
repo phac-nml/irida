@@ -5,6 +5,7 @@
     "utilities",
     "cart",
     "angular",
+    "angular.gravatar",
     "notifications"
   ],
   "assets": [

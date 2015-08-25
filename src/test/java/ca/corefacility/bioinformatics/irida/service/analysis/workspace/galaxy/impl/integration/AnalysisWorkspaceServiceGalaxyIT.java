@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -76,7 +77,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Work
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -112,10 +112,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-
-	@Autowired
-	private GalaxyLibraryContentSearch galaxyLibraryContentSearch;
-
+	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	
 	/**
@@ -275,6 +272,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		history.setName("testPrepareAnalysisFilesSingleSuccess");
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
@@ -294,8 +292,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 		
 		// verify correct library is created
-		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibraryContentSearch
-				.libraryContentAsMap(preparedWorkflow.getRemoteDataId());
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
+		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
+
 		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
 		String sequenceFileALibraryName = "/" + sequenceFilePathA.getFileName().toString();
 		assertEquals("the returned library does not contain the correct number of elements", 2,
@@ -380,6 +379,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		history.setName("testPrepareAnalysisFilesPairSuccess");
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
@@ -400,8 +400,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 		
 		// verify correct library is created
-		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibraryContentSearch
-				.libraryContentAsMap(preparedWorkflow.getRemoteDataId());
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
+		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
+
 		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
 		String sequenceFile1ALibraryName = "/" + sequenceFilePathA.getFileName().toString();
 		String sequenceFile2ALibraryName = "/" + sequenceFilePath2A.getFileName().toString();
