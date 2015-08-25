@@ -56,22 +56,10 @@
 	</outputs>
 	<toolRepositories>
 		<repository>
-			<name>package_ncurses_5_9</name>
-			<owner>iuc</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
-			<revision>71e3f4bfd1a9</revision>
-		</repository>
-		<repository>
-			<name>package_zlib_1_2_8</name>
-			<owner>ericenns</owner>
-			<url>http://galaxy-toolshed.corefacility.ca</url>
-			<revision>13295cc88624</revision>
-		</repository>
-		<repository>
 			<name>suite_snvphyl</name>
 			<owner>phil</owner>
 			<url>http://galaxy-toolshed.corefacility.ca</url>
-			<revision>c93963ab1520</revision>
+			<revision>d30ca5deff13</revision>
 		</repository>
 	</toolRepositories>
 </iridaWorkflow>
