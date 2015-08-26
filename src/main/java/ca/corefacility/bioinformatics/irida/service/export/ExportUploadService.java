@@ -71,7 +71,6 @@ public class ExportUploadService {
 
 		for (NcbiExportSubmission submission : submissionsWithState) {
 
-			boolean success = false;
 			try {
 				logger.trace("Updating submission " + submission.getId());
 
@@ -80,16 +79,13 @@ public class ExportUploadService {
 
 				String xmlContent = createXml(submission);
 
-				success = uploadSubmission(submission, xmlContent);
-			} catch (Exception e) {
-				logger.debug("Upload failed", e);
-				success = false;
-			}
+				uploadSubmission(submission, xmlContent);
 
-			if (success) {
 				submission = exportSubmissionService.update(submission.getId(),
 						ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
-			} else {
+			} catch (Exception e) {
+				logger.debug("Upload failed", e);
+
 				submission = exportSubmissionService.update(submission.getId(),
 						ImmutableMap.of("uploadState", ExportUploadState.ERROR));
 			}
