@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -14,8 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,17 +25,21 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Class storing a request to upload sequence data to NCBI.
+ * 
+ * @see <a href=
+ *      "http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Experiment_">
+ *      Ncbi SRA experiment guide</a>
  */
 @Entity
 @Table(name = "ncbi_export_submission")
 @EntityListeners(AuditingEntityListener.class)
-public class NcbiExportSubmission implements IridaThing {
+public class NcbiExportSubmission implements MutableIridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -43,13 +48,15 @@ public class NcbiExportSubmission implements IridaThing {
 	@JoinColumn(name = "project_id")
 	private Project project;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "ncbi_export_submission_single_files", inverseJoinColumns = @JoinColumn(name = "sequence_file_id") )
-	private List<SequenceFile> singleFiles;
+	@Column(name = "bio_project_id", nullable = false)
+	private String bioProjectId;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "ncbi_export_submission_pair_files", inverseJoinColumns = @JoinColumn(name = "pair_file_id") )
-	private List<SequenceFilePair> pairFiles;
+	@Column(name = "namespace", nullable = false)
+	private String ncbiNamespace;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "ncbi_export_submission_biosample")
+	private List<NcbiBioSampleFiles> bioSampleFiles;
 
 	@Column(name = "created_date", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -60,20 +67,32 @@ public class NcbiExportSubmission implements IridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
+	@Column(name = "release_date")
+	@Temporal(TemporalType.DATE)
+	private Date releaseDate;
+
 	@Column(name = "upload_state", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ExportUploadState uploadState;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "submitter")
+	private User submitter;
 
 	public NcbiExportSubmission() {
 		uploadState = ExportUploadState.NEW;
 		createdDate = new Date();
 	}
 
-	public NcbiExportSubmission(Project project, List<SequenceFile> singleFiles, List<SequenceFilePair> pairFiles) {
+	public NcbiExportSubmission(Project project, User submitter, String bioProjectId, String ncbiNamespace,
+			Date releaseDate, List<NcbiBioSampleFiles> bioSampleFiles) {
 		this();
 		this.project = project;
-		this.singleFiles = singleFiles;
-		this.pairFiles = pairFiles;
+		this.submitter = submitter;
+		this.bioProjectId = bioProjectId;
+		this.ncbiNamespace = ncbiNamespace;
+		this.releaseDate = releaseDate;
+		this.bioSampleFiles = bioSampleFiles;
 	}
 
 	@Override
@@ -110,12 +129,8 @@ public class NcbiExportSubmission implements IridaThing {
 		return project;
 	}
 
-	public List<SequenceFilePair> getPairFiles() {
-		return pairFiles;
-	}
-
-	public List<SequenceFile> getSingleFiles() {
-		return singleFiles;
+	public List<NcbiBioSampleFiles> getBioSampleFiles() {
+		return bioSampleFiles;
 	}
 
 	public void setUploadState(ExportUploadState uploadState) {
@@ -126,4 +141,27 @@ public class NcbiExportSubmission implements IridaThing {
 		return uploadState;
 	}
 
+	public String getNcbiNamespace() {
+		return ncbiNamespace;
+	}
+
+	public void setNcbiNamespace(String ncbiNamespace) {
+		this.ncbiNamespace = ncbiNamespace;
+	}
+
+	public String getBioProjectId() {
+		return bioProjectId;
+	}
+
+	public void setBioProjectId(String bioProjectId) {
+		this.bioProjectId = bioProjectId;
+	}
+
+	public Date getReleaseDate() {
+		return releaseDate;
+	}
+
+	public User getSubmitter() {
+		return submitter;
+	}
 }

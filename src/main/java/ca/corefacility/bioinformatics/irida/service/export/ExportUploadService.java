@@ -5,7 +5,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -19,11 +22,16 @@ import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 public class ExportUploadService {
 	private static final Logger logger = LoggerFactory.getLogger(ExportUploadService.class);
 
+	private static final String NCBI_TEMPLATE = "ncbi";
+
 	private NcbiExportSubmissionService exportSubmissionService;
+	private TemplateEngine templateEngine;
 
 	@Autowired
-	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService) {
+	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
+			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine) {
 		this.exportSubmissionService = exportSubmissionService;
+		this.templateEngine = templateEngine;
 	}
 
 	/**
@@ -46,11 +54,7 @@ public class ExportUploadService {
 
 			logger.trace("Going to sleep " + submission.getId());
 
-			try {
-				Thread.sleep(30000);
-			} catch (InterruptedException e) {
-
-			}
+			createXml(submission);
 
 			logger.trace("Finished sleep " + submission.getId());
 
@@ -58,5 +62,14 @@ public class ExportUploadService {
 					ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
 		}
 
+	}
+
+	public void createXml(NcbiExportSubmission submission) {
+		final Context ctx = new Context();
+		ctx.setVariable("submission", submission);
+
+		final String htmlContent = templateEngine.process(NCBI_TEMPLATE, ctx);
+
+		logger.debug(htmlContent);
 	}
 }

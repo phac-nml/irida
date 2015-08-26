@@ -18,33 +18,65 @@
 				<constraints foreignKeyName="FK_NCBI_SUBMISSION_PROJECT"
 					referencedColumnNames="id" referencedTableName="project" />
 			</column>
+			<column name="submitter" type="bigint(20)">
+				<constraints foreignKeyName="FK_NCBI_SUBMISSION_SUBMITTER"
+					referencedColumnNames="id" referencedTableName="user" />
+			</column>
 			<column name="upload_state" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
+			<column name="bio_project_id" type="varchar(255)" />
+			<column name="namespace" type="varchar(255)" />
+			<column name="release_date" type="date" />
 		</createTable>
 
-		<createTable tableName="ncbi_export_submission_single_files">
+		<createTable tableName="ncbi_export_biosample">
+			<column name="id" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="bioSample" type="varchar(255)" />
+			<column name="instrument_model" type="varchar(255)" />
+			<column name="library_name" type="varchar(255)" />
+			<column name="library_selection" type="varchar(255)" />
+			<column name="library_source" type="varchar(255)" />
+			<column name="library_strategy" type="varchar(255)" />
+			<column name="library_construction_protocol" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="ncbi_export_submission_biosample">
 			<column name="ncbi_export_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_NCBI_EXPORT_BIOSAMPLE" referencedColumnNames="id"
+					referencedTableName="ncbi_export_submission" />
+			</column>
+			<column name="bioSampleFiles_id" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_NCBI_EXPORT_BIOSAMPLE_FILES"
+					referencedColumnNames="id" referencedTableName="ncbi_export_biosample" />
+			</column>
+		</createTable>
+
+		<createTable tableName="ncbi_export_biosample_sequence_file">
+			<column name="ncbi_export_biosample_id" type="varchar(255)">
 				<constraints nullable="false"
 					foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_FILE_SUBMISSION"
-					referencedColumnNames="id" referencedTableName="ncbi_export_submission"></constraints>
+					referencedColumnNames="id" referencedTableName="ncbi_export_biosample"></constraints>
 			</column>
 
-			<column name="sequence_file_id" type="bigint(20)">
-				<constraints nullable="false"
-					foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_FILE_FILE"
+			<column name="files_id" type="bigint(20)">
+				<constraints nullable="false" foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_FILE"
 					referencedColumnNames="id" referencedTableName="sequence_file"></constraints>
 			</column>
 		</createTable>
 
-		<createTable tableName="ncbi_export_submission_pair_files">
-			<column name="ncbi_export_submission_id" type="bigint(20)">
+		<createTable tableName="ncbi_export_biosample_sequence_file_pair">
+			<column name="ncbi_export_biosample_id" type="varchar(255)">
 				<constraints nullable="false"
 					foreignKeyName="FK_NCBI_SUBMISSION_PAIR_FILE_SUBMISSION"
-					referencedColumnNames="id" referencedTableName="ncbi_export_submission"></constraints>
+					referencedColumnNames="id" referencedTableName="ncbi_export_biosample"></constraints>
 			</column>
 
-			<column name="pair_file_id" type="bigint(20)">
+			<column name="pairs_id" type="bigint(20)">
 				<constraints nullable="false"
 					foreignKeyName="FK_NCBI_SUBMISSION_PAIR_FILE_PAIR"
 					referencedColumnNames="id" referencedTableName="sequence_file_pair"></constraints>
