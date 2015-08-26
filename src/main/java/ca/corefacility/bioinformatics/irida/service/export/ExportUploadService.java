@@ -209,7 +209,7 @@ public class ExportUploadService {
 
 	private boolean uploadFile(FTPClient client, String filename, InputStream stream) throws UploadException,
 			IOException {
-		boolean success = client.storeFile("submission.xml", stream);
+		boolean success = client.storeFile(filename, stream);
 
 		if (!success) {
 			String reply = client.getReplyString();
