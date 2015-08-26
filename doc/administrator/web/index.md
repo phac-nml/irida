@@ -72,7 +72,7 @@ The main configuration parameters you will need to change are:
   * `galaxy.execution.url=http://localhost/`
   * `galaxy.execution.apiKey=xxxx`
   * `galaxy.execution.email=user@localhost`
-4. **NCBI SRA export configuration** - A SRA bulk upload user account must be created with NCBI to allow automated SRA uploads.  See [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Establishing_a_Center_A_) for details.
+4. **NCBI SRA export configuration** - An SRA bulk upload user account must be created with NCBI to allow automated SRA uploads.  See [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Establishing_a_Center_A_) for details.
   * `ncbi.upload.host` - FTP host to upload ncbi exports
   * `ncbi.upload.user` - FTP Username
   * `ncbi.upload.password` - FTP password
