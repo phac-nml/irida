@@ -117,18 +117,18 @@ public class ExportUploadService {
 			logger.trace(client.getStatus());
 
 			if (!client.changeWorkingDirectory(baseDirectory)) {
-				throw new UploadException(
-						"Couldn't change to base directory " + baseDirectory + " : " + client.getReplyString());
+				throw new UploadException("Couldn't change to base directory " + baseDirectory + " : "
+						+ client.getReplyString());
 			}
 
 			if (!client.makeDirectory(directoryName)) {
-				throw new UploadException(
-						"Couldn't create new upload directory " + directoryName + " : " + client.getReplyString());
+				throw new UploadException("Couldn't create new upload directory " + directoryName + " : "
+						+ client.getReplyString());
 			}
 
 			if (!client.changeWorkingDirectory(directoryName)) {
-				throw new UploadException(
-						"Couldn't change to upload directory " + directoryName + " : " + client.getReplyString());
+				throw new UploadException("Couldn't change to upload directory " + directoryName + " : "
+						+ client.getReplyString());
 			}
 
 			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
@@ -179,8 +179,8 @@ public class ExportUploadService {
 
 	}
 
-	private boolean uploadFile(FTPClient client, String filename, InputStream stream)
-			throws UploadException, IOException {
+	private boolean uploadFile(FTPClient client, String filename, InputStream stream) throws UploadException,
+			IOException {
 		boolean success = client.storeFile("submission.xml", stream);
 
 		if (!success) {
