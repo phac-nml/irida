@@ -2,8 +2,9 @@ package ca.corefacility.bioinformatics.irida.service.export;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 
@@ -17,14 +18,14 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
@@ -160,41 +161,31 @@ public class ExportUploadService {
 			}
 
 			// upload submission.xml file
-			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
-			uploadFile(client, "submission.xml", stream);
-			stream.close();
+			uploadString(client, "submission.xml", xml);
 
 			// upload biosample files
 			for (NcbiBioSampleFiles bsFile : submission.getBioSampleFiles()) {
+
+				// upload single end files
 				for (SequenceFile file : bsFile.getFiles()) {
-					InputStream fileStream = Files.newInputStream(file.getFile());
-
-					uploadFile(client, file.getFileName(), fileStream);
-
-					fileStream.close();
+					uploadPath(client, file.getFileName(), file.getFile());
 				}
 
+				// upload paired end files
 				for (SequenceFilePair pair : bsFile.getPairs()) {
-
+					// upload forward
 					SequenceFile file = pair.getForwardSequenceFile();
-					InputStream fileStream = Files.newInputStream(file.getFile());
-					uploadFile(client, file.getFileName(), fileStream);
+					uploadPath(client, file.getFileName(), file.getFile());
 
-					fileStream.close();
-
+					// upload reverse
 					file = pair.getReverseSequenceFile();
-					fileStream = Files.newInputStream(file.getFile());
-					uploadFile(client, file.getFileName(), fileStream);
-
-					fileStream.close();
+					uploadPath(client, file.getFileName(), file.getFile());
 				}
 
 			}
 
 			// create submit.ready file
-			ByteArrayInputStream readyStream = new ByteArrayInputStream(new byte[0]);
-			client.storeFile("submit.ready", readyStream);
-			readyStream.close();
+			uploadString(client, "submit.ready", "");
 
 			// disconnect from ftp site
 			client.disconnect();
@@ -207,15 +198,45 @@ public class ExportUploadService {
 
 	}
 
-	private boolean uploadFile(FTPClient client, String filename, InputStream stream) throws UploadException,
-			IOException {
-		boolean success = client.storeFile(filename, stream);
-
-		if (!success) {
+	/**
+	 * Upload a string to remote ftp client
+	 * 
+	 * @param client
+	 *            {@link FTPClient} to use for upload
+	 * @param filename
+	 *            name of file to create
+	 * @param content
+	 *            content of file to create
+	 * @throws UploadException
+	 *             if file could not be uploaded
+	 */
+	private void uploadString(FTPClient client, String filename, String content) throws UploadException {
+		try (ByteArrayInputStream stringStream = new ByteArrayInputStream(content.getBytes())) {
+			client.storeFile(filename, stringStream);
+		} catch (Exception e) {
 			String reply = client.getReplyString();
-			throw new UploadException("Could not upload file " + filename + " : " + reply);
+			throw new UploadException("Could not upload file " + filename + " : " + reply, e);
 		}
-		return success;
+	}
 
+	/**
+	 * Upload a file {@link Path} to a remote ftp client
+	 * 
+	 * @param client
+	 *            {@link FTPClient} to upload with
+	 * @param filename
+	 *            name of file to create
+	 * @param path
+	 *            {@link Path} to upload
+	 * @throws UploadException
+	 *             if file could not be uploaded
+	 */
+	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException {
+		try (OutputStream storeFileStream = client.storeFileStream(filename)) {
+			Files.copy(path, storeFileStream);
+		} catch (Exception e) {
+			String reply = client.getReplyString();
+			throw new UploadException("Could not upload file " + filename + " : " + reply, e);
+		}
 	}
 }
