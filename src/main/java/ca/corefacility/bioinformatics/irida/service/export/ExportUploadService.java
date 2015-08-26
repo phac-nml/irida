@@ -80,7 +80,13 @@ public class ExportUploadService {
 
 			logger.trace("Finished sleep " + submission.getId());
 
-			boolean success = uploadSubmission(submission, xmlContent);
+			boolean success = false;
+			try {
+				success = uploadSubmission(submission, xmlContent);
+			} catch (UploadException e) {
+				logger.debug("Upload failed", e);
+				success = false;
+			}
 
 			if (success) {
 				submission = exportSubmissionService.update(submission.getId(),
@@ -102,7 +108,7 @@ public class ExportUploadService {
 		return xmlContent;
 	}
 
-	public boolean uploadSubmission(NcbiExportSubmission submission, String xml) {
+	public boolean uploadSubmission(NcbiExportSubmission submission, String xml) throws UploadException {
 
 		boolean success = true;
 
@@ -170,9 +176,9 @@ public class ExportUploadService {
 			readyStream.close();
 
 			client.disconnect();
-		} catch (IOException | UploadException e) {
+		} catch (IOException e) {
 			logger.error("Error in upload", e);
-			success = false;
+			throw new UploadException("Could not upload run", e);
 		}
 
 		return success;
