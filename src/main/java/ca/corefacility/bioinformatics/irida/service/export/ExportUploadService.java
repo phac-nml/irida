@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -69,21 +70,17 @@ public class ExportUploadService {
 
 		for (NcbiExportSubmission submission : submissionsWithState) {
 
-			logger.trace("Updating submission " + submission.getId());
-
-			submission = exportSubmissionService.update(submission.getId(),
-					ImmutableMap.of("uploadState", ExportUploadState.PROCESSING));
-
-			logger.trace("Going to sleep " + submission.getId());
-
-			String xmlContent = createXml(submission);
-
-			logger.trace("Finished sleep " + submission.getId());
-
 			boolean success = false;
 			try {
+				logger.trace("Updating submission " + submission.getId());
+
+				submission = exportSubmissionService.update(submission.getId(),
+						ImmutableMap.of("uploadState", ExportUploadState.PROCESSING));
+
+				String xmlContent = createXml(submission);
+
 				success = uploadSubmission(submission, xmlContent);
-			} catch (UploadException e) {
+			} catch (Exception e) {
 				logger.debug("Upload failed", e);
 				success = false;
 			}
@@ -99,7 +96,15 @@ public class ExportUploadService {
 
 	}
 
+	/**
+	 * Create the XML for an {@link NcbiExportSubmission}
+	 * 
+	 * @param submission
+	 *            the {@link NcbiExportSubmission} to create submission xml for
+	 * @return String content of the xml
+	 */
 	public String createXml(NcbiExportSubmission submission) {
+		logger.debug("Creating export xml for submission " + submission.getId());
 		final Context ctx = new Context();
 		ctx.setVariable("submission", submission);
 
@@ -108,6 +113,18 @@ public class ExportUploadService {
 		return xmlContent;
 	}
 
+	/**
+	 * Upload an {@link NcbiExportSubmission}'s files and submission xml to the
+	 * configured ftp site
+	 * 
+	 * @param submission
+	 *            The {@link NcbiExportSubmission} to upload
+	 * @param xml
+	 *            The submission xml to upload
+	 * @return true/false if upload was successful
+	 * @throws UploadException
+	 *             if the upload failed
+	 */
 	public boolean uploadSubmission(NcbiExportSubmission submission, String xml) throws UploadException {
 
 		boolean success = true;
@@ -115,33 +132,39 @@ public class ExportUploadService {
 		FTPClient client = new FTPClient();
 		try {
 
-			String directoryName = submission.getId().toString();
+			// create submission directory name
+			String directoryName = submission.getId().toString() + "-" + new Date().getTime();
 
+			// login to host
 			logger.trace("Logging in to " + ftpHost + " as " + ftpUser);
 			client.connect(ftpHost);
 			client.login(ftpUser, ftpPassword);
 			logger.trace(client.getStatus());
 
+			// cd to submission base directory
 			if (!client.changeWorkingDirectory(baseDirectory)) {
 				throw new UploadException("Couldn't change to base directory " + baseDirectory + " : "
 						+ client.getReplyString());
 			}
 
+			// create new submission directory
 			if (!client.makeDirectory(directoryName)) {
 				throw new UploadException("Couldn't create new upload directory " + directoryName + " : "
 						+ client.getReplyString());
 			}
 
+			// cd to submission directory
 			if (!client.changeWorkingDirectory(directoryName)) {
 				throw new UploadException("Couldn't change to upload directory " + directoryName + " : "
 						+ client.getReplyString());
 			}
 
+			// upload submission.xml file
 			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
-
 			uploadFile(client, "submission.xml", stream);
 			stream.close();
 
+			// upload biosample files
 			for (NcbiBioSampleFiles bsFile : submission.getBioSampleFiles()) {
 				for (SequenceFile file : bsFile.getFiles()) {
 					InputStream fileStream = Files.newInputStream(file.getFile());
@@ -168,13 +191,12 @@ public class ExportUploadService {
 
 			}
 
-			stream.close();
-
 			// create submit.ready file
 			ByteArrayInputStream readyStream = new ByteArrayInputStream(new byte[0]);
 			client.storeFile("submit.ready", readyStream);
 			readyStream.close();
 
+			// disconnect from ftp site
 			client.disconnect();
 		} catch (IOException e) {
 			logger.error("Error in upload", e);
