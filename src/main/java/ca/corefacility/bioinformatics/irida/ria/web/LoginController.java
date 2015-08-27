@@ -64,7 +64,8 @@ public class LoginController extends BaseController {
 	}
 
 	private boolean isAuthenticated() {
-		return SecurityContextHolder.getContext().getAuthentication() instanceof UsernamePasswordAuthenticationToken;
+		return SecurityContextHolder.getContext().getAuthentication() != null
+				&& SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
 
 	}
 }
