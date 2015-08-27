@@ -252,10 +252,10 @@ public class SNVPhylAnalysisIT {
 		@SuppressWarnings("resource")
 		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
 				"\\Z").next();
-//		assertTrue(
-//				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
-//				com.google.common.io.Files.equal(vcf2core1.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
-//						.toFile()));
+		assertTrue(
+				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
+				com.google.common.io.Files.equal(vcf2core1.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
 				.getCreatedByTool());
 		// only test to make sure the file has a valid size since PhyML uses a
@@ -345,10 +345,10 @@ public class SNVPhylAnalysisIT {
 		@SuppressWarnings("resource")
 		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
 				"\\Z").next();
-//		assertTrue(
-//				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
-//				com.google.common.io.Files.equal(vcf2core2.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
-//						.toFile()));
+		assertTrue(
+				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
+				com.google.common.io.Files.equal(vcf2core2.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
 				.getCreatedByTool());
 		// only test to make sure the file has a valid size since PhyML uses a
