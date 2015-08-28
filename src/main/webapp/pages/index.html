@@ -7,43 +7,43 @@
 </head>
 
 <body>
-  <div class="row" layout:fragment="page">
-    <div layout-gt-md="row" layout-sm="column" layout-margin="" layout-fill="">
-      <div flex="" class="md-whiteframe-z1">
-        <md-toolbar class="md-primary">
-          <div class="md-toolbar-tools">
-            <h2 th:text="#{event.title}">_Recent Activities_</h2>
-            <span flex=""></span>
-            <md-button th:href="@{/events/admin}" sec:authorize="hasRole('ROLE_ADMIN')"
-                       th:text="#{event.admin.link}">_All Projects_
-            </md-button>
-          </div>
-        </md-toolbar>
-        <md-content layout-padding="">
-          <div class="form-group">
-            <label for="size" th:text="#{event.size}">_Activities to show:_</label>
-            <select style="width:100px;" id="size" class="form-control event-count">
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-          </div>
-          <div id="events"></div>
-        </md-content>
+<div class="row" layout:fragment="page">
+  <div class="col-md-6 col-sm-12">
+    <section class="panel panel-primary">
+      <div class="panel-heading clearfix">
+        <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
+
+        <div class="btn-group pull-right">
+          <a class="btn btn-primary btn-sm" th:href="@{/events/admin}" sec:authorize="hasRole('ROLE_ADMIN')"
+             th:text="#{event.admin.link}">_All Projects_
+          </a>
+        </div>
       </div>
-      <div th:if="${updates}" flex-gt-sm="33" class="md-whiteframe-z1" ng-controller="updateController as updateCtrl">
-        <md-toolbar class="md-accent md-hue-1">
-          <div class="md-toolbar-tools">
-            <h2 th:text="#{updates.title}">_UPDATES_</h2>
-          </div>
-        </md-toolbar>
-        <md-content layout-padding="" class="updates" ng-show="updateCtrl.content">
-          <div class="updates-content" marked="updateCtrl.content"></div>
-        </md-content>
+      <div class="panel-body">
+        <div class="form-group">
+          <label for="size" th:text="#{event.size}">_Activities to show:_</label>
+          <select style="width:100px;" id="size" class="form-control event-count">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        <div id="events"></div>
       </div>
-    </div>
+    </section>
   </div>
+  <div th:if="${updates}" class="col-md-6 col-sm-12" ng-controller="updateController as updateCtrl">
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h4 th:text="#{updates.title}">_UPDATES_</h4>
+      </div>
+      <div class="panel-body" ng-show="updateCtrl.content">
+        <div class="updates-content" marked="updateCtrl.content"></div>
+      </div>
+    </section>
+  </div>
+</div>
   <th:block layout:fragment="page-scripts">
     <script th:inline="javascript">
       var PAGE = {
