@@ -8,7 +8,17 @@
 
 <body>
 <div class="row" layout:fragment="page">
-  <div class="col-md-6 col-sm-12">
+  <div th:if="${updates}" class="col-md-6 col-md-push-6 col-sm-12" ng-controller="updateController as updateCtrl">
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h4 th:text="#{updates.title}">_UPDATES_</h4>
+      </div>
+      <div class="panel-body" ng-show="updateCtrl.content">
+        <div class="updates-content" marked="updateCtrl.content"></div>
+      </div>
+    </section>
+  </div>
+  <div class="col-md-6 col-sm-12 col-md-pull-6">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
@@ -30,16 +40,6 @@
           </select>
         </div>
         <div id="events"></div>
-      </div>
-    </section>
-  </div>
-  <div th:if="${updates}" class="col-md-6 col-sm-12" ng-controller="updateController as updateCtrl">
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h4 th:text="#{updates.title}">_UPDATES_</h4>
-      </div>
-      <div class="panel-body" ng-show="updateCtrl.content">
-        <div class="updates-content" marked="updateCtrl.content"></div>
       </div>
     </section>
   </div>
