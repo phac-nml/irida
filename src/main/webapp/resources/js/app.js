@@ -3,7 +3,6 @@
   var deps = _.union(window.dependencies || [], [
     'ngAria',
     'ngAnimate',
-    'ngMaterial',
     'ngMessages',
     'ui.bootstrap',
     'ui.gravatar',
@@ -28,13 +27,6 @@
   }
 
   angular.module('irida', deps)
-    .config(function($mdThemingProvider) {
-      $mdThemingProvider.theme('default')
-        .primaryPalette('blue')
-        .accentPalette('blue-grey', {
-          'hue-1': '50'
-        });
-    })
     .config(function($httpProvider) {
       $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 

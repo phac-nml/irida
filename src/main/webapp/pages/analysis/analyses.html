@@ -8,6 +8,17 @@
 	<link rel="stylesheet" href="/resources/bower_components/ng-table/dist/ng-table.min.css"
 	      th:href="@{/resources/bower_components/ng-table/dist/ng-table.min.css}"/>
 	<script>window.dependencies = ['irida.analysis.user'];</script>
+	<style>
+		.progress {
+			height: 2px;
+		}
+		.crop {
+			max-width: 250px!important;
+			white-space: nowrap!important;
+			overflow: hidden!important;
+			text-overflow: ellipsis!important;
+		}
+	</style>
 </head>
 <body>
 <div layout:fragment="page" ddl:bundle-includes="analyses">
@@ -96,16 +107,14 @@
 						    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
 							<td class="analysis-percent" data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}
 								<span ng-if="analysis.analysisState !== 'ERROR'" class="md-caption">
-									<md-progress-linear md-mode="determinate"
-								                    ng-value="analysis.percentComplete" aria-valuetext="{{analysis.percentComplete | number:0}}%"></md-progress-linear>
+									<progressbar value="analysis.percentComplete"></progressbar>
 									{{ analysis.percentComplete | number:0 }}%
 								</span>
 							</td>
 							<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
-                              <md-button th:href="@{/analysis/{{analysis.id}}}" href="#" aria-label="Go to {{::analysis.label}}">
-	                              <md-tooltip>{{::analysis.label}}</md-tooltip>
-							    <span class="crop">{{::analysis.label}}</span>
-                              </md-button>
+                              <a class="btn btn-link" th:href="@{/analysis/{{analysis.id}}}" title="{{::analysis.label}}" href="#" aria-label="Go to {{::analysis.label}}">
+							    <div class="crop">{{::analysis.label}}</div>
+                              </a>
 							</td>
 							<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">
 								{{analysis.workflowName}}
@@ -122,8 +131,7 @@
 							<td>
 								<button ng-show="analysis.analysisState==='COMPLETED'" aria-label="#{form.download}"
 								        class="btn btn-default btn-xs pull-right download-analysis-btn"
-								        ng-click="ctrl.download(analysis.id)">
-									<md-tooltip th:text="#{form.download}"></md-tooltip>
+								        ng-click="ctrl.download(analysis.id)" data:tooltip="#{form.download}">
 									<fa:icon type="download" />
 								</button>
 							</td>
