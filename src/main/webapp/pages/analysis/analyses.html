@@ -11,8 +11,8 @@
 </head>
 <body>
 <div layout:fragment="page" ddl:bundle-includes="analyses">
-	<div layout="column" layout-gt-md="row" layout-padding="">
-		<aside ng-controller="filterController as filter" flex="" flex-gt-md="25">
+	<div class="row">
+		<aside ng-controller="filterController as filter" class="col-sm-3">
 			<div class="sidenav__inner--fixed sidebar">
 				<div class="sidebar__heading">
 					<h2>
@@ -80,7 +80,7 @@
 				</div>
 			</div>
 		</aside>
-		<div flex="">
+		<div class="col-sm-9">
 			<h1 style="margin-top: 0;" th:text="#{${admin} ? 'analyses.admin.page-title' : 'analyses.user.page-title'}">
 				_ANALYSIS_PAGE_</h1>
 
