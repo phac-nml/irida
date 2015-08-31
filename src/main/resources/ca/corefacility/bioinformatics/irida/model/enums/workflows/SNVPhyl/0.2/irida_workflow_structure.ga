@@ -130,6 +130,11 @@
                     "action_type": "ChangeDatatypeAction", 
                     "output_name": "out"
                 }, 
+                "HideDatasetActionout": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out"
+                }, 
                 "RenameDatasetActionout": {
                     "action_arguments": {
                         "newname": "invalid_positions.bed"
@@ -216,7 +221,7 @@
             "post_job_actions": {
                 "RenameDatasetActionoutput_log": {
                     "action_arguments": {
-                        "newname": "percentage_reference_mapped.txt"
+                        "newname": "mappingQuality.txt"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "output_log"
@@ -224,7 +229,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.3", 
-            "tool_state": "{\"minmap\": \"\\\"80\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"mindepth\": \"\\\"15\\\"\", \"bams\": \"null\"}", 
+            "tool_state": "{\"minmap\": \"\\\"80\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"mindepth\": \"\\\"2\\\"\", \"bams\": \"null\"}", 
             "tool_version": "0.0.3", 
             "type": "tool", 
             "user_outputs": [], 
@@ -530,7 +535,7 @@
                 }, 
                 "RenameDatasetActionvcf2core": {
                     "action_arguments": {
-                        "newname": "vcf2core.csv"
+                        "newname": "vcf2core.tsv"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "vcf2core"
@@ -555,6 +560,82 @@
             }, 
             "inputs": [], 
             "label": null, 
+            "name": "Regex Find And Replace", 
+            "outputs": [
+                {
+                    "name": "out_file1", 
+                    "type": "input"
+                }
+            ], 
+            "position": {
+                "left": 2241, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionout_file1": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/jjohnson/regex_find_replace/regex1/0.1.0", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"checks\": \"[{\\\"__index__\\\": 0, \\\"replacement\\\": \\\"\\\", \\\"pattern\\\": \\\"'\\\"}]\", \"__page__\": 0}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "1134975e-7d95-4ca8-ae69-14732e8ced29"
+        }, 
+        "13": {
+            "annotation": "", 
+            "id": 13, 
+            "input_connections": {
+                "tabfile": {
+                    "id": 11, 
+                    "output_name": "positions"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Filter Stats", 
+            "outputs": [
+                {
+                    "name": "out", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 2241, 
+                "top": 313
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionout": {
+                    "action_arguments": {
+                        "newname": "filterStats.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/filter_stats/filterstat/0.0.3", 
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"tabfile\": \"null\", \"summary\": \"null\"}", 
+            "tool_version": "0.0.3", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "d39f69c4-1a16-4464-bdf0-be05d9c8dbda"
+        }, 
+        "14": {
+            "annotation": "", 
+            "id": 14, 
+            "input_connections": {
+                "input": {
+                    "id": 12, 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
             "name": "PhyML", 
             "outputs": [
                 {
@@ -567,7 +648,7 @@
                 }
             ], 
             "position": {
-                "left": 2241, 
+                "left": 2569, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -578,11 +659,6 @@
                     "action_type": "ChangeDatatypeAction", 
                     "output_name": "output_tree"
                 }, 
-                "HideDatasetActionoutput_stats": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "output_stats"
-                }, 
                 "RenameDatasetActionoutput_stats": {
                     "action_arguments": {
                         "newname": "phylogeneticTreeStats.txt"
@@ -592,7 +668,7 @@
                 }, 
                 "RenameDatasetActionoutput_tree": {
                     "action_arguments": {
-                        "newname": "phylogeneticTree.tre"
+                        "newname": "phylogeneticTree.newick"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "output_tree"
@@ -606,13 +682,13 @@
             "user_outputs": [], 
             "uuid": "c525fb6c-19a0-416b-a5c2-2a2cd0e9f19f"
         }, 
-        "13": {
+        "15": {
             "annotation": "", 
-            "id": 13, 
+            "id": 15, 
             "input_connections": {
                 "phylip": {
-                    "id": 11, 
-                    "output_name": "phylip"
+                    "id": 12, 
+                    "output_name": "out_file1"
                 }
             }, 
             "inputs": [], 
@@ -625,7 +701,7 @@
                 }
             ], 
             "position": {
-                "left": 2241, 
+                "left": 2569, 
                 "top": 358
             }, 
             "post_job_actions": {
@@ -644,46 +720,7 @@
             "type": "tool", 
             "user_outputs": [], 
             "uuid": "e474528e-acd0-4e26-819e-dd1514567d26"
-        }, 
-        "14": {
-            "annotation": "", 
-            "id": 14, 
-            "input_connections": {
-                "tabfile": {
-                    "id": 11, 
-                    "output_name": "positions"
-                }
-            }, 
-            "inputs": [], 
-            "label": null, 
-            "name": "Filter Stats", 
-            "outputs": [
-                {
-                    "name": "out", 
-                    "type": "tabular"
-                }
-            ], 
-            "position": {
-                "left": 2241, 
-                "top": 471
-            }, 
-            "post_job_actions": {
-                "RenameDatasetActionout": {
-                    "action_arguments": {
-                        "newname": "filterStats.txt"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "out"
-                }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/filter_stats/filterstat/0.0.3", 
-            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"tabfile\": \"null\", \"summary\": \"null\"}", 
-            "tool_version": "0.0.3", 
-            "type": "tool", 
-            "user_outputs": [], 
-            "uuid": "d39f69c4-1a16-4464-bdf0-be05d9c8dbda"
         }
     }, 
-    "uuid": "294be179-c704-4564-8c02-2de9e84d3759"
+    "uuid": "3044ac47-817c-4687-b318-a51c2d925588"
 }
