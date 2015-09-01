@@ -95,6 +95,7 @@ ExecStop=/opt/irida/galaxy/galaxy-dist/run.sh --stop-daemon
 Type=forking
 User=galaxy-irida
 EnvironmentFile=/opt/irida/galaxy/env.sh
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
