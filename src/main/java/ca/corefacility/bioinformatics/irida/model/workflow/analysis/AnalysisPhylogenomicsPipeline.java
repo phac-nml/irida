@@ -33,6 +33,11 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 	public AnalysisOutputFile getPhylogeneticTree() {
 		return getAnalysisOutputFile("tree");
 	}
+	
+	@JsonIgnore
+	public AnalysisOutputFile getPhylogeneticTreeStats() {
+		return getAnalysisOutputFile("tree-stats");
+	}
 
 	@JsonIgnore
 	public AnalysisOutputFile getSnpMatrix() {
@@ -47,5 +52,15 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 	@JsonIgnore
 	public AnalysisOutputFile getCoreGenomeLog() {
 		return getAnalysisOutputFile("core");
+	}
+	
+	@JsonIgnore
+	public AnalysisOutputFile getMappingQuality() {
+		return getAnalysisOutputFile("mapping-quality");
+	}
+	
+	@JsonIgnore
+	public AnalysisOutputFile getFilterStats() {
+		return getAnalysisOutputFile("filter-stats");
 	}
 }

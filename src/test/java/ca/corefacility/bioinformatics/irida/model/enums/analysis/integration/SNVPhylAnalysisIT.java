@@ -102,10 +102,14 @@ public class SNVPhylAnalysisIT {
 	private Path outputSnpTable1;
 	private Path outputSnpMatrix1;
 	private Path vcf2core1;
+	private Path mappingQuality1;
+	private Path filterStats1;
 	
 	private Path outputSnpTable2;
 	private Path outputSnpMatrix2;
 	private Path vcf2core2;
+	private Path mappingQuality2;
+	private Path filterStats2;
 
 	/**
 	 * Sets up variables for testing.
@@ -173,10 +177,14 @@ public class SNVPhylAnalysisIT {
 		outputSnpTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpTable.tsv").toURI());
 		outputSnpMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpMatrix.tsv").toURI());
 		vcf2core1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/vcf2core.csv").toURI());
+		mappingQuality1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/mappingQuality.txt").toURI());
+		filterStats1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/filterStats.txt").toURI());
 		
 		outputSnpTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpTable.tsv").toURI());
 		outputSnpMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpMatrix.tsv").toURI());
 		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.csv").toURI());
+		mappingQuality2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/mappingQuality.txt").toURI());
+		filterStats2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/filterStats.txt").toURI());
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -229,8 +237,9 @@ public class SNVPhylAnalysisIT {
 				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals("the phylogenomics pipeline should have 4 output files.", 4, analysisPhylogenomics
+		assertEquals("the phylogenomics pipeline should have 7 output files.", 7, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
+		
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
 				.next();
@@ -240,6 +249,7 @@ public class SNVPhylAnalysisIT {
 						.getFile().toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
 				.getCreatedByTool());
+		
 		@SuppressWarnings("resource")
 		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
@@ -249,6 +259,7 @@ public class SNVPhylAnalysisIT {
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
 				.getCreatedByTool());
+		
 		@SuppressWarnings("resource")
 		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
 				"\\Z").next();
@@ -258,10 +269,33 @@ public class SNVPhylAnalysisIT {
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
 				.getCreatedByTool());
-		// only test to make sure the file has a valid size since PhyML uses a
+		
+		@SuppressWarnings("resource")
+		String mappingQualityContent = new Scanner(analysisPhylogenomics.getMappingQuality().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"mappingQuality should be the same but is \"" + mappingQualityContent + "\"",
+				com.google.common.io.Files.equal(mappingQuality1.toFile(), analysisPhylogenomics.getMappingQuality().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getMappingQuality()
+				.getCreatedByTool());
+		
+		@SuppressWarnings("resource")
+		String filterStatsContent = new Scanner(analysisPhylogenomics.getFilterStats().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"filterStats should be the same but is \"" + filterStatsContent + "\"",
+				com.google.common.io.Files.equal(filterStats1.toFile(), analysisPhylogenomics.getFilterStats().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+				.getCreatedByTool());
+		
+		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue("the phylogenetic tree file should not be empty.",
 				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+		assertTrue("the phylogenetic tree stats file should not be empty.",
+				Files.size(analysisPhylogenomics.getPhylogeneticTreeStats().getFile()) > 0);
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
@@ -322,8 +356,9 @@ public class SNVPhylAnalysisIT {
 				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals("the phylogenomics pipeline should have 4 output files.", 4, analysisPhylogenomics
+		assertEquals("the phylogenomics pipeline should have 7 output files.", 7, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
+		
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
 				.next();
@@ -333,6 +368,7 @@ public class SNVPhylAnalysisIT {
 						.getFile().toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
 				.getCreatedByTool());
+		
 		@SuppressWarnings("resource")
 		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
@@ -342,6 +378,7 @@ public class SNVPhylAnalysisIT {
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
 				.getCreatedByTool());
+		
 		@SuppressWarnings("resource")
 		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
 				"\\Z").next();
@@ -351,10 +388,33 @@ public class SNVPhylAnalysisIT {
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
 				.getCreatedByTool());
-		// only test to make sure the file has a valid size since PhyML uses a
+		
+		@SuppressWarnings("resource")
+		String mappingQualityContent = new Scanner(analysisPhylogenomics.getMappingQuality().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"mappingQuality should be the same but is \"" + mappingQualityContent + "\"",
+				com.google.common.io.Files.equal(mappingQuality2.toFile(), analysisPhylogenomics.getMappingQuality().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getMappingQuality()
+				.getCreatedByTool());
+		
+		@SuppressWarnings("resource")
+		String filterStatsContent = new Scanner(analysisPhylogenomics.getFilterStats().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"filterStats should be the same but is \"" + filterStatsContent + "\"",
+				com.google.common.io.Files.equal(filterStats2.toFile(), analysisPhylogenomics.getFilterStats().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+				.getCreatedByTool());
+		
+		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue("the phylogenetic tree file should not be empty.",
 				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+		assertTrue("the phylogenetic tree stats file should not be empty.",
+				Files.size(analysisPhylogenomics.getPhylogeneticTreeStats().getFile()) > 0);
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
