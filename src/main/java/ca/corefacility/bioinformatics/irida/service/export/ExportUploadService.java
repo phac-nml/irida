@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.export;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
@@ -160,8 +161,16 @@ public class ExportUploadService {
 
 			// login to host
 			logger.trace("Logging in to " + ftpHost + " as " + ftpUser);
-			client.connect(ftpHost, ftpPort);
-			client.login(ftpUser, ftpPassword);
+
+			try {
+				client.connect(ftpHost, ftpPort);
+			} catch (ConnectException ex) {
+				throw new UploadException("Couldn't connect to server " + ftpHost + ":" + ftpPort);
+			}
+
+			if (!client.login(ftpUser, ftpPassword)) {
+				throw new UploadException("Couldn't log in as " + ftpUser + client.getReplyString());
+			}
 
 			logger.trace(client.getStatus());
 
