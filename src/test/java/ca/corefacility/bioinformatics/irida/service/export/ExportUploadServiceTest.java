@@ -155,7 +155,7 @@ public class ExportUploadServiceTest {
 	 */
 	private NcbiExportSubmission createFakeSubmission() throws IOException {
 		NcbiExportSubmission submission = new NcbiExportSubmission();
-		submission.setId(1l);
+		submission.setId(1L);
 
 		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles();
 		Path tempFile = Files.createTempFile("sequencefile", ".fastq");
