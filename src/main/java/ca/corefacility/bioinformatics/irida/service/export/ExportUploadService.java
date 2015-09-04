@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.export;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
@@ -42,6 +42,9 @@ public class ExportUploadService {
 	@Value("${ncbi.upload.host}")
 	private String ftpHost = "localhost";
 
+	@Value("${ncbi.upload.port}")
+	private int ftpPort = 21;
+
 	@Value("${ncbi.upload.user}")
 	private String ftpUser = "test";
 
@@ -56,6 +59,29 @@ public class ExportUploadService {
 			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine) {
 		this.exportSubmissionService = exportSubmissionService;
 		this.templateEngine = templateEngine;
+	}
+
+	/**
+	 * Manually configure connection details for this service
+	 * 
+	 * @param ftpHost
+	 *            The hostname to connect to
+	 * @param ftpPort
+	 *            the ftp port to connect to
+	 * @param ftpUser
+	 *            the username to authenticate with
+	 * @param ftpPassword
+	 *            the password to authenticate with
+	 * @param baseDirectory
+	 *            the base directory to upload new runs into
+	 */
+	public void setConnectionDetails(String ftpHost, int ftpPort, String ftpUser, String ftpPassword,
+			String baseDirectory) {
+		this.ftpHost = ftpHost;
+		this.ftpPort = ftpPort;
+		this.ftpUser = ftpUser;
+		this.ftpPassword = ftpPassword;
+		this.baseDirectory = baseDirectory;
 	}
 
 	/**
@@ -134,8 +160,9 @@ public class ExportUploadService {
 
 			// login to host
 			logger.trace("Logging in to " + ftpHost + " as " + ftpUser);
-			client.connect(ftpHost);
+			client.connect(ftpHost, ftpPort);
 			client.login(ftpUser, ftpPassword);
+
 			logger.trace(client.getStatus());
 
 			// cd to submission base directory
@@ -228,8 +255,8 @@ public class ExportUploadService {
 	 *             if file could not be uploaded
 	 */
 	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException {
-		try (OutputStream storeFileStream = client.storeFileStream(filename)) {
-			Files.copy(path, storeFileStream);
+		try (InputStream stream = Files.newInputStream(path)) {
+			client.storeFile(filename, stream);
 		} catch (Exception e) {
 			String reply = client.getReplyString();
 			throw new UploadException("Could not upload file " + filename + " : " + reply, e);
