@@ -1,7 +1,7 @@
 ==========Reference Mapping Quality===========
 NUMBER OF BP's IN REFERENCE GENOME: 700
 MINIMUM DEPTH: 2
-MINIMUM MAPPING: 80
+MINIMUM MAPPING: 75
 SampleC: 7.29%
 SampleB: 7.29%
 SampleA: 7.29%

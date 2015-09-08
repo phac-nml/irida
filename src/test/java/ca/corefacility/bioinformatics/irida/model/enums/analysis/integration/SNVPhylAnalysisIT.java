@@ -340,7 +340,8 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
-		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.90", "minimum-read-coverage", "2");
+		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.90", "minimum-read-coverage", "2",
+				"minimum-percent-coverage", "90", "minimum-mean-mapping-quality", "20");
 		
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
@@ -424,6 +425,8 @@ public class SNVPhylAnalysisIT {
 
 		String minimumFreebayesCoverage = null;
 		String altAlleleFraction = null;
+		String minimumPercentCoverage = null;
+		String minimumDepthVerify = null;
 		
 		// navigate through the tree to make sure that you can find both types
 		// of input tools: the one where you upload the reference file, and the
@@ -438,8 +441,16 @@ public class SNVPhylAnalysisIT {
 				altAlleleFraction = params.get("options_type.section_input_filters_type.min_alternate_fraction");
 				break;
 			}
+			
+			if (ex.getToolName().contains("Verify Mapping Quality")) {
+				final Map<String, String> params = ex.getExecutionTimeParameters();
+				minimumPercentCoverage = params.get("minmap");
+				minimumDepthVerify = params.get("mindepth");
+			}
 		}
 		assertEquals("incorrect minimum freebayes coverage", "2", minimumFreebayesCoverage);
 		assertEquals("incorrect alternative allele fraction", "0.9", altAlleleFraction);
+		assertEquals("incorrect minimum depth for verify map", "2", minimumDepthVerify);
+		assertEquals("incorrect min percent coverage for verify map", "75", minimumPercentCoverage);
 	}
 }
