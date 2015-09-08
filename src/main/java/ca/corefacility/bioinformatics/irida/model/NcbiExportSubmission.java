@@ -133,6 +133,10 @@ public class NcbiExportSubmission implements MutableIridaThing {
 		return bioSampleFiles;
 	}
 
+	public void setBioSampleFiles(List<NcbiBioSampleFiles> bioSampleFiles) {
+		this.bioSampleFiles = bioSampleFiles;
+	}
+
 	public void setUploadState(ExportUploadState uploadState) {
 		this.uploadState = uploadState;
 	}

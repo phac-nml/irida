@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -60,6 +62,8 @@ public class NcbiBioSampleFiles {
 	private String libraryConstructionProtocol;
 
 	public NcbiBioSampleFiles() {
+		files = Lists.newArrayList();
+		pairs = Lists.newArrayList();
 	}
 
 	public NcbiBioSampleFiles(String namespace) {
