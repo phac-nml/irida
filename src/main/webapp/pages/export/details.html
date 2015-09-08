@@ -11,12 +11,6 @@
   <div layout:fragment="page">
     <main class="col-md-9 col-md-push-3" layout:fragment="main">
       <div class="row">
-        <div class="col-md-10">
-          <h1 role="heading" th:text="${submission.getLabel()}">__TITLE__</h1>
-        </div>
-
-      </div>
-      <div class="row">
         <div class="col-md-12">
           <div class="panel panel-info">
             <div class="panel-heading">
@@ -117,29 +111,33 @@
     <div class="col-md-3 col-md-pull-9">
       <aside class="sidebar">
         <div class="sidebar__heading">
-          <h2 id="sample-name" th:text="${submission.getLabel()}">__NAME__</h2>
+          <h2 id="sample-name" th:text="#{project.export.sidebar.title}">__NAME__</h2>
         </div>
         <div class="sidebar__body">
           <div class="sidebar__item">
             <div class="sidebar__item">
               <fa:icon type="id" />
             </div>
-            <div th:text="#{iridaThing.id}">ID</div>
+            <div>
+            <em th:text="#{iridaThing.id}">ID</em>
+              </div>
             <div id="sb-id" class="sidebar__value" th:text="${submission.getId()}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="date" />
+              <fa:icon type="pipelineState" />
             </div>
-            <div><em>_Upload Status_</em>
+            <div>
+              <em th:text="#{project.export.status}">_Upload Status_</em>
             </div>
             <div class="sidebar__value" th:text="${submission.uploadState}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="date" />
+              <fa:icon type="user" />
             </div>
-            <div><em>_Submitter_</em>
+            <div>
+              <em th:text="#{project.export.submitter}">_Submitter_</em>
             </div>
             <div class="sidebar__value">
               <a href="#" th:href="@{/users/{id}(id=${submission.submitter.id})}" th:text="${submission.submitter.label}"></a>
@@ -147,9 +145,21 @@
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
+              <fa:icon type="project" />
+            </div>
+            <div>
+              <em th:text="#{project.export.project}">_Project_</em>
+            </div>
+            <div class="sidebar__value">
+              <a href="#" th:href="@{/projects/{id}(id=${submission.project.id})}" th:text="${submission.project.label}"></a>
+            </div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
               <fa:icon type="date" />
             </div>
-            <div><em th:text="#{iridaThing.timestamp}">_Created_</em>
+            <div>
+              <em th:text="#{iridaThing.timestamp}">_Created_</em>
             </div>
             <div id="sb-created" class="sidebar__value" th:text="${#calendars.format(submission.getCreatedDate(), 'dd MMM yyyy')}"></div>
           </div>
@@ -159,8 +169,6 @@
     </div>
   </div>
   <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-
     <th:block layout:fragment="pageScripts"></th:block>
   </th:block>
 </body>
