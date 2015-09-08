@@ -218,9 +218,9 @@
           contentType: 'application/json',
           data: JSON.stringify(submission),
           success: function(data, textStatus, jqXHR) {
-            var url = /*[[@{/export/submission/}]]*/ '/export/submission/';
+            var url = /*[[@{/export/}]]*/ '/export/';
             url = url + data.submissionId;
-            //window.location = url;
+            window.location = url;
           }
         });
       });
