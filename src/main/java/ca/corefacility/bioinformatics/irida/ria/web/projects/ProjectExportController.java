@@ -54,6 +54,7 @@ public class ProjectExportController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectExportController.class);
 
 	public static final String NCBI_EXPORT_VIEW = "export/ncbi";
+	public static final String EXPORT_DETAILS_VIEW = "export/details";
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
@@ -87,8 +88,7 @@ public class ProjectExportController {
 	 * @return Name of the NCBI export page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("s") List<Long> sampleIds,
-			Model model) {
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("s") List<Long> sampleIds, Model model) {
 		Project project = projectService.read(projectId);
 
 		logger.trace("Reading " + sampleIds.size() + " samples");
@@ -200,6 +200,13 @@ public class ProjectExportController {
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 
 		return ImmutableMap.of("submissionId", ncbiExportSubmission.getId());
+	}
+
+	@RequestMapping("/export/{submissionId}")
+	public String getDetailsView(@PathVariable Long submissionId, Model model) {
+		NcbiExportSubmission submission = exportSubmissionService.read(submissionId);
+		model.addAttribute("submission", submission);
+		return EXPORT_DETAILS_VIEW;
 	}
 
 	/**

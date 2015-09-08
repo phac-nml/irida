@@ -54,7 +54,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	@Column(name = "namespace", nullable = false)
 	private String ncbiNamespace;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinTable(name = "ncbi_export_submission_biosample")
 	private List<NcbiBioSampleFiles> bioSampleFiles;
 

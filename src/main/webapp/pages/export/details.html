@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
+
+<head lang="en">
+  <title>THIS IS SOMETHING WRONG</title>
+</head>
+
+<body>
+
+  <div layout:fragment="page">
+    <main class="col-md-9 col-md-push-3" layout:fragment="main">
+      <div class="row">
+        <div class="col-md-10">
+          <h1 role="heading" th:text="${submission.getLabel()}">__TITLE__</h1>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <b class="panel-title">_Submission Data_</b>
+            </div>
+            <div class="panel-body">
+              <dl>
+                <dt>_BioProject ID_</dt>
+                <dd th:text="${submission.bioProjectId}"></dd>
+              </dl>
+              <dl>
+                <dt>_Release date_</dt>
+                <dd th:text="${submission.releaseDate}"></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <b class="panel-title">_Samples_</b>
+            </div>
+            <ul class="list-group">
+              <li class="list-group-item" th:each="sample : ${submission.bioSampleFiles}">
+                <div class="row">
+                  <dl class="col-md-6">
+                    <dt>_BioSample ID_</dt>
+                    <dd th:text="${sample.bioSample}"></dd>
+                  </dl>
+                  <dl class="col-md-6">
+                    <dt>_Library Construction Protocol_</dt>
+                    <dd th:text="${sample.libraryConstructionProtocol}"></dd>
+                  </dl>
+                </div>
+                <div class="row">
+                  <dl class="col-md-6">
+                    <dt>_Library Name_</dt>
+                    <dd th:text="${sample.libraryName}"></dd>
+                  </dl>
+                  <dl class="col-md-6">
+                    <dt>_Instrument Model_</dt>
+                    <dd th:text="${sample.instrumentModel.value}"></dd>
+                  </dl>
+                </div>
+                <div class="row">
+                  <dl class="col-md-6">
+                    <dt>_Library Strategy_</dt>
+                    <dd th:text="${sample.libraryStrategy.value}"></dd>
+                  </dl>
+                  <dl class="col-md-6">
+                    <dt>_Library Selection_</dt>
+                    <dd th:text="${sample.librarySelection.value}"></dd>
+                  </dl>
+                </div>
+                <div class="row">
+                  <dl class="col-md-6">
+                    <dt>_Library Source_</dt>
+                    <dd th:text="${sample.librarySource.value}"></dd>
+                  </dl>
+                </div>
+                
+                <!-- Files -->
+                
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="col-md-3 col-md-pull-9">
+      <aside class="sidebar">
+        <div class="sidebar__heading">
+          <h2 id="sample-name" th:text="${submission.getLabel()}">__NAME__</h2>
+        </div>
+        <div class="sidebar__body">
+          <div class="sidebar__item">
+            <div class="sidebar__item">
+              <fa:icon type="id" />
+            </div>
+            <div th:text="#{iridaThing.id}">ID</div>
+            <div id="sb-id" class="sidebar__value" th:text="${submission.getId()}"></div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <fa:icon type="date" />
+            </div>
+            <div><em>_Upload Status_</em>
+            </div>
+            <div class="sidebar__value" th:text="${submission.uploadState}"></div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <fa:icon type="date" />
+            </div>
+            <div><em>_Submitter_</em>
+            </div>
+            <div class="sidebar__value">
+              <a href="#" th:href="@{/users/{id}(id=${submission.submitter.id})}" th:text="${submission.submitter.label}"></a>
+            </div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <fa:icon type="date" />
+            </div>
+            <div><em th:text="#{iridaThing.timestamp}">_Created_</em>
+            </div>
+            <div id="sb-created" class="sidebar__value" th:text="${#calendars.format(submission.getCreatedDate(), 'dd MMM yyyy')}"></div>
+          </div>
+
+        </div>
+      </aside>
+    </div>
+  </div>
+  <th:block layout:fragment="page-scripts">
+    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+
+    <th:block layout:fragment="pageScripts"></th:block>
+  </th:block>
+</body>
+
+</html>
