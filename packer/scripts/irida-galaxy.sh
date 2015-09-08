@@ -80,7 +80,7 @@ su galaxy-irida -c 'config_galaxy'
 
 systemctl start mariadb
 echo "grant all privileges on galaxy_irida.* to 'irida'@'localhost' identified by 'irida';" | mysql -u root
-echo "create database galaxy_irida;" | mysql -u root
+echo "create database galaxy_irida character set 'utf8';" | mysql -u root
 
 # Write out a systemd startup script for galaxy
 cat > /etc/systemd/system/galaxy.service <<EOF
