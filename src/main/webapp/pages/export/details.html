@@ -20,15 +20,19 @@
         <div class="col-md-12">
           <div class="panel panel-info">
             <div class="panel-heading">
-              <b class="panel-title">_Submission Data_</b>
+              <b class="panel-title" th:text="#{project.export.metadata}">_Project Data_</b>
             </div>
             <div class="panel-body">
               <dl>
-                <dt>_BioProject ID_</dt>
+                <dt th:text="#{project.export.bioproject.title}">_BioProject ID_</dt>
                 <dd th:text="${submission.bioProjectId}"></dd>
               </dl>
               <dl>
-                <dt>_Release date_</dt>
+                <dt th:text="#{project.export.namespace.title}">_Namespace ID_</dt>
+                <dd th:text="${submission.ncbiNamespace}"></dd>
+              </dl>
+              <dl>
+                <dt th:text="#{project.export.release_date.title}">_Release date_</dt>
                 <dd th:text="${submission.releaseDate}"></dd>
               </dl>
             </div>
@@ -39,43 +43,43 @@
         <div class="col-md-12">
           <div class="panel panel-info">
             <div class="panel-heading">
-              <b class="panel-title">_Samples_</b>
+              <b class="panel-title" th:text="#{project.export.files}">_Samples_</b>
             </div>
             <ul class="list-group">
               <li class="list-group-item" th:each="sample : ${submission.bioSampleFiles}">
                 <div class="row">
                   <dl class="col-md-6">
-                    <dt>_BioSample ID_</dt>
+                    <dt th:text="#{project.export.biosample.title}">_BioSample ID_</dt>
                     <dd th:text="${sample.bioSample}"></dd>
                   </dl>
                   <dl class="col-md-6">
-                    <dt>_Library Construction Protocol_</dt>
+                    <dt th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</dt>
                     <dd th:text="${sample.libraryConstructionProtocol}"></dd>
                   </dl>
                 </div>
                 <div class="row">
                   <dl class="col-md-6">
-                    <dt>_Library Name_</dt>
+                    <dt th:text="#{project.export.library_name.title}">_Library Name_</dt>
                     <dd th:text="${sample.libraryName}"></dd>
                   </dl>
                   <dl class="col-md-6">
-                    <dt>_Instrument Model_</dt>
+                    <dt th:text="#{project.export.instrument_model.title}">_Instrument Model_</dt>
                     <dd th:text="${sample.instrumentModel.value}"></dd>
                   </dl>
                 </div>
                 <div class="row">
                   <dl class="col-md-6">
-                    <dt>_Library Strategy_</dt>
+                    <dt th:text="#{project.export.library_strategy.title}">_Library Strategy_</dt>
                     <dd th:text="${sample.libraryStrategy.value}"></dd>
                   </dl>
                   <dl class="col-md-6">
-                    <dt>_Library Selection_</dt>
+                    <dt th:text="#{project.export.library_selection.title}">_Library Selection_</dt>
                     <dd th:text="${sample.librarySelection.value}"></dd>
                   </dl>
                 </div>
                 <div class="row">
                   <dl class="col-md-6">
-                    <dt>_Library Source_</dt>
+                    <dt th:text="#{project.export.library_source.title}">_Library Source_</dt>
                     <dd th:text="${sample.librarySource.value}"></dd>
                   </dl>
                 </div>
