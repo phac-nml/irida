@@ -6,7 +6,7 @@
              projectDescription="description" remoteURL="somewhere"/>
 
     <sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
-            sequencerSampleId="sample1" sampleName="sample1"/>
+             sampleName="sample1"/>
 
     <project_sample id="1" createdDate="2013-07-18 14:20:19.0"
                     project_id="1" sample_id="1"/>

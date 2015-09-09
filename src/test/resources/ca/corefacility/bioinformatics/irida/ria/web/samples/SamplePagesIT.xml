@@ -41,16 +41,16 @@
     <related_project/>
 
     <sample id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-20 14:20:19.0" description="description1"
-            sequencerSampleId="sample1" sampleName="sample1" organism="E. coli" latitude="49.8994" longitude="-97.1392"
+             sampleName="sample1" organism="E. coli" latitude="49.8994" longitude="-97.1392"
             collectedBy="Fred Penner" isolationSource="grass" geographicLocationName="Somewhere:nowhere" strain="O157" isolate="54343"/>
     <sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
-            sequencerSampleId="sample2" sampleName="sample2"/>
+             sampleName="sample2"/>
     <sample id="3" createdDate="2013-07-18 14:20:19.0" description="description3"
-            sequencerSampleId="sample3" sampleName="sample3"/>
+             sampleName="sample3"/>
     <sample id="4" createdDate="2013-07-18 14:20:19.0" description="description4"
-            sequencerSampleId="sample4" sampleName="sample4"/>
+             sampleName="sample4"/>
     <sample id="5" createdDate="2013-07-18 14:20:19.0" description="description5"
-            sequencerSampleId="sample5" sampleName="sample5"/>
+             sampleName="sample5"/>
 
     <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:20:19.0"/>
     <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:20:19.0"/>
