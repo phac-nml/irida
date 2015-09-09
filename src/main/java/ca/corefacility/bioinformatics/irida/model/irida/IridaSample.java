@@ -6,6 +6,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
@@ -19,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
  * 
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public interface IridaSample {
 	/**
 	 * Get the local numerical identifier
