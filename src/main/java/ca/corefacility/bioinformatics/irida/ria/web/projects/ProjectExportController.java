@@ -202,7 +202,16 @@ public class ProjectExportController {
 		return ImmutableMap.of("submissionId", ncbiExportSubmission.getId());
 	}
 
-	@RequestMapping("/export/{submissionId}")
+	/**
+	 * Get the details view of a given {@link NcbiExportSubmission}
+	 * 
+	 * @param submissionId
+	 *            the {@link NcbiExportSubmission} id
+	 * @param model
+	 *            model for the view
+	 * @return name of the details view
+	 */
+	@RequestMapping("/projects/{projectId}/export/{submissionId}")
 	public String getDetailsView(@PathVariable Long submissionId, Model model) {
 		NcbiExportSubmission submission = exportSubmissionService.read(submissionId);
 		model.addAttribute("submission", submission);

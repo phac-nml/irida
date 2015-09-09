@@ -161,7 +161,7 @@
       $("#submissionForm").submit(function(event) {
 
         $(".empty-file-warning").hide();
-        
+
         var single = [];
         var paired = [];
 
@@ -193,8 +193,8 @@
           sample.find('.single_files:checked').each(function() {
             single.push($(this).val());
           });
-          
-          if(paired.length + single.length == 0){
+
+          if (paired.length + single.length == 0) {
             sample.find(".empty-file-warning").show();
           }
 
@@ -218,7 +218,7 @@
           contentType: 'application/json',
           data: JSON.stringify(submission),
           success: function(data, textStatus, jqXHR) {
-            var url = /*[[@{/export/}]]*/ '/export/';
+            var url = /*[[@{/projects/{id}/export/(id=${project.id})}]]*/ '/export/';
             url = url + data.submissionId;
             window.location = url;
           }
