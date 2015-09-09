@@ -42,7 +42,7 @@ public class SampleTest {
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
 
-		assertEquals("Wrong number of violations.", 3, violations.size());
+		assertEquals("Wrong number of violations.", 2, violations.size());
 	}
 	
 	@Test
@@ -51,7 +51,7 @@ public class SampleTest {
 		s.setSampleName("");
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
-		assertEquals("Wrong number of violations.", 2, violations.size());
+		assertEquals("Wrong number of violations.", 1, violations.size());
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class SampleTest {
 			Sample s = new Sample();
 			s.setSampleName("ATLEAST3" + c);
 			Set<ConstraintViolation<Sample>> violations = validator.validate(s);
-			assertEquals("Wrong number of violations.", 2, violations.size());
+			assertEquals("Wrong number of violations.", 1, violations.size());
 		}
 	}
 }
