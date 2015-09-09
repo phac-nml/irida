@@ -20,10 +20,8 @@ import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionS
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 @Service
-// TODO: Write permission
-@PreAuthorize("permitAll()")
-public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiExportSubmission>
-		implements NcbiExportSubmissionService {
+public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiExportSubmission> implements
+		NcbiExportSubmissionService {
 
 	private final NcbiExportSubmissionRepository repository;
 
@@ -37,6 +35,7 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasPermission(#id, 'canReadExportSubmission')")
 	public NcbiExportSubmission read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
@@ -45,8 +44,9 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NcbiExportSubmission create(NcbiExportSubmission object)
-			throws ConstraintViolationException, EntityExistsException {
+	@PreAuthorize("permitAll()")
+	public NcbiExportSubmission create(NcbiExportSubmission object) throws ConstraintViolationException,
+			EntityExistsException {
 		return super.create(object);
 	}
 
@@ -54,6 +54,7 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state) {
 		return repository.getSubmissionsWithState(state);
 	}
@@ -62,8 +63,9 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NcbiExportSubmission update(Long id, Map<String, Object> updatedFields)
-			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public NcbiExportSubmission update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
+			EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
 	}
 
