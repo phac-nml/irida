@@ -119,7 +119,7 @@ public class SampleServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
 	public void testGetSampleByExternalIdDuplicates() {
 		Project p = projectService.read(7L);
-		Sample s = sampleService.getSampleBySampleName(p, "external");
+		Sample s = sampleService.getSampleBySampleName(p, "sample");
 		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(7L), s.getId());
 	}
 
