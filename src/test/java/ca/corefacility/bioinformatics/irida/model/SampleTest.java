@@ -39,7 +39,6 @@ public class SampleTest {
 	public void testNullSampleName() {
 		Sample s = new Sample();
 		s.setSampleName(null);
-		s.setSequencerSampleId(null);
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
 
@@ -50,7 +49,6 @@ public class SampleTest {
 	public void testEmptySampleName() {
 		Sample s = new Sample();
 		s.setSampleName("");
-		s.setSequencerSampleId("");
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
 		assertEquals("Wrong number of violations.", 2, violations.size());
@@ -60,7 +58,6 @@ public class SampleTest {
 	public void testInvalidSampleName() {
 		Sample s = new Sample();
 		s.setSampleName("This name has a single quote ' and spaces and a period.");
-		s.setSequencerSampleId("external");
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
 		assertEquals("Wrong number of violations.", 3, violations.size());
@@ -76,7 +73,6 @@ public class SampleTest {
 		for (char c : blacklist) {
 			Sample s = new Sample();
 			s.setSampleName("ATLEAST3" + c);
-			s.setSequencerSampleId("ATLEAST3" + c);
 			Set<ConstraintViolation<Sample>> violations = validator.validate(s);
 			assertEquals("Wrong number of violations.", 2, violations.size());
 		}

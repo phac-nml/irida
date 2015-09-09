@@ -38,16 +38,6 @@ public interface IridaSample {
 	public String getSampleName();
 
 	/**
-	 * Get the sample ID as produced by the sequencer which produced it
-	 * 
-	 * @return the identifier used by the sequencer for the sample.
-	 */
-	@NotNull(message = "{sample.external.id.notnull}")
-	@Size(min = 3, message = "{sample.external.id.too.short}")
-	@ValidSampleName
-	public String getSequencerSampleId();
-
-	/**
 	 * Get a text description of the sample
 	 * 
 	 * @return a plain-text description of the sample.
