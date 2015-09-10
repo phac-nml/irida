@@ -47,6 +47,22 @@
 	</style>
 </head>
 <body>
+
+<div class="panel panel-default" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
+	<div class="panel-heading">
+
+		<button class="btn btn-default btn-sm btn-block" ngf-select="fileUploadCtrl.uploadFiles($files)" multiple="true"><th:block th:text="#{samples.files.upload.btn}"></th:block>&nbsp;<fa:icon type="upload"/></button>
+	</div>
+	<div class="ng-cloak panel-body file-upload-progress flexed animated" ng-class="{fadeIn: fileUploadCtrl.uploading, fadeOut: !fileUploadCtrl.uploading}">
+		<progressbar class="progress-striped active" value="fileUploadCtrl.progress">{{ fileUploadCtrl.progress
+			}}%
+		</progressbar>
+		<button class="btn btn-default btn-xs">
+			<fa:icon type="remove"/>
+		</button>
+	</div>
+</div>
+
 <main layout:fragment="main" ddl:bundle-includes="sample-files">
 	<div class="row">
 		<div class="col-md-12">
