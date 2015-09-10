@@ -83,7 +83,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 		when(sequenceFileService.getSequenceFilesForSample(s)).thenReturn(relationships);
 
-		ModelMap modelMap = controller.getSampleSequenceFiles(p.getId(), s.getId());
+		ModelMap modelMap = controller.getSampleSequenceFiles(s.getId());
 
 		// verify that the service calls were used.
 		verify(projectService).read(p.getId());
@@ -160,7 +160,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenReturn(join);
 		when(sequenceFilePairService.getPairedFileForSequenceFile(sf)).thenReturn(pairFile);
 
-		ModelMap modelMap = controller.getSequenceFileForSample(p.getId(), s.getId(), sf.getId());
+		ModelMap modelMap = controller.getSequenceFileForSample(s.getId(), sf.getId());
 
 		verify(projectService).read(p.getId());
 		verify(sampleService).read(s.getId());
@@ -202,7 +202,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenThrow(
 				new EntityNotFoundException("not in sample"));
 
-		controller.getSequenceFileForSample(p.getId(), s.getId(), sf.getId());
+		controller.getSequenceFileForSample(s.getId(), sf.getId());
 
 	}
 
@@ -277,7 +277,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 		when(sequenceFileService.createSequenceFilePairInSample(any(SequenceFile.class),
 				any(SequenceFile.class),any(Sample.class))).thenReturn(relationships);
-		ModelMap modelMap = controller.addNewSequenceFilePairToSample(p.getId(), s.getId(),
+		ModelMap modelMap = controller.addNewSequenceFilePairToSample(s.getId(),
 				mmf1, resource1, mmf2, resource2, response);
 		verify(projectService).read(p.getId());
 		verify(sampleService).getSampleForProject(p, s.getId());
@@ -351,7 +351,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 		when(sequenceFileService.createSequenceFilePairInSample(any(SequenceFile.class),
 				any(SequenceFile.class),any(Sample.class))).thenReturn(relationships);
-		controller.addNewSequenceFilePairToSample(p.getId(), s.getId(),
+		controller.addNewSequenceFilePairToSample(s.getId(),
 				mmf1, resource1, mmf2, resource2, response);
 				
 	}

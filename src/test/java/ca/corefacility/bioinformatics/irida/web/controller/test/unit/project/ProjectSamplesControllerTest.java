@@ -210,7 +210,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.update(s.getId(), updatedFields)).thenReturn(s);
 
-		ModelMap modelMap = controller.updateSample(p.getId(), s.getId(), updatedFields);
+		ModelMap modelMap = controller.updateSample(s.getId(), updatedFields);
 
 		verify(sampleService).getSampleForProject(p, s.getId());
 		verify(sampleService).update(s.getId(), updatedFields);
