@@ -106,7 +106,7 @@ public class RESTProjectSamplesController {
 			resource.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
 			labeledProjectSampleResources.add(resource);
 			final String location = linkTo(
-					methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withSelfRel()
+					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId,sampleId)).withSelfRel()
 					.getHref();
 			response.addHeader(HttpHeaders.LOCATION, location);
 		}
@@ -232,6 +232,10 @@ public class RESTProjectSamplesController {
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
 	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
+		//verify sample is in project
+		Project project = projectService.read(projectId);
+		sampleService.getSampleForProject(project, sampleId);
+		
 		ModelMap modelMap = getSample(sampleId);
 		Sample s = (Sample) modelMap.get(RESTGenericController.RESOURCE_NAME);
 		

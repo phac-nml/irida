@@ -71,7 +71,6 @@ public class SampleSequenceFilesControllerTest {
 
 	@Test
 	public void testGetSampleSequenceFiles() throws IOException {
-		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
 		Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
@@ -79,15 +78,13 @@ public class SampleSequenceFilesControllerTest {
 		List<Join<Sample, SequenceFile>> relationships = Lists.newArrayList(r);
 
 		// mock out the service calls
-		when(projectService.read(p.getId())).thenReturn(p);
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
+		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.getSequenceFilesForSample(s)).thenReturn(relationships);
 
 		ModelMap modelMap = controller.getSampleSequenceFiles(s.getId());
 
 		// verify that the service calls were used.
-		verify(projectService).read(p.getId());
-		verify(sampleService).getSampleForProject(p,s.getId());
+		verify(sampleService).read(s.getId());
 		verify(sequenceFileService).getSequenceFilesForSample(s);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
@@ -99,7 +96,7 @@ public class SampleSequenceFilesControllerTest {
 
 		Link selfCollection = resources.getLink(Link.REL_SELF);
 		Link sample = resources.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
+		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
 
 		assertEquals(sampleLocation + "/sequenceFiles", selfCollection.getHref());
@@ -114,17 +111,14 @@ public class SampleSequenceFilesControllerTest {
 
 	@Test
 	public void testRemoveSequenceFileFromSample() throws IOException {
-		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
 
-		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
 
-		ModelMap modelMap = controller.removeSequenceFileFromSample(p.getId(), s.getId(), sf.getId());
+		ModelMap modelMap = controller.removeSequenceFileFromSample(s.getId(), sf.getId());
 
-		verify(projectService, times(1)).read(p.getId());
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequenceFileService, times(1)).read(sf.getId());
 
@@ -138,8 +132,7 @@ public class SampleSequenceFilesControllerTest {
 		Link sample = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		Link sequenceFiles = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 
-		String projectLocation = "http://localhost/api/projects/" + p.getId();
-		String sampleLocation = projectLocation + "/samples/" + s.getId();
+		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 
 		assertNotNull(sample);
 		assertEquals(sampleLocation, sample.getHref());
@@ -149,20 +142,17 @@ public class SampleSequenceFilesControllerTest {
 
 	@Test
 	public void testGetSequenceFileForSample() throws IOException {
-		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s, sf);
 		SequenceFile pairFile = TestDataFactory.constructSequenceFile();
 
-		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenReturn(join);
 		when(sequenceFilePairService.getPairedFileForSequenceFile(sf)).thenReturn(pairFile);
 
 		ModelMap modelMap = controller.getSequenceFileForSample(s.getId(), sf.getId());
 
-		verify(projectService).read(p.getId());
 		verify(sampleService).read(s.getId());
 		verify(sequenceFileService).getSequenceFileForSample(s, sf.getId());
 		verify(sequenceFilePairService).getPairedFileForSequenceFile(sf);
@@ -178,7 +168,7 @@ public class SampleSequenceFilesControllerTest {
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		Link pair = sfr.getLink(RESTSampleSequenceFilesController.REL_PAIR);
 
-		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
+		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
 
 		assertNotNull(self);
@@ -208,7 +198,6 @@ public class SampleSequenceFilesControllerTest {
 
 	@Test
 	public void testAddNewSequenceFileToSample() throws IOException {
-		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
 		Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
@@ -220,11 +209,9 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s)))
 				.thenReturn(r);
-		when(projectService.read(p.getId())).thenReturn(p);
 		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
-		ModelMap modelMap = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf, resource,response);
-		verify(sampleService).getSampleForProject(p, s.getId());
-		verify(projectService).read(p.getId());
+		ModelMap modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource,response);
+		verify(sampleService).read(s.getId());
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequenceFileService).createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s));
 		
@@ -238,7 +225,7 @@ public class SampleSequenceFilesControllerTest {
 		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		
-		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
+		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
 		assertNotNull("self reference must exist",self);
 		assertEquals("self reference must be correct",sequenceFileLocation, self.getHref());
@@ -252,7 +239,6 @@ public class SampleSequenceFilesControllerTest {
 	
 	@Test
 	public void testAddNewSequenceFilePairToSample() throws IOException {
-		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf1 = TestDataFactory.constructSequenceFile();
 		SequenceFile sf2 = TestDataFactory.constructSequenceFile();
@@ -272,15 +258,12 @@ public class SampleSequenceFilesControllerTest {
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		// mock out the service calls
-		when(projectService.read(p.getId())).thenReturn(p);
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
+		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.createSequenceFilePairInSample(any(SequenceFile.class),
 				any(SequenceFile.class),any(Sample.class))).thenReturn(relationships);
 		ModelMap modelMap = controller.addNewSequenceFilePairToSample(s.getId(),
 				mmf1, resource1, mmf2, resource2, response);
-		verify(projectService).read(p.getId());
-		verify(sampleService).getSampleForProject(p, s.getId());
+		verify(sampleService).read(s.getId());
 		verify(sequenceFileService).createSequenceFilePairInSample(any(SequenceFile.class),
 				any(SequenceFile.class),any(Sample.class));
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
@@ -292,7 +275,7 @@ public class SampleSequenceFilesControllerTest {
 		assertTrue("Resource collection should have only 2 LabelledRelationshipResource instances",rc.size() == 2);
 		Link selfCollection = rc.getLink(Link.REL_SELF);
 		Link sampleRC = rc.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
+		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFilesLocation = sampleLocation + "/sequenceFiles/pairs";
 		assertEquals("Collection location should be correct",sequenceFilesLocation, selfCollection.getHref());
 		assertEquals("Sample location should be correct",sampleLocation,sampleRC.getHref());
@@ -316,8 +299,7 @@ public class SampleSequenceFilesControllerTest {
 			assertEquals("Sequence file location should be correct",sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
 			assertNotNull("Sample location should not be null",sample);
 			assertEquals("Sample location should be correct",sampleLocation, sample.getHref());
-			assertEquals("Header sequence file location should be correct","http://localhost/api/projects/" + p.getId() +
-					"/samples/" + s.getId() + "/sequenceFiles/" + sequences[i].getId(), locations.get(i));
+			assertEquals("Header sequence file location should be correct","http://localhost/api/samples/" + s.getId() + "/sequenceFiles/" + sequences[i].getId(), locations.get(i));
 		}
 		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
 		Files.delete(f1);

@@ -80,7 +80,7 @@ public class ProjectSamplesControllerTest {
         Link sequenceFilesLink = s.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
         Link projectLink = s.getLink(RESTProjectSamplesController.REL_PROJECT);
         String projectLocation = "http://localhost/api/projects/" + p.getId();
-        String sampleLocation = projectLocation + "/samples/" + s.getId();
+        String sampleLocation = "http://localhost/api/samples/" + s.getId();
         assertNotNull("Sample resource's self link should not be null",selfLink);
         assertEquals("Sample resource's sample location should equal [" + sampleLocation + "]",
                         sampleLocation, selfLink.getHref());
@@ -172,12 +172,14 @@ public class ProjectSamplesControllerTest {
 
 		// mock out the service calls
 		when(projectService.read(p.getId())).thenReturn(p);
+		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 
 		ModelMap modelMap = controller.getProjectSample(p.getId(), s.getId());
 
-		verify(sampleService).getSampleForProject(p, s.getId());
+		verify(sampleService).read(s.getId());
 		verify(projectService).read(p.getId());
+		verify(sampleService).getSampleForProject(p, s.getId());
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof Sample);
@@ -188,7 +190,7 @@ public class ProjectSamplesControllerTest {
 		Link projectLink = sr.getLink(RESTProjectSamplesController.REL_PROJECT);
 
 		String projectLocation = "http://localhost/api/projects/" + p.getId();
-		String sampleLocation = projectLocation + "/samples/" + s.getId();
+		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 
 		assertNotNull(selfLink);
 		assertEquals(sampleLocation, selfLink.getHref());
@@ -203,16 +205,14 @@ public class ProjectSamplesControllerTest {
 
 	@Test
 	public void testUpdateSample() {
-		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		Map<String, Object> updatedFields = ImmutableMap.of("sampleName", (Object) "some new name");
 
-		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.update(s.getId(), updatedFields)).thenReturn(s);
 
 		ModelMap modelMap = controller.updateSample(s.getId(), updatedFields);
 
-		verify(sampleService).getSampleForProject(p, s.getId());
+		verify(sampleService).read(s.getId());
 		verify(sampleService).update(s.getId(), updatedFields);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
@@ -221,12 +221,10 @@ public class ProjectSamplesControllerTest {
 		RootResource resource = (RootResource) o;
 		Map<String, String> links = linksToMap(resource.getLinks());
 		String self = links.get(Link.REL_SELF);
-		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId(), self);
+		assertEquals("http://localhost/api/samples/" + s.getId(), self);
 		String sequenceFiles = links.get(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles",
+		assertEquals("http://localhost/api/samples/" + s.getId() + "/sequenceFiles",
 				sequenceFiles);
-		String project = links.get(RESTProjectsController.REL_PROJECT);
-		assertEquals("http://localhost/api/projects/" + p.getId(), project);
 	}
 
 	@Test

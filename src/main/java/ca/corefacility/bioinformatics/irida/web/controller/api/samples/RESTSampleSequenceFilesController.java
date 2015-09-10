@@ -295,18 +295,14 @@ public class RESTSampleSequenceFilesController {
 	 * @throws IOException
 	 *             if we can't write the file to disk.
 	 */
-	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ModelMap addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
+	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ModelMap addNewSequenceFileToSample(@PathVariable Long sampleId,
 			@RequestPart("file") MultipartFile file,
 			@RequestPart(value = "parameters", required = false) SequenceFileResource fileResource, HttpServletResponse response) throws IOException {
 		ModelMap modelMap = new ModelMap();
 		
-		logger.debug("Adding sequence file to sample " + sampleId + " in project " + projectId);
+		logger.debug("Adding sequence file to sample " + sampleId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
-		Project p = projectService.read(projectId);
-		logger.trace("Read project " + projectId);
-		// confirm that a relationship exists between the project and the sample
-		sampleService.getSampleForProject(p, sampleId);
 		// load the sample from the database
 		Sample sample = sampleService.read(sampleId);
 		logger.trace("Read sample " + sampleId);
@@ -365,7 +361,7 @@ public class RESTSampleSequenceFilesController {
 		sequenceFile.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
 						sequenceFileId)).withSelfRel());
-		sequenceFile.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
+		sequenceFile.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
 				REL_SAMPLE));
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceFile);
 		// add a location header.
@@ -501,11 +497,10 @@ public class RESTSampleSequenceFilesController {
 	 * @return a status indicating the success of the move.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
-	public ModelMap removeSequenceFileFromSample(@PathVariable Long projectId, @PathVariable Long sampleId,
+	public ModelMap removeSequenceFileFromSample(@PathVariable Long sampleId,
 			@PathVariable Long sequenceFileId) {
 		ModelMap modelMap = new ModelMap();
 		// load the project, sample and sequence file from the database
-		projectService.read(projectId);
 		Sample s = sampleService.read(sampleId);
 		SequenceFile sf = sequenceFileService.read(sequenceFileId);
 
@@ -519,7 +514,7 @@ public class RESTSampleSequenceFilesController {
 		// file (as it is associated with the
 		// project)
 		RootResource resource = new RootResource();
-		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
+		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
 				REL_SAMPLE));
 		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
 				.withRel(REL_SAMPLE_SEQUENCE_FILES));
