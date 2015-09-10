@@ -123,8 +123,6 @@ public class RESTSampleSequenceFilesController {
 	 * Get the {@link SequenceFile} entities associated with a specific
 	 * {@link Sample}.
 	 *
-	 * @param projectId
-	 *            the ID of the project.
 	 * @param sampleId
 	 *            the identifier for the {@link Sample}.
 	 * @return the {@link SequenceFile} entities associated with the
@@ -170,8 +168,6 @@ public class RESTSampleSequenceFilesController {
 	 * Read the {@link SequenceFilePair}s for a given {@link Sample} and
 	 * {@link Project}
 	 * 
-	 * @param projectId
-	 *            Project to read from
 	 * @param sampleId
 	 *            Sample to read from
 	 * @return The {@link SequenceFilePair} entities
@@ -209,8 +205,6 @@ public class RESTSampleSequenceFilesController {
 	 * Read the {@link SequenceFile}s for a given {@link Sample} and
 	 * {@link Project} which are not paired
 	 * 
-	 * @param projectId
-	 *            Project to read from
 	 * @param sampleId
 	 *            Sample to read from
 	 * @return The {@link SequenceFile} entities
@@ -252,8 +246,6 @@ public class RESTSampleSequenceFilesController {
 	 * Read an individual {@link SequenceFilePair} from a {@link Project} and
 	 * {@link Sample}
 	 * 
-	 * @param projectId
-	 *            project id
 	 * @param sampleId
 	 *            sample id
 	 * @param pairId
@@ -281,8 +273,6 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Add a new {@link SequenceFile} to a {@link Sample}.
 	 * 
-	 * @param projectId
-	 *            the identifier for the {@link Project}.
 	 * @param sampleId
 	 *            the identifier for the {@link Sample}.
 	 * @param file
@@ -376,8 +366,6 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Add a pair of {@link SequenceFile}s to a {@link Sample}
 	 * 
-	 * @param projectId
-	 *            The {@link Project} id to add to
 	 * @param sampleId
 	 *            The {@link Sample} id to add to
 	 * @param file1
@@ -488,15 +476,13 @@ public class RESTSampleSequenceFilesController {
 	 * {@link SequenceFile} will be moved to the {@link Project} that is related
 	 * to this {@link Sample}.
 	 * 
-	 * @param projectId
-	 *            the destination {@link Project} identifier.
 	 * @param sampleId
 	 *            the source {@link Sample} identifier.
 	 * @param sequenceFileId
 	 *            the identifier of the {@link SequenceFile} to move.
 	 * @return a status indicating the success of the move.
 	 */
-	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
 	public ModelMap removeSequenceFileFromSample(@PathVariable Long sampleId,
 			@PathVariable Long sequenceFileId) {
 		ModelMap modelMap = new ModelMap();
@@ -527,8 +513,6 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Get a specific {@link SequenceFile} associated with a {@link Sample}.
 	 * 
-	 * @param projectId
-	 *            the identifier of the {@link Project}.
 	 * @param sampleId
 	 *            the identifier of the {@link Sample}.
 	 * @param sequenceFileId
@@ -578,9 +562,6 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Update a {@link SequenceFile} details.
 	 *
-	 * @param projectId
-	 *            the identifier of the {@link Project} that the {@link Sample}
-	 *            belongs to.
 	 * @param sampleId
 	 *            the identifier of the {@link Sample}.
 	 * @param sequenceFileId
@@ -621,8 +602,6 @@ public class RESTSampleSequenceFilesController {
 	 * 
 	 * @param pair
 	 *            The {@link SequenceFilePair} to enhance
-	 * @param projectId
-	 *            The id of the {@link Project} the pair is in
 	 * @param sampleId
 	 *            the id of the {@link Sample} the pair is in
 	 * @return The {@link SequenceFilePair} with added links

@@ -304,9 +304,6 @@ public class RESTProjectSamplesController {
 	/**
 	 * Update a {@link Sample} details.
 	 *
-	 * @param projectId
-	 *            the identifier of the {@link Project} that the {@link Sample}
-	 *            belongs to.
 	 * @param sampleId
 	 *            the identifier of the {@link Sample}.
 	 * @param updatedFields
