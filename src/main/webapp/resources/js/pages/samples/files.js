@@ -115,16 +115,20 @@
     };
   }
 
-  function FileUploadController(Upload, $timeout) {
+  /**
+   * Controller to handle uploading new sequence files
+   * @param Upload
+   * @param $timeout
+   * @param $window
+   * @constructor
+   */
+  function FileUploadController(Upload, $timeout, $window) {
     var vm = this,
     url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
     vm.uploading = false;
 
     vm.uploadFiles = function($files) {
-      if(!$files || $files.length === 0) return;
-      var files = $files.map(function(file) {
-        return file.name;
-      });
+      if(!$files || $files.length === 0) {return;}
 
       vm.uploading = true;
       Upload.upload({
@@ -132,74 +136,19 @@
         file: $files
       }).progress(function (evt) {
         vm.progress = parseInt(100.0 * evt.loaded / evt.total);
-      }).success(function (data) {
+      }).success(function () {
         $timeout(function () {
           vm.uploading = false;
+          // TODO: This should be an ajax refresh of the files table.
+          $window.location.reload();
         }, 2000);
       });
     };
   }
 
-  /**
-   * Controller for the modal to upload sequence files.
-   * @param $modalInstance
-   * @constructor
-   */
-  function UploadModalController($modalInstance) {
-    var vm = this;
-    vm.files = [];
-    vm.rejects = [];
-
-    /**
-     * Add files to a list of files to upload to the server.
-     * @param files Array of file objects.
-     * @param e event triggering.
-     * @param rejects Array of files that do not match the requirements.
-     */
-    vm.addFiles = function(files, e, rejects) {
-      // Filter to ensure that we do not upload the same file twice.
-      vm.files = vm.files.concat(files.filter(function(file) {
-        return (vm.files.filter(function(f) {
-          return (f.path !== file.path);
-        }).length === 0);
-      }));
-
-      vm.rejects = vm.rejects.concat(rejects.filter(function(reject) {
-        return reject.type !== 'directory';
-      }));
-    };
-
-    /**
-     * Remove a file from the list of files to upload
-     * @param file
-     */
-    vm.remove = function(file) {
-      vm.files = vm.files.filter(function(f) {
-        return f !== file;
-      });
-    };
-
-    /**
-     * Trigger the upload of files.
-     */
-    vm.ok = function() {
-      if (vm.files.length > 0) {
-        $modalInstance.close(vm.files);
-      }
-    };
-
-    /**
-     * Clears the upload list and closes the modal.
-     */
-    vm.cancel = function() {
-      $modalInstance.dismiss();
-    };
-  }
-
   angular.module('irida.sample.files', ['ngAnimate', 'ui.bootstrap', 'file.utils', 'ngFileUpload'])
     .directive('fileUpload', [fileUpload])
-    .controller('FileUploadController', ['Upload', '$timeout', FileUploadController])
+    .controller('FileUploadController', ['Upload', '$timeout', '$window', FileUploadController])
     .controller('FileController', ['FileService', '$modal', FileController])
-    .controller('FileDeletionController', ['$modalInstance', 'id', 'label', FileDeletionController])
-    .controller('UploadModalController', ['$modalInstance', UploadModalController]);
+    .controller('FileDeletionController', ['$modalInstance', 'id', 'label', FileDeletionController]);
 })(window.angular, window.TL, window.PAGE);
