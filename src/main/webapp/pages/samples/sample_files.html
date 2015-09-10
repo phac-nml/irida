@@ -7,19 +7,22 @@
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
 	<script>window.dependencies = ['irida.sample.files'];</script>
 	<style>
-		.drop-box {
-			width: 568px;
-			height: 50px;
-			border-radius: 4px;
-			background-color: #fefefe;
-			border: 2px dashed darkgreen;
-			padding: 1rem;
-			margin-bottom: 1rem;
-			transition: background-color 0.5s ease;
+		.flexed {
+			display: flex;
 		}
 
-		.drop-box.dragover {
-			background-color: #bbb;
+		.file-upload-progress {
+			display: none!important;
+		}
+
+		.file-upload-progress.fadeIn{
+			display: flex!important;
+		}
+
+		.progress {
+			margin-bottom: 0;
+			flex-grow: 2;
+			margin-right: 1em;
 		}
 
 		.seq-file {
@@ -47,13 +50,7 @@
 <main layout:fragment="main" ddl:bundle-includes="sample-files">
 	<div class="row">
 		<div class="col-md-12">
-			<h1 id="page-title" role="heading">
-				<th:block th:text="#{samples.files.page-title(${sample.getLabel()})}"></th:block>
-				<file-upload></file-upload></h1>
-		</div>
-	</div>
-	<div class="row" th:if="${fileDeleted}">
-		<div class="col-md-12">
+			<h1 id="page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
 			<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="alert alert-success"
 			     role="alert">
 				<strong th:text="${fileDeletedMessage}"></strong>

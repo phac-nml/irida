@@ -115,6 +115,31 @@
     };
   }
 
+  function FileUploadController(Upload, $timeout) {
+    var vm = this,
+    url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
+    vm.uploading = false;
+
+    vm.uploadFiles = function($files) {
+      if(!$files || $files.length === 0) return;
+      var files = $files.map(function(file) {
+        return file.name;
+      });
+
+      vm.uploading = true;
+      Upload.upload({
+        url: url,
+        file: $files
+      }).progress(function (evt) {
+        vm.progress = parseInt(100.0 * evt.loaded / evt.total);
+      }).success(function (data) {
+        $timeout(function () {
+          vm.uploading = false;
+        }, 2000);
+      });
+    };
+  }
+
   /**
    * Controller for the modal to upload sequence files.
    * @param $modalInstance
@@ -171,8 +196,9 @@
     };
   }
 
-  angular.module('irida.sample.files', ['ui.bootstrap', 'file.utils'])
+  angular.module('irida.sample.files', ['ngAnimate', 'ui.bootstrap', 'file.utils', 'ngFileUpload'])
     .directive('fileUpload', [fileUpload])
+    .controller('FileUploadController', ['Upload', '$timeout', FileUploadController])
     .controller('FileController', ['FileService', '$modal', FileController])
     .controller('FileDeletionController', ['$modalInstance', 'id', 'label', FileDeletionController])
     .controller('UploadModalController', ['$modalInstance', UploadModalController]);
