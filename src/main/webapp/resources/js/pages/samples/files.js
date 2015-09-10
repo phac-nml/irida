@@ -124,6 +124,7 @@
    */
   function FileUploadController(Upload, $timeout, $window) {
     var vm = this,
+        fileUpload = undefined,
     url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
     vm.uploading = false;
 
@@ -131,7 +132,7 @@
       if(!$files || $files.length === 0) {return;}
 
       vm.uploading = true;
-      Upload.upload({
+      fileUpload = Upload.upload({
         url: url,
         file: $files
       }).progress(function (evt) {
@@ -143,6 +144,14 @@
           $window.location.reload();
         }, 2000);
       });
+    };
+
+    vm.cancel = function () {
+      if(fileUpload !== undefined) {
+        fileUpload.abort();
+        fileUpload = undefined;
+        vm.uploading = false;
+      }
     };
   }
 
