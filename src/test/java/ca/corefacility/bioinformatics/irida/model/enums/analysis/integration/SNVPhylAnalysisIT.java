@@ -270,13 +270,13 @@ public class SNVPhylAnalysisIT {
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
 				.getCreatedByTool());
 		
-//		@SuppressWarnings("resource")
-//		String mappingQualityContent = new Scanner(analysisPhylogenomics.getMappingQuality().getFile().toFile()).useDelimiter(
-//				"\\Z").next();
-//		assertTrue(
-//				"mappingQuality should be the same but is \"" + mappingQualityContent + "\"",
-//				com.google.common.io.Files.equal(mappingQuality1.toFile(), analysisPhylogenomics.getMappingQuality().getFile()
-//						.toFile()));
+		@SuppressWarnings("resource")
+		String mappingQualityContent = new Scanner(analysisPhylogenomics.getMappingQuality().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"mappingQuality should be the same but is \"" + mappingQualityContent + "\"",
+				com.google.common.io.Files.equal(mappingQuality1.toFile(), analysisPhylogenomics.getMappingQuality().getFile()
+						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getMappingQuality()
 				.getCreatedByTool());
 		
@@ -341,7 +341,7 @@ public class SNVPhylAnalysisIT {
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
 		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.90", "minimum-read-coverage", "2",
-				"minimum-percent-coverage", "90", "minimum-mean-mapping-quality", "20");
+				"minimum-percent-coverage", "75", "minimum-mean-mapping-quality", "20");
 		
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
@@ -390,13 +390,13 @@ public class SNVPhylAnalysisIT {
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
 				.getCreatedByTool());
 		
-//		@SuppressWarnings("resource")
-//		String mappingQualityContent = new Scanner(analysisPhylogenomics.getMappingQuality().getFile().toFile()).useDelimiter(
-//				"\\Z").next();
-//		assertTrue(
-//				"mappingQuality should be the same but is \"" + mappingQualityContent + "\"",
-//				com.google.common.io.Files.equal(mappingQuality2.toFile(), analysisPhylogenomics.getMappingQuality().getFile()
-//						.toFile()));
+		@SuppressWarnings("resource")
+		String mappingQualityContent = new Scanner(analysisPhylogenomics.getMappingQuality().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"mappingQuality should be the same but is \"" + mappingQualityContent + "\"",
+				com.google.common.io.Files.equal(mappingQuality2.toFile(), analysisPhylogenomics.getMappingQuality().getFile()
+						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getMappingQuality()
 				.getCreatedByTool());
 		
