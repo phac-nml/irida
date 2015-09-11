@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
@@ -38,7 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -372,30 +369,12 @@ public class SamplesController extends BaseController {
 					}
 				}));
 
-		try {
-			for (String key : pairedUpFiles.keySet()) {
-				List<MultipartFile> list = pairedUpFiles.get(key);
-				if (list.size() > 1) {
-					createSequenceFilePairsInSample(list, sample);
-				} else {
-					createSequenceFileInSample(list.get(0), sample);
-				}
-			}
-		} catch (IOException e) {
-			logger.error("Error writing sequence file", e);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		} catch (final StorageException e) {
-			if (e.getCause() instanceof FileAlreadyExistsException) {
-				logger.error("General storage exception: File already exists (inconsistent back-end state)", e);				
-			} else if (e.getCause() instanceof FileSystemException) {
-				final FileSystemException fse = (FileSystemException) e.getCause();
-				if (fse.getMessage().contains("No space left on device")) {
-					logger.error("General storage exception: No space left on device.", e);
-				} else {
-					logger.error("General storage exception: Unexpected reason.", e);
-				}
+		for (String key : pairedUpFiles.keySet()) {
+			List<MultipartFile> list = pairedUpFiles.get(key);
+			if (list.size() > 1) {
+				createSequenceFilePairsInSample(list, sample);
 			} else {
-				logger.error("General storage exception: Unexpected reason.", e);
+				createSequenceFileInSample(list.get(0), sample);
 			}
 		}
 	}
