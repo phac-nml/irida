@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
  * Repository for storing and reading {@link NcbiExportSubmission}s
@@ -22,4 +23,14 @@ public interface NcbiExportSubmissionRepository extends IridaJpaRepository<NcbiE
 	 */
 	@Query("FROM NcbiExportSubmission s WHERE s.uploadState=?1")
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state);
+
+	/**
+	 * Get a List of {@link NcbiExportSubmission} for the given {@link Project}
+	 * 
+	 * @param project
+	 *            The {@link Project} for the submission
+	 * @return a List of {@link NcbiExportSubmission}
+	 */
+	@Query("FROM NcbiExportSubmission s WHERE s.project=?1")
+	public List<NcbiExportSubmission> getSubmissionsForProject(Project project);
 }

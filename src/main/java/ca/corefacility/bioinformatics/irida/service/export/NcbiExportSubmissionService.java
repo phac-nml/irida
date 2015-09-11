@@ -4,6 +4,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -20,4 +21,13 @@ public interface NcbiExportSubmissionService extends CRUDService<Long, NcbiExpor
 	 * @return a List of {@link NcbiExportSubmission}
 	 */
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state);
+
+	/**
+	 * Get a List of {@link NcbiExportSubmission} for the given {@link Project}
+	 * 
+	 * @param project
+	 *            The {@link Project} for the submission
+	 * @return a List of {@link NcbiExportSubmission}
+	 */
+	public List<NcbiExportSubmission> getSubmissionsForProject(Project project);
 }

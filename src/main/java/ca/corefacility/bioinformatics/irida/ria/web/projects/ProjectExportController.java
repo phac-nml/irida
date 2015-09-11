@@ -55,6 +55,7 @@ public class ProjectExportController {
 
 	public static final String NCBI_EXPORT_VIEW = "export/ncbi";
 	public static final String EXPORT_DETAILS_VIEW = "export/details";
+	public static final String EXPORT_LIST_VIEW = "export/list";
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
@@ -216,6 +217,33 @@ public class ProjectExportController {
 		NcbiExportSubmission submission = exportSubmissionService.read(submissionId);
 		model.addAttribute("submission", submission);
 		return EXPORT_DETAILS_VIEW;
+	}
+
+	@RequestMapping("/projects/{projectId}/export")
+	public String getExportsPage(@PathVariable Long projectId, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		return EXPORT_LIST_VIEW;
+	}
+
+	@RequestMapping("/projects/{projectId}/export/list")
+	@ResponseBody
+	public List<Map<String, Object>> getExportsForProject(@PathVariable Long projectId, Model model) {
+		Project project = projectService.read(projectId);
+		List<NcbiExportSubmission> submissions = exportSubmissionService.getSubmissionsForProject(project);
+
+		List<Map<String, Object>> subList = new ArrayList<>();
+		for (NcbiExportSubmission sub : submissions) {
+			Map<String, Object> subMap = new HashMap<>();
+			subMap.put("id", sub.getId());
+			subMap.put("state", sub.getUploadState());
+			subMap.put("samples", sub.getBioSampleFiles().size());
+			subMap.put("created", sub.getCreatedDate());
+			subMap.put("link", "projects/" + project.getId()+"/export/"+sub.getId());
+			subList.add(subMap);
+		}
+
+		return subList;
 	}
 
 	/**

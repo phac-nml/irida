@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:ddl="http://www.thymeleaf.org/dandelion" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
+
+<head>
+  <title th:text="#{project.export.table.title}">SRA</title>
+</head>
+
+<body>
+  <div layout:fragment="page" >
+    <main class="col-md-12" role="main" property="mainContentOfPage">
+      <h1 th:text="#{project.export.table.title}"></h1>
+      <div dt:conf="exportTable">
+        <div dt:confType="callback" dt:type="init" dt:function="irida-datatables#datatable.tableDrawn"></div>
+      </div>
+      <table id="exportTable" dt:table="true" dt:url="@{/projects/{id}/export/list(id=${project.id})}">
+        <thead>
+          <tr role="row">
+            <th dt:property="id" th:text="#{iridaThing.id}" dt:renderFunction="irida-datatables#datatable.createItemButton"></th>
+            <th dt:property="samples" th:text="#{project.export.table.samples}"></th>
+            <th dt:property="state" th:text="#{project.export.table.state}"></th>
+            <th dt:property="created" dt:renderFunction="irida-datatables#datatable.formatDate" th:text="#{iridaThing.timestamp}"></th>
+          </tr>
+        </thead>
+      </table>
+    </main>
+  </div>
+  <th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script>
+      
+    </script>
+  </th:block>
+</body>
+
+</html>
