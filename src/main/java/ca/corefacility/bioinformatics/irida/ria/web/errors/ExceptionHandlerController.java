@@ -141,7 +141,7 @@ public class ExceptionHandlerController {
 	}
 
 	/**
-	 * Catch and handle all {@link StorageExceptions}. Try your best to figure
+	 * Catch and handle all {@link StorageException}s. Try your best to figure
 	 * out the root cause of the exception.
 	 * 
 	 * @param e

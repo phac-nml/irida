@@ -50,6 +50,8 @@ public interface EmailController {
 	/**
 	 * Send an e-mail to the administrative user with an exception when there's a serious storage related exception.
 	 * 
+	 * @param adminEmailAddress 
+	 * 			  the address to which notifications should be sent.
 	 * @param rootCause
 	 *            the exception to send to the user.
 	 */
