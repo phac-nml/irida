@@ -23,7 +23,7 @@
 		</parameter>
 		<parameter name="minimum-percent-coverage" defaultValue="80">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.3"
+				toolId="galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.4"
 				parameterName="minmap" />
 		</parameter>
 		<parameter name="alternative-allele-fraction" defaultValue="0.75">
@@ -57,7 +57,7 @@
 				toolId="galaxy-toolshed.corefacility.ca/repos/phil/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
 				parameterName="coverage" />
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.3"
+				toolId="galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.4"
 				parameterName="mindepth" />
 		</parameter>
 	</parameters>

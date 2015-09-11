@@ -228,9 +228,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.3", 
+            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.4", 
             "tool_state": "{\"minmap\": \"\\\"80\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"mindepth\": \"\\\"2\\\"\", \"bams\": \"null\"}", 
-            "tool_version": "0.0.3", 
+            "tool_version": "0.0.4", 
             "type": "tool", 
             "user_outputs": [], 
             "uuid": "9d6b2ea0-a56a-4065-97e2-045dcdf2ea8e"
