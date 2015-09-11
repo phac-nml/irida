@@ -50,7 +50,7 @@
         }).success(function () {
           defer.resolve();
         }).error(function(data, status, headers, config){
-          $rootScope.$broadcast(UPLOAD_ERROR, "This is a single reason");
+          $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
           defer.reject("Error uploading file");
         });
         $rootScope.$broadcast(UPLOAD_EVENT, {
