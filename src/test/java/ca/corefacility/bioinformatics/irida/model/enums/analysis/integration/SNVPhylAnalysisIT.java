@@ -425,12 +425,6 @@ public class SNVPhylAnalysisIT {
 				altAlleleFraction = params.get("options_type.section_input_filters_type.min_alternate_fraction");
 				break;
 			}
-			
-			if (ex.getToolName().contains("Verify Mapping Quality")) {
-				final Map<String, String> params = ex.getExecutionTimeParameters();
-				minimumPercentCoverage = params.get("minmap");
-				minimumDepthVerify = params.get("mindepth");
-			}
 		}
 		
 		// try to follow the mapping quality provenance all the way back to the
@@ -452,7 +446,7 @@ public class SNVPhylAnalysisIT {
 		
 		assertEquals("incorrect minimum freebayes coverage", "2", minimumFreebayesCoverage);
 		assertEquals("incorrect alternative allele fraction", "0.9", altAlleleFraction);
-		assertEquals("incorrect minimum depth for verify map", "2", minimumDepthVerify);
-		assertEquals("incorrect min percent coverage for verify map", "75", minimumPercentCoverage);
+		assertEquals("incorrect minimum depth for verify map", "\"2\"", minimumDepthVerify);
+		assertEquals("incorrect min percent coverage for verify map", "\"75\"", minimumPercentCoverage);
 	}
 }
