@@ -81,7 +81,7 @@
       }).success(function () {
         defer.resolve();
       }).error(function (data, status, headers, config) {
-        $rootScope.$broadcast(UPLOAD_ERROR, "this is a bulk reason");
+        $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
         defer.reject("Error uploading file");
       });
 
@@ -100,7 +100,7 @@
       controller: ['$scope', function($scope) {
         $scope.hasError = false;
         $scope.$on(UPLOAD_ERROR, function(event, reason) {
-        	console.log(reason);
+          $scope.errorMessage = reason;
           $scope.hasError = true;
         });
       }]
