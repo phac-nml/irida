@@ -144,9 +144,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/find_repeats/findrepeat/0.0.2-dev", 
+            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/find_repeats/findrepeat/0.0.4", 
             "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"__rerun_remap_job_id__\": null, \"pid\": \"\\\"90\\\"\", \"length\": \"\\\"150\\\"\"}", 
-            "tool_version": "0.0.2-dev", 
+            "tool_version": "0.0.4", 
             "type": "tool", 
             "user_outputs": [], 
             "uuid": "b46f9d65-9d1d-458b-8780-20d248d4ab84"
@@ -374,9 +374,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/filter_vcf/filtervcf/0.0.2", 
+            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/filter_vcf/filtervcf/0.0.3", 
             "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"vcf\": \"null\"}", 
-            "tool_version": "0.0.2", 
+            "tool_version": "0.0.3", 
             "type": "tool", 
             "user_outputs": [], 
             "uuid": "928a97c7-01de-4fd2-82c6-33d6e73819fe"
@@ -542,9 +542,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/vcf2pseudoalignment/vcf2pseudoalignment/0.0.13", 
+            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16", 
             "tool_state": "{\"__page__\": 0, \"ref_fasta\": \"null\", \"reference\": \"\\\"reference\\\"\", \"__rerun_remap_job_id__\": null, \"ao\": \"\\\"0.75\\\"\", \"invalid\": \"null\", \"coverage\": \"\\\"2\\\"\", \"mean_mapping\": \"\\\"30\\\"\", \"freebayes_collection\": \"null\", \"mpileup_collection\": \"null\"}", 
-            "tool_version": "0.0.13", 
+            "tool_version": "0.0.16", 
             "type": "tool", 
             "user_outputs": [], 
             "uuid": "3f29ec48-5b58-4048-8ef4-4760b36e9e2d"
@@ -618,9 +618,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/filter_stats/filterstat/0.0.3", 
+            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/filter_stats/filterstat/0.0.4", 
             "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"tabfile\": \"null\", \"summary\": \"null\"}", 
-            "tool_version": "0.0.3", 
+            "tool_version": "0.0.4", 
             "type": "tool", 
             "user_outputs": [], 
             "uuid": "d39f69c4-1a16-4464-bdf0-be05d9c8dbda"
@@ -714,9 +714,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/snp_matrix/snpmatrix/0.0.2", 
+            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/snp_matrix/snpmatrix/0.0.3", 
             "tool_state": "{\"__page__\": 0, \"phylip\": \"null\", \"__rerun_remap_job_id__\": null}", 
-            "tool_version": "0.0.2", 
+            "tool_version": "0.0.3", 
             "type": "tool", 
             "user_outputs": [], 
             "uuid": "e474528e-acd0-4e26-819e-dd1514567d26"
