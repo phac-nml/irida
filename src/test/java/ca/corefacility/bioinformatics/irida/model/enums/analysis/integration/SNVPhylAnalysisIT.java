@@ -102,13 +102,11 @@ public class SNVPhylAnalysisIT {
 	private Path outputSnpTable1;
 	private Path outputSnpMatrix1;
 	private Path vcf2core1;
-	private Path mappingQuality1;
 	private Path filterStats1;
 	
 	private Path outputSnpTable2;
 	private Path outputSnpMatrix2;
 	private Path vcf2core2;
-	private Path mappingQuality2;
 	private Path filterStats2;
 
 	/**
@@ -177,13 +175,11 @@ public class SNVPhylAnalysisIT {
 		outputSnpTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpTable.tsv").toURI());
 		outputSnpMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpMatrix.tsv").toURI());
 		vcf2core1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/vcf2core.csv").toURI());
-		mappingQuality1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/mappingQuality.txt").toURI());
 		filterStats1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/filterStats.txt").toURI());
 		
 		outputSnpTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpTable.tsv").toURI());
 		outputSnpMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpMatrix.tsv").toURI());
 		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.csv").toURI());
-		mappingQuality2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/mappingQuality.txt").toURI());
 		filterStats2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/filterStats.txt").toURI());
 	}
 
