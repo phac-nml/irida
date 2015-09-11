@@ -223,6 +223,15 @@ public class ProjectExportController {
 		return EXPORT_DETAILS_VIEW;
 	}
 
+	/**
+	 * Get the project export list view
+	 * 
+	 * @param projectId
+	 *            which {@link Project} to get exports for
+	 * @param model
+	 *            model for the view
+	 * @return name of the exports list view
+	 */
 	@RequestMapping("/projects/{projectId}/export")
 	public String getExportsPage(@PathVariable Long projectId, Model model) {
 		Project project = projectService.read(projectId);
@@ -231,9 +240,17 @@ public class ProjectExportController {
 		return EXPORT_LIST_VIEW;
 	}
 
+	/**
+	 * Ajax method for getting the {@link NcbiExportSubmission}s for a given
+	 * {@link Project}
+	 * 
+	 * @param projectId
+	 *            {@link Project} id
+	 * @return List of Map of submission params
+	 */
 	@RequestMapping("/projects/{projectId}/export/list")
 	@ResponseBody
-	public List<Map<String, Object>> getExportsForProject(@PathVariable Long projectId, Model model) {
+	public List<Map<String, Object>> getExportsForProject(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		List<NcbiExportSubmission> submissions = exportSubmissionService.getSubmissionsForProject(project);
 
