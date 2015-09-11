@@ -356,7 +356,7 @@ public class SamplesController extends BaseController {
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" })
 	public void uploadSequenceFiles(@PathVariable Long sampleId,
-			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) {
+			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 
 		final Map<String, List<MultipartFile>> pairedUpFiles = files.stream().collect(
