@@ -419,7 +419,7 @@ public class SNVPhylAnalysisIT {
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
-		final List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
+		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 
@@ -448,6 +448,24 @@ public class SNVPhylAnalysisIT {
 				minimumDepthVerify = params.get("mindepth");
 			}
 		}
+		
+		// try to follow the mapping quality provenance all the way back to the
+		// upload tools
+		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getMappingQuality()
+				.getCreatedByTool());
+		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
+		
+		while (!toolsToVisit.isEmpty()) {
+			final ToolExecution ex = toolsToVisit.remove(0);
+			toolsToVisit.addAll(ex.getPreviousSteps());
+			
+			if (ex.getToolName().contains("Verify Mapping Quality")) {
+				final Map<String, String> params = ex.getExecutionTimeParameters();
+				minimumPercentCoverage = params.get("minmap");
+				minimumDepthVerify = params.get("mindepth");
+			}
+		}
+		
 		assertEquals("incorrect minimum freebayes coverage", "2", minimumFreebayesCoverage);
 		assertEquals("incorrect alternative allele fraction", "0.9", altAlleleFraction);
 		assertEquals("incorrect minimum depth for verify map", "2", minimumDepthVerify);

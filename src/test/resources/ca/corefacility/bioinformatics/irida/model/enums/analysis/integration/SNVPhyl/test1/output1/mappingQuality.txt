@@ -2,6 +2,6 @@
 NUMBER OF BP's IN REFERENCE GENOME: 700
 MINIMUM DEPTH: 2
 MINIMUM MAPPING: 80
-SampleC: 7.29%
-SampleB: 7.29%
-SampleA: 7.29%
+SampleC : 7.29%
+SampleA : 7.29%
+SampleB : 7.29%
