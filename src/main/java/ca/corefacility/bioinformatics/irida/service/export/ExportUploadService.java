@@ -41,19 +41,19 @@ public class ExportUploadService {
 	private TemplateEngine templateEngine;
 
 	@Value("${ncbi.upload.host}")
-	private String ftpHost = "localhost";
+	private String ftpHost;
 
 	@Value("${ncbi.upload.port}")
-	private int ftpPort = 21;
+	private int ftpPort;
 
 	@Value("${ncbi.upload.user}")
-	private String ftpUser = "test";
+	private String ftpUser;
 
 	@Value("${ncbi.upload.password}")
-	private String ftpPassword = "xxxx";
+	private String ftpPassword;
 
 	@Value("${ncbi.upload.baseDirectory}")
-	private String baseDirectory = "tmp";
+	private String baseDirectory;
 
 	@Autowired
 	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,

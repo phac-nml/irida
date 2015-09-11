@@ -53,9 +53,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 public class ProjectExportController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectExportController.class);
 
-	public static final String NCBI_EXPORT_VIEW = "export/ncbi";
-	public static final String EXPORT_DETAILS_VIEW = "export/details";
-	public static final String EXPORT_LIST_VIEW = "export/list";
+	public static final String NCBI_EXPORT_VIEW = "projects/export/ncbi";
+	public static final String EXPORT_DETAILS_VIEW = "projects/export/details";
+	public static final String EXPORT_LIST_VIEW = "projects/export/list";
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
@@ -153,6 +153,7 @@ public class ProjectExportController {
 		model.addAttribute("library_selection", NcbiLibrarySelection.values());
 		model.addAttribute("library_source", NcbiLibrarySource.values());
 		model.addAttribute("library_strategy", NcbiLibraryStrategy.values());
+		model.addAttribute("activeNav", "export");
 
 		return NCBI_EXPORT_VIEW;
 	}
@@ -213,9 +214,12 @@ public class ProjectExportController {
 	 * @return name of the details view
 	 */
 	@RequestMapping("/projects/{projectId}/export/{submissionId}")
-	public String getDetailsView(@PathVariable Long submissionId, Model model) {
+	public String getDetailsView(@PathVariable Long projectId, @PathVariable Long submissionId, Model model) {
 		NcbiExportSubmission submission = exportSubmissionService.read(submissionId);
+		Project project = projectService.read(projectId);
 		model.addAttribute("submission", submission);
+		model.addAttribute("activeNav", "export");
+		model.addAttribute("project", project);
 		return EXPORT_DETAILS_VIEW;
 	}
 
@@ -223,6 +227,7 @@ public class ProjectExportController {
 	public String getExportsPage(@PathVariable Long projectId, Model model) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+		model.addAttribute("activeNav", "export");
 		return EXPORT_LIST_VIEW;
 	}
 
@@ -239,7 +244,7 @@ public class ProjectExportController {
 			subMap.put("state", sub.getUploadState());
 			subMap.put("samples", sub.getBioSampleFiles().size());
 			subMap.put("created", sub.getCreatedDate());
-			subMap.put("link", "projects/" + project.getId()+"/export/"+sub.getId());
+			subMap.put("link", "projects/" + project.getId() + "/export/" + sub.getId());
 			subList.add(subMap);
 		}
 
