@@ -78,72 +78,81 @@
   }
 
   /**
-   * Directive to open the file chooser for selecting sequence files.
-   * @returns {{restrict: string, template: string, controllerAs: string, controller: *[]}}
-   */
-  function fileUpload() {
-    return {
-      'restrict': 'E',
-      'templateUrl': '/upload-btn.html',
-      'controllerAs': 'uploadCtrl',
-      'controller': ['$scope', '$timeout', '$modal', 'FileService', function($scope, $timeout, $modal, fileService) {
-        var vm = this;
-        vm.files = [];
-        /**
-         * Open the modal for file selection
-         */
-        vm.open = function() {
-          $scope.$broadcast('NEW_UPLOAD');
-
-          $modal.open({
-              animation: true,
-              templateUrl: '/upload.html',
-              controllerAs: 'modalCtrl',
-              controller: 'UploadModalController'
-            })
-            .result.then(function(files) {
-              var url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
-              fileService.uploadBulk(url, files).then(function() {
-                $timeout(function () {
-                  window.location.href = window.location.href;
-                }, 500);
-              });
-            });
-        };
-      }]
-
-    };
-  }
-
-  /**
    * Controller to handle uploading new sequence files
    * @param Upload
    * @param $timeout
    * @param $window
    * @constructor
    */
-  function FileUploadController(Upload, $timeout, $window) {
+  function FileUploadController(Upload, $timeout, $window, $modal) {
     var vm = this,
         fileUpload = undefined,
     url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
     vm.uploading = false;
 
-    vm.uploadFiles = function($files) {
-      if(!$files || $files.length === 0) {return;}
-
+    function uploadGoodFiles(files) {
       vm.uploading = true;
+
+      $window.onbeforeunload = function() {
+        return PAGE.i18n.leaving;
+      };
+
       fileUpload = Upload.upload({
         url: url,
-        file: $files
+        file: files
       }).progress(function (evt) {
         vm.progress = parseInt(100.0 * evt.loaded / evt.total);
       }).success(function () {
+        $window.onbeforeunload = undefined;
         $timeout(function () {
           vm.uploading = false;
           // TODO: This should be an ajax refresh of the files table.
           $window.location.reload();
         }, 2000);
       });
+    }
+
+    vm.uploadFiles = function($files, $event, $rejectedFiles) {
+      if($files.length === 0 && $rejectedFiles.length === 0 ) {
+        return;
+      }
+
+      if($rejectedFiles && $rejectedFiles.length > 0) {
+        $modal.open({
+          animation: true,
+          templateUrl: '/upload-error.html',
+          controllerAs: 'rejectModalCtrl',
+          controller: ['$modalInstance', 'rejects', 'files', function ($modalInstance, rejects, files) {
+            var vm = this;
+            vm.rejects = rejects;
+            vm.good = files;
+            console.log(files);
+
+            vm.cancel = function () {
+              $modalInstance.dismiss();
+            };
+
+            vm.finish = function() {
+              $modalInstance.close(_.filter(files, function (file) {
+                return file.selected;
+              }));
+            };
+          }],
+          resolve: {
+            rejects: function () {
+              return $rejectedFiles;
+            },
+            files: function () {
+              return $files;
+            }
+          }
+        }).result.then(function (files) {
+          uploadGoodFiles(files);
+        });
+      }
+      else {
+        uploadGoodFiles($files);
+      }
     };
 
     vm.cancel = function () {
@@ -153,11 +162,14 @@
         vm.uploading = false;
       }
     };
+
+    vm.closeFastqWarning = function() {
+
+    };
   }
 
   angular.module('irida.sample.files', ['ngAnimate', 'ui.bootstrap', 'file.utils', 'ngFileUpload'])
-    .directive('fileUpload', [fileUpload])
-    .controller('FileUploadController', ['Upload', '$timeout', '$window', FileUploadController])
+    .controller('FileUploadController', ['Upload', '$timeout', '$window', '$modal', FileUploadController])
     .controller('FileController', ['FileService', '$modal', FileController])
     .controller('FileDeletionController', ['$modalInstance', 'id', 'label', FileDeletionController]);
 })(window.angular, window.TL, window.PAGE);
