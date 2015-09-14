@@ -157,7 +157,7 @@ public class ProjectSamplesControllerTest {
 		//assertEquals(1, resource.getSequenceFileCount());
 		List<Link> links = resource.getLinks();
 		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
-				RESTProjectSamplesController.REL_PROJECT);
+				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE);
 		for (Link link : links) {
 			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
 			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel()));
@@ -266,7 +266,7 @@ public class ProjectSamplesControllerTest {
 		assertEquals("Sample name should be correct",s.getSampleName(), sample.getSampleName());
 		List<Link> links = resource.getLinks();
 		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
-				RESTProjectSamplesController.REL_PROJECT);
+				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE);
 		for (Link link : links) {
 			assertTrue("Rels should contain link [" + link + "]", rels.contains(link.getRel()));
 			assertNotNull("Rels should remove link [" + link + "]", rels.remove(link.getRel()));

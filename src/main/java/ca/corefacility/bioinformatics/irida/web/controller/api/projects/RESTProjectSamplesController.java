@@ -49,6 +49,8 @@ public class RESTProjectSamplesController {
 	 * rel used for accessing the list of samples associated with a project.
 	 */
 	public static final String REL_PROJECT_SAMPLES = "project/samples";
+	
+	public static final String REL_PROJECT_SAMPLE = "project/sample";
 
 	/**
 	 * Reference to {@link ProjectService}.
@@ -100,6 +102,7 @@ public class RESTProjectSamplesController {
 			resource.add(linkTo(
 					methodOn(RESTProjectSamplesController.class).getSample(sample.getId()))
 					.withSelfRel());
+			resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId())).withRel(REL_PROJECT_SAMPLE));
 			resource.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sample.getId()))
 					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
@@ -155,6 +158,7 @@ public class RESTProjectSamplesController {
 		sample.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
 				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 		sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+		sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId())).withRel(REL_PROJECT_SAMPLE));
 
 		// add the resource to the model
 		model.addAttribute(RESTGenericController.RESOURCE_NAME, sample);
@@ -192,6 +196,7 @@ public class RESTProjectSamplesController {
 					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sample.getId()))
 					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 			sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+			sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId())).withRel(REL_PROJECT_SAMPLE));
 			sampleResources.add(sample);
 		}
 
@@ -241,6 +246,7 @@ public class RESTProjectSamplesController {
 		
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
 		s.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(REL_PROJECT_SAMPLE));
 
 		return modelMap;
 	}
