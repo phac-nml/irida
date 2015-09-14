@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -59,5 +63,29 @@ public class SampleFilesPage extends AbstractPage {
 
 	public boolean isDeleteConfirmationMessageDisplayed() {
 		return driver.findElements(By.id("file-deleted-success")).size() > 0;
+	}
+
+	public void selectGoodFastqFiles() {
+		uploadFile("src/test/resources/files/test_file.fastq");
+	}
+
+	public void selectBadFastaFile() {
+		uploadFile("src/test/resources/files/test_file.fasta");
+	}
+
+	public boolean isProgressBarDisplayed() {
+		return driver.findElements(By.className("progress")).size() > 0;
+	}
+
+	private void uploadFile(String filePath) {
+		WebElement uploadBtn = driver.findElement(By.id("file-upload-btn"));
+		Path path = Paths.get(filePath);
+		uploadBtn.sendKeys(path.toAbsolutePath().toString());
+		waitForTime(50);
+	}
+
+	public boolean isFileTypeWarningDisplayed() {
+		WebElement modalBody = waitForElementVisible(By.className("modal-body"));
+		return modalBody.findElement(By.className("bad-file-name")).getText().equals("test_file.fasta");
 	}
 }

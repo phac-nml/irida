@@ -7,6 +7,23 @@
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
 	<script>window.dependencies = ['irida.sample.files'];</script>
 	<style>
+		.fileUpload {
+			position: relative;
+			overflow: hidden;
+			/*margin: 10px;*/
+		}
+		.fileUpload input.upload {
+			position: absolute;
+			top: 0;
+			right: 0;
+			margin: 0;
+			padding: 0;
+			font-size: 20px;
+			cursor: pointer;
+			opacity: 0;
+			filter: alpha(opacity=0);
+		}
+
 		.flexed {
 			display: flex;
 		}
@@ -72,15 +89,15 @@
 <div class="panel panel-default" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
 	<form name="uploadForm">
 		<div class="panel-heading">
-			<button class="btn btn-default btn-sm btn-block" name="files"
-					ngf-change="fileUploadCtrl.uploadFiles($files, $event, $rejectedFiles)"
-					ngf-accept="'.fastq,.fastq.gz'"
-					ngf-select=""
-					multiple="true">
+			<div class="fileUpload btn btn-default btn-sm btn-block">
 				<th:block th:text="#{samples.files.upload.btn}"></th:block>
 				&nbsp;
 				<fa:icon type="upload"/>
-			</button>
+				<input type="file" id="file-upload-btn" class="upload" name="files"
+				       ngf-change="fileUploadCtrl.uploadFiles($files, $event, $rejectedFiles)"
+				       ngf-accept="'.fastq,.fastq.gz'"
+				       ngf-select=""
+				       multiple="true"/></div>
 		</div>
 		<div class="ng-cloak panel-body file-upload-progress flexed animated"
 			 ng-class="{fadeIn: fileUploadCtrl.uploading, fadeOut: !fileUploadCtrl.uploading}">
@@ -168,7 +185,7 @@
 	<script type="text/ng-template" id="/upload-error.html">
 		<div class="modal-header">
 			<h2>
-				<fa:icon type="warning" size="2x"/>
+				<fa:icon type="warning" />
 				&nbsp;&nbsp;
 				<th:block th:text="#{project.samples.files.error.title}"></th:block>
 			</h2>
@@ -179,10 +196,11 @@
 							  th:attr="when='{\'1\' : \'' + #{project.samples.files.error.bad-files.single} + '\', \'other\': \'' + #{project.samples.files.error.bad-files.plural} + '\'}'">
 				</ng-pluralize>
 			</h3>
-			<alert type="danger" ng-repeat="file in rejectModalCtrl.rejects">
-				<strong>{{file.name}}</strong>
-
-				<div class="pull-right">{{ file.size | humanReadableBytes }}</div>
+			<alert type="danger">
+				<div ng-repeat="file in rejectModalCtrl.rejects">
+					<strong class="bad-file-name">{{file.name}}</strong>
+					<div class="pull-right">{{ file.size | humanReadableBytes }}</div>
+				</div>
 			</alert>
 			<div ng-if="rejectModalCtrl.good.length">
 				<h3>

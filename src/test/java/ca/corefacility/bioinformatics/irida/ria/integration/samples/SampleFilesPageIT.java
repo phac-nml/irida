@@ -60,7 +60,8 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		
 		page.deleteFirstFile();
-		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
+		assertTrue("Should display a confirmation message that the file was deleted",
+				page.isDeleteConfirmationMessageDisplayed());
 		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
 	}
 
@@ -71,5 +72,18 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.deleteFirstPair();
 		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
 		assertEquals("Displays the correct number of sequence files", 1, page.getSequenceFileCount());
+	}
+
+	@Test
+	public void testFileUploads() {
+		page.gotoPage(SAMPLE_ID);
+
+		// Test valid fastq
+		page.selectGoodFastqFiles();
+		assertTrue("Should display progress bar for file uploads", page.isProgressBarDisplayed());
+
+		// Test uploading an incorrect file type.
+		page.selectBadFastaFile();
+		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
 	}
 }
