@@ -26,12 +26,12 @@
           <div class="form-group">
             <label for="bioProject" th:text="#{project.export.bioproject.title}">_BioProject ID_</label>
             <input class="form-control" id="bioProject" required="required" />
-            <p class="help-block" th:text="#{project.export.bioproject.description}">Example block-level help text here.</p>
+            <p class="help-block" th:text="#{project.export.bioproject.description}">_BioProject to add data to_</p>
           </div>
           <div class="form-group">
             <label for="namespace" th:text="#{project.export.namespace.title}">_SRA Namespace_</label>
             <input class="form-control" id="namespace" required="required" />
-            <p class="help-block" th:text="#{project.export.namespace.description}">Example block-level help text here.</p>
+            <p class="help-block" th:text="#{project.export.namespace.description}">_Namespace used for identifier creation_</p>
           </div>
           <div class="form-group">
             <label for="release-date" th:text="#{project.export.release_date.title}">_Release Date_</label>
@@ -41,7 +41,7 @@
               <button type="button" class="btn btn-default" ng-click="picker.open($event)"><fa:icon type="date" /></button>
             </span>
             </div>
-            <p class="help-block" th:text="#{project.export.release_date.description}">Example block-level help text here.</p>
+            <p class="help-block" th:text="#{project.export.release_date.description}">_When data will be released_</p>
           </div>
         </div>
       </div>
@@ -59,13 +59,13 @@
               <div class="form-group col-md-6">
                 <label th:text="#{project.export.biosample.title}">_BioSample ID_</label>
                 <input class="form-control bioSample" name="bioSample" required="required" />
-                <p class="help-block" th:text="#{project.export.biosample.description}">Example block-level help text here.</p>
+                <p class="help-block" th:text="#{project.export.biosample.description}">_biosample to add data to_</p>
               </div>
 
               <div class="form-group col-md-6">
                 <label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label>
                 <input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" />
-                <p class="help-block" th:utext="#{project.export.library_construction_protocol.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_construction_protocol.description}">_protocol used ot crate library_</p>
               </div>
 
             </div>
@@ -73,7 +73,7 @@
               <div class="form-group col-md-6">
                 <label th:text="#{project.export.library_name.title}">_Library Name_</label>
                 <input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" />
-                <p class="help-block" th:utext="#{project.export.library_name.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_name.description}">_name of sequencing library_</p>
               </div>
 
               <div class="form-group col-md-6">
@@ -81,7 +81,7 @@
                 <select class="form-control instrument_model" name="instrument_model" required="required">
                   <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
                 </select>
-                <p class="help-block" th:utext="#{project.export.instrument_model.descripton}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.instrument_model.descripton}">_instrument used to sequence data_</p>
               </div>
 
             </div>
@@ -91,7 +91,7 @@
                 <select class="form-control library_strategy" name="library_strategy" required="required">
                   <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
                 </select>
-                <p class="help-block" th:utext="#{project.export.library_strategy.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_strategy.description}">_strategy used to create sequencing library_</p>
               </div>
 
               <div class="form-group col-md-6">
@@ -99,7 +99,7 @@
                 <select class="form-control library_selection" name="library_selection" required="required">
                   <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
                 </select>
-                <p class="help-block" th:utext="#{project.export.library_selection.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_selection.description}">_how data for library was selected_</p>
               </div>
             </div>
             <div class="row">
@@ -108,7 +108,7 @@
                 <select class="form-control library_source" name="library_source" required="required">
                   <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
                 </select>
-                <p class="help-block" th:utext="#{project.export.library_source.description}">Example block-level help text here.</p>
+                <p class="help-block" th:utext="#{project.export.library_source.description}">_source material of library_</p>
               </div>
             </div>
 
