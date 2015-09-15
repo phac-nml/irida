@@ -59,5 +59,5 @@ If everything was successfull then all dependencies for this pipeline have been 
 [upload-history]: ../test/snvphyl/images/upload-history.jpg
 [datasets-icon]: ../test/snvphyl/images/datasets-icon.jpg
 [dataset-pair-screen]: ../test/snvphyl/images/dataset-pair-screen.jpg
-[workflow-success]: ../test/snvphyl/images/workflow-success.jpg
+[workflow-success]: ../test/snvphyl/images/workflow-success.png
 [view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg
