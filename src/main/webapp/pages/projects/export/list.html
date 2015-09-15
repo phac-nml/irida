@@ -12,7 +12,7 @@
       <div dt:conf="exportTable">
         <div dt:confType="callback" dt:type="init" dt:function="irida-datatables#datatable.tableDrawn"></div>
       </div>
-      <table id="exportTable" dt:table="true" dt:url="@{/projects/{id}/export/list(id=${project.id})}">
+      <table id="exportTable" dt:table="true" dt:url="@{/ajax/projects/{id}/export/list(id=${project.id})}">
         <thead>
           <tr role="row">
             <th dt:property="id" th:text="#{iridaThing.id}" dt:renderFunction="irida-datatables#datatable.createItemButton"></th>

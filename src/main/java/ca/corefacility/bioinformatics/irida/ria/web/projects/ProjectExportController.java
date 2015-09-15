@@ -248,7 +248,7 @@ public class ProjectExportController {
 	 *            {@link Project} id
 	 * @return List of Map of submission params
 	 */
-	@RequestMapping("/projects/{projectId}/export/list")
+	@RequestMapping("/ajax/projects/{projectId}/export/list")
 	@ResponseBody
 	public List<Map<String, Object>> getExportsForProject(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
