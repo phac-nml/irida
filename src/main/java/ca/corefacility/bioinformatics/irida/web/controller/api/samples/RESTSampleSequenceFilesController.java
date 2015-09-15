@@ -34,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -97,10 +96,7 @@ public class RESTSampleSequenceFilesController {
 	 * Reference to the {@link SampleService}.
 	 */
 	private SampleService sampleService;
-	/**
-	 * Reference to the {@link ProjectService}.
-	 */
-	private ProjectService projectService;	
+
 	/**
 	 * Reference to the {@link MiseqRunService}
 	 */
@@ -111,11 +107,10 @@ public class RESTSampleSequenceFilesController {
 
 	@Autowired
 	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService, SampleService sampleService,
-			ProjectService projectService, SequencingRunService miseqRunService) {
+			SequencingRunService miseqRunService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.sampleService = sampleService;
-		this.projectService = projectService;
 		this.miseqRunService = miseqRunService;
 	}
 

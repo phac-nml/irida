@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -55,7 +54,6 @@ public class SampleSequenceFilesControllerTest {
 	private SequenceFileService sequenceFileService;
 	private SequenceFilePairService sequenceFilePairService;
 	private SampleService sampleService;
-	private ProjectService projectService;
 	private SequencingRunService miseqRunService;
 
 	@Before
@@ -63,10 +61,9 @@ public class SampleSequenceFilesControllerTest {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		sequenceFilePairService = mock(SequenceFilePairService.class);
-		projectService = mock(ProjectService.class);
 		miseqRunService= mock(SequencingRunService.class);
 
-		controller = new RESTSampleSequenceFilesController(sequenceFileService, sequenceFilePairService, sampleService, projectService,miseqRunService);
+		controller = new RESTSampleSequenceFilesController(sequenceFileService, sequenceFilePairService, sampleService, miseqRunService);
 	}
 
 	@Test
@@ -182,12 +179,10 @@ public class SampleSequenceFilesControllerTest {
 
 	@Test(expected = EntityNotFoundException.class)
 	public void testCantGetSequenceFileForOtherSample() {
-		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = new SequenceFile();
 		sf.setId(5L);
 
-		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenThrow(
 				new EntityNotFoundException("not in sample"));
@@ -328,7 +323,6 @@ public class SampleSequenceFilesControllerTest {
 		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2", 
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 		when(sequenceFileService.createSequenceFilePairInSample(any(SequenceFile.class),
