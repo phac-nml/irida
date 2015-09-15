@@ -13,51 +13,51 @@
 	<parameters>
 		<parameter name="repeat-minimum-length" defaultValue="150">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/find_repeats/findrepeat/0.0.4"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4"
 				parameterName="length" />
 		</parameter>
 		<parameter name="repeat-minimum-pid" defaultValue="90">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/find_repeats/findrepeat/0.0.4"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4"
 				parameterName="pid" />
 		</parameter>
 		<parameter name="minimum-percent-coverage" defaultValue="80">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.4"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4"
 				parameterName="minmap" />
 		</parameter>
 		<parameter name="alternative-allele-fraction" defaultValue="0.75">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/freebayes/freebayes/0.0.4"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
 				parameterName="options_type.section_input_filters_type.min_alternate_fraction" />
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
 				parameterName="ao" />
 		</parameter>
 		<parameter name="minimum-mapping-quality" defaultValue="30">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/freebayes/freebayes/0.0.4"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
 				parameterName="options_type.section_input_filters_type.quality_filter_type.min_mapping_quality" />
 		</parameter>
 		<parameter name="minimum-mean-mapping-quality" defaultValue="30">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
 				parameterName="mean_mapping" />
 		</parameter>
 		<parameter name="minimum-base-quality" defaultValue="30">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/freebayes/freebayes/0.0.4"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
 				parameterName="options_type.section_input_filters_type.quality_filter_type.min_base_quality" />
 		</parameter>
 		<parameter name="minimum-read-coverage" defaultValue="15">
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/freebayes/freebayes/0.0.4"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
 				parameterName="options_type.section_input_filters_type.min_coverage" />
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
 				parameterName="coverage" />
 			<toolParameter
-				toolId="galaxy-toolshed.corefacility.ca/repos/phil/verify_map/verify_map/0.0.4"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4"
 				parameterName="mindepth" />
 		</parameter>
 	</parameters>
@@ -73,15 +73,9 @@
 	<toolRepositories>
 		<repository>
 			<name>suite_snvphyl</name>
-			<owner>phil</owner>
-			<url>http://galaxy-toolshed.corefacility.ca</url>
-			<revision>fde6677a7f0e</revision>
-		</repository>
-		<repository>
-			<name>regex_find_replace</name>
-			<owner>jjohnson</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
-			<revision>9ea374bb0350</revision>
+			<owner>nml</owner>
+			<url>https://irida.corefacility.ca/galaxy-shed</url>
+			<revision>99463e5aef1b</revision>
 		</repository>
 	</toolRepositories>
 </iridaWorkflow>

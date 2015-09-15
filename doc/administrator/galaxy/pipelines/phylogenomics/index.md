@@ -11,35 +11,17 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 | Tool Name            | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:--------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **suite_snvphyl**    | de3e46eaf5ba  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
+| **suite_snvphyl**    | 99463e5aef1b  | 0 (2015-09-15)                | [IRIDA Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
-## Step 1: Install Dependencies
-
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory.
-
-1. [MUMMer][]:  Please download and install MUMMer (in particular, the command `nucmer`) and add your `PATH` in the `$GALAXY_ENV` file.
-2. [SAMTools][]: Please download and install [SAMTools 0.1.18][] and add to your `PATH` in the `$GALAXY_ENV` file.
-3. **Perl Modules**:  Please download and install dependency Perl modules with the command:
-
-```bash
-cpanm Readonly List::MoreUtils
-```
-
-In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install:
-
-```bash
-cpanm http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
-```
-
-## Step 2: Install Galaxy Tools
+## Step 1: Install Galaxy Tools
 
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
 The install progress can be monitored in the Galaxy log file `$GALAXY_BASE_DIR/main.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
-## Step 3: Testing Pipeline
+## Step 2: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
 
