@@ -70,6 +70,9 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 		return super.update(id, updatedFields);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasPermission('#project','canReadProject')")
 	public List<NcbiExportSubmission> getSubmissionsForProject(Project project) {
