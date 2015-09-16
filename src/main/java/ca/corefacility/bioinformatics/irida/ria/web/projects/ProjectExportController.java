@@ -257,11 +257,8 @@ public class ProjectExportController {
 		List<Map<String, Object>> subList = new ArrayList<>();
 		for (NcbiExportSubmission sub : submissions) {
 			Map<String, Object> subMap = new HashMap<>();
-			subMap.put("id", sub.getId());
-			subMap.put("state", sub.getUploadState());
-			subMap.put("samples", sub.getBioSampleFiles().size());
-			subMap.put("created", sub.getCreatedDate());
 			subMap.put("link", "projects/" + project.getId() + "/export/" + sub.getId());
+			subMap.put("submission", sub);
 			subList.add(subMap);
 		}
 

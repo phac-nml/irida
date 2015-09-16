@@ -6,7 +6,7 @@
 </head>
 
 <body>
-  <div layout:fragment="page" >
+  <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
       <h1 th:text="#{project.export.table.title}"></h1>
       <div dt:conf="exportTable">
@@ -15,10 +15,10 @@
       <table id="exportTable" dt:table="true" dt:url="@{/ajax/projects/{id}/export/list(id=${project.id})}">
         <thead>
           <tr role="row">
-            <th dt:property="id" th:text="#{iridaThing.id}" dt:renderFunction="irida-datatables#datatable.createItemButton"></th>
-            <th dt:property="samples" th:text="#{project.export.table.samples}"></th>
-            <th dt:property="state" th:text="#{project.export.table.state}"></th>
-            <th dt:property="created" dt:renderFunction="irida-datatables#datatable.formatDate" th:text="#{iridaThing.timestamp}"></th>
+            <th dt:property="submission.identifier" th:text="#{iridaThing.id}" dt:renderFunction="irida-datatables#datatable.createItemButton"></th>
+            <th dt:property="submission.bioSampleFiles" th:text="#{project.export.table.samples}" dt:renderFunction="irida-datatables#datatable.displayListSize"></th>
+            <th dt:property="submission.uploadState" th:text="#{project.export.table.state}"></th>
+            <th dt:property="submission.createdDate" dt:renderFunction="irida-datatables#datatable.formatDate" th:text="#{iridaThing.timestamp}"></th>
           </tr>
         </thead>
       </table>
@@ -26,7 +26,6 @@
   </div>
   <th:block layout:fragment="page-scripts" th:inline="javascript">
     <script>
-      
     </script>
   </th:block>
 </body>
