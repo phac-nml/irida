@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,7 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("permitAll()")
+	@PreAuthorize("isAuthenticated()")
 	public NcbiExportSubmission create(NcbiExportSubmission object) throws ConstraintViolationException,
 			EntityExistsException {
 		return super.create(object);
@@ -75,6 +76,7 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	 */
 	@Override
 	@PreAuthorize("hasPermission('#project','canReadProject')")
+	@PostFilter("hasPermission(filterObject, 'canReadExportSubmission')")
 	public List<NcbiExportSubmission> getSubmissionsForProject(Project project) {
 		return repository.getSubmissionsForProject(project);
 	}
