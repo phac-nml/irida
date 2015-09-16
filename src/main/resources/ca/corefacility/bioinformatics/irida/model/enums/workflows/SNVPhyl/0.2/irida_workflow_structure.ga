@@ -358,7 +358,7 @@
                 }
             ], 
             "position": {
-                "left": 1318, 
+                "left": 1322, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -395,7 +395,7 @@
                 }
             ], 
             "position": {
-                "left": 1318, 
+                "left": 1322, 
                 "top": 321
             }, 
             "post_job_actions": {
@@ -439,7 +439,7 @@
                 }
             ], 
             "position": {
-                "left": 1646, 
+                "left": 1650, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -507,7 +507,7 @@
                 }
             ], 
             "position": {
-                "left": 1974, 
+                "left": 1978, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -563,7 +563,7 @@
                 }
             ], 
             "position": {
-                "left": 2237, 
+                "left": 2241, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -602,7 +602,7 @@
                 }
             ], 
             "position": {
-                "left": 2237, 
+                "left": 2241, 
                 "top": 313
             }, 
             "post_job_actions": {
@@ -616,7 +616,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_stats/filterstat/0.0.4", 
-            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"tabfile\": \"null\", \"summary\": \"\\\"invalids\\\"\"}", 
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"tabfile\": \"null\", \"summary\": \"null\"}", 
             "tool_version": "0.0.4", 
             "type": "tool", 
             "user_outputs": [], 
@@ -719,5 +719,5 @@
             "uuid": "e474528e-acd0-4e26-819e-dd1514567d26"
         }
     }, 
-    "uuid": "fdcbe599-efdc-4e40-84e2-5a03fe15c7d3"
+    "uuid": "d33b86c5-61c2-4929-ba95-c30e429e4675"
 }
