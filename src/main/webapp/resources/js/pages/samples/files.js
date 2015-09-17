@@ -126,7 +126,6 @@
             var vm = this;
             vm.rejects = rejects;
             vm.good = files;
-            console.log(files);
 
             vm.cancel = function () {
               $modalInstance.dismiss();
