@@ -1,0 +1,9 @@
+================= Filter Summary Statistics =====================
+Number of sites used to generate phylogeny: 2
+Total number of sites identified: 2
+Number of sites filtered: 0
+Percentage of sites filtered: 0.00
+Coverage filtered: 0
+mpileup filtered: 0
+Density filtered: 0
+Invalid filtered: 0
