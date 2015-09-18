@@ -88,7 +88,6 @@
     var vm = this,
         fileUpload = undefined,
     url = TL.BASE_URL + 'samples/' + PAGE.sample.id + '/sequenceFiles/upload';
-    vm.uploading = false;
 
     function uploadGoodFiles(files) {
       vm.uploading = true;
@@ -102,12 +101,17 @@
         file: files
       }).progress(function (evt) {
         vm.progress = parseInt(100.0 * evt.loaded / evt.total);
+        if(vm.progress === 100) {
+          vm.uploading = false;
+          vm.processing = true;
+        }
       }).success(function () {
         $window.onbeforeunload = undefined;
         $timeout(function () {
           vm.uploading = false;
           // TODO: This should be an ajax refresh of the files table.
           $window.location.reload();
+          vm.processing = false;
         }, 100);
       });
     }

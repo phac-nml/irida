@@ -9,29 +9,36 @@
 </head>
 <body>
 
-<div class="panel panel-default" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
-	<form name="uploadForm">
-		<div class="panel-heading">
-			<div class="fileUpload btn btn-default btn-sm btn-block">
-				<th:block th:text="#{samples.files.upload.btn}"></th:block>
-				&nbsp;
-				<fa:icon type="upload"/>
-				<input type="file" id="file-upload-btn" class="upload" name="files"
-				       ngf-change="fileUploadCtrl.uploadFiles($files, $event, $rejectedFiles)"
-				       ngf-accept="'.fastq,.fastq.gz'"
-				       ngf-select=""
-				       multiple="true"/></div>
-		</div>
-		<div class="ng-cloak panel-body file-upload-progress flexed animated"
+<div class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
+	<div class="panel-body" ng-hide="fileUploadCtrl.uploading || fileUploadCtrl.processing">
+		<div class="fileUpload btn btn-default btn-sm btn-block">
+			<th:block th:text="#{samples.files.upload.btn}"></th:block>
+			&nbsp;
+			<fa:icon type="upload"/>
+			<input type="file" id="file-upload-btn" class="upload" name="files"
+				   ngf-change="fileUploadCtrl.uploadFiles($files, $event, $rejectedFiles)"
+				   ngf-accept="'.fastq,.fastq.gz'"
+				   ngf-select=""
+				   multiple="true"/></div>
+	</div>
+	<div class="ng-cloak panel-body" ng-show="fileUploadCtrl.uploading || fileUploadCtrl.processing">
+		<h3 th:text="#{samples.files.upload.progress.title}">_Uploading Files</h3>
+
+		<div class="file-upload-progress"
 			 ng-class="{fadeIn: fileUploadCtrl.uploading, fadeOut: !fileUploadCtrl.uploading}">
-			<progressbar class="progress-striped active" value="fileUploadCtrl.progress">{{ fileUploadCtrl.progress
+			<progressbar class="progress-striped active" style="margin-right: 1em;" value="fileUploadCtrl.progress">{{ fileUploadCtrl.progress
 				}}%
 			</progressbar>
 			<button class="btn btn-default btn-xs" ng-click="fileUploadCtrl.cancel()">
 				<fa:icon type="remove"/>
 			</button>
 		</div>
-	</form>
+		<div class="alert alert-info file-upload-crunching"
+			ng-class="{fadeIn: fileUploadCtrl.processing, fadeOut: !fileUploadCtrl.processing}">
+				<fa:icon type="loading"/>
+				&nbsp;<th:block th:text="#{samples.files.upload.progress.processing}"></th:block>
+		</div>
+	</div>
 </div>
 
 <main layout:fragment="main" ddl:bundle-includes="sample-files">
