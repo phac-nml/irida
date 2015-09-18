@@ -40,4 +40,4 @@ insert into client_details_resource_ids (client_details_id,resource_id) values (
 insert into client_details_resource_ids (client_details_id,resource_id) values (4,"NmlIrida");
 insert into client_details_resource_ids (client_details_id,resource_id) values (5,"NmlIrida");
 
-CREATE TABLE oauth_access_token (token_id VARCHAR(255), token LONGBLOB NOT NULL, authentication_id VARCHAR(255) NOT NULL, user_name VARCHAR(255) NOT NULL, client_id VARCHAR(255) NOT NULL, authentication LONGBLOB NOT NULL, refresh_token VARCHAR(255), PRIMARY KEY(token_id), CONSTRAINT `FK_OAUTH_TOKEN_CLIENT_DETAILS` FOREIGN KEY (`client_id`) REFERENCES `client_details` (`clientId`) ON DELETE CASCADE);
+CREATE TABLE oauth_access_token (token_id VARCHAR(255), token LONGBLOB NOT NULL, authentication_id VARCHAR(255) NOT NULL, user_name VARCHAR(255) NOT NULL, client_id VARCHAR(255) NOT NULL, authentication LONGBLOB NOT NULL, refresh_token VARCHAR(255), PRIMARY KEY(token_id), CONSTRAINT `FK_OAUTH_TOKEN_CLIENT_DETAILS` FOREIGN KEY (`client_id`) REFERENCES `client_details` (`clientId`) ON DELETE CASCADE, UNIQUE (`authentication_id`));
