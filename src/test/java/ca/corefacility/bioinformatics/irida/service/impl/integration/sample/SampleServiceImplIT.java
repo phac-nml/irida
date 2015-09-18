@@ -76,7 +76,6 @@ public class SampleServiceImplIT {
 		Sample s = new Sample();
 		String sampleName = "sampleName";
 		s.setSampleName(sampleName);
-		s.setSequencerSampleId("sampleId");
 		Sample saved = sampleService.create(s);
 		assertEquals("Wrong name was saved.", sampleName, saved.getSampleName());
 	}
@@ -120,7 +119,7 @@ public class SampleServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
 	public void testGetSampleByExternalIdDuplicates() {
 		Project p = projectService.read(7L);
-		Sample s = sampleService.getSampleBySequencerSampleId(p, "external");
+		Sample s = sampleService.getSampleBySampleName(p, "sample");
 		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(7L), s.getId());
 	}
 
@@ -128,7 +127,7 @@ public class SampleServiceImplIT {
 	@Test(expected = EntityNotFoundException.class)
 	public void testgetSampleByExternalNotFound() {
 		Project p = projectService.read(1L);
-		sampleService.getSampleBySequencerSampleId(p, "garbage");
+		sampleService.getSampleBySampleName(p, "garbage");
 	}
 
 	@Test
@@ -136,10 +135,10 @@ public class SampleServiceImplIT {
 	public void testReadSampleByExternalIdAsSequencer() {
 		String externalId = "sample5";
 		Project p = projectService.read(3L);
-		Sample s = sampleService.getSampleBySequencerSampleId(p, externalId);
+		Sample s = sampleService.getSampleBySampleName(p, externalId);
 
 		assertNotNull("Sample was not populated.", s);
-		assertEquals("Wrong external id.", externalId, s.getSequencerSampleId());
+		assertEquals("Wrong external id.", externalId, s.getSampleName());
 	}
 
 	@Test
