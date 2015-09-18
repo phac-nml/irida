@@ -11,5 +11,4 @@
 		relativeToChangelogFile="true" />
 	<include file="fix-workflow-id-column-type.xml"
 		relativeToChangelogFile="true" />
-	<include file="email-subscription.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
