@@ -59,9 +59,9 @@
     <sequence_file_pair_files pair_id="1"
         files_id="6" />
 
-	<sample id="1" sampleName="sample" sequencerSampleId="sample1"
+	<sample id="1" sampleName="sample" 
 		createdDate="2013-07-18 14:20:19.0" />
-	<sample id="2" sampleName="sample" sequencerSampleId="sample2"
+	<sample id="2" sampleName="sample" 
 		createdDate="2013-07-18 14:20:19.0" />
 	<project id="1" name="project 1" createdDate="2013-07-18 14:20:19.0" />
 
