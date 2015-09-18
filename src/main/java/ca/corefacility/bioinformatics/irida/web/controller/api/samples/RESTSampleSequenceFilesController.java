@@ -126,9 +126,6 @@ public class RESTSampleSequenceFilesController {
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles", method = RequestMethod.GET)
 	public ModelMap getSampleSequenceFiles(@PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
-		// Use the RelationshipService to get the set of SequenceFile
-		// identifiers associated with a Sample, then
-		// retrieve each of the SequenceFiles and prepare for serialization.
 		logger.debug("Reading seq files for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
 		List<Join<Sample, SequenceFile>> relationships = sequenceFileService.getSequenceFilesForSample(sample);
