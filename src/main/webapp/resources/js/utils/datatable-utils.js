@@ -42,6 +42,15 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
   }
+  
+  /**
+   * Return the size of the list passed in the data param
+   * @param data column data.  Should be a JSON list
+   * @returns size of the data list
+   */
+  function displayListSize(data) {
+    return data.length;
+  }
 
   function forceContentSize(data, type, full) {
     if (data && data.length > 0) {
@@ -109,6 +118,7 @@ var datatable = (function(moment, tl, page) {
     i18n: i18n,
     createItemButton: createItemButton,
     forceContentSize: forceContentSize,
-    tableDrawn: tableDrawn
+    tableDrawn: tableDrawn,
+    displayListSize: displayListSize
   };
 })(window.moment, window.TL, window.PAGE);

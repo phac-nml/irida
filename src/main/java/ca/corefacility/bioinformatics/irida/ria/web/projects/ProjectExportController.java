@@ -53,7 +53,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 public class ProjectExportController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectExportController.class);
 
-	public static final String NCBI_EXPORT_VIEW = "export/ncbi";
+	public static final String NCBI_EXPORT_VIEW = "projects/export/ncbi";
+	public static final String EXPORT_DETAILS_VIEW = "projects/export/details";
+	public static final String EXPORT_LIST_VIEW = "projects/export/list";
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
@@ -87,8 +89,7 @@ public class ProjectExportController {
 	 * @return Name of the NCBI export page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("s") List<Long> sampleIds,
-			Model model) {
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("s") List<Long> sampleIds, Model model) {
 		Project project = projectService.read(projectId);
 
 		logger.trace("Reading " + sampleIds.size() + " samples");
@@ -152,6 +153,7 @@ public class ProjectExportController {
 		model.addAttribute("library_selection", NcbiLibrarySelection.values());
 		model.addAttribute("library_source", NcbiLibrarySource.values());
 		model.addAttribute("library_strategy", NcbiLibraryStrategy.values());
+		model.addAttribute("activeNav", "export");
 
 		return NCBI_EXPORT_VIEW;
 	}
@@ -200,6 +202,67 @@ public class ProjectExportController {
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 
 		return ImmutableMap.of("submissionId", ncbiExportSubmission.getId());
+	}
+
+	/**
+	 * Get the details view of a given {@link NcbiExportSubmission}
+	 * 
+	 * @param submissionId
+	 *            the {@link NcbiExportSubmission} id
+	 * @param model
+	 *            model for the view
+	 * @return name of the details view
+	 */
+	@RequestMapping("/projects/{projectId}/export/{submissionId}")
+	public String getDetailsView(@PathVariable Long projectId, @PathVariable Long submissionId, Model model) {
+		NcbiExportSubmission submission = exportSubmissionService.read(submissionId);
+		Project project = projectService.read(projectId);
+		model.addAttribute("submission", submission);
+		model.addAttribute("activeNav", "export");
+		model.addAttribute("project", project);
+		return EXPORT_DETAILS_VIEW;
+	}
+
+	/**
+	 * Get the project export list view
+	 * 
+	 * @param projectId
+	 *            which {@link Project} to get exports for
+	 * @param model
+	 *            model for the view
+	 * @return name of the exports list view
+	 */
+	@RequestMapping("/projects/{projectId}/export")
+	public String getExportsPage(@PathVariable Long projectId, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		model.addAttribute("activeNav", "export");
+		return EXPORT_LIST_VIEW;
+	}
+
+	/**
+	 * Ajax method for getting the {@link NcbiExportSubmission}s for a given
+	 * {@link Project}
+	 * 
+	 * @param projectId
+	 *            {@link Project} id
+	 * @return List of Map of submission params
+	 */
+	@RequestMapping("/ajax/projects/{projectId}/export/list")
+	@ResponseBody
+	public List<Map<String, Object>> getExportsForProject(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+		List<NcbiExportSubmission> submissions = exportSubmissionService.getSubmissionsForProject(project);
+
+		List<Map<String, Object>> subList = new ArrayList<>();
+		for (NcbiExportSubmission sub : submissions) {
+			Map<String, Object> subMap = new HashMap<>();
+			subMap.put("link", "projects/" + project.getId() + "/export/" + sub.getId());
+			subMap.put("submission", sub);
+			subList.add(subMap);
+		}
+
+		return subList;
 	}
 
 	/**

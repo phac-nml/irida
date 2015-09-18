@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
@@ -33,9 +34,11 @@ public class NcbiBioSampleFiles {
 
 	private String bioSample;
 
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<SequenceFile> files;
 
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<SequenceFilePair> pairs;
 

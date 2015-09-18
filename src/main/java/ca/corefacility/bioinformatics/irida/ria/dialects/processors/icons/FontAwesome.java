@@ -93,6 +93,10 @@ public class FontAwesome {
 	 */
 	private static final String FILE_ATTRIBUTE = "file";
 	private static final String FILE_ICON = "file-o";
+	
+	private static final String PROJECT_ATTRIBUTE = "project";
+	private static final String PROJECT_ICON = "folder";
+	
 	/*
 	Attribute to display terminal icon
 	 */
@@ -156,6 +160,7 @@ public class FontAwesome {
 			.put(SAMPLE_ATTRIBUTE,SAMPLE_ICON)
 			.put(USER_ATTRIBUTE,USER_ICON)
 			.put(BAN_ATTRIBUTE,BAN_ICON)
+			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
 			.build();
 	// @formatter:on
 
