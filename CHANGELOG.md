@@ -1,6 +1,18 @@
 Changes
 =======
 
+1.0.0-alpha4 to 1.0.0-alpha5
+----------------------------
+* [UI] Feature: Announcements section added to dashboard.
+* [UI] Feature: Updated the logo in the top, right-hand corner to use the real IRIDA logo.
+* [UI] Feature: Project e-mail subscriptions; you may now subscribe to a project to receive daily digest e-mails showing project events.
+* [UI] Papercut: Show better error messages when a problem occurs with sequence file uploads by the web interface. (Issue #318)
+* [Workflow]: SNVPhyl is updated to version 0.2 (in sync with NML Galaxy).
+* [Tools] Bugfix: Resolved issue where multiple multiple OAuth token requests by the same client using the same user credentials was resulting in duplicated OAuth access tokens being issued. (Issue #324)
+* [Tools] Papercut: Remove sequencer ID column from back-end, only use the sample name field from sample sheets to reduce confusion about how data is uploaded to samples.
+* [Developer] Removed all unused code for transferring files to arbitrary instances of Galaxy, feature is supported by IRIDA Import tool in NML Galaxy.
+* [Developer] Add new top-level data model classes to help distinguish mutable from immutable objects.
+
 1.0.0-alpha3 to 1.0.0-alpha4
 ----------------------------
 * [UI] Bugfix: Fixed adding samples to the cart from associated projects.
