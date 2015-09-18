@@ -29,11 +29,11 @@
 	<project id="4" createdDate="2013-07-18 14:22:19.0" name="project22" />
 	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" />
 
-	<sample id="1" sequencerSampleId="external" sampleName="sample"
+	<sample id="1"  sampleName="sample1"
 		createdDate="2013-07-18 14:20:19.0" />
-	<sample id="2" sequencerSampleId="external2" sampleName="sample"
+	<sample id="2"  sampleName="sample2"
 		createdDate="2013-07-18 14:20:19.0" />
-	<sample id="3" sequencerSampleId="external2" sampleName="sample"
+	<sample id="3"  sampleName="sample2"
 		createdDate="2013-07-18 14:20:19.0" />
 
 	<project_sample id="1" project_id="1" sample_id="1"

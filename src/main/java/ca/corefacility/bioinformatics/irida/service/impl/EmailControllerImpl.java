@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
@@ -200,5 +201,25 @@ public class EmailControllerImpl implements EmailController {
 		}
 
 		return eventInfo;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause) throws MailSendException {
+		final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+		try {
+			message.setSubject("IRIDA Storage Exception: " + rootCause.getMessage());
+			message.setTo(adminEmailAddress);
+			message.setFrom(serverEmail);
+			message.setText("An exeption related to storage has occurred that requires your attention, stack as follows: " + rootCause);
+			
+			javaMailSender.send(mimeMessage);
+		} catch (final MessagingException e) {
+			logger.error("Error trying to send exception email. (Ack.)", e);
+			throw new MailSendException("Failed to send e-mail for storage related-exception.", e);
+		}
 	}
 }

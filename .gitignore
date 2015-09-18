@@ -12,3 +12,4 @@ node_modules
 /src/main/java/a
 doc/_site
 *.swp
+/.idea/
