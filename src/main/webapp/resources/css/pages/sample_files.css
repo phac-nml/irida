@@ -130,7 +130,7 @@
 
 .panel-file-upload .panel-body h3 {
   margin-top: 0 !important; }
-.panel-file-upload .panel-body .alert-info, .panel-file-upload .panel-body .progress {
+.panel-file-upload .panel-body .alert-info {
   margin: 0 !important;
   padding: 2px 5px !important; }
 .panel-file-upload .panel-body .progress {
