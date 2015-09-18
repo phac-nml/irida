@@ -356,7 +356,7 @@ public class SamplesController extends BaseController {
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" })
 	public void uploadSequenceFiles(@PathVariable Long sampleId,
-			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) {
+			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 
 		final Map<String, List<MultipartFile>> pairedUpFiles = files.stream().collect(
@@ -369,18 +369,13 @@ public class SamplesController extends BaseController {
 					}
 				}));
 
-		try {
-			for (String key : pairedUpFiles.keySet()) {
-				List<MultipartFile> list = pairedUpFiles.get(key);
-				if (list.size() > 1) {
-					createSequenceFilePairsInSample(list, sample);
-				} else {
-					createSequenceFileInSample(list.get(0), sample);
-				}
+		for (String key : pairedUpFiles.keySet()) {
+			List<MultipartFile> list = pairedUpFiles.get(key);
+			if (list.size() > 1) {
+				createSequenceFilePairsInSample(list, sample);
+			} else {
+				createSequenceFileInSample(list.get(0), sample);
 			}
-		} catch (IOException e) {
-			logger.error("Error writing sequence file", e);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
 

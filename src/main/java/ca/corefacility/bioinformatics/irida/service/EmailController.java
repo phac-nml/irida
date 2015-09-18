@@ -48,6 +48,16 @@ public interface EmailController {
 	public void sendSubscriptionUpdateEmail(User user, List<ProjectEvent> events) throws MailSendException;
 
 	/**
+	 * Send an e-mail to the administrative user with an exception when there's a serious storage related exception.
+	 * 
+	 * @param adminEmailAddress 
+	 * 			  the address to which notifications should be sent.
+	 * @param rootCause
+	 *            the exception to send to the user.
+	 */
+	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause) throws MailSendException;
+
+	/**
 	 * Is the mail server configured?
 	 * 
 	 * @return {@link Boolean#TRUE} if configured, {@link Boolean#FALSE} if not.

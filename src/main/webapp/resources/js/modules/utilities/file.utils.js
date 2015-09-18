@@ -49,8 +49,8 @@
           file: file
         }).success(function () {
           defer.resolve();
-        }).error(function(){
-          $rootScope.$broadcast(UPLOAD_ERROR);
+        }).error(function(data, status, headers, config){
+          $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
           defer.reject("Error uploading file");
         });
         $rootScope.$broadcast(UPLOAD_EVENT, {
@@ -80,8 +80,8 @@
         file: files
       }).success(function () {
         defer.resolve();
-      }).error(function () {
-        $rootScope.$broadcast(UPLOAD_ERROR);
+      }).error(function (data, status, headers, config) {
+        $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
         defer.reject("Error uploading file");
       });
 
@@ -99,7 +99,8 @@
       templateUrl: '/upload-error.html',
       controller: ['$scope', function($scope) {
         $scope.hasError = false;
-        $scope.$on(UPLOAD_ERROR, function() {
+        $scope.$on(UPLOAD_ERROR, function(event, reason) {
+          $scope.errorMessage = reason;
           $scope.hasError = true;
         });
       }]

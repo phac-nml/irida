@@ -219,6 +219,8 @@ public class UsersController {
 	 *            whether the user account should be enabled or disabled.
 	 * @param principal
 	 *            a reference to the logged in user.
+	 * @param request
+	 * 		      the request
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
