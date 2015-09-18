@@ -15,13 +15,21 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 To install these tools, please proceed through the following steps.
 
-## Step 1: Install Galaxy Tools
+## Step 1: Install Perl Modules
+
+Some Perl modules are required to be installed before the tools are installed.  In particular, the module `Readonly` needs to be installed.  This can by installed by running:
+
+```
+cpanm Readonly
+```
+
+## Step 2: Install Galaxy Tools
 
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
 The install progress can be monitored in the Galaxy log file `$GALAXY_BASE_DIR/main.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
-## Step 2: Testing Pipeline
+## Step 3: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
 
