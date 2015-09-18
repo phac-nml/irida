@@ -237,10 +237,6 @@ public class RESTProjectSamplesController {
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
 	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
-		//verify sample is in project
-		Project project = projectService.read(projectId);
-		sampleService.getSampleForProject(project, sampleId);
-		
 		ModelMap modelMap = getSample(sampleId);
 		Sample s = (Sample) modelMap.get(RESTGenericController.RESOURCE_NAME);
 		
@@ -322,9 +318,6 @@ public class RESTProjectSamplesController {
 	public ModelMap updateSample(@PathVariable Long sampleId,
 			@RequestBody Map<String, Object> updatedFields) {
 		ModelMap modelMap = new ModelMap();
-
-		// confirm that the project is related to the sample
-		sampleService.read(sampleId);
 
 		// issue an update request
 		sampleService.update(sampleId, updatedFields);
