@@ -108,7 +108,7 @@
           vm.uploading = false;
           // TODO: This should be an ajax refresh of the files table.
           $window.location.reload();
-        }, 2000);
+        }, 100);
       });
     }
 
