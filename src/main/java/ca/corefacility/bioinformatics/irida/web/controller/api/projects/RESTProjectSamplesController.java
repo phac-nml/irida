@@ -247,21 +247,25 @@ public class RESTProjectSamplesController {
 		return modelMap;
 	}
 
+	/**
+	 * Read a {@link Sample} by its id
+	 * 
+	 * @param sampleId
+	 *            the id of the {@link Sample} to read
+	 * @return representation of the sample
+	 */
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.GET)
 	public ModelMap getSample(@PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 		Sample s = sampleService.read(sampleId);
 
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withSelfRel());
-		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-		s.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
 				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
-		s.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class)
-						.getUnpairedSequenceFilesForSample(sampleId)).withRel(
-				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getUnpairedSequenceFilesForSample(sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
 		return modelMap;
