@@ -6,6 +6,9 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet id="oauth-unique-key" author="tom">
+		<!-- deleting tokens so unique constraint doesn't conflict -->
+		<delete tableName="oauth_access_token" />
+
 		<addUniqueConstraint columnNames="authentication_id"
 			constraintName="UK_OAUTH_AUTHENTICATION" tableName="oauth_access_token" />
 	</changeSet>
