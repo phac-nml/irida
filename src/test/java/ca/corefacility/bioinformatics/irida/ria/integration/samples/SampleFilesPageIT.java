@@ -75,14 +75,15 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testFileUploads() {
+	public void testGoodFileUploads() {
 		page.gotoPage(SAMPLE_ID);
-
-		// Test valid fastq
 		page.selectGoodFastqFiles();
 		assertTrue("Should display progress bar for file uploads", page.isProgressBarDisplayed());
+	}
 
-		// Test uploading an incorrect file type.
+	@Test
+	public void testBadFileUploads() {
+		page.gotoPage(SAMPLE_ID);
 		page.selectBadFastaFile();
 		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
 	}
