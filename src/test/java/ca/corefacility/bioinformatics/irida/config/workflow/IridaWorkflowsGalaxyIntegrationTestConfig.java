@@ -50,7 +50,7 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
 
-	private UUID snvPhylWorkflowId = UUID.fromString("ccca532d-b0be-4f2c-bd6d-9886aa722571");
+	private UUID snvPhylWorkflowId = UUID.fromString("3fd2719d-8729-4e91-bd01-c6c20b99874d");
 
 	/**
 	 * Registers a production SNVPhyl workflow for testing.
