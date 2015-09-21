@@ -86,11 +86,11 @@
   }
 }
 
-.file-upload-progress, .file-upload-crunching {
+.file-upload-progress, .file-upload-crunching, .file-upload-error {
   display: none!important;
 }
 
-.file-upload-crunching {
+.file-upload-crunching, .file-upload-error, .file-upload-error {
   padding-bottom: 15px;
 }
 
@@ -101,7 +101,7 @@
   }
 }
 
-.file-upload-crunching.fadeIn {
+.file-upload-crunching.fadeIn, .file-upload-error.fadeIn {
   display: block!important;
 }
 

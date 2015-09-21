@@ -21,7 +21,7 @@
 				   ngf-select=""
 				   multiple="true"/></div>
 	</div>
-	<div class="ng-cloak panel-body" ng-show="fileUploadCtrl.uploading || fileUploadCtrl.processing">
+	<div class="ng-cloak panel-body" ng-show="fileUploadCtrl.uploading || fileUploadCtrl.processing || fileUploadCtrl.errorMessage">
 		<h3 th:text="#{samples.files.upload.progress.title}">_Uploading Files</h3>
 
 		<div class="file-upload-progress"
@@ -38,6 +38,11 @@
 				<fa:icon type="loading"/>
 				&nbsp;<th:block th:text="#{samples.files.upload.progress.processing}"></th:block>
 		</div>
+		<div class="alert alert-danger file-upload-error"
+			 ng-class="{fadeIn: fileUploadCtrl.errorMessage, fadeOut: !fileUploadCtrl.errorMessage}">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="fileUploadCtrl.errorMessage=''"><span aria-hidden="true">&times;</span></button>
+			<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
+			<p>{{ errorMessage }}</p></div>
 	</div>
 </div>
 

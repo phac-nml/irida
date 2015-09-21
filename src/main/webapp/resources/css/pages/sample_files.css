@@ -136,10 +136,10 @@
 .panel-file-upload .panel-body .progress {
   margin-right: 0.5em !important; }
 
-.file-upload-progress, .file-upload-crunching {
+.file-upload-progress, .file-upload-crunching, .file-upload-error {
   display: none !important; }
 
-.file-upload-crunching {
+.file-upload-crunching, .file-upload-error, .file-upload-error {
   padding-bottom: 15px; }
 
 .file-upload-progress.fadeIn {
@@ -147,7 +147,7 @@
   .file-upload-progress.fadeIn h3 {
     margin-top: 0 !important; }
 
-.file-upload-crunching.fadeIn {
+.file-upload-crunching.fadeIn, .file-upload-error.fadeIn {
   display: block !important; }
 
 .modal-body .alert {

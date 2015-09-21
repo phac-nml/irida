@@ -101,7 +101,7 @@
         file: files
       }).progress(function (evt) {
         vm.progress = parseInt(100.0 * evt.loaded / evt.total);
-        if(vm.progress === 100) {
+        if(vm.progress >= 99) {
           vm.uploading = false;
           vm.processing = true;
         }
@@ -113,6 +113,10 @@
           $window.location.reload();
           vm.processing = false;
         }, 100);
+      }).error(function (data) {
+        vm.processing = false;
+        vm.uploading = false;
+        vm.errorMessage = data.error_message;
       });
     }
 
