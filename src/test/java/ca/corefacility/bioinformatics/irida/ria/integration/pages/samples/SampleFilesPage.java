@@ -81,7 +81,7 @@ public class SampleFilesPage extends AbstractPage {
 		WebElement uploadBtn = driver.findElement(By.id("file-upload-btn"));
 		Path path = Paths.get(filePath);
 		uploadBtn.sendKeys(path.toAbsolutePath().toString());
-		waitForTime(50);
+		waitForTime(500);
 	}
 
 	public boolean isFileTypeWarningDisplayed() {
