@@ -214,8 +214,7 @@ public class ProjectSamplesController {
 				seqFileMap.put("_links", links);
 				links.put("self", self);
 				String seqFileLoc = linkTo(
-						methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId,
-								sampleSeqJoin.getSubject().getId(), sampleSeqJoin.getObject().getId())).withSelfRel()
+						methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleSeqJoin.getSubject().getId(), sampleSeqJoin.getObject().getId())).withSelfRel()
 						.getHref();
 				self.put("href", seqFileLoc);
 				sequences.add(seqFileMap);

@@ -470,13 +470,16 @@ A sample corresponds to a single isolate and contains the sequencing data and me
     "createdDate" : 1406733849000,
     "links" : [ {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/5/samples/1"
+    "href" : "http://localhost:8080/api/samples/1"
     }, {
     "rel" : "sample/sequenceFiles",
-    "href" : "http://localhost:8080/api/projects/5/samples/1/sequenceFiles"
+    "href" : "http://localhost:8080/api/samples/1/sequenceFiles"
     }, {
     "rel" : "sample/project",
     "href" : "http://localhost:8080/api/projects/5"
+    }, {
+    "rel" : "project/sample",
+    "href" : "http://localhost:8080/api/projects/5/samples/1"
     } ]
   }],
   "links" : [ {
@@ -500,6 +503,7 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `self` | A link to this sample. |
 | `sample/project` | A link to the project that owns this sample. |
 | `sample/sequenceFiles` | A link to the collection of sequence files in this sample. |
+| `project/sample` | A link to the relationship between the project and sample.  To remove a sample from a project, `DELETE` this resource. |
 
 ##### Properties
 {:.no_toc}
@@ -571,13 +575,13 @@ An individual sample contains the metadata associated with an isolate. The sampl
   "createdDate" : 1406733854000,
   "links" : [ {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/5/samples/5"
+    "href" : "http://localhost:8080/api/samples/5"
   }, {
     "rel" : "sample/project",
     "href" : "http://localhost:8080/api/projects/5"
   }, {
     "rel" : "sample/sequenceFiles",
-    "href" : "http://localhost:8080/api/projects/5/samples/5/sequenceFiles"
+    "href" : "http://localhost:8080/api/samples/5/sequenceFiles"
   } ]
   }
 
@@ -620,15 +624,15 @@ Each sample will refer to a [collection of sequence files](#sequence-file-collec
     "createdDate" : 1407344463000,
     "links" : [ {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/10"
+    "href" : "http://localhost:8080/api/samples/51/sequenceFiles/10"
     } ]
   } ],
   "links" : [ {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
+    "href" : "http://localhost:8080/api/samples/51/sequenceFiles"
   }, {
     "rel" : "sample",
-    "href" : "http://localhost:8080/api/projects/4/samples/51"
+    "href" : "http://localhost:8080/api/samples/51"
   } ]
   }
 
@@ -668,13 +672,13 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
   "createdDate" : 1407344463000,
   "links" : [ {
     "rel" : "sample/sequenceFiles",
-    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
+    "href" : "http://localhost:8080/api/samples/51/sequenceFiles"
   }, {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/9"
+    "href" : "http://localhost:8080/api/samples/51/sequenceFiles/9"
   }, {
     "rel" : "sample",
-    "href" : "http://localhost:8080/api/projects/4/samples/51"
+    "href" : "http://localhost:8080/api/samples/51"
   } ]
   }
 
