@@ -166,7 +166,7 @@ public class ProjectSamplesControllerTest {
 	}
 
 	@Test
-	public void testGetIndividualSample() throws IOException {
+	public void testGetProjectSample() throws IOException {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 
@@ -177,8 +177,6 @@ public class ProjectSamplesControllerTest {
 
 		ModelMap modelMap = controller.getProjectSample(p.getId(), s.getId());
 
-		verify(sampleService).read(s.getId());
-		verify(projectService).read(p.getId());
 		verify(sampleService).getSampleForProject(p, s.getId());
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
@@ -212,7 +210,6 @@ public class ProjectSamplesControllerTest {
 
 		ModelMap modelMap = controller.updateSample(s.getId(), updatedFields);
 
-		verify(sampleService).read(s.getId());
 		verify(sampleService).update(s.getId(), updatedFields);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);

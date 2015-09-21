@@ -237,12 +237,20 @@ public class RESTProjectSamplesController {
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
 	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
-		ModelMap modelMap = getSample(sampleId);
-		Sample s = (Sample) modelMap.get(RESTGenericController.RESOURCE_NAME);
-		
-		// add a link to: 1) self, 2) sequenceFiles, 3) project
+		// read project/sample to verify sample exists in project
+		Project project = projectService.read(projectId);
+		Sample s = sampleService.getSampleForProject(project, sampleId);
+
+		ModelMap modelMap = new ModelMap();
+
+		s = addLinksForSample(s);
+
+		// add a link to project
 		s.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(REL_PROJECT_SAMPLE));
+		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
+				REL_PROJECT_SAMPLE));
+
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
 
 		return modelMap;
 	}
@@ -259,16 +267,30 @@ public class RESTProjectSamplesController {
 		ModelMap modelMap = new ModelMap();
 		Sample s = sampleService.read(sampleId);
 
-		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withSelfRel());
-		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
-				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
-		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getUnpairedSequenceFilesForSample(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+		s = addLinksForSample(s);
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
 		return modelMap;
+	}
+
+	/**
+	 * Add the required links for a sample individual: self, file pairs,
+	 * unpaired files
+	 * 
+	 * @param s
+	 *            The sample to add links to
+	 * @return the sample with added links
+	 */
+	private Sample addLinksForSample(Sample s) {
+		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withSelfRel());
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(s.getId())).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(s.getId()))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getUnpairedSequenceFilesForSample(s.getId()))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+
+		return s;
 	}
 
 	/**
