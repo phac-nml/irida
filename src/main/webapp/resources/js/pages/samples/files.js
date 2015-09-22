@@ -60,7 +60,7 @@
         }
       });
     };
-    
+
     vm.deletePair = function(id, label1, label2) {
       $modal.open({
         templateUrl: '/confirm_pair.html',
@@ -114,6 +114,7 @@
           vm.processing = false;
         }, 100);
       }).error(function (data) {
+        $window.onbeforeunload = undefined;
         vm.processing = false;
         vm.uploading = false;
         vm.errorMessage = data.error_message;
