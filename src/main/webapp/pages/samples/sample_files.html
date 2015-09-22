@@ -42,7 +42,7 @@
 			 ng-class="{fadeIn: fileUploadCtrl.errorMessage, fadeOut: !fileUploadCtrl.errorMessage}">
 			<button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="fileUploadCtrl.errorMessage=''"><span aria-hidden="true">&times;</span></button>
 			<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
-			<p>{{ errorMessage }}</p></div>
+			<p>{{ fileUploadCtrl.errorMessage }}</p></div>
 	</div>
 </div>
 
