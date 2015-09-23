@@ -11,8 +11,9 @@
     <main layout:fragment="main">
     <div class="row">
         <div class="col-md-12">
-          <h1 role="heading"><th:block th:text="#{sequencingruns.details.title(${run.id})}">__TITLE__</th:block>
-          <button id="remove-btn" class="btn btn-danger pull-right" th:text="#{form.btn.remove}">Remove</button>
+          <h1 role="heading">
+            <th:block th:text="#{sequencingruns.details.title(${run.id})}">__TITLE__</th:block>
+            <button id="remove-btn" class="btn btn-danger pull-right" th:text="#{form.btn.remove}">Remove</button>
           </h1>
         </div>
     </div>
@@ -48,7 +49,7 @@
     			noty({
     				layout: "center",
     	            type: "default",
-    	            text: /*[[#{sequencingruns.delete.confirmation}]]*/ "Remove client?",
+    	            text: /*[[#{sequencingruns.delete.confirmation}]]*/ "Remove sequencing run?",
     	            modal: true,
     	            buttons: [
     	                {
@@ -67,7 +68,6 @@
     	                }
     	            ],
     			});
-
     		});
         });
       </script>
