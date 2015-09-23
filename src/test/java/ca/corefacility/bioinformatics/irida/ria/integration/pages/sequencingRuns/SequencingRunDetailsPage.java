@@ -43,4 +43,10 @@ public class SequencingRunDetailsPage extends AbstractPage {
 	public String getSequencerType() {
 		return driver.findElement(By.className("sequencer-type")).getText();
 	}
+
+	public void deleteRun() {
+		driver.findElement(By.id("remove-btn")).click();
+		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.className("confirm-delete")));
+		confirmButton.click();
+	}
 }
