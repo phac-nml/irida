@@ -18,29 +18,29 @@ cpanm --force Fatal Clone Parallel::ForkManager http://search.cpan.org/CPAN/auth
 pip install bioblend
 
 # prepare the directories and check out galaxy
-mkdir -p /opt/irida/galaxy/{shed_tools,tool_dependencies,install}
+mkdir -p /home/irida/galaxy/{shed_tools,tool_dependencies,install}
 
-useradd --no-create-home --system galaxy-irida --home-dir /opt/irida/galaxy/
-chown -R galaxy-irida /opt/irida/galaxy/
+useradd --no-create-home --system galaxy-irida --home-dir /home/irida/galaxy/
+chown -R galaxy-irida /home/irida/galaxy/
 
 function config_galaxy () {
-	cd /opt/irida/galaxy/install
+	cd /home/irida/galaxy/install
 	curl -L -O http://downloads.sourceforge.net/project/mummer/mummer/3.23/MUMmer3.23.tar.gz
 	tar xf MUMmer3.23.tar.gz
 	cd MUMmer3.23
 	make
 
-	cd /opt/irida/galaxy/install/
+	cd /home/irida/galaxy/install/
 	curl -L -O http://downloads.sourceforge.net/project/samtools/samtools/0.1.18/samtools-0.1.18.tar.bz2
 	tar xf samtools-0.1.18.tar.bz2
 	cd samtools-0.1.18
 	make
 
-	cat >> /opt/irida/galaxy/env.sh <<EOF
-PATH=/opt/irida/galaxy/install/MUMmer3.23:/opt/irida/galaxy/install/samtools-0.1.18:/opt/irida/galaxy/install/samtools-0.1.18/bcftools:/bin:/usr/bin
+	cat >> /home/irida/galaxy/env.sh <<EOF
+PATH=/home/irida/galaxy/install/MUMmer3.23:/home/irida/galaxy/install/samtools-0.1.18:/home/irida/galaxy/install/samtools-0.1.18/bcftools:/bin:/usr/bin
 EOF
 
-	cd /opt/irida/galaxy/
+	cd /home/irida/galaxy/
 
 	hg clone https://bitbucket.org/apetkau/galaxy-dist
 	cd galaxy-dist
@@ -54,25 +54,25 @@ EOF
 	# begin configuring galaxy
 
 	## config.ini
-        sed -i 's_#host.*_host = 0.0.0.0_' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's_#port.*_port = 9090_' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
+        sed -i 's_#host.*_host = 0.0.0.0_' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's_#port.*_port = 9090_' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
 	# use 127.0.0.1 instead of localhost; localhost tries to connect over a socket, 127.0.0.1 uses tcp
-	sed -i 's_#database\_connection.*_database\_connection = mysql://irida:irida@127.0.0.1/galaxy\_irida_' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's/#allow_library_path_paste.*/allow_library_path_paste = True/' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's/#admin_users.*/admin_users = admin@localhost.localdomain, workflow@localhost.localdomain/' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's_debug = True_debug = False_' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's/use_interactive = True/use_interactive = False/' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's_^filter-with = gzip_#&_' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's@#tool_dependency_dir.*@tool_dependency_dir = /opt/irida/galaxy/tool_dependencies@' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's/#\(tool_sheds_config_file.*\)/\1/' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's_#database\_connection.*_database\_connection = mysql://irida:irida@127.0.0.1/galaxy\_irida_' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's/#allow_library_path_paste.*/allow_library_path_paste = True/' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's/#admin_users.*/admin_users = admin@localhost.localdomain, workflow@localhost.localdomain/' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's_debug = True_debug = False_' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's/use_interactive = True/use_interactive = False/' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's_^filter-with = gzip_#&_' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's@#tool_dependency_dir.*@tool_dependency_dir = /home/irida/galaxy/tool_dependencies@' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's/#\(tool_sheds_config_file.*\)/\1/' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
 	SECRET=$(pwgen --secure -N 1 56)
-	sed -i "s/#id_secret.*/id_secret = $SECRET/" /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i "s/#id_secret.*/id_secret = $SECRET/" /home/irida/galaxy/galaxy-dist/config/galaxy.ini
 	MASTER_API_KEY=$(pwgen --secure -N 1 40)
-	sed -i "s/#master_api_key.*/master_api_key = $MASTER_API_KEY/" /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
-	sed -i 's@#environment_setup_file = None@environment_setup_file = /opt/irida/galaxy/env.sh@' /opt/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i "s/#master_api_key.*/master_api_key = $MASTER_API_KEY/" /home/irida/galaxy/galaxy-dist/config/galaxy.ini
+	sed -i 's@#environment_setup_file = None@environment_setup_file = /home/irida/galaxy/env.sh@' /home/irida/galaxy/galaxy-dist/config/galaxy.ini
 
 	## tool_sheds_conf.xml
-	sed -i 's@</tool_sheds>@    <tool_shed name="IRIDA tool shed" url="https://irida.corefacility.ca/galaxy-shed/"/>\n</tool_sheds>@' /opt/irida/galaxy/galaxy-dist/config/tool_sheds_conf.xml
+	sed -i 's@</tool_sheds>@    <tool_shed name="IRIDA tool shed" url="https://irida.corefacility.ca/galaxy-shed/"/>\n</tool_sheds>@' /home/irida/galaxy/galaxy-dist/config/tool_sheds_conf.xml
 }
 
 export -f config_galaxy
@@ -90,11 +90,11 @@ Requires=mariadb.service
 After=mariadb.service
 
 [Service]
-ExecStart=/opt/irida/galaxy/galaxy-dist/run.sh --daemon
-ExecStop=/opt/irida/galaxy/galaxy-dist/run.sh --stop-daemon
+ExecStart=/home/irida/galaxy/galaxy-dist/run.sh --daemon
+ExecStop=/home/irida/galaxy/galaxy-dist/run.sh --stop-daemon
 Type=forking
 User=galaxy-irida
-EnvironmentFile=/opt/irida/galaxy/env.sh
+EnvironmentFile=/home/irida/galaxy/env.sh
 Restart=always
 
 [Install]
@@ -106,12 +106,12 @@ systemctl enable galaxy
 systemctl start galaxy
 wait_for_galaxy
 
-mv /tmp/workflows /opt/irida/galaxy/install
-mv /tmp/install-workflow-tools.py /opt/irida/galaxy/install
+mv /tmp/workflows /home/irida/galaxy/install
+mv /tmp/install-workflow-tools.py /home/irida/galaxy/install
 
-MASTER_API_KEY=$(grep master_api_key /opt/irida/galaxy/galaxy-dist/config/galaxy.ini | awk '{print $3}')
+MASTER_API_KEY=$(grep master_api_key /home/irida/galaxy/galaxy-dist/config/galaxy.ini | awk '{print $3}')
 
-cd /opt/irida/galaxy/install
+cd /home/irida/galaxy/install
 python install-workflow-tools.py --pipeline-xml-dir workflows/ --master-api-key $MASTER_API_KEY --master-api-url http://localhost:9090/api --galaxy-admin-user admin@localhost.localdomain --galaxy-admin-pass adminpassword --galaxy-workflow-user workflow@localhost.localdomain --galaxy-workflow-pass workflowpassword | tee install-workflow-tools.log
 
 API_KEY=$(grep 'Galaxy API key created for user' install-workflow-tools.log | perl -pe 's/.*\[([^\]]+)\].*/\1/')

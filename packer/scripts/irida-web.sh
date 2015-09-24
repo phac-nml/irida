@@ -2,27 +2,27 @@
 yum -y install epel-release
 yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-client tomcat-native
 
-mkdir -p /opt/irida/data/{sequencing,reference,analysis,snapshot}
+mkdir -p /home/irida/data/{sequencing,reference,analysis,snapshot}
 mkdir -p /etc/irida/analytics
 
-chown -R tomcat:tomcat /opt/irida/
+chown -R tomcat:tomcat /home/irida/
 
-cd /opt/irida
+cd /home/irida
 curl -O https://irida.corefacility.ca/distributables/irida-latest.war
-ln -s /opt/irida/irida-latest.war /var/lib/tomcat/webapps/irida.war
+ln -s /home/irida/irida-latest.war /var/lib/tomcat/webapps/irida.war
 
 curl -O https://irida.corefacility.ca/documentation/administrator/web/config/irida.conf
-ln -s /opt/irida/irida.conf /etc/irida/irida.conf
+ln -s /home/irida/irida.conf /etc/irida/irida.conf
 
 curl -O https://irida.corefacility.ca/documentation/administrator/web/config/web.conf
-ln -s /opt/irida/web.conf /etc/irida/web.conf
+ln -s /home/irida/web.conf /etc/irida/web.conf
 
 ## Set up the directories in /etc/irida/irida.conf
 
-sed -i 's_sequence.file.base.directory=.*_sequence.file.base.directory=/opt/irida/data/sequencing_' /etc/irida/irida.conf
-sed -i 's_reference.file.base.directory=.*_reference.file.base.directory=/opt/irida/data/reference_' /etc/irida/irida.conf
-sed -i 's_output.file.base.directory=.*_output.file.base.directory=/opt/irida/data/analysis_' /etc/irida/irida.conf
-sed -i 's_snapshot.file.base.directory=.*_snapshot.file.base.directory=/opt/irida/data/snapshot_' /etc/irida/irida.conf
+sed -i 's_sequence.file.base.directory=.*_sequence.file.base.directory=/home/irida/data/sequencing_' /etc/irida/irida.conf
+sed -i 's_reference.file.base.directory=.*_reference.file.base.directory=/home/irida/data/reference_' /etc/irida/irida.conf
+sed -i 's_output.file.base.directory=.*_output.file.base.directory=/home/irida/data/analysis_' /etc/irida/irida.conf
+sed -i 's_snapshot.file.base.directory=.*_snapshot.file.base.directory=/home/irida/data/snapshot_' /etc/irida/irida.conf
 
 ## Set up a local database and point /etc/irida/irida.conf at that database
 systemctl enable mariadb
