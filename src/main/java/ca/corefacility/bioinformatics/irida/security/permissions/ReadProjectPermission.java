@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -25,6 +26,8 @@ public class ReadProjectPermission extends BasePermission<Project, Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
 	public static final String PERMISSION_PROVIDED = "canReadProject";
+	
+	private static final String ROLE_SEQUENCER = Role.ROLE_SEQUENCER.getAuthority();
 
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
@@ -53,6 +56,12 @@ public class ReadProjectPermission extends BasePermission<Project, Long> {
 	@Override
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
 		logger.trace("Testing permission for [" + authentication + "] on project [" + p + "]");
+		
+		if (authentication.getAuthorities().stream().anyMatch(g -> g.getAuthority().equals(ROLE_SEQUENCER))) {
+			logger.trace("Fast pass for sequencer role.");
+			return true;
+		}
+		
 		// if not an administrator, then we need to figure out if the
 		// authenticated user is participating in the project.
 		User u = userRepository.loadUserByUsername(authentication.getName());
