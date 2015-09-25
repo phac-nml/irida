@@ -500,6 +500,8 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `self` | A link to this sample. |
 | `sample/project` | A link to the project that owns this sample. |
 | `sample/sequenceFiles` | A link to the collection of sequence files in this sample. |
+| `sample/sequenceFiles/pairs` | A link to the collection of paired-end sequence files in this sample.  Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
+| `sample/sequenceFiles/unpaired` | A link to the collection of unpaired sequence files in this sample. Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
 
 ##### Properties
 {:.no_toc}
