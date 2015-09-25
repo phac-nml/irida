@@ -90,18 +90,9 @@ public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	@Override
 	public Project getSubject() {
 		return this.project;
-	}
-
-	@Override
-	public void setSubject(Project subject) {
-		this.project = subject;
 	}
 
 	@Override
@@ -110,23 +101,8 @@ public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 	}
 
 	@Override
-	public void setObject(ReferenceFile object) {
-		this.referenceFile = object;
-	}
-
-	@Override
 	public Date getTimestamp() {
 		return this.createdDate;
-	}
-
-	@Override
-	public Date getModifiedDate() {
-		return this.createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-
 	}
 
 	@Override

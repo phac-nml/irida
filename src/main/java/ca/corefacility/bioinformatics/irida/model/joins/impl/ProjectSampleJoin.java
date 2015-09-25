@@ -37,7 +37,7 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "project_id")
@@ -80,28 +80,14 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 		return this.id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	@Override
 	public Project getSubject() {
 		return project;
 	}
 
 	@Override
-	public void setSubject(Project subject) {
-		this.project = subject;
-	}
-
-	@Override
 	public Sample getObject() {
 		return sample;
-	}
-
-	@Override
-	public void setObject(Sample object) {
-		this.sample = object;
 	}
 
 	@Override

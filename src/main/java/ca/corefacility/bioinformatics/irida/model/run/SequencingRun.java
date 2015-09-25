@@ -29,7 +29,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
@@ -38,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @Audited
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class SequencingRun extends IridaResourceSupport implements IridaThing, Comparable<SequencingRun> {
+public abstract class SequencingRun extends IridaResourceSupport implements MutableIridaThing, Comparable<SequencingRun> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -50,7 +50,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
-
+	
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
@@ -68,18 +68,23 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 	@Column(name = "layout_type")
 	private LayoutType layoutType;
 
-	public SequencingRun() {
-		layoutType = LayoutType.SINGLE_END;
-		uploadStatus = SequencingRunUploadStatus.UPLOADING;
+	protected SequencingRun() {
 		createdDate = new Date();
+	}
+	
+	public SequencingRun(final LayoutType layoutType, final SequencingRunUploadStatus uploadStatus) {
+		this();
+		this.layoutType = layoutType;
+		this.uploadStatus = uploadStatus;
 	}
 
 	@Override
 	public Long getId() {
 		return id;
 	}
-
-	public void setId(Long id) {
+	
+	@Override
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -87,28 +92,19 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	@Override
 	public Date getCreatedDate() {
 		return createdDate;
 	}
-
+	
 	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
-
+	
 	@Override
-	public void setModifiedDate(Date modifiedDate) {
+	public void setModifiedDate(final Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
-	}
-
-	@Override
-	public int compareTo(SequencingRun p) {
-		return modifiedDate.compareTo(p.modifiedDate);
 	}
 
 	/**
@@ -121,7 +117,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, modifiedDate, description);
+		return Objects.hash(createdDate, description);
 	}
 
 	@Override
@@ -133,16 +129,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 			return false;
 		}
 		final SequencingRun other = (SequencingRun) obj;
-		if (Objects.equals(this.description, other.description) && Objects.equals(this.createdDate, other.createdDate)
-				&& Objects.equals(this.modifiedDate, other.modifiedDate)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public void setUploadStatus(SequencingRunUploadStatus uploadStatus) {
-		this.uploadStatus = uploadStatus;
+		return Objects.equals(this.description, other.description) && Objects.equals(this.createdDate, other.createdDate);
 	}
 
 	public SequencingRunUploadStatus getUploadStatus() {
@@ -151,10 +138,6 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 
 	public LayoutType getLayoutType() {
 		return layoutType;
-	}
-
-	public void setLayoutType(LayoutType layoutType) {
-		this.layoutType = layoutType;
 	}
 
 	/**

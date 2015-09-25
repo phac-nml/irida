@@ -6,6 +6,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
@@ -19,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
  * 
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public interface IridaSample {
 	/**
 	 * Get the local numerical identifier
@@ -36,16 +39,6 @@ public interface IridaSample {
 	@Size(min = 3, message = "{sample.name.too.short}")
 	@ValidSampleName
 	public String getSampleName();
-
-	/**
-	 * Get the sample ID as produced by the sequencer which produced it
-	 * 
-	 * @return the identifier used by the sequencer for the sample.
-	 */
-	@NotNull(message = "{sample.external.id.notnull}")
-	@Size(min = 3, message = "{sample.external.id.too.short}")
-	@ValidSampleName
-	public String getSequencerSampleId();
 
 	/**
 	 * Get a text description of the sample

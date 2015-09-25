@@ -10,6 +10,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -45,9 +47,10 @@ import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -162,6 +165,7 @@ public class UsersController {
 			map.put("identifier", project.getId());
 			map.put("name", project.getName());
 			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER) ? true : false);
+			map.put("subscribed" , pujoin.isEmailSubscription());
 
 			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
 			map.put("role", messageSource.getMessage(proleMessageName, null, locale));
@@ -215,6 +219,8 @@ public class UsersController {
 	 *            whether the user account should be enabled or disabled.
 	 * @param principal
 	 *            a reference to the logged in user.
+	 * @param request
+	 * 		      the request
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
@@ -222,7 +228,7 @@ public class UsersController {
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
 			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
 			@RequestParam(required = false) String password, @RequestParam(required = false) String enabled,
-			@RequestParam(required = false) String confirmPassword, Model model, Principal principal) {
+			@RequestParam(required = false) String confirmPassword, Model model, Principal principal, HttpServletRequest request) {
 		logger.debug("Updating user " + userId);
 
 		Locale locale = LocaleContextHolder.getLocale();
@@ -273,8 +279,16 @@ public class UsersController {
 		String returnView;
 		if (errors.isEmpty()) {
 			try {
-				userService.update(userId, updatedValues);
+				User user = userService.update(userId, updatedValues);
 				returnView = "redirect:/users/" + userId;
+
+				// If the user is updating their account make sure you update it in the sesion variable
+				// this will update the users gravatar!
+				if (user != null && principal.getName().equals(user.getUsername())) {
+					HttpSession session = request.getSession();
+					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
+				}
+
 			} catch (ConstraintViolationException | DataIntegrityViolationException ex) {
 				errors = handleCreateUpdateException(ex, locale);
 

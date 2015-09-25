@@ -11,33 +11,16 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 | Tool Name            | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:--------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **msa_datatypes**    | 70227007b991  | 0 (2014-04-22)                | [Galaxy Main Shed][] |
-| **bcftools_view**    | 6572c40a8505  | 8 (2012-10-08)                | [Galaxy Main Shed][] |
-| **samtools_mpileup** | 973fea5b4bdf  | 3 (2014-03-27)                | [Galaxy Main Shed][] |
-| **sam_to_bam**       | c73bf16b45df  | 5 (2015-03-05)                | [Galaxy Main Shed][] |
-| **core_pipeline**    | 0737c0310cab  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
-| **freebayes**        | 386bc6e45b68  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
-| **phyml**            | b5867c5c7674  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
-| **smalt_collection** | de3e46eaf5ba  | 0 (2014-10-07)                | [IRIDA Main Shed][]  |
+| **suite_snvphyl**    | 99463e5aef1b  | 0 (2015-09-15)                | [IRIDA Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
-## Step 1: Install Dependencies
+## Step 1: Install Perl Modules
 
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory.
+Some Perl modules are required to be installed before the tools are installed.  In particular, the module `Readonly` needs to be installed.  This can by installed by running:
 
-1. [MUMMer][]:  Please download and install MUMMer (in particular, the command `nucmer`) and add your `PATH` in the `$GALAXY_ENV` file.
-2. [SAMTools][]: Please download and install [SAMTools 0.1.18][] and add to your `PATH` in the `$GALAXY_ENV` file.
-3. **Perl Modules**:  Please download and install dependency Perl modules with the command:
-
-```bash
-cpanm Clone Parallel::ForkManager
 ```
-
-In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install:
-
-```bash
-cpanm http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
+cpanm Readonly
 ```
 
 ## Step 2: Install Galaxy Tools
@@ -84,5 +67,5 @@ If everything was successfull then all dependencies for this pipeline have been 
 [upload-history]: ../test/snvphyl/images/upload-history.jpg
 [datasets-icon]: ../test/snvphyl/images/datasets-icon.jpg
 [dataset-pair-screen]: ../test/snvphyl/images/dataset-pair-screen.jpg
-[workflow-success]: ../test/snvphyl/images/workflow-success.jpg
+[workflow-success]: ../test/snvphyl/images/workflow-success.png
 [view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg

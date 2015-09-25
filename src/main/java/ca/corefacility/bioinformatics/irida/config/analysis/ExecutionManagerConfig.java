@@ -21,17 +21,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -62,19 +56,11 @@ public class ExecutionManagerConfig {
 	private static final String EMAIL_EXECUTION_PROPERTY = "galaxy.execution.email";
 	private static final String DATA_STORAGE_EXECUTION_PROPERTY = "galaxy.execution.dataStorage";
 
-	/**
-	 * Property names for a Galaxy instance to upload files into.
-	 */
-	private static final String URL_UPLODER_PROPERTY = "galaxy.uploader.url";
-	private static final String API_KEY_UPLOADER_PROPERTY = "galaxy.uploader.admin.apiKey";
-	private static final String ADMIN_EMAIL_UPLOADER_PROPERTY = "galaxy.uploader.admin.email";
-	private static final String DATA_STORAGE_UPLOADER_PROPERTY = "galaxy.uploader.dataStorage";
-
-	private static final Map<String, Uploader.DataStorage> VALID_STORAGE = ImmutableMap.of(
-					"remote", Uploader.DataStorage.REMOTE,
-					"local", Uploader.DataStorage.LOCAL);
+	private static final Map<String, DataStorage> VALID_STORAGE = ImmutableMap.of(
+					"remote", DataStorage.REMOTE,
+					"local", DataStorage.LOCAL);
 	
-	private static final Uploader.DataStorage DEFAULT_DATA_STORAGE = Uploader.DataStorage.REMOTE;
+	private static final DataStorage DEFAULT_DATA_STORAGE = DataStorage.REMOTE;
 	
 	/**
 	 * Timeout in seconds to stop polling a Galaxy library.
@@ -108,38 +94,6 @@ public class ExecutionManagerConfig {
 		return buildExecutionManager(URL_EXECUTION_PROPERTY, API_KEY_EXECUTION_PROPERTY,
 				EMAIL_EXECUTION_PROPERTY, DATA_STORAGE_EXECUTION_PROPERTY);
 	}
-
-	/**
-	 * Builds a new GalaxyUploader for uploading files to Galaxy.
-	 * @return  A new GalaxyUploader object.
-	 */
-	@Bean
-	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() {
-		GalaxyUploader galaxyUploader = new GalaxyUploader();
-
-		try {
-			GalaxyConnector galaxyConnector;
-			
-			ExecutionManagerGalaxy executionManager = buildExecutionManager(URL_UPLODER_PROPERTY, API_KEY_UPLOADER_PROPERTY,
-					ADMIN_EMAIL_UPLOADER_PROPERTY, DATA_STORAGE_UPLOADER_PROPERTY);
-
-			galaxyConnector = new GalaxyConnector(executionManager.getLocation(),
-					executionManager.getAccountEmail(),
-					executionManager.getAPIKey());
-			galaxyConnector.setDataStorage(executionManager.getDataStorage());
-			
-			galaxyUploader.connectToGalaxy(galaxyConnector);
-
-		} catch (ExecutionManagerConfigurationException e) {
-			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
-		} catch (ConstraintViolationException e) {
-			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
-		} catch (GalaxyConnectException e) {
-			logger.error("Exception attempting to connect to Galaxy: " + e.getMessage());
-		}
-
-		return galaxyUploader;
-	}
 	
 	/**
 	 * Builds a new ExecutionManagerGalaxy given the following environment properties.
@@ -157,7 +111,7 @@ public class ExecutionManagerConfig {
 		URL galaxyURL = getGalaxyURL(urlProperty);
 		GalaxyAccountEmail galaxyEmail = getGalaxyEmail(emailProperty);
 		String apiKey = getAPIKey(apiKeyProperty);
-		Uploader.DataStorage dataStorage = getDataStorage(dataStorageProperty);
+		DataStorage dataStorage = getDataStorage(dataStorageProperty);
 
 		return new ExecutionManagerGalaxy(galaxyURL, apiKey, galaxyEmail, dataStorage);
 	}
@@ -224,9 +178,9 @@ public class ExecutionManagerConfig {
 	 * @param dataStorageProperty  The property with the storage strategy for Galaxy.
 	 * @return  The corresponding storage strategy object, defaults to DEFAULT_DATA_STORAGE if invalid.
 	 */
-	private Uploader.DataStorage getDataStorage(String dataStorageProperty) {
+	private DataStorage getDataStorage(String dataStorageProperty) {
 		String dataStorageString = environment.getProperty(dataStorageProperty,"");
-		Uploader.DataStorage dataStorage = VALID_STORAGE.get(dataStorageString.toLowerCase());
+		DataStorage dataStorage = VALID_STORAGE.get(dataStorageString.toLowerCase());
 		
 		if (dataStorage == null) {
 			dataStorage = DEFAULT_DATA_STORAGE;
@@ -252,27 +206,7 @@ public class ExecutionManagerConfig {
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() throws ExecutionManagerConfigurationException {
-		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), StandardCharsets.UTF_8);
-	}
-
-	/**
-	 * @return A GalaxyLibraryBuilder for building libraries.
-	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
-	 */
-	@Lazy
-	@Bean
-	public GalaxyLibraryBuilder galaxyLibraryBuilder() throws ExecutionManagerConfigurationException {
-		return new GalaxyLibraryBuilder(librariesClient(), galaxyRoleSearch(), executionManager().getLocation());
-	}
-
-	/**
-	 * @return A GalaxyRoleSearch for searching through Galaxy roles.
-	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
-	 */
-	@Lazy
-	@Bean
-	public GalaxyRoleSearch galaxyRoleSearch() throws ExecutionManagerConfigurationException {
-		return new GalaxyRoleSearch(rolesClient(), executionManager().getLocation());
+		return new GalaxyWorkflowService(workflowsClient(), StandardCharsets.UTF_8);
 	}
 
 	/**

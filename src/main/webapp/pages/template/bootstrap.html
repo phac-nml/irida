@@ -15,13 +15,15 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" th:href="@{/}" href="#" th:text="#{global.title}">IRIDA</a>
+			<a th:href="@{/}" href="#">
+				<img src="/resources/img/irida_logo_dark.svg" th:src="@{/resources/img/irida_logo_dark.svg}" style="height: 32px; margin-top: 9px;" th:alt="#{global.title}" />
+			</a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"
 		     collapse="navbarCollapsed">
-			<ul class="nav navbar-nav ng-cloak" ng-hide="uiGalaxyCtrl.inGalaxy">
+			<ul class="nav navbar-nav" ng-hide="uiGalaxyCtrl.inGalaxy">
 				<li class="dropdown" dropdown="">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.project}">Projects</span>
@@ -87,7 +89,7 @@
 					</ul>
 				</li>
 			</ul>
-			<ul class="nav navbar-nav navbar-right ng-cloak">
+			<ul class="nav navbar-nav navbar-right">
 				<li sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown" dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
 						<span th:text="#{nav.main.admin}">Admin</span>
@@ -158,14 +160,22 @@
 						<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
 					</button>
 				</li>
-                <li ng-hide="uiGalaxyCtrl.inGalaxy">
-                    <a href="#" th:href="@{/remote_api}" data:tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom"><i class="glyphicon glyphicon-transfer"></i></a>
-                </li>
-                
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
-					<a href="#" th:href="@{/users/current}" data:tooltip="#{nav.main.account}" tooltip-placement="bottom"><i class="fa fa-fw fa-user"></i></a></li>
+					<a href="#" th:href="@{/remote_api}" data:tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">
+						<i class="glyphicon glyphicon-transfer"></i>
+					</a>
+				</li>
+
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
-					<a th:href="@{/logout}" data:tooltip="#{nav.main.logout}" href="/logout" tooltip-placement="bottom"><i class="fa fa-sign-out"></i>
+					<a class="nav-gravatar" href="#" th:href="@{/users/current}" th:with="email=${#httpSession.getAttribute('CURRENT_USER_DETAILS') != null} ? ${#httpSession.getAttribute('CURRENT_USER_DETAILS').email} : 'anonymous@anonymous.ca'"
+					   data:tooltip="#{nav.main.account}" tooltip-placement="bottom">
+						<img data:gravatar-src-once="'\'' + ${email} + '\''"
+						     gravatar-size="28"/>
+					</a>
+				</li>
+				<li ng-hide="uiGalaxyCtrl.inGalaxy">
+					<a th:href="@{/logout}" href="/logout" data:tooltip="#{nav.main.logout}" tooltip-placement="bottom">
+						<i class="fa fa-sign-out"></i>
 					</a>
 				</li>
 			</ul>

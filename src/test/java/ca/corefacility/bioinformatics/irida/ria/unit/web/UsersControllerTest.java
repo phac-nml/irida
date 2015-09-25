@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -26,9 +28,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
-
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -38,12 +42,14 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
@@ -215,10 +221,11 @@ public class UsersControllerTest {
 		expected.put("firstName", firstName);
 		User puser = new User(userId, USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
+		HttpServletRequest request = new MockHttpServletRequest();
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
 		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, "checked", null,
-				model, principal);
+				model, principal, request);
 
 		assertEquals("redirect:/users/1", updateUser);
 
@@ -237,6 +244,9 @@ public class UsersControllerTest {
 		User puser = new User(userId, USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
 
+		Authentication auth = new UsernamePasswordAuthenticationToken(puser, null);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+
 		DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException(
 				"Exception: " + User.USER_EMAIL_CONSTRAINT_NAME);
 
@@ -245,7 +255,7 @@ public class UsersControllerTest {
 		when(userService.update(userId, expected)).thenThrow(dataIntegrityViolationException);
 
 		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, "checked", null, model,
-				principal);
+				principal, new MockHttpServletRequest());
 
 		assertEquals(USER_EDIT_PAGE, updateUser);
 		assertTrue(model.containsKey("errors"));

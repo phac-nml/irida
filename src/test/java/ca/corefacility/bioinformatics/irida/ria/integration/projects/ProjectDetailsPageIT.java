@@ -12,13 +12,13 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * <p> Integration test to ensure that the Project Details Page. </p>
@@ -70,6 +70,7 @@ public class ProjectDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testDisplaysProjectEvent() {
+		detailsPage.goTo(PROJECT_ID);
 		List<WebElement> events = detailsPage.getEvents();
 		assertEquals(1, events.size());
 		WebElement next = events.iterator().next();

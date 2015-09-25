@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -34,14 +35,14 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * 
  */
 @Entity
-@Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
+@Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }) )
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectUserJoin implements Join<Project, User> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "project_id")
@@ -60,9 +61,14 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
+	@Column(name = "email_subscription")
+	@NotNull
+	private boolean emailSubscription;
+
 	public ProjectUserJoin() {
 		createdDate = new Date();
 		projectRole = ProjectRole.PROJECT_USER;
+		emailSubscription = false;
 	}
 
 	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole) {
@@ -74,10 +80,6 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	public Long getId() {
 		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Override
@@ -101,18 +103,8 @@ public class ProjectUserJoin implements Join<Project, User> {
 	}
 
 	@Override
-	public void setSubject(Project subject) {
-		this.project = subject;
-	}
-
-	@Override
 	public User getObject() {
 		return user;
-	}
-
-	@Override
-	public void setObject(User object) {
-		this.user = object;
 	}
 
 	@Override
@@ -142,6 +134,14 @@ public class ProjectUserJoin implements Join<Project, User> {
 	 */
 	public void setProjectRole(ProjectRole userRole) {
 		this.projectRole = userRole;
+	}
+
+	public void setEmailSubscription(boolean emailSubscription) {
+		this.emailSubscription = emailSubscription;
+	}
+
+	public boolean isEmailSubscription() {
+		return emailSubscription;
 	}
 
 }

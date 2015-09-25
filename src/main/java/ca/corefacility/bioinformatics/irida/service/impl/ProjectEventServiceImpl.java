@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
  *
  */
 @Service
-public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent> implements ProjectEventService {
+public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>implements ProjectEventService {
 
 	private ProjectEventRepository repository;
 
@@ -57,4 +61,16 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 			throws IllegalArgumentException {
 		return super.list(page, size, order, sortProperties);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Transactional
+	public List<ProjectEvent> getEventsForUserAfterDate(User user, Date beginning) {
+		List<ProjectEvent> eventsForUserAfterDate = repository.getEventsForUserAfterDate(user, beginning);
+
+		return eventsForUserAfterDate;
+	}
+
 }

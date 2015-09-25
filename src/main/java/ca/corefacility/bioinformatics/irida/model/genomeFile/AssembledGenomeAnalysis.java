@@ -86,32 +86,8 @@ public class AssembledGenomeAnalysis implements AssembledGenome {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setId(Long id) {
-		throw new UnsupportedOperationException("AssembledGenomeAnalysis types cannot be modified.");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Date getModifiedDate() {
-		return createdDate;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("AssembledGenomeAnalysis types cannot be modified.");
 	}
 
 	/**

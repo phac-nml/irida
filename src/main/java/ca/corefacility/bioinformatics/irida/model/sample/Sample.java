@@ -27,7 +27,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -48,7 +48,7 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Sample extends IridaResourceSupport implements IridaThing, IridaSample, Comparable<Sample> {
+public class Sample extends IridaResourceSupport implements MutableIridaThing, IridaSample, Comparable<Sample> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -62,14 +62,6 @@ public class Sample extends IridaResourceSupport implements IridaThing, IridaSam
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-
-	/**
-	 * Note: The unique constraint makes sense programmatically, however it does
-	 * not make sense to have a unique constraint for an external identifier
-	 * from the perspective of a user; especially since the external identifier
-	 * is provided entirely externally from the system.
-	 */
-	private String sequencerSampleId;
 
 	private String sampleName;
 
@@ -226,27 +218,12 @@ public class Sample extends IridaResourceSupport implements IridaThing, IridaSam
 		this.sampleName = sampleName;
 	}
 
-	/**
-	 * Create a new {@link Sample} with the given name and ID
-	 * 
-	 * @param sampleName
-	 *            The sampleName of the sample
-	 * @param sampleId
-	 *            The ID of the sample
-	 */
-	public Sample(String sampleName, String sampleId) {
-		this();
-		this.sampleName = sampleName;
-		this.sequencerSampleId = sampleId;
-	}
-
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Sample) {
 			Sample sample = (Sample) other;
 			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate)
 					&& Objects.equals(modifiedDate, sample.modifiedDate)
-					&& Objects.equals(sequencerSampleId, sample.sequencerSampleId)
 					&& Objects.equals(sampleName, sample.sampleName) && Objects.equals(description, sample.description)
 					&& Objects.equals(organism, sample.organism) && Objects.equals(isolate, sample.isolate)
 					&& Objects.equals(strain, sample.strain) && Objects.equals(collectedBy, sample.collectedBy)
@@ -269,7 +246,7 @@ public class Sample extends IridaResourceSupport implements IridaThing, IridaSam
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, createdDate, modifiedDate, sequencerSampleId, sampleName, description, organism,
+		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism,
 				isolate, strain, collectedBy, collectionDate, geographicLocationName, host, isolationSource, latitude,
 				longitude, cultureCollection, genotype, passageHistory, pathotype, serotype, serovar, specimenVoucher,
 				subgroup, subtype, organization);
@@ -295,14 +272,6 @@ public class Sample extends IridaResourceSupport implements IridaThing, IridaSam
 
 	public void setSampleName(String sampleName) {
 		this.sampleName = sampleName;
-	}
-
-	public String getSequencerSampleId() {
-		return sequencerSampleId;
-	}
-
-	public void setSequencerSampleId(String sampleId) {
-		this.sequencerSampleId = sampleId;
 	}
 
 	public String getDescription() {

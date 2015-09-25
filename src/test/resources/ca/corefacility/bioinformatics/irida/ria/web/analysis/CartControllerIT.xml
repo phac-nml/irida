@@ -24,25 +24,28 @@
 		modifiedDate="2013-07-18 14:18:19.0" />
 
 	<project_user id="1" project_id="1" user_id="1"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
+	projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+	email_subscription="false" />
 	<project_user id="2" project_id="2" user_id="1"
-		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0" />
+		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 	<project_user id="3" project_id="3" user_id="1"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-20 14:20:19.0"
-		description="description1" sequencerSampleId="sample1" sampleName="sample1"
+		description="description1"  sampleName="sample1"
 		organism="E. coli" latitude="49.8994" longitude="-97.1392"
 		collectedBy="Fred Penner" isolationSource="grass"
 		geographicLocationName="Somewhere:nowhere" strain="O157" isolate="54343" />
 	<sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
-		sequencerSampleId="sample2" sampleName="sample2" />
+		 sampleName="sample2" />
 	<sample id="3" createdDate="2013-07-18 14:20:19.0" description="description3"
-		sequencerSampleId="sample3" sampleName="sample3" />
+		 sampleName="sample3" />
 	<sample id="4" createdDate="2013-07-18 14:20:19.0" description="description4"
-		sequencerSampleId="sample4" sampleName="sample4" />
+		 sampleName="sample4" />
 	<sample id="5" createdDate="2013-07-18 14:20:19.0" description="description5"
-		sequencerSampleId="sample5" sampleName="sample5" />
+		 sampleName="sample5" />
 
 	<project_sample id="1" project_id="1" sample_id="1"
 		createdDate="2013-07-10 14:20:19.0" />

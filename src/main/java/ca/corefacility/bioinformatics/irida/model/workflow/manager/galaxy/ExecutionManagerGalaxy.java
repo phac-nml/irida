@@ -4,8 +4,7 @@ import java.net.URL;
 
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.ExecutionManager;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 
 /**
  * Defines an ExecutionManager Galaxy implementation for interacting with Galaxy.
@@ -16,7 +15,7 @@ public class ExecutionManagerGalaxy implements ExecutionManager {
 	private URL location;
 	private String apiKey;
 	private GalaxyAccountEmail accountEmail;
-	private Uploader.DataStorage dataStorage;
+	private DataStorage dataStorage;
 	
 	/**
 	 * Builds a new ExecutionManagerGalaxy with the given information.
@@ -45,7 +44,7 @@ public class ExecutionManagerGalaxy implements ExecutionManager {
 		return accountEmail;
 	}
 
-	public Uploader.DataStorage getDataStorage() {
+	public DataStorage getDataStorage() {
 		return dataStorage;
 	}
 }

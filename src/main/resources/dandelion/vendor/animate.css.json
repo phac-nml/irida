@@ -1,0 +1,10 @@
+{
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/animate.css/animate.css"
+      }
+    }
+    ]
+}
