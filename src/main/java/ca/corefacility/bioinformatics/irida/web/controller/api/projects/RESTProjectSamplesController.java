@@ -212,7 +212,7 @@ public class RESTProjectSamplesController {
 	public ModelAndView getProjectSampleBySequencerId(@PathVariable Long projectId, @PathVariable String seqeuncerId) {
 		Project p = projectService.read(projectId);
 
-		Sample sampleBySampleId = sampleService.getSampleBySequencerSampleId(p, seqeuncerId);
+		Sample sampleBySampleId = sampleService.getSampleBySampleName(p, seqeuncerId);
 
 		Link withSelfRel = linkTo(
 				methodOn(RESTProjectSamplesController.class).getSample(sampleBySampleId.getId()))

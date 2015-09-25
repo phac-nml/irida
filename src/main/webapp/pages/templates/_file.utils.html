@@ -23,7 +23,7 @@
 	<div class="alert alert-warning" ng-show="hasError">
 		<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
 
-		<p th:text="#{project.samples.files.upload.error.body}">__Upload_error_message__</p>
+		<p>{{ errorMessage }}</p>
 	</div>
 </script>
 </body>

@@ -124,7 +124,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER')")
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	public Iterable<Project> findAll() {
 		return super.findAll();
@@ -258,8 +258,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 		// Check to ensure a sample with this sequencer id doesn't exist in this
 		// project already
-		if (sampleRepository.getSampleBySequencerSampleId(project, sample.getSequencerSampleId()) != null) {
-			throw new EntityExistsException("Sample with sequencer id '" + sample.getSequencerSampleId()
+		if (sampleRepository.getSampleBySampleName(project, sample.getSampleName()) != null) {
+			throw new EntityExistsException("Sample with sequencer id '" + sample.getSampleName()
 					+ "' already exists in project " + project.getId());
 		}
 
