@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asSequencer;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asOtherUser;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
@@ -138,5 +139,10 @@ public class ProjectIT {
 		asUser().expect().statusCode(HttpStatus.OK.value()).when().head(projectUri);
 		asUser().given().header("Accept", MediaType.JSON_UTF_8.toString()).expect().statusCode(HttpStatus.OK.value())
 				.when().head(projectUri);
+	}
+	
+	@Test
+	public void testListProjectsAsSequencer() {
+		asSequencer().expect().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel", hasItems("self")).when().get(PROJECTS);
 	}
 }

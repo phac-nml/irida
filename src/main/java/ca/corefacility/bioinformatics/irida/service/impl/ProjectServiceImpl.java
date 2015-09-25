@@ -124,7 +124,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER')")
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	public Iterable<Project> findAll() {
 		return super.findAll();
