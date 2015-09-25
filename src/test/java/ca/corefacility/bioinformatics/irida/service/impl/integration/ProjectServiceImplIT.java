@@ -233,13 +233,13 @@ public class ProjectServiceImplIT {
 
 		projectService.addSampleToProject(p, s);
 
-		Sample otherSample = new Sample(s.getSampleName(), s.getSequencerSampleId());
+		Sample otherSample = new Sample(s.getSampleName());
 
 		projectService.addSampleToProject(p, otherSample);
 
 		// if 2 exist with the same id, this call will fail
-		Sample sampleBySequencerSampleId = sampleService.getSampleBySequencerSampleId(p,
-				otherSample.getSequencerSampleId());
+		Sample sampleBySequencerSampleId = sampleService.getSampleBySampleName(p,
+				otherSample.getSampleName());
 		assertNotNull(sampleBySequencerSampleId);
 	}
 
@@ -573,7 +573,6 @@ public class ProjectServiceImplIT {
 		Sample s = new Sample();
 		s.setSampleName("Samplename");
 		s.setDescription("Description");
-		s.setSequencerSampleId("external");
 
 		return s;
 	}

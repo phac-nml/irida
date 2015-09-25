@@ -1,0 +1,4 @@
+job1:
+  script: "scripts/integration-tests.sh"
+job2:
+  script: "scripts/build-docs.sh"

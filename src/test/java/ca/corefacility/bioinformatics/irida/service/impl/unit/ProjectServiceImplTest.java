@@ -120,7 +120,6 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProject() {
 		Sample s = new Sample();
 		s.setSampleName("sample");
-		s.setSequencerSampleId("external");
 		s.setId(new Long(2222));
 		Project p = project();
 
@@ -131,7 +130,7 @@ public class ProjectServiceImplTest {
 		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
 
 		verify(psjRepository).save(join);
-		verify(sampleRepository).getSampleBySequencerSampleId(p, s.getSequencerSampleId());
+		verify(sampleRepository).getSampleBySampleName(p, s.getSampleName());
 
 		assertNotNull(rel);
 		assertEquals(rel.getSubject(), p);
@@ -171,7 +170,6 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProjectNoSamplePersisted() {
 		Project p = project();
 		Sample s = new Sample();
-		s.setSequencerSampleId("external");
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> noViolations = new HashSet<>();
 
@@ -188,7 +186,6 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProjectNoSamplePersistedInvalidSample() {
 		Project p = project();
 		Sample s = new Sample();
-		s.setSequencerSampleId("external");
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> violations = new HashSet<>();
 		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, Sample.class, null, null, null, null,
@@ -205,7 +202,6 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProjectAlreadyAdded() {
 		Project p = project();
 		Sample s = new Sample();
-		s.setSequencerSampleId("external");
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> noViolations = new HashSet<>();
 
@@ -223,11 +219,10 @@ public class ProjectServiceImplTest {
 	public void testAddSampleWithSameSequencerId() {
 		Project p = project();
 		Sample s = new Sample();
-		Sample otherSample = new Sample("name", "external");
-		s.setSequencerSampleId("external");
+		Sample otherSample = new Sample("name");
 		s.setSampleName("name");
 
-		when(sampleRepository.getSampleBySequencerSampleId(p, s.getSequencerSampleId())).thenReturn(otherSample);
+		when(sampleRepository.getSampleBySampleName(p, s.getSampleName())).thenReturn(otherSample);
 
 		projectService.addSampleToProject(p, s);
 	}

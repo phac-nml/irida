@@ -177,8 +177,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
-	public Sample getSampleBySequencerSampleId(Project project, String sampleId) {
-		Sample s = sampleRepository.getSampleBySequencerSampleId(project, sampleId);
+	public Sample getSampleBySampleName(Project project, String sampleId) {
+		Sample s = sampleRepository.getSampleBySampleName(project, sampleId);
 		if (s != null) {
 			return s;
 		} else {

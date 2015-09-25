@@ -43,7 +43,7 @@
 	<project id="7" createdDate="2013-07-18 14:22:19.0" name="project7" />
 	<project id="8" createdDate="2013-07-18 14:22:19.0" name="project8" />
 
-	<sample id="1" sequencerSampleId="external" sampleName="sample"
+	<sample id="1"  sampleName="sample"
 		createdDate="2013-07-18 14:20:19.0" />
 	<reference_file id="1" filePath="/" createdDate="2013-07-18 14:20:19.0" />
 
