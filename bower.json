@@ -39,7 +39,8 @@
     "marked": "0.3.3",
     "angular-marked": "0.0.18",
     "angular-gravatar": "~0.4.0",
-    "animate.css": "3.4.0"
+    "animate.css": "3.4.0",
+    "angular-sanitize": "1.4.0"
   },
   "devDependencies": {},
   "resolutions": {

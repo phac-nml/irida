@@ -18,7 +18,7 @@
       </div>
     </section>
   </div>
-  <div th:attr="class=${updates} ? 'col-md-7 col-sm-12 col-md-pull-5' : ''" class="col-md-7 col-sm-12 col-md-pull-5">
+  <div th:attr="class=${updates} ? 'col-md-7 col-sm-12 col-md-pull-5' : ''" class="col-md-7 col-sm-12 col-md-pull-5" ng-controller="EventsController as events">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
@@ -31,13 +31,13 @@
       </div>
       <div class="panel-body">
         <div class="form-group">
-          <label for="size" th:text="#{event.size}">_Activities to show:_</label>
-          <select style="width:100px;" id="size" class="form-control event-count">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
+          <label th:text="#{event.size}">_Activities to show:_</label><br/>
+            <div class="btn-group">
+                <label class="btn btn-default" ng-model="events.size" btn-radio="10">10</label>
+                <label class="btn btn-default" ng-model="events.size" btn-radio="20">20</label>
+                <label class="btn btn-default" ng-model="events.size" btn-radio="50">50</label>
+                <label class="btn btn-default" ng-model="events.size" btn-radio="100">100</label>
+            </div>
         </div>
         <div id="events"></div>
       </div>

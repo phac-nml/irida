@@ -1,0 +1,24 @@
+.event-item {
+  display: flex;
+}
+.event-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 35px;
+  margin-right:10px;
+}
+.event-icon .fa {
+  font-size: 1.6em;
+}
+.event-date {
+  flex: 0 0 90px;
+  line-height:22px;
+  text-align: right;
+  color: #666;
+  font-size: .7em;
+}
+.event-content {
+  flex-grow: 1;
+  line-height: 28px;
+}
