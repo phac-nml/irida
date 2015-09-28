@@ -106,10 +106,12 @@ public class ExportUploadService {
 
 				String xmlContent = createXml(submission);
 
-				uploadSubmission(submission, xmlContent);
+				submission = uploadSubmission(submission, xmlContent);
 
-				submission = exportSubmissionService.update(submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.COMPLETE));
+				submission = exportSubmissionService.update(
+						submission.getId(),
+						ImmutableMap.of("uploadState", ExportUploadState.COMPLETE, "directoryPath",
+								submission.getDirectoryPath()));
 			} catch (Exception e) {
 				logger.debug("Upload failed", e);
 
@@ -149,9 +151,7 @@ public class ExportUploadService {
 	 * @throws UploadException
 	 *             if the upload failed
 	 */
-	public boolean uploadSubmission(NcbiExportSubmission submission, String xml) throws UploadException {
-
-		boolean success = true;
+	public NcbiExportSubmission uploadSubmission(NcbiExportSubmission submission, String xml) throws UploadException {
 
 		FTPClient client = new FTPClient();
 		try {
@@ -192,6 +192,10 @@ public class ExportUploadService {
 						+ client.getReplyString());
 			}
 
+			// set the directory saved
+			String directoryPath = baseDirectory + "/" + directoryName;
+			submission.setDirectoryPath(directoryPath);
+
 			// upload submission.xml file
 			uploadString(client, "submission.xml", xml);
 
@@ -226,7 +230,7 @@ public class ExportUploadService {
 			throw new UploadException("Could not upload run", e);
 		}
 
-		return success;
+		return submission;
 
 	}
 

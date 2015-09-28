@@ -54,7 +54,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	@Column(name = "namespace", nullable = false)
 	private String ncbiNamespace;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "ncbi_export_submission_biosample")
 	private List<NcbiBioSampleFiles> bioSampleFiles;
 
@@ -78,6 +78,9 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "submitter")
 	private User submitter;
+
+	@Column(name = "directory_path")
+	private String directoryPath;
 
 	public NcbiExportSubmission() {
 		uploadState = ExportUploadState.NEW;
@@ -167,5 +170,13 @@ public class NcbiExportSubmission implements MutableIridaThing {
 
 	public User getSubmitter() {
 		return submitter;
+	}
+
+	public String getDirectoryPath() {
+		return directoryPath;
+	}
+
+	public void setDirectoryPath(String directoryPath) {
+		this.directoryPath = directoryPath;
 	}
 }

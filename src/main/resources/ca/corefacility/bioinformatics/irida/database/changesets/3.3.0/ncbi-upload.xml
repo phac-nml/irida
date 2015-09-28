@@ -28,6 +28,7 @@
 			<column name="bio_project_id" type="varchar(255)" />
 			<column name="namespace" type="varchar(255)" />
 			<column name="release_date" type="date" />
+			<column name="directory_path" type="varchar(255)" />
 		</createTable>
 
 		<createTable tableName="ncbi_export_biosample">
