@@ -8,7 +8,7 @@ mkdir -p /etc/irida/analytics
 chown -R tomcat:tomcat /home/irida/
 
 cd /home/irida
-curl -O https://irida.corefacility.ca/distributables/irida-latest.war
+curl -O https://irida.corefacility.ca/downloads/webapp/irida-latest.war
 ln -s /home/irida/irida-latest.war /var/lib/tomcat/webapps/irida.war
 
 curl -O https://irida.corefacility.ca/documentation/administrator/web/config/irida.conf
