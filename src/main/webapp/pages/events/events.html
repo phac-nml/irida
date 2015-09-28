@@ -1,11 +1,21 @@
-<ul class="list-group">
+<div>
+    <div th:if="${#lists.size(events)>0}" class="form-group">
+        <label th:text="#{event.size}"></label><br/>
+        <div class="btn-group">
+            <label class="btn btn-default" ng-model="eventsCtrl.size" btn-radio="10">10</label>
+            <label class="btn btn-default" ng-model="eventsCtrl.size" btn-radio="20">20</label>
+            <label class="btn btn-default" ng-model="eventsCtrl.size" btn-radio="50">50</label>
+            <label class="btn btn-default" ng-model="eventsCtrl.size" btn-radio="100">100</label>
+        </div>
+    </div>
+    <ul class="list-group">
     <li class="list-group-item event-item" th:each="event : ${events}">
         <th:block th:replace="events/fragments/event :: ${event.name} (${event.event})"></th:block>
         <div class="event-date">
-            <span class="pull-right" data:tooltip="${#dates.format(event.event.createdDate)}" data:livestamp="${event.event.createdDate}"></span>
+            <div tooltip-placement="left" data:tooltip="${#dates.format(event.event.createdDate)}" data:livestamp="${event.event.createdDate}"></div>
         </div>
     </li>
     <li class="list-group-item" th:if="${#lists.isEmpty(events)}" th:text="#{event.no_activities}">
     </li>
 </ul>
-
+</div>

@@ -21,24 +21,14 @@
   function events(svc, $compile) {
 
     return {
-      template: '<div>\
-      <div class="form-group">\
-      <div class="btn-group">\
-      <label class="btn btn-default" ng-model="eventsCtrl.size" btn-radio="10">10</label>\
-      <label class="btn btn-default" ng-model="eventsCtrl.size" btn-radio="20">20</label>\
-      <label class="btn btn-default" ng-model="eventsCtrl.size" btn-radio="50">50</label>\
-      <label class="btn btn-default" ng-model="eventsCtrl.size" btn-radio="100">100</label>\
-      </div></div>\
-      <div id="events"></div>\
-      </div>',
+      template: "<div></div>",
       scope: {
         url: '@'
       },
       replace: true,
       controllerAs: 'eventsCtrl',
-      controller: function ($scope, $element, $attrs) {
-        var vm = this,
-          elm = $element.find('#events');
+      controller: function ($scope, $element) {
+        var vm = this;
 
         vm.size = 10;
         $scope.$watch(function () {
@@ -51,7 +41,7 @@
 
         function getEvents() {
           svc.getEvents($scope.url, vm.size).then(function(data) {
-            elm.html($compile(data)($scope));
+            $element.html($compile(data)($scope));
           });
         }
 

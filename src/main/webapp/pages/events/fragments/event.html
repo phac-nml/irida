@@ -16,8 +16,8 @@ can be internationalized.
         th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
         userLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt;'},
         projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-        projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}"
-        th:utext="#{event.user_added(${userLink},#{'projectRole.'+${event.role}},${projectLink})}"></div>
+        projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}">
+        <span th:utext="#{event.user_added(${userLink},#{'projectRole.'+${event.role}},${projectLink})}"></span></div>
 </th:block>
 
 <th:block class="event-text" th:fragment="user-removed-event (event)">
