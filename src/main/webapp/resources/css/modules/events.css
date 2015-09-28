@@ -42,7 +42,8 @@
       -ms-flex: 0 0 90px;
           flex: 0 0 90px;
   color: #666;
-  font-size: .7em; }
+  font-size: .7em;
+  text-align: right; }
 
 .event-time {
   line-height: 28px; }
