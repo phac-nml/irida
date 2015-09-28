@@ -18,7 +18,7 @@
       </div>
     </section>
   </div>
-  <div th:attr="class=${updates} ? 'col-md-7 col-sm-12 col-md-pull-5' : ''" class="col-md-7 col-sm-12 col-md-pull-5" ng-controller="EventsController as events">
+  <div th:attr="class=${updates} ? 'col-md-7 col-sm-12 col-md-pull-5' : ''" class="col-md-7 col-sm-12 col-md-pull-5">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
@@ -31,15 +31,12 @@
       </div>
       <div class="panel-body">
         <div class="form-group">
-          <label th:text="#{event.size}">_Activities to show:_</label><br/>
-            <div class="btn-group">
-                <label class="btn btn-default" ng-model="events.size" btn-radio="10">10</label>
-                <label class="btn btn-default" ng-model="events.size" btn-radio="20">20</label>
-                <label class="btn btn-default" ng-model="events.size" btn-radio="50">50</label>
-                <label class="btn btn-default" ng-model="events.size" btn-radio="100">100</label>
+          <!--<label th:text="#{event.size}">_Activities to show:_</label><br/>-->
+
+        <!--</div>-->
+        <!--<div id="events"></div>-->
+            <events data:url="@{/events/current_user}"></events>
             </div>
-        </div>
-        <div id="events"></div>
       </div>
     </section>
   </div>
@@ -47,9 +44,6 @@
   <th:block layout:fragment="page-scripts">
     <script th:inline="javascript">
       var PAGE = {
-          urls: {
-              events: /*[[@{/events/current_user}]]*/ '/events/current_user'
-          },
           updates: /*[[${updates}]]*/ '## Nothing Here!'
       };
     </script>

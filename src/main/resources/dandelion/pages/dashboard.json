@@ -1,18 +1,12 @@
 {
   "bundle": "dashboard",
-  "dependencies": [ "livestamp", "marked" ],
+  "dependencies": [ "events", "marked" ],
   "assets": [
     {
       "type": "js",
       "locations": {
         "webapp": "/resources/js/pages/dashboard.js"
       }
-    },
-    {
-      "type": "css",
-      "locations": {
-        "webapp": "/resources/css/pages/dashboard.css"
-      }
     }
-  ]
+    ]
 }
