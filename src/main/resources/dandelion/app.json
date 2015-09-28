@@ -2,6 +2,7 @@
   "bundle": "app",
   "dependencies": [
     "font-awesome",
+    "animate.css",
     "utilities",
     "cart",
     "angular",
