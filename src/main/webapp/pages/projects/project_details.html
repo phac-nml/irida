@@ -3,33 +3,21 @@
 
 <head>
   <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
+    <script>window.dependencies=['irida.project.activities'];</script>
 </head>
 
 <body>
   <main layout:fragment="main">
     <h1 th:text="#{project.activities.title(${project.label})}"></h1>
-    <div ddl:bundle-includes="project-events">
+    <div ddl:bundle-includes="events">
       <div class="row">
-        <div class="col-xs-3">
-          <label for="size" th:text="#{event.size}">_Activities to show:_</label>
-          <select id="size" class="form-control event-count">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
+         <div class="col-md-12"> <events data:url="@{/events/project/{id}(id=${project.getId()})}"></events></div>
       </div>
-      <div id="events"></div>
     </div>
   </main>
   <th:block layout:fragment="scripts" th:inline="javascript">
   <script th:inline="javascript">
-  var PAGE = {
-      urls: {
-          events: /*[[@{/events/project/{id}(id=${project.getId()})}]]*/ '/events/project'
-      }
-  };
+    angular.module('irida.project.activities',['irida.events']);
   </script>
   </th:block>
 </body>
