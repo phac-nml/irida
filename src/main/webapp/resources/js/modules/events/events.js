@@ -1,6 +1,19 @@
 (function (angular) {
   'use strict';
+
+  /**
+   * Service to get events DOM from server.
+   * @param $http
+   * @returns {{getEvents: getEvents}}
+   * @constructor
+   */
   function EventsService($http) {
+    /**
+     *
+     * @param url
+     * @param size - defaults to 10 if not supplied.
+     * @returns {*}
+     */
     function getEvents(url, size) {
       size = typeof size === 'undefined' ? 10 : size;
       return $http.get(url, {
@@ -18,6 +31,12 @@
     };
   }
 
+  /**
+   * Events directive. Replaces DOM on page with the updated events list.
+   * @param svc - EventsService
+   * @param $compile
+   * @returns {{template: string, scope: {url: string}, replace: boolean, controllerAs: string, controller: controller}}
+   */
   function events(svc, $compile) {
 
     return {
