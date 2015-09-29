@@ -205,7 +205,23 @@ public class SampleSequenceFilesIT {
 		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(2)).when()
 				.get(sequenceFilePairsUri);
 	}
-	
+
+	@Test
+	public void testReadForwardReverseFromPair() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/pairs/1";
+
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
+		String forwardLink = response.jsonPath().getString(
+				"resource.links.find{it.rel=='" + RESTSampleSequenceFilesController.REL_PAIR_FORWARD + "'}.href");
+		String reverseLink = response.jsonPath().getString(
+				"resource.links.find{it.rel=='" + RESTSampleSequenceFilesController.REL_PAIR_REVERSE + "'}.href");
+
+		asUser().expect().statusCode(HttpStatus.OK.value()).and()
+				.body("resource.fileName", equalTo("sequenceFile2_01_L001_R1_001.fastq.gz")).when().get(forwardLink);
+		asUser().expect().statusCode(HttpStatus.OK.value()).and()
+				.body("resource.fileName", equalTo("sequenceFile3_01_L001_R2_001.fastq.gz")).when().get(reverseLink);
+	}
+
 	@Test
 	public void testReadUnPairedSequenceFiles() {
 		String unpairedRel = RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED;
