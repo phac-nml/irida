@@ -46,6 +46,13 @@
     </main>
     <th:block layout:fragment="page-scripts">
       <script th:inline="javascript">
+        var PAGE = {
+          urls: { 
+            remove: /*[[@{/sequencingRuns/{id}(id=${run.id})}]]*/ '/sequencingRuns',
+            list: /*[[@{/sequencingRuns}]]*/ '/sequencingRuns',
+          }
+        };
+        
     	(function() {
 	        "use strict";
 
@@ -67,9 +74,9 @@
                 console.log("done");  
                 $http({
                   method: 'DELETE',
-                  url: /*[[@{/sequencingRuns/{id}(id=${run.id})}]]*/ '/sequencingRuns',
+                  url: PAGE.urls.remove,
                 }).success(function(){
-                  window.location = /*[[@{/sequencingRuns}]]*/ '/sequencingRuns';
+                  window.location = PAGE.urls.list
                 });
               };
               
