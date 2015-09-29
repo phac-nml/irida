@@ -482,10 +482,10 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.goToPage();
 
 		// Page should be sorted by creation date first
-		assertTrue(page.isTableSortedAscByCreationDate());
-		page.sortTableByCreatedDate();
-		assertFalse(page.isTableSortedAscByCreationDate());
 		assertTrue(page.isTableSortedDescByCreationDate());
+		page.sortTableByCreatedDate();
+		assertTrue(page.isTableSortedAscByCreationDate());
+		assertFalse(page.isTableSortedDescByCreationDate());
 
 		// Sort by name
 		page.sortTableByName();
