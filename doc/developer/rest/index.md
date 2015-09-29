@@ -696,6 +696,61 @@ Listing sequence file pairs will display the sequnece files for a given sample w
 | `self` | A link to this collection of sequence files. |
 | `sample` | A link back to the sample that owns this sequence file collection. |
 
+##### Example Response
+
+```json
+{
+  "resource" : {
+    "resources" : [ {
+      "createdDate" : 1406726674000,
+      "files" : [ {
+        "file" : "/tmp/sequence-files/2/2/02-2222_S1_L001_R2_001.fastq",
+        "createdDate" : 1406726674000,
+        "modifiedDate" : 1406726674000,
+        "label" : "02-2222_S1_L001_R2_001.fastq",
+        "fileName" : "02-2222_S1_L001_R2_001.fastq",
+        "links" : [ {
+          "rel" : "self",
+          "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+        } ],
+        "identifier" : "2"
+      }, {
+        "file" : "/tmp/sequence-files/1/2/02-2222_S1_L001_R1_001.fastq",
+        "createdDate" : 1406726674000,
+        "modifiedDate" : 1406726674000,
+        "label" : "02-2222_S1_L001_R1_001.fastq",
+        "fileName" : "02-2222_S1_L001_R1_001.fastq",
+        "links" : [ {
+          "rel" : "self",
+          "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+        } ],
+        "identifier" : "1"
+      } ],
+      "assembledGenome" : null,
+      "label" : "02-2222_S1_L001_R2_001.fastq, 02-2222_S1_L001_R1_001.fastq",
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/pairs/1"
+      }, {
+        "rel" : "pair/forward",
+        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+      }, {
+        "rel" : "pair/reverse",
+        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+      } ],
+      "identifier" : "1"
+    } ],
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/pairs"
+    }, {
+      "rel" : "sample",
+      "href" : "http://localhost:8080/api/projects/5/samples/52"
+    } ]
+  }
+}
+```
+
 #### Sequence File Pair Individual
 {:.no_toc}
 A sequence file pair individual contains a reference to 2 [sequence files](#sequence-file-individual).  These files are generally created by the sequencer as a pair of files.
