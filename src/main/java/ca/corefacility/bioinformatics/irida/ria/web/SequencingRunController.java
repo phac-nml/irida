@@ -16,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -24,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for displaying and interacting with {@link SequencingRun} objects
@@ -93,10 +94,11 @@ public class SequencingRunController {
 	 *            the run id to delete
 	 * @return redirect to runs list
 	 */
-	@RequestMapping(value = "/delete", method = RequestMethod.POST)
-	public String deleteSequencingRun(@RequestParam Long id) {
-		sequencingRunService.delete(id);
-		return "redirect:/sequencingRuns";
+	@RequestMapping(value = "/{runId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Map<String, String> deleteSequencingRun(@PathVariable Long runId) {
+		sequencingRunService.delete(runId);
+		return ImmutableMap.of("success", "true");
 
 	}
 
