@@ -59,7 +59,7 @@
     "use strict";
     return {
       page    : 0,
-      sortDir : false,
+      sortDir : true,
       sortedBy: 'sample.createdDate',
       count   : 10,
       sample  : {}
