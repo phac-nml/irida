@@ -14,9 +14,9 @@ can be internationalized.
     <div class="event-icon"><img class="gravatar" data:gravatar-src-once="'\'' + ${event.user.email} + '\''" gravatar-size="28" /></div>
     <div class="event-content user-role-event"
         th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
-        userLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt;'},
+        userLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
         projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-        projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}">
+        projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt; '}">
         <span th:utext="#{event.user_added(${userLink},#{'projectRole.'+${event.role}},${projectLink})}"></span></div>
 </th:block>
 
@@ -26,7 +26,7 @@ can be internationalized.
             th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
             userLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
             projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}"
+            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt; '}"
             th:utext="#{event.user_removed(${userLink},${projectLink})}"></div>
 </th:block>
 
@@ -34,18 +34,18 @@ can be internationalized.
     <div class="event-icon"><fa:icon type="sample" /></div>
     <div class="event-content sample-added-event"
             th:with="sampleHref=@{/projects/{pid}/samples/{sid}(sid=${event.sample.getId()}, pid=${event.project.getId()})},
-            sampleLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
+            sampleLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt; '},
             projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}"
-            th:utext="#{event.sample_added(${sampleLink},${projectLink})}"></div>
+            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt; '}">
+            <span th:utext="#{event.sample_added(${sampleLink},${projectLink})}"></span></div>
 </th:block>
 
 <th:block class="event-text" th:fragment="data-added-event (event)">
     <div class="event-icon"><fa:icon type="file" /></div>
     <div class="event-content data-added-event"
             th:with="sampleHref=@{/projects/{pid}/samples/{sid}(sid=${event.sample.getId()}, pid=${event.project.getId()})},
-            sampleLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
+            sampleLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt; '},
             projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}"
-            th:utext="#{event.data_added(${sampleLink},${projectLink})}"></div>
+            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt; '}">
+            <span th:utext="#{event.data_added(${sampleLink},${projectLink})}"></span></div>
 </th:block>
