@@ -8,15 +8,12 @@
 <body>
     <main layout:fragment="main">
     <div class="row">
-        <div class="col-md-12" ng-controller="ModalDemoCtrl as ctrl">
+        <div class="col-md-12" ng-controller="DeleteModalCtrl as ctrl">
           <h1 role="heading">
             <th:block th:text="#{sequencingruns.details.title(${run.id})}">__TITLE__</th:block>
               <script type="text/ng-template" id="myModalContent.html">
                   <div class="modal-header">
                       <h3 class="modal-title" th:text="#{sequencingruns.delete.confirmation}">I'm a modal!</h3>
-                  </div>
-                  <div class="modal-body">
-                    Remove this run?
                   </div>
                   <div class="modal-footer">
                       <button id="confirm-delete" class="btn btn-primary" type="button" ng-click="modal.ok()">OK</button>
@@ -53,7 +50,7 @@
 	        "use strict";
 
 	        var app = angular.module('irida.sequencingruns', ['ui.bootstrap']);
-	        app.controller('ModalDemoCtrl', function ($modal) {
+	        app.controller('DeleteModalCtrl', function ($modal) {
 		        var vm = this;
 	            vm.open = function (size) {
 
