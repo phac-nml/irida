@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -81,6 +82,12 @@ public class RESTSampleSequenceFilesController {
 	
 	public static final String REL_SEQUENCEFILE_SAMPLE = "sequenceFile/sample";
 	public static final String REL_PAIR_SAMPLE = "sequenceFilePair/sample";
+	
+	/**
+	 * rel for forward and reverse files
+	 */
+	public static final String REL_PAIR_FORWARD = "pair/forward";
+	public static final String REL_PAIR_REVERSE = "pair/reverse";
 	
 	/**
 	 * The key used in the request to add an existing {@link SequenceFile} to a
@@ -591,7 +598,7 @@ public class RESTSampleSequenceFilesController {
     
 	/**
 	 * Add the {@link SequenceFile} and self rel links to a
-	 * {@link SequenceFilePair}
+	 * {@link SequenceFilePair}.  Also adds the forward and reverse file links
 	 * 
 	 * @param pair
 	 *            The {@link SequenceFilePair} to enhance
@@ -600,14 +607,22 @@ public class RESTSampleSequenceFilesController {
 	 * @return The {@link SequenceFilePair} with added links
 	 */
 	public static SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long sampleId) {
-		for (SequenceFile file : pair.getFiles()) {
-			file = addSequenceFileLinks(file, sampleId);
-		}
+		SequenceFile forward = pair.getForwardSequenceFile();
+		ControllerLinkBuilder forwardLink = linkTo(methodOn(RESTSampleSequenceFilesController.class)
+				.getSequenceFileForSample(sampleId, forward.getId()));
 
-		pair.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId, pair.getId()))
-				.withSelfRel());
+		SequenceFile reverse = pair.getReverseSequenceFile();
+		ControllerLinkBuilder reverseLink = linkTo(methodOn(RESTSampleSequenceFilesController.class)
+				.getSequenceFileForSample(sampleId, reverse.getId()));
 
-		pair.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_PAIR_SAMPLE));
+		forward.add(forwardLink.withSelfRel());
+		reverse.add(reverseLink.withSelfRel());
+
+		pair.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId,
+						pair.getId())).withSelfRel());
+		pair.add(forwardLink.withRel(REL_PAIR_FORWARD));
+		pair.add(reverseLink.withRel(REL_PAIR_REVERSE));
 
 		return pair;
 	}
