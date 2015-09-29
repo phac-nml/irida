@@ -231,7 +231,7 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public void sortTableByCreatedDate() {
-		driver.findElement(By.id("sortCreatedDate")).click();
+		driver.findElement(By.cssSelector("#sortCreatedDate a")).click();
 	}
 
 	public boolean isTableSortedAscByCreationDate() {
