@@ -61,7 +61,7 @@
 		        var vm = this;
 	            vm.open = function (size) {
 
-                  var modalInstance = $modal.open({
+                  $modal.open({
                     templateUrl: 'myModalContent.html',
                     controller: 'ModalInstanceCtrl as modal',
                     size: 'sm'
@@ -71,7 +71,6 @@
               var vm = this;
               
               vm.ok = function(){
-                console.log("done");  
                 $http({
                   method: 'DELETE',
                   url: PAGE.urls.remove,
@@ -88,7 +87,7 @@
           
           
           
-        })();
+        })(window.angular, [angular]);
       </script>
     </th:block>
 </body>
