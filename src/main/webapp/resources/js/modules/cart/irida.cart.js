@@ -186,11 +186,12 @@
       params = {},
       samples = [];
 
-    function initialize(libraryName, email, authCode, redirectURI) {
+    function initialize(libraryName, email, addtohistory, authCode, redirectURI) {
       params = {
         '_embedded': {
           'library': {'name': libraryName},
           'user': {'email': email},
+          'addtohistory': addtohistory,
           'oauth2': {
             'code': authCode,
             'redirect': redirectURI
@@ -223,8 +224,8 @@
       return [sampleFormEntity];
     }
 
-    svc.exportFromProjSampPage = function (libraryName, email, authCode, redirectURI) {
-      initialize(libraryName, email, authCode, redirectURI);
+    svc.exportFromProjSampPage = function (libraryName, email, addtohistory, authCode, redirectURI) {
+      initialize(libraryName, email, addtohistory, authCode, redirectURI);
 
       var samples = StorageService.getSamples();
       _.each(samples, function (sample) {
@@ -233,10 +234,10 @@
       return getSampleFormEntities();
     };
 
-    svc.exportFromCart = function (libraryName, email, authCode, redirectURI) {
+    svc.exportFromCart = function (libraryName, email, addtohistory, authCode, redirectURI) {
       return CartService.all()
         .then(function (data) {
-          initialize(libraryName, email, authCode, redirectURI);
+          initialize(libraryName, email, addtohistory, authCode, redirectURI);
           var projects = data;
           _.each(projects, function (project) {
             var samples = project.samples;
@@ -282,9 +283,9 @@
         vm.showEmailLibInput = true;
 
         if (openedByCart) {
-          GalaxyExportService.exportFromCart(vm.name, vm.email, authToken, vm.redirectURI).then(sendSampleForm);
+          GalaxyExportService.exportFromCart(vm.name, vm.email, vm.addtohistory, authToken, vm.redirectURI).then(sendSampleForm);
         } else {
-          sendSampleForm(GalaxyExportService.exportFromProjSampPage(vm.name, vm.email, authToken, vm.redirectURI));
+          sendSampleForm(GalaxyExportService.exportFromProjSampPage(vm.name, vm.email, vm.addtohistory, authToken, vm.redirectURI));
         }
       }
     });
