@@ -512,6 +512,10 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(3, page.getFilteredSampleCount());
 		page.filterByOrganism("Listeria");
 		assertEquals(2, page.getFilteredSampleCount());
+
+		// Test filter by file
+		page.filterByFile();
+		assertEquals(2, page.getFilteredSampleCount());
 	}
 
 	@Test

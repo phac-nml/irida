@@ -211,6 +211,12 @@
       updateSelectedCount();
     };
 
+    /**
+     * Filter the samples based on a list of sample names.
+     *
+     * @param sampleNames - array of sample names
+     * @returns {*}
+     */
     svc.getFileFilteredSamples = function (sampleNames) {
       var f = [], count = 0;
       _.each(svc.samples, function(s) {
@@ -803,6 +809,9 @@
 
     vm.filterByFile = function($fileContent) {
       vm.fileFiltering = true;
+      vm.filter.sample = {};
+      vm.name = "";
+      vm.organism = "";
       var sampleNames = $fileContent.split("\n");
       $scope.$emit('SAMPLES_FILE_FILTER', {sampleNames: sampleNames});
     };
@@ -921,4 +930,4 @@
     .controller('ConnectionWarningCtrl', ['$rootScope', 'SamplesService', ConnectionWarningCtrl])
   ;
 })
-(angular, $, _, PAGE);
+(window.angular, window.$, window._, window.PAGE);
