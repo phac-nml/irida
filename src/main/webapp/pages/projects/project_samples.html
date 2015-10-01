@@ -4,6 +4,37 @@
 <head>
 	<title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
 	<script>window.dependencies = ['Samples'];</script>
+	<style>
+		.inputfile {
+			width: 0.1px;
+			height: 0.1px;
+			opacity: 0;
+			overflow: hidden;
+			position: absolute;
+			z-index: -1;
+		}
+		.inputfile + label {
+			display: block;
+			margin: 10px 0 0 0;
+			font-weight: normal;
+			font-size: 14px;
+			color: #333;
+			border-radius: 3px;
+			border: 1px solid rgb(204, 204, 204);
+			padding: 5px 10px;
+			text-align: center;
+			cursor: pointer;
+		}
+		.inputfile:focus + label {
+			outline: 1px dotted #000;
+			outline: -webkit-focus-ring-color auto 5px;
+		}
+		.inputfile:focus + label,
+		.inputfile + label:hover {
+			background-color: rgb(230, 230, 230);
+			border-color: rgb(173,173,173);
+		}
+	</style>
 </head>
 <body>
 <aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
@@ -48,6 +79,16 @@
 					</button>
 				</span>
 			</div>
+		</div>
+		<div class="form-group">
+			<form name="fileFilterForm">
+				<div ng-show="!sf.fileFiltering"><input class="inputfile" type="file" id="fileFilter"
+					   filter-by-file="sf.filterByFile($fileContent)"/>
+				<label for="fileFilter"><fa:icon type="file" />&nbsp;Filter &amp; Select Based on File</label></div>
+				<button style="margin-top: 10px;" ng-show="sf.fileFiltering" class="btn btn-info btn-sm btn-block"
+						ng-click="sf.clearFileFilter()">Clear File Filter
+				</button>
+			</form>
 		</div>
 	</div>
 </aside>
