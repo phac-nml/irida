@@ -80,6 +80,9 @@ public class RESTSampleSequenceFilesController {
 	 */
 	public static final String REL_SAMPLE_SEQUENCE_FILE_UNPAIRED = "sample/sequenceFiles/unpaired";
 	
+	public static final String REL_SEQUENCEFILE_SAMPLE = "sequenceFile/sample";
+	public static final String REL_PAIR_SAMPLE = "sequenceFilePair/sample";
+	
 	/**
 	 * rel for forward and reverse files
 	 */
@@ -222,9 +225,7 @@ public class RESTSampleSequenceFilesController {
 		for (Join<Sample, SequenceFile> join : unpairedSequenceFilesForSample) {
 			SequenceFile file = join.getObject();
 
-			file.add(linkTo(
-					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
-							file.getId())).withSelfRel());
+			file = addSequenceFileLinks(file, sampleId);
 
 			resources.add(file);
 		}
@@ -605,8 +606,7 @@ public class RESTSampleSequenceFilesController {
 	 *            the id of the {@link Sample} the pair is in
 	 * @return The {@link SequenceFilePair} with added links
 	 */
-
-	private SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long sampleId) {
+	public static SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long sampleId) {
 		SequenceFile forward = pair.getForwardSequenceFile();
 		ControllerLinkBuilder forwardLink = linkTo(methodOn(RESTSampleSequenceFilesController.class)
 				.getSequenceFileForSample(sampleId, forward.getId()));
@@ -625,6 +625,22 @@ public class RESTSampleSequenceFilesController {
 		pair.add(reverseLink.withRel(REL_PAIR_REVERSE));
 
 		return pair;
+	}
 
+	/**
+	 * Add the {@link Sample} and self rel links to a {@link SequenceFile}
+	 * @param file {@link SequenceFile} to add links to 
+	 * @param sampleId id of the {@link Sample} the file exists in
+	 * @return modified {@link SequenceFile}
+	 */
+	public static SequenceFile addSequenceFileLinks(SequenceFile file, Long sampleId) {
+		file.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId, file.getId()))
+				.withSelfRel());
+
+		file.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
+				REL_SEQUENCEFILE_SAMPLE));
+
+		return file;
 	}
 }

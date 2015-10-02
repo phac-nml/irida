@@ -209,7 +209,7 @@ public class SampleSequenceFilesIT {
 
 	@Test
 	public void testReadForwardReverseFromPair() {
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/pairs/1";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/sequenceFiles/pairs/1";
 
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
 		String forwardLink = response.jsonPath().getString(

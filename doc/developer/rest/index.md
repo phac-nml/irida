@@ -1016,6 +1016,8 @@ Each analysis submission corresponds to a collection of inputs (files and parame
 |------|-------------|
 | `self` | A link to this analysis submission. |
 | `analysis` | A link to the **completed** analysis created for this submission. This link will only appear when the analysis submission is in the `COMPLETED` state. |
+| `input/paired` | A link to the collection of paired-end input files used for this analysis. See [Sequence File Pairs Collection](#sequence-file-pairs-collection) for response format.|
+| `input/unpaired` | A link to the collection of single-end input files used for this analysis.  See [Sequence File Collection](#sequence-file-collection) for response format. |
 
 ##### Properties
 {:.no_toc}
@@ -1039,38 +1041,34 @@ Each analysis submission corresponds to a collection of inputs (files and parame
 
 ```javascript
 {
-    "resource": {
-        "analysisCleanedState": "NOT_CLEANED",
-        "analysisState": "COMPLETED",
-        "createdDate": 1434990870000,
-        "identifier": "1",
-        "inputParameters": {
-            "alternative-allele-fraction": "0.75",
-            "minimum-base-quality": "30",
-            "minimum-mapping-quality": "30",
-            "minimum-read-coverage": "15",
-            "repeat-minimum-length": "150",
-            "repeat-minimum-pid": "90"
-        },
-        "label": "SNVPhyl_20150622",
-        "links": [
-            {
-                "href": "http://localhost:8080/api/analysisSubmissions/1/analysis",
-                "rel": "analysis"
-            },
-            {
-                "href": "http://localhost:8080/api/analysisSubmissions/1",
-                "rel": "self"
-            }
-        ],
-        "modifiedDate": 1434991388000,
-        "name": "SNVPhyl_20150622",
-        "remoteFilesPaired": [],
-        "remoteFilesSingle": [],
-        "remoteInputDataId": "f605f7fc4b86cc72",
-        "remoteWorkflowId": "f605f7fc4b86cc72",
-        "workflowId": "ccca532d-b0be-4f2c-bd6d-9886aa722571"
-    }
+  "resource" : {
+    "name" : "Analysis-13",
+    "workflowId" : "3fd2719d-8729-4e91-bd01-c6c20b99874d",
+    "remoteInputDataId" : null,
+    "remoteWorkflowId" : null,
+    "remoteFilesSingle" : [ ],
+    "remoteFilesPaired" : [ ],
+    "inputParameters" : { },
+    "createdDate" : 1406559662000,
+    "modifiedDate" : null,
+    "analysisState" : "COMPLETED",
+    "analysisCleanedState" : "NOT_CLEANED",
+    "label" : "Analysis-13",
+    "links" : [ {
+      "rel" : "analysis",
+      "href" : "http://localhost:8080/api/analysisSubmissions/13/analysis"
+    }, {
+      "rel" : "input/unpaired",
+      "href" : "http://localhost:8080/api/analysisSubmissions/13/sequenceFiles/unpaired"
+    }, {
+      "rel" : "input/paired",
+      "href" : "http://localhost:8080/api/analysisSubmissions/13/sequenceFiles/pairs"
+    }, {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/analysisSubmissions/13"
+    } ],
+    "identifier" : "13"
+  }
 }
 ```
 
