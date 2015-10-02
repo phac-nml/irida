@@ -125,9 +125,21 @@ public class FontAwesome {
 	private static final String BAN_ICON = "ban";
 
 	/*
-	 * If using multiple icons in a list (such as a side bar) add the 'fixed=""'
-	 * attribute to append this class. This will line up the icons properly.
+	 * Attribute for email
 	 */
+	private static final String EMAIL_ATTRIBUTE = "email";
+	private static final String EMAIL_ICON = "envelope-o";
+
+	/*
+	 * Attribute for an external link
+	 */
+	public static final String EXTERNAL_LINK_ATTRIBUTE = "external-link";
+	public static final String EXTERNAL_LINK_ICON = "external-link";
+
+	/*
+	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
+    * attribute to append this class. This will line up the icons properly.
+    */
 	private static final String FIXED_WIDTH_CLASS = "fa-fw";
 
 	/*
@@ -153,9 +165,11 @@ public class FontAwesome {
 			.put(TERMINAL_ATTRIBUTE, TERMINAL_ICON)
 			.put(COLLAPSE_SHOW_ATTRIBUTE, COLLAPSE_SHOW_ICON)
 			.put(COLLAPSE_CLOSE_ATTRIBUTE, COLLAPSE_CLOSE_ICON)
-			.put(SAMPLE_ATTRIBUTE,SAMPLE_ICON)
-			.put(USER_ATTRIBUTE,USER_ICON)
-			.put(BAN_ATTRIBUTE,BAN_ICON)
+			.put(SAMPLE_ATTRIBUTE, SAMPLE_ICON)
+			.put(USER_ATTRIBUTE, USER_ICON)
+			.put(BAN_ATTRIBUTE, BAN_ICON)
+			.put(EMAIL_ATTRIBUTE, EMAIL_ICON)
+			.put(EXTERNAL_LINK_ATTRIBUTE, EXTERNAL_LINK_ICON)
 			.build();
 	// @formatter:on
 
@@ -182,6 +196,7 @@ public class FontAwesome {
 
 		/**
 		 * Creates a {@link Builder} with the type of icon to create
+		 *
 		 * @param type {@link String} type of icon to use.
 		 * @throws IconNotFoundException if the icon type doesn't exist
 		 */
@@ -197,9 +212,7 @@ public class FontAwesome {
 		/**
 		 * Sets the fixed with class if needed
 		 *
-		 * @param isFixed
-		 * 		{@link Boolean} if it is to be fixed width
-		 *
+		 * @param isFixed {@link Boolean} if it is to be fixed width
 		 * @return {@link Builder}
 		 */
 		public Builder fixedWidth(boolean isFixed) {
@@ -212,9 +225,7 @@ public class FontAwesome {
 		/**
 		 * Sets the appropriate icon size for the {@link FontAwesome}
 		 *
-		 * @param size
-		 * 		{@link String} desired icon size or null
-		 *
+		 * @param size {@link String} desired icon size or null
 		 * @return {@link Builder}
 		 * @throws IconNotFoundException if the icon size isn't available
 		 */
@@ -245,8 +256,7 @@ public class FontAwesome {
 	/**
 	 * Builds a new {@link FontAwesome} with the given {@link Builder}
 	 *
-	 * @param builder
-	 * 		The {@link Builder} to build the {@link FontAwesome}
+	 * @param builder The {@link Builder} to build the {@link FontAwesome}
 	 */
 	public FontAwesome(Builder builder) {
 		this();
@@ -256,9 +266,7 @@ public class FontAwesome {
 	/**
 	 * Get the {@link Builder} for Font-Awesome Icons
 	 *
-	 * @param type
-	 * 		{@link String} type of icon to create.
-	 *
+	 * @param type {@link String} type of icon to create.
 	 * @return {@link Builder} for icons
 	 * @throws IconNotFoundException if the icon type doesn't exist
 	 */
