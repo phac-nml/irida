@@ -90,7 +90,7 @@ public class SequencingRunController {
 	/**
 	 * Delete the {@link SequencingRun} with the given ID
 	 * 
-	 * @param id
+	 * @param runId
 	 *            the run id to delete
 	 * @return redirect to runs list
 	 */
