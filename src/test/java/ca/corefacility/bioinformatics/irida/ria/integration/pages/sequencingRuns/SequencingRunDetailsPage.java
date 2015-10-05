@@ -46,7 +46,7 @@ public class SequencingRunDetailsPage extends AbstractPage {
 
 	public void deleteRun() {
 		driver.findElement(By.id("remove-btn")).click();
-		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.className("confirm-delete")));
+		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.id("confirm-delete")));
 		confirmButton.click();
 	}
 }
