@@ -5761,6 +5761,9 @@ iframe.remote-api-frame {
   .nav-gravatar img {
     border-radius: 50%; }
 
+body {
+  padding-bottom: 50px; }
+
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer; }
 
