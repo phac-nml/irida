@@ -2662,7 +2662,7 @@ select[multiple].input-lg,
   border-color: #ea7d10; }
   .btn-warning:hover, .btn-warning:focus, .btn-warning.focus, .btn-warning:active, .btn-warning.active, .open > .btn-warning.dropdown-toggle {
     color: #fff;
-    background-color: #d3700e;
+    background-color: #d3710e;
     border-color: #b15f0c; }
   .btn-warning:active, .btn-warning.active, .open > .btn-warning.dropdown-toggle {
     background-image: none; }
@@ -3809,7 +3809,7 @@ a.label:hover, a.label:focus {
 .label-warning {
   background-color: #F08A24; }
   .label-warning[href]:hover, .label-warning[href]:focus {
-    background-color: #d3700e; }
+    background-color: #d3710e; }
 
 .label-danger {
   background-color: #F04124; }
@@ -5648,9 +5648,12 @@ iframe.remote-api-frame {
   height: 450px; }
 
 .nav-gravatar {
-  padding: 12px 5px 10px 5px !important; }
+  padding: 11px 5px !important; }
   .nav-gravatar img {
     border-radius: 50%; }
+
+body {
+  padding-bottom: 50px; }
 
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer; }
