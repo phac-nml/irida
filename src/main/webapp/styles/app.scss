@@ -41,6 +41,8 @@ img.gravatar {
 }
 
 // Bootstrap override
+body {
+  padding-bottom: 50px;}
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
 .clickable {
