@@ -187,6 +187,10 @@
       samples = [];
 
     function initialize(libraryName, email, addtohistory, authCode, redirectURI) {
+      if(typeof addtohistory === 'undefined')
+      {
+        addtohistory = false;
+      }
       params = {
         '_embedded': {
           'library': {'name': libraryName},
