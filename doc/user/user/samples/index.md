@@ -128,7 +128,11 @@ Filtering and Selecting by File
 
 As projects become larger, it becomes unwieldy to select a large subset of samples.  To facilitate this, there is the 'Filter by File' option.
 
-* Create a `.txt` file that contains the name of each sample you want to select on a new line. Example (`project_5_filter.txt`):
+* Create a `.txt` file that contains the name of each sample you want to select on a new line.  You can either:
+    - Use a text editor like Windows Notepad or TextEdit on Mac (note: when creating a new text document in TextEdit, press cmd + shift + t to change to the `.txt` format)
+    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file. 
+
+Example (`project_5_filter.txt`):
 
 <pre>
 Sample 50
