@@ -123,6 +123,28 @@ The filters work by only showing samples that have the search string *anywhere* 
 
 To remove a filter from your view, either click the <img src="images/clear-filter-button.png" class="inline" alt="Clear filter button."> icon, or delete the text in your filter.
 
+Filtering and Selecting by File
+-------------------------------
+
+As projects become larger, it becomes unwieldy to select a large subset of samples.  To facilitate this, there is the 'Filter by File' option.
+
+* Create a `.txt` file that contains the name of each sample you want to select on a new line. Example (`project_5_filter.txt`):
+
+<pre>
+Sample 50
+Sample 43
+Sample 41
+</pre>
+
+* On the project samples page, select the 'Filter & Select by File' button from the filter menu.
+
+![Filter by File Button](images/filter_by_file_btn.png)
+
+* Select the file you created.  This will clear all previous filters, then filter and select the samples that have matching names to those in your list.
+
+![Filter by File Button](images/filter_by_file_selected.png)
+
+
 Viewing associated samples
 --------------------------
 

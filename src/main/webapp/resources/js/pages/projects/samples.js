@@ -800,7 +800,7 @@
     }
   }
 
-  function FilterCtrl($scope, filter) {
+  function FilterCtrl($scope, $modal, filter) {
     "use strict";
     var vm = this;
     vm.filter = filter;
@@ -820,6 +820,13 @@
       vm.fileFiltering = false;
       fileFilterForm.reset();
       $scope.$emit('CLEAR_FILE_FILTER');
+    };
+
+    vm.showFileFilterDesc = function () {
+      $modal.open({
+        templateUrl: '/fileFilterDescription.tmpl.html',
+        size: 'sm'
+      })
     };
 
     $scope.$watch(function () {
@@ -924,7 +931,7 @@
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
-    .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
+    .controller('FilterCtrl', ['$scope', '$modal', 'FilterFactory', FilterCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
     .controller('ConnectionWarningCtrl', ['$rootScope', 'SamplesService', ConnectionWarningCtrl])
