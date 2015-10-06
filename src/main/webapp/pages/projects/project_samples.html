@@ -77,7 +77,14 @@
 						ng-click="sf.clearFileFilter()" th:text="#{project.sample.ClearFilterByFile}">Clear File Filter
 				</button>
 			</form>
-			<div class="clearfix"><button class="btn btn-link btn-xs btn-default pull-right" ng-click="sf.showFileFilterDesc()"><small th:text="#{project.sample.filterByFile.modal.button}">What's this?</small></button></div>
+			<div class="clearfix">
+				<button type="button" class="btn btn-link btn-xs btn-default pull-right"
+						data:popover="#{project.sample.filterByFile.modal.body}"
+						data:popover-title="#{project.sample.filterByFile.modal.title}"
+						popover-trigger="mouseenter">
+					<small th:text="#{project.sample.filterByFile.modal.button}">What's this?</small>
+				</button>
+			</div>
 		</div>
 	</div>
 </aside>
@@ -342,15 +349,6 @@
 </main>
 
 <th:block th:inline="javascript" layout:fragment="scripts">
-	<script type="text/ng-template" id="/fileFilterDescription.tmpl.html">
-		<div class="modal-header">
-			<h3 class="modal-title" th:text="#{project.sample.filterByFile.modal.title}">_Filter by File</h3>
-		</div>
-		<div class="modal-body">
-			<p th:text="#{project.sample.filterByFile.modal.body}">To simplify selecting many samples from large projects, create a text file that contains the names of the samples you want to run, each name on it's own line.</p>
-		</div>
-	</script>
-
 	<script>
 		var PAGE = {
 			urls: {

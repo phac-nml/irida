@@ -822,13 +822,6 @@
       $scope.$emit('CLEAR_FILE_FILTER');
     };
 
-    vm.showFileFilterDesc = function () {
-      $modal.open({
-        templateUrl: '/fileFilterDescription.tmpl.html',
-        size: 'sm'
-      })
-    };
-
     $scope.$watch(function () {
       return vm.sampleName;
     }, _.debounce(function (n, o) {
