@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
@@ -12,8 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import java.util.List;
 
 public class RemoteAPIDetailsPage extends AbstractPage {
 	public static String REMOTEAPI_LIST = "remote_api";
@@ -96,7 +95,8 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		boolean deleted = false;
 
 		logger.debug("Checking for client existence");
-		if (driver.getCurrentUrl().matches(BASE_URL + REMOTEAPI_LIST)) {
+		WebElement el = driver.findElement(By.tagName("h1"));
+		if (el.getText().equals("Remote APIs")) {
 			logger.debug("Succesfully loaded client list page");
 			waitForAjax();
 			logger.debug("Table loaded");
