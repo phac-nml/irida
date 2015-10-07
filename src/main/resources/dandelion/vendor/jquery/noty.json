@@ -1,0 +1,11 @@
+{
+  "dependencies": ["jquery"],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.js"
+      }
+    }
+  ]
+}
