@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 public class CreateUserPage extends AbstractPage {
 
 	public static String CREATE_PAGE = "users/create";
-	public static String SUCCESS_PAGE = BASE_URL + "users/\\d+";
 
 	public CreateUserPage(WebDriver driver) {
 		super(driver);
@@ -63,7 +62,7 @@ public class CreateUserPage extends AbstractPage {
 	}
 
 	public boolean createSuccess() {
-		return driver.getCurrentUrl().matches(SUCCESS_PAGE);
+		return driver.findElement(By.tagName("h1")).getText().equals("test user");
 	}
 
 }
