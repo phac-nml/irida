@@ -1,0 +1,28 @@
+{
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.css"
+      }
+    },
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables/media/js/jquery.dataTables.js"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables-bootstrap3-plugin/media/js/datatables-bootstrap3.js"
+      }
+    }
+  ]
+}
