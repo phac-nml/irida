@@ -62,7 +62,12 @@ public class CreateUserPage extends AbstractPage {
 	}
 
 	public boolean createSuccess() {
-		return driver.findElement(By.tagName("h1")).getText().equals("test user");
+		try {
+			WebElement id = waitForElementVisible(By.id("wb-cont"));
+			return id.getText().equals("test user");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }

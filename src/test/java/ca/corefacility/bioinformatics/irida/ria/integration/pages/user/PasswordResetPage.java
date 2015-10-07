@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class PasswordResetPage extends AbstractPage {
 	private final String RELATIVE_URL = "password_reset/";
-	private final String SUCCESS_PAGE = RELATIVE_URL + "success/.+";
 
 	public PasswordResetPage(WebDriver driver) {
 		super(driver);
@@ -28,6 +27,11 @@ public class PasswordResetPage extends AbstractPage {
 	}
 
 	public boolean checkSuccess() {
-		return driver.getCurrentUrl().matches(BASE_URL + SUCCESS_PAGE);
+		try {
+			WebElement el = waitForElementVisible(By.className("reset-success"));
+			return el.getText().contains("Create New Password For ");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
