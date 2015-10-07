@@ -25,6 +25,11 @@ public class CreatePasswordResetPage extends AbstractPage {
 	}
 
 	public boolean checkSuccess() {
-		return driver.getCurrentUrl().matches(SUCCESS_PAGE);
+		try {
+			WebElement el = waitForElementVisible(By.className("reset-desc"));
+			return el.getText().contains("Password reset created for ");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
