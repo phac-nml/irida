@@ -183,27 +183,7 @@
 
   function GalaxyExportService(CartService, StorageService) {
     var svc = this,
-      params = {},
       samples = [];
-
-    function initialize(libraryName, email, addtohistory, authCode, redirectURI) {
-      if(typeof addtohistory === 'undefined')
-      {
-        addtohistory = false;
-      }
-      params = {
-        '_embedded': {
-          'library': {'name': libraryName},
-          'user': {'email': email},
-          'addtohistory': addtohistory,
-          'oauth2': {
-            'code': authCode,
-            'redirect': redirectURI
-          },
-          'samples': samples
-        }
-      };
-    }
 
     function addSampleFile(sampleName, sampleFilePath) {
       var sample = _.find(samples, function (sampleItr) {
@@ -220,28 +200,39 @@
       sample._embedded.sample_files.push({'_links': {'self': {'href': sampleFilePath}}});
     }
 
-    function getSampleFormEntities() {
-      var sampleFormEntity = {
+    function getSampleFormEntities(args) {
+      var defaults = {addtohistory: false},
+        p = _.extend({}, defaults, args),
+        params = {
+        '_embedded': {
+          'library': {'name': p.name},
+          'user': {'email': p.email},
+          'addtohistory': p.addtohistory,
+          'oauth2': {
+            'code': p.authToken,
+            'redirect': p.redirectURI
+          },
+          'samples': samples
+        }
+      };
+      return [{
         'name': 'json_params',
         'value': JSON.stringify(params)
-      };
-      return [sampleFormEntity];
+      }];
     }
 
-    svc.exportFromProjSampPage = function (libraryName, email, addtohistory, authCode, redirectURI) {
-      initialize(libraryName, email, addtohistory, authCode, redirectURI);
+    svc.exportFromProjSampPage = function (args) {
 
       var samples = StorageService.getSamples();
       _.each(samples, function (sample) {
           addSampleFile(sample.sample.label, sample.href);
       });
-      return getSampleFormEntities();
+      return getSampleFormEntities(args);
     };
 
-    svc.exportFromCart = function (libraryName, email, addtohistory, authCode, redirectURI) {
+    svc.exportFromCart = function (args) {
       return CartService.all()
         .then(function (data) {
-          initialize(libraryName, email, addtohistory, authCode, redirectURI);
           var projects = data;
           _.each(projects, function (project) {
             var samples = project.samples;
@@ -252,7 +243,7 @@
               });
             });
           });
-          return getSampleFormEntities();
+          return getSampleFormEntities(args);
         });
     };
   }
@@ -287,9 +278,9 @@
         vm.showEmailLibInput = true;
 
         if (openedByCart) {
-          GalaxyExportService.exportFromCart(vm.name, vm.email, vm.addtohistory, authToken, vm.redirectURI).then(sendSampleForm);
+          GalaxyExportService.exportFromCart({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, authToken: authToken, redirectURI: vm.redirectURI}).then(sendSampleForm);
         } else {
-          sendSampleForm(GalaxyExportService.exportFromProjSampPage(vm.name, vm.email, vm.addtohistory, authToken, vm.redirectURI));
+          sendSampleForm(GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, authToken: authToken, redirectURI: vm.redirectURI}));
         }
       }
     });
