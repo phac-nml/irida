@@ -24,7 +24,6 @@
     "angular-aria": "1.4.0",
     "angular-messages": "1.4.0",
     "bootstrap-sass-official": "3.3.1",
-    "angular-bootstrap": "~0.12.0",
     "ng-table": "0.5.2",
     "angular-ui-router": "0.2.13",
     "moment": "2.7.0",
@@ -39,6 +38,7 @@
     "angular-gravatar": "~0.4.0",
     "animate.css": "3.4.0",
     "angular-sanitize": "1.4.0"
+    "angular-bootstrap": "0.13.4"
   },
   "devDependencies": {},
   "resolutions": {

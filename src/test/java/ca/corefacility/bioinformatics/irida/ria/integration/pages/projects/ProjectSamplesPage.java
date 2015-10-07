@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -303,6 +305,13 @@ public class ProjectSamplesPage extends AbstractPage {
 				break;
 			}
 		}
+	}
+
+	public void filterByFile() {
+		WebElement uploadBtn = driver.findElement(By.id("fileFilter"));
+		Path path = Paths.get("src/test/resources/files/sampleNamesForFilter.txt");
+		uploadBtn.sendKeys(path.toAbsolutePath().toString());
+		waitForTime(100);
 	}
 
 	// Cart
