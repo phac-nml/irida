@@ -8,8 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,26 +157,11 @@ public class ExportUploadService {
 	 */
 	public NcbiExportSubmission uploadSubmission(NcbiExportSubmission submission, String xml) throws UploadException {
 
-		FTPClient client = new FTPClient();
 		try {
+			FTPClient client = getFtpClient();
 
 			// create submission directory name
 			String directoryName = submission.getId().toString() + "-" + new Date().getTime();
-
-			// login to host
-			logger.trace("Logging in to " + ftpHost + " as " + ftpUser);
-
-			try {
-				client.connect(ftpHost, ftpPort);
-			} catch (ConnectException ex) {
-				throw new UploadException("Couldn't connect to server " + ftpHost + ":" + ftpPort);
-			}
-
-			if (!client.login(ftpUser, ftpPassword)) {
-				throw new UploadException("Couldn't log in as " + ftpUser + client.getReplyString());
-			}
-
-			logger.trace(client.getStatus());
 
 			// cd to submission base directory
 			if (!client.changeWorkingDirectory(baseDirectory)) {
@@ -232,6 +221,67 @@ public class ExportUploadService {
 
 		return submission;
 
+	}
+
+	public NcbiExportSubmission getUploadStatus(NcbiExportSubmission submission) throws UploadException {
+		try {
+			FTPClient client = getFtpClient();
+
+			String directoryPath = submission.getDirectoryPath();
+
+			// cd to submission base directory
+			if (!client.changeWorkingDirectory(directoryPath)) {
+				throw new UploadException("Couldn't change to base directory " + baseDirectory + " : "
+						+ client.getReplyString());
+			}
+
+			Pattern regex = Pattern.compile("report.(\\d+).xml");
+
+			String latestFile = null;
+			int highestNumber = 0;
+			FTPFile[] listFiles = client.listFiles();
+			for (FTPFile file : listFiles) {
+				String fileName = file.getName();
+				Matcher matcher = regex.matcher(fileName);
+				if (matcher.matches()) {
+					int reportNumber = Integer.parseInt(matcher.group(1));
+					if (reportNumber > highestNumber) {
+						highestNumber = reportNumber;
+						latestFile = fileName;
+					}
+				}
+			}
+
+			InputStream retrieveFileStream = client.retrieveFileStream(latestFile);
+			String responseXML = IOUtils.toString(retrieveFileStream);
+
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return submission;
+	}
+
+	private FTPClient getFtpClient() throws IOException {
+		FTPClient client = new FTPClient();
+		// login to host
+		logger.trace("Logging in to " + ftpHost + " as " + ftpUser);
+
+		try {
+			client.connect(ftpHost, ftpPort);
+		} catch (ConnectException ex) {
+			throw new IOException("Couldn't connect to server " + ftpHost + ":" + ftpPort);
+		}
+
+		if (!client.login(ftpUser, ftpPassword)) {
+			throw new IOException("Couldn't log in as " + ftpUser + client.getReplyString());
+		}
+
+		logger.trace(client.getStatus());
+
+		return client;
 	}
 
 	/**
