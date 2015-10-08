@@ -209,7 +209,7 @@ public class AbstractPage {
 	 */
 	public void submitAndWait(final WebElement submitButton) {
 		WebElement oldHtml = driver.findElement(By.tagName("html"));
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.stalenessOf(oldHtml));
 		submitButton.click();
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.stalenessOf(oldHtml));
 	}
 }
