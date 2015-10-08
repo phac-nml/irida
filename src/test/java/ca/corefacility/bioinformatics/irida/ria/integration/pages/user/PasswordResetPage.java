@@ -30,7 +30,16 @@ public class PasswordResetPage extends AbstractPage {
 	public boolean checkSuccess() {
 		try {
 			WebElement el = waitForElementVisible(By.className("reset-success"));
-			return el.getText().contains("Create New Password For ");
+			return el.getText().contains("Password successfully updated.");
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	public boolean checkFailure(final String failureMessage) {
+		try {
+			final WebElement el = waitForElementVisible(By.className("alert-warning"));
+			return el.getText().contains(failureMessage);
 		} catch (Exception e) {
 			return false;
 		}
