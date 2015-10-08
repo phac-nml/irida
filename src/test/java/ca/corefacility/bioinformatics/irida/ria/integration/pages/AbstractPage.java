@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +29,7 @@ public class AbstractPage {
 	private static final String APPLICATION_PORT = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080"
 			: System.getProperty("jetty.port");
 	protected static final String BASE_URL = "http://localhost:" + APPLICATION_PORT + "/";
-	private static final Long TIME_OUT_IN_SECONDS = 10L;
+	protected static final Long TIME_OUT_IN_SECONDS = 10L;
 
 	@FindBy(className = "error")
 	private WebElement errors;
@@ -102,6 +103,11 @@ public class AbstractPage {
 	public WebElement waitForElementVisible(By locator) {
 		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+	}
+	
+	public Collection<WebElement> waitForElementsVisible(By locator) {
+		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.visibilityOfElementLocated(locator));
+		return driver.findElements(locator);
 	}
 
 	public void waitForElementInvisible(By locator) {
@@ -192,5 +198,18 @@ public class AbstractPage {
 	 */
 	public String getApplicationPort() {
 		return APPLICATION_PORT;
+	}
+	
+	/**
+	 * Convenience method to make sure that form submission actually happens
+	 * before proceeding to checking later steps.
+	 * 
+	 * @param submitButton
+	 *            the submit button to click.
+	 */
+	public void submitAndWait(final WebElement submitButton) {
+		WebElement oldHtml = driver.findElement(By.tagName("html"));
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.stalenessOf(oldHtml));
+		submitButton.click();
 	}
 }

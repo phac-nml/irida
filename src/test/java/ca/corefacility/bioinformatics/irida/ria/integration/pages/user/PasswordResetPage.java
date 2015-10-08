@@ -23,7 +23,8 @@ public class PasswordResetPage extends AbstractPage {
 		passwordElement.sendKeys(password);
 		confirmElement.sendKeys(confirmPassword);
 
-		driver.findElement(By.className("submit")).click();
+		WebElement submitButton = driver.findElement(By.className("submit"));
+		submitAndWait(submitButton);
 	}
 
 	public boolean checkSuccess() {

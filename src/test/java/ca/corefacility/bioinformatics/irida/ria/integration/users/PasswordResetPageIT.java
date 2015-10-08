@@ -37,7 +37,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "Password1";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertTrue(passwordResetPage.checkSuccess());
+		assertTrue("Should have successfully reset password.", passwordResetPage.checkSuccess());
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "Password1";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, "different1");
-		assertFalse(passwordResetPage.checkSuccess());
+		assertFalse("Should **not** successfully reset password.", passwordResetPage.checkSuccess());
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "notcomplex";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertFalse(passwordResetPage.checkSuccess());
+		assertFalse("Should **not** successfully reset password.", passwordResetPage.checkSuccess());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		// reset password
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertTrue(passwordResetPage.checkSuccess());
+		assertTrue("Should have successfully reset password.", passwordResetPage.checkSuccess());
 
 		AbstractPage.logout(driver());
 		// try new password

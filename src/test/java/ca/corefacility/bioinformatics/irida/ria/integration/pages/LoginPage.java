@@ -106,7 +106,6 @@ public class LoginPage extends AbstractPage {
 	public void login(String username, String password) {
 		this.username.sendKeys(username);
 		this.password.sendKeys(password);
-		this.submitBtn.click();
-		waitForTime(500);
+		submitAndWait(this.submitBtn);
 	}
 }
