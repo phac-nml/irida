@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -45,7 +46,9 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 
 	public void clickDeleteButton() {
 		logger.debug("clicking remove button");
-		WebElement findElement = driver.findElement(By.id("remove-btn"));
+		
+		WebElement findElement = new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until(ExpectedConditions.presenceOfElementLocated(By.id("remove-btn")));
 		findElement.click();
 	}
 
@@ -95,20 +98,27 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		boolean deleted = false;
 
 		logger.debug("Checking for client existence");
-		WebElement el = driver.findElement(By.tagName("h1"));
-		if (el.getText().equals("Remote APIs")) {
-			logger.debug("Succesfully loaded client list page");
-			waitForAjax();
-			logger.debug("Table loaded");
-			List<WebElement> findElements = driver.findElements(By.className("remoteApiCol"));
-			deleted = true;
-			// check if the element is in the table
-			for (WebElement ele : findElements) {
-				if (ele.getText().equals(clientId)) {
-					deleted = false;
+		do {
+			try {
+				WebElement el = driver.findElement(By.tagName("h1"));
+				if (el.getText().equals("Remote APIs")) {
+					logger.debug("Succesfully loaded client list page");
+					waitForAjax();
+					logger.debug("Table loaded");
+					List<WebElement> findElements = driver.findElements(By.className("remoteApiCol"));
+					deleted = true;
+					// check if the element is in the table
+					for (WebElement ele : findElements) {
+						if (ele.getText().equals(clientId)) {
+							deleted = false;
+						}
+					}
 				}
+			} catch (StaleElementReferenceException e) {
+				logger.debug("Got stale element reference exception when trying to get text on h1, trying again.");
 			}
-		}
+		} while (!deleted);
+		
 
 		return deleted;
 	}

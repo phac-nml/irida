@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;

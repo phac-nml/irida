@@ -7,9 +7,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import com.google.common.base.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -79,25 +81,18 @@ public class AbstractPage {
 		return wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 
-	public void clickElement(WebElement element) {
-		boolean failed = true;
-		int count = 10;
-		while (failed && count > 0) {
-			count--;
+	public void clickElement(By finder) {
+		boolean clicked = false;
+		do{
 			try {
-				element.click();
-				failed = false;
-			} catch (Exception e) {
-				if (count == 0) {
-					throw e;
-				}
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e1) {
-					logger.error("Cannot sleep thread.");
-				}
+				final WebElement el = driver.findElement(finder);
+				waitForElementToBeClickable(el);
+				el.click();
+				clicked = true;
+			} catch (final StaleElementReferenceException ex) {
+				logger.debug("Got stale element reference exception when clicking launch pipeline, trying again.");
 			}
-		}
+		} while (!clicked);
 	}
 
 	public WebElement waitForElementVisible(By locator) {
@@ -212,4 +207,5 @@ public class AbstractPage {
 		submitButton.click();
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.stalenessOf(oldHtml));
 	}
+	
 }
