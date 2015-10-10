@@ -54,8 +54,16 @@ public class ProjectsPage extends AbstractPage {
 	public void clickProjectNameHeader() {
 		// Sorting row is the second one
 		WebElement headerRow = driver.findElements(By.cssSelector(".dataTables_scrollHeadInner thead tr")).get(0);
-		headerRow.findElements(By.cssSelector("th")).get(0).click();
-		waitForAjax();
+		final WebElement th = headerRow.findElements(By.cssSelector("th")).get(0);
+		final String originalSortOrder = th.getAttribute("aria-sort");
+		th.click();
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(final WebDriver input) {
+				return !th.getAttribute("aria-sort").equals(originalSortOrder);
+			}
+		});
 	}
 
 	private void waitForAjax() {
