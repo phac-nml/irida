@@ -53,8 +53,9 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "notcomplex";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertTrue("Should **not** successfully reset password.",
-				passwordResetPage.checkFailure("Password must contain at least one number."));
+		final Boolean badPasswordMessage = passwordResetPage.checkFailure("Password must contain at least one number.") ||
+				passwordResetPage.checkFailure("Password must contain at least one upper-case letter.");
+		assertTrue("Should **not** successfully reset password.", badPasswordMessage);
 	}
 
 	@Test
