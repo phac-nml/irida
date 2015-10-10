@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * <p>
  * Page Object to represent the projects page.
  * </p>
- * 
+ *
  */
 public class ProjectsPage extends AbstractPage {
     private static final Logger logger = LoggerFactory.getLogger(ProjectsPage.class);
@@ -61,7 +61,8 @@ public class ProjectsPage extends AbstractPage {
 
 			@Override
 			public Boolean apply(final WebDriver input) {
-				return !th.getAttribute("aria-sort").equals(originalSortOrder);
+				final String ariaSort = th.getAttribute("aria-sort");
+				return ariaSort!= null && !ariaSort.equals(originalSortOrder);
 			}
 		});
 	}
