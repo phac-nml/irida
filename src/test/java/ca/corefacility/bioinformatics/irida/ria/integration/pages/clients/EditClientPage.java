@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.clients;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -28,8 +29,6 @@ public class EditClientPage extends AbstractPage {
 
 	@FindBy(id = "edit-client-submit")
 	private WebElement editClientSubmit;
-
-	public static String SUCCESS_PAGE = "clients/\\d+";
 
 	public EditClientPage(WebDriver driver) {
 		super(driver);
@@ -61,9 +60,10 @@ public class EditClientPage extends AbstractPage {
 	}
 
 	public boolean checkSuccess() {
-		if (driver.getCurrentUrl().matches(BASE_URL + SUCCESS_PAGE)) {
-			return true;
-		} else {
+		try {
+			WebElement el = waitForElementVisible(By.className("client-details-heading"));
+			return el.getText().equals("Client Details");
+		} catch (Exception e) {
 			return false;
 		}
 	}

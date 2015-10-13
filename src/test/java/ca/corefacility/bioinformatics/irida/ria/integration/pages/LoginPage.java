@@ -41,6 +41,7 @@ public class LoginPage extends AbstractPage {
 	 * 		Password to login with
 	 */
 	public static void login(WebDriver driver, String username, String password) {
+		logout(driver);
 		get(driver, "login");
 		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
 		loginPage.login(username, password);
@@ -53,9 +54,7 @@ public class LoginPage extends AbstractPage {
 	 * 		{@link WebDriver}
 	 */
 	public static void loginAsUser(WebDriver driver) {
-		get(driver, "login");
-		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
-		loginPage.login(USER_USERNAME, GOOD_PASSWORD);
+		login(driver, USER_USERNAME, GOOD_PASSWORD);
 	}
 
 	/**
@@ -65,9 +64,7 @@ public class LoginPage extends AbstractPage {
 	 * 		{@link WebDriver}
 	 */
 	public static void loginAsManager(WebDriver driver) {
-		get(driver, "login");
-		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
-		loginPage.login(MANAGER_USERNAME, GOOD_PASSWORD);
+		login(driver, MANAGER_USERNAME, GOOD_PASSWORD);
 	}
 
 	/**
@@ -77,10 +74,9 @@ public class LoginPage extends AbstractPage {
 	 * 		{@link WebDriver}
 	 */
 	public static void loginAsAdmin(WebDriver driver) {
-		get(driver, "login");
-		LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
-		loginPage.login(ADMIN_USERNAME, GOOD_PASSWORD);
+		login(driver, ADMIN_USERNAME, GOOD_PASSWORD);
 	}
+
 
 	/**
 	 * To to the login page in and initialize the page
@@ -106,7 +102,6 @@ public class LoginPage extends AbstractPage {
 	public void login(String username, String password) {
 		this.username.sendKeys(username);
 		this.password.sendKeys(password);
-		this.submitBtn.click();
-		waitForTime(500);
+		submitAndWait(this.submitBtn);
 	}
 }
