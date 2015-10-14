@@ -5,6 +5,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * <p>
  * Page Object to represent the projects page.
  * </p>
- * 
+ *
  */
 public class ProjectsPage extends AbstractPage {
     private static final Logger logger = LoggerFactory.getLogger(ProjectsPage.class);
@@ -43,7 +44,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void gotoProjectPage(int row) {
-		driver.findElements(By.cssSelector("#projectsTable .item-link")).get(row).click();
+		submitAndWait(driver.findElements(By.cssSelector("#projectsTable .item-link")).get(row));
 	}
 
 	public List<WebElement> getProjectColumn() {
@@ -53,8 +54,17 @@ public class ProjectsPage extends AbstractPage {
 	public void clickProjectNameHeader() {
 		// Sorting row is the second one
 		WebElement headerRow = driver.findElements(By.cssSelector(".dataTables_scrollHeadInner thead tr")).get(0);
-		headerRow.findElements(By.cssSelector("th")).get(0).click();
-		waitForAjax();
+		final WebElement th = headerRow.findElements(By.cssSelector("th")).get(0);
+		final String originalSortOrder = th.getAttribute("aria-sort");
+		th.click();
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(final WebDriver input) {
+				final String ariaSort = th.getAttribute("aria-sort");
+				return ariaSort!= null && !ariaSort.equals(originalSortOrder);
+			}
+		});
 	}
 
 	private void waitForAjax() {

@@ -13,7 +13,7 @@
     	<div class="col-md-8">
             <div class="sidebar">
                 <div class="sidebar__heading clearfix">
-                	<h2 class="pull-left" th:text="#{client.details.title}">_Client Details_</h2>
+                	<h2 class="pull-left client-details-heading" th:text="#{client.details.title}">_Client Details_</h2>
 					        <div class="btn-group-xs pull-right">
 				            <div id="remove-btn" class="btn btn-danger" th:text="#{client.remove.button}">Remove</div>
                         <a href="#" th:href="@{/clients/{id}/edit(id=${client.getId()})}" id="edit-btn" class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
