@@ -53,9 +53,9 @@ public class ProjectMetadataEditPageIT extends AbstractIridaUIITChromeDriver {
 	public void canUpdateProjectInformation() {
 		page.gotoPage(PROJECT_ID_OWNER);
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, GOOD_PROJECT_REMOTEURL);
-		assertFalse("Redirects to the metadata page", driver().getCurrentUrl().contains("edit"));
-
 		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
+		assertTrue("Redirects to the metadata page", metadataPage.hasEditButton());
+
 		metadataPage.goTo(PROJECT_ID_OWNER);
 		assertEquals("Updated the project name", GOOD_PROJECT_NAME, metadataPage.getDataProjectName());
 		assertEquals("Updated the organism", GOOD_PROJECT_ORGANISM, metadataPage.getDataProjectOrganism());
