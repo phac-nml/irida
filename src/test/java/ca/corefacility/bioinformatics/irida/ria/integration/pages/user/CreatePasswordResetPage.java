@@ -7,7 +7,6 @@ import org.openqa.selenium.WebElement;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class CreatePasswordResetPage extends AbstractPage {
-	private final String SUCCESS_PAGE = BASE_URL + "password_reset/created/.+";
 
 	public CreatePasswordResetPage(WebDriver driver) {
 		super(driver);
@@ -25,6 +24,11 @@ public class CreatePasswordResetPage extends AbstractPage {
 	}
 
 	public boolean checkSuccess() {
-		return driver.getCurrentUrl().matches(SUCCESS_PAGE);
+		try {
+			WebElement el = waitForElementVisible(By.className("reset-desc"));
+			return el.getText().contains("Password reset created for ");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

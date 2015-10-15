@@ -56,7 +56,7 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		page.login(EXPIRED_USERNAME, EXPIRED_PASSWORD);
 		PasswordResetPage passwordResetPage = new PasswordResetPage(driver());
 		passwordResetPage.enterPassword(newPassword, newPassword);
-		assertTrue(passwordResetPage.checkSuccess());
+		assertTrue("Should have succeeded in changing password.", passwordResetPage.checkSuccess());
 
 		AbstractPage.logout(driver());
 		page = LoginPage.to(driver());
