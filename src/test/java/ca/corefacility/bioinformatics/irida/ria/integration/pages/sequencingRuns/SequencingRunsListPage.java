@@ -40,4 +40,17 @@ public class SequencingRunsListPage extends AbstractPage {
 
 	}
 
+	public boolean idDisplayIdInList(String id) {
+		logger.trace("Listing runs");
+		waitForElementVisible(By.className("run-id"));
+		List<WebElement> ids = driver.findElements(By.className("run-ids"));
+		boolean found = false;
+		for (WebElement rowId : ids) {
+			if (rowId.getText().equals(id)) {
+				found = true;
+				break;
+			}
+		}
+		return found;
+	}
 }
