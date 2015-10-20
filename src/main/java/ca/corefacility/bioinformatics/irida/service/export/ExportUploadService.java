@@ -16,6 +16,10 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -284,15 +288,15 @@ public class ExportUploadService {
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(xml);
 
-			// check that there's a SubmissionStatus element
-			NodeList rootElement = doc.getElementsByTagName("SubmissionStatus");
-			if (rootElement.getLength() != 1 && rootElement.item(0).getNodeType() != Node.ELEMENT_NODE) {
-				throw new NcbiXmlParseException("result file should have 1 SubmissionStatus element");
-			}
+			XPath xPath = XPathFactory.newInstance().newXPath();
 
 			// get the submission status and set it in the submission
-			Element submissionElement = (Element) rootElement.item(0);
-			String submissionStatusString = submissionElement.getAttribute("status");
+			String submissionStatusString = xPath.compile("SubmissionStatus/@status").evaluate(doc);
+
+			if (submissionStatusString == null) {
+				throw new NcbiXmlParseException("result file should have 1 SubmissionStatus element with a status");
+			}
+
 			ExportUploadState submissionStatus = ExportUploadState.fromString(submissionStatusString);
 			submission.setUploadState(submissionStatus);
 
@@ -302,7 +306,8 @@ public class ExportUploadService {
 			Map<String, NcbiBioSampleFiles> sampleMap = getSampleNameMap(submission);
 
 			// get the actions
-			NodeList actions = submissionElement.getElementsByTagName("Action");
+			NodeList actions = (NodeList) xPath.compile("SubmissionStatus/Action")
+					.evaluate(doc, XPathConstants.NODESET);
 			for (int i = 0; i < actions.getLength(); i++) {
 
 				if (actions.item(i).getNodeType() == Node.ELEMENT_NODE) {
@@ -326,7 +331,7 @@ public class ExportUploadService {
 				}
 			}
 
-		} catch (IOException | ParserConfigurationException | SAXException e) {
+		} catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException e) {
 			logger.error("Couldn't parse response XML", e);
 			throw new NcbiXmlParseException("Error parsing NCBI response", e);
 		}
