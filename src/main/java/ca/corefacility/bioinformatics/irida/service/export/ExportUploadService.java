@@ -148,6 +148,10 @@ public class ExportUploadService {
 
 	}
 
+	/**
+	 * Check local database for submissions which may have updates on the NCBI
+	 * server and update them as necessary.
+	 */
 	public synchronized void updateRunningUploads() {
 		logger.trace("Getting running exports");
 
@@ -286,6 +290,18 @@ public class ExportUploadService {
 
 	}
 
+	/**
+	 * Get the latest result.#.xml file for the given submission
+	 * 
+	 * @param client
+	 *            {@link FTPClient} to use for the connection
+	 * @param submission
+	 *            {@link NcbiExportSubmission} to get results for
+	 * @return {@link InputStream} for the newest file if found. null if no file
+	 *         was found
+	 * @throws NcbiXmlParseException
+	 *             if the file couldn't be found
+	 */
 	private InputStream getLatestXMLStream(FTPClient client, NcbiExportSubmission submission)
 			throws NcbiXmlParseException {
 		InputStream retrieveFileStream = null;
@@ -330,7 +346,19 @@ public class ExportUploadService {
 		return retrieveFileStream;
 	}
 
-	public NcbiExportSubmission updateSubmissionForXml(NcbiExportSubmission submission, InputStream xml)
+	/**
+	 * Get the updates from the result.#.xml file for the given submission and
+	 * update the object
+	 * 
+	 * @param submission
+	 *            {@link NcbiExportSubmission} to update
+	 * @param xml
+	 *            {@link InputStream} of xml
+	 * @return Updated {@link NcbiExportSubmission}
+	 * @throws NcbiXmlParseException
+	 *             if the xml couldn't be parsed
+	 */
+	private NcbiExportSubmission updateSubmissionForXml(NcbiExportSubmission submission, InputStream xml)
 			throws NcbiXmlParseException {
 
 		try {
@@ -397,6 +425,14 @@ public class ExportUploadService {
 
 	}
 
+	/**
+	 * Get a Map of {@link NcbiBioSampleFiles} for a
+	 * {@link NcbiExportSubmission} indexed by the submitted sample ids
+	 * 
+	 * @param submission
+	 *            Submission to get the {@link NcbiBioSampleFiles} for
+	 * @return A Map of String => {@link NcbiBioSampleFiles}
+	 */
 	private Map<String, NcbiBioSampleFiles> getSampleNameMap(NcbiExportSubmission submission) {
 		Map<String, NcbiBioSampleFiles> map = new HashMap<>();
 		for (NcbiBioSampleFiles sample : submission.getBioSampleFiles()) {
@@ -406,6 +442,13 @@ public class ExportUploadService {
 		return map;
 	}
 
+	/**
+	 * Connect an {@link FTPClient} with the configured connection details
+	 * 
+	 * @return a connected {@link FTPClient}
+	 * @throws IOException
+	 *             if a connection error occurred
+	 */
 	private FTPClient getFtpClient() throws IOException {
 		FTPClient client = new FTPClient();
 		// login to host
