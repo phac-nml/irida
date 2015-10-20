@@ -319,6 +319,7 @@ public class ExportUploadService {
 			}
 
 			if (latestFile != null) {
+				logger.debug("newest file is " + latestFile);
 				retrieveFileStream = client.retrieveFileStream(latestFile);
 			}
 

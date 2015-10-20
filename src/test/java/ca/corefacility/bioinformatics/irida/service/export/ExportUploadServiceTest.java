@@ -6,17 +6,23 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.DirectoryEntry;
+import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
@@ -144,6 +150,64 @@ public class ExportUploadServiceTest {
 		String xml = "<xml></xml>";
 
 		exportUploadService.uploadSubmission(submission, xml);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetResultsSubmitted() throws IOException, UploadException {
+		NcbiExportSubmissionService exportSubmissionService = mock(NcbiExportSubmissionService.class);
+
+		NcbiBioSampleFiles sample2 = new NcbiBioSampleFiles();
+		sample2.setId("NMLTEST2");
+		NcbiBioSampleFiles sample3 = new NcbiBioSampleFiles();
+		sample3.setId("NMLTEST3");
+		NcbiExportSubmission submission = new NcbiExportSubmission();
+		submission.setBioSampleFiles(Lists.newArrayList(sample2, sample3));
+		submission.setDirectoryPath("submit/Test/example");
+
+		when(exportSubmissionService.getSubmissionsWithState(any(Collection.class))).thenReturn(
+				Lists.newArrayList(submission));
+
+		String report = "<?xml version='1.0' encoding='utf-8'?>\n"
+				+ "<SubmissionStatus submission_id=\"SUB189884\" status=\"processing\">\n"
+				+ "  <Action action_id=\"SUB189884-nmltest2\" target_db=\"SRA\" status=\"processing\">\n"
+				+ "    <Response status=\"processing\"/>\n" + "  </Action>\n"
+				+ "  <Action action_id=\"SUB189884-nmltest3\" target_db=\"SRA\" status=\"submitted\"/>\n"
+				+ "</SubmissionStatus>\n";
+
+		String ftpHost = "localhost";
+		String ftpUser = "test";
+		String ftpPassword = "password";
+		String baseDirectory = "/home/test/submit/Test";
+		String submissionDirectory = baseDirectory + "/example";
+		String reportFile = submissionDirectory + "/report.2.xml";
+
+		FakeFtpServer server = new FakeFtpServer();
+		server.addUserAccount(new UserAccount(ftpUser, ftpPassword, "/home/test"));
+
+		FileSystem fileSystem = new UnixFakeFileSystem();
+		fileSystem.add(new DirectoryEntry(submissionDirectory));
+		fileSystem.add(new FileEntry(reportFile, report));
+		server.setFileSystem(fileSystem);
+
+		// finds an open port
+		server.setServerControlPort(0);
+
+		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null);
+		try {
+			server.start();
+			int ftpPort = server.getServerControlPort();
+
+			exportUploadService.setConnectionDetails(ftpHost, ftpPort, ftpUser, ftpPassword, baseDirectory);
+
+			exportUploadService.updateRunningUploads();
+		} finally {
+			server.stop();
+		}
+
+		assertEquals("sample2 should have processing state", ExportUploadState.PROCESSING,
+				sample2.getSubmissionStatus());
+		assertEquals("sample3 should have processing state", ExportUploadState.SUBMITTED, sample3.getSubmissionStatus());
 	}
 
 	/**
