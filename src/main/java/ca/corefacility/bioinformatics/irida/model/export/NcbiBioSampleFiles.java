@@ -69,6 +69,9 @@ public class NcbiBioSampleFiles {
 	@Column(name = "submission_status")
 	private ExportUploadState submissionStatus;
 
+	@Column(name = "accession")
+	private String accession;
+
 	public NcbiBioSampleFiles() {
 		files = Lists.newArrayList();
 		pairs = Lists.newArrayList();
@@ -280,6 +283,14 @@ public class NcbiBioSampleFiles {
 
 	public void setSubmissionStatus(ExportUploadState submissionStatus) {
 		this.submissionStatus = submissionStatus;
+	}
+
+	public String getAccession() {
+		return accession;
+	}
+
+	public void setAccession(String accession) {
+		this.accession = accession;
 	}
 
 }

@@ -379,6 +379,12 @@ public class ExportUploadService {
 					ncbiBioSampleFiles.setSubmissionStatus(sampleStatus);
 					logger.debug("Sample export state for sample " + ncbiBioSampleFiles.getId() + " is " + sampleStatus);
 
+					String accession = xPath.compile("Response/Object/@accession").evaluate(action);
+					if (accession != null && !accession.isEmpty()) {
+						logger.trace("Found accession " + accession);
+						ncbiBioSampleFiles.setAccession(accession);
+					}
+
 				}
 			}
 

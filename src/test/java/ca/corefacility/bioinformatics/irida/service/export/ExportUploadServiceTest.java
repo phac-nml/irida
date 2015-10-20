@@ -210,6 +210,66 @@ public class ExportUploadServiceTest {
 		assertEquals("sample3 should have processing state", ExportUploadState.SUBMITTED, sample3.getSubmissionStatus());
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetResultsWithAccession() throws IOException, UploadException {
+		NcbiExportSubmissionService exportSubmissionService = mock(NcbiExportSubmissionService.class);
+
+		NcbiBioSampleFiles sample2 = new NcbiBioSampleFiles();
+		sample2.setId("NMLTEST2");
+		NcbiExportSubmission submission = new NcbiExportSubmission();
+		submission.setBioSampleFiles(Lists.newArrayList(sample2));
+		submission.setDirectoryPath("submit/Test/example");
+
+		String newAccession = "SRR12345";
+
+		when(exportSubmissionService.getSubmissionsWithState(any(Collection.class))).thenReturn(
+				Lists.newArrayList(submission));
+
+		String report = "<?xml version='1.0' encoding='utf-8'?>\n"
+				+ "<SubmissionStatus submission_id=\"SUB11245\" status=\"processed-ok\">\n"
+				+ "  <Action action_id=\"SUB11245-nmltest2\" target_db=\"SRA\" status=\"processed-ok\" notify_submitter=\"true\">\n"
+				+ "    <Response status=\"processed-ok\">\n"
+				+ "      <Object target_db=\"SRA\" object_id=\"RUN:3119494\" spuid_namespace=\"NML\" spuid=\"nmltest2\" accession=\""
+				+ newAccession + "\" status=\"updated\">\n" + "        <Meta>\n"
+				+ "          <SRAStudy>SRP12345</SRAStudy>\n" + "        </Meta>\n" + "      </Object>\n"
+				+ "    </Response>\n" + "  </Action>\n" + "</SubmissionStatus>";
+
+		String ftpHost = "localhost";
+		String ftpUser = "test";
+		String ftpPassword = "password";
+		String baseDirectory = "/home/test/submit/Test";
+		String submissionDirectory = baseDirectory + "/example";
+		String reportFile = submissionDirectory + "/report.2.xml";
+
+		FakeFtpServer server = new FakeFtpServer();
+		server.addUserAccount(new UserAccount(ftpUser, ftpPassword, "/home/test"));
+
+		FileSystem fileSystem = new UnixFakeFileSystem();
+		fileSystem.add(new DirectoryEntry(submissionDirectory));
+		fileSystem.add(new FileEntry(reportFile, report));
+		server.setFileSystem(fileSystem);
+
+		// finds an open port
+		server.setServerControlPort(0);
+
+		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null);
+		try {
+			server.start();
+			int ftpPort = server.getServerControlPort();
+
+			exportUploadService.setConnectionDetails(ftpHost, ftpPort, ftpUser, ftpPassword, baseDirectory);
+
+			exportUploadService.updateRunningUploads();
+		} finally {
+			server.stop();
+		}
+
+		assertEquals("sample2 should have processing state", ExportUploadState.PROCESSED_OK,
+				sample2.getSubmissionStatus());
+		assertEquals("sample2 should have an accession", newAccession, sample2.getAccession());
+	}
+
 	/**
 	 * Create a fake submission for test uploads
 	 * 
