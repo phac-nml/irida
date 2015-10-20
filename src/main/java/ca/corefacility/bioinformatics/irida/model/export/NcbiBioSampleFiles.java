@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -12,12 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
 
 /**
  * {@link SequenceFile}s and {@link SequenceFilePair}s associated with a
@@ -64,9 +67,14 @@ public class NcbiBioSampleFiles {
 	@Column(name = "library_construction_protocol")
 	private String libraryConstructionProtocol;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "submission_status")
+	private ExportUploadState submissionStatus;
+
 	public NcbiBioSampleFiles() {
 		files = Lists.newArrayList();
 		pairs = Lists.newArrayList();
+		submissionStatus = ExportUploadState.NEW;
 	}
 
 	public NcbiBioSampleFiles(String namespace) {
@@ -228,6 +236,10 @@ public class NcbiBioSampleFiles {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public List<SequenceFilePair> getPairs() {
 		return pairs;
 	}
@@ -263,4 +275,13 @@ public class NcbiBioSampleFiles {
 	public NcbiLibraryStrategy getLibraryStrategy() {
 		return libraryStrategy;
 	}
+
+	public ExportUploadState getSubmissionStatus() {
+		return submissionStatus;
+	}
+
+	public void setSubmissionStatus(ExportUploadState submissionStatus) {
+		this.submissionStatus = submissionStatus;
+	}
+
 }
