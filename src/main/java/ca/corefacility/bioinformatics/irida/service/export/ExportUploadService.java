@@ -319,7 +319,7 @@ public class ExportUploadService {
 			}
 
 			if (latestFile != null) {
-				logger.debug("newest file is " + latestFile);
+				logger.trace("newest file is " + latestFile);
 				retrieveFileStream = client.retrieveFileStream(latestFile);
 			}
 
@@ -351,7 +351,7 @@ public class ExportUploadService {
 			ExportUploadState submissionStatus = ExportUploadState.fromString(submissionStatusString);
 			submission.setUploadState(submissionStatus);
 
-			logger.debug("Root export state is " + submissionStatus);
+			logger.trace("Root export state is " + submissionStatus);
 
 			// get all the sample files objects by name
 			Map<String, NcbiBioSampleFiles> sampleMap = getSampleNameMap(submission);
@@ -377,7 +377,7 @@ public class ExportUploadService {
 					ExportUploadState sampleStatus = ExportUploadState.fromString(status);
 
 					ncbiBioSampleFiles.setSubmissionStatus(sampleStatus);
-					logger.debug("Sample export state for sample " + ncbiBioSampleFiles.getId() + " is " + sampleStatus);
+					logger.trace("Sample export state for sample " + ncbiBioSampleFiles.getId() + " is " + sampleStatus);
 
 					String accession = xPath.compile("Response/Object/@accession").evaluate(action);
 					if (accession != null && !accession.isEmpty()) {
