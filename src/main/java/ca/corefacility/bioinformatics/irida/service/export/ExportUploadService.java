@@ -7,9 +7,15 @@ import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -22,7 +28,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.NcbiXmlParseException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
@@ -106,7 +118,7 @@ public class ExportUploadService {
 				logger.trace("Updating submission " + submission.getId());
 
 				submission = exportSubmissionService.update(submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.PROCESSING));
+						ImmutableMap.of("uploadState", ExportUploadState.UPLOADING));
 
 				String xmlContent = createXml(submission);
 
@@ -114,13 +126,13 @@ public class ExportUploadService {
 
 				submission = exportSubmissionService.update(
 						submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.COMPLETE, "directoryPath",
+						ImmutableMap.of("uploadState", ExportUploadState.UPLOADED, "directoryPath",
 								submission.getDirectoryPath()));
 			} catch (Exception e) {
 				logger.debug("Upload failed", e);
 
 				submission = exportSubmissionService.update(submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.ERROR));
+						ImmutableMap.of("uploadState", ExportUploadState.UPLOAD_ERROR));
 			}
 		}
 
@@ -255,13 +267,81 @@ public class ExportUploadService {
 			InputStream retrieveFileStream = client.retrieveFileStream(latestFile);
 			String responseXML = IOUtils.toString(retrieveFileStream);
 
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return submission;
+	}
+
+	public NcbiExportSubmission updateSubmissionForXml(NcbiExportSubmission submission, InputStream xml)
+			throws NcbiXmlParseException {
+
+		try {
+			// read the incoming xml file
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(xml);
+
+			// check that there's a SubmissionStatus element
+			NodeList rootElement = doc.getElementsByTagName("SubmissionStatus");
+			if (rootElement.getLength() != 1 && rootElement.item(0).getNodeType() != Node.ELEMENT_NODE) {
+				throw new NcbiXmlParseException("result file should have 1 SubmissionStatus element");
+			}
+
+			// get the submission status and set it in the submission
+			Element submissionElement = (Element) rootElement.item(0);
+			String submissionStatusString = submissionElement.getAttribute("status");
+			ExportUploadState submissionStatus = ExportUploadState.fromString(submissionStatusString);
+			submission.setUploadState(submissionStatus);
+
+			logger.debug("Root export state is " + submissionStatus);
+
+			// get all the sample files objects by name
+			Map<String, NcbiBioSampleFiles> sampleMap = getSampleNameMap(submission);
+
+			// get the actions
+			NodeList actions = submissionElement.getElementsByTagName("Action");
+			for (int i = 0; i < actions.getLength(); i++) {
+
+				if (actions.item(i).getNodeType() == Node.ELEMENT_NODE) {
+					Element action = (Element) actions.item(i);
+
+					// get the status and action id
+					String status = action.getAttribute("status");
+					String actionId = action.getAttribute("action_id");
+
+					// action id is of the form SUBMISSIONID-sampleid
+					String sampleId = actionId.substring(actionId.lastIndexOf("-") + 1);
+
+					// get the sample for this action
+					NcbiBioSampleFiles ncbiBioSampleFiles = sampleMap.get(sampleId);
+
+					ExportUploadState sampleStatus = ExportUploadState.fromString(status);
+
+					ncbiBioSampleFiles.setSubmissionStatus(sampleStatus);
+					logger.debug("Sample export state for sample " + ncbiBioSampleFiles.getId() + " is " + sampleStatus);
+
+				}
+			}
+
+		} catch (IOException | ParserConfigurationException | SAXException e) {
+			logger.error("Couldn't parse response XML", e);
+			throw new NcbiXmlParseException("Error parsing NCBI response", e);
+		}
+
+		return submission;
+
+	}
+
+	private Map<String, NcbiBioSampleFiles> getSampleNameMap(NcbiExportSubmission submission) {
+		Map<String, NcbiBioSampleFiles> map = new HashMap<>();
+		for (NcbiBioSampleFiles sample : submission.getBioSampleFiles()) {
+			map.put(sample.getId().toLowerCase(), sample);
+		}
+
+		return map;
 	}
 
 	private FTPClient getFtpClient() throws IOException {

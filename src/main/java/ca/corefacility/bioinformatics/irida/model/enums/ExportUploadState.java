@@ -96,7 +96,8 @@ public enum ExportUploadState {
 	private String stateString;
 
 	// set of statuses that should be watched and update
-	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(NEW, CREATED, QUEUED, PROCESSING, WAITING);
+	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(NEW, SUBMITTED, CREATED, QUEUED,
+			PROCESSING, WAITING);
 
 	static {
 		for (ExportUploadState state : ExportUploadState.values()) {
