@@ -100,7 +100,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Second Page
 		page.selectPage(2);
-		assertEquals(2, page.getGetSelectedPageNumber());
+		assertEquals("Should be on page 2.", 2, page.getGetSelectedPageNumber());
 		assertTrue(page.isFirstButtonEnabled());
 		assertTrue(page.isPreviousButtonEnabled());
 		assertTrue(page.isNextButtonEnabled());
@@ -118,22 +118,22 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Previous Button
 		page.clickPreviousPageButton();
-		assertEquals(2, page.getGetSelectedPageNumber());
+		assertEquals("Clicked previous on page 3, should be on page 2.", 2, page.getGetSelectedPageNumber());
 		page.clickPreviousPageButton();
-		assertEquals(1, page.getGetSelectedPageNumber());
+		assertEquals("Clicked previous on page 2, should be on page 1.", 1, page.getGetSelectedPageNumber());
 
 		// Next Button
 		page.clickNextPageButton();
-		assertEquals(2, page.getGetSelectedPageNumber());
+		assertEquals("Clicked next on page 1, should be on page 2.", 2, page.getGetSelectedPageNumber());
 		page.clickNextPageButton();
-		assertEquals(3, page.getGetSelectedPageNumber());
+		assertEquals("Clicked next on page 2, should be on page 3.", 3, page.getGetSelectedPageNumber());
 
 		// First and List page buttons
 		page.clickFirstPageButton();
-		assertEquals(1, page.getGetSelectedPageNumber());
+		assertEquals("Clicked first page button, should be on page 1", 1, page.getGetSelectedPageNumber());
 		assertFalse(page.isFirstButtonEnabled());
 		page.clickLastPageButton();
-		assertEquals(3, page.getGetSelectedPageNumber());
+		assertEquals("Clicked last page button, should be on page 3.", 3, page.getGetSelectedPageNumber());
 		assertFalse(page.isLastButtonEnabled());
 		assertTrue(page.isFirstButtonEnabled());
 		assertEquals(1, page.getNumberOfSamplesDisplayed());
@@ -482,10 +482,10 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.goToPage();
 
 		// Page should be sorted by creation date first
-		assertTrue(page.isTableSortedAscByCreationDate());
-		page.sortTableByCreatedDate();
-		assertFalse(page.isTableSortedAscByCreationDate());
 		assertTrue(page.isTableSortedDescByCreationDate());
+		page.sortTableByCreatedDate();
+		assertTrue(page.isTableSortedAscByCreationDate());
+		assertFalse(page.isTableSortedDescByCreationDate());
 
 		// Sort by name
 		page.sortTableByName();
@@ -505,12 +505,16 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(1, page.getFilteredSampleCount());
 		page.filterByName("5");
 		assertEquals(17, page.getFilteredSampleCount());
-		page.filterByName(" ");
+		page.clearFilterByName();
 
 		// Filter by organism
 		page.filterByOrganism("coli");
 		assertEquals(3, page.getFilteredSampleCount());
 		page.filterByOrganism("Listeria");
+		assertEquals(2, page.getFilteredSampleCount());
+
+		// Test filter by file
+		page.filterByFile();
 		assertEquals(2, page.getFilteredSampleCount());
 	}
 

@@ -44,7 +44,7 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(className = "download-analysis-btn")
 	private List<WebElement> downloadAnalysisBtn;
 
-	@FindBy(tagName = "md-progress-linear")
+	@FindBy(className = "progress-bar")
 	private List<WebElement> progressBars;
 
 	public AnalysesUserPage(WebDriver driver) {
@@ -111,7 +111,7 @@ public class AnalysesUserPage extends AbstractPage {
 	}
 
 	public String getPercentComplete(int row) {
-		return progressBars.get(row).getAttribute("aria-valuetext");
+		return progressBars.get(row).getAttribute("aria-valuenow");
 	}
 
 	public int getNumberOfAnalyses() {

@@ -103,21 +103,5 @@
         }
       };
     })
-  
-    .directive('phylosvg', function() {
-      return {
-        restrict: 'A',
-        replace: false,
-        link: function(scope, element, attrs) {
-          angular.element(element)
-            .css({
-              'margin-top': '20px'
-            });
-          var phylo = new Smits.PhyloCanvas({
-            'newick': attrs.newick
-          }, 'phyloSVG', 500, 500, 'circular');
-        }
-      }
-    })
   ;
 })(window.angular, window.PhyloCanvas);

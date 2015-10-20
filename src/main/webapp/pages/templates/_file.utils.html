@@ -8,14 +8,14 @@
 				<ng-pluralize count="count" data:when="'{\'1\': \'' + #{files.upload.message.singular} + '\', \'other\': \'' + #{files.upload.message.plural} + '\'}'"></ng-pluralize>
 			</h3>
 		</div>
-		<md-list>
-			<md-list-item class="md-2-line" ng-repeat="file in files">
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="file in files">
 				<div class="md-list-item-text">
 					<h4><th:block th:text="#{form.lable.uploading}"></th:block> {{ file.filename }} [{{file.progress}}%]</h4>
-					<md-progress-linear md-mode="determinate" ng-value="file.progress"></md-progress-linear>
+					<progressbar max="100" value="file.progress"></progressbar>
 				</div>
-			</md-list-item>
-		</md-list>
+			</li>
+		</ul>
 	</div>
 </script>
 
@@ -23,7 +23,7 @@
 	<div class="alert alert-warning" ng-show="hasError">
 		<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
 
-		<p th:text="#{project.samples.files.upload.error.body}">__Upload_error_message__</p>
+		<p>{{ errorMessage }}</p>
 	</div>
 </script>
 </body>

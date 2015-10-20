@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsNewPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +56,9 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 		page.goToPage();
 		page.submitForm("test project name", "", "", "");
 		page.clickSubmit();
-		assertTrue("Redirects to the project metadata page", driver().getCurrentUrl().contains("/metadata"));
+
+		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
+		assertTrue("Should be on metadata page which has edit buttong", metadataPage.hasEditButton());
 	}
 
 	@Test

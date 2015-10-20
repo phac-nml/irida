@@ -101,9 +101,13 @@ public class SNVPhylAnalysisIT {
 
 	private Path outputSnpTable1;
 	private Path outputSnpMatrix1;
+	private Path vcf2core1;
+	private Path filterStats1;
 	
 	private Path outputSnpTable2;
 	private Path outputSnpMatrix2;
+	private Path vcf2core2;
+	private Path filterStats2;
 
 	/**
 	 * Sets up variables for testing.
@@ -170,9 +174,13 @@ public class SNVPhylAnalysisIT {
 
 		outputSnpTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpTable.tsv").toURI());
 		outputSnpMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpMatrix.tsv").toURI());
+		vcf2core1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/vcf2core.csv").toURI());
+		filterStats1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/filterStats.txt").toURI());
 		
 		outputSnpTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpTable.tsv").toURI());
 		outputSnpMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpMatrix.tsv").toURI());
+		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.csv").toURI());
+		filterStats2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/filterStats.txt").toURI());
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -225,8 +233,9 @@ public class SNVPhylAnalysisIT {
 				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals("the phylogenomics pipeline should have 3 output files.", 3, analysisPhylogenomics
+		assertEquals("the phylogenomics pipeline should have 7 output files.", 7, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
+		
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
 				.next();
@@ -236,6 +245,7 @@ public class SNVPhylAnalysisIT {
 						.getFile().toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
 				.getCreatedByTool());
+		
 		@SuppressWarnings("resource")
 		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
@@ -245,10 +255,37 @@ public class SNVPhylAnalysisIT {
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
 				.getCreatedByTool());
-		// only test to make sure the file has a valid size since PhyML uses a
+		
+		@SuppressWarnings("resource")
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
+				com.google.common.io.Files.equal(vcf2core1.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
+				.getCreatedByTool());
+		
+		// only check size of mapping quality file due to samples output in random order
+		assertTrue("the mapping quality file should not be empty.",
+				Files.size(analysisPhylogenomics.getMappingQuality().getFile()) > 0);
+		
+		@SuppressWarnings("resource")
+		String filterStatsContent = new Scanner(analysisPhylogenomics.getFilterStats().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"filterStats should be the same but is \"" + filterStatsContent + "\"",
+				com.google.common.io.Files.equal(filterStats1.toFile(), analysisPhylogenomics.getFilterStats().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+				.getCreatedByTool());
+		
+		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue("the phylogenetic tree file should not be empty.",
 				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+		assertTrue("the phylogenetic tree stats file should not be empty.",
+				Files.size(analysisPhylogenomics.getPhylogeneticTreeStats().getFile()) > 0);
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
@@ -293,7 +330,8 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
-		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.90", "minimum-read-coverage", "2");
+		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.90", "minimum-read-coverage", "2",
+				"minimum-percent-coverage", "75", "minimum-mean-mapping-quality", "20");
 		
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
@@ -309,8 +347,9 @@ public class SNVPhylAnalysisIT {
 				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals("the phylogenomics pipeline should have 3 output files.", 3, analysisPhylogenomics
+		assertEquals("the phylogenomics pipeline should have 7 output files.", 7, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
+		
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
 				.next();
@@ -320,6 +359,7 @@ public class SNVPhylAnalysisIT {
 						.getFile().toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
 				.getCreatedByTool());
+		
 		@SuppressWarnings("resource")
 		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
@@ -329,19 +369,48 @@ public class SNVPhylAnalysisIT {
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
 				.getCreatedByTool());
-		// only test to make sure the file has a valid size since PhyML uses a
+		
+		@SuppressWarnings("resource")
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
+				com.google.common.io.Files.equal(vcf2core2.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
+				.getCreatedByTool());
+		
+		// only check size of mapping quality file due to samples output in random order
+		assertTrue("the mapping quality file should not be empty.",
+				Files.size(analysisPhylogenomics.getMappingQuality().getFile()) > 0);
+		
+		@SuppressWarnings("resource")
+		String filterStatsContent = new Scanner(analysisPhylogenomics.getFilterStats().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"filterStats should be the same but is \"" + filterStatsContent + "\"",
+				com.google.common.io.Files.equal(filterStats2.toFile(), analysisPhylogenomics.getFilterStats().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+				.getCreatedByTool());
+		
+		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue("the phylogenetic tree file should not be empty.",
 				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+		assertTrue("the phylogenetic tree stats file should not be empty.",
+				Files.size(analysisPhylogenomics.getPhylogeneticTreeStats().getFile()) > 0);
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
-		final List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
+		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 
 		String minimumFreebayesCoverage = null;
 		String altAlleleFraction = null;
+		String minimumPercentCoverage = null;
+		String minimumDepthVerify = null;
 		
 		// navigate through the tree to make sure that you can find both types
 		// of input tools: the one where you upload the reference file, and the
@@ -357,7 +426,27 @@ public class SNVPhylAnalysisIT {
 				break;
 			}
 		}
+		
+		// try to follow the mapping quality provenance all the way back to the
+		// upload tools
+		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getMappingQuality()
+				.getCreatedByTool());
+		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
+		
+		while (!toolsToVisit.isEmpty()) {
+			final ToolExecution ex = toolsToVisit.remove(0);
+			toolsToVisit.addAll(ex.getPreviousSteps());
+			
+			if (ex.getToolName().contains("Verify Mapping Quality")) {
+				final Map<String, String> params = ex.getExecutionTimeParameters();
+				minimumPercentCoverage = params.get("minmap");
+				minimumDepthVerify = params.get("mindepth");
+			}
+		}
+		
 		assertEquals("incorrect minimum freebayes coverage", "2", minimumFreebayesCoverage);
 		assertEquals("incorrect alternative allele fraction", "0.9", altAlleleFraction);
+		assertEquals("incorrect minimum depth for verify map", "\"2\"", minimumDepthVerify);
+		assertEquals("incorrect min percent coverage for verify map", "\"75\"", minimumPercentCoverage);
 	}
 }

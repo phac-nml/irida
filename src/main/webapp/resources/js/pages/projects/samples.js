@@ -59,7 +59,7 @@
     "use strict";
     return {
       page    : 0,
-      sortDir : false,
+      sortDir : true,
       sortedBy: 'sample.createdDate',
       count   : 10,
       sample  : {}
@@ -211,6 +211,39 @@
       updateSelectedCount();
     };
 
+    /**
+     * Filter the samples based on a list of sample names.
+     *
+     * @param sampleNames - array of sample names
+     * @returns {*}
+     */
+    svc.getFileFilteredSamples = function (sampleNames) {
+      var f = [], count = 0;
+      _.each(svc.samples, function(s) {
+        var index = _.indexOf(sampleNames, s.sample.sampleName);
+        s.selected = false;
+        if (index > -1) {
+          count++;
+          f.push(s);
+          s.selected = true;
+          storage.addSample(s);
+          sampleNames.splice(index, 1);
+        }
+      });
+      if (count>0) {
+        filtered = f;
+        updateSelectedCount();
+        return filtered;
+      } else {
+        return svc.samples;
+      }
+    };
+
+    svc.clearFileFilter = function () {
+      svc.selectNone();
+      return svc.samples;
+    };
+
     svc.downloadFiles = function () {
       var ids = getSelectedSampleIds();
       var mapped = _.map(ids, function (id) {
@@ -242,15 +275,15 @@
 
       $rootScope.$broadcast('SAMPLES_INIT', {total: svc.samples.length});
       return svc.samples;
-    }
+    };
     
     svc.getRequestedTypes = function(){
 	return svc.requested;
-    }
+    };
     
     svc.getSampleWarnings = function(){
       return svc.notConnected;
-    }
+    };
 
     /**
      * Load a set of samples from the server.  Fires a SAMPLES_READY event on complete
@@ -286,7 +319,7 @@
         storage.removeUnavailableSamples(svc.samples);
         updateSelectedCount();
       });
-    }
+    };
     
     function getSelectedSampleIds() {
       return storage.getKeys();
@@ -431,7 +464,15 @@
         filter.count = SampleService.getNumSamples();
       }
       $rootScope.$broadcast('PAGE_SIZE_CHANGE');
-    }
+    };
+
+    $rootScope.$on('SAMPLES_FILE_FILTER', function () {
+      vm.count = 'All';
+    });
+
+    $rootScope.$on('CLEAR_FILE_FILTER', function () {
+      vm.count = 10;
+    });
   }
 
   /*[- */
@@ -457,6 +498,14 @@
       vm.requested = SamplesService.getRequestedTypes();
     });
 
+
+    $rootScope.$on("SAMPLES_FILE_FILTER", function (evt, args) {
+      vm.samples = SamplesService.getFileFilteredSamples(args.sampleNames);
+    });
+
+    $rootScope.$on("CLEAR_FILE_FILTER", function () {
+      vm.samples = SamplesService.clearFileFilter();
+    });
   }
 
 
@@ -609,7 +658,7 @@
         return page.i18n.associatedSelectedTooltip;
       }
       return "";
-    }
+    };
 
     $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
@@ -747,10 +796,7 @@
     };
 
     vm.areAllSelected = function () {
-      if (Object.keys(vm.samples).length == SamplesService.samples.length) {
-        return true;
-      }
-      return false;
+      return Object.keys(vm.samples).length === SamplesService.samples.length;
     }
   }
 
@@ -766,11 +812,27 @@
     }
   }
 
-  function FilterCtrl($scope, filter) {
+  function FilterCtrl($scope, $modal, filter) {
     "use strict";
     var vm = this;
     vm.filter = filter;
     vm.name = "";
+    vm.fileFiltering = false;
+
+    vm.filterByFile = function($fileContent) {
+      vm.fileFiltering = true;
+      vm.filter.sample = {};
+      vm.name = "";
+      vm.organism = "";
+      var sampleNames = $fileContent.split("\n");
+      $scope.$emit('SAMPLES_FILE_FILTER', {sampleNames: sampleNames});
+    };
+
+    vm.clearFileFilter = function () {
+      vm.fileFiltering = false;
+      fileFilterForm.reset();
+      $scope.$emit('CLEAR_FILE_FILTER');
+    };
 
     $scope.$watch(function () {
       return vm.sampleName;
@@ -832,6 +894,28 @@
       });
   }
 
+  function filterByFile($parse) {
+    return {
+      restrict: 'A',
+      scope: false,
+      link: function (scope, element, attrs) {
+        var fn = $parse(attrs.filterByFile);
+
+        element.on('change', function(onChangeEvent) {
+          var reader = new FileReader();
+
+          reader.onload = function (onLoadEvent) {
+            scope.$apply(function () {
+              fn(scope, {$fileContent: onLoadEvent.target.result});
+            });
+          };
+
+          reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+        });
+      }
+    }
+  }
+
   angular.module('Samples', ['cgBusy', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
@@ -841,6 +925,7 @@
     .filter('SamplesFilter', ['FilterFactory', SamplesFilter])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
+    .directive('filterByFile', ['$parse', filterByFile])
     .controller('SubNavCtrl', ['$scope', '$modal', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
@@ -851,10 +936,10 @@
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
-    .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
+    .controller('FilterCtrl', ['$scope', '$modal', 'FilterFactory', FilterCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
     .controller('ConnectionWarningCtrl', ['$rootScope', 'SamplesService', ConnectionWarningCtrl])
   ;
 })
-(angular, $, _, PAGE);
+(window.angular, window.$, window._, window.PAGE);

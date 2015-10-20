@@ -63,27 +63,19 @@ Paired-end files will appear in a pair:
 
 ![Paired-end sequencing file.](images/sample-sequence-file-paired-end.png)
 
-#### Upload a sequence file
+#### Uploading Sequence Files
 
-Sequence files can be uploaded by clicking on the "Upload new files" button at the top, right hand side of the sequence file table.  Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
+Sequence files can be uploaded by clicking on the "Upload Sequence Files" button, on the left hand side side of the sequence file table.  Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
 
 ![Upload sequence file.](images/upload-sample-file-btn.png)
 
-You can upload a collection of sequencing data to IRIDA by dragging the files in a directory to the drop area in the pop-up window:
+You can select single or multiple files in the system file selection window.
 
-![Drag and drop area.](images/upload-sample-file-drop-area.png)
+![Upload File Selection.](images/upload-sample-file-selection.png)
 
-You may also upload files by clicking on the "Or Select Files" button:
+Files will upload immediately and a progress bar will be displayed.  If you need to cancel an upload click the <img class="inline" src="images/upload-sample-cancel-btn.png" alt="Cancel Upload Button" /> button.
 
-![Select files button.](images/upload-sample-file-select-file-btn.png)
-
-The added files will be displayed in the pop-up window, and can be removed before upload by clicking the <img src="images/trash.png" class="inline" alt="trash can icon"/> icon, on the right-hand side of the file size.
-
-![Selected files.](images/upload-sample-file-dropped-dir.png)
-
-To complete the upload press the Upload button.
-
-![Upload button.](images/upload-sample-file-btn-upload.png)
+![Cancel upload](images/upload-sample-progress-cancel.png)
 
 #### Downloading a sequence file
 
@@ -130,6 +122,32 @@ The filters work by only showing samples that have the search string *anywhere* 
 * 2nd_Sample
 
 To remove a filter from your view, either click the <img src="images/clear-filter-button.png" class="inline" alt="Clear filter button."> icon, or delete the text in your filter.
+
+Filtering and Selecting by File
+-------------------------------
+
+As projects become larger, it becomes unwieldy to select a large subset of samples.  To facilitate this, there is the 'Filter by File' option.
+
+* Create a `.txt` file that contains the name of each sample you want to select on a new line.  You can either:
+    - Use a text editor like Windows Notepad or TextEdit on Mac (note: when creating a new text document in TextEdit, press cmd + shift + t to change to the `.txt` format)
+    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file. 
+
+Example (`project_5_filter.txt`):
+
+<pre>
+Sample 50
+Sample 43
+Sample 41
+</pre>
+
+* On the project samples page, select the 'Filter & Select by File' button from the filter menu.
+
+![Filter by File Button](images/filter_by_file_btn.png)
+
+* Select the file you created.  This will clear all previous filters, then filter and select the samples that have matching names to those in your list.
+
+![Filter by File Button](images/filter_by_file_selected.png)
+
 
 Viewing associated samples
 --------------------------

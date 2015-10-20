@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Profile;
+import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 
@@ -42,6 +43,11 @@ public class TestEmailController extends EmailControllerImpl {
 	public void sendSubscriptionUpdateEmail(User user, List<ProjectEvent> events) {
 		logger.info("TestEmailController#sendSubscriptionUpdateEmail called for " + user + " and " + events.size()
 				+ " events");
+	}
+	
+	@Override
+	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause) throws MailSendException {
+		logger.info("TestEmailController#sendFilesystemExceptionEmail called.");
 	}
 
 	@Override

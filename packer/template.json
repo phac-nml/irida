@@ -44,6 +44,8 @@
       "boot_command": [
         "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
       ],
+      "communicator": "ssh",
+      "ssh_pty": "true",
       "boot_wait": "10s",
       "disk_size": 1000000,
       "guest_os_type": "RedHat_64",

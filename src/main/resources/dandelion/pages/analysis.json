@@ -1,0 +1,11 @@
+{
+  "dependencies": [ "angular-router", "PhyloCanvas", "SubNavDirective" ],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/analysis/analysis.js"
+      }
+    }
+  ]
+}
