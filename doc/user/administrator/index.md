@@ -265,6 +265,10 @@ The sequencing run details page shows information that was captured from the seq
 
 ![Sequencing run details page.](images/sequencing-run-details.png)
 
+To delete a sequencing run, click the `Remove` button on the details page.  Note: This will remove the sequencing run and all assocaited sequence files.  If this operation results in a sample being empty, the sample will also be removed.
+
+![Sequencing run remove.](images/remove-run.png)
+
 To view the collection of files that were uploaded as part of the run, click on the "Files" tab, above the quick-details pane:
 
 ![Sequencing run details file tab.](images/sequencing-run-details-files-tab.png)

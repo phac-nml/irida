@@ -104,7 +104,7 @@ var datatable = (function(moment, tl, page) {
       table = scrollBody.getElementsByTagName('table')[0],
       tableClientRect = table.getBoundingClientRect();
     if (tableClientRect.bottom > h) {
-      scrollBody.style.height = h - scrollBodyClientRect.top - 60 + 'px';
+      scrollBody.style.height = h - scrollBodyClientRect.top - 85 + 'px';
     } else {
       // + 1 to prevent the scrollbar from appearing
       scrollBody.style.height = tableClientRect.bottom - scrollBodyClientRect.top + 1 + 'px';

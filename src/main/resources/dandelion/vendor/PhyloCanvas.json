@@ -1,0 +1,16 @@
+{
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/vendor/PhyloCanvas.js"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/modules/phylocanvas/PhyloCanvasDirective.js"
+      }
+    }
+  ]
+}

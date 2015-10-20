@@ -15,9 +15,9 @@
 		email_subscription="false" />
 
 	<sample id="8" createdDate="2013-05-18 14:20:19.0" description="description5"
-		sequencerSampleId="sample8" sampleName="sample8" />
+		 sampleName="sample8" />
 	<sample id="9" createdDate="2013-05-18 14:20:19.0" description="description5"
-		sequencerSampleId="sample9" sampleName="sample9" />
+		 sampleName="sample9" />
 
 	<project_sample id="8" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="8" />

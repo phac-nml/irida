@@ -50,6 +50,13 @@ public class SequencingRunIT {
 				.body("resource.resources.workflow", hasItems("Test workflow 1", "Test workflow 2", "Test workflow 3"))
 				.and().when().get("/api/sequencingrun");
 	}
+	
+	@Test
+	public void testListRunsAsSequencer() {
+		asSequencer().expect().and().body("resource.resources.description", hasItems("run 1", "run 2", "run 3")).and()
+				.body("resource.resources.workflow", hasItems("Test workflow 1", "Test workflow 2", "Test workflow 3"))
+				.and().when().get("/api/sequencingrun");
+	}
 
 	@Test
 	public void testGetRun() {

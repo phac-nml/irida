@@ -4,6 +4,23 @@
 <head>
 	<title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
 	<script>window.dependencies = ['Samples'];</script>
+	<style>
+		.fileinput {
+			position: relative;
+			overflow: hidden;
+		}
+		.fileinput input.upload {
+			position: absolute;
+			top: 0;
+			right: 0;
+			margin: 0;
+			padding: 0;
+			font-size: 20px;
+			cursor: pointer;
+			opacity: 0;
+			filter: alpha(opacity=0);
+		}
+	</style>
 </head>
 <body>
 <aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
@@ -47,6 +64,26 @@
 						<span class="fa fa-fw fa-remove"></span>
 					</button>
 				</span>
+			</div>
+		</div>
+		<div class="form-group" style="padding-top: 10px;">
+			<form name="fileFilterForm">
+				<div class="fileinput btn btn-default btn-sm btn-block" ng-show="!sf.fileFiltering">
+					<fa:icon type="file"/>&nbsp;<th:block th:text="#{project.sample.filterByFile}"></th:block>
+					<input type="file" id="fileFilter" class="upload"
+					   filter-by-file="sf.filterByFile($fileContent)"/>
+				</div>
+				<button ng-show="sf.fileFiltering" class="btn btn-info btn-sm btn-block"
+						ng-click="sf.clearFileFilter()" th:text="#{project.sample.ClearFilterByFile}">Clear File Filter
+				</button>
+			</form>
+			<div class="clearfix">
+				<button type="button" class="btn btn-link btn-xs btn-default pull-right"
+						data:popover="#{project.sample.filterByFile.modal.body}"
+						data:popover-title="#{project.sample.filterByFile.modal.title}"
+						popover-trigger="mouseenter">
+					<small th:text="#{project.sample.filterByFile.modal.button}">What's this?</small>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -318,20 +355,22 @@
 	</div>
 </main>
 
-<script layout:fragment="scripts" th:inline="javascript">
-	var PAGE = {
-		urls: {
-			local     : /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
-			associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '',
-			remote    : /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
-			merge     : /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
-			remove    : /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
-			copy      : /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
-		},
-		i18n: {
-			associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
-		}
-	};
-</script>
+<th:block th:inline="javascript" layout:fragment="scripts">
+	<script>
+		var PAGE = {
+			urls: {
+				local: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
+				associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '',
+				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
+				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
+				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
+				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
+			},
+			i18n: {
+				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
+			}
+		};
+	</script>
+</th:block>
 </body>
 </html>

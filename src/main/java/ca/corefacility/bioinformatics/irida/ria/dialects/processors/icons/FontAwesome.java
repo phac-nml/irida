@@ -132,6 +132,19 @@ public class FontAwesome {
 	 * If using multiple icons in a list (such as a side bar) add the 'fixed=""'
 	 * attribute to append this class. This will line up the icons properly.
 	 */
+	private static final String EMAIL_ATTRIBUTE = "email";
+	private static final String EMAIL_ICON = "envelope-o";
+
+	/*
+	 * Attribute for an external link
+	 */
+	public static final String EXTERNAL_LINK_ATTRIBUTE = "external-link";
+	public static final String EXTERNAL_LINK_ICON = "external-link";
+
+	/*
+	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
+    * attribute to append this class. This will line up the icons properly.
+    */
 	private static final String FIXED_WIDTH_CLASS = "fa-fw";
 
 	/*
@@ -157,9 +170,11 @@ public class FontAwesome {
 			.put(TERMINAL_ATTRIBUTE, TERMINAL_ICON)
 			.put(COLLAPSE_SHOW_ATTRIBUTE, COLLAPSE_SHOW_ICON)
 			.put(COLLAPSE_CLOSE_ATTRIBUTE, COLLAPSE_CLOSE_ICON)
-			.put(SAMPLE_ATTRIBUTE,SAMPLE_ICON)
-			.put(USER_ATTRIBUTE,USER_ICON)
-			.put(BAN_ATTRIBUTE,BAN_ICON)
+			.put(SAMPLE_ATTRIBUTE, SAMPLE_ICON)
+			.put(USER_ATTRIBUTE, USER_ICON)
+			.put(BAN_ATTRIBUTE, BAN_ICON)
+			.put(EMAIL_ATTRIBUTE, EMAIL_ICON)
+			.put(EXTERNAL_LINK_ATTRIBUTE, EXTERNAL_LINK_ICON)
 			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
 			.build();
 	// @formatter:on

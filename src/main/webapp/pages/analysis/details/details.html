@@ -6,8 +6,6 @@
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
 	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
 	      th:href="@{/resources/css/pages/sample_files.css}"/>
-	<link rel="stylesheet" href="/resources/bower_components/PhyloCanvas/src/styles/PhyloCanvas.css"
-	      th:href="@{/resources/bower_components/PhyloCanvas/src/styles/PhyloCanvas.css}"/>
 	<style>
 		.tool i {
 			font-size: .75em;
@@ -63,12 +61,6 @@
 					</phylocanvas>
 				</div>
 				<div th:unless="${isCompleted} and ${preview}"></div>
-			</script>
-
-			<script type="text/ng-template" id="preview-linux.html">
-				<div ng-controller="PreviewController as previewContoller">
-					<div class="center-block" style="width: 500px" id="phyloSVG" phylosvg="" newick="{{previewContoller.newick}}"></div>
-				</div>
 			</script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end) + #lists.size(remote_paired)}">
