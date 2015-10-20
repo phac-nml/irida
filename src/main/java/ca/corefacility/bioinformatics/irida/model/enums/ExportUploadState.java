@@ -4,9 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 
@@ -95,10 +92,6 @@ public enum ExportUploadState {
 	private static Map<String, ExportUploadState> stateMap = new HashMap<>();
 	private String stateString;
 
-	// set of statuses that should be watched and update
-	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(NEW, SUBMITTED, CREATED, QUEUED,
-			PROCESSING, WAITING);
-
 	static {
 		for (ExportUploadState state : ExportUploadState.values()) {
 			stateMap.put(state.toString(), state);
@@ -121,16 +114,6 @@ public enum ExportUploadState {
 		checkNotNull(state, "state for string \"" + stateString + "\" does not exist");
 
 		return state;
-	}
-
-	/**
-	 * Get a set of the {@link ExportUploadState}s that should be watched and
-	 * updated
-	 * 
-	 * @return a set of {@link ExportUploadState}
-	 */
-	public static Set<ExportUploadState> getUpdateableStates() {
-		return updateableStates;
 	}
 
 	/**

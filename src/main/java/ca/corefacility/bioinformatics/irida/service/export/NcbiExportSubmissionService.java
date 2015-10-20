@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
+import java.util.Collection;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
@@ -21,6 +22,16 @@ public interface NcbiExportSubmissionService extends CRUDService<Long, NcbiExpor
 	 * @return a List of {@link NcbiExportSubmission}
 	 */
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state);
+
+	/**
+	 * Get a List of {@link NcbiExportSubmission} objects which have one of the
+	 * given {@link ExportUploadState}s
+	 * 
+	 * @param states
+	 *            {@link ExportUploadState} to search for
+	 * @return a List of {@link NcbiExportSubmission}
+	 */
+	public List<NcbiExportSubmission> getSubmissionsWithState(Collection<ExportUploadState> state);
 
 	/**
 	 * Get a List of {@link NcbiExportSubmission} for the given {@link Project}

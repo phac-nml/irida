@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +22,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
@@ -74,6 +75,11 @@ public class ExportUploadService {
 
 	@Value("${ncbi.upload.baseDirectory}")
 	private String baseDirectory;
+
+	// set of statuses that should be watched and update
+	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(ExportUploadState.NEW,
+			ExportUploadState.SUBMITTED, ExportUploadState.CREATED, ExportUploadState.QUEUED,
+			ExportUploadState.PROCESSING, ExportUploadState.WAITING);
 
 	@Autowired
 	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
@@ -133,13 +139,54 @@ public class ExportUploadService {
 						ImmutableMap.of("uploadState", ExportUploadState.UPLOADED, "directoryPath",
 								submission.getDirectoryPath()));
 			} catch (Exception e) {
-				logger.debug("Upload failed", e);
+				logger.error("Upload failed", e);
 
 				submission = exportSubmissionService.update(submission.getId(),
 						ImmutableMap.of("uploadState", ExportUploadState.UPLOAD_ERROR));
 			}
 		}
 
+	}
+
+	public synchronized void updateRunningUploads() {
+		logger.trace("Getting running exports");
+
+		List<NcbiExportSubmission> submissionsWithState = exportSubmissionService
+				.getSubmissionsWithState(updateableStates);
+
+		try {
+			for (NcbiExportSubmission submission : submissionsWithState) {
+				// connect to FTP site
+				FTPClient client = getFtpClient();
+				try {
+					logger.trace("Getting report for submission " + submission.getId());
+					InputStream xmlStream = getLatestXMLStream(client, submission);
+
+					if (xmlStream != null) {
+						NcbiExportSubmission updateSubmissionForXml = updateSubmissionForXml(submission, xmlStream);
+
+						exportSubmissionService.update(updateSubmissionForXml.getId(), ImmutableMap.of("uploadState",
+								updateSubmissionForXml.getUploadState(), "bioSampleFiles",
+								updateSubmissionForXml.getBioSampleFiles()));
+
+						xmlStream.close();
+					}
+				} catch (NcbiXmlParseException e) {
+					logger.error("Error getting response", e);
+
+					submission = exportSubmissionService.update(submission.getId(),
+							ImmutableMap.of("uploadState", ExportUploadState.UPLOAD_ERROR));
+				} catch (IOException e) {
+					logger.error("Error closing XML stream", e);
+				}
+
+				// close connection
+				client.disconnect();
+			}
+
+		} catch (IOException e) {
+			logger.error("Couldn't connect to FTP site", e);
+		}
 	}
 
 	/**
@@ -239,15 +286,16 @@ public class ExportUploadService {
 
 	}
 
-	public NcbiExportSubmission getUploadStatus(NcbiExportSubmission submission) throws UploadException {
-		try {
-			FTPClient client = getFtpClient();
+	private InputStream getLatestXMLStream(FTPClient client, NcbiExportSubmission submission)
+			throws NcbiXmlParseException {
+		InputStream retrieveFileStream = null;
 
+		try {
 			String directoryPath = submission.getDirectoryPath();
 
 			// cd to submission base directory
 			if (!client.changeWorkingDirectory(directoryPath)) {
-				throw new UploadException("Couldn't change to base directory " + baseDirectory + " : "
+				throw new NcbiXmlParseException("Couldn't change to base directory " + baseDirectory + " : "
 						+ client.getReplyString());
 			}
 
@@ -255,6 +303,8 @@ public class ExportUploadService {
 
 			String latestFile = null;
 			int highestNumber = 0;
+
+			// search for the highest number in the report.#.xml files
 			FTPFile[] listFiles = client.listFiles();
 			for (FTPFile file : listFiles) {
 				String fileName = file.getName();
@@ -268,15 +318,15 @@ public class ExportUploadService {
 				}
 			}
 
-			InputStream retrieveFileStream = client.retrieveFileStream(latestFile);
-			String responseXML = IOUtils.toString(retrieveFileStream);
+			if (latestFile != null) {
+				retrieveFileStream = client.retrieveFileStream(latestFile);
+			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new NcbiXmlParseException("Couldn't get response xml", e);
 		}
 
-		return submission;
+		return retrieveFileStream;
 	}
 
 	public NcbiExportSubmission updateSubmissionForXml(NcbiExportSubmission submission, InputStream xml)
