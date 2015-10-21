@@ -1,9 +1,7 @@
 {
-  "bundle": "projects",
   "dependencies": [
     "momentjs",
-    "yadcf",
-    "natural"
+    "datatables"
   ],
   "assets": [
     {
