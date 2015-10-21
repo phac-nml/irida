@@ -28,10 +28,10 @@ public interface NcbiExportSubmissionService extends CRUDService<Long, NcbiExpor
 	 * given {@link ExportUploadState}s
 	 * 
 	 * @param states
-	 *            {@link ExportUploadState} to search for
+	 *            collection of {@link ExportUploadState} to search for
 	 * @return a List of {@link NcbiExportSubmission}
 	 */
-	public List<NcbiExportSubmission> getSubmissionsWithState(Collection<ExportUploadState> state);
+	public List<NcbiExportSubmission> getSubmissionsWithState(Collection<ExportUploadState> states);
 
 	/**
 	 * Get a List of {@link NcbiExportSubmission} for the given {@link Project}
