@@ -77,7 +77,7 @@ public class ExportUploadService {
 	private String baseDirectory;
 
 	// set of statuses that should be watched and update
-	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(ExportUploadState.NEW,
+	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(ExportUploadState.UPLOADED,
 			ExportUploadState.SUBMITTED, ExportUploadState.CREATED, ExportUploadState.QUEUED,
 			ExportUploadState.PROCESSING, ExportUploadState.WAITING);
 
@@ -397,7 +397,7 @@ public class ExportUploadService {
 					String actionId = action.getAttribute("action_id");
 
 					// action id is of the form SUBMISSIONID-sampleid
-					String sampleId = actionId.substring(actionId.lastIndexOf("-") + 1);
+					String sampleId = actionId.substring(actionId.indexOf("-") + 1);
 
 					// get the sample for this action
 					NcbiBioSampleFiles ncbiBioSampleFiles = sampleMap.get(sampleId);

@@ -75,6 +75,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	// rate in MS of the upload task rate
 	private static final long UPLOAD_EXECUTION_TASK_RATE = 60000; // 60 seconds
 	
+	// rate in MS of the upload status checking
+	private static final long UPLOAD_STATUS_TASK_RATE = 60000; // 5 minutes
+	
 	/**
 	 * Rate in milliseconds of the cleanup task.
 	 */
@@ -141,6 +144,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Scheduled(initialDelay = 1000, fixedDelay = UPLOAD_EXECUTION_TASK_RATE)
 	public void ncbiUpload() {
 		uploadService.launchUpload();
+	}
+
+	/**
+	 * Launch the NCBI status checing
+	 */
+	@Scheduled(initialDelay = UPLOAD_STATUS_TASK_RATE, fixedDelay = UPLOAD_STATUS_TASK_RATE)
+	public void ncbiUploadStatus() {
+		uploadService.updateRunningUploads();
 	}
 
 	/**
