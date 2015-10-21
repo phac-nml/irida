@@ -18,9 +18,9 @@
         <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="header">
             <thead>
             <tr role="row">
-                <th dt:property="item.identifier" dt:sortable="false" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
-                <th dt:filterable="true" dt:property="item.name" dt:renderFunction="datatables-utils#datatable.createItemButton"
-                	th:text="#{projects.table.name}"></th>
+                <th dt:property="item.identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
+                <th dt:filterable="true" dt:property="item.name" dt:renderFunction="projects#projectsTable.createItemButton"
+                	><span class="header-name" th:text="#{projects.table.name}"></span></th>
                 <th dt:filterable="true" dt:property="item.organism" th:text="#{projects.table.organism}"
                     dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
                 <th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>

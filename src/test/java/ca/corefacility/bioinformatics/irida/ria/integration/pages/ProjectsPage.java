@@ -5,12 +5,9 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
  * <p>
@@ -52,18 +49,13 @@ public class ProjectsPage extends AbstractPage {
 
 	public void clickProjectNameHeader() {
 		// Sorting row is the second one
-		WebElement th = driver.findElements(By.xpath("#projectsTable thead th")).get(1);
+		WebElement th = driver.findElements(By.cssSelector("#projectsTable th")).get(1);
 		final String originalSortOrder = th.getAttribute("aria-sort");
-		th.click();
+		th.findElement(By.className("header-name")).click();
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(
 				(org.openqa.selenium.support.ui.ExpectedCondition<Boolean>) input -> {
 					final String ariaSort = th.getAttribute("aria-sort");
 					return ariaSort!= null && !ariaSort.equals(originalSortOrder);
 				});
-	}
-
-	private void waitForAjax() {
-		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-		wait.until(Ajax.waitForAjax(60000));
 	}
 }

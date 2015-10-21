@@ -1,15 +1,15 @@
 {
-  "dependencies": [
-    "momentjs",
-    "datatables"
-  ],
   "assets": [
     {
-      "name": "projects",
-      "version": "0.0.1",
       "type": "css",
       "locations": {
         "webapp": "/resources/css/pages/projects.css"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/projects.js"
       }
     }
   ]
