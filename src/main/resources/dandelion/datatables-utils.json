@@ -8,6 +8,12 @@
       "locations": {
         "webapp": "/resources/js/utils/datatable-utils.js"
       }
+    },
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/components/datatables-custom.css"
+      }
     }
   ]
 }

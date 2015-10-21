@@ -1,0 +1,21 @@
+.cell-width-200 {
+  text-align: left;
+  width: 200px !important;
+  wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+table th {
+  vertical-align: top !important;
+}
+
+.yadcf-filter-reset-button {
+  display: none !important;
+}
+
+.yadcf-filter-wrapper {
+  display: block !important;
+}
