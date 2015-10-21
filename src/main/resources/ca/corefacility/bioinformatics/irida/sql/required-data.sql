@@ -105,14 +105,14 @@ INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24::09', '2015-08-30 08:24:09' , 'Project 90');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24::09', '2015-09-01 08:24:09' , 'Project 91');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24::09', '2015-09-02 08:24:09' , 'Project 92');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09''2015-09-03 08:24:09' , 'Project 93');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09''2015-09-04 08:24:09' , 'Project 94');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09''2015-09-05 08:24:09' , 'Project 95');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09''2015-09-06 08:24:09' , 'Project 96');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09''2015-09-07 08:24:09' , 'Project 97');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09''2015-09-08 08:24:09' , 'Project 98');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09''2015-09-09 08:24:09' , 'Project 99');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09''2015-09-10 08:24:09' , 'Project 100');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-03 08:24:09' , 'Project 93');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-04 08:24:09' , 'Project 94');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-05 08:24:09' , 'Project 95');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-06 08:24:09' , 'Project 96');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-07 08:24:09' , 'Project 97');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-08 08:24:09' , 'Project 98');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-09 08:24:09' , 'Project 99');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-10 08:24:09' , 'Project 100');
 
 -- relationship between projects and users
 INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `email_subscription`) VALUES (now(), 1, 2, 'PROJECT_OWNER', 0);
