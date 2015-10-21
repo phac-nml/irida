@@ -1,15 +1,9 @@
 {
   "dependencies": [
-    "jquery"
+    "jquery",
+    "datatables-utils"
   ],
   "assets": [
-    {
-      "name": "irida-datatables",
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/utils/datatable-utils.js"
-      }
-    },
     {
       "type": "js",
       "locations": {
