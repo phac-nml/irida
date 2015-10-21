@@ -80,6 +80,7 @@ public class NcbiBioSampleFiles {
 
 	public NcbiBioSampleFiles(String namespace) {
 		// Creating a new SRA upload identifier using the current time
+		this();
 		StringBuilder builder = new StringBuilder(namespace);
 		builder.append(UUID.randomUUID().toString());
 		id = builder.toString();
