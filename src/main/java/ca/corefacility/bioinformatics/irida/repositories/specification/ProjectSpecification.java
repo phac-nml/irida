@@ -55,4 +55,12 @@ public class ProjectSpecification {
 			}
 		};
 	}
+
+	public static Specification<Project> searchProjects() {
+		return (root, query, cb) -> {
+			ArrayList<Predicate> predicates = new ArrayList<>();
+
+			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+		};
+	}
 }

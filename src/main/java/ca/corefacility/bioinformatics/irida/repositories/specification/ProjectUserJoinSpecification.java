@@ -14,6 +14,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+
 /**
  * Specification for searching {@link ProjectUserJoin}s
  * 
@@ -79,6 +81,16 @@ public class ProjectUserJoinSpecification {
 
 				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
+		};
+	}
+
+	public static Specification<ProjectUserJoin> getPagedProjectsForUser(User user, DatatablesCriterias criterias) {
+		return (root, query, cb) -> {
+			ArrayList<Predicate> predicates = new ArrayList<>();
+
+			predicates.add(cb.equal(root.get("user"), user));
+
+			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};
 	}
 }

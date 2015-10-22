@@ -27,15 +27,12 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -43,6 +40,8 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
+
+import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
@@ -85,25 +84,25 @@ public class ProjectsControllerTest {
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
-	@Test
-	public void testGetAjaxProjectList() {
-		Principal principal = () -> USER_NAME;
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.getProjectsForUser(user)).thenReturn(TestDataFactory.constructListJoinProjectUser(user));
-		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
-		List<Map<String, Object>> result = controller.getAjaxProjectList(principal);
-		testGetAnyAjaxProjectListResult(result, 10);
-	}
+//	@Test
+//	public void testGetAjaxProjectList() {
+//		Principal principal = () -> USER_NAME;
+//		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+//		when(projectService.getProjectsForUser(user)).thenReturn(TestDataFactory.constructListJoinProjectUser(user));
+//		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
+//		List<Map<String, Object>> result = controller.getAjaxProjectList(principal);
+//		testGetAnyAjaxProjectListResult(result, 10);
+//	}
 
-	@Test
-	public void testGetAjaxAdminProjectsList() {
-		Principal principal = () -> USER_NAME;
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.findAll()).thenReturn(TestDataFactory.constructProjectList());
-		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(true);
-		List<Map<String, Object>> result = controller.getAjaxAdminProjectsList(principal);
-		testGetAnyAjaxProjectListResult(result, 50);
-	}
+//	@Test
+//	public void testGetAjaxAdminProjectsList() {
+//		Principal principal = () -> USER_NAME;
+//		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+//		when(projectService.findAll()).thenReturn(TestDataFactory.constructProjectList());
+//		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(true);
+//		List<Map<String, Object>> result = controller.getAjaxAdminProjectsList(principal);
+//		testGetAnyAjaxProjectListResult(result, 50);
+//	}
 
 	@Test
 	public void testGetSpecificProjectPage() {

@@ -18,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -41,6 +44,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -49,6 +54,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
@@ -364,10 +374,18 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/projects/ajax/list")
 	@ResponseBody
-	public List<Map<String, Object>> getAjaxProjectList(final Principal principal) {
-
+	public DatatablesResponse<Project> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias, final Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
-		return getProjectsDataMap(projectService.getProjectsForUser(user));
+		Specification<ProjectUserJoin> specification = ProjectUserJoinSpecification
+				.getPagedProjectsForUser(user, criterias);
+		Page<ProjectUserJoin> page = projectService
+				.searchProjectUsers(specification, 1, 10, Sort.Direction.ASC);
+		List<Project> projects = new ArrayList<>();
+		for (ProjectUserJoin join : page) {
+			projects.add(join.getSubject());
+		}
+		DataSet<Project> dataSet = new DataSet<>(projects, page.getTotalElements(), page.getTotalElements());
+		return DatatablesResponse.build(dataSet, criterias);
 	}
 
 	/**
@@ -380,9 +398,19 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
-	public List<Map<String, Object>> getAjaxAdminProjectsList(final Principal principal) {
+	public DatatablesResponse<Project> getAjaxAdminProjectsList(@DatatablesParams DatatablesCriterias criterias, final Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
-		return generateAdminProjectMap(user, (List<Project>) projectService.findAll());
+		Specification<Project> specification = ProjectSpecification.searchProjects();
+
+		ColumnDef sortedColumn = criterias.getSortedColumnDefs().get(0);
+		Sort.Direction sortDirection = sortedColumn.getSortDirection().equals(ColumnDef.SortDirection.ASC) ? Sort.Direction.ASC : Sort.Direction.DESC;
+		int pageSize = criterias.getLength() > 0 ? criterias.getLength() : 20;
+		int currentPage = (int) Math.floor(criterias.getStart() / pageSize);
+
+		Page<Project> page = projectService
+				.search(specification, currentPage, criterias.getLength(), sortDirection);
+		DataSet<Project> dataSet = new DataSet<>(page.getContent(), page.getTotalElements(), page.getTotalElements());
+		return DatatablesResponse.build(dataSet, criterias);
 	}
 
 	/**
