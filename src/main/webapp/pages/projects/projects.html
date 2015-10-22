@@ -34,21 +34,5 @@
         </table>
     </main>
 </div>
-<th:block layout:fragment="page-scripts" th:inline="javascript">
-    <script>
-        var roles = [
-                /*[[#{projectRole.PROJECT_USER}]]*/ 'Collaborator',
-                /*[[#{projectRole.PROJECT_OWNER}]]*/ 'Manager',
-                /*[[#{projectRole.PROJECT_NONE}]]*/ 'None'
-            ],
-            PAGE = {
-                lang: {
-                    'PROJECT_USER': roles[0],
-                    'PROJECT_OWNER': roles[1],
-                    'PROJECT_NONE': roles[2]
-                }
-            };
-    </script>
-</th:block>
 </body>
 </html>
