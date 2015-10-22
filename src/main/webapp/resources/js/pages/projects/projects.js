@@ -1,11 +1,15 @@
 /*exported projectsTable*/
-var projectsTable = (function(tl) {
+var projectsTable = (function (tl) {
+
+  function filter(filters) {
+    
+  }
 
   /**
    * Create a link button to the IRIDA thing
    *
    * @param {Object} data column data
-   * @param {string} type type of data
+   * @param {String} type type of data
    * @param {Object} full full object for the row.
    * @returns {*}
    */
@@ -21,3 +25,14 @@ var projectsTable = (function(tl) {
     createItemButton: createItemButton
   };
 })(window.TL);
+
+(function ($) {
+  $('#filterProjectsBtn').on('click', function () {
+    var nameField = filterForm.name.value;
+
+    if (nameField !== null || nameField !== '') {
+
+    }
+
+  });
+})(window.jQuery);

@@ -19,3 +19,9 @@ table th {
 .yadcf-filter-wrapper {
   display: block !important;
 }
+
+.dataTables_filter {
+  display: inline-block;
+  float: right;
+  margin-right: 1em;
+}
