@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.specification;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -56,9 +57,13 @@ public class ProjectSpecification {
 		};
 	}
 
-	public static Specification<Project> searchProjects() {
+	public static Specification<Project> searchProjects(Map<String, String> searchMap) {
 		return (root, query, cb) -> {
 			ArrayList<Predicate> predicates = new ArrayList<>();
+
+			if (searchMap.containsKey("name")) {
+				predicates.add(cb.like(root.get("name"), "%" + searchMap.get("name") + "%"));
+			}
 
 			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};

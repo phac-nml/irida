@@ -391,16 +391,22 @@ public class ProjectsController {
 	/**
 	 * Admin mapping to get a list of all project they are on.
 	 *
-	 * @param principal
-	 *            {@link Principal} currently logged in user.
-	 *
 	 * @return {@link List} of project {@link Map}
 	 */
 	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Project> getAjaxAdminProjectsList(@DatatablesParams DatatablesCriterias criterias, final Principal principal) {
-		User user = userService.getUserByUsername(principal.getName());
-		Specification<Project> specification = ProjectSpecification.searchProjects();
+	public DatatablesResponse<Project> getAjaxAdminProjectsList(@DatatablesParams DatatablesCriterias criterias) {
+
+		List<ColumnDef> columnDefs = criterias.getColumnDefs();
+
+		// SEARCH
+		Map<String, String> searchMap = new HashMap<>();
+		// 1. Name
+		if (columnDefs.get(1).isFiltered()) {
+			searchMap.put("name", columnDefs.get(1).getSearch());
+		}
+
+		Specification<Project> specification = ProjectSpecification.searchProjects(searchMap);
 
 		ColumnDef sortedColumn = criterias.getSortedColumnDefs().get(0);
 		Sort.Direction sortDirection = sortedColumn.getSortDirection().equals(ColumnDef.SortDirection.ASC) ? Sort.Direction.ASC : Sort.Direction.DESC;
