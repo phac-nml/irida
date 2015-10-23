@@ -48,13 +48,13 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSp
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
@@ -376,10 +376,17 @@ public class ProjectsController {
 	@ResponseBody
 	public DatatablesResponse<Project> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias, final Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
+
+		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
 		Specification<ProjectUserJoin> specification = ProjectUserJoinSpecification
-				.getPagedProjectsForUser(user, criterias);
+				.getPagedProjectsForUser(user, searchMap);
+
+
+		Sort.Direction sortDirection = ProjectsDatatableUtils.getSortDirection(criterias);
+		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
+
 		Page<ProjectUserJoin> page = projectService
-				.searchProjectUsers(specification, 1, 10, Sort.Direction.ASC);
+				.searchProjectUsers(specification, currentPage, criterias.getLength(), sortDirection);
 		List<Project> projects = new ArrayList<>();
 		for (ProjectUserJoin join : page) {
 			projects.add(join.getSubject());
@@ -397,21 +404,11 @@ public class ProjectsController {
 	@ResponseBody
 	public DatatablesResponse<Project> getAjaxAdminProjectsList(@DatatablesParams DatatablesCriterias criterias) {
 
-		List<ColumnDef> columnDefs = criterias.getColumnDefs();
-
-		// SEARCH
-		Map<String, String> searchMap = new HashMap<>();
-		// 1. Name
-		if (columnDefs.get(1).isFiltered()) {
-			searchMap.put("name", columnDefs.get(1).getSearch());
-		}
-
+		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
 		Specification<Project> specification = ProjectSpecification.searchProjects(searchMap);
 
-		ColumnDef sortedColumn = criterias.getSortedColumnDefs().get(0);
-		Sort.Direction sortDirection = sortedColumn.getSortDirection().equals(ColumnDef.SortDirection.ASC) ? Sort.Direction.ASC : Sort.Direction.DESC;
-		int pageSize = criterias.getLength() > 0 ? criterias.getLength() : 20;
-		int currentPage = (int) Math.floor(criterias.getStart() / pageSize);
+		Sort.Direction sortDirection = ProjectsDatatableUtils.getSortDirection(criterias);
+		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
 
 		Page<Project> page = projectService
 				.search(specification, currentPage, criterias.getLength(), sortDirection);

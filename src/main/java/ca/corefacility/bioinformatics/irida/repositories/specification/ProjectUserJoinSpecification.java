@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.specification;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,8 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 
 /**
  * Specification for searching {@link ProjectUserJoin}s
@@ -84,9 +83,16 @@ public class ProjectUserJoinSpecification {
 		};
 	}
 
-	public static Specification<ProjectUserJoin> getPagedProjectsForUser(User user, DatatablesCriterias criterias) {
+	public static Specification<ProjectUserJoin> getPagedProjectsForUser(User user, Map<String, String> searchMap) {
 		return (root, query, cb) -> {
 			ArrayList<Predicate> predicates = new ArrayList<>();
+
+			if (searchMap.containsKey("name")) {
+				predicates.add(cb.like(root.get("name"), "%" + searchMap.get("name") + "%"));
+			}
+			if (searchMap.containsKey("organism")) {
+				predicates.add(cb.like(root.get("organism"), "%" + searchMap.get("organism") + "%"));
+			}
 
 			predicates.add(cb.equal(root.get("user"), user));
 

@@ -64,6 +64,9 @@ public class ProjectSpecification {
 			if (searchMap.containsKey("name")) {
 				predicates.add(cb.like(root.get("name"), "%" + searchMap.get("name") + "%"));
 			}
+			if (searchMap.containsKey("organism")) {
+				predicates.add(cb.like(root.get("organism"), "%" + searchMap.get("organism") + "%"));
+			}
 
 			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};
