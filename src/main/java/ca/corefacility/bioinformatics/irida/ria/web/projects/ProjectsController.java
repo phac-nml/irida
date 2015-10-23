@@ -118,17 +118,17 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Request for the page to display a list of all projects available to the
-	 * currently logged in user.
+	 * Request for the page to display a list of all projects available to the currently logged in user.
 	 *
 	 * @param model
-	 *            The model to add attributes to for the template.
+	 * 		The model to add attributes to for the template.
 	 * @param galaxyCallbackURL
-	 *            The URL at which to call the Galaxy export tool
+	 * 		The URL at which to call the Galaxy export tool
 	 * @param galaxyClientID
-	 *            The OAuth2 client ID of the Galaxy instance to export to
+	 * 		The OAuth2 client ID of the Galaxy instance to export to
 	 * @param httpSession
-	 *            The user's session
+	 * 		The user's session
+	 *
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")
@@ -150,7 +150,7 @@ public class ProjectsController {
 	 * Get the admin projects page.
 	 *
 	 * @param model
-	 *            {@link Model}
+	 * 		{@link Model}
 	 *
 	 * @return The name of the page
 	 */
@@ -165,11 +165,11 @@ public class ProjectsController {
 	 * Request for a specific project details page.
 	 *
 	 * @param projectId
-	 *            The id for the project to show details for.
+	 * 		The id for the project to show details for.
 	 * @param model
-	 *            Spring model to populate the html page.
+	 * 		Spring model to populate the html page.
 	 * @param principal
-	 *            a reference to the logged in user.
+	 * 		a reference to the logged in user.
 	 *
 	 * @return The name of the project details page.
 	 */
@@ -187,7 +187,7 @@ public class ProjectsController {
 	 * Gets the name of the template for the new project page
 	 *
 	 * @param model
-	 *            {@link Model}
+	 * 		{@link Model}
 	 *
 	 * @return The name of the create new project page
 	 */
@@ -200,19 +200,18 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Creates a new project and displays a list of users for the user to add to
-	 * the project
+	 * Creates a new project and displays a list of users for the user to add to the project
 	 *
 	 * @param model
-	 *            {@link Model}
+	 * 		{@link Model}
 	 * @param name
-	 *            String name of the project
+	 * 		String name of the project
 	 * @param organism
-	 *            Organism name
+	 * 		Organism name
 	 * @param projectDescription
-	 *            Brief description of the project
+	 * 		Brief description of the project
 	 * @param remoteURL
-	 *            URL for the project wiki
+	 * 		URL for the project wiki
 	 *
 	 * @return The name of the add users to project page
 	 */
@@ -242,11 +241,11 @@ public class ProjectsController {
 	 * Returns the name of a page to add users to a *new* project.
 	 *
 	 * @param model
-	 *            {@link Model}
+	 * 		{@link Model}
 	 * @param principal
-	 *            a reference to the logged in user.
+	 * 		a reference to the logged in user.
 	 * @param projectId
-	 *            the id of the project to find the metadata for.
+	 * 		the id of the project to find the metadata for.
 	 *
 	 * @return The name of the add users to new project page.
 	 */
@@ -329,17 +328,14 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Search for taxonomy terms. This method will return a map of found
-	 * taxonomy terms and their child nodes.
+	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
 	 * <p>
-	 * Note: If the search term was not included in the results, it will be
-	 * added as an option
+	 * Note: If the search term was not included in the results, it will be added as an option
 	 *
 	 * @param searchTerm
-	 *            The term to find taxa for
+	 * 		The term to find taxa for
 	 *
-	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic
-	 *         tree of matching terms
+	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
 	 */
 	@RequestMapping("/projects/ajax/taxonomy/search")
 	@ResponseBody
@@ -368,28 +364,45 @@ public class ProjectsController {
 	 * User mapping to get a list of all project they are on.
 	 *
 	 * @param principal
-	 *            {@link Principal} currently logged in user.
+	 * 		{@link Principal} currently logged in user.
+	 *
 	 * @return {@link List} of project {@link Map}
 	 */
 	@RequestMapping("/projects/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias, final Principal principal) {
+	public DatatablesResponse<Map<String, Object>> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias,
+			final Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 
 		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
+		// NOTE: Special case for sorting on the ProjectUserJoin
+		String searchString = searchMap.get(ProjectsDatatableUtils.SORT_STRING);
+		if (searchString != null && (searchString.equals("modifiedDate") || searchString.equals("createdDate"))) {
+			searchMap.put(ProjectsDatatableUtils.SORT_STRING, "project." + searchString);
+		}
+
 		Specification<ProjectUserJoin> specification = ProjectUserJoinSpecification
 				.getPagedProjectsForUser(user, searchMap);
 
-
-		Sort.Direction sortDirection = ProjectsDatatableUtils.getSortDirection(criterias);
+		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
 
-		Page<ProjectUserJoin> page = projectService
-				.searchProjectUsers(specification, currentPage, criterias.getLength(), sortDirection);
+		Page<ProjectUserJoin> page;
+		if (searchString != null) {
+			page = projectService
+					.searchProjectUsers(specification, currentPage, criterias.getLength(),
+							(Sort.Direction) sortProperties.get(ProjectsDatatableUtils.SORT_DIRECTION),
+							"project." +  sortProperties.get(ProjectsDatatableUtils.SORT_STRING));
+		} else {
+			page = projectService
+					.searchProjectUsers(specification, currentPage, criterias.getLength(),
+							(Sort.Direction) sortProperties.get(ProjectsDatatableUtils.SORT_DIRECTION));
+		}
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
 		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join.getSubject()))
 				.collect(Collectors.toList()));
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(), page.getTotalElements());
+		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
+				page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 
@@ -400,28 +413,31 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(@DatatablesParams DatatablesCriterias criterias) {
+	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
+			@DatatablesParams DatatablesCriterias criterias) {
 
 		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
 		Specification<Project> specification = ProjectSpecification.searchProjects(searchMap);
 
-		Sort.Direction sortDirection = ProjectsDatatableUtils.getSortDirection(criterias);
+		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
 
 		Page<Project> page = projectService
-				.search(specification, currentPage, criterias.getLength(), sortDirection);
+				.search(specification, currentPage, criterias.getLength(),
+						(Sort.Direction) sortProperties.get(ProjectsDatatableUtils.SORT_DIRECTION),
+						(String) sortProperties.get(ProjectsDatatableUtils.SORT_STRING));
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
 		projects.addAll(page.getContent().stream().map(this::createProjectMap).collect(Collectors.toList()));
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(), page.getTotalElements());
+		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
+				page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 
 	/**
-	 * Changes a {@link ConstraintViolationException} to a usable map of strings
-	 * for displaing in the UI.
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
 	 *
 	 * @param e
-	 *            {@link ConstraintViolationException} for the form submitted.
+	 * 		{@link ConstraintViolationException} for the form submitted.
 	 *
 	 * @return Map of string {fieldName, error}
 	 */
@@ -444,11 +460,10 @@ public class ProjectsController {
 	/**
 	 * }
 	 * <p>
-	 * /** Recursively transform a {@link TreeNode} into a json parsable map
-	 * object
+	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
 	 *
 	 * @param node
-	 *            The node to transform
+	 * 		The node to transform
 	 *
 	 * @return A Map<String,Object> which may contain more children
 	 */

@@ -24,9 +24,9 @@
                 <th dt:filterable="true" dt:property="organism" th:text="#{projects.table.organism}"
                     dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
                 <th dt:property="samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
-                <th width="150px" dt:property="item.createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
+                <th width="150px" dt:property="createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
                     dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-                <th width="150px" dt:property="item.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
+                <th width="150px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
                     dt:renderFunction="datatables-utils#datatable.formatDate"></th>
             </tr>
             </thead>
