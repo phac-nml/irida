@@ -1,12 +1,6 @@
 {
   "assets": [
     {
-      "type": "css",
-      "locations": {
-        "webapp": "/resources/css/pages/projects.css"
-      }
-    },
-    {
       "type": "js",
       "locations": {
         "webapp": "/resources/js/pages/projects/projects.js"
