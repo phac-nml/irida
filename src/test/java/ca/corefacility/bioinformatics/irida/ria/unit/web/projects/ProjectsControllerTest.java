@@ -17,6 +17,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,10 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
@@ -33,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -41,6 +47,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.google.common.collect.Lists;
 
 /**
@@ -84,15 +93,23 @@ public class ProjectsControllerTest {
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
-//	@Test
-//	public void testGetAjaxProjectList() {
-//		Principal principal = () -> USER_NAME;
-//		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-//		when(projectService.getProjectsForUser(user)).thenReturn(TestDataFactory.constructListJoinProjectUser(user));
-//		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
-//		List<Map<String, Object>> result = controller.getAjaxProjectList(principal);
-//		testGetAnyAjaxProjectListResult(result, 10);
-//	}
+	@Test
+	public void testGetAjaxProjectList() {
+		Principal principal = () -> USER_NAME;
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+
+		Page<ProjectUserJoin> page = getProjectUserJoinPage(user);
+ 		when(projectService.searchProjectUsers(any(Specification.class), any(Integer.class), any(Integer.class), any(Sort.Direction.class))).thenReturn(page);
+		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
+
+		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
+		when(criterias.getColumnDefs()).thenReturn(getColumnDefs());
+		when(criterias.getSortedColumnDefs()).thenReturn(getSortedColumnDefs());
+		when(criterias.getLength()).thenReturn(10);
+
+		DatatablesResponse<Map<String, Object>> result = controller.getAjaxProjectList(criterias, principal);
+		testGetAnyAjaxProjectListResult(result.getData(), 10);
+	}
 
 //	@Test
 //	public void testGetAjaxAdminProjectsList() {
@@ -261,9 +278,110 @@ public class ProjectsControllerTest {
 		assertEquals("Should be 10 items in the list", expectedSize, result.size());
 
 		for (Map<String, Object> map : result) {
-			assertTrue("Should have key 'item'", map.containsKey("item"));
-			assertTrue("Should have key 'link'", map.containsKey("link"));
-			assertTrue("Should have key 'custom'", map.containsKey("custom"));
+			assertTrue("Should have key 'identifier'", map.containsKey("identifier"));
+			assertTrue("Should have key 'name'", map.containsKey("name"));
+			assertTrue("Should have key 'label'", map.containsKey("label"));
+			assertTrue("Should have key 'samples'", map.containsKey("samples"));
+			assertTrue("Should have key 'createdDate'", map.containsKey("createdDate"));
+			assertTrue("Should have key 'modifiedDate'", map.containsKey("modifiedDate"));
 		}
+	}
+
+	private List<ColumnDef> getColumnDefs() {
+		List<ColumnDef> list = new ArrayList<>();
+
+		// 0. identifier
+		ColumnDef def0 = new ColumnDef();
+		def0.setFiltered(false);
+		def0.setName("identifier");
+		list.add(def0);
+
+		// 1. name
+		ColumnDef def1 = new ColumnDef();
+		def1.setFiltered(false);
+		def1.setName("name");
+		list.add(def1);
+
+		// 2. organism
+		ColumnDef def2 = new ColumnDef();
+		def2.setFiltered(false);
+		def2.setName("organism");
+		list.add(def2);
+
+		return list;
+	}
+
+	private List<ColumnDef> getSortedColumnDefs() {
+		List<ColumnDef> list = new ArrayList<>();
+
+		ColumnDef def = new ColumnDef();
+		def.setSortDirection(ColumnDef.SortDirection.ASC);
+		list.add(def);
+
+		return list;
+	}
+
+	private Page<ProjectUserJoin> getProjectUserJoinPage(User user) {
+		return new Page<ProjectUserJoin>() {
+			@Override public int getTotalPages() {
+				return 10;
+			}
+
+			@Override public long getTotalElements() {
+				return 100;
+			}
+
+			@Override public int getNumber() {
+				return 10;
+			}
+
+			@Override public int getSize() {
+				return 10;
+			}
+
+			@Override public int getNumberOfElements() {
+				return 10;
+			}
+
+			@Override public List<ProjectUserJoin> getContent() {
+				return TestDataFactory.constructListJoinProjectUser(user);
+			}
+
+			@Override public boolean hasContent() {
+				return true;
+			}
+
+			@Override public Sort getSort() {
+				return null;
+			}
+
+			@Override public boolean isFirst() {
+				return false;
+			}
+
+			@Override public boolean isLast() {
+				return false;
+			}
+
+			@Override public boolean hasNext() {
+				return false;
+			}
+
+			@Override public boolean hasPrevious() {
+				return false;
+			}
+
+			@Override public Pageable nextPageable() {
+				return null;
+			}
+
+			@Override public Pageable previousPageable() {
+				return null;
+			}
+
+			@Override public Iterator<ProjectUserJoin> iterator() {
+				return null;
+			}
+		};
 	}
 }
