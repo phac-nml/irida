@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
@@ -386,9 +387,8 @@ public class ProjectsController {
 		Page<ProjectUserJoin> page = projectService
 				.searchProjectUsers(specification, currentPage, criterias.getLength(), sortDirection);
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
-		for (ProjectUserJoin join : page) {
-			projects.add(createProjectMap(join.getSubject()));
-		}
+		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join.getSubject()))
+				.collect(Collectors.toList()));
 		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(), page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
 	}
@@ -411,9 +411,7 @@ public class ProjectsController {
 		Page<Project> page = projectService
 				.search(specification, currentPage, criterias.getLength(), sortDirection);
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
-		for (Project project : page) {
-			projects.add(createProjectMap(project));
-		}
+		projects.addAll(page.getContent().stream().map(this::createProjectMap).collect(Collectors.toList()));
 		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(), page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
 	}

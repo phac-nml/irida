@@ -54,7 +54,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
- * 
+ *
  */
 public class ProjectsControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
@@ -99,7 +99,8 @@ public class ProjectsControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 
 		Page<ProjectUserJoin> page = getProjectUserJoinPage(user);
- 		when(projectService.searchProjectUsers(any(Specification.class), any(Integer.class), any(Integer.class), any(Sort.Direction.class))).thenReturn(page);
+ 		when(projectService.searchProjectUsers(any(Specification.class), any(Integer.class), any(Integer.class), any(
+			    Sort.Direction.class))).thenReturn(page);
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
 
 		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
@@ -111,15 +112,23 @@ public class ProjectsControllerTest {
 		testGetAnyAjaxProjectListResult(result.getData(), 10);
 	}
 
-//	@Test
-//	public void testGetAjaxAdminProjectsList() {
-//		Principal principal = () -> USER_NAME;
-//		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-//		when(projectService.findAll()).thenReturn(TestDataFactory.constructProjectList());
-//		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(true);
-//		List<Map<String, Object>> result = controller.getAjaxAdminProjectsList(principal);
-//		testGetAnyAjaxProjectListResult(result, 50);
-//	}
+	@Test
+	public void testGetAjaxAdminProjectsList() {
+
+		Page<Project> page = getProjectPage();
+		when(projectService.search(any(Specification.class), any(Integer.class), any(Integer.class), any(
+				Sort.Direction.class))).thenReturn(page);
+		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
+
+		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
+		when(criterias.getColumnDefs()).thenReturn(getColumnDefs());
+		when(criterias.getSortedColumnDefs()).thenReturn(getSortedColumnDefs());
+		when(criterias.getLength()).thenReturn(10);
+
+		DatatablesResponse<Map<String, Object>> result = controller.getAjaxAdminProjectsList(criterias);
+
+		testGetAnyAjaxProjectListResult(result.getData(), 10);
+	}
 
 	@Test
 	public void testGetSpecificProjectPage() {
@@ -217,7 +226,7 @@ public class ProjectsControllerTest {
 
 	}
 
-	
+
 
 	/**
 	 * Mocks the information found within the project sidebar.
@@ -280,7 +289,7 @@ public class ProjectsControllerTest {
 		for (Map<String, Object> map : result) {
 			assertTrue("Should have key 'identifier'", map.containsKey("identifier"));
 			assertTrue("Should have key 'name'", map.containsKey("name"));
-			assertTrue("Should have key 'label'", map.containsKey("label"));
+			assertTrue("Should have key 'organism'", map.containsKey("organism"));
 			assertTrue("Should have key 'samples'", map.containsKey("samples"));
 			assertTrue("Should have key 'createdDate'", map.containsKey("createdDate"));
 			assertTrue("Should have key 'modifiedDate'", map.containsKey("modifiedDate"));
@@ -356,6 +365,74 @@ public class ProjectsControllerTest {
 			}
 
 			@Override public boolean isFirst() {
+				return true;
+			}
+
+			@Override public boolean isLast() {
+				return false;
+			}
+
+			@Override public boolean hasNext() {
+				return true;
+			}
+
+			@Override public boolean hasPrevious() {
+				return false;
+			}
+
+			@Override public Pageable nextPageable() {
+				return null;
+			}
+
+			@Override public Pageable previousPageable() {
+				return null;
+			}
+
+			@Override public Iterator<ProjectUserJoin> iterator() {
+				return null;
+			}
+		};
+	}
+
+	public Page<Project> getProjectPage() {
+		return new Page<Project>() {
+			@Override public int getTotalPages() {
+				return 2;
+			}
+
+			@Override public long getTotalElements() {
+				return 100;
+			}
+
+			@Override public int getNumber() {
+				return 50;
+			}
+
+			@Override public int getSize() {
+				return 10;
+			}
+
+			@Override public int getNumberOfElements() {
+				return 100;
+			}
+
+			@Override public List<Project> getContent() {
+				List<Project> list = new ArrayList<>();
+				for(int i = 0; i<10; i++) {
+					list.add(new Project("project-" + i));
+				}
+				return list;
+			}
+
+			@Override public boolean hasContent() {
+				return true;
+			}
+
+			@Override public Sort getSort() {
+				return null;
+			}
+
+			@Override public boolean isFirst() {
 				return false;
 			}
 
@@ -379,7 +456,7 @@ public class ProjectsControllerTest {
 				return null;
 			}
 
-			@Override public Iterator<ProjectUserJoin> iterator() {
+			@Override public Iterator<Project> iterator() {
 				return null;
 			}
 		};
