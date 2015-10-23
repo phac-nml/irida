@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -60,7 +59,6 @@ import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
@@ -367,14 +365,14 @@ public class ProjectsController {
 
 	/**
 	 * User mapping to get a list of all project they are on.
-	 * 
+	 *
 	 * @param principal
 	 *            {@link Principal} currently logged in user.
 	 * @return {@link List} of project {@link Map}
 	 */
 	@RequestMapping("/projects/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Project> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias, final Principal principal) {
+	public DatatablesResponse<Map<String, Object>> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias, final Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 
 		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
@@ -387,11 +385,11 @@ public class ProjectsController {
 
 		Page<ProjectUserJoin> page = projectService
 				.searchProjectUsers(specification, currentPage, criterias.getLength(), sortDirection);
-		List<Project> projects = new ArrayList<>();
+		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
 		for (ProjectUserJoin join : page) {
-			projects.add(join.getSubject());
+			projects.add(createProjectMap(join.getSubject()));
 		}
-		DataSet<Project> dataSet = new DataSet<>(projects, page.getTotalElements(), page.getTotalElements());
+		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(), page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 
@@ -402,7 +400,7 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Project> getAjaxAdminProjectsList(@DatatablesParams DatatablesCriterias criterias) {
+	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(@DatatablesParams DatatablesCriterias criterias) {
 
 		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
 		Specification<Project> specification = ProjectSpecification.searchProjects(searchMap);
@@ -412,69 +410,12 @@ public class ProjectsController {
 
 		Page<Project> page = projectService
 				.search(specification, currentPage, criterias.getLength(), sortDirection);
-		DataSet<Project> dataSet = new DataSet<>(page.getContent(), page.getTotalElements(), page.getTotalElements());
+		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
+		for (Project project : page) {
+			projects.add(createProjectMap(project));
+		}
+		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(), page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
-	}
-
-	/**
-	 * Generates a map of project information for the projects table
-	 * 
-	 * @param projectList
-	 *            {@link List} of {@link ProjectUserJoin}
-	 * @return A list of information about a project.
-	 */
-	public List<Map<String, Object>> getProjectsDataMap(List<Join<Project, User>> projectList) {
-		// Create the format required by DataTable
-		List<Map<String, Object>> projectsData = new ArrayList<>(projectList.size());
-		for (Join<Project, User> join : projectList) {
-			Project p = join.getSubject();
-			String role = ((ProjectUserJoin) join).getProjectRole() != null ? ((ProjectUserJoin) join).getProjectRole()
-					.toString() : "";
-			projectsData.add(createProjectDetailsMap(p, role));
-		}
-		return projectsData;
-	}
-
-	/**
-	 * Generates a map of projects for an admin user.
-	 * 
-	 * @param user
-	 *            {@link User} currently logged in user.
-	 * @param projects
-	 *            {@link List} of {@link Project}
-	 * @return {@link List} of {@link Map} of project data.
-	 */
-	private List<Map<String, Object>> generateAdminProjectMap(User user, List<Project> projects) {
-		List<Map<String, Object>> result = new ArrayList<>(projects.size());
-		for (Project project : projects) {
-			String role = projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER) ? ProjectRole.PROJECT_OWNER
-					.toString()
-					: projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_USER) ? ProjectRole.PROJECT_USER
-							.toString() : "PROJECT_NONE";
-			result.add(createProjectDetailsMap(project, role));
-		}
-		return result;
-	}
-
-	/**
-	 * Generates a map of the project data. This is required for specific fields
-	 * such as 'role', 'samples' and 'members'
-	 *
-	 * @param project
-	 *            {@link Project}
-	 * @param role
-	 *            {@link String} user's role on the project.
-	 *
-	 * @return
-	 */
-	private Map<String, Object> createProjectDetailsMap(Project project, String role) {
-		Map<String, Object> map = new HashMap<>();
-		map.put("item", project);
-		map.put("link", "projects/" + project.getId());
-		map.put("custom", ImmutableMap.of("samples",
-				String.valueOf(sampleService.getNumberOfSamplesForProject(project)), "members",
-				String.valueOf(userService.countUsersForProject(project)), "role", role));
-		return map;
 	}
 
 	/**
@@ -535,5 +476,18 @@ public class ProjectsController {
 		}
 
 		return current;
+	}
+
+	public Map<String, Object> createProjectMap(Project project) {
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("identifier", project.getId());
+		map.put("name", project.getName());
+		map.put("organism", project.getOrganism());
+		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
+		map.put("createdDate", project.getCreatedDate());
+		map.put("modifiedDate", project.getModifiedDate());
+
+		return map;
 	}
 }
