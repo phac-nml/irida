@@ -325,6 +325,7 @@ public class ProjectsControllerTest {
 
 		ColumnDef def = new ColumnDef();
 		def.setSortDirection(ColumnDef.SortDirection.ASC);
+		def.setName("name");
 		list.add(def);
 
 		return list;
