@@ -14,34 +14,30 @@
 		<h1 th:text="#{projects.title}"></h1>
 
 		<div dt:conf="projectsTable">
+            <div dt:confType="callback" dt:type="init" dt:function="datatables-utils#datatable.tableDrawn"></div>
 			<div dt:confType="extrahtml" dt:uid="0">
 				<button class="btn btn-sm btn-default pull-right" data-toggle="modal" data-target="#filterModal">Advanced
 					Filter
 				</button>
 			</div>
-		</div>
-		<table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}">
-			<thead>
-			<tr role="row">
-				<th dt:property="item.identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
-				<th width="200px" dt:property="item.name"
-				    dt:renderFunction="projects#projectsTable.createItemButton">
-					<span class="header-name" th:text="#{projects.table.name}"></span>
-				</th>
-				<th dt:property="item.organism" th:text="#{projects.table.organism}"
-				    dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
-				<th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
-				<th dt:property="custom.members" dt:searchable="false" th:text="#{projects.table.members}"></th>
-				<th width="150px" dt:property="item.createdDate" dt:sortType="natural"
-				    th:text="#{projects.table.created}"
-				    dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-				<th width="150px" dt:property="item.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc"
-				    th:text="#{projects.table.modified}"
-				    dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-			</tr>
-			</thead>
-		</table>
-	</main>
+        </div>
+        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="header">
+            <thead>
+            <tr role="row">
+                <th dt:property="identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
+                <th dt:property="name" width="200px" dt:filterable="true" dt:renderFunction="projects#projectsTable.createItemButton"
+                	><span class="header-name" th:text="#{projects.table.name}"></span></th>
+                <th dt:filterable="true" dt:property="organism" th:text="#{projects.table.organism}"
+                    dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
+                <th dt:property="samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
+                <th width="150px" dt:property="createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
+                    dt:renderFunction="datatables-utils#datatable.formatDate"></th>
+                <th width="150px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
+                    dt:renderFunction="datatables-utils#datatable.formatDate"></th>
+            </tr>
+            </thead>
+        </table>
+    </main>
 </div>
 <th:block layout:fragment="page-scripts" th:inline="javascript">
 	<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="#filterTitle">
