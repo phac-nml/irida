@@ -387,17 +387,10 @@ public class ProjectsController {
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
 
-		Page<ProjectUserJoin> page;
-		if (searchString != null) {
-			page = projectService
+		Page<ProjectUserJoin> page = projectService
 					.searchProjectUsers(specification, currentPage, criterias.getLength(),
 							(Sort.Direction) sortProperties.get(ProjectsDatatableUtils.SORT_DIRECTION),
 							"project." +  sortProperties.get(ProjectsDatatableUtils.SORT_STRING));
-		} else {
-			page = projectService
-					.searchProjectUsers(specification, currentPage, criterias.getLength(),
-							(Sort.Direction) sortProperties.get(ProjectsDatatableUtils.SORT_DIRECTION));
-		}
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
 		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join.getSubject()))
 				.collect(Collectors.toList()));
