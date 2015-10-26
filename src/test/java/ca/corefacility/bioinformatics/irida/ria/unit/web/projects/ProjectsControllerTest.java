@@ -7,6 +7,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -93,14 +94,15 @@ public class ProjectsControllerTest {
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxProjectList() {
 		Principal principal = () -> USER_NAME;
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 
 		Page<ProjectUserJoin> page = getProjectUserJoinPage(user);
- 		when(projectService.searchProjectUsers(any(Specification.class), any(Integer.class), any(Integer.class), any(
-			    Sort.Direction.class))).thenReturn(page);
+		when(projectService.searchProjectUsers(any(Specification.class), any(Integer.class), any(Integer.class), any(
+				Sort.Direction.class), anyVararg())).thenReturn(page);
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
 
 		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
@@ -112,12 +114,11 @@ public class ProjectsControllerTest {
 		testGetAnyAjaxProjectListResult(result.getData(), 10);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxAdminProjectsList() {
-
-		Page<Project> page = getProjectPage();
 		when(projectService.search(any(Specification.class), any(Integer.class), any(Integer.class), any(
-				Sort.Direction.class))).thenReturn(page);
+				Sort.Direction.class), anyVararg())).thenReturn(getProjectPage());
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
 
 		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
@@ -398,7 +399,7 @@ public class ProjectsControllerTest {
 	public Page<Project> getProjectPage() {
 		return new Page<Project>() {
 			@Override public int getTotalPages() {
-				return 2;
+				return 10;
 			}
 
 			@Override public long getTotalElements() {
@@ -406,7 +407,7 @@ public class ProjectsControllerTest {
 			}
 
 			@Override public int getNumber() {
-				return 50;
+				return 10;
 			}
 
 			@Override public int getSize() {
