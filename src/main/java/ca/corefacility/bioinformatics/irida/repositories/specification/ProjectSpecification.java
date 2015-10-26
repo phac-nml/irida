@@ -71,4 +71,15 @@ public class ProjectSpecification {
 			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};
 	}
+
+	public static Specification<Project> searchProjectsAllFields(String term) {
+		return (root, query, cb) -> {
+			ArrayList<Predicate> predicates = new ArrayList<>();
+
+			predicates.add(cb.like(root.get("name"), "%" + term + "%"));
+			predicates.add(cb.like(root.get("organism"), "%" + term + "%"));
+
+			return cb.or(predicates.toArray(new Predicate[predicates.size()]));
+		};
+	}
 }
