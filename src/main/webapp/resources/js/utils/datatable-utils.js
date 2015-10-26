@@ -58,7 +58,6 @@ var datatable = (function(moment, tl, page) {
    */
   function tableDrawn() {
     updateFilters();
-    resizeTable();
   }
 
   /**
@@ -85,29 +84,9 @@ var datatable = (function(moment, tl, page) {
     }
   }
 
-  /**
-   * Resizes the datatable to be full screen.
-   */
-  function resizeTable() {
-    var h = window.innerHeight,
-      scrollBody = document.getElementsByClassName('dataTables_scrollBody')[0],
-      scrollBodyClientRect = scrollBody.getBoundingClientRect(),
-      table = scrollBody.getElementsByTagName('table')[0],
-      tableClientRect = table.getBoundingClientRect();
-    if (tableClientRect.bottom > h) {
-      scrollBody.style.height = h - scrollBodyClientRect.top - 120 + 'px';
-    } else {
-      // + 1 to prevent the scrollbar from appearing
-      scrollBody.style.height = tableClientRect.bottom - scrollBodyClientRect.top + 1 + 'px';
-    }
-  }
-
-  window.onresize = resizeTable;
-
   return {
     formatDate: formatDate,
     i18n: i18n,
-    createItemButton: createItemButton,
     forceContentSize: forceContentSize,
     tableDrawn: tableDrawn
   };
