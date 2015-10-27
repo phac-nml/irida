@@ -44,15 +44,6 @@ img.gravatar {
 body {
   padding-bottom: 50px;}
 
-a {
-  text-decoration: none;
-  border-bottom: 1px #222 dotted;
-
-  &:hover {
-    border-bottom: none;
-  }
-}
-
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
 .clickable {
