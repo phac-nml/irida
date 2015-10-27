@@ -57,6 +57,12 @@ public class ProjectSpecification {
 		};
 	}
 
+	/**
+	 * Search for projects based on submitted criteria
+	 *
+	 * @param searchMap {@link Map} of values to filter by.
+	 * @return A {@link Specification<Project>} 
+	 */
 	public static Specification<Project> searchProjects(Map<String, String> searchMap) {
 		return (root, query, cb) -> {
 			ArrayList<Predicate> predicates = new ArrayList<>();
