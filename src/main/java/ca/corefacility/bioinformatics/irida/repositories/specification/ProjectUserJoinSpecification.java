@@ -83,6 +83,16 @@ public class ProjectUserJoinSpecification {
 		};
 	}
 
+	/**
+	 * Search for projects belonging to a specific user based on search criteria.
+	 *
+	 * @param user
+	 * 		{@link User} User to get the projects for.
+	 * @param searchMap
+	 * 		{@link Map} of search criteria.
+	 *
+	 * @return {@link Specification<ProjectUserJoin}
+     */
 	public static Specification<ProjectUserJoin> getPagedProjectsForUser(User user, Map<String, String> searchMap) {
 		return (root, query, cb) -> {
 			ArrayList<Predicate> predicates = new ArrayList<>();
