@@ -1,13 +1,5 @@
 /*exported projectsTable*/
 var projectsTable = (function (tl) {
-  function getFilterParams() {
-    return {
-      data: {
-        name: $('#nameFilter').val()
-      }
-    };
-  }
-
   /**
    * Create a link button to the IRIDA thing
    *
@@ -25,13 +17,13 @@ var projectsTable = (function (tl) {
   }
 
   return {
-    createItemButton: createItemButton,
-    getFilterParams: getFilterParams
+    createItemButton: createItemButton
   };
 })(window.TL);
 
 (function ($) {
-  $('#filterProjectsBtn').on('click', function () {
+  $('#filterForm').on('submit', function (e) {
+    document.getElementById('filterProjectsBtn').click();
     oTable_projectsTable.ajax.reload();
   });
 })(window.jQuery);

@@ -54,13 +54,13 @@
 						<div class="form-group">
 							<label th:text="#{projects.table.name}"></label>
 
-							<input type="text" id="nameFilter" class="form-control"/>
+							<input type="text" id="nameFilter" name="name" class="form-control"/>
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}"></button>
-					<button id="filterProjectsBtn" type="button" class="btn btn-primary" data-dismiss="modal">Filter Projects</button>
+					<button id="filterProjectsBtn" type="submit" class="btn btn-primary" data-dismiss="modal">Filter Projects</button>
 				</div>
 			</div>
 		</div>
