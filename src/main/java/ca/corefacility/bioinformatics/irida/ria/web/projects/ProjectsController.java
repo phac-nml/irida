@@ -484,6 +484,14 @@ public class ProjectsController {
 		return current;
 	}
 
+	/**
+	 * Extract the details of the a {@link Project} into a {@link Map} which is consumable by the UI
+	 *
+	 * @param project
+	 * 		{@link Project}
+	 *
+	 * @return {@link Map<String, String>}
+	 */
 	public Map<String, Object> createProjectMap(Project project) {
 		Map<String, Object> map = new HashMap<>();
 
