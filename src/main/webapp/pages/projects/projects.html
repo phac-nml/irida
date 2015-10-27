@@ -14,18 +14,17 @@
 		<h1 th:text="#{projects.title}"></h1>
 
 		<div dt:conf="projectsTable">
-            <div dt:confType="callback" dt:type="init" dt:function="datatables-utils#datatable.tableDrawn"></div>
 			<div dt:confType="extrahtml" dt:uid="0">
 				<button class="btn btn-sm btn-default pull-right" data-toggle="modal" data-target="#filterModal">Advanced
 					Filter
 				</button>
 			</div>
         </div>
-        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}">
+        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none" dt:filterSelector="#filterProjectsBtn" dt:serverparams="projectsTable#getFilterParams">
             <thead>
             <tr role="row">
                 <th dt:property="identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
-                <th dt:property="name" width="200px" dt:renderFunction="projects#projectsTable.createItemButton"
+                <th dt:property="name" dt:filterable="true" dt:selector="nameFilterDiv" width="200px" dt:renderFunction="projects#projectsTable.createItemButton"
                 	><span class="header-name" th:text="#{projects.table.name}"></span></th>
                 <th dt:property="organism" th:text="#{projects.table.organism}"
                     dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
@@ -50,10 +49,10 @@
 					<h4 class="modal-title" id="filterTitle">_Advanced Projects Filter</h4>
 				</div>
 				<div class="modal-body">
-					<form name="filterForm">
+					<form id="filterForm" name="filterForm">
 						<div class="form-group">
-							<label for="nameFilter" th:text="#{projects.table.name}"></label>
-							<input type="text" class="form-control" id="nameFilter" name="name" />
+							<label th:text="#{projects.table.name}"></label>
+							<div id="nameFilterDiv"></div>
 						</div>
 					</form>
 				</div>

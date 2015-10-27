@@ -1,8 +1,7 @@
 /*exported projectsTable*/
 var projectsTable = (function (tl) {
-
-  function filter(filters) {
-    
+  function getFilterParams(aoData) {
+    console.log('filltklejrlkjasdfklj');
   }
 
   /**
@@ -22,17 +21,10 @@ var projectsTable = (function (tl) {
   }
 
   return {
-    createItemButton: createItemButton
+    createItemButton: createItemButton,
+    getFilterParams: getFilterParams
   };
 })(window.TL);
 
 (function ($) {
-  $('#filterProjectsBtn').on('click', function () {
-    var nameField = filterForm.name.value;
-
-    if (nameField !== null || nameField !== '') {
-
-    }
-
-  });
 })(window.jQuery);

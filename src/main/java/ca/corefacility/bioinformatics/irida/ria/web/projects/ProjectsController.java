@@ -407,8 +407,8 @@ public class ProjectsController {
 	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
-			@DatatablesParams DatatablesCriterias criterias) {
-
+			@DatatablesParams DatatablesCriterias criterias, @RequestParam(required = false) String name) {
+logger.debug("Name: " + name);
 		Specification<Project> specification;
 		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
 			specification = ProjectSpecification.searchProjectsAllFields(criterias.getSearch());
