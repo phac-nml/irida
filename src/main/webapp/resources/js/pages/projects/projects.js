@@ -1,7 +1,11 @@
 /*exported projectsTable*/
 var projectsTable = (function (tl) {
-  function getFilterParams(aoData) {
-    console.log('filltklejrlkjasdfklj');
+  function getFilterParams() {
+    return {
+      data: {
+        name: $('#nameFilter').val()
+      }
+    };
   }
 
   /**
@@ -27,4 +31,7 @@ var projectsTable = (function (tl) {
 })(window.TL);
 
 (function ($) {
+  $('#filterProjectsBtn').on('click', function () {
+    oTable_projectsTable.ajax.reload();
+  });
 })(window.jQuery);
