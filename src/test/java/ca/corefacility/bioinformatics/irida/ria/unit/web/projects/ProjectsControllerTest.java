@@ -127,7 +127,7 @@ public class ProjectsControllerTest {
 		when(criterias.getLength()).thenReturn(10);
 
 
-		DatatablesResponse<Map<String, Object>> result = controller.getAjaxAdminProjectsList(criterias, null);
+		DatatablesResponse<Map<String, Object>> result = controller.getAjaxAdminProjectsList(criterias);
 
 		testGetAnyAjaxProjectListResult(result.getData(), 10);
 	}

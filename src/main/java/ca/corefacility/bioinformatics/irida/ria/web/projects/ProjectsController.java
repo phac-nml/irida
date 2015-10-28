@@ -49,7 +49,6 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUs
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsFilter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -408,7 +407,7 @@ public class ProjectsController {
 	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
-			@DatatablesParams DatatablesCriterias criterias, ProjectsFilter filter) {
+			@DatatablesParams DatatablesCriterias criterias) {
 		Specification<Project> specification;
 		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
 			specification = ProjectSpecification.searchProjectsAllFields(criterias.getSearch());
