@@ -1,27 +1,19 @@
 {
+  "dependencies": [
+    "jquery",
+    "datatables-utils"
+  ],
   "assets": [
     {
-      "type": "css",
-      "locations": {
-        "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.css"
-      }
-    },
-    {
-      "type": "css",
-      "locations": {
-        "webapp": "/resources/bower_components/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css"
-      }
-    },
-    {
       "type": "js",
       "locations": {
-        "webapp": "/resources/bower_components/datatables/media/js/jquery.dataTables.js"
+        "webapp": "/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"
       }
     },
     {
-      "type": "js",
+      "type": "css",
       "locations": {
-        "webapp": "/resources/bower_components/datatables-bootstrap3-plugin/media/js/datatables-bootstrap3.js"
+        "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"
       }
     }
   ]
