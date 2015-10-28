@@ -15,10 +15,10 @@ public class ProjectsDatatableUtils extends DatatablesUtils  {
 	public static final int ORGANISM_COLUMN = 2;
 
 	/**
-	 * Generate a {@link Map<String, String>} of search criteria.
+	 * Generate a {@link Map} of search criteria.
 	 *
-	 * @param columnDefs {@link List<ColumnDef>} {@link DatatablesParams} list of column definitions
-	 * @return {@link Map<String, String>} of search criteria
+	 * @param columnDefs {@link List} {@link DatatablesParams} list of column definitions
+	 * @return {@link Map} of search criteria
 	 */
 	public static HashMap<String, String> generateSearchMap(List<ColumnDef> columnDefs) {
 		HashMap<String, String> searchMap = new HashMap<>();
