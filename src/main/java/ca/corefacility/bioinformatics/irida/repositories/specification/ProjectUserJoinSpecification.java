@@ -91,7 +91,7 @@ public class ProjectUserJoinSpecification {
 	 * @param searchMap
 	 * 		{@link Map} of search criteria.
 	 *
-	 * @return {@link Specification<ProjectUserJoin}
+	 * @return {@link Specification}
      */
 	public static Specification<ProjectUserJoin> getPagedProjectsForUser(User user, Map<String, String> searchMap) {
 		return (root, query, cb) -> {
