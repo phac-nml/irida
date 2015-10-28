@@ -16,9 +16,12 @@
 		<div dt:conf="projectsTable">
 			<div dt:confType="extrajs" dt:bundles="projects-table" dt:placeholder="before_end_document_ready" />
 			<div dt:confType="extrahtml" dt:uid="0">
-				<button class="btn btn-sm btn-default pull-right" data-toggle="modal" data-target="#filterModal">Advanced
-					Filter
-				</button>
+				<div class="btn-toolbar pull-right">
+					<button class="btn btn-sm btn-default" data-toggle="modal" data-target="#filterModal">
+						Advanced Filter
+					</button>
+					<button id="clearFilterBtn" class="btn btn-sm btn-inverse">Clear</button>
+				</div>
 			</div>
         </div>
         <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none">
@@ -40,7 +43,7 @@
     </main>
 </div>
 <th:block layout:fragment="page-scripts" th:inline="javascript">
-	<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="#filterTitle">
+	<div class="modal fade" id="filterModal" role="dialog" aria-labelledby="#filterTitle">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -53,13 +56,16 @@
 					<form id="filterForm" name="filterForm">
 						<div class="form-group">
 							<label th:text="#{projects.table.name}"></label>
-
-							<input type="text" id="nameFilter" name="name" class="form-control"/>
+							<input autofocus="autofocus" type="text" id="nameFilter" name="name" class="form-control"/>
+						</div>
+						<div class="form-group">
+							<label th:text="#{projects.table.organism}"></label>
+							<input type="text" id="organismFilter" name="organism" class="form-control"/>
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}"></button>
+					<button tabindex="-1" type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}"></button>
 					<button id="filterProjectsBtn" type="submit" class="btn btn-primary" data-dismiss="modal">Filter Projects</button>
 				</div>
 			</div>

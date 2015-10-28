@@ -21,9 +21,31 @@ var projectsTable = (function (tl) {
   };
 })(window.TL);
 
-(function ($) {
-  $('#filterForm').on('submit', function (e) {
-    document.getElementById('filterProjectsBtn').click();
+(function ($, tl) {
+  var filterBtn = $('#filterProjectsBtn');
+
+  filterBtn.on('click', function () {
     oTable_projectsTable.ajax.reload();
   });
-})(window.jQuery);
+
+  $('#filterForm').on('submit', function (e) {
+    e.preventDefault();
+    filterBtn.click();
+  });
+
+  $("#organismFilter").select2({
+    minimumInputLength: 2,
+    ajax: {
+      url: tl.BASE_URL +  'projects/ajax/taxonomy/search',
+      dataType: 'json',
+      data: function (term) {
+        return {
+          searchTerm: term
+        };
+      },
+      results: function (data) {
+        return {results: data};
+      }
+    }
+  });
+})(window.jQuery, window.TL);
