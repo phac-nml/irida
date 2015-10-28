@@ -22,30 +22,14 @@ var projectsTable = (function (tl) {
 })(window.TL);
 
 (function ($, tl) {
-  var filterBtn = $('#filterProjectsBtn');
+  var $filterBtn = $('#filterProjectsBtn');
 
-  filterBtn.on('click', function () {
+  $filterBtn.on('click', function () {
     oTable_projectsTable.ajax.reload();
   });
 
   $('#filterForm').on('submit', function (e) {
     e.preventDefault();
-    filterBtn.click();
-  });
-
-  $("#organismFilter").select2({
-    minimumInputLength: 2,
-    ajax: {
-      url: tl.BASE_URL +  'projects/ajax/taxonomy/search',
-      dataType: 'json',
-      data: function (term) {
-        return {
-          searchTerm: term
-        };
-      },
-      results: function (data) {
-        return {results: data};
-      }
-    }
+    $filterBtn.click();
   });
 })(window.jQuery, window.TL);

@@ -9,6 +9,7 @@ oTable_projectsTable.on('search.dt', function (e, settings) {
 
 $("#clearFilterBtn").on('click', function () {
   fields.nameFilter.value = "";
-  $("#organismFilter").val(null);
+  fields.organismFilter.value = "";
   $("#projectsTable_filter").find("input[type=search]").val("");
+  oTable_projectsTable.ajax.reload();
 });

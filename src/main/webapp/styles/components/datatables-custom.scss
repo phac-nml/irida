@@ -8,24 +8,14 @@
   font-size: 14px;
 }
 
+.filter-row {
+  margin-bottom: 14px;
+}
+
 table th {
   vertical-align: top !important;
 }
 
 table td {
   padding: 5px 18px!important;
-}
-
-.yadcf-filter-reset-button {
-  display: none !important;
-}
-
-.yadcf-filter-wrapper {
-  display: block !important;
-}
-
-.dataTables_filter {
-  display: inline-block;
-  float: right;
-  margin-right: 1em;
 }
