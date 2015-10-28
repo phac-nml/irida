@@ -58,4 +58,33 @@ public class ProjectsPage extends AbstractPage {
 					return ariaSort!= null && !ariaSort.equals(originalSortOrder);
 				});
 	}
+
+	public void clearFilters() {
+		driver.findElement(By.id("clearFilterBtn")).click();
+		waitForElementInvisible(By.className("projectsTable_processing"));
+	}
+
+	public void filterByName(String name) {
+		openFilters();
+		WebElement input = driver.findElement(By.id("nameFilter"));
+		input.sendKeys(name);
+		submitFilter();
+	}
+
+	public void filterByOrganism(String organism) {
+		openFilters();
+		WebElement input = driver.findElement(By.id("organismFilter"));
+		input.sendKeys(organism);
+		submitFilter();
+	}
+
+	private void openFilters() {
+		WebElement btn = waitForElementVisible(By.id("openFilterModal"));
+		btn.click();
+	}
+
+	private void submitFilter() {
+		driver.findElement(By.id("filterProjectsBtn")).click();
+		waitForElementInvisible(By.className("projectsTable_processing"));
+	}
 }

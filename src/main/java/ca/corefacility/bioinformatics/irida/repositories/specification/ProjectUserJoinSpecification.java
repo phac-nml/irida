@@ -98,10 +98,10 @@ public class ProjectUserJoinSpecification {
 			ArrayList<Predicate> predicates = new ArrayList<>();
 
 			if (searchMap.containsKey("name")) {
-				predicates.add(cb.like(root.get("name"), "%" + searchMap.get("name") + "%"));
+				predicates.add(cb.like(root.get("project").get("name"), "%" + searchMap.get("name") + "%"));
 			}
 			if (searchMap.containsKey("organism")) {
-				predicates.add(cb.like(root.get("organism"), "%" + searchMap.get("organism") + "%"));
+				predicates.add(cb.like(root.get("project").get("organism"), "%" + searchMap.get("organism") + "%"));
 			}
 
 			predicates.add(cb.equal(root.get("user"), user));
