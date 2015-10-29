@@ -1,17 +1,9 @@
 {
-  "bundle": "projects",
-  "dependencies": [
-    "momentjs",
-    "yadcf",
-    "natural"
-  ],
   "assets": [
     {
-      "name": "projects",
-      "version": "0.0.1",
-      "type": "css",
+      "type": "js",
       "locations": {
-        "webapp": "/resources/css/pages/projects.css"
+        "webapp": "/resources/js/pages/projects/projects.js"
       }
     }
   ]

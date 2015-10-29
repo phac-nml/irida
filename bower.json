@@ -37,6 +37,7 @@
     "angular-marked": "0.0.18",
     "angular-gravatar": "~0.4.0",
     "animate.css": "3.4.0",
+    "angular-sanitize": "1.4.0",
     "angular-bootstrap": "0.13.4"
   },
   "devDependencies": {},

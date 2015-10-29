@@ -10,42 +10,42 @@ These created variables are then used as parameters to a message so that they
 can be internationalized.
 */-->
 
-<span th:fragment="user-role-event (event)">  
-    <fa:icon type="user" fixed="" />
-    <span class="event-content user-role-event"
+<th:block class="event-text" th:fragment="user-role-event (event)">
+    <div class="event-icon"><img class="gravatar" data:gravatar-src-once="'\'' + ${event.user.email} + '\''" gravatar-size="28" /></div>
+    <div class="event-content user-role-event"
         th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
-        userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt;'},
+        userLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
         projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-        projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}" 
-        th:utext="#{event.user_added(${userLink},#{'projectRole.'+${event.role}},${projectLink})}"></span>
-</span>
+        projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt; '}">
+        <span th:utext="#{event.user_added(${userLink},#{'projectRole.'+${event.role}},${projectLink})}"></span></div>
+</th:block>
 
-<span th:fragment="user-removed-event (event)">
-    <fa:icon type="ban" fixed=""/>
-    <span class="event-content user-removed-event" 
+<th:block class="event-text" th:fragment="user-removed-event (event)">
+    <div class="event-icon"><img class="gravatar" data:gravatar-src-once="'\'' + ${event.user.email} + '\''" gravatar-size="28" /></div>
+    <div class="event-content user-removed-event"
             th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
-            userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
+            userLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
             projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-            projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}" 
-            th:utext="#{event.user_removed(${userLink},${projectLink})}"></span>
-</span>
+            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt; '}"
+            th:utext="#{event.user_removed(${userLink},${projectLink})}"></div>
+</th:block>
 
-<span th:fragment="sample-added-event (event)">
-    <fa:icon type="sample" fixed=""/>
-    <span class="event-content sample-added-event"
-            th:with="sampleHref=@{/projects/{pid}/samples/{sid}(sid=${event.sample.getId()}, pid=${event.project.getId()})},
-            sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
+<th:block class="event-text" th:fragment="sample-added-event (event)">
+    <div class="event-icon"><fa:icon type="sample" /></div>
+    <div class="event-content sample-added-event"
+            th:with="sampleHref=@{/projects/{pid}/samples/{sid}/sequenceFiles(sid=${event.sample.getId()}, pid=${event.project.getId()})},
+            sampleLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt; '},
             projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-            projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
-            th:utext="#{event.sample_added(${sampleLink},${projectLink})}"></span>
-</span>
+            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt; '}">
+            <span th:utext="#{event.sample_added(${sampleLink},${projectLink})}"></span></div>
+</th:block>
 
-<span th:fragment="data-added-event (event)">
-    <fa:icon type="file" fixed=""/>
-    <span class="event-content data-added-event"
-            th:with="sampleHref=@{/projects/{pid}/samples/{sid}(sid=${event.sample.getId()}, pid=${event.project.getId()})},
-            sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
+<th:block class="event-text" th:fragment="data-added-event (event)">
+    <div class="event-icon"><fa:icon type="file" /></div>
+    <div class="event-content data-added-event"
+            th:with="sampleHref=@{/projects/{pid}/samples/{sid}/sequenceFiles(sid=${event.sample.getId()}, pid=${event.project.getId()})},
+            sampleLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt; '},
             projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
-            projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
-            th:utext="#{event.data_added(${sampleLink},${projectLink})}"></span>
-</span>
+            projectLink=${'&lt;a class=&quot;btn btn-default btn-xs&quot; href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt; '}">
+            <span th:utext="#{event.data_added(${sampleLink},${projectLink})}"></span></div>
+</th:block>

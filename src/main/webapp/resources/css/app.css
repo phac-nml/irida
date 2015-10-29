@@ -5681,9 +5681,6 @@ input {
 .description-detail {
   color: #232323; }
 
-.event-count {
-  margin-bottom: 1rem; }
-
 .image-link {
   cursor: -webkit-zoom-in;
   cursor: -moz-zoom-in;
@@ -5758,8 +5755,11 @@ iframe.remote-api-frame {
 
 .nav-gravatar {
   padding: 11px 5px !important; }
-  .nav-gravatar img {
-    border-radius: 50%; }
+
+img.gravatar {
+  border-radius: 50%;
+  width: 30px;
+  padding: 0 auto; }
 
 body {
   padding-bottom: 50px; }

@@ -42,6 +42,6 @@ public class SampleEditPage extends AbstractPage {
 	}
 
 	public void submitForm() {
-		driver.findElement(By.id("submitBtn")).click();
+		clickElement(By.id("submitBtn"));
 	}
 }

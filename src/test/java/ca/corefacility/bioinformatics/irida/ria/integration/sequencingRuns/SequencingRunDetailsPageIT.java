@@ -1,19 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.sequencingRuns;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns.SequencingRunDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns.SequencingRunsListPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/sequencingRuns/SequencingRunsPagesIT.xml")
 public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
@@ -43,6 +41,6 @@ public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	public void testDeleteRun(){
 		page.deleteRun();
 		SequencingRunsListPage listPage = new SequencingRunsListPage(driver());
-		assertFalse("run should have been deleted", listPage.getDisplayedIds().contains(1L));
+		assertFalse("run should have been deleted", listPage.idDisplayIdInList("1"));
 	}
 }
