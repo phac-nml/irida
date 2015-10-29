@@ -490,7 +490,7 @@ public class ProjectsController {
 	 * @param project
 	 * 		{@link Project}
 	 *
-	 * @return {@link Map<String, String>}
+	 * @return {@link Map}
 	 */
 	public Map<String, Object> createProjectMap(Project project) {
 		Map<String, Object> map = new HashMap<>();
