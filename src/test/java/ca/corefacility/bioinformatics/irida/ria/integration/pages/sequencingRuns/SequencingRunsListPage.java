@@ -22,7 +22,6 @@ public class SequencingRunsListPage extends AbstractPage {
 
 	public SequencingRunsListPage(WebDriver driver) {
 		super(driver);
-		waitForElementVisible(By.className("run-row"));
 	}
 
 	public void goTo() {
