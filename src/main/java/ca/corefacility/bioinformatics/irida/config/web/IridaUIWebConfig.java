@@ -209,9 +209,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	/**
-	 * {@inheritDoc} <p>This implementation is empty.
-	 *
-	 * @param argumentResolvers
+	 * {@inheritDoc}
 	 */
 	@Override public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(new DatatablesCriteriasMethodArgumentResolver());
