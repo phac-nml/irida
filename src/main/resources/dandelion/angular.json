@@ -32,6 +32,14 @@
       "locations": {
         "webapp": "/resources/bower_components/angular-messages/angular-messages.js"
       }
+    },
+    {
+      "name": "angular-sanitize",
+      "version": "1.4.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-sanitize/angular-sanitize.min.js"
+      }
     }
   ]
 }
