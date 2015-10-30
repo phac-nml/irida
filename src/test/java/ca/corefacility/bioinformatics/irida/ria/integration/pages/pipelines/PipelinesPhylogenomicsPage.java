@@ -3,8 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -13,6 +16,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  *
  */
 public class PipelinesPhylogenomicsPage extends AbstractPage {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPage.class);
 	public PipelinesPhylogenomicsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -61,7 +66,15 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	}
 
 	public void clickLaunchPipelineBtn() {
-		driver.findElement(By.id("btn-launch")).click();
+		boolean clicked = false;
+		do{
+			try {
+				driver.findElement(By.id("btn-launch")).click();
+				clicked = true;
+			} catch (final StaleElementReferenceException ex) {
+				logger.debug("Got stale element reference exception when clicking launch pipeline, trying again.");
+			}
+		} while (!clicked);
 	}
 
 	public void clickPipelineParametersBtn() {

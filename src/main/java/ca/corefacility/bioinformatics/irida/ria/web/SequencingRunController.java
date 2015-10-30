@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -22,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for displaying and interacting with {@link SequencingRun} objects
@@ -70,8 +73,10 @@ public class SequencingRunController {
 	/**
 	 * Get the sequencing run display page
 	 * 
-	 * @param runId the ID of the run to view.
-	 * @param model the model in the current request.
+	 * @param runId
+	 *            the ID of the run to view.
+	 * @param model
+	 *            the model in the current request.
 	 * @return the name of the details view for sequencing run.
 	 */
 	@RequestMapping("/{runId}")
@@ -83,10 +88,27 @@ public class SequencingRunController {
 	}
 
 	/**
+	 * Delete the {@link SequencingRun} with the given ID
+	 * 
+	 * @param runId
+	 *            the run id to delete
+	 * @return redirect to runs list
+	 */
+	@RequestMapping(value = "/{runId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Map<String, String> deleteSequencingRun(@PathVariable Long runId) {
+		sequencingRunService.delete(runId);
+		return ImmutableMap.of("success", "true");
+
+	}
+
+	/**
 	 * Get the sequencing run display page
 	 * 
-	 * @param runId the ID of the run to view.
-	 * @param model the model in the current request.
+	 * @param runId
+	 *            the ID of the run to view.
+	 * @param model
+	 *            the model in the current request.
 	 * @return the name of the files view for sequencing run.
 	 */
 	@RequestMapping("/{runId}/sequenceFiles")
@@ -107,7 +129,7 @@ public class SequencingRunController {
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<Map<String, Object>>  getSequencingRuns(Locale locale) {
+	public List<Map<String, Object>> getSequencingRuns(Locale locale) {
 		List<Map<String, Object>> list = new ArrayList<>();
 		for (SequencingRun run : sequencingRunService.findAll()) {
 			Map<String, Object> runMap = new HashMap<>();
@@ -116,7 +138,7 @@ public class SequencingRunController {
 			runMap.put("sequencerType", run.getSequencerType());
 			runMap.put("uploadStatus", messageSource.getMessage(UPLOAD_STATUS_MESSAGE_BASE
 					+ run.getUploadStatus().toString(), null, locale));
-			
+
 			list.add(runMap);
 		}
 		return list;

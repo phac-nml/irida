@@ -1,6 +1,5 @@
 {
-  "bundle": "analyses",
-  "dependencies" : [],
+  "dependencies" : ["ng-table"],
   "assets": [
     {
       "name": "analyses-css",

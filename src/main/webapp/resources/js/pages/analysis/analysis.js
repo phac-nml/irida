@@ -123,7 +123,7 @@
       $stateProvider
         .state("preview", {
           url        : "/preview",
-          templateUrl: isLinux ? "preview-linux.html" : "preview.html"
+          templateUrl: "preview.html"
         })
         .state("inputs", {
           url        : "/inputs",

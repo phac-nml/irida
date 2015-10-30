@@ -1,19 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
+import com.google.common.collect.Ordering;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
-
-import com.google.common.collect.Ordering;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -59,7 +62,7 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public int getGetSelectedPageNumber() {
-		return Integer.parseInt(driver.findElement(By.cssSelector(".pagination li.active")).getText());
+		return Integer.parseInt(driver.findElement(By.cssSelector(".pagination > .active > a")).getText());
 	}
 
 	public void selectPage(int pageNum) {
@@ -74,40 +77,61 @@ public class ProjectSamplesPage extends AbstractPage {
 		}
 		// Since paging has an offset of 1
 		pageNum--;
-		links.get(pageNum).click();
+		clickAndWait(links.get(pageNum));
+	}
+	
+
+	/**
+	 * Convenience method to make sure that we wait until something has finished
+	 * happening after clicking before proceeding to the next step.
+	 * 
+	 * @param el
+	 *            the element to click.
+	 */
+	public void clickAndWait(final WebElement el) {
+		el.click();
+
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver input) {
+				return !el.getAttribute("class").contains("active");
+			}
+		});
+	}
+	
+	private void clickNavigationButton(final String buttonText) {
+		final WebElement currentlyActive = driver.findElement(By.cssSelector(".pagination-page.active"));
+		final List<WebElement> navigationButtons = driver.findElements(By.cssSelector(".pagination li a"));
+		
+		for (final WebElement el : navigationButtons) {
+			if (el.getText().equals(buttonText)) {
+				el.click();
+				break;
+			}
+		}
+		
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver input) {
+				return !currentlyActive.getAttribute("class").contains("active");
+			}
+		});
 	}
 
 	public void clickPreviousPageButton() {
-		driver.findElements(By.cssSelector(".pagination li>a")).get(1).click();
+		clickNavigationButton("Previous");
 	}
-
+	
 	public void clickFirstPageButton() {
-		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li a"));
-		if (links.get(0).getText().equals("First")) {
-			links.get(0).click();
-		}
-		// Remove directions links if there are any
-		else {
-			int count = 0;
-			for (WebElement link : links) {
-				count++;
-				if (link.getText().equals("1")) {
-					break;
-				}
-			}
-			links.get(count).click();
-		}
+		clickNavigationButton("First");
 	}
 
 	public void clickNextPageButton() {
-		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
-		links.get(links.size() - 2).click();
+		clickNavigationButton("Next");
 	}
 
 	public void clickLastPageButton() {
-		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
-		links.get(links.size() - 1).click();
-		waitForTime(700);
+		clickNavigationButton("Last");
 	}
 
 	public boolean isPreviousButtonEnabled() {
@@ -231,7 +255,7 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public void sortTableByCreatedDate() {
-		driver.findElement(By.id("sortCreatedDate")).click();
+		driver.findElement(By.cssSelector("#sortCreatedDate a")).click();
 	}
 
 	public boolean isTableSortedAscByCreationDate() {
@@ -284,15 +308,28 @@ public class ProjectSamplesPage extends AbstractPage {
 	public void filterByName(String name) {
 		WebElement input = driver.findElement(By.id("sample-name-filter"));
 		input.clear();
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until(ExpectedConditions.invisibilityOfElementLocated(By.id("samples-filtered")));
 		input.sendKeys(name);
-		waitForTime(550);
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until(ExpectedConditions.visibilityOfElementLocated(By.id("samples-filtered")));
+	}
+	
+	public void clearFilterByName() {
+		WebElement input = driver.findElement(By.id("sample-name-filter"));
+		input.clear();
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until(ExpectedConditions.invisibilityOfElementLocated(By.id("samples-filtered")));
 	}
 
 	public void filterByOrganism(String organism) {
 		WebElement input = driver.findElement(By.id("sample-organism-filter"));
 		input.clear();
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until(ExpectedConditions.invisibilityOfElementLocated(By.id("samples-filtered")));
 		input.sendKeys(organism);
-		waitForTime(550);
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until(ExpectedConditions.visibilityOfElementLocated(By.id("samples-filtered")));
 	}
 
 	public void selectPageSize(String count) {
@@ -303,6 +340,13 @@ public class ProjectSamplesPage extends AbstractPage {
 				break;
 			}
 		}
+	}
+
+	public void filterByFile() {
+		WebElement uploadBtn = driver.findElement(By.id("fileFilter"));
+		Path path = Paths.get("src/test/resources/files/sampleNamesForFilter.txt");
+		uploadBtn.sendKeys(path.toAbsolutePath().toString());
+		waitForTime(100);
 	}
 
 	// Cart
