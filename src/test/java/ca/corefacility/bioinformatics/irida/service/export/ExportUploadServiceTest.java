@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.service.export;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.mockftpserver.fake.FakeFtpServer;
@@ -17,9 +20,6 @@ import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
@@ -165,7 +165,7 @@ public class ExportUploadServiceTest {
 		submission.setBioSampleFiles(Lists.newArrayList(sample2, sample3));
 		submission.setDirectoryPath("submit/Test/example");
 
-		when(exportSubmissionService.getSubmissionsWithState(any(Collection.class))).thenReturn(
+		when(exportSubmissionService.getSubmissionsWithState(any(Set.class))).thenReturn(
 				Lists.newArrayList(submission));
 
 		String report = "<?xml version='1.0' encoding='utf-8'?>\n"
@@ -223,7 +223,7 @@ public class ExportUploadServiceTest {
 
 		String newAccession = "SRR12345";
 
-		when(exportSubmissionService.getSubmissionsWithState(any(Collection.class))).thenReturn(
+		when(exportSubmissionService.getSubmissionsWithState(any(Set.class))).thenReturn(
 				Lists.newArrayList(submission));
 
 		String report = "<?xml version='1.0' encoding='utf-8'?>\n"

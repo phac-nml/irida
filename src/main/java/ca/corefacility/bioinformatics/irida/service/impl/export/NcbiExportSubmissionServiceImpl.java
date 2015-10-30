@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl.export;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
-import com.google.common.collect.ImmutableSet;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -23,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+
+import com.google.common.collect.ImmutableSet;
 
 @Service
 public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiExportSubmission> implements
@@ -69,7 +69,7 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<NcbiExportSubmission> getSubmissionsWithState(Collection<ExportUploadState> states) {
+	public List<NcbiExportSubmission> getSubmissionsWithState(Set<ExportUploadState> states) {
 		return repository.getSubmissionsWithState(states);
 	}
 
