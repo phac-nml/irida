@@ -147,7 +147,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	}
 
 	/**
-	 * Launch the NCBI status checing
+	 * Launch the NCBI status checking
 	 */
 	@Scheduled(initialDelay = UPLOAD_STATUS_TASK_RATE, fixedDelay = UPLOAD_STATUS_TASK_RATE)
 	public void ncbiUploadStatus() {
