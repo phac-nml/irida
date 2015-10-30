@@ -196,7 +196,8 @@ public class ExportUploadService {
 				}
 
 			}
-
+			
+			disconnectFtpCient(client);
 		} catch (Exception e) {
 			logger.error("Couldn't connect to FTP site", e);
 		} finally {
