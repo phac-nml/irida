@@ -4,10 +4,6 @@
       layout:decorator="clients/_base">
 <head>
 	<title th:text="#{client.create}">_Create Client_</title>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
-	      href="/resources/bower_components/select2/select2.css"/>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
-	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
     <style>
         .sub-cb {
         margin-left: 20px;
@@ -15,7 +11,7 @@
     </style>
 </head>
 <body>
-<main layout:fragment="main">
+<main layout:fragment="main" ddl:bundle-includes="client_edit">
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
 			<form role="form" action="/clients/create"
@@ -126,31 +122,5 @@
 		</div>
 	</div>
 </main>
-
-<th:block layout:fragment="pageScripts" th:inline="javascript">
-	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
-	        src="/resources/bower_components/select2/select2.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function () {
-			$("#tokenValidity").select2().select2("val", [[${given_tokenValidity}]]);
-			$("#authorizedGrantTypes").select2();
-			$("#scope_read").change(function() {
-				handleChecked(this,"#scope_auto_read_div");
-			});
-			$("#scope_write").change(function() {
-				handleChecked(this,"#scope_auto_write_div");
-			});
-			handleChecked = function(item, itemToShow) {
-				if(item.checked) {
-					$(itemToShow).show();
-					}
-			    else {
-			    	$(itemToShow).hide();
-			    }
-			}
-		});
-
-	</script>
-</th:block>
 </body>
 </html>
