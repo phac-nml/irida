@@ -76,7 +76,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private static final long UPLOAD_EXECUTION_TASK_RATE = 60000; // 60 seconds
 	
 	// rate in MS of the upload status checking
-	private static final long UPLOAD_STATUS_TASK_RATE = 60000; // 5 minutes
+	private static final long UPLOAD_STATUS_TASK_RATE = 300000; // 5 minutes
 	
 	/**
 	 * Rate in milliseconds of the cleanup task.
