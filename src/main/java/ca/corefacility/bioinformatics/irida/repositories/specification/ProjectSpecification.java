@@ -80,10 +80,21 @@ public class ProjectSpecification {
 		};
 	}
 
-	public static Specification<Project> searchProjectsAllFields(String term) {
+	/**
+	 * Filter all {@link Project}s by a general search term again project attributes.
+	 *
+	 * @param term
+	 * 		{@link String} The search query.
+	 *
+	 * @return {@link Specification}
+	 */
+	public static Specification<Project> filterAllProjectsAllFields(String term) {
 		return (root, query, cb) -> {
 			ArrayList<Predicate> predicates = new ArrayList<>();
 
+			if (term.matches("\\d*")) {
+				predicates.add(cb.like(root.get("id").as(String.class), "%" + term + "%"));
+			}
 			predicates.add(cb.like(root.get("name"), "%" + term + "%"));
 			predicates.add(cb.like(root.get("organism"), "%" + term + "%"));
 
