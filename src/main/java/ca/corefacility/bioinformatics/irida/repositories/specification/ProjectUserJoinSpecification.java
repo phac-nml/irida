@@ -89,11 +89,11 @@ public class ProjectUserJoinSpecification {
 	 * @param user
 	 * 		{@link User} User to get the projects for.
 	 * @param searchMap
-	 * 		{@link Map} of search criteria.
+	 * 		{@link Map} where key corresponds to {@link Project} attributes to filter by.
 	 *
 	 * @return {@link Specification}
-     */
-	public static Specification<ProjectUserJoin> getPagedProjectsForUser(User user, Map<String, String> searchMap) {
+	 */
+	public static Specification<ProjectUserJoin> filterProjectsForUserByProjectAttributes(User user, Map<String, String> searchMap) {
 		return (root, query, cb) -> {
 			ArrayList<Predicate> predicates = new ArrayList<>();
 

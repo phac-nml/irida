@@ -6,7 +6,7 @@
     <title th:text="#{client.details.title(${client.clientId})}">_USER PAGE_</title>
 </head>
 <body>
-<main layout:fragment="main">
+<main layout:fragment="main" ddl:bundle-includes="client_details">
     <h1 th:text="${client.clientId}">_Name_</h1>
     <div class="row mrgn-tp-lg">
     	<!-- User details -->
@@ -123,65 +123,19 @@
            </form>
        </section>
 </main>
-<th:block layout:fragment="pageScripts">
-    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
-            src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script th:inline="javascript">
-    	$(function(){
-    		$("#remove-btn").click(function(){
-    			noty({
-    				layout: "center",
-    	            type: "default",
-    	            text: /*[[#{client.remove.confirm(${client.clientId})}]]*/ "Remove client?",
-    	            modal: true,
-    	            buttons: [
-    	                {
-    	                    addClass: 'btn btn-primary btn-sm confirm-delete',
-    	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
-    	                    onClick: function ($noty) {
-    	                        $("#removeForm").submit();
-    	                    }
-    	                },
-    	                {
-    	                    addClass: 'btn btn-default btn-sm',
-    	                    text: /*[[#{form.btn.cancel}]]*/ 'Cancel',
-    	                    onClick: function ($noty) {
-    	                        $noty.close();
-    	                    }
-    	                }
-    	            ],
-    			});
-
-    		});
-          
-          $("#revoke-btn").click(function(){
-    			noty({
-    				layout: "center",
-    	            type: "default",
-    	            text: /*[[#{client.revoke.confirm(${client.clientId})}]]*/ "Revoke tokens?",
-    	            modal: true,
-    	            buttons: [
-    	                {
-    	                    addClass: 'btn btn-primary btn-sm confirm-revoke',
-    	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
-    	                    onClick: function ($noty) {
-    	                        $("#revokeForm").submit();
-    	                    }
-    	                },
-    	                {
-    	                    addClass: 'btn btn-default btn-sm',
-    	                    text: /*[[#{form.btn.cancel}]]*/ 'Cancel',
-    	                    onClick: function ($noty) {
-    	                        $noty.close();
-    	                    }
-    	                }
-    	            ],
-    			});
-
-    		});
-    	});
-
-    </script>
-</th:block>
+<script layout:fragment="page-scripts">
+    var PAGE = {
+        buttons: {
+            ok: /*[[#{form.btn.confim}]]*/ 'OK',
+            cancel: /*[[#{form.btn.cancel}]]*/ 'Cancel'
+        },
+        removeNoty: {
+            text: /*[[#{client.remove.confirm(${client.clientId})}]]*/ "Remove client?"
+        },
+        revokeNoty: {
+            text: /*[[#{client.revoke.confirm(${client.clientId})}]]*/ "Revoke tokens?"
+        }
+    };
+</script>
 </body>
 </html>

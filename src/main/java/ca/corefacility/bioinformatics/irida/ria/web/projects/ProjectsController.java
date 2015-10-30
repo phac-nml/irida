@@ -377,12 +377,12 @@ public class ProjectsController {
 		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
 		// NOTE: Special case for sorting on the ProjectUserJoin
 		String searchString = searchMap.get(ProjectsDatatableUtils.SORT_STRING);
-		if (searchString != null && (searchString.equals("modifiedDate") || searchString.equals("createdDate"))) {
+		if (searchString != null) {
 			searchMap.put(ProjectsDatatableUtils.SORT_STRING, "project." + searchString);
 		}
 
 		Specification<ProjectUserJoin> specification = ProjectUserJoinSpecification
-				.getPagedProjectsForUser(user, searchMap);
+				.filterProjectsForUserByProjectAttributes(user, searchMap);
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
@@ -408,12 +408,14 @@ public class ProjectsController {
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
 			@DatatablesParams DatatablesCriterias criterias) {
+
+		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
 		Specification<Project> specification;
 		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
 			specification = ProjectSpecification.searchProjectsAllFields(criterias.getSearch());
 		} else {
 			Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-			specification = ProjectSpecification.searchProjects(searchMap);
+			specification = ProjectSpecification.filterAllProjectsByProjectAttributes(searchMap);
 		}
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
@@ -499,7 +501,7 @@ public class ProjectsController {
 	public Map<String, Object> createProjectMap(Project project) {
 		Map<String, Object> map = new HashMap<>();
 
-		map.put("identifier", project.getId());
+		map.put("id", project.getId());
 		map.put("name", project.getName());
 		map.put("organism", project.getOrganism());
 		map.put("samples", sampleService.getNumberOfSamplesForProject(project));

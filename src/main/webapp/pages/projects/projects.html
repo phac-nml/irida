@@ -27,12 +27,12 @@
         <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none">
             <thead>
             <tr role="row">
-                <th dt:property="identifier" dt:searchable="false" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
+                <th dt:property="id" dt:searchable="false" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
                 <th dt:property="name" dt:filterable="true" width="200px" dt:renderFunction="projects#projectsTable.createItemButton"
                 	><span class="header-name" th:text="#{projects.table.name}"></span></th>
                 <th dt:property="organism" th:text="#{projects.table.organism}"
                     dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
-                <th dt:property="samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
+                <th dt:property="samples" dt:sortable="false" dt:searchable="false" th:text="#{projects.table.samples}"></th>
                 <th width="150px" dt:property="createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
                     dt:renderFunction="datatables-utils#datatable.formatDate"></th>
                 <th width="150px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
