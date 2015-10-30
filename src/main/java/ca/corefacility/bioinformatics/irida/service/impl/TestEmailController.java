@@ -29,6 +29,11 @@ public class TestEmailController extends EmailControllerImpl {
 		logger.info("TestEmailController overriding EmailController");
 	}
 
+	public TestEmailController() {
+		super(null, null, null);
+		logger.info("TestEmailController overriding EmailController");
+	}
+
 	@Override
 	public void sendPasswordResetLinkEmail(User user, PasswordReset passwordReset) {
 		logger.info("TestEmailController#sendPasswordResetLinkEmail called for " + user + " " + passwordReset);
@@ -44,10 +49,17 @@ public class TestEmailController extends EmailControllerImpl {
 		logger.info("TestEmailController#sendSubscriptionUpdateEmail called for " + user + " and " + events.size()
 				+ " events");
 	}
-	
+
 	@Override
-	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause) throws MailSendException {
+	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause)
+			throws MailSendException {
 		logger.info("TestEmailController#sendFilesystemExceptionEmail called.");
+	}
+
+	@Override
+	public void sendNCBIUploadExceptionEmail(String adminEmailAddress, Exception rootCause, Long submissionId)
+			throws MailSendException {
+		logger.info("TestEmailController#sendNCBIUploadExceptionEmail called.");
 	}
 
 	@Override

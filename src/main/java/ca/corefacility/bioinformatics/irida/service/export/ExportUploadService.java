@@ -45,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -60,6 +61,7 @@ public class ExportUploadService {
 
 	private NcbiExportSubmissionService exportSubmissionService;
 	private TemplateEngine templateEngine;
+	private EmailController emailController;
 
 	@Value("${ncbi.upload.host}")
 	private String ftpHost;
@@ -76,6 +78,9 @@ public class ExportUploadService {
 	@Value("${ncbi.upload.baseDirectory}")
 	private String baseDirectory;
 
+	@Value("${irida.administrative.notifications.email}")
+	private String notificationAdminEmail;
+
 	// set of statuses that should be watched and update
 	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(ExportUploadState.UPLOADED,
 			ExportUploadState.SUBMITTED, ExportUploadState.CREATED, ExportUploadState.QUEUED,
@@ -83,9 +88,10 @@ public class ExportUploadService {
 
 	@Autowired
 	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
-			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine) {
+			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine, EmailController emailController) {
 		this.exportSubmissionService = exportSubmissionService;
 		this.templateEngine = templateEngine;
+		this.emailController = emailController;
 	}
 
 	/**
@@ -143,6 +149,8 @@ public class ExportUploadService {
 
 				submission = exportSubmissionService.update(submission.getId(),
 						ImmutableMap.of("uploadState", ExportUploadState.UPLOAD_ERROR));
+
+				emailController.sendNCBIUploadExceptionEmail(notificationAdminEmail, e, submission.getId());
 			}
 		}
 
@@ -181,13 +189,15 @@ public class ExportUploadService {
 
 					submission = exportSubmissionService.update(submission.getId(),
 							ImmutableMap.of("uploadState", ExportUploadState.UPLOAD_ERROR));
+
+					emailController.sendNCBIUploadExceptionEmail(notificationAdminEmail, e, submission.getId());
 				} catch (IOException e) {
 					logger.error("Error closing XML stream", e);
 				}
 
 			}
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("Couldn't connect to FTP site", e);
 		} finally {
 			disconnectFtpCient(client);

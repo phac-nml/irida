@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 
 import com.google.common.collect.Lists;
 
@@ -49,7 +50,7 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(null, null);
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
@@ -92,7 +93,7 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(null, null);
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
@@ -120,7 +121,7 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(null, null);
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
@@ -144,7 +145,7 @@ public class ExportUploadServiceTest {
 		String baseDirectory = "/home/test/submit/Test";
 		int ftpPort = 1;
 
-		ExportUploadService exportUploadService = new ExportUploadService(null, null);
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, new TestEmailController());
 
 		exportUploadService.setConnectionDetails(ftpHost, ftpPort, ftpUser, ftpPassword, baseDirectory);
 		String xml = "<xml></xml>";
@@ -165,8 +166,8 @@ public class ExportUploadServiceTest {
 		submission.setBioSampleFiles(Lists.newArrayList(sample2, sample3));
 		submission.setDirectoryPath("submit/Test/example");
 
-		when(exportSubmissionService.getSubmissionsWithState(any(Set.class))).thenReturn(
-				Lists.newArrayList(submission));
+		when(exportSubmissionService.getSubmissionsWithState(any(Set.class)))
+				.thenReturn(Lists.newArrayList(submission));
 
 		String report = "<?xml version='1.0' encoding='utf-8'?>\n"
 				+ "<SubmissionStatus submission_id=\"SUB189884\" status=\"processing\">\n"
@@ -193,7 +194,8 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null);
+		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null,
+				new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
@@ -223,8 +225,8 @@ public class ExportUploadServiceTest {
 
 		String newAccession = "SRR12345";
 
-		when(exportSubmissionService.getSubmissionsWithState(any(Set.class))).thenReturn(
-				Lists.newArrayList(submission));
+		when(exportSubmissionService.getSubmissionsWithState(any(Set.class)))
+				.thenReturn(Lists.newArrayList(submission));
 
 		String report = "<?xml version='1.0' encoding='utf-8'?>\n"
 				+ "<SubmissionStatus submission_id=\"SUB11245\" status=\"processed-ok\">\n"
@@ -253,7 +255,8 @@ public class ExportUploadServiceTest {
 		// finds an open port
 		server.setServerControlPort(0);
 
-		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null);
+		ExportUploadService exportUploadService = new ExportUploadService(exportSubmissionService, null,
+				new TestEmailController());
 		try {
 			server.start();
 			int ftpPort = server.getServerControlPort();
