@@ -382,7 +382,7 @@ public class ProjectsController {
 		}
 
 		Specification<ProjectUserJoin> specification = ProjectUserJoinSpecification
-				.getPagedProjectsForUser(user, searchMap);
+				.filterProjectsForUserByProjectAttributes(user, searchMap);
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
