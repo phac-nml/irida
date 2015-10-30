@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -187,8 +185,6 @@ public class ExportUploadService {
 					logger.error("Error closing XML stream", e);
 				}
 
-				// close connection
-				client.disconnect();
 			}
 
 		} catch (IOException e) {
@@ -285,8 +281,6 @@ public class ExportUploadService {
 			// create submit.ready file
 			uploadString(client, "submit.ready", "");
 
-			// disconnect from ftp site
-			client.disconnect();
 		} catch (IOException e) {
 			logger.error("Error in upload", e);
 			throw new UploadException("Could not upload run", e);
@@ -480,7 +474,8 @@ public class ExportUploadService {
 		try {
 			client.connect(ftpHost, ftpPort);
 		} catch (ConnectException ex) {
-			throw new IOException("Couldn't connect to server " + ftpHost + ":" + ftpPort);
+			logger.error("Couldn't connect to server " + ftpHost + ":" + ftpPort);
+			throw ex;
 		}
 
 		if (!client.login(ftpUser, ftpPassword)) {
