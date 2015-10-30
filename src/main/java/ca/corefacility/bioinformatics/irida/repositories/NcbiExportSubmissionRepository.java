@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
 
@@ -23,7 +23,7 @@ public interface NcbiExportSubmissionRepository extends IridaJpaRepository<NcbiE
 	 * @return a List of {@link NcbiExportSubmission}
 	 */
 	@Query("FROM NcbiExportSubmission s WHERE s.uploadState IN ?1")
-	public List<NcbiExportSubmission> getSubmissionsWithState(Collection<ExportUploadState> state);
+	public List<NcbiExportSubmission> getSubmissionsWithState(Set<ExportUploadState> state);
 
 	/**
 	 * Get a List of {@link NcbiExportSubmission} for the given {@link Project}
