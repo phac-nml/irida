@@ -505,7 +505,7 @@ public class ExportUploadService {
 	 *            An {@link FTPClient} to shut down if it's connected
 	 */
 	private void disconnectFtpCient(FTPClient client) {
-		if (client.isConnected()) {
+		if (client != null && client.isConnected()) {
 			try {
 				client.disconnect();
 			} catch (IOException e) {
