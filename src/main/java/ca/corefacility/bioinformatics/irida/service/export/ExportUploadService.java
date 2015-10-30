@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -354,7 +356,22 @@ public class ExportUploadService {
 
 	/**
 	 * Get the updates from the result.#.xml file for the given submission and
-	 * update the object
+	 * update the object. XML will look like the following:
+	 * 
+	 * <pre>
+	 * <?xml version='1.0' encoding='utf-8'?>
+	 * <SubmissionStatus submission_id="SUB1234" status="processed-ok">
+	 *   <Action action_id="SUB1234-submission12345" target_db="SRA" status="processed-ok" notify_submitter="true">
+	 *     <Response status="processed-ok">
+	 *       <Object target_db="SRA" object_id="RUN:4567" spuid_namespace="NML" spuid="submission12345" accession="SRR6789" status="updated">
+	 *         <Meta>
+	 *           <SRAStudy>SRP012345</SRAStudy>
+	 *         </Meta>
+	 *       </Object>
+	 *     </Response>
+	 *   </Action>
+	 * </SubmissionStatus>
+	 * </pre>
 	 * 
 	 * @param submission
 	 *            {@link NcbiExportSubmission} to update
