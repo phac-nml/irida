@@ -377,7 +377,7 @@ public class ProjectsController {
 		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
 		// NOTE: Special case for sorting on the ProjectUserJoin
 		String searchString = searchMap.get(ProjectsDatatableUtils.SORT_STRING);
-		if (searchString != null && (searchString.equals("modifiedDate") || searchString.equals("createdDate"))) {
+		if (searchString != null) {
 			searchMap.put(ProjectsDatatableUtils.SORT_STRING, "project." + searchString);
 		}
 
@@ -495,7 +495,7 @@ public class ProjectsController {
 	public Map<String, Object> createProjectMap(Project project) {
 		Map<String, Object> map = new HashMap<>();
 
-		map.put("identifier", project.getId());
+		map.put("id", project.getId());
 		map.put("name", project.getName());
 		map.put("organism", project.getOrganism());
 		map.put("samples", sampleService.getNumberOfSamplesForProject(project));

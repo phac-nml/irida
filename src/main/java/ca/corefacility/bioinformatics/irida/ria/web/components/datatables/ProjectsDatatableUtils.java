@@ -6,30 +6,31 @@ import java.util.Map;
 
 import com.github.dandelion.datatables.core.ajax.ColumnDef;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Static methods to help create Searching criteria for the projects datatable.
  */
-public class ProjectsDatatableUtils extends DatatablesUtils  {
-	public static final int NAME_COLUMN = 1;
-	public static final int ORGANISM_COLUMN = 2;
+public class ProjectsDatatableUtils extends DatatablesUtils {
+	private static final Map<String, Boolean> filterableProjectAttributes = ImmutableMap.of(
+			"name", true,
+			"organism", true
+	);
+
 
 	/**
 	 * Generate a {@link Map} of search criteria.
 	 *
-	 * @param columnDefs {@link List} {@link DatatablesParams} list of column definitions
+	 * @param columnDefs
+	 * 		{@link List} {@link DatatablesParams} list of column definitions
+	 *
 	 * @return {@link Map} of search criteria
 	 */
 	public static HashMap<String, String> generateSearchMap(List<ColumnDef> columnDefs) {
 		HashMap<String, String> searchMap = new HashMap<>();
-		// 1. Name
-		if (columnDefs.get(NAME_COLUMN).isFiltered()) {
-			searchMap.put("name", columnDefs.get(1).getSearch());
-		}
-		// 2. Organism
-		if (columnDefs.get(ORGANISM_COLUMN).isFiltered()) {
-			searchMap.put("organism", columnDefs.get(2).getSearch());
-		}
+
+		columnDefs.stream().filter(def -> def.isFiltered() && filterableProjectAttributes.get(def.getName()))
+				.forEach(def -> searchMap.put(def.getName(), def.getSearch()));
 		return searchMap;
 	}
 }
