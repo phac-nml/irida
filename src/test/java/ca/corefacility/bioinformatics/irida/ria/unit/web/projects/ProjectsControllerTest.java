@@ -288,7 +288,7 @@ public class ProjectsControllerTest {
 		assertEquals("Should be 10 items in the list", expectedSize, result.size());
 
 		for (Map<String, Object> map : result) {
-			assertTrue("Should have key 'identifier'", map.containsKey("identifier"));
+			assertTrue("Should have key 'id'", map.containsKey("id"));
 			assertTrue("Should have key 'name'", map.containsKey("name"));
 			assertTrue("Should have key 'organism'", map.containsKey("organism"));
 			assertTrue("Should have key 'samples'", map.containsKey("samples"));
