@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
  * Handles decipher requests made using {@link DatatablesCriterias}
  */
 public class DatatablesUtils {
+	private static int DEFAULT_PAGE_SIZE = 10;
 	public static String SORT_DIRECTION = "direction";
 	public static String SORT_STRING = "sort_string";
 
@@ -38,7 +39,7 @@ public class DatatablesUtils {
 	 * @return {@link Integer} the current page of the datatable
 	 */
 	public static int getCurrentPage(DatatablesCriterias criterias) {
-		int pageSize = criterias.getLength() > 0 ? criterias.getLength() : 20;
+		int pageSize = criterias.getLength() > 0 ? criterias.getLength() : DEFAULT_PAGE_SIZE;
 		return (int) Math.floor(criterias.getStart() / pageSize);
 	}
 }
