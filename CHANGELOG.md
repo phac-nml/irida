@@ -1,6 +1,18 @@
 Changes
 =======
 
+1.0.0-alpha5 to 1.0.0-alpha6
+----------------------------
+* [UI] Feature: Added IRIDA logo to the header, and added a footer with some contact information. Also added a favicon.
+* [UI] Feature: Added ability to remove sequencing runs and all uploaded files from the web interface.
+* [Developer] Bugfix: Moved the install directories in the VM to reside on `/home` from `/opt` because packer makes a giant home partition and we were running out of space when Galaxy was running in `/opt`.
+* [UI] Feature: Upgrade to the latest version of Phylocanvas for rendering phylogenetic trees from SNVPhyl runs. We were falling back to PhyloSVG in Firefox on Linux because of a bug in Phylocanvas, but the bug has since been fixed, so now everyone gets Phylocanvas!
+* [UI] Feature/Bugfix: Updated the "Recent Activities" section to use angular directives. Also fixed a bug with how the links in recent activities were rendered.
+* [UI] Feature: Added a feature to filter samples in a project using a file with sample names. 
+* [Tools] Bugfix: Updated some of the permissions for listing projects for `ROLE_SEQUENCER` so that the new GUI uploader tool works.
+* [Developer] Feature: Fixed up a lot of the testing code to evaluate pass or fail based on the content of the page rather than the URL. This fixed timing issues in tests and actually validated some behaviour instead of assuming that stuff worked.
+* [Developer] Feature: Add forward and reverse links on paired-end sequencing files to the REST API.
+
 1.0.0-alpha4 to 1.0.0-alpha5
 ----------------------------
 * [UI] Feature: Announcements section added to dashboard.
