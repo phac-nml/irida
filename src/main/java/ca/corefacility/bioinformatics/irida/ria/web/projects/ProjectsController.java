@@ -410,7 +410,7 @@ public class ProjectsController {
 			@DatatablesParams DatatablesCriterias criterias) {
 
 		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-		Specification<Project> specification = ProjectSpecification.searchProjects(searchMap);
+		Specification<Project> specification = ProjectSpecification.filterAllProjectsByProjectAttributes(searchMap);
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
