@@ -158,10 +158,11 @@ public class ExportUploadService {
 		List<NcbiExportSubmission> submissionsWithState = exportSubmissionService
 				.getSubmissionsWithState(updateableStates);
 
+		FTPClient client = null;
 		try {
 			for (NcbiExportSubmission submission : submissionsWithState) {
 				// connect to FTP site
-				FTPClient client = getFtpClient();
+				client = getFtpClient();
 				try {
 					logger.trace("Getting report for submission " + submission.getId());
 					InputStream xmlStream = getLatestXMLStream(client, submission);
@@ -190,6 +191,8 @@ public class ExportUploadService {
 
 		} catch (IOException e) {
 			logger.error("Couldn't connect to FTP site", e);
+		} finally {
+			disconnectFtpCient(client);
 		}
 	}
 
@@ -224,8 +227,9 @@ public class ExportUploadService {
 	 */
 	public NcbiExportSubmission uploadSubmission(NcbiExportSubmission submission, String xml) throws UploadException {
 
+		FTPClient client = null;
 		try {
-			FTPClient client = getFtpClient();
+			client = getFtpClient();
 
 			// create submission directory name
 			String directoryName = submission.getId().toString() + "-" + new Date().getTime();
@@ -284,6 +288,8 @@ public class ExportUploadService {
 		} catch (IOException e) {
 			logger.error("Error in upload", e);
 			throw new UploadException("Could not upload run", e);
+		} finally {
+			disconnectFtpCient(client);
 		}
 
 		return submission;
@@ -467,6 +473,23 @@ public class ExportUploadService {
 		logger.trace(client.getStatus());
 
 		return client;
+	}
+
+	/**
+	 * Disconnect an {@link FTPClient} if it's connected. Just doing this to
+	 * avoid the old try-catch-in-finally mess.
+	 * 
+	 * @param client
+	 *            An {@link FTPClient} to shut down if it's connected
+	 */
+	private void disconnectFtpCient(FTPClient client) {
+		if (client.isConnected()) {
+			try {
+				client.disconnect();
+			} catch (IOException e) {
+				logger.error("Couldn't disconnect FTP Client", e);
+			}
+		}
 	}
 
 	/**
