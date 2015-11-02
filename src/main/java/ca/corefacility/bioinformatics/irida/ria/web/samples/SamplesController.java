@@ -353,6 +353,7 @@ public class SamplesController extends BaseController {
 	 * @param response
 	 *            HTTP response object to update response status if there's an
 	 *            error.
+	 * @throws IOException
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" })
 	public void uploadSequenceFiles(@PathVariable Long sampleId,
