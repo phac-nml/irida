@@ -1,0 +1,11 @@
+{
+  "dependencies": ["livestampjs", "dropdown-enhancements", "qtip2"],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/projects.js"
+      }
+    }
+  ]
+}

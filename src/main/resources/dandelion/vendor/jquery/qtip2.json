@@ -1,0 +1,16 @@
+{
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/bower_components/qtip2/jquery.qtip.min.css"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/qtip2/jquery.qtip.min.js"
+      }
+    }
+  ]
+}

@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<main layout:fragment="main" th:object="${project}">
+<main layout:fragment="main" th:object="${project}" ddl:bundle-includes="project-associated">
     <div class="row">
         <div class="col-md-10">
             <h1 role="heading" th:text="#{project.associated.heading(${project.label})}"></h1>
