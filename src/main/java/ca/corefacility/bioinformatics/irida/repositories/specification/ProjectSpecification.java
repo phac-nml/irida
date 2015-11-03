@@ -92,6 +92,9 @@ public class ProjectSpecification {
 		return (root, query, cb) -> {
 			ArrayList<Predicate> predicates = new ArrayList<>();
 
+			// Since the project id is a long, we first check to ensure that it is a number being searched
+			// If it is, then to get the search to work within a long, we need to cast that id as a string
+			// and then proceed with the search.
 			if (term.matches("\\d*")) {
 				predicates.add(cb.like(root.get("id").as(String.class), "%" + term + "%"));
 			}
