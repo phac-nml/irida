@@ -112,6 +112,7 @@ public class ProjectUserJoinSpecification {
 
 	/**
 	 * Filter {@link Project}s for a specific {@link User} based on all project attributes.
+	 *  (currently only id, name, and organism).
 	 *
 	 * @param user
 	 * 		{@link User} currently logged in {@link User}

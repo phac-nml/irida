@@ -82,6 +82,8 @@ public class ProjectSpecification {
 
 	/**
 	 * Filter all {@link Project}s by a general search term again project attributes.
+	 *  This search {@link Specification} is for searching {@link Project}'s via any attribute
+	 *  (currently only id, name, and organism).
 	 *
 	 * @param term
 	 * 		{@link String} The search query.
