@@ -1,4 +1,8 @@
 {
+  "dependencies": [
+    "jquery",
+    "bootstrap"
+  ],
   "assets": [
     {
       "type": "css",
