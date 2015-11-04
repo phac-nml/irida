@@ -60,6 +60,38 @@ When you've finished entering the details for your new project, click on the "Cr
 
 IRIDA will automatically generate a numeric project identifier for your project. The project identifier is used by external tools for uploading sequencing data to IRIDA. The project identifier can be found in the ["Project Details" panel](#viewing-project-details), or in the [projects list](#viewing-existing-projects).
 
+Filtering and Searching the Projects Table
+------------------------------------------
+
+There are two ways to find a specific project in the projects table - filtering and searching.
+
+**Searching**
+
+![Project search entry.](images/project-search.png)
+
+Search is always available in the text field directly above and to the right of the table.  This search across the project's id, name, and organism.
+
+![Projects search by out](images/projects-search-outbreak.png)
+
+**Filtering**
+
+![Button to open the projects filter modal.](images/project-filter-btn.png)
+
+Pressing the Filter button opens a dialogue that allows you to filter on specific items within the project - the name and the organism.  Each filter only applies to its specific part of a project.
+
+![Projects Filtering Modal](images/projects-filter-modal.png)
+
+Example: filtering the name by "outbreak" and organism by "listeria" gives the following results:
+
+![Result of filtering projects by name using outbreak](images/projects-filter-name-outbreak.png)
+
+You can see which filters are currently applied to the table under the filter button:
+
+![List of applied filters](images/projects-applied-filters.png)
+
+Clicking on the filters will clear that specif filter.
+
+**Refining Filtering**
 
 Viewing project details
 -----------------------
