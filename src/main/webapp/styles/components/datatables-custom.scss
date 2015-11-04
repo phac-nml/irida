@@ -9,7 +9,18 @@
 }
 
 .filter-row {
-  margin-bottom: 14px;
+  margin-bottom: 5px;
+}
+
+.datatables-active-filters {
+  margin-bottom: 10px;
+  .label {
+    cursor: pointer;
+    &:after {
+      content: ' \f00d';
+      font-family: 'FontAwesome';
+    }
+  }
 }
 
 table th {

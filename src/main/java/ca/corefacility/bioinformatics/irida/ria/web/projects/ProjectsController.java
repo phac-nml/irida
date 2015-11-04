@@ -415,13 +415,9 @@ public class ProjectsController {
 	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
 			@DatatablesParams DatatablesCriterias criterias) {
 
-		Specification<Project> specification;
-		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
-			specification = ProjectSpecification.filterAllProjectsAllFields(criterias.getSearch());
-		} else {
-			Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-			specification = ProjectSpecification.filterAllProjectsByProjectAttributes(searchMap);
-		}
+		Specification<Project> specification = ProjectSpecification
+				.filterProjectByAnythingAndEverything(ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs()),
+						criterias.getSearch());
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);

@@ -23,6 +23,12 @@
 					<button id="clearFilterBtn" class="btn btn-sm btn-inverse" th:text="#{projects.filter.clear}">Clear</button>
 				</div>
 			</div>
+			<div dt:confType="extrahtml" dt:uid="1">
+				<div class="col-md-12 text-right">
+					<span class="label label-default hidden">Name: <em id="nameFilterPreview">sdafsd</em></span>
+					<span class="label label-default hidden">Organism: <em id="organismFilterPreview">sdafsd</em></span>
+				</div>
+			</div>
         </div>
         <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none">
             <thead>
