@@ -8,7 +8,7 @@
   font-size: 14px; }
 
 .filter-row {
-  margin-bottom: 5px; }
+  margin-bottom: 5px !important; }
 
 .datatables-active-filters {
   margin-bottom: 10px; }
@@ -16,7 +16,8 @@
     cursor: pointer; }
     .datatables-active-filters .label:after {
       content: ' \f00d';
-      font-family: 'FontAwesome'; }
+      font-family: 'FontAwesome';
+      margin-left: 3px; }
 
 table th {
   vertical-align: top !important; }

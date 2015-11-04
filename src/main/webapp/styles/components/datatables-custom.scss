@@ -9,7 +9,7 @@
 }
 
 .filter-row {
-  margin-bottom: 5px;
+  margin-bottom: 5px!important;
 }
 
 .datatables-active-filters {
@@ -19,6 +19,7 @@
     &:after {
       content: ' \f00d';
       font-family: 'FontAwesome';
+      margin-left: 3px;
     }
   }
 }

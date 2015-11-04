@@ -61,7 +61,14 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Projects table should be populated by 7 projects", 7, projectsPage.projectsTableSize());
 		
 		projectsPage.filterByOrganism("coli");
-		assertEquals("Projects table should be populated by 1 projects after applying filter", 1, projectsPage.projectsTableSize());
+		assertEquals("Projects table should be populated by 4 projects after applying filter", 4,
+				projectsPage.projectsTableSize());
+
+		// Lets clean that filter up with some searching
+		projectsPage.doSearch("K-12");
+		assertEquals("Projects table should be populated by 1 project after applying filter", 1,
+				projectsPage.projectsTableSize());
+
 	}
 
 	/**

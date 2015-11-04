@@ -87,4 +87,9 @@ public class ProjectsPage extends AbstractPage {
 		driver.findElement(By.id("filterProjectsBtn")).click();
 		waitForElementInvisible(By.className("projectsTable_processing"));
 	}
+
+	public void doSearch(String term) {
+		driver.findElement(By.cssSelector("#projectsTable_filter input")).sendKeys(term);
+		waitForElementInvisible(By.className("projectsTable_processing"));
+	}
 }
