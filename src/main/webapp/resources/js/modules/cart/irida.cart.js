@@ -250,6 +250,7 @@
 
   function GalaxyDialogCtrl($modalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
     var vm = this;
+    vm.addtohistory=true;
     vm.showOauthIframe = false;
     vm.showEmailLibInput = true;
     vm.redirectURI = TL.BASE_URL + 'galaxy/auth_code';
