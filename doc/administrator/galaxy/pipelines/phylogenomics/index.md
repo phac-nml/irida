@@ -11,7 +11,7 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 | Tool Name            | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:--------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **suite_snvphyl**    | 99463e5aef1b  | 0 (2015-09-15)                | [IRIDA Main Shed][]  |
+| **suite_snvphyl**    | a7b3f1f5d015  | 4 (2015-11-04)                | [IRIDA Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
