@@ -60,6 +60,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void clickLinkToProject(int row) {
-		driver.findElements(By.className("item-link")).get(row).click();
+		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.className("item-link"));
+		links.get(row).click();
 	}
 }
