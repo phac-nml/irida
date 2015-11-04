@@ -13,6 +13,7 @@ import org.openqa.selenium.WebElement;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -59,7 +60,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 		projectsPage.clearFilters();
 		assertEquals("Projects table should be populated by 7 projects", 7, projectsPage.projectsTableSize());
-		
+
 		projectsPage.filterByOrganism("coli");
 		assertEquals("Projects table should be populated by 4 projects after applying filter", 4,
 				projectsPage.projectsTableSize());
@@ -68,7 +69,13 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		projectsPage.doSearch("K-12");
 		assertEquals("Projects table should be populated by 1 project after applying filter", 1,
 				projectsPage.projectsTableSize());
+	}
 
+	@Test
+	public void testLinkingToSpecificProject() {
+		projectsPage.clickLinkToProject(0);
+		ProjectSamplesPage page = new ProjectSamplesPage(driver());
+		assertEquals("Should link to the project page.", page.getTitle(), "project Samples");
 	}
 
 	/**

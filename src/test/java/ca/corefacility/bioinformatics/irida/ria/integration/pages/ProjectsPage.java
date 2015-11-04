@@ -92,4 +92,9 @@ public class ProjectsPage extends AbstractPage {
 		driver.findElement(By.cssSelector("#projectsTable_filter input")).sendKeys(term);
 		waitForElementInvisible(By.className("projectsTable_processing"));
 	}
+
+	public void clickLinkToProject(int row) {
+		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.className("item-link"));
+		links.get(row).click();
+	}
 }
