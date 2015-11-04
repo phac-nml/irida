@@ -253,3 +253,24 @@ ul.main-nav-links {
 		text-align: center;
 	}
 }
+
+ul.breadcrumbs {
+	list-style-type: none;
+	clear: left;
+	float: left;
+	margin: 0px;
+
+	li {
+		display: inline-block;
+		&:not(:first-child) {
+			&:before {
+				font-family: FontAwesome;
+				font-weight: lighter;
+				font-style: normal;
+				display: inline-block;
+				text-decoration: inherit;
+				content: "\f178";
+			}
+		}
+	}
+}
