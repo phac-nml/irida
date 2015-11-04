@@ -34,7 +34,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void confirmTablePopulatedByProjects() {
-		assertEquals("Projects table should be populated by 4 projects", 4, projectsPage.projectsTableSize());
+		assertEquals("Projects table should be populated by 7 projects", 7, projectsPage.projectsTableSize());
 
 		// Ensure buttons are created and direct to the write project.
 		projectsPage.gotoProjectPage(1);
@@ -58,7 +58,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Projects table should be populated by 1 projects after applying filter", 1, projectsPage.projectsTableSize());
 
 		projectsPage.clearFilters();
-		assertEquals("Projects table should be populated by 4 projects", 4, projectsPage.projectsTableSize());
+		assertEquals("Projects table should be populated by 7 projects", 7, projectsPage.projectsTableSize());
 		
 		projectsPage.filterByOrganism("coli");
 		assertEquals("Projects table should be populated by 1 projects after applying filter", 1, projectsPage.projectsTableSize());
