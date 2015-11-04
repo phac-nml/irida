@@ -229,3 +229,27 @@ table {
 		padding: 5px;
 	}
 }
+
+/**
+ * Navigation links on the main page
+ */
+
+ul.main-nav-links {
+	list-style-type: none;
+	text-align: justify;
+
+	&:after {
+		content: '';
+		display: inline-block;
+		width: 100%;
+	}
+	&:before {
+		content: '';
+		display: block;
+	}
+
+	li {
+		display: inline-block;
+		text-align: center;
+	}
+}
