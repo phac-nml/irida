@@ -27,13 +27,12 @@ var projectsTable = (function (tl) {
   var $filterBtn = $('#filterProjectsBtn');
 
   $filterBtn.on('click', function () {
-    oTable_projectsTable.ajax.reload(function () {
-
-    });
+    oTable_projectsTable.ajax.reload();
   });
 
-  $('#filterForm').on('submit', function (e) {
-    e.preventDefault();
-    $filterBtn.click();
+  $('#filterForm').on('keydown', function (e) {
+    if(e.which === 13) {
+      $filterBtn.click();
+    }
   });
 })(window.jQuery);
