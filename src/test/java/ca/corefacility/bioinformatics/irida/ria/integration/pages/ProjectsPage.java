@@ -58,4 +58,8 @@ public class ProjectsPage extends AbstractPage {
 					return ariaSort!= null && !ariaSort.equals(originalSortOrder);
 				});
 	}
+
+	public void clickLinkToProject(int row) {
+		driver.findElements(By.className("item-link")).get(row).click();
+	}
 }
