@@ -28,6 +28,7 @@
 			<column name="bio_project_id" type="varchar(255)" />
 			<column name="namespace" type="varchar(255)" />
 			<column name="release_date" type="date" />
+			<column name="directory_path" type="varchar(255)" />
 		</createTable>
 
 		<createTable tableName="ncbi_export_biosample">
@@ -41,6 +42,8 @@
 			<column name="library_source" type="varchar(255)" />
 			<column name="library_strategy" type="varchar(255)" />
 			<column name="library_construction_protocol" type="varchar(255)" />
+			<column name="accession" type="varchar(255)" />
+			<column name="submission_status" type="varchar(255)" />
 		</createTable>
 
 		<createTable tableName="ncbi_export_submission_biosample">

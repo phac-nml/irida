@@ -8,4 +8,5 @@
 	<include file="drop-sample-sequencer-id.xml"
 		relativeToChangelogFile="true" />
 	<include file="oauth-unique-key.xml" relativeToChangelogFile="true" />
+	<include file="ncbi-upload.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

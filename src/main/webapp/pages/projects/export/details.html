@@ -47,34 +47,47 @@
                     <dd th:text="${sample.bioSample}"></dd>
                   </dl>
                   <dl class="col-md-6">
-                    <dt th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</dt>
-                    <dd th:text="${sample.libraryConstructionProtocol}"></dd>
+                    <dt th:text="#{project.export.status}">_Export Status_</dt>
+                    <dd th:text="${sample.submissionStatus}"></dd>
                   </dl>
                 </div>
                 <div class="row">
+                  <dl class="col-md-6">
+                    <dt th:text="#{project.export.accession}">_NCBI Accession_</dt>
+                    <dd th:text="${sample.accession}"></dd>
+                  </dl>
+                
                   <dl class="col-md-6">
                     <dt th:text="#{project.export.library_name.title}">_Library Name_</dt>
                     <dd th:text="${sample.libraryName}"></dd>
                   </dl>
+                </div>
+                <div class="row">
                   <dl class="col-md-6">
                     <dt th:text="#{project.export.instrument_model.title}">_Instrument Model_</dt>
                     <dd th:text="${sample.instrumentModel.value}"></dd>
                   </dl>
-                </div>
-                <div class="row">
+                
                   <dl class="col-md-6">
                     <dt th:text="#{project.export.library_strategy.title}">_Library Strategy_</dt>
                     <dd th:text="${sample.libraryStrategy.value}"></dd>
                   </dl>
+                </div>
+                <div class="row">
                   <dl class="col-md-6">
                     <dt th:text="#{project.export.library_selection.title}">_Library Selection_</dt>
                     <dd th:text="${sample.librarySelection.value}"></dd>
                   </dl>
-                </div>
-                <div class="row">
+
                   <dl class="col-md-6">
                     <dt th:text="#{project.export.library_source.title}">_Library Source_</dt>
                     <dd th:text="${sample.librarySource.value}"></dd>
+                  </dl>
+                </div>
+                <div class="row">
+                  <dl class="col-md-6">
+                    <dt th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</dt>
+                    <dd th:text="${sample.libraryConstructionProtocol}"></dd>
                   </dl>
                 </div>
 

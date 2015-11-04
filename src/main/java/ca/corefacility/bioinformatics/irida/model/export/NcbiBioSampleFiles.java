@@ -12,12 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
 
 /**
  * {@link SequenceFile}s and {@link SequenceFilePair}s associated with a
@@ -64,13 +65,22 @@ public class NcbiBioSampleFiles {
 	@Column(name = "library_construction_protocol")
 	private String libraryConstructionProtocol;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "submission_status")
+	private ExportUploadState submissionStatus;
+
+	@Column(name = "accession")
+	private String accession;
+
 	public NcbiBioSampleFiles() {
 		files = Lists.newArrayList();
 		pairs = Lists.newArrayList();
+		submissionStatus = ExportUploadState.NEW;
 	}
 
 	public NcbiBioSampleFiles(String namespace) {
 		// Creating a new SRA upload identifier using the current time
+		this();
 		StringBuilder builder = new StringBuilder(namespace);
 		builder.append(UUID.randomUUID().toString());
 		id = builder.toString();
@@ -228,6 +238,10 @@ public class NcbiBioSampleFiles {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public List<SequenceFilePair> getPairs() {
 		return pairs;
 	}
@@ -263,4 +277,21 @@ public class NcbiBioSampleFiles {
 	public NcbiLibraryStrategy getLibraryStrategy() {
 		return libraryStrategy;
 	}
+
+	public ExportUploadState getSubmissionStatus() {
+		return submissionStatus;
+	}
+
+	public void setSubmissionStatus(ExportUploadState submissionStatus) {
+		this.submissionStatus = submissionStatus;
+	}
+
+	public String getAccession() {
+		return accession;
+	}
+
+	public void setAccession(String accession) {
+		this.accession = accession;
+	}
+
 }

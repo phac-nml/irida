@@ -207,6 +207,8 @@ public class ProjectExportController {
 	/**
 	 * Get the details view of a given {@link NcbiExportSubmission}
 	 * 
+	 * @param projectId
+	 *            ID of the {@link Project} the export is for
 	 * @param submissionId
 	 *            the {@link NcbiExportSubmission} id
 	 * @param model

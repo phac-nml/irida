@@ -8,7 +8,9 @@ import java.util.Map;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 
 /**
- * Status of an {@link NcbiExportSubmission}
+ * Status of an {@link NcbiExportSubmission}. Many states taken from <a href=
+ * "http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission-response.xsd"
+ * >upload response XSD</a>.
  */
 public enum ExportUploadState {
 
@@ -18,19 +20,74 @@ public enum ExportUploadState {
 	NEW("NEW"),
 
 	/**
-	 * Submission currently being processed and uploaded
+	 * Submission currently being uploaded
 	 */
-	PROCESSING("PROCESSING"),
+	UPLOADING("UPLOADING"),
 
 	/**
 	 * Submission which has been successfully uploaded
 	 */
-	COMPLETE("COMPLETE"),
+	UPLOADED("UPLOADED"),
 
 	/**
-	 * Submission where an error occurred while processing
+	 * Submission where an error occurred while uploading
 	 */
-	ERROR("ERROR");
+	UPLOAD_ERROR("UPLOAD_ERROR"),
+
+	/**
+	 * Submission created and being populated
+	 */
+	CREATED("created"),
+
+	/**
+	 * Failed immediately after submission
+	 */
+	FAILED("failed"),
+
+	/**
+	 * Queued for processing
+	 */
+	QUEUED("queued"),
+
+	/**
+	 * Processing started
+	 */
+	PROCESSING("processing"),
+
+	/**
+	 * Processing completed successfully
+	 */
+	PROCESSED_OK("processed-ok"),
+
+	/**
+	 * Processing completed with error(s)
+	 */
+	PROCESSED_ERROR("processed-error"),
+
+	/**
+	 * Waiting for other files to continue processing
+	 */
+	WAITING("waiting"),
+
+	/**
+	 * Submitted to NCBI
+	 */
+	SUBMITTED("submitted"),
+
+	/**
+	 * Submission deleted
+	 */
+	DELETED("Submission deleted"),
+
+	/**
+	 * Retried processing of failed action(s
+	 */
+	RETRIED("retried"),
+
+	/**
+	 * used for undefined states
+	 */
+	UNKNOWN("unknown");
 
 	private static Map<String, ExportUploadState> stateMap = new HashMap<>();
 	private String stateString;

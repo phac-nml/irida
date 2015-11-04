@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.export;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -20,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+
+import com.google.common.collect.ImmutableSet;
 
 @Service
 public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiExportSubmission> implements
@@ -58,7 +61,16 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<NcbiExportSubmission> getSubmissionsWithState(ExportUploadState state) {
-		return repository.getSubmissionsWithState(state);
+		return repository.getSubmissionsWithState(ImmutableSet.of(state));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<NcbiExportSubmission> getSubmissionsWithState(Set<ExportUploadState> states) {
+		return repository.getSubmissionsWithState(states);
 	}
 
 	/**
