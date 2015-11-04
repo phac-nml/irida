@@ -109,16 +109,16 @@ public class ProjectSpecification {
 
 	public static Specification<Project> filterProjectByAnythingAndEverything(Map<String, String> filterMap, String term) {
 		return (root, query, cb) -> {
-			Predicate[] filteredPredicatesList = getFilteredPredicates(cb, root, filterMap);
-			Predicate[] searchPredicatesList = getSearchPredicates(cb, root, term);
+			Predicate filteredPredicatesList = getFilteredPredicates(cb, root, filterMap);
+			Predicate searchPredicatesList = getSearchPredicates(cb, root, term);
 
 			// Filter gets first priority
-			cb.and(filteredPredicatesList);
-			return cb.and(searchPredicatesList);
+			
+			return cb.and(new Predicate[] {filteredPredicatesList,searchPredicatesList});
 		};
 	}
 
-	private static Predicate[] getFilteredPredicates(CriteriaBuilder cb, Root<Project> root, Map<String, String> filterMap) {
+	private static Predicate getFilteredPredicates(CriteriaBuilder cb, Root<Project> root, Map<String, String> filterMap) {
 		ArrayList<Predicate> predicates = new ArrayList<>();
 
 		if (filterMap.containsKey("name")) {
@@ -127,10 +127,10 @@ public class ProjectSpecification {
 		if (filterMap.containsKey("organism")) {
 			predicates.add(cb.like(root.get("organism"), "%" + filterMap.get("organism") + "%"));
 		}
-		return predicates.toArray(new Predicate[predicates.size()]);
+		return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 	}
 
-	private static Predicate[] getSearchPredicates(CriteriaBuilder cb, Root<Project> root, String term) {
+	private static Predicate getSearchPredicates(CriteriaBuilder cb, Root<Project> root, String term) {
 		ArrayList<Predicate> predicates = new ArrayList<>();
 
 		// Since the project id is a long, we first check to ensure that it is a number being searched
@@ -141,6 +141,6 @@ public class ProjectSpecification {
 		}
 		predicates.add(cb.like(root.get("name"), "%" + term + "%"));
 		predicates.add(cb.like(root.get("organism"), "%" + term + "%"));
-		return predicates.toArray(new Predicate[predicates.size()]);
+		return cb.or(predicates.toArray(new Predicate[predicates.size()]));
 	}
 }
