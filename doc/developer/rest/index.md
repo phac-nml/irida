@@ -715,7 +715,7 @@ Listing sequence file pairs will display the sequnece files for a given sample w
         "fileName" : "02-2222_S1_L001_R2_001.fastq",
         "links" : [ {
           "rel" : "self",
-          "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+          "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
         } ],
         "identifier" : "2"
       }, {
@@ -726,7 +726,7 @@ Listing sequence file pairs will display the sequnece files for a given sample w
         "fileName" : "02-2222_S1_L001_R1_001.fastq",
         "links" : [ {
           "rel" : "self",
-          "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+          "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
         } ],
         "identifier" : "1"
       } ],
@@ -734,22 +734,25 @@ Listing sequence file pairs will display the sequnece files for a given sample w
       "label" : "02-2222_S1_L001_R2_001.fastq, 02-2222_S1_L001_R1_001.fastq",
       "links" : [ {
         "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/pairs/1"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/pairs/1"
       }, {
         "rel" : "pair/forward",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
       }, {
         "rel" : "pair/reverse",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
+      }, {
+        "rel" : "sequenceFilePair/sample",
+        "href" : "http://localhost:8080/api/samples/52"
       } ],
       "identifier" : "1"
     } ],
     "links" : [ {
       "rel" : "self",
-      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/pairs"
+      "href" : "http://localhost:8080/api/samples/52/sequenceFiles/pairs"
     }, {
       "rel" : "sample",
-      "href" : "http://localhost:8080/api/projects/5/samples/52"
+      "href" : "http://localhost:8080/api/samples/52"
     } ]
   }
 }
@@ -767,6 +770,7 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
 | `self` | A link to this sequence file pair record. |
 | `pair/forward` | A link to the forward oriented sequence file. |
 | `pair/reverse` | A link to the reverse oriented sequence file. |
+| `sequenceFilePair/sample` | A link to the sample that contains this sequence file. |
 
 ##### Properties
 {:.no_toc}
@@ -786,22 +790,22 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
       "file" : "/tmp/sequence-files/2/2/02-2222_S1_L001_R2_001.fastq",
       "createdDate" : 1406726674000,
       "modifiedDate" : 1406726674000,
-      "fileName" : "02-2222_S1_L001_R2_001.fastq",
       "label" : "02-2222_S1_L001_R2_001.fastq",
+      "fileName" : "02-2222_S1_L001_R2_001.fastq",
       "links" : [ {
         "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
       } ],
       "identifier" : "2"
     }, {
       "file" : "/tmp/sequence-files/1/2/02-2222_S1_L001_R1_001.fastq",
       "createdDate" : 1406726674000,
       "modifiedDate" : 1406726674000,
-      "fileName" : "02-2222_S1_L001_R1_001.fastq",
       "label" : "02-2222_S1_L001_R1_001.fastq",
+      "fileName" : "02-2222_S1_L001_R1_001.fastq",
       "links" : [ {
         "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
       } ],
       "identifier" : "1"
     } ],
@@ -809,13 +813,16 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
     "label" : "02-2222_S1_L001_R2_001.fastq, 02-2222_S1_L001_R1_001.fastq",
     "links" : [ {
       "rel" : "self",
-      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/pairs/1"
+      "href" : "http://localhost:8080/api/samples/52/sequenceFiles/pairs/1"
     }, {
       "rel" : "pair/forward",
-      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+      "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
     }, {
       "rel" : "pair/reverse",
-      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+      "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
+    }, {
+      "rel" : "sequenceFilePair/sample",
+      "href" : "http://localhost:8080/api/samples/52"
     } ],
     "identifier" : "1"
   }
