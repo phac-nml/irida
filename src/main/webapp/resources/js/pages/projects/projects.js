@@ -11,7 +11,7 @@ var projectsTable = (function(tl) {
    */
   function createItemButton(data, type, full) {
     if (tl && tl.BASE_URL) {
-      return '<a class="item-link" title="' + data + '" href="' + tl.BASE_URL + 'projects/' + full.identifier + '"><span class="cell-width-200">' + data + '</span></a>';
+      return '<a class="item-link" title="' + data + '" href="' + tl.BASE_URL + 'projects/' + full.id + '"><span class="cell-width-200">' + data + '</span></a>';
     } else {
       return data;
     }
