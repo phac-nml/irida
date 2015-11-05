@@ -1,15 +1,18 @@
 {
-  "bundle": "irida-datatables",
   "dependencies": [
-    "datatables",
     "momentjs"
   ],
   "assets": [
     {
-      "version": "1.0.0",
       "type": "js",
       "locations": {
         "webapp": "/resources/js/utils/datatable-utils.js"
+      }
+    },
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/components/datatables-custom.css"
       }
     }
   ]

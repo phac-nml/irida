@@ -62,6 +62,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -197,31 +198,10 @@ public class ProjectSamplesController {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
 		List<Map<String, Object>> samples = new ArrayList<>(joinList.size());
+
 		for (Join<Project, Sample> join : joinList) {
 			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join
 					.getObject().getId());
-
-			// Galaxy Export Functionality:
-			List<Join<Sample, SequenceFile>> sampleSeqFiles = sequenceFileService.getSequenceFilesForSample(join
-					.getObject());
-			List<Map<String, Object>> sequences = new ArrayList<>();
-			Map<String, Object> embedded = new HashMap<>(1);
-			for (Join<Sample, SequenceFile> sampleSeqJoin : sampleSeqFiles) {
-
-				Map<String, Object> seqFileMap = new HashMap<>(1);
-				Map<String, Object> links = new HashMap<>(1);
-				Map<String, Object> self = new HashMap<>(1);
-				seqFileMap.put("_links", links);
-				links.put("self", self);
-				String seqFileLoc = linkTo(
-						methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleSeqJoin.getSubject().getId(), sampleSeqJoin.getObject().getId())).withSelfRel()
-						.getHref();
-				self.put("href", seqFileLoc);
-				sequences.add(seqFileMap);
-			}
-			embedded.put("sample_files", sequences);
-			sampleMap.put("embedded", embedded);
-
 			samples.add(sampleMap);
 		}
 		result.put("samples", samples);
@@ -618,7 +598,13 @@ public class ProjectSamplesController {
 		sampleMap.put("project", project);
 		sampleMap.put("sampleType", type);
 		sampleMap.put("identifier", identifier);
+		String href = linkTo(
+			methodOn(RESTProjectSamplesController.class).getProjectSample(
+					project.getId(), sample.getId()
+				)
+			).withSelfRel().getHref();
 
+		sampleMap.put("href", href);
 		return sampleMap;
 	}
 

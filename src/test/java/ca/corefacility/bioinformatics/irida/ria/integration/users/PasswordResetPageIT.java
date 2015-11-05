@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -37,7 +36,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "Password1";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertTrue(passwordResetPage.checkSuccess());
+		assertTrue("Should have successfully reset password.", passwordResetPage.checkSuccess());
 	}
 
 	@Test
@@ -45,7 +44,8 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "Password1";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, "different1");
-		assertFalse(passwordResetPage.checkSuccess());
+		assertTrue("Should **not** successfully reset password.",
+				passwordResetPage.checkFailure("Password and Confirm Password do not match."));
 	}
 
 	@Test
@@ -53,7 +53,9 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "notcomplex";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertFalse(passwordResetPage.checkSuccess());
+		final Boolean badPasswordMessage = passwordResetPage.checkFailure("Password must contain at least one number.") ||
+				passwordResetPage.checkFailure("Password must contain at least one upper-case letter.");
+		assertTrue("Should **not** successfully reset password.", badPasswordMessage);
 	}
 
 	@Test
@@ -62,7 +64,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		// reset password
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertTrue(passwordResetPage.checkSuccess());
+		assertTrue("Should have successfully reset password.", passwordResetPage.checkSuccess());
 
 		AbstractPage.logout(driver());
 		// try new password

@@ -1,17 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.WebElement;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
  * <p> Integration test to ensure that the Projects Page. </p>
@@ -35,7 +39,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Ensure buttons are created and direct to the write project.
 		projectsPage.gotoProjectPage(1);
-		assertTrue("Should be on specific project page", driver().getCurrentUrl().contains("/projects/2"));
+		assertTrue("Should be on specific project page", driver().findElement(By.id("samplesTable")).isDisplayed());
 	}
 
 	@Test
@@ -47,6 +51,13 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		projectsPage.clickProjectNameHeader();
 		List<WebElement> desElements = projectsPage.getProjectColumn();
 		assertTrue("Projects page is sorted Descending", checkSortedDescending(desElements));
+	}
+
+	@Test
+	public void testLinkingToSpecificProject() {
+		projectsPage.clickLinkToProject(0);
+		ProjectSamplesPage page = new ProjectSamplesPage(driver());
+		assertEquals("Should link to the project page.", page.getTitle(), "project Samples");
 	}
 
 	/**

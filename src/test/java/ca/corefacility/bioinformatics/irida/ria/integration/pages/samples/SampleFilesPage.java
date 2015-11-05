@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -62,7 +61,7 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	public boolean isDeleteConfirmationMessageDisplayed() {
-		return driver.findElements(By.id("file-deleted-success")).size() > 0;
+		return waitForElementsVisible(By.id("file-deleted-success")).size() > 0;
 	}
 
 	public void selectGoodFastqFiles() {

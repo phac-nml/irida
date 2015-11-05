@@ -1,16 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SequencingRunDetailsPage extends AbstractPage {
 	public static String PAGEURL = "sequencingRuns/";
@@ -42,5 +41,12 @@ public class SequencingRunDetailsPage extends AbstractPage {
 
 	public String getSequencerType() {
 		return driver.findElement(By.className("sequencer-type")).getText();
+	}
+
+	public void deleteRun() {
+		driver.findElement(By.id("remove-btn")).click();
+		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.id("confirm-delete")));
+		confirmButton.click();
+		waitForElementInvisible(By.className("modal-dialog"));
 	}
 }

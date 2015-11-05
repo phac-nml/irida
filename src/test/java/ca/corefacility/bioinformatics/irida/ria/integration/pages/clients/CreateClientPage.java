@@ -12,7 +12,6 @@ public class CreateClientPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(CreateClientPage.class);
 
 	private final String CREATE_PAGE = "clients/create";
-	public static String SUCCESS_PAGE = "clients/\\d+";
 
 	public CreateClientPage(WebDriver driver) {
 		super(driver);
@@ -40,9 +39,10 @@ public class CreateClientPage extends AbstractPage {
 	}
 
 	public boolean checkSuccess() {
-		if (driver.getCurrentUrl().matches(BASE_URL + SUCCESS_PAGE)) {
-			return true;
-		} else {
+		try {
+			WebElement el = waitForElementVisible(By.className("client-details-heading"));
+			return el.getText().equals("Client Details");
+		} catch (Exception e) {
 			return false;
 		}
 	}

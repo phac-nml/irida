@@ -9,48 +9,29 @@
 </head>
 <body>
 <div layout:fragment="page"
-     ddl:bundle-includes="projects">
+     ddl:bundle-includes="projects" ddl:asset-css-excludes="datatables">
     <main class="col-md-12" role="main" property="mainContentOfPage">
         <h1 th:text="#{projects.title}"></h1>
 		<div dt:conf="projectsTable">
-            <div dt:confType="callback" dt:type="init" dt:function="irida-datatables#datatable.tableDrawn"></div>
+            <div dt:confType="callback" dt:type="init" dt:function="datatables-utils#datatable.tableDrawn"></div>
         </div>
         <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="header">
             <thead>
             <tr role="row">
-                <th dt:property="item.identifier" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
-                <th dt:filterable="true" dt:property="item.name" dt:renderFunction="irida-datatables#datatable.createItemButton"
-                	th:text="#{projects.table.name}"></th>
-                <th dt:filterable="true" dt:property="item.organism" th:text="#{projects.table.organism}"
-                    dt:renderFunction="irida-datatables#datatable.forceContentSize"></th>
-                <th dt:property="custom.role" dt:filterable="true" dt:filterType="select" dt:filterValues="roles"
-                    dt:renderFunction="irida-datatables#datatable.i18n" th:text="#{projects.table.role}"></th>
-                <th dt:property="custom.samples" dt:searchable="false" th:text="#{projects.table.samples}"></th>
-                <th dt:property="custom.members" dt:searchable="false" th:text="#{projects.table.members}"></th>
-                <th dt:property="item.createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
-                    dt:renderFunction="irida-datatables#datatable.formatDate"></th>
-                <th dt:property="item.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
-                    dt:renderFunction="irida-datatables#datatable.formatDate"></th>
+                <th dt:property="id" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
+                <th dt:property="name" width="200px" dt:filterable="true" dt:renderFunction="projects#projectsTable.createItemButton"
+                	><span class="header-name" th:text="#{projects.table.name}"></span></th>
+                <th dt:filterable="true" dt:property="organism" th:text="#{projects.table.organism}"
+                    dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
+                <th dt:property="samples" dt:sortable="false" dt:searchable="false" th:text="#{projects.table.samples}"></th>
+                <th width="150px" dt:property="createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
+                    dt:renderFunction="datatables-utils#datatable.formatDate"></th>
+                <th width="150px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
+                    dt:renderFunction="datatables-utils#datatable.formatDate"></th>
             </tr>
             </thead>
         </table>
     </main>
 </div>
-<th:block layout:fragment="page-scripts" th:inline="javascript">
-    <script>
-        var roles = [
-                /*[[#{projectRole.PROJECT_USER}]]*/ 'Collaborator',
-                /*[[#{projectRole.PROJECT_OWNER}]]*/ 'Manager',
-                /*[[#{projectRole.PROJECT_NONE}]]*/ 'None'
-            ],
-            PAGE = {
-                lang: {
-                    'PROJECT_USER': roles[0],
-                    'PROJECT_OWNER': roles[1],
-                    'PROJECT_NONE': roles[2]
-                }
-            };
-    </script>
-</th:block>
 </body>
 </html>

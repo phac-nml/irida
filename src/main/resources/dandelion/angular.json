@@ -20,7 +20,6 @@
     },
     {
       "name": "angular-bootstrap",
-      "version": "0.12.0",
       "type": "js",
       "locations": {
         "webapp": "/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"
@@ -32,6 +31,14 @@
       "type": "js",
       "locations": {
         "webapp": "/resources/bower_components/angular-messages/angular-messages.js"
+      }
+    },
+    {
+      "name": "angular-sanitize",
+      "version": "1.4.0",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-sanitize/angular-sanitize.min.js"
       }
     }
   ]

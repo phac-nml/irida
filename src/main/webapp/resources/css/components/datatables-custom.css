@@ -1,0 +1,24 @@
+.cell-width-200 {
+  text-align: left;
+  width: 200px !important;
+  wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px; }
+
+table th {
+  vertical-align: top !important; }
+
+table td {
+  padding: 5px 18px !important; }
+
+.yadcf-filter-reset-button {
+  display: none !important; }
+
+.yadcf-filter-wrapper {
+  display: block !important; }
+
+.yadcf-filter.form-control {
+  font-weight: normal;
+  font-size: 12px !important; }

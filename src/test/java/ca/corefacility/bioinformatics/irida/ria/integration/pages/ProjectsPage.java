@@ -5,18 +5,15 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
  * <p>
  * Page Object to represent the projects page.
  * </p>
- * 
+ *
  */
 public class ProjectsPage extends AbstractPage {
     private static final Logger logger = LoggerFactory.getLogger(ProjectsPage.class);
@@ -29,12 +26,12 @@ public class ProjectsPage extends AbstractPage {
 
 	public void toUserProjectsPage() {
 		get(driver, RELATIVE_URL);
-		waitForAjax();
+		waitForElementVisible(By.cssSelector("#projectsTable tbody tr"));
 	}
 
 	public void toAdminProjectsPage() {
 		get(driver, ADMIN_URL);
-		waitForAjax();
+		waitForElementVisible(By.cssSelector("#projectsTable tbody tr"));
 	}
 
 	public int projectsTableSize() {
@@ -43,7 +40,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void gotoProjectPage(int row) {
-		driver.findElements(By.cssSelector("#projectsTable .item-link")).get(row).click();
+		submitAndWait(driver.findElements(By.cssSelector("#projectsTable .item-link")).get(row));
 	}
 
 	public List<WebElement> getProjectColumn() {
@@ -52,13 +49,18 @@ public class ProjectsPage extends AbstractPage {
 
 	public void clickProjectNameHeader() {
 		// Sorting row is the second one
-		WebElement headerRow = driver.findElements(By.cssSelector(".dataTables_scrollHeadInner thead tr")).get(0);
-		headerRow.findElements(By.cssSelector("th")).get(0).click();
-		waitForAjax();
+		WebElement th = driver.findElements(By.cssSelector("#projectsTable th")).get(1);
+		final String originalSortOrder = th.getAttribute("aria-sort");
+		th.findElement(By.className("header-name")).click();
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(
+				(org.openqa.selenium.support.ui.ExpectedCondition<Boolean>) input -> {
+					final String ariaSort = th.getAttribute("aria-sort");
+					return ariaSort!= null && !ariaSort.equals(originalSortOrder);
+				});
 	}
 
-	private void waitForAjax() {
-		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-		wait.until(Ajax.waitForAjax(60000));
+	public void clickLinkToProject(int row) {
+		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.className("item-link"));
+		links.get(row).click();
 	}
 }

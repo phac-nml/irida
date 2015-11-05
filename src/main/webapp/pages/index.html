@@ -31,15 +31,8 @@
       </div>
       <div class="panel-body">
         <div class="form-group">
-          <label for="size" th:text="#{event.size}">_Activities to show:_</label>
-          <select style="width:100px;" id="size" class="form-control event-count">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
-        <div id="events"></div>
+            <events data:url="@{/events/current_user}"></events>
+            </div>
       </div>
     </section>
   </div>
@@ -47,9 +40,6 @@
   <th:block layout:fragment="page-scripts">
     <script th:inline="javascript">
       var PAGE = {
-          urls: {
-              events: /*[[@{/events/current_user}]]*/ '/events/current_user'
-          },
           updates: /*[[${updates}]]*/ '## Nothing Here!'
       };
     </script>

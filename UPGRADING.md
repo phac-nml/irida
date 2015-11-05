@@ -4,6 +4,10 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+1.0.0-alpha5 to 1.0.0-alpha6
+----------------------------
+* No special upgrade steps required, just deploy the new `war` file.
+
 1.0.0-alpha4 to 1.0.0-alpha5
 ----------------------------
 * A new version of SNVPhyl should be installed in Galaxy, you must install a new tool repository `suite_snvphyl` with revision `99463e5aef1b` from the IRIDA Main Toolshed. Please see https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/#irida-whole-genome-phylogenomics for more information.

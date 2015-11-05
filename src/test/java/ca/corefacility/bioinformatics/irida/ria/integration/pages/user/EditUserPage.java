@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 public class EditUserPage extends AbstractPage {
 
 	public static String EDIT_PAGE = "users/1/edit";
-	public static String SUCCESS_PAGE = BASE_URL + "users/1";
 
 	public EditUserPage(WebDriver driver) {
 		super(driver);
@@ -45,7 +44,12 @@ public class EditUserPage extends AbstractPage {
 	}
 	
 	public boolean updateSuccess(){
-		return driver.getCurrentUrl().equals(SUCCESS_PAGE);
+		try {
+			waitForElementVisible(By.className("user-details-title"));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }

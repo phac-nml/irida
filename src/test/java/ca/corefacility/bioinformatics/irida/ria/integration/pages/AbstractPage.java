@@ -1,12 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import com.google.common.base.Strings;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -15,9 +20,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+
+import com.google.common.base.Strings;
 
 /**
  * Represents the common elements in a page within the application.
@@ -28,7 +33,7 @@ public class AbstractPage {
 	private static final String APPLICATION_PORT = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080"
 			: System.getProperty("jetty.port");
 	protected static final String BASE_URL = "http://localhost:" + APPLICATION_PORT + "/";
-	private static final Long TIME_OUT_IN_SECONDS = 10L;
+	protected static final Long TIME_OUT_IN_SECONDS = 10L;
 
 	@FindBy(className = "error")
 	private WebElement errors;
@@ -78,30 +83,28 @@ public class AbstractPage {
 		return wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 
-	public void clickElement(WebElement element) {
-		boolean failed = true;
-		int count = 10;
-		while (failed && count > 0) {
-			count--;
+	public void clickElement(By finder) {
+		boolean clicked = false;
+		do{
 			try {
-				element.click();
-				failed = false;
-			} catch (Exception e) {
-				if (count == 0) {
-					throw e;
-				}
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e1) {
-					logger.error("Cannot sleep thread.");
-				}
+				final WebElement el = driver.findElement(finder);
+				waitForElementToBeClickable(el);
+				el.click();
+				clicked = true;
+			} catch (final StaleElementReferenceException ex) {
+				logger.debug("Got stale element reference exception when clicking launch pipeline, trying again.");
 			}
-		}
+		} while (!clicked);
 	}
 
 	public WebElement waitForElementVisible(By locator) {
 		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+	}
+	
+	public Collection<WebElement> waitForElementsVisible(By locator) {
+		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.visibilityOfElementLocated(locator));
+		return driver.findElements(locator);
 	}
 
 	public void waitForElementInvisible(By locator) {
@@ -193,4 +196,18 @@ public class AbstractPage {
 	public String getApplicationPort() {
 		return APPLICATION_PORT;
 	}
+	
+	/**
+	 * Convenience method to make sure that form submission actually happens
+	 * before proceeding to checking later steps.
+	 * 
+	 * @param submitButton
+	 *            the submit button to click.
+	 */
+	public void submitAndWait(final WebElement submitButton) {
+		WebElement oldHtml = driver.findElement(By.tagName("html"));
+		submitButton.click();
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.stalenessOf(oldHtml));
+	}
+	
 }
