@@ -598,7 +598,8 @@ public class RESTSampleSequenceFilesController {
     
 	/**
 	 * Add the {@link SequenceFile} and self rel links to a
-	 * {@link SequenceFilePair}.  Also adds the forward and reverse file links
+	 * {@link SequenceFilePair}. Also adds the forward and reverse file links
+	 * and a link to the pair's sample
 	 * 
 	 * @param pair
 	 *            The {@link SequenceFilePair} to enhance
@@ -618,11 +619,12 @@ public class RESTSampleSequenceFilesController {
 		forward.add(forwardLink.withSelfRel());
 		reverse.add(reverseLink.withSelfRel());
 
-		pair.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId,
-						pair.getId())).withSelfRel());
+		pair.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId, pair.getId()))
+				.withSelfRel());
 		pair.add(forwardLink.withRel(REL_PAIR_FORWARD));
 		pair.add(reverseLink.withRel(REL_PAIR_REVERSE));
+
+		pair.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_PAIR_SAMPLE));
 
 		return pair;
 	}
