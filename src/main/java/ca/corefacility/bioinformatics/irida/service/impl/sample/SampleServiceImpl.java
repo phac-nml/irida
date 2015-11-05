@@ -165,6 +165,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#file, 'canReadSequenceFile')")
 	public Join<Sample, SequenceFile>  getSampleForSequeneFile(SequenceFile file) {
