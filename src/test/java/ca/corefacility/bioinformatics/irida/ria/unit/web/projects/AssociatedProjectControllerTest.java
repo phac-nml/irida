@@ -22,8 +22,12 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -75,6 +79,10 @@ public class AssociatedProjectControllerTest {
 		sampleRemoteService = mock(SampleRemoteService.class);
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
 				userService, apiService, projectRemoteService, sampleService, sampleRemoteService);
+		
+        // fake out the servlet response so that the URI builder will work.
+        RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
+        RequestContextHolder.setRequestAttributes(ra);
 	}
 
 	@Test
@@ -359,7 +367,9 @@ public class AssociatedProjectControllerTest {
 		Project project = new Project();
 
 		Project allowedProject = new Project("allowed");
+		allowedProject.setId(2L);
 		Project notAllowedProject = new Project("not allowed");
+		notAllowedProject.setId(3L);
 
 		when(projectService.read(projectId)).thenReturn(project);
 
@@ -368,6 +378,7 @@ public class AssociatedProjectControllerTest {
 						notAllowedProject)));
 
 		Sample sample = new Sample("test");
+		sample.setId(1L);
 		when(sampleService.getSamplesForProject(allowedProject)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(allowedProject, sample)));
 
@@ -396,11 +407,14 @@ public class AssociatedProjectControllerTest {
 
 		Sample sample1 = new Sample("sample1");
 		sample1.add(new Link("http://sample1",Link.REL_SELF));
+		sample1.setId(1L);
 		Sample sample2 = new Sample("sample2");
 		sample2.add(new Link("http://sample2",Link.REL_SELF));
+		sample2.setId(2L);
 		List<Sample> samples = Lists.newArrayList(sample1, sample2);
 
 		Project remoteProject = new Project("remote project");
+		remoteProject.setId(1L);
 
 		when(projectService.read(projectId)).thenReturn(project);
 
@@ -411,7 +425,7 @@ public class AssociatedProjectControllerTest {
 		when(projectRemoteService.read(forbiddenProject)).thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN));
 
 		when(sampleRemoteService.getSamplesForProject(remoteProject)).thenReturn(samples);
-
+		
 		Map<String, Object> remoteAssociatedSamplesForProject = controller
 				.getRemoteAssociatedSamplesForProject(projectId);
 
