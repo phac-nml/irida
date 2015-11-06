@@ -76,6 +76,7 @@ public class ProjectMembersControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("My random string");
 
 		controller.addProjectMember(projectId, userId, projectRole.toString(), Locale.US);
 
