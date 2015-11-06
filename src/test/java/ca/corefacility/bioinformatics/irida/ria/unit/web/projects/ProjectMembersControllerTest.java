@@ -11,10 +11,12 @@ import static org.mockito.Mockito.when;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
@@ -38,6 +40,7 @@ public class ProjectMembersControllerTest {
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
 	private ProjectTestUtils projectTestUtils;
+	private MessageSource messageSource;
 	private static final String USER_NAME = "testme";
 
 	ProjectMembersController controller;
@@ -47,7 +50,8 @@ public class ProjectMembersControllerTest {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		controller = new ProjectMembersController(projectUtils, projectService, userService);
+		messageSource = mock(MessageSource.class);
+		controller = new ProjectMembersController(projectUtils, projectService, userService, messageSource);
 		projectTestUtils = new ProjectTestUtils(projectService, userService);
 
 		projectTestUtils.mockSidebarInfo();
@@ -73,7 +77,7 @@ public class ProjectMembersControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
 
-		controller.addProjectMember(projectId, userId, projectRole.toString());
+		controller.addProjectMember(projectId, userId, projectRole.toString(), Locale.US);
 
 		verify(projectService).read(projectId);
 		verify(userService).read(userId);

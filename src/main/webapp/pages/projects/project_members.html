@@ -4,26 +4,22 @@
       layout:decorator="projects/_base">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.members}"></title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
-          href="/resources/bower_components/select2/select2.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
-          href="/resources/bower_components/select2/select2-bootstrap.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
-          href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
           href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
+
+    <script>window.dependencies=["irida.project.members"]</script>
 </head>
 <body>
-<main layout:fragment="main">
+<main layout:fragment="main" ddl:bundle-includes="project-members" ng-controller="MembersController as membersCtrl">
     <div class="row">
         <div class="col-md-12">
             <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
 
-            <div class="btn-toolbar mrgn-bttm-md" role="toolbar">
+            <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group">
-                    <a id="add-members-button" class="btn btn-default btn-sm open-popup-link"
+                    <button id="add-members-button" class="btn btn-default"
                        th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
-                       th:text="#{project.members.edit.add}">_Add Members_</a>
+                       th:text="#{project.members.edit.add}" ng-click="membersCtrl.showAddMemberModal()">_Add Members_</button>
                 </div>
             </div>
         </div>
@@ -49,49 +45,57 @@
 <th:block layout:fragment="scripts">
 <script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
         src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-<script th:src="@{/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js}"
-        src="/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
-<script th:src="@{/resources/bower_components/select2/select2.min.js}"
-        src="/resources/bower_components/select2/select2.min.js"></script>
 <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
         src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-<div class="hidden">
-    <select id="template-roles" class="role-select form-control input-sm">
-        <option th:each="role : ${projectRoles}"
-                th:value="${role}"
-                th:text="#{${'projectRole.'+role}}">_Role_
-        </option>
-    </select>
-</div>
-
-<section id="addMembersLink" class="modal-dialog modal-content overlay-def mfp-hide">
-    <header class="modal-header">
-        <h2 class="modal-title" id="lbx-title">Add User</h2>
-    </header>
-
-    <div class="modal-body">
-        <form id="addUserForm" action="#">
-            <div class="form-group">
-                <label class="control-label" for="add-user-username" th:text="#{project.members.add.username}">_Username_</label>
-                <input type="text" id="add-user-username" name="userId" class="form-control input-full"/>
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="add-user-role" th:text="#{project.members.add.role}">_Project
-                    Role_</label>
-                <select id="add-user-role" class="form-control input-full" name="projectRole">
-                    <option th:each="role : ${projectRoles}"
-                            th:value="${role}"
-                            th:text="#{${'projectRole.'+role}}">_Role_
-                    </option>
-                </select>
-            </div>
-        </form>
+    <div class="hidden">
+        <select id="template-roles" class="role-select form-control input-sm">
+            <option th:each="role : ${projectRoles}"
+                    th:value="${role}"
+                    th:text="#{${'projectRole.'+role}}">_Role_
+            </option>
+        </select>
     </div>
-    <div class="panel-footer text-right">
-        <button id="closeAddMemer" class="btn btn-default popup-modal-dismiss" th:text="#{project.members.add.cancel}">_Cancel_</button>
-        <button id="submitAddMember" class="btn btn-primary" th:text="#{project.members.add.submit}">_Submit_</button>
-    </div>
-</section>
+
+    <script type="text/ng-template" id="newMemberModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Add User</h3>
+        </div>
+        <div class="modal-body">
+            <form id="addUserForm" action="#">
+                <div class="form-group">
+                    <label class="control-label" for="add-user-username" th:text="#{project.members.add.username}">_Username_</label>
+                    <input select2="" data:url="@{/projects/{id}/ajax/availablemembers(id=${project.getId()})}" th:placeholder="#{project.members.add.select-user}" type="text" ng-model="modalCtrl.user.userId" id="add-user-username" name="userId" class="form-control input-full"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="add-user-role" th:text="#{project.members.add.role}">_Project
+                        Role_</label>
+                    <select ng-model="modalCtrl.user.projectRole" id="add-user-role" class="form-control input-full" name="projectRole">
+                        <option th:each="role : ${projectRoles}"
+                                th:value="${role}"
+                                th:text="#{${'projectRole.'+role}}">_Role_
+                        </option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" type="button" ng-click="modalCtrl.cancel()">Cancel</button>
+            <button class="btn btn-primary" type="button" ng-click="modalCtrl.addMember()">OK</button>
+        </div>
+    </script>
+
+    <script th:inline="javascript">
+        var PAGE = {
+            langs: {
+                addMember: {
+                    error: /*[[#{project.members.add.error}]]*/ "An error occurred when adding the User to the Project."
+                }
+            },
+            urls: {
+                addMember: /*[[@{/projects/{id}/members(id=${project.getId()})}]]*/ '/projects/1/members'
+            }
+        };
+    </script>
 
 <script th:inline="javascript">
 /*<![CDATA[*/
@@ -179,7 +183,7 @@ var DT = {
 var showRole = true;
 
 $(document).ready(function () {
-    var table = $('#usersTable').DataTable({
+    PAGE.table = $('#usersTable').DataTable({
         dom: "<'top'lf>rt<'bottom'ip><'clear'>",
         ajax: /*[[@{/projects/ajax/{id}/members(id=${project.getId()})}]]*/ '/projects/ajax/1/members',
         deferRender: true,
@@ -198,7 +202,7 @@ $(document).ready(function () {
             $("#usersTable").off("click", id);
 
             $("#usersTable").on("click", id, function () {
-                showRemoveUser(userLabel, removeUrl, uid, table);
+                showRemoveUser(userLabel, removeUrl, uid, PAGE.table);
             });
         },
         columns: [
@@ -289,66 +293,6 @@ $(document).ready(function () {
         }
     });
 
-    //Set modial popup links
-    $('.open-popup-link').magnificPopup({
-        type: 'inline',
-        callbacks: {
-            beforeOpen: function () {
-                $("#add-user-username").select2("val", "");
-                $("#add-user-role").select2("val", "PROJECT_USER");
-            }
-        }
-    });
-
-    $("#closeAddMemer").on('click', function() {
-        $.magnificPopup.close();
-    });
-
-    $("#submitAddMember").click(function () {
-        var form = $("#addUserForm");
-        var username = form.find("#add-user-username");
-        var role = form.find("#add-user-role");
-        var errors = false;
-
-        if (!username.val().length == 0 && !role.val().length == 0) {
-            var data = $("#addUserForm").serialize();
-            $.ajax({
-                url: /*[[@{/projects/{id}/members(id=${project.getId()})}]]*/ '/projects/1/members',
-                data: data,
-                type: "POST",
-                success: function () {
-                    noty({
-                        text: /*[[#{project.members.add.success}]]*/ "User added to project successfully.",
-                        layout: "topCenter",
-                        type: "success",
-                        timeout: 5000
-                    });
-
-                    $.magnificPopup.close();
-
-                    table.ajax.reload();
-                },
-                error: function () {
-                    noty({
-                        text: /*[[#{project.members.add.error}]]*/ "An error occurred when adding the User to the Project.",
-                        layout: "topCenter",
-                        type: "error",
-                        timeout: 10000
-                    });
-                }
-            });
-        }
-        else {
-            noty({
-                text: /*[[#{project.members.add.required}]]*/ "User and Project Role are required.",
-                layout: "topCenter",
-                type: "error",
-                timeout: 10000
-            });
-        }
-    });
-
-
     $("#usersTable").on('click', 'button.edit', function (e) { //click the edit button
         e.stopPropagation();
         var currEdit = $("tr.editing");
@@ -394,7 +338,7 @@ $(document).ready(function () {
                     timeout: 5000
                 });
 
-                table.ajax.reload();
+                PAGE.table.ajax.reload();
             },
             statusCode: {
                 // 403 returned if changing role would leave project without owner
@@ -420,37 +364,6 @@ $(document).ready(function () {
         });
 
     });
-
-    $("#add-user-username").select2({
-        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-            url: /*[[@{/projects/{id}/(id=${project.getId()})}]]*/ ''
-            + 'ajax/availablemembers',
-            dataType: 'json',
-            data: function (search, page) {
-                return {
-                    term: search, // search term
-                    page_limit: 10,
-                };
-            },
-            results: function (data, page) { // parse the results into the format expected by Select2.
-                // since we are using custom formatting functions we do not need to alter remote JSON data
-                var results = [];
-
-                for (var id in data) {
-                    results.push({
-                        "id": id,
-                        "text": data[id]
-                    });
-                }
-
-                return {results: results};
-            }
-        },
-        "placeholder": /*[[#{project.members.add.select-user}]]*/ "Select a User"
-    });
-
-    $("#add-user-role").select2();
-
 });
 
 function showRemoveUser(userLabel, removeUrl, userId, table) {

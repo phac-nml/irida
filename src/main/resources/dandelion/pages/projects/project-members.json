@@ -1,0 +1,11 @@
+{
+  "dependencies": ["select2"],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/members.js"
+      }
+    }
+  ]
+}
