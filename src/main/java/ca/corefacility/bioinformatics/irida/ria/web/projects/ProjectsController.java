@@ -416,7 +416,7 @@ public class ProjectsController {
 			@DatatablesParams DatatablesCriterias criterias) {
 
 		Specification<Project> specification = ProjectSpecification
-				.filterProjectByAnythingAndEverything(ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs()),
+				.filterProjectsByAdvancedFiltersAndSearch(ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs()),
 						criterias.getSearch());
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
