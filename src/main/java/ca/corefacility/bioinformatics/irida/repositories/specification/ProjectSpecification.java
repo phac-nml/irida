@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Specification for searching project properties
@@ -58,56 +59,17 @@ public class ProjectSpecification {
 	}
 
 	/**
-	 * Search for projects based on submitted criteria
+	 * Search through {@link Project}s for a {@link User} based on specific attributes or through a generalized search
+	 * string.
 	 *
-	 * @param searchMap
-	 * 		{@link Map} The keys correspond to {@link Project} attributes to filter by.
-	 *
-	 * @return A {@link Specification}
-	 */
-	public static Specification<Project> filterAllProjectsByProjectAttributes(Map<String, String> searchMap) {
-		return (root, query, cb) -> {
-			ArrayList<Predicate> predicates = new ArrayList<>();
-
-			if (searchMap.containsKey("name")) {
-				predicates.add(cb.like(root.get("name"), "%" + searchMap.get("name") + "%"));
-			}
-			if (searchMap.containsKey("organism")) {
-				predicates.add(cb.like(root.get("organism"), "%" + searchMap.get("organism") + "%"));
-			}
-
-			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
-		};
-	}
-
-	/**
-	 * Filter all {@link Project}s by a general search term again project attributes.
-	 *  This search {@link Specification} is for searching {@link Project}'s via any attribute
-	 *  (currently only id, name, and organism).
-	 *
+	 * @param filterMap
+	 * 		{@link Map} of {@link Project} attributes to search with the searc term.
 	 * @param term
-	 * 		{@link String} The search query.
+	 * 		{@link String} A general search term to search the {@link Project} attributes.
 	 *
-	 * @return {@link Specification}
+	 * @return {@link Specification} for the search.
 	 */
-	public static Specification<Project> filterAllProjectsAllFields(String term) {
-		return (root, query, cb) -> {
-			ArrayList<Predicate> predicates = new ArrayList<>();
-
-			// Since the project id is a long, we first check to ensure that it is a number being searched
-			// If it is, then to get the search to work within a long, we need to cast that id as a string
-			// and then proceed with the search.
-			if (term.matches("\\d*")) {
-				predicates.add(cb.like(root.get("id").as(String.class), "%" + term + "%"));
-			}
-			predicates.add(cb.like(root.get("name"), "%" + term + "%"));
-			predicates.add(cb.like(root.get("organism"), "%" + term + "%"));
-
-			return cb.or(predicates.toArray(new Predicate[predicates.size()]));
-		};
-	}
-
-	public static Specification<Project> filterProjectByAnythingAndEverything(Map<String, String> filterMap, String term) {
+	public static Specification<Project> filterProjectsByAdvancedFiltersAndSearch(Map<String, String> filterMap, String term) {
 		return (root, query, cb) -> {
 			Predicate filteredPredicatesList = getFilteredPredicates(cb, root, filterMap);
 			Predicate searchPredicatesList = getSearchPredicates(cb, root, term);
@@ -118,6 +80,19 @@ public class ProjectSpecification {
 		};
 	}
 
+	/**
+	 * Create a {@link Predicate} based on a {@link Map} of {@link Project} attributes with their corresponding search
+	 * string..
+	 *
+	 * @param cb
+	 * 		{@link CriteriaBuilder} for a {@link Specification}
+	 * @param root
+	 * 		{@link Root}
+	 * @param filterMap
+	 * 		{@link Map} of {@link Project} attributes to search with their corresponding search term.
+	 *
+	 * @return {@link Predicate}
+	 */
 	private static Predicate getFilteredPredicates(CriteriaBuilder cb, Root<Project> root, Map<String, String> filterMap) {
 		ArrayList<Predicate> predicates = new ArrayList<>();
 
@@ -130,6 +105,18 @@ public class ProjectSpecification {
 		return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 	}
 
+	/**
+	 * Create a {@link Predicate} to search 'all' {@link Project} attribute for one general search {@link String}
+	 *
+	 * @param cb
+	 * 		{@link CriteriaBuilder} for a {@link Specification}
+	 * @param root
+	 * 		{@link Root}
+	 * @param term
+	 * 		{@link String} term to search the {@link Project} attributes for.
+	 *
+	 * @return {@link Predicate}
+	 */
 	private static Predicate getSearchPredicates(CriteriaBuilder cb, Root<Project> root, String term) {
 		ArrayList<Predicate> predicates = new ArrayList<>();
 
