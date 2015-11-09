@@ -15,8 +15,8 @@
   window.notifications = (function() {
     var types = {'success':true, 'error':true, 'information':true, 'warning': true},
         animation = {
-      open  : 'animated fadeInDown', // Animate.css class names
-      close: 'animated fadeOutUp' // Animate.css class names
+      open  : 'animated fadeInRight', // Animate.css class names
+      close: 'animated fadeOutRight' // Animate.css class names
     };
 
     /**
