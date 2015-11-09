@@ -337,7 +337,7 @@
           notifications.show({msg: data.message});
         }
         _.forEach(data.warnings, function (msg) {
-          notifications.show({type: 'info', msg: msg});
+          notifications.show({type: 'warning', msg: msg});
         });
         
         if (move) {
