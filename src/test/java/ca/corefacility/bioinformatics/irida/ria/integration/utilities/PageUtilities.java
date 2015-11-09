@@ -59,23 +59,26 @@ public class PageUtilities {
 	}
 
 	public boolean checkSuccessNotification() {
-		boolean present = false;
-		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className("toast-success")));
-			present = true;
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
+		return checkNotyNotification("noty_type_success");
+	}
 
-		return present;
+	public boolean checkInformationNotification() {
+		return checkNotyNotification("noty_type_information");
 	}
 	
 	public boolean checkWarningNotification() {
+		return checkNotyNotification("noty_type_warning");
+	}
+
+	public boolean checkErrorNotification() {
+		return checkNotyNotification("noty_type_error");
+	}
+
+	private boolean checkNotyNotification(String type) {
 		boolean present = false;
 		try {
 			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className("toast-message")));
+					.className(type)));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;
