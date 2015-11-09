@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.specification;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -79,6 +80,33 @@ public class ProjectUserJoinSpecification {
 
 				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
+		};
+	}
+
+	/**
+	 * Search for projects belonging to a specific user based on search criteria.
+	 *
+	 * @param user
+	 * 		{@link User} User to get the projects for.
+	 * @param searchMap
+	 * 		{@link Map} where key corresponds to {@link Project} attributes to filter by.
+	 *
+	 * @return {@link Specification}
+	 */
+	public static Specification<ProjectUserJoin> filterProjectsForUserByProjectAttributes(User user, Map<String, String> searchMap) {
+		return (root, query, cb) -> {
+			ArrayList<Predicate> predicates = new ArrayList<>();
+
+			if (searchMap.containsKey("name")) {
+				predicates.add(cb.like(root.get("project").get("name"), "%" + searchMap.get("name") + "%"));
+			}
+			if (searchMap.containsKey("organism")) {
+				predicates.add(cb.like(root.get("project").get("organism"), "%" + searchMap.get("organism") + "%"));
+			}
+
+			predicates.add(cb.equal(root.get("user"), user));
+
+			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};
 	}
 }
