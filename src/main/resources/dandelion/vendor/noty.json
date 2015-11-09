@@ -1,7 +1,4 @@
 {
-  "dependencies": [
-    "jQuery"
-  ],
   "assets": [
     {
       "type": "js",
