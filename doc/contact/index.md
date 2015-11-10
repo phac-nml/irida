@@ -10,7 +10,7 @@ Contact Information
 
 We'd like to think that our documentation is perfect, but we know that installing and running IRIDA can sometimes be not straightforward.
 
-You may also find a bug or a papercut that you want to report to the development team.
+You may also find a bug that you want to report or may want to suggest an improvement to the development team.
 
 You can get in touch with the IRIDA team in several different ways.
 
@@ -26,4 +26,4 @@ You can either use your favourite IRC client, or use the Freenode web chat inter
 E-mail
 ------
 
-You can reach the IRIDA PI team at <IRIDA-mail@sfu.ca>. E-mail addresses for each PI can be found at <http://www.irida.ca/people/>.
+You can reach the IRIDA primary investigator team at <IRIDA-mail@sfu.ca>. E-mail addresses for each primary investigator can be found at <http://www.irida.ca/people/>.
