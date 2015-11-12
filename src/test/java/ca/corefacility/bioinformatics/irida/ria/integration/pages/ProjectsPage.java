@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,13 +25,23 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void toUserProjectsPage() {
-		get(driver, RELATIVE_URL);
-		waitForElementVisible(By.cssSelector("#projectsTable tbody tr"));
+		ensurePageLoadedCorrectly(RELATIVE_URL);
 	}
 
 	public void toAdminProjectsPage() {
-		get(driver, ADMIN_URL);
-		waitForElementVisible(By.cssSelector("#projectsTable tbody tr"));
+		ensurePageLoadedCorrectly(ADMIN_URL);
+	}
+
+	private void ensurePageLoadedCorrectly(String url) {
+		boolean loaded = false;
+		int tries = 4;
+		while (!loaded && --tries > 0) {
+			get(driver, url);
+			waitForTime(100);
+			if (driver.findElements(By.cssSelector("#projectsTable tbody tr")).size() > 0) {
+                loaded = true;
+            }
+		}
 	}
 
 	public int projectsTableSize() {
