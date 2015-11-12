@@ -164,6 +164,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#file, 'canReadSequenceFile')")
+	public Join<Sample, SequenceFile>  getSampleForSequeneFile(SequenceFile file) {
+		return ssfRepository.getSampleForSequenceFile(file);
+	}
 
 	/**
 	 * {@inheritDoc}
