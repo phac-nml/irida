@@ -65,17 +65,7 @@ Paired-end files will appear in a pair:
 
 #### Uploading Sequence Files
 
-Sequence files can be uploaded by clicking on the "Upload Sequence Files" button, on the left hand side side of the sequence file table.  Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
-
-![Upload sequence file.](images/upload-sample-file-btn.png)
-
-You can select single or multiple files in the system file selection window.
-
-![Upload File Selection.](images/upload-sample-file-selection.png)
-
-Files will upload immediately and a progress bar will be displayed.  If you need to cancel an upload click the <img class="inline" src="images/upload-sample-cancel-btn.png" alt="Cancel Upload Button" /> button.
-
-![Cancel upload](images/upload-sample-progress-cancel.png)
+{% include tutorials/common/uploading-sample-files.md %}
 
 #### Downloading a sequence file
 
@@ -92,21 +82,7 @@ You can only delete a sequence file from a sample if you have the project <img s
 Adding a new sample
 -------------------
 
-You can add a new sample to the project if you have the project Manager role on the project. To add a new sample to the project, click on the "Add New Sample" button in the "Samples" menu:
-
-![New sample button](images/add-sample-button.png)
-
-Clicking this button will take you to the Create New Sample page.  When creating a sample, you must define the sample name (only upper and lowercase letters, numbers, and the special characters <code>!, @, #, $, %, _, -</code>, and <code>`</code> are allowed) and optionally choose an organism for the sample:
-
-![Create new sample palge](images/create-sample-page.png)
-
-If you choose to set a sample organism, click on the "Organism" drop-down menu and begin typing the name of the organism. For example, if you wanted to specify a sample organism of “Escherichia coli O26:NM”, you would begin to type "Esc" and the menu would allow you to choose from a set of well-defined organism names:
-
-![Taxonomic terms](images/create-sample-page-organism.png)
-
-When you've finished choosing the name and organism for the sample, click on the "Create Sample" button.
-
-![Create Sample](images/create-sample-page-create.png)
+{% include tutorials/common/creating-a-sample.md %}
 
 Searching and filtering samples
 -------------------------------
