@@ -1,6 +1,3 @@
-Creating a new Project
-----------------------
-
 You can create a new project by clicking on the "Projects" menu at the top of the dashboard and selecting "Create New Project":
 
 ![Create new project dashboard location.]({{ site.baseurl }}/images/tutorials/common/projects/create-new-project.png)

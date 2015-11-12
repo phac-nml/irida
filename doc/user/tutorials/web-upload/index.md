@@ -16,13 +16,20 @@ You should start from the beginning of this tutorial if you have not yet created
 * TOC
 {:toc}
 
+Creating a new Project
+----------------------
+
 {% include tutorials/common/creating-a-project.md %}
+
+Creating a Sample in your Project
+---------------------------------
 
 {% include tutorials/common/creating-a-sample.md %} 
 
 Uploading data to your Sample
 -----------------------------
 
+{% include tutorials/common/uploading-sample-files.md %}
 
 
 [uploader-tutorial]: ../uploader-tool/

@@ -65,17 +65,7 @@ Paired-end files will appear in a pair:
 
 #### Uploading Sequence Files
 
-Sequence files can be uploaded by clicking on the "Upload Sequence Files" button, on the left hand side side of the sequence file table.  Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
-
-![Upload sequence file.](images/upload-sample-file-btn.png)
-
-You can select single or multiple files in the system file selection window.
-
-![Upload File Selection.](images/upload-sample-file-selection.png)
-
-Files will upload immediately and a progress bar will be displayed.  If you need to cancel an upload click the <img class="inline" src="images/upload-sample-cancel-btn.png" alt="Cancel Upload Button" /> button.
-
-![Cancel upload](images/upload-sample-progress-cancel.png)
+{% include tutorials/common/uploading-sample-files.md %}
 
 #### Downloading a sequence file
 
@@ -88,6 +78,9 @@ You can download all sequence files in a sample by following the instructions in
 If you need to delete a sequence file from IRIDA, you can do so by clicking on the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon, on the right-hand side of the row for the sequence file.
 
 You can only delete a sequence file from a sample if you have the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
+
+Creating a Sample
+-----------------
 
 {% include tutorials/common/creating-a-sample.md %}
 

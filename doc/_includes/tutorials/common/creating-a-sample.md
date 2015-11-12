@@ -1,6 +1,3 @@
-Creating a Sample in your Project
----------------------------------
-
 You can add a new sample to the project if you have the project Manager role on the project. To add a new sample to the project, click on the "Add New Sample" button in the "Samples" menu:
 
 ![New sample button]({{ site.baseurl }}/images/tutorials/common/samples/add-sample-button.png)
