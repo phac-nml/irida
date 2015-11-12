@@ -323,7 +323,7 @@
                         <span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
 					</td>
 					<td>{{entry.sample.organism}}</td>
-					<td class="createdDate" data-date="{{entry.sample.modifiedDate}}" tooltip-popup-delay='500'
+					<td class="modifiedDate" data-date="{{entry.sample.modifiedDate}}" tooltip-popup-delay='500'
 					    tooltip-placement="left" tooltip="{{entry.sample.modifiedDate | date:'medium'}}" tooltip-append-to-body="true">
 						<span>{{entry.sample.modifiedDate | date:'mediumDate'}}</span>
 					</td>
