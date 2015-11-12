@@ -134,3 +134,5 @@ The platform updates section will show you things like:
 * When scheduled downtime will happen.
 * Recently added features or bug fixes.
 * Other platform announcements.
+
+<a href="../login/">Previous: Logging in</a><a href="../project/" style="float: right;">Next: Managing projects</a>

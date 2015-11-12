@@ -346,3 +346,5 @@ After you've entered your e-mail address and the name of the data library, click
 You can view a report of the exported samples by clicking on the name of the history item. You can find your data library by clicking on "Shared Data" at the top of Galaxy and clicking on "Data Libraries":
 
 ![Galaxy data libraries button.](images/galaxy-data-libraries-button.png)
+
+<a href="../project/">Previous: Managing Projects</a><a href="../pipelines/" style="float: right;">Next: Launching Pipelines</a>
