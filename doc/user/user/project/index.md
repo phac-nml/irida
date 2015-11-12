@@ -37,8 +37,8 @@ The projects list provides a high-level overview of project details, including:
 
 You have **read-only** permissions on projects where you are listed as a **Collaborator** role. You have **modify** permissions on projects where you are listed as **Manager** role. You can view the role that you have on a project in the **Role** column.
 
-Creating a Project
-------------------
+Creating a new project
+----------------------
 
 {% include tutorials/common/creating-a-project.md %}
 

@@ -79,8 +79,8 @@ If you need to delete a sequence file from IRIDA, you can do so by clicking on t
 
 You can only delete a sequence file from a sample if you have the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
 
-Creating a Sample
------------------
+Adding a new sample
+-------------------
 
 {% include tutorials/common/creating-a-sample.md %}
 
