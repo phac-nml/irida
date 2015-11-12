@@ -13,35 +13,35 @@
 	<parameters>
 		<parameter name="repeat-minimum-length" defaultValue="150">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0"
+				toolId="localhost:9010/repos/nml/find_repeats/findrepeat/1.5.0"
 				parameterName="length" />
 		</parameter>
 		<parameter name="repeat-minimum-pid" defaultValue="90">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0"
+				toolId="localhost:9010/repos/nml/find_repeats/findrepeat/1.5.0"
 				parameterName="pid" />
 		</parameter>
 		<parameter name="minimum-percent-coverage" defaultValue="80">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.5.0"
+				toolId="localhost:9010/repos/nml/verify_map/verify_map/1.5.0"
 				parameterName="minmap" />
 		</parameter>
 		<parameter name="alternative-allele-fraction" defaultValue="0.75">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+				toolId="localhost:9010/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
 				parameterName="ao" />
 		</parameter>
 		<parameter name="minimum-mean-mapping-quality" defaultValue="30">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+				toolId="localhost:9010/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
 				parameterName="mean_mapping" />
 		</parameter>
 		<parameter name="minimum-read-coverage" defaultValue="15">
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+				toolId="localhost:9010/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
 				parameterName="coverage" />
 			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.5.0"
+				toolId="localhost:9010/repos/nml/verify_map/verify_map/1.5.0"
 				parameterName="mindepth" />
 		</parameter>
 	</parameters>

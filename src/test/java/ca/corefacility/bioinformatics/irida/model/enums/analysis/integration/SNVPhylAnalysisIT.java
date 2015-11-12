@@ -444,8 +444,8 @@ public class SNVPhylAnalysisIT {
 			}
 		}
 		
-		assertEquals("incorrect minimum vcf 2 align coverage", "2", minVcf2AlignCov);
-		assertEquals("incorrect alternative allele fraction", "0.9", altAlleleFraction);
+		assertEquals("incorrect minimum vcf 2 align coverage", "\"2\"", minVcf2AlignCov);
+		assertEquals("incorrect alternative allele fraction", "\"0.90\"", altAlleleFraction);
 		assertEquals("incorrect minimum depth for verify map", "\"2\"", minimumDepthVerify);
 		assertEquals("incorrect min percent coverage for verify map", "\"75\"", minimumPercentCoverage);
 	}
