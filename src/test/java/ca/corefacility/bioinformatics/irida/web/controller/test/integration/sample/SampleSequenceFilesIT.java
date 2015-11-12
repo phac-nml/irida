@@ -95,7 +95,7 @@ public class SampleSequenceFilesIT {
 		String sequenceFileUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
 
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/pairs";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/sequenceFiles/pairs";
 
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -163,8 +163,9 @@ public class SampleSequenceFilesIT {
 	@Test
 	public void testRemoveSequenceFileFromSample() throws IOException {
 		// for now, add a sequence file to the sample so that we can remove it
-		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
-		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
+		String projectSampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
+		String sampleUri = ITestSystemProperties.BASE_URL + "/api/samples/1";
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(projectSampleUri);
 		String sampleBody = response.getBody().asString();
 		String sequenceFileUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
@@ -208,7 +209,7 @@ public class SampleSequenceFilesIT {
 
 	@Test
 	public void testReadForwardReverseFromPair() {
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/pairs/1";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/sequenceFiles/pairs/1";
 
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
 		String forwardLink = response.jsonPath().getString(
