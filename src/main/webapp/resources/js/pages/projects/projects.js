@@ -1,13 +1,14 @@
 /*exported projectsTable*/
-var projectsTable = (function(tl) {
+/*global oTable_projectsTable */
 
+var projectsTable = (function (tl) {
   /**
    * Create a link button to the IRIDA thing
    *
    * @param {Object} data column data
-   * @param {string} type type of data
+   * @param {String} type type of data
    * @param {Object} full full object for the row.
-   * @returns {*}
+   * @returns {String} either a anchor dom element to the project or just the name of the project.
    */
   function createItemButton(data, type, full) {
     if (tl && tl.BASE_URL) {
@@ -21,3 +22,17 @@ var projectsTable = (function(tl) {
     createItemButton: createItemButton
   };
 })(window.TL);
+
+(function ($) {
+  var $filterBtn = $('#filterProjectsBtn');
+
+  $filterBtn.on('click', function () {
+    oTable_projectsTable.ajax.reload();
+  });
+
+  $('#filterForm').on('keydown', function (e) {
+    if(e.which === 13) {
+      $filterBtn.click();
+    }
+  });
+})(window.jQuery);
