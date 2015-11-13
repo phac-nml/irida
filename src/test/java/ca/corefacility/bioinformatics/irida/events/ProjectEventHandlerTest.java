@@ -34,19 +34,22 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 
 public class ProjectEventHandlerTest {
 	private ProjectEventHandler handler;
 	private ProjectEventRepository eventRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private ProjectRepository projectRepository;
+	private SampleRepository sampleRepository;
 
 	@Before
 	public void setup() {
 		eventRepository = mock(ProjectEventRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 		projectRepository = mock(ProjectRepository.class);
-		handler = new ProjectEventHandler(eventRepository, psjRepository, projectRepository);
+		sampleRepository = mock(SampleRepository.class);
+		handler = new ProjectEventHandler(eventRepository, psjRepository, projectRepository, sampleRepository);
 	}
 
 	@Test
@@ -137,6 +140,7 @@ public class ProjectEventHandlerTest {
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
 
 		verify(projectRepository).save(any(Project.class));
+		verify(sampleRepository).save(any(Sample.class));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -167,6 +171,7 @@ public class ProjectEventHandlerTest {
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
 
 		verify(projectRepository).save(any(Project.class));
+		verify(sampleRepository).save(any(Sample.class));
 	}
 
 	@SuppressWarnings("unchecked")

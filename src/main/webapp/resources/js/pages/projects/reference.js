@@ -24,7 +24,7 @@
     });
   }
 
-  function ReferenceFileService($rootScope, $modal, $http, notifications) {
+  function ReferenceFileService($rootScope, $uibModal, $http, notifications) {
     "use strict";
     var svc = this;
 
@@ -36,7 +36,7 @@
     };
 
     svc.deleteFile = function (file) {
-      var modalInstance = $modal.open({
+      var modalInstance = $uibModal.open({
         templateUrl: '/delete-modal.html',
         controller : 'DeleteCtrl as dCtrl',
         resolve    : {
@@ -116,7 +116,7 @@
 
   angular.module('References', ['file.utils'])
     .service('ProjectFileService', ['$rootScope', '$http', ProjectFileService])
-    .service('ReferenceFileService', ['$rootScope', '$modal', '$http', 'notifications', ReferenceFileService])
+    .service('ReferenceFileService', ['$rootScope', '$uibModal', '$http', 'notifications', ReferenceFileService])
     .controller('FilesCtrl', ['ProjectFileService', 'ReferenceFileService', FilesCtrl])
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
     .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl])

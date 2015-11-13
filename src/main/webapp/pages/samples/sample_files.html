@@ -26,9 +26,9 @@
 
 		<div class="file-upload-progress"
 			 ng-class="{fadeIn: fileUploadCtrl.uploading, fadeOut: !fileUploadCtrl.uploading}">
-			<progressbar class="progress-striped active" style="margin-right: 1em;" value="fileUploadCtrl.progress">{{ fileUploadCtrl.progress
+			<uib-progressbar class="progress-striped active" style="margin-right: 1em;" value="fileUploadCtrl.progress">{{ fileUploadCtrl.progress
 				}}%
-			</progressbar>
+			</uib-progressbar>
 			<button class="btn btn-default btn-xs" ng-click="fileUploadCtrl.cancel()">
 				<fa:icon type="remove"/>
 			</button>

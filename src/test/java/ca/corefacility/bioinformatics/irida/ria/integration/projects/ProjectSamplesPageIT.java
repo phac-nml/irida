@@ -482,17 +482,17 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.goToPage();
 
 		// Page should be sorted by creation date first
-		assertTrue(page.isTableSortedDescByCreationDate());
+		assertTrue("Page should be initially sorted descending by creation date.", page.isTableSortedDescByCreationDate());
 		page.sortTableByCreatedDate();
-		assertTrue(page.isTableSortedAscByCreationDate());
-		assertFalse(page.isTableSortedDescByCreationDate());
+		assertTrue("Page should be sorted ascending by creation date.", page.isTableSortedAscByCreationDate());
+		assertFalse("Page should **not** be sorted descending by creation date.", page.isTableSortedDescByCreationDate());
 
 		// Sort by name
 		page.sortTableByName();
-		assertTrue(page.isTableSortedDescBySampleName());
+		assertTrue("Page should be sorted descending by sample name.", page.isTableSortedDescBySampleName());
 		page.sortTableByName();
-		assertFalse(page.isTableSortedDescBySampleName());
-		assertTrue(page.isTableSortedAscBySampleName());
+		assertFalse("Page should **not** be sorted descending by sample name.", page.isTableSortedDescBySampleName());
+		assertTrue("Page should be sorted ascending by sample name.", page.isTableSortedAscBySampleName());
 	}
 
 	@Test

@@ -3,7 +3,7 @@
         .module('irida.session', ['irida.utilities'])
         .run(['SessionFactory', runSessionFactory])
         .config(['$httpProvider', httpProviderConfig])
-        .factory('SessionFactory', ['$timeout', '$interval', '$window', '$modal', SessionFactory])
+        .factory('SessionFactory', ['$timeout', '$interval', '$window', '$uibModal', SessionFactory])
         .factory('HttpInterceptor', ['$injector', HttpInterceptor])
     ;
 
@@ -23,7 +23,7 @@
         };
     }
 
-    function SessionFactory($timeout, $interval, $window, $modal) {
+    function SessionFactory($timeout, $interval, $window, $uibModal) {
         var modalWait = 120000, // 2 minutes
             initialWait = TL.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
             timeout,
@@ -33,7 +33,7 @@
         function _restart() {
             if (!opened) {
                 opened = true;
-                $modal.open({
+                $uibModal.open({
                     templateUrl: '/session-modal.html',
                     controller : ['$scope', '$http', '$window', '$modalInstance', function ($scope, $http, $window, $modalInstance) {
                         $scope.poke = function () {

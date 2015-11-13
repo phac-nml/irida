@@ -84,7 +84,7 @@
 								</button>
 							</div>
 						</div>
-						<ul collapse="cart.collapsed[p.id]">
+						<ul uib-collapse="cart.collapsed[p.id]">
 							<li ng-repeat="s in p.filteredSamples = (p.samples | cartFilter:cart.term)">
 								<span>{{ s.label }}</span>
 								<button class="btn-icon pull-right remove-sample-btn"
@@ -109,7 +109,7 @@
                                 </button>
                             </div>
                         </div>
-                        <ul collapse="cart.collapsed['remote']">
+                        <ul uib-collapse="cart.collapsed['remote']">
                             <li ng-repeat="(id,s) in r.filteredSamples = (cart.remote | cartFilter:cart.term)">
                                 <span>{{ s.label }}</span>
                                 <button class="btn-icon pull-right remove-sample-btn"
