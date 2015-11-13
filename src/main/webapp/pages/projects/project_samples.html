@@ -323,7 +323,7 @@
 					</td>
 					<td>{{entry.sample.organism}}</td>
 					<td class="modifiedDate" data-date="{{entry.sample.modifiedDate}}" tooltip-popup-delay='500'
-					    tooltip-placement="left" tooltip="{{entry.sample.modifiedDate | date:'medium'}}" tooltip-append-to-body="true">
+					    tooltip-placement="left" uib-tooltip="{{entry.sample.modifiedDate | date:'medium'}}" tooltip-append-to-body="true">
 						<span>{{entry.sample.modifiedDate | date:'mediumDate'}}</span>
 					</td>
 					<td ng-show="table.requested.associated || table.requested.remote">
@@ -339,10 +339,10 @@
 				</tbody>
 				<tfoot>
 				<tr>
-					<td colspan="5" class="text-center">
-						<div uib-pagination="" ng-controller="PagingCtrl as paging" ng-model="paging.page"
+					<td colspan="5" class="text-center" ng-controller="PagingCtrl as paging">
+						<uib-pagination ng-model="paging.page"
 						     items-per-page="paging.count"
-						     total-items="paging.total" ng-change="paging.update()"></div>
+						     total-items="paging.total" ng-change="paging.update()"></uib-pagination>
 					</td>
 				</tr>
 				</tfoot>
