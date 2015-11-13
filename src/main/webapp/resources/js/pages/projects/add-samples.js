@@ -150,5 +150,5 @@
     .directive('select2', ['$timeout', select2])
     .directive('serverValidated',[serverValidated])
     .directive('nameValidator', [nameValidator])
-    .controller('SampleController', ['SampleService', '$modal', SampleController]);
+    .controller('SampleController', ['SampleService', '$uibModal', SampleController]);
 })(window.angular, window.$, window.TL, window.PAGE);
