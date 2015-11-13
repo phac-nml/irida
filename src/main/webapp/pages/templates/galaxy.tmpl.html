@@ -23,7 +23,7 @@
 			</label>
 			<br />
 			<label for="makepairedcollection">
-			<input id="makepairedcollection" type="checkbox" ng-model="gCtrl.makepairedcollection"/>&nbsp;
+			<input id="makepairedcollection" type="checkbox" ng-show="gCtrl.addtohistory" ng-model="gCtrl.makepairedcollection"/>&nbsp;
 				<th:block th:text="#{galaxy.label.makepairedcollection}"></th:block>
 			</label>
 		</div>
