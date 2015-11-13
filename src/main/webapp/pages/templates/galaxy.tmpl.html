@@ -22,9 +22,13 @@
 				<th:block th:text="#{galaxy.label.addtohistory}"></th:block>
 			</label>
 			<br />
-			<label for="makepairedcollection">
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<label for="makepairedcollection" ng-show="gCtrl.addtohistory">
 			<input id="makepairedcollection" type="checkbox" ng-show="gCtrl.addtohistory" ng-model="gCtrl.makepairedcollection"/>&nbsp;
 				<th:block th:text="#{galaxy.label.makepairedcollection}"></th:block>
+				<button type="button" class="btn btn-link btn-xs btn-default pull-right" popover-trigger="mouseenter" data-popover="This option lets you organize your imported data by putting it into paired collections in your Galaxy history." data-popover-title="Automatically Create Collection">
+					<i class="fa fa-question-circle"></i>
+				</button>
 			</label>
 		</div>
 	</div>
