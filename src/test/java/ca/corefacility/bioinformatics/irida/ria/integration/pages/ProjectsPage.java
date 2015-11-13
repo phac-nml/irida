@@ -25,23 +25,17 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void toUserProjectsPage() {
-		ensurePageLoadedCorrectly(RELATIVE_URL);
+		loadPage(RELATIVE_URL);
 	}
 
 	public void toAdminProjectsPage() {
-		ensurePageLoadedCorrectly(ADMIN_URL);
+		loadPage(ADMIN_URL);
 	}
 
-	private void ensurePageLoadedCorrectly(String url) {
-		boolean loaded = false;
-		int tries = 4;
-		while (!loaded && --tries > 0) {
-			get(driver, url);
-			waitForTime(100);
-			if (driver.findElements(By.cssSelector("#projectsTable tbody tr")).size() > 0) {
-                loaded = true;
-            }
-		}
+	private void loadPage(String url) {
+		get(driver, url);
+		waitForTime(100);
+		waitForElementVisible(By.cssSelector("#projectsTable tbody tr"));
 	}
 
 	public int projectsTableSize() {
