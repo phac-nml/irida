@@ -89,7 +89,7 @@ You can see which filters are currently applied to the table under the filter bu
 
 ![List of applied filters](images/projects-applied-filters.png)
 
-Clicking on the filters will clear that specif filter.
+Clicking on the filters will clear that specific filter.
 
 **Refining Filtering**
 
