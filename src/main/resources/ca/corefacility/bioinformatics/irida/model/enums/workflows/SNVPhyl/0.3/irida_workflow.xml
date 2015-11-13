@@ -13,35 +13,35 @@
 	<parameters>
 		<parameter name="repeat-minimum-length" defaultValue="150">
 			<toolParameter
-				toolId="localhost:9010/repos/nml/find_repeats/findrepeat/1.5.0"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0"
 				parameterName="length" />
 		</parameter>
 		<parameter name="repeat-minimum-pid" defaultValue="90">
 			<toolParameter
-				toolId="localhost:9010/repos/nml/find_repeats/findrepeat/1.5.0"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0"
 				parameterName="pid" />
 		</parameter>
 		<parameter name="minimum-percent-coverage" defaultValue="80">
 			<toolParameter
-				toolId="localhost:9010/repos/nml/verify_map/verify_map/1.5.0"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.5.0"
 				parameterName="minmap" />
 		</parameter>
 		<parameter name="alternative-allele-fraction" defaultValue="0.75">
 			<toolParameter
-				toolId="localhost:9010/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
 				parameterName="ao" />
 		</parameter>
 		<parameter name="minimum-mean-mapping-quality" defaultValue="30">
 			<toolParameter
-				toolId="localhost:9010/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
 				parameterName="mean_mapping" />
 		</parameter>
 		<parameter name="minimum-read-coverage" defaultValue="15">
 			<toolParameter
-				toolId="localhost:9010/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
 				parameterName="coverage" />
 			<toolParameter
-				toolId="localhost:9010/repos/nml/verify_map/verify_map/1.5.0"
+				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.5.0"
 				parameterName="mindepth" />
 		</parameter>
 	</parameters>
@@ -58,8 +58,8 @@
 		<repository>
 			<name>suite_snvphyl_0_3_0</name>
 			<owner>nml</owner>
-			<url>http://localhost:9010/</url>
-			<revision>af0046b378fb</revision>
+			<url>https://irida.corefacility.ca/galaxy-shed</url>
+			<revision>bb2e651149da</revision>
 		</repository>
 	</toolRepositories>
 </iridaWorkflow>
