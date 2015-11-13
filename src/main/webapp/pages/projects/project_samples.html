@@ -290,10 +290,11 @@
 					    sortdir="sCtrl.filter.sortDir"
 					    sortedBy="sCtrl.filter.sortedBy" sortValue="sample.organism">__ORGANISM__
 					</th>
-					<th id="sortCollectedBy" th:text="#{project.samples.table.collectedBy}" sort-by=""
+					<th id="sortModifiedDate" th:text="#{project.samples.table.modified}" sort-by=""
 					    onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
-					    sortedBy="sCtrl.filter.sortedBy" sortValue="sample.collectedBy">Collected By
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="sample.modifiedDate">Modified date
 					</th>
+					
 					<th id="sortProject" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
 					    sortedBy="sCtrl.filter.sortedBy" sortValue="project.label" ng-show="table.requested.associated || table.requested.remote">Project
 					</th>
@@ -322,7 +323,10 @@
                         <span ng-if="entry.sampleType=='REMOTE'">{{entry.sample.sampleName}}</span>
 					</td>
 					<td>{{entry.sample.organism}}</td>
-					<td>{{entry.sample.collectedBy}}</td>
+					<td class="modifiedDate" data-date="{{entry.sample.modifiedDate}}" tooltip-popup-delay='500'
+					    tooltip-placement="left" tooltip="{{entry.sample.modifiedDate | date:'medium'}}" tooltip-append-to-body="true">
+						<span>{{entry.sample.modifiedDate | date:'mediumDate'}}</span>
+					</td>
 					<td ng-show="table.requested.associated || table.requested.remote">
 					   <span ng-if="entry.sampleType != 'LOCAL'">
                             {{entry.project.label}}
