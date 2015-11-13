@@ -79,9 +79,9 @@
 			</form>
 			<div class="clearfix">
 				<button type="button" class="btn btn-link btn-xs btn-default pull-right"
-						data:popover="#{project.sample.filterByFile.modal.body}"
+						data:uib-popover="#{project.sample.filterByFile.modal.body}"
 						data:popover-title="#{project.sample.filterByFile.modal.title}"
-						popover-trigger="mouseenter">
+						popover-trigger="mouseenter" popover-append-to-body="true" popover-placement="right">
 					<small th:text="#{project.sample.filterByFile.modal.button}">What's this?</small>
 				</button>
 			</div>
@@ -95,19 +95,18 @@
 		</div>
 	</div>
 	<div class="row mrgn-bttm-md">
-		<div class="col-md-12" ng-controller="SubNavCtrl as subnav">
+		<div class="col-md-12 ng-cloak" ng-controller="SubNavCtrl as subnav">
 			<div class="btn-toolbar pull-left">
 				<!-- Sample Selection (Page, All, None) -->
-				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
-					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle"
-					        dropdown-toggle="">
+				<div class="btn-group" uib-dropdown="" is-open="subnav.selection.isopen">
+					<button id="selectBtn" type="button" class="btn btn-default btn-sm" uib-dropdown-toggle="">
                         <span ng-controller="SelectedCountCtrl as countCtrl" id="selected-count"
                               class="label label-default" ng-bind="countCtrl.count">0</span>
 						<span th:text="#{lists.select-title}">Select</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
+					<ul class="uib-dropdown-menu" role="menu">
 						<li>
 							<a id="selectPageBtn" href="#" th:text="#{lists.select-page}"
 							   ng-click="subnav.selection.selectPage()">Select Page
@@ -127,16 +126,16 @@
 					</ul>
 				</div>
 
-				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" dropdown=""
+				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" uib-dropdown=""
 				     is-open="subnav.display.isopen">
-					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle ng-cloak"
+					<button id="displayBtn" type="button" class="btn btn-default btn-sm ng-cloak"
 					        ng-hide="uiGalaxyCtrl.inGalaxy"
-					        dropdown-toggle="">
+					        uib-dropdown-toggle="">
 						<span th:text="#{project.samples.display.title}">_Display_</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu noclose ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
+					<ul class="uib-dropdown-menu noclose ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
 						<li class="sample-type-selector local-sample">
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
@@ -162,16 +161,16 @@
 				</div>
 
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
-				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
-					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle ng-cloak" dropdown-toggle=""
+				<div class="btn-group" uib-dropdown="" is-open="subnav.samplesOptions.open">
+					<button id="samplesOptionsBtn" class="btn btn-default btn-sm ng-cloak" uib-dropdown-toggle=""
 					        ng-hide="uiGalaxyCtrl.inGalaxy">
 						<span>Samples</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
+					<ul class="uib-dropdown-menu ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
 						<li id="merge-li" ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
-						    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
+						    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" tooltip-append-to-body="true"
 						    tooltip-placement="right">
 							<a id="mergeBtn" href="#" ng-click="subnav.merge()">
 								<span class="fa fa-fw fa-compress"></span>
@@ -188,7 +187,7 @@
 								</a>
 							</li>
 							<li id="move-li" class="local-only" ng-class="{disabled: subnav.count&lt;1 || ! subnav.localSelected}"
-							    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
+							    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" tooltip-append-to-body="true"
 							    tooltip-placement="right">
 								<a id="moveBtn" href="#" ng-click="subnav.openModal('move')">
 									<span class="fa fa-truck fa-fw"></span>
@@ -197,7 +196,7 @@
 								</a>
 							</li>
 							<li id="remove-li" class="local-only" ng-class="{disabled: subnav.count&lt;1 || ! subnav.localSelected}"
-							    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
+							    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" tooltip-append-to-body="true"
 							    tooltip-placement="right">
 								<a id="removeBtn" href="#" ng-click="subnav.remove()">
 									<i class="fa fa-trash fa-fw"></i> &nbsp;
@@ -217,14 +216,14 @@
 					</ul>
 				</div>
 
-				<div class="btn-group" dropdown="" is-open="subnav.export.open">
-					<button id="exportOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle=""
+				<div class="btn-group" uib-dropdown="" is-open="subnav.export.open">
+					<button id="exportOptionsBtn" class="btn btn-default btn-sm uib-dropdown-toggle" uib-dropdown-toggle=""
 					        ng-disabled="!subnav.localSelected">
 						<span th:text="#{project.samples.export.label}">Export</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
+					<ul class="uib-dropdown-menu" role="menu">
 						<li>
 							<a id="exportDownloadBtn" href="#" ng-click="subnav.export.download()">
 								<span class="fa fa-fw fa-download"></span>
@@ -233,8 +232,8 @@
 							</a>
 						</li>
 						<li th:if="${linkerAvailable}" ng-class="{disabled: ! subnav.localSelected}"
-						    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
-						    tooltip-placement="right">
+						    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" uib-tooltip-append-to-body="true"
+						    uib-tooltip-placement="right">
 							<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()">
 								<span class="fa fa-fw fa-terminal"></span>
 								&nbsp;
@@ -260,14 +259,14 @@
                 </div>
 			</div>
       
-            <div class="btn-group pull-right" dropdown="" ng-controller="ConnectionWarningCtrl as warnings" ng-show="warnings.notConnected.length > 0">
-                <button class="btn btn-warning btn-sm dropdown-toggle" dropdown-toggle="">
+            <div class="btn-group pull-right" uib-dropdown="" ng-controller="ConnectionWarningCtrl as warnings" ng-show="warnings.notConnected.length > 0">
+                <button class="btn btn-warning btn-sm uib-dropdown-toggle" uib-dropdown-toggle="">
                     <span class="label label-default" ng-bind="warnings.notConnected.length">0</span>
                     <span>Warnings</span>
                     &nbsp;
                     <span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" role="menu">
+                <ul class="uib-dropdown-menu" role="menu">
                     <li ng-repeat="api in warnings.notConnected">
                         <a th:href="@{/remote_api/{{api.identifier}}}" th:text="#{project.samples.warning.notConnected}"></a>
                     </li>
@@ -333,7 +332,7 @@
 						</span>
 					</td>
 					<td class="createdDate" data-date="{{entry.sample.createdDate}}" tooltip-popup-delay='500'
-					    tooltip-placement="left" tooltip="{{entry.sample.createdDate | date:'medium'}}">
+					    tooltip-placement="left" uib-tooltip="{{entry.sample.createdDate | date:'medium'}}">
 						<span>{{entry.sample.createdDate | date:'mediumDate'}}</span>
 					</td>
 				</tr>
@@ -341,7 +340,7 @@
 				<tfoot>
 				<tr>
 					<td colspan="5" class="text-center">
-						<div pagination="" ng-controller="PagingCtrl as paging" ng-model="paging.page"
+						<div uib-pagination="" ng-controller="PagingCtrl as paging" ng-model="paging.page"
 						     items-per-page="paging.count"
 						     total-items="paging.total" ng-change="paging.update()"></div>
 					</td>

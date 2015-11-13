@@ -52,11 +52,11 @@
 		</section>
 		<section class="row">
 			<div class="col-md-12" ng-controller="ImageController as imgController">
-				<carousel interval="5000">
-					<slide ng-repeat="slide in imgController.slides" active="slide.active">
+				<uib-carousel interval="5000">
+					<uib-slide ng-repeat="slide in imgController.slides" active="slide.active">
 						<img ng-src="{{slide.image}}" style="margin:auto;"/>
-					</slide>
-				</carousel>
+					</uib-slide>
+				</uib-carousel>
 			</div>
 		</section>
 	</main>
