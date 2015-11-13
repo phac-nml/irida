@@ -57,11 +57,11 @@
 	        "use strict";
 
 	        var app = angular.module('irida.sequencingruns', ['ui.bootstrap']);
-	        app.controller('DeleteModalCtrl', function ($modal) {
+	        app.controller('DeleteModalCtrl', function ($uibModal) {
 		        var vm = this;
 	            vm.open = function (size) {
 
-                  $modal.open({
+                  $uibModal.open({
                     templateUrl: 'myModalContent.html',
                     controller: 'ModalInstanceCtrl as modal',
                     size: 'sm'
@@ -69,7 +69,7 @@
                 };
 	        }).controller('ModalInstanceCtrl',function($modalInstance, $http){
               var vm = this;
-              
+
               vm.ok = function(){
                 $http({
                   method: 'DELETE',
@@ -78,7 +78,7 @@
                   window.location = PAGE.urls.list
                 });
               };
-              
+
               vm.cancel = function(){
                 $modalInstance.dismiss('cancel');
               }
