@@ -1,17 +1,23 @@
 Changes
 =======
 
+1.0.0-alpha6 to 1.0.0-alpha7
+----------------------------
+* [UI] Feature: When new data is added to a project, both the project and sample modified times are changed so that you can find the most recently uploaded files in a project by sorting on the date modified column of the samples table.
+* [UI] Feature: All metadata fields for sample are shown on the samples details page, even if the field does not have an entered value.
+
 1.0.0-alpha5 to 1.0.0-alpha6
 ----------------------------
 * [UI] Feature: Added IRIDA logo to the header, and added a footer with some contact information. Also added a favicon.
 * [UI] Feature: Added ability to remove sequencing runs and all uploaded files from the web interface.
-* [Developer] Bugfix: Moved the install directories in the VM to reside on `/home` from `/opt` because packer makes a giant home partition and we were running out of space when Galaxy was running in `/opt`.
 * [UI] Feature: Upgrade to the latest version of Phylocanvas for rendering phylogenetic trees from SNVPhyl runs. We were falling back to PhyloSVG in Firefox on Linux because of a bug in Phylocanvas, but the bug has since been fixed, so now everyone gets Phylocanvas!
 * [UI] Feature/Bugfix: Updated the "Recent Activities" section to use angular directives. Also fixed a bug with how the links in recent activities were rendered.
 * [UI] Feature: Added a feature to filter samples in a project using a file with sample names. 
+* [UI] Feature: Paging is now down server side for the projects list, improving performance.
 * [Tools] Bugfix: Updated some of the permissions for listing projects for `ROLE_SEQUENCER` so that the new GUI uploader tool works.
 * [Developer] Feature: Fixed up a lot of the testing code to evaluate pass or fail based on the content of the page rather than the URL. This fixed timing issues in tests and actually validated some behaviour instead of assuming that stuff worked.
 * [Developer] Feature: Add forward and reverse links on paired-end sequencing files to the REST API.
+* [Developer] Bugfix: Moved the install directories in the VM to reside on `/home` from `/opt` because packer makes a giant home partition and we were running out of space when Galaxy was running in `/opt`.
 
 1.0.0-alpha4 to 1.0.0-alpha5
 ----------------------------
