@@ -373,16 +373,22 @@ public class ProjectsController {
 	public DatatablesResponse<Map<String, Object>> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias,
 			final Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
+		Specification<ProjectUserJoin> specification;
 
-		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-		// NOTE: Special case for sorting on the ProjectUserJoin
-		String searchString = searchMap.get(ProjectsDatatableUtils.SORT_STRING);
-		if (searchString != null) {
-			searchMap.put(ProjectsDatatableUtils.SORT_STRING, "project." + searchString);
+		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
+			specification = ProjectUserJoinSpecification.filterProjectsForUserAllFields(user, criterias.getSearch());
+		} else {
+			Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
+			// NOTE: Special case for sorting on the ProjectUserJoin
+			String searchString = searchMap.get(ProjectsDatatableUtils.SORT_STRING);
+			if (searchString != null) {
+				searchMap.put(ProjectsDatatableUtils.SORT_STRING, searchString);
+			}
+
+			specification = ProjectUserJoinSpecification
+					.filterProjectsForUserByProjectAttributes(user, searchMap);
 		}
 
-		Specification<ProjectUserJoin> specification = ProjectUserJoinSpecification
-				.filterProjectsForUserByProjectAttributes(user, searchMap);
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
@@ -409,8 +415,9 @@ public class ProjectsController {
 	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
 			@DatatablesParams DatatablesCriterias criterias) {
 
-		Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-		Specification<Project> specification = ProjectSpecification.filterAllProjectsByProjectAttributes(searchMap);
+		Specification<Project> specification = ProjectSpecification
+				.filterProjectsByAdvancedFiltersAndSearch(ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs()),
+						criterias.getSearch());
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);

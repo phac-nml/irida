@@ -62,16 +62,8 @@ public class PageUtilities {
 		return checkNotyNotification("noty_type_success");
 	}
 
-	public boolean checkInformationNotification() {
-		return checkNotyNotification("noty_type_information");
-	}
-	
 	public boolean checkWarningNotification() {
 		return checkNotyNotification("noty_type_warning");
-	}
-
-	public boolean checkErrorNotification() {
-		return checkNotyNotification("noty_type_error");
 	}
 
 	private boolean checkNotyNotification(String type) {

@@ -1,0 +1,723 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "Snvphyl", 
+    "format-version": "0.1", 
+    "name": "SNVPhyl v0.3 Paired-End", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "sequence_reads_paired"
+                }
+            ], 
+            "label": null, 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 200
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "user_outputs": [], 
+            "uuid": "ea11929e-ba45-4d3c-8b8e-fee1c589c836"
+        }, 
+        "1": {
+            "annotation": "", 
+            "id": 1, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "reference"
+                }
+            ], 
+            "label": null, 
+            "name": "Input dataset", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 285
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"name\": \"reference\"}", 
+            "tool_version": null, 
+            "type": "data_input", 
+            "user_outputs": [], 
+            "uuid": "b22dbbdc-e021-4077-af11-df1a3793fbac"
+        }, 
+        "2": {
+            "annotation": "", 
+            "id": 2, 
+            "input_connections": {
+                "reference": {
+                    "id": 1, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "smalt index", 
+            "outputs": [
+                {
+                    "name": "output", 
+                    "type": "data"
+                }, 
+                {
+                    "name": "output2", 
+                    "type": "data"
+                }
+            ], 
+            "position": {
+                "left": 462, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output"
+                }, 
+                "HideDatasetActionoutput2": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output2"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/smalt_index/smalt_index/1.0.0", 
+            "tool_state": "{\"__page__\": 0, \"k\": \"\\\"13\\\"\", \"__rerun_remap_job_id__\": null, \"s\": \"\\\"6\\\"\", \"reference\": \"null\"}", 
+            "tool_version": "1.0.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "713fb2c8-84dd-4762-8281-e071c61fe979"
+        }, 
+        "3": {
+            "annotation": "", 
+            "id": 3, 
+            "input_connections": {
+                "fasta": {
+                    "id": 1, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Find Repeats", 
+            "outputs": [
+                {
+                    "name": "out", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 462, 
+                "top": 341
+            }, 
+            "post_job_actions": {
+                "ChangeDatatypeActionout": {
+                    "action_arguments": {
+                        "newtype": "bed"
+                    }, 
+                    "action_type": "ChangeDatatypeAction", 
+                    "output_name": "out"
+                }, 
+                "RenameDatasetActionout": {
+                    "action_arguments": {
+                        "newname": "invalid_positions.bed"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0", 
+            "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"__rerun_remap_job_id__\": null, \"pid\": \"\\\"90\\\"\", \"length\": \"\\\"150\\\"\"}", 
+            "tool_version": "1.5.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "3c2257f4-d708-47c4-934e-7a027804f7db"
+        }, 
+        "4": {
+            "annotation": "", 
+            "id": 4, 
+            "input_connections": {
+                "singlePaired|fastq_collection": {
+                    "id": 0, 
+                    "output_name": "output"
+                }, 
+                "sma": {
+                    "id": 2, 
+                    "output_name": "output2"
+                }, 
+                "smi": {
+                    "id": 2, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "smalt map", 
+            "outputs": [
+                {
+                    "name": "output", 
+                    "type": "cigar"
+                }
+            ], 
+            "position": {
+                "left": 690, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/smalt_map/smalt_map/1.0.1", 
+            "tool_state": "{\"minbasq\": \"\\\"\\\"\", \"__page__\": 0, \"insertmin\": \"\\\"20\\\"\", \"mincover\": \"\\\"\\\"\", \"insfil\": \"null\", \"scordiff\": \"\\\"\\\"\", \"insertmax\": \"\\\"1000\\\"\", \"singlePaired\": \"{\\\"fastq_collection\\\": null, \\\"sPaired\\\": \\\"collections\\\", \\\"pairtype\\\": \\\"pe\\\", \\\"__current_case__\\\": 2}\", \"minid\": \"\\\"0.5\\\"\", \"__rerun_remap_job_id__\": null, \"search_harder\": \"\\\"False\\\"\", \"seed\": \"\\\"1\\\"\", \"sw_weighted\": \"\\\"False\\\"\", \"smi\": \"null\", \"oformat\": \"{\\\"bamOptions\\\": null, \\\"outformat\\\": \\\"bam\\\", \\\"__current_case__\\\": 1}\", \"minscor\": \"\\\"\\\"\", \"sma\": \"null\"}", 
+            "tool_version": "1.0.1", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "7a4b9431-20a8-429d-a26e-433f0827c463"
+        }, 
+        "5": {
+            "annotation": "", 
+            "id": 5, 
+            "input_connections": {
+                "bams": {
+                    "id": 4, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Verify Mapping Quality", 
+            "outputs": [
+                {
+                    "name": "output_log", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 994, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionoutput_log": {
+                    "action_arguments": {
+                        "newname": "mappingQuality.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_log"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.5.0", 
+            "tool_state": "{\"minmap\": \"\\\"80\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"mindepth\": \"\\\"${min_coverage}\\\"\", \"bams\": \"null\"}", 
+            "tool_version": "1.5.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "82bed622-a144-43fd-869e-c4468e6131ff"
+        }, 
+        "6": {
+            "annotation": "", 
+            "id": 6, 
+            "input_connections": {
+                "reference_source|input_bams_0|input_bam": {
+                    "id": 4, 
+                    "output_name": "output"
+                }, 
+                "reference_source|ref_file": {
+                    "id": 1, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "FreeBayes", 
+            "outputs": [
+                {
+                    "name": "output_vcf", 
+                    "type": "vcf"
+                }, 
+                {
+                    "name": "output_failed_alleles_bed", 
+                    "type": "bed"
+                }, 
+                {
+                    "name": "output_trace", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 994, 
+                "top": 313
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput_failed_alleles_bed": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_failed_alleles_bed"
+                }, 
+                "HideDatasetActionoutput_trace": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_trace"
+                }, 
+                "HideDatasetActionoutput_vcf": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_vcf"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/devteam/freebayes/freebayes/0.4.1", 
+            "tool_state": "{\"__page__\": 0, \"reference_source\": \"{\\\"ref_file\\\": null, \\\"reference_source_selector\\\": \\\"history\\\", \\\"input_bams\\\": [{\\\"__index__\\\": 0, \\\"input_bam\\\": null}], \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"options_type\": \"{\\\"options_type_selector\\\": \\\"full\\\", \\\"allele_scope\\\": {\\\"__current_case__\\\": 1, \\\"allele_scope_selector\\\": \\\"False\\\"}, \\\"reporting\\\": {\\\"reporting_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"genotype_likelihoods\\\": {\\\"genotype_likelihoods_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"O\\\": \\\"False\\\", \\\"population_model\\\": {\\\"K\\\": \\\"False\\\", \\\"J\\\": \\\"False\\\", \\\"P\\\": \\\"1\\\", \\\"T\\\": \\\"0.001\\\", \\\"__current_case__\\\": 0, \\\"population_model_selector\\\": \\\"True\\\"}, \\\"reference_allele\\\": {\\\"reference_allele_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"optional_inputs\\\": {\\\"optional_inputs_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"__current_case__\\\": 0, \\\"population_mappability_priors\\\": {\\\"population_mappability_priors_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"input_filters\\\": {\\\"input_filters_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"algorithmic_features\\\": {\\\"algorithmic_features_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}}\", \"target_limit_type\": \"{\\\"target_limit_type_selector\\\": \\\"do_not_limit\\\", \\\"__current_case__\\\": 0}\"}", 
+            "tool_version": "0.4.1", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "880cb192-d299-4736-af89-2b0df9977514"
+        }, 
+        "7": {
+            "annotation": "", 
+            "id": 7, 
+            "input_connections": {
+                "reference_source|input_bams_0|input_bam": {
+                    "id": 4, 
+                    "output_name": "output"
+                }, 
+                "reference_source|ref_file": {
+                    "id": 1, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "MPileup", 
+            "outputs": [
+                {
+                    "name": "output_mpileup", 
+                    "type": "pileup"
+                }, 
+                {
+                    "name": "output_log", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 994, 
+                "top": 541
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput_log": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_log"
+                }, 
+                "HideDatasetActionoutput_mpileup": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_mpileup"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/devteam/samtools_mpileup/samtools_mpileup/2.0", 
+            "tool_state": "{\"__page__\": 0, \"advanced_options\": \"{\\\"max_reads_per_bam\\\": \\\"1024\\\", \\\"advanced_options_selector\\\": \\\"advanced\\\", \\\"extended_BAQ_computation\\\": \\\"False\\\", \\\"region_string\\\": \\\"\\\", \\\"limit_by_region\\\": {\\\"limit_by_regions\\\": \\\"no_limit\\\", \\\"__current_case__\\\": 2}, \\\"disable_probabilistic_realignment\\\": \\\"True\\\", \\\"skip_anomalous_read_pairs\\\": \\\"True\\\", \\\"minimum_mapping_quality\\\": \\\"0\\\", \\\"filter_by_flags\\\": {\\\"filter_flags\\\": \\\"nofilter\\\", \\\"__current_case__\\\": 1}, \\\"__current_case__\\\": 0, \\\"coefficient_for_downgrading\\\": \\\"0\\\", \\\"minimum_base_quality\\\": \\\"0\\\", \\\"ignore_overlaps\\\": \\\"False\\\", \\\"exclude_read_group\\\": {\\\"__current_case__\\\": 2, \\\"exclude_read_groups\\\": \\\"no_limit\\\"}}\", \"__rerun_remap_job_id__\": null, \"genotype_likelihood_computation_type\": \"{\\\"__current_case__\\\": 0, \\\"output_format\\\": \\\"--VCF\\\", \\\"perform_indel_calling\\\": {\\\"__current_case__\\\": 2, \\\"perform_indel_calling_selector\\\": \\\"do_not_perform_indel_calling\\\"}, \\\"compressed\\\": \\\"False\\\", \\\"genotype_likelihood_computation_type_selector\\\": \\\"perform_genotype_likelihood_computation\\\", \\\"output_tags\\\": null}\", \"reference_source\": \"{\\\"ref_file\\\": null, \\\"reference_source_selector\\\": \\\"history\\\", \\\"input_bams\\\": [{\\\"__index__\\\": 0, \\\"input_bam\\\": null}], \\\"__current_case__\\\": 1}\"}", 
+            "tool_version": "2.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "55cf9f84-3f62-47fc-8828-916a3ca8779d"
+        }, 
+        "8": {
+            "annotation": "", 
+            "id": 8, 
+            "input_connections": {
+                "vcf": {
+                    "id": 6, 
+                    "output_name": "output_vcf"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Filter vcf", 
+            "outputs": [
+                {
+                    "name": "vcfout", 
+                    "type": "vcf"
+                }
+            ], 
+            "position": {
+                "left": 1322, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionvcfout": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "vcfout"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_vcf/filtervcf/1.5.0", 
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"vcf\": \"null\"}", 
+            "tool_version": "1.5.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "92790084-218f-4ad5-bdbb-5925d0b63cdc"
+        }, 
+        "9": {
+            "annotation": "", 
+            "id": 9, 
+            "input_connections": {
+                "input": {
+                    "id": 7, 
+                    "output_name": "output_mpileup"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "BCFtools call", 
+            "outputs": [
+                {
+                    "name": "output", 
+                    "type": "vcf"
+                }
+            ], 
+            "position": {
+                "left": 1322, 
+                "top": 321
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output"
+                }, 
+                "RenameDatasetActionoutput": {
+                    "action_arguments": {
+                        "newname": "mpileup_bcf"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/bcftools_call/bcftools_call/1.0.0", 
+            "tool_state": "{\"__page__\": 0, \"constraint\": \"\\\"-C alleles\\\"\", \"filter_calls\": \"{\\\"filter_calls_selector\\\": \\\"no_filter\\\", \\\"__current_case__\\\": 0}\", \"output_format\": \"\\\"b\\\"\", \"caller\": \"\\\"-c\\\"\", \"skip_indels_snps\": \"\\\"\\\"\", \"input\": \"null\", \"variants_only\": \"\\\"False\\\"\", \"__rerun_remap_job_id__\": null}", 
+            "tool_version": "1.0.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "59cba723-cc03-4bc7-a38f-ef5df3c848b2"
+        }, 
+        "10": {
+            "annotation": "", 
+            "id": 10, 
+            "input_connections": {
+                "input": {
+                    "id": 8, 
+                    "output_name": "vcfout"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "bcftools_view", 
+            "outputs": [
+                {
+                    "name": "output", 
+                    "type": "vcf"
+                }
+            ], 
+            "position": {
+                "left": 1650, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output"
+                }, 
+                "RenameDatasetActionoutput": {
+                    "action_arguments": {
+                        "newname": "filtered_freebayes_bcf"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/bcftools_view/bcftools_view/0.1.0", 
+            "tool_state": "{\"max_nref\": \"\\\"\\\"\", \"__page__\": 0, \"filters\": \"\\\"\\\"\", \"output_format\": \"\\\"b\\\"\", \"header_option\": \"\\\"all\\\"\", \"min_nref\": \"\\\"\\\"\", \"select_sites\": \"null\", \"__rerun_remap_job_id__\": null, \"private\": \"null\", \"samples\": \"\\\"\\\"\", \"include_types\": \"null\", \"region\": \"\\\"\\\"\", \"input\": \"null\", \"trim_alt_alleles\": \"\\\"False\\\"\", \"sites_no_genotype\": \"\\\"off\\\"\"}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "59aede98-a211-4fcc-aad3-bfb6e99cf25e"
+        }, 
+        "11": {
+            "annotation": "", 
+            "id": 11, 
+            "input_connections": {
+                "freebayes_collection": {
+                    "id": 10, 
+                    "output_name": "output"
+                }, 
+                "invalid": {
+                    "id": 3, 
+                    "output_name": "out"
+                }, 
+                "mpileup_collection": {
+                    "id": 9, 
+                    "output_name": "output"
+                }, 
+                "ref_fasta": {
+                    "id": 1, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "VCF 2 pseudoalignment", 
+            "outputs": [
+                {
+                    "name": "positions", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "fasta", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "phylip", 
+                    "type": "phylip"
+                }, 
+                {
+                    "name": "vcf2core", 
+                    "type": "csv"
+                }
+            ], 
+            "position": {
+                "left": 1978, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionfasta": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "fasta"
+                }, 
+                "HideDatasetActionphylip": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "phylip"
+                }, 
+                "RenameDatasetActionpositions": {
+                    "action_arguments": {
+                        "newname": "snpTable.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "positions"
+                }, 
+                "RenameDatasetActionvcf2core": {
+                    "action_arguments": {
+                        "newname": "vcf2core.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "vcf2core"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0", 
+            "tool_state": "{\"__page__\": 0, \"ref_fasta\": \"null\", \"reference\": \"\\\"reference\\\"\", \"__rerun_remap_job_id__\": null, \"ao\": \"\\\"${alternative_allele_proportion}\\\"\", \"invalid\": \"null\", \"coverage\": \"\\\"${min_coverage}\\\"\", \"mean_mapping\": \"\\\"${min_mean_mapping}\\\"\", \"freebayes_collection\": \"null\", \"mpileup_collection\": \"null\"}", 
+            "tool_version": "1.5.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "e5fe678b-e6ff-40d5-b86e-cf00a334cd92"
+        }, 
+        "12": {
+            "annotation": "", 
+            "id": 12, 
+            "input_connections": {
+                "input": {
+                    "id": 11, 
+                    "output_name": "phylip"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Regex Find And Replace", 
+            "outputs": [
+                {
+                    "name": "out_file1", 
+                    "type": "input"
+                }
+            ], 
+            "position": {
+                "left": 2241, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionout_file1": {
+                    "action_arguments": {
+                        "newname": "snpAlignment.phy"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/jjohnson/regex_find_replace/regex1/0.1.0", 
+            "tool_state": "{\"input\": \"null\", \"__rerun_remap_job_id__\": null, \"checks\": \"[{\\\"__index__\\\": 0, \\\"replacement\\\": \\\"\\\", \\\"pattern\\\": \\\"'\\\"}]\", \"__page__\": 0}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "1134975e-7d95-4ca8-ae69-14732e8ced29"
+        }, 
+        "13": {
+            "annotation": "", 
+            "id": 13, 
+            "input_connections": {
+                "tabfile": {
+                    "id": 11, 
+                    "output_name": "positions"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Filter Stats", 
+            "outputs": [
+                {
+                    "name": "out", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 2241, 
+                "top": 313
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionout": {
+                    "action_arguments": {
+                        "newname": "filterStats.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_stats/filterstat/1.5.0", 
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"tabfile\": \"null\", \"summary\": \"null\"}", 
+            "tool_version": "1.5.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "157fd5be-539c-44f6-b534-d6c7aeef72de"
+        }, 
+        "14": {
+            "annotation": "", 
+            "id": 14, 
+            "input_connections": {
+                "input": {
+                    "id": 12, 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "PhyML", 
+            "outputs": [
+                {
+                    "name": "output_tree", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "output_stats", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 2569, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "ChangeDatatypeActionoutput_tree": {
+                    "action_arguments": {
+                        "newtype": "nhx"
+                    }, 
+                    "action_type": "ChangeDatatypeAction", 
+                    "output_name": "output_tree"
+                }, 
+                "RenameDatasetActionoutput_stats": {
+                    "action_arguments": {
+                        "newname": "phylogeneticTreeStats.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_stats"
+                }, 
+                "RenameDatasetActionoutput_tree": {
+                    "action_arguments": {
+                        "newname": "phylogeneticTree.newick"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_tree"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/phyml/phyml1/3.1", 
+            "tool_state": "{\"datatype_condition\": \"{\\\"tstv\\\": \\\"e\\\", \\\"model\\\": \\\"GTR\\\", \\\"type\\\": \\\"nt\\\", \\\"__current_case__\\\": 0}\", \"search\": \"\\\"BEST\\\"\", \"__page__\": 0, \"gamma_condition\": \"{\\\"shape\\\": \\\"e\\\", \\\"categories\\\": \\\"4\\\", \\\"gamma\\\": \\\"yes\\\", \\\"__current_case__\\\": 0}\", \"support_condition\": \"{\\\"support\\\": \\\"sh\\\", \\\"__current_case__\\\": 0}\", \"random_condition\": \"{\\\"random\\\": \\\"no\\\", \\\"__current_case__\\\": 1}\", \"prop_invar\": \"\\\"0.0\\\"\", \"input\": \"null\", \"__rerun_remap_job_id__\": null}", 
+            "tool_version": "3.1", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "c525fb6c-19a0-416b-a5c2-2a2cd0e9f19f"
+        }, 
+        "15": {
+            "annotation": "", 
+            "id": 15, 
+            "input_connections": {
+                "phylip": {
+                    "id": 12, 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "SNP Matrix", 
+            "outputs": [
+                {
+                    "name": "csv", 
+                    "type": "csv"
+                }
+            ], 
+            "position": {
+                "left": 2569, 
+                "top": 358
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActioncsv": {
+                    "action_arguments": {
+                        "newname": "snpMatrix.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "csv"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/snp_matrix/snpmatrix/1.5.0", 
+            "tool_state": "{\"__page__\": 0, \"phylip\": \"null\", \"__rerun_remap_job_id__\": null}", 
+            "tool_version": "1.5.0", 
+            "type": "tool", 
+            "user_outputs": [], 
+            "uuid": "732e9590-99d1-44c7-b612-293b92cb6cc4"
+        }
+    }, 
+    "uuid": "242e582b-30b3-4f1a-8fba-576ca27cb618"
+}

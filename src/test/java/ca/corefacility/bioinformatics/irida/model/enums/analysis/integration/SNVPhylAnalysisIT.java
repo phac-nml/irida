@@ -407,7 +407,7 @@ public class SNVPhylAnalysisIT {
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 
-		String minimumFreebayesCoverage = null;
+		String minVcf2AlignCov = null;
 		String altAlleleFraction = null;
 		String minimumPercentCoverage = null;
 		String minimumDepthVerify = null;
@@ -419,10 +419,10 @@ public class SNVPhylAnalysisIT {
 			final ToolExecution ex = toolsToVisit.remove(0);
 			toolsToVisit.addAll(ex.getPreviousSteps());
 
-			if (ex.getToolName().contains("FreeBayes")) {
+			if (ex.getToolName().contains("VCF 2 pseudoalignment")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
-				minimumFreebayesCoverage = params.get("options_type.section_input_filters_type.min_coverage");
-				altAlleleFraction = params.get("options_type.section_input_filters_type.min_alternate_fraction");
+				minVcf2AlignCov = params.get("coverage");
+				altAlleleFraction = params.get("ao");
 				break;
 			}
 		}
@@ -444,8 +444,8 @@ public class SNVPhylAnalysisIT {
 			}
 		}
 		
-		assertEquals("incorrect minimum freebayes coverage", "2", minimumFreebayesCoverage);
-		assertEquals("incorrect alternative allele fraction", "0.9", altAlleleFraction);
+		assertEquals("incorrect minimum vcf 2 align coverage", "\"2\"", minVcf2AlignCov);
+		assertEquals("incorrect alternative allele fraction", "\"0.90\"", altAlleleFraction);
 		assertEquals("incorrect minimum depth for verify map", "\"2\"", minimumDepthVerify);
 		assertEquals("incorrect min percent coverage for verify map", "\"75\"", minimumPercentCoverage);
 	}
