@@ -46,12 +46,11 @@
         url   : page.urls.addMember,
         data  : user
       }).then(function (data) {
-        console.log(data);
         PAGE.table.ajax.reload();
         notifications.show({'msg': data.data.result});
       }, function () {
         notifications.show({'msg': page.langs.addMember.error, type: 'error'});
-      })
+      });
     }
 
     return {
@@ -59,11 +58,11 @@
     };
   }
 
-  function MembersController(MembersService, $modal) {
+  function MembersController(MembersService, $uibModal) {
     var vm = this;
 
     vm.showAddMemberModal = function () {
-      $modal.open({
+      $uibModal.open({
         templateUrl: 'newMemberModal.html',
         controller: 'NewMemberModalController',
         controllerAs: 'modalCtrl'
@@ -73,23 +72,23 @@
     };
   }
 
-  function NewMemberModalController ($modalInstance) {
+  function NewMemberModalController ($uibModalInstance) {
     var vm = this;
     vm.user = {projectRole: 'PROJECT_USER'};
 
     vm.cancel = function () {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
     };
 
     vm.addMember = function () {
-      $modalInstance.close(vm.user);
+      $uibModalInstance.close(vm.user);
     };
   }
 
   angular.module('irida.project.members', ['ui.bootstrap'])
     .service('MembersService', ['$http', 'notifications', MembersService])
     .directive('select2', [select2])
-    .controller('MembersController', ['MembersService', '$modal', MembersController])
-    .controller('NewMemberModalController', ['$modalInstance', NewMemberModalController])
+    .controller('MembersController', ['MembersService', '$uibModal', MembersController])
+    .controller('NewMemberModalController', ['$uibModalInstance', NewMemberModalController])
   ;
 })(window.angular, window.PAGE);
