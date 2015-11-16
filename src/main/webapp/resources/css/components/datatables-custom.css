@@ -7,18 +7,20 @@
   text-overflow: ellipsis;
   font-size: 14px; }
 
+.filter-row {
+  margin-bottom: 5px !important; }
+
+.datatables-active-filters {
+  margin-bottom: 10px; }
+  .datatables-active-filters .label {
+    cursor: pointer; }
+    .datatables-active-filters .label:after {
+      content: ' \f00d';
+      font-family: 'FontAwesome';
+      margin-left: 3px; }
+
 table th {
   vertical-align: top !important; }
 
 table td {
   padding: 5px 18px !important; }
-
-.yadcf-filter-reset-button {
-  display: none !important; }
-
-.yadcf-filter-wrapper {
-  display: block !important; }
-
-.yadcf-filter.form-control {
-  font-weight: normal;
-  font-size: 12px !important; }

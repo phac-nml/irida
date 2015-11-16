@@ -23,10 +23,10 @@ INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES (
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-08 08:24:09' , 'Project 8', 'E. coli');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-09 08:24:09' , 'Project 9', 'E. coli');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-10 08:24:09' , 'Project 10', 'E. coli');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-11 08:24:09' , 'Project 11', 'E. coli');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-12 08:24:09' , 'Project 12', 'E. coli');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-13 08:24:09' , 'Project 13', 'E. coli');
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-14 08:24:09' , 'Project 14', 'E. coli');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-11 08:24:09' , 'Listeria Outbreak 2013', 'Listeria');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-12 08:24:09' , 'Listeria Outbreak 2014', 'Listeria');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-13 08:24:09' , 'Listeria Outbreak 2015', 'Listeria');
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-14 08:24:09' , 'E. coli O157 Outbreak 2012', 'E. coli');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-15 08:24:09' , 'Project 15', 'E. coli');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-16 08:24:09' , 'Project 16', 'E. coli');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-17 08:24:09' , 'Project 17', 'E. coli');

@@ -8,9 +8,9 @@
 
 <th:block th:fragment="sequenceFileTableLayout" th:with="url=@{${#httpServletRequest.requestURI}},dateFormat=#{locale.date.short}">
 	<td class="td_icon" th:switch="${icon}">
-		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:tooltip="#{sf.tooltip.forward}"></i>
-		<i th:case="'reverse'" class="fa fa-fw fa-arrow-left" data:tooltip="#{sf.tooltip.reverse}"></i>
-		<i th:case="'single'" class="fa fa-fw fa-minus" data:tooltip="#{sf.tooltip.single}"></i>
+		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:uib-tooltip="#{sf.tooltip.forward}"></i>
+		<i th:case="'reverse'" class="fa fa-fw fa-arrow-left" data:uib-tooltip="#{sf.tooltip.reverse}"></i>
+		<i th:case="'single'" class="fa fa-fw fa-minus" data:uib-tooltip="#{sf.tooltip.single}"></i>
 	</td>
 	<td>
 		<a href="#"
@@ -39,9 +39,9 @@
     
 <th:block th:fragment="remoteSequenceFileTableLayout" th:with="url=@{${#httpServletRequest.requestURI}},dateFormat=#{locale.date.short}">
 	<td class="td_icon" th:switch="${icon}">
-		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:tooltip="#{sf.tooltip.forward}"></i>
-		<i th:case="'reverse'" class="fa fa-fw fa-arrow-left" data:tooltip="#{sf.tooltip.reverse}"></i>
-		<i th:case="'single'" class="fa fa-fw fa-minus" data:tooltip="#{sf.tooltip.single}"></i>
+		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:uib-tooltip="#{sf.tooltip.forward}"></i>
+		<i th:case="'reverse'" class="fa fa-fw fa-arrow-left" data:uib-tooltip="#{sf.tooltip.reverse}"></i>
+		<i th:case="'single'" class="fa fa-fw fa-minus" data:uib-tooltip="#{sf.tooltip.single}"></i>
 	</td>
 	<td>
 		<a href="#" class="btn btn-default btn-sm file-name" disabled="disabled"

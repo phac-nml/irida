@@ -55,7 +55,7 @@
    * Controller for functions on the cart slider
    * @param CartService The cart service to communicate with the server
    */
-  function CartSliderController(CartService, $modal) {
+  function CartSliderController(CartService, $uibModal) {
     var vm = this;
 
     vm.clear = function () {
@@ -84,7 +84,7 @@
           if (data !== null) {
             var firstProjID = data[0].id;
 
-            $modal.open({
+            $uibModal.open({
               templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + firstProjID,
               controller: 'GalaxyDialogCtrl as gCtrl',
               resolve: {
@@ -365,7 +365,7 @@
   angular
     .module('irida.cart', [])
     .service('CartService', ['$rootScope', '$http', '$q', CartService])
-    .controller('CartSliderController', ['CartService', '$modal', CartSliderController])
+    .controller('CartSliderController', ['CartService', '$uibModal', CartSliderController])
     .controller('GalaxyDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
     .directive('cart', [CartDirective])
