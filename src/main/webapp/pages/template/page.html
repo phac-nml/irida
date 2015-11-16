@@ -3,8 +3,6 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/base">
 <head lang="en">
-	<link rel="stylesheet" th:href="@{/resources/bower_components/AngularJS-Toaster/toaster.css}"
-	      href="/resources/bower_components/AngularJS-Toaster/toaster.css"/>
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -46,8 +44,6 @@
 			</div>
 		</nav>
 	</div>
-
-	<div toaster-container=""></div>
 	<script type="text/ng-template" id="/cart.html">
 		<aside class="cart">
 			<section ng-hide="cart.count">
