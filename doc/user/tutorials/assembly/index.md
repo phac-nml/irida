@@ -72,9 +72,9 @@ Viewing the Results
 
 Once the pipeline is complete, you will be given the option to download the results of the analysis.  Please click **Download** to download these results now.
 
-[assembly-pipeline-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/assembly-pipeline-page.png
+[assembly-pipeline-page.png]: images/assembly-pipeline-page.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
 [pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
 [your-analyses-menu.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-menu.png
 [your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
-[assembly-pipeline-page-details.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/assembly-pipeline-page-details.png
+[assembly-pipeline-page-details.png]: images/assembly-pipeline-page-details.png
