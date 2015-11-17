@@ -16,33 +16,20 @@ This is a quick tutorial on how to assemble a set of genomes through IRIDA.
 Initial Data
 ============
 
-The data for this tutorial comes from <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>.  It is assumed the sequence files in `miseq-run/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][].  Before starting this tutorial you should have a project with samples that appear as:
-
-![tutorial-pipeline-samples.png][]
+{% include tutorials/common/initial-data.md %}
 
 Adding Samples to the Cart
 ==========================
 
-The first step to assemble a set of genomes is to select the samples with sequence read data to assemble and add to the cart.  For this tutorial please select all three samples and click the **Add to Cart** button.
-
-![select-samples.png][]
-
-Once the samples have been added to the cart, the samples can be reviewed by clicking on the **Cart** button at the top.
-
-![cart-button.png][]
+{% include tutorials/common/adding-samples.md %}
 
 Selecting a Pipeline
 ====================
 
-Once inside the cart, the **Select a Pipeline** button can be used to select a pipeline to run on the selected samples.
-
-![select-a-pipeline.png][]
-
-From the **Select a Pipeline** view a number of different pipelines are available.
-
-![select-a-pipeline-view.png][]
+{% include tutorials/common/selecting-pipeline.md %}
 
 There are two different types of assembly pipelines available:
+
 1. **Assembly and Annotation Pipeline**:  This is used for assembling and annotating a single genome.
 2. **Assembly and Annotation Collection Pipeline**:  This is used for assembling and annotating a collection of genomes and compiling the results into a single downloadable package.
 
@@ -85,12 +72,6 @@ Viewing the Results
 
 Once the pipeline is complete, you will be given the option to download the results of the analysis.  Please click **Download** to download these results now.
 
-[Web Upload Tutorial]: ../web-upload
-[tutorial-pipeline-samples.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/tutorial-pipeline-samples.png
-[select-samples.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/select-samples.png
-[cart-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/cart-button.png
-[select-a-pipeline.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/select-a-pipeline.png
-[select-a-pipeline-view.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/select-a-pipeline-view.png
 [assembly-pipeline-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/assembly-pipeline-page.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
 [assembly-pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/assembly-pipeline-launch.png
