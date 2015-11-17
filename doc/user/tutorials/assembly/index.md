@@ -48,7 +48,7 @@ We will use the default parameters.  Please select the **Ready to Launch?** butt
 
 Once the button is selected you should see a screen showing that your pipeline has been launched.
 
-![assembly-pipeline-launch.png][]
+![pipeline-launch.png][]
 
 Monitoring Pipeline Status
 ==========================
@@ -74,7 +74,7 @@ Once the pipeline is complete, you will be given the option to download the resu
 
 [assembly-pipeline-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/assembly-pipeline-page.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
-[assembly-pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/assembly-pipeline-launch.png
+[pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
 [your-analyses-menu.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-menu.png
 [your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
 [assembly-pipeline-page-details.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/assembly-pipeline-page-details.png

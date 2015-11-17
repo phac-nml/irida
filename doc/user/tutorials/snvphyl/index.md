@@ -59,7 +59,7 @@ Once a set of parameters has been chosen, the **Ready to Launch?** button may be
 
 Once the button is selected you should see a screen showing that your pipeline has been launched.
 
-![assembly-pipeline-launch.png][]
+![pipeline-launch.png][]
 
 Monitoring Pipeline Status
 ==========================
@@ -89,7 +89,7 @@ Once the pipeline is complete, you will see the generated phylogenetic tree with
 [snvphyl-pipeline-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-pipeline-page.png
 [snvphyl-parameters.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-parameters.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
-[assembly-pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/assembly-pipeline-launch.png
+[pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
 [your-analyses-menu.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-menu.png
 [your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
 [snvphyl-analysis-status.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-analysis-status.png
