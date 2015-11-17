@@ -2,4 +2,5 @@ The data for this tutorial comes from <https://irida.corefacility.ca/downloads/d
 
 ![tutorial-pipeline-samples.png][]
 
+[Web Upload Tutorial]: {{ site.baseurl }}/user/tutorials/web-upload
 [tutorial-pipeline-samples.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/tutorial-pipeline-samples.png

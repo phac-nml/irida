@@ -1,4 +1,4 @@
-The first step to assemble a set of genomes is to select the samples with sequence read data to assemble and add to the cart.  For this tutorial please select all three samples and click the **Add to Cart** button.
+Before a pipeline can be run a set of samples and sequence read data must be selected and added to the cart.  For this tutorial please select all three samples and click the **Add to Cart** button.
 
 ![select-samples.png][]
 
