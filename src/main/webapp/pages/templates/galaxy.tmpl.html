@@ -22,14 +22,15 @@
 				<th:block th:text="#{galaxy.label.addtohistory}"></th:block>
 			</label>
 			<br />
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<label for="makepairedcollection" ng-show="gCtrl.addtohistory">
-			<input id="makepairedcollection" type="checkbox" ng-show="gCtrl.addtohistory" ng-model="gCtrl.makepairedcollection"/>&nbsp;
-				<th:block th:text="#{galaxy.label.makepairedcollection}"></th:block>
-				<span class="btn btn-link btn-xs btn-default pull-right" popover-trigger="mouseenter" data:popover="#{galaxy.help-popup}" data:popover-title="#{galaxy.help-popup-title}">
-					<fa:icon type="question-circle" />
-				</span>
-			</label>
+			<div class="form-group-detail">
+				<label for="makepairedcollection" ng-show="gCtrl.addtohistory">
+				<input id="makepairedcollection" type="checkbox" ng-show="gCtrl.addtohistory" ng-model="gCtrl.makepairedcollection"/>&nbsp;
+					<th:block th:text="#{galaxy.label.makepairedcollection}"></th:block>
+					<span class="btn btn-link btn-xs btn-default pull-right" popover-trigger="mouseenter" data:popover="#{galaxy.help-popup}" data:popover-title="#{galaxy.help-popup-title}">
+						<fa:icon type="question-circle" />
+					</span>
+				</label>
+			</div>
 		</div>
 	</div>
 	<div class="modal-body" ng-show="gCtrl.showOauthIframe">
