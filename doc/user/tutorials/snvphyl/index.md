@@ -107,14 +107,14 @@ To view the pipeline provenance information, please select the **Provenance** ta
 This will display the individual steps of this pipeline and the parameters used at each step.  For more details on the pipeline please see the [SNVPhyl][] documentation.
 
 [SNVPhyl]: http://snvphyl.readthedocs.org/
-[snvphyl-pipeline-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-pipeline-page.png
-[snvphyl-parameters.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-parameters.png
+[snvphyl-pipeline-page.png]: images/snvphyl-pipeline-page.png
+[snvphyl-parameters.png]: images/snvphyl-parameters.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
 [pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
 [your-analyses-menu.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-menu.png
 [your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
-[snvphyl-analysis-status.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-analysis-status.png
-[snvphyl-analysis-status-details.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-analysis-status-details.png
+[snvphyl-analysis-status.png]: images/snvphyl-analysis-status.png
+[snvphyl-analysis-status-details.png]: images/snvphyl-analysis-status-details.png
 [SNVPhyl Output Guide]: http://snvphyl.readthedocs.org/en/latest/user/output/
-[snvphyl-results.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-results.png
-[snvphyl-provenance.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-provenance.png
+[snvphyl-results.png]: images/snvphyl-results.png
+[snvphyl-provenance.png]: images/snvphyl-provenance.png
