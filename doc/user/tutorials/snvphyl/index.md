@@ -83,7 +83,28 @@ Viewing the Results
 
 Once the pipeline is complete, you will see the generated phylogenetic tree within your browser and you will be given the option to download the results of the analysis.  Please click **Download** to download these results now.
 
+![snvphyl-results.png][]
 
+A number of files are provided within the download package.  These are described below:
+
+1. `phylogeneticTree.newick`:  The contains the constructed phylogenetic tree in newick format.
+2. `phylogeneticTreeStats.txt`:  This contains additional information about the constructed tree.
+3. `snpMatrix.tsv`:  This contains a pair-wise SNV distance matrix.
+4. `vcf2core.tsv`:  This defines the number of core positions evaluated for constructing the phylogeny.
+5. `snpTable.tsv`:  This is a table of the individual variants detected.
+6. `mappingQuality.txt`:  This defines the percent of the reference covered by each genome.
+7. `filterStats.txt`:  This defines information about the SNVs removed due to poor quality.
+
+More information about interpreting these files can be found in the [SNVPhyl Output Guide][].
+
+Viewing Provenance Information
+==============================
+
+To view the pipeline provenance information, please select the **Provenance** tab.
+
+![snvphyl-provenance.png][]
+
+This will display the individual steps of this pipeline and the parameters used at each step.  For more details on the pipeline please see the [SNVPhyl][] documentation.
 
 [SNVPhyl]: http://snvphyl.readthedocs.org/
 [snvphyl-pipeline-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-pipeline-page.png
@@ -94,3 +115,6 @@ Once the pipeline is complete, you will see the generated phylogenetic tree with
 [your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
 [snvphyl-analysis-status.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-analysis-status.png
 [snvphyl-analysis-status-details.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-analysis-status-details.png
+[SNVPhyl Output Guide]: http://snvphyl.readthedocs.org/en/latest/user/output/
+[snvphyl-results.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-results.png
+[snvphyl-provenance.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/snvphyl-provenance.png
