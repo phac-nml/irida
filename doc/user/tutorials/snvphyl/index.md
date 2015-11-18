@@ -16,15 +16,12 @@ This is a quick tutorial on how to construct a whole genome SNV phylogeny with [
 Initial Data
 ============
 
-Sequence Files
---------------
-
 {% include tutorials/common/initial-data.md %}
 
 Reference Genome
 ----------------
 
-SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  A reference file is provided in the <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip> under the `references/` folder.  Please upload the file `08-5578.fasta` using the following steps.
+SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  A number of example reference files are provided under the `references/` folder.  Please upload the file `08-5578.fasta` using the following steps.
 
 {% include tutorials/common/uploading-a-reference.md %}
 
