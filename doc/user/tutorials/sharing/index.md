@@ -37,13 +37,11 @@ Once the user account is created go to the project containing the data you want 
 Downloading Sample Data
 -----------------------
 
-Downloading Multiple Samples
-============================
+### Downloading Multiple Samples
 
 {% include tutorials/common/samples/download-samples.md %}
 
-Downloading Individual Files
-============================
+### Downloading Individual Files
 
 {% include tutorials/common/samples/view-individual-sample.md %}
 
