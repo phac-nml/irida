@@ -39,7 +39,7 @@ Filtering and Searching the Projects Table
 
 There are two ways to find a specific project in the projects table - filtering and searching.
 
-**Searching**
+### Searching
 
 ![Project search entry.](images/project-search.png)
 
@@ -47,7 +47,7 @@ Search is always available in the text field directly above and to the right of 
 
 ![Projects search by out](images/projects-search-outbreak.png)
 
-**Filtering**
+### Filtering
 
 ![Button to open the projects filter modal.](images/project-filter-btn.png)
 
@@ -65,10 +65,7 @@ You can see which filters are currently applied to the table under the filter bu
 
 Clicking on the filters will clear that specific filter.
 
-**Refining Filtering**
-
-Creating a new project
-----------------------
+### Creating a new project
 
 {% include tutorials/common/creating-a-project.md %}
 
