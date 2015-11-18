@@ -1,4 +1,4 @@
-Start by [viewing the details of an individual sample](#viewing-individual-sample-details). On the sample details page, click on the "Files" tab, just above the sample details panel:
+Start by [viewing the details of an individual sample]({{ site.baseurl }}/user/user/samples/#viewing-individual-sample-details). On the sample details page, click on the "Files" tab, just above the sample details panel:
 
 ![Sample details file tab.]({{ site.baseurl }}/images/tutorials/common/samples/sample-details-file-tab.png)
 

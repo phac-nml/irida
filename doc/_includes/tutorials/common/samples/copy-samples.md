@@ -1,6 +1,6 @@
 Samples may be copied between projects. A sample that is copied into multiple projects is effectively *linked* between those projects -- the files contained within the sample are not physically duplicated, and any sample metadata changes in one project are reproduced in the sample in the copied project.
 
-You must be a project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** on **both** the project that you are copying the sample *from*, and the project that you are copying the sample *to*.
+You must be a project **Manager** on **both** the project that you are copying the sample *from*, and the project that you are copying the sample *to*.
 
 Start by [selecting the samples]({{ site.baseurl }}/user/user/samples/#selecting-samples) that you want to copy to the other project. When you've selected the samples that you want to copy, click on the "Samples" button just above the samples list, and select "Copy Samples":
 

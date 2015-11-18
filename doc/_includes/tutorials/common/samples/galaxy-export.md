@@ -12,7 +12,7 @@ After you log in to IRIDA (or if you were already logged in), you will be direct
 
 ![Galaxy IRIDA projects list.]({{ site.baseurl }}/images/tutorials/common/samples/galaxy-irida-projects-list.png)
 
-Navigate to the list of samples that you're interested in exporting by clicking on the project name. Then, [select the samples](#selecting-samples) that you want to export, click on the "Export" button just above the samples list and click "Send to Galaxy":
+Navigate to the list of samples that you're interested in exporting by clicking on the project name. Then, [select the samples]({{ site.baseurl }}/user/user/samples/#selecting-samples) that you want to export, click on the "Export" button just above the samples list and click "Send to Galaxy":
 
 ![Export to Galaxy button.]({{ site.baseurl }}/images/tutorials/common/samples/export-to-galaxy-button.png)
 

@@ -1,4 +1,4 @@
-To view details about an individual sample, start by [viewing the samples in a project](#viewing-samples-in-a-project), then click on the sample name in the samples table:
+To view details about an individual sample, start by [viewing the samples in a project]({{ site.baseurl }}/user/user/samples/#viewing-samples-in-a-project), then click on the sample name in the samples table:
 
 ![Sample name button.]({{ site.baseurl }}/images/tutorials/common/samples/sample-name-button.png)
 
