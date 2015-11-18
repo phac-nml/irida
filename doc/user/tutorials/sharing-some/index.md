@@ -9,7 +9,9 @@ Sharing some data from a project
 ================================
 {:.no_toc}
 
-Do share a selected number of samples with another IRIDA user you must create a new project and then copy the sample you want to share into it.
+Sometimes you only want to share a small subset of the data in one of your projects with another user. You can share out smaller sets of samples from a project by creating a new project in IRIDA, copying some samples to it, then adding new members to that project.
+
+You must have the role of **Manager** on the project to copy samples to another project.
 
 ### Create a new project
 
