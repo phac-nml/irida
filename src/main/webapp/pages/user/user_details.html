@@ -243,13 +243,13 @@
           });
         }]);
 
-		pwd.controller('DetailsCtrl', ['$modal', function ($modal) {
+		pwd.controller('DetailsCtrl', ['$uibModal', function ($uibModal) {
 			"use strict";
 
 			var vm = this;
 
 			vm.resetPrompt = function () {
-				$modal.open({
+				$uibModal.open({
 					templateUrl: 'reset-modal.html',
 					controller: 'ResetCtrl as reset',
 					size: 'sm'

@@ -337,7 +337,7 @@
           notifications.show({msg: data.message});
         }
         _.forEach(data.warnings, function (msg) {
-          notifications.show({type: 'info', msg: msg});
+          notifications.show({type: 'warning', msg: msg});
         });
         
         if (move) {
@@ -535,7 +535,7 @@
     vm.displaySamples();
   }
 
-  function SubNavCtrl($scope, $modal, SamplesService) {
+  function SubNavCtrl($scope, $uibModal, SamplesService) {
     "use strict";
     var vm = this;
     vm.count = 0;
@@ -573,7 +573,7 @@
       linker  : function linker() {
         if (vm.localSelected) {
           vm.export.open = false;
-          $modal.open({
+          $uibModal.open({
             templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
             controller : 'LinkerCtrl as lCtrl'
           });
@@ -581,7 +581,7 @@
       },
       galaxy  : function galaxy() {
         vm.export.open = false;
-        $modal.open({
+        $uibModal.open({
           templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.id,
           controller : 'GalaxyDialogCtrl as gCtrl',
           resolve    : {
@@ -598,7 +598,7 @@
 
     vm.merge = function () {
       if (vm.localSelected && vm.count > 1) {
-        $modal.open({
+        $uibModal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/merge',
           controller : 'MergeCtrl as mergeCtrl',
           resolve    : {
@@ -612,7 +612,7 @@
 
     vm.openModal = function (type) {
       if (vm.count > 0 && ( type === 'copy' || vm.localSelected )) {
-        $modal.open({
+        $uibModal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/' + type,
           controller : 'CopyMoveCtrl as cmCtrl',
           resolve    : {
@@ -629,7 +629,7 @@
     
     vm.remove = function () {
       if (vm.count > 0 && vm.localSelected) {
-        $modal.open({
+        $uibModal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/remove',
           controller : 'RemoveCtrl as rmCtrl',
           resolve    : {
@@ -800,7 +800,7 @@
     }
   }
 
-  function FilterCtrl($scope, $modal, filter) {
+  function FilterCtrl($scope, $uibModal, filter) {
     "use strict";
     var vm = this;
     vm.filter = filter;
@@ -914,7 +914,7 @@
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .directive('filterByFile', ['$parse', filterByFile])
-    .controller('SubNavCtrl', ['$scope', '$modal', 'SamplesService', SubNavCtrl])
+    .controller('SubNavCtrl', ['$scope', '$uibModal', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
     .controller('SamplesTableCtrl', ['$rootScope', 'SamplesService', 'FilterFactory', SamplesTableCtrl])
@@ -924,7 +924,7 @@
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
-    .controller('FilterCtrl', ['$scope', '$modal', 'FilterFactory', FilterCtrl])
+    .controller('FilterCtrl', ['$scope', '$uibModal', 'FilterFactory', FilterCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
     .controller('ConnectionWarningCtrl', ['$rootScope', 'SamplesService', ConnectionWarningCtrl])

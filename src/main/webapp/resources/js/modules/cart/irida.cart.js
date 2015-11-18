@@ -201,13 +201,17 @@
     }
 
     function getSampleFormEntities(args) {
-      var defaults = {addtohistory: false},
+      var defaults = {
+          addtohistory: false,
+          makepairedcollection: false
+        },
         p = _.extend({}, defaults, args),
         params = {
         '_embedded': {
           'library': {'name': p.name},
           'user': {'email': p.email},
           'addtohistory': p.addtohistory,
+          'makepairedcollection': p.makepairedcollection,
           'oauth2': {
             'code': p.authToken,
             'redirect': p.redirectURI
@@ -251,6 +255,7 @@
   function GalaxyDialogCtrl($modalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
     var vm = this;
     vm.addtohistory=true;
+    vm.makepairedcollection=true;
     vm.showOauthIframe = false;
     vm.showEmailLibInput = true;
     vm.redirectURI = TL.BASE_URL + 'galaxy/auth_code';
@@ -279,9 +284,9 @@
         vm.showEmailLibInput = true;
 
         if (openedByCart) {
-          GalaxyExportService.exportFromCart({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, authToken: authToken, redirectURI: vm.redirectURI}).then(sendSampleForm);
+          GalaxyExportService.exportFromCart({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}).then(sendSampleForm);
         } else {
-          sendSampleForm(GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, authToken: authToken, redirectURI: vm.redirectURI}));
+          sendSampleForm(GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}));
         }
       }
     });

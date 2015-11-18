@@ -3,8 +3,6 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/base">
 <head lang="en">
-	<link rel="stylesheet" th:href="@{/resources/bower_components/AngularJS-Toaster/toaster.css}"
-	      href="/resources/bower_components/AngularJS-Toaster/toaster.css"/>
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -46,8 +44,6 @@
 			</div>
 		</nav>
 	</div>
-
-	<div toaster-container=""></div>
 	<script type="text/ng-template" id="/cart.html">
 		<aside class="cart">
 			<section ng-hide="cart.count">
@@ -84,7 +80,7 @@
 								</button>
 							</div>
 						</div>
-						<ul collapse="cart.collapsed[p.id]">
+						<ul uib-collapse="cart.collapsed[p.id]">
 							<li ng-repeat="s in p.filteredSamples = (p.samples | cartFilter:cart.term)">
 								<span>{{ s.label }}</span>
 								<button class="btn-icon pull-right remove-sample-btn"
@@ -109,7 +105,7 @@
                                 </button>
                             </div>
                         </div>
-                        <ul collapse="cart.collapsed['remote']">
+                        <ul uib-collapse="cart.collapsed['remote']">
                             <li ng-repeat="(id,s) in r.filteredSamples = (cart.remote | cartFilter:cart.term)">
                                 <span>{{ s.label }}</span>
                                 <button class="btn-icon pull-right remove-sample-btn"

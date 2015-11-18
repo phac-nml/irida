@@ -4,12 +4,10 @@
 <body>
 <nav id="topnav" class="navbar navbar-inverse navbar-static-top" role="navigation"
      ng-init="navbarCollapsed = true">
-	<div class="container">
+	<div class="container ng-cloak">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-			        data-target="#bs-example-navbar-collapse-1"
-			        ng-click="navbarCollapsed = !navbarCollapsed">
+			<button type="button" class="navbar-toggle collapsed" ng-click="navbarCollapsed = !navbarCollapsed">
 				<span class="sr-only" th:text="#{sr.nav.toggle}">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -21,67 +19,66 @@
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"
-		     collapse="navbarCollapsed">
+		<div class="navbar-collapse" uib-collapse="navbarCollapsed">
 			<ul class="nav navbar-nav" ng-hide="uiGalaxyCtrl.inGalaxy">
-				<li class="dropdown" dropdown="">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="" role="button">
+				<li uib-dropdown="">
+					<a href="#" uib-dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.project}">Projects</span>
 						&nbsp;
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li>
+					<ul class="uib-dropdown-menu" role="menu">
+						<li role="menuitem">
 							<a href="/projects" th:href="@{/projects}"
 							   th:text="#{nav.main.project-list}">List Projects
 							</a>
 						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+						<li role="menuitem" sec:authorize="hasAnyRole('ROLE_ADMIN')">
 							<a href="/projects/all" th:href="@{/projects/all}"
 							   th:text="#{nav.main.project-list-all}">One more separated link
 							</a>
 						</li>
 						<li role="presentation" class="divider"></li>
-						<li>
+						<li role="menuitem">
 							<a th:href="@{/projects/new}" href="/projects/new">
 								<span th:text="#{nav.main.project-create}">Create New Project</span>
 							</a>
 						</li>
 					</ul>
 				</li>
-				<li class="dropdown" dropdown="">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
+				<li uib-dropdown="">
+					<a href="#" data-toggle="uib-dropdown" uib-dropdown-toggle="">
 						<span th:text="#{nav.main.analysis}">Analysis</span>
 						&nbsp;
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li>
+					<ul class="uib-dropdown-menu" role="menu">
+						<li role="menuitem">
 							<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
-						<li>
+						<li role="menuitem">
 							<a th:href="@{/analysis}" href="/analysis" th:text="#{nav.main.analysis-admin-user}">Your Analysis</a>
 						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+						<li role="menuitem" sec:authorize="hasAnyRole('ROLE_ADMIN')">
 							<a th:href="@{/analysis/all}" href="/analysis/all"
 							   th:text="#{nav.main.analysis-admin-all}">List All Analysis
 							</a>
 						</li>
 					</ul>
 				</li>
-				<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" class="dropdown" dropdown="">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="" role="button">
+				<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" class="uib-dropdown" uib-dropdown="">
+					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.users}">Users</span>
 						&nbsp;
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li>
+					<ul class="uib-dropdown-menu" role="menu">
+						<li role="menuitem">
 							<a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">
 								List Users
 							</a>
 						</li>
 						<li role="presentation" class="divider"></li>
-						<li>
+						<li role="menuitem">
 							<a href="#" th:href="@{/users/create}">
 								<span th:text="#{nav.main.add.user}">Create new user</span>
 							</a>
@@ -90,30 +87,30 @@
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown" dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
+				<li sec:authorize="hasRole('ROLE_ADMIN')" class="uib-dropdown" uib-dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
+					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="">
 						<span th:text="#{nav.main.admin}">Admin</span>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li>
+					<ul class="uib-dropdown-menu" role="menu">
+						<li role="menuitem">
 							<a href="#" th:href="@{/clients}" th:text="#{nav.main.clients}">
 								_Clients_
 							</a>
 						</li>
-						<li>
+						<li role="menuitem">
 							<a href="#" th:href="@{/sequencingRuns}" th:text="#{nav.main.sequencingruns}">
 								_Sequencing Runs_
 							</a>
 						</li>
 					</ul>
 				</li>
-				<!--<li class="dropdown" dropdown="">-->
-					<!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">-->
+				<!--<li class="uib-dropdown" uib-dropdown="">-->
+					<!--<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="">-->
 						<!--<span th:text="#{nav.main.settings}">Account</span>-->
 						<!--<span class="caret"></span>-->
 					<!--</a>-->
-					<!--<ul class="dropdown-menu" role="menu">-->
+					<!--<ul class="uib-dropdown-menu" role="menu">-->
                         <!--&lt;!&ndash;/* TODO: Re-enable for federated data-->
 						<!--<li>-->
 							<!--<a href="#" th:href="@{/remote_api}" th:text="#{nav.main.remoteapis}">-->
@@ -124,26 +121,26 @@
                         <!--*/&ndash;&gt;-->
 					<!--</ul>-->
 				<!--</li>-->
-				<li class="dropdown" dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown"
-					   dropdown-toggle="">
+				<li uib-dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
+					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown"
+					   uib-dropdown-toggle="">
 						<span th:text="#{nav.main.help}">__Help__</span>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li>
+					<ul class="uib-dropdown-menu" role="menu">
+						<li role="menuitem">
 							<a th:text="#{nav.main.userguide}"
 							   href="https://irida.corefacility.ca/documentation/user/user" target="_blank">__User
 								Guide__
 							</a>
 						</li>
-						<li sec:authorize="hasRole('ROLE_ADMIN')">
+						<li role="menuitem" sec:authorize="hasRole('ROLE_ADMIN')">
 							<a th:text="#{nav.main.adminguide}"
 							   href="https://irida.corefacility.ca/documentation/user/administrator" target="_blank">
 								__Admin Guide__
 							</a>
 						</li>
-						<li>
+						<li role="menuitem">
 							<a href="http://hub.corefacility.ca/?category=irida" th:text="#{nav.main.iridahub}"
 							   target="_blank">
 								__IRIDA Hub__
@@ -161,20 +158,20 @@
 					</button>
 				</li>
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
-					<a href="#" th:href="@{/remote_api}" data:tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">
+					<a href="#" th:href="@{/remote_api}" data:uib-tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">
 						<i class="glyphicon glyphicon-transfer"></i>
 					</a>
 				</li>
 
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a class="nav-gravatar" href="#" th:href="@{/users/current}" th:with="email=${#httpSession.getAttribute('CURRENT_USER_DETAILS') != null} ? ${#httpSession.getAttribute('CURRENT_USER_DETAILS').email} : 'anonymous@anonymous.ca'"
-					   data:tooltip="#{nav.main.account}" tooltip-placement="bottom">
+					   data:uib-tooltip="#{nav.main.account}" tooltip-placement="bottom">
 						<img class="gravatar" data:gravatar-src-once="'\'' + ${email} + '\''"
 						     gravatar-size="28"/>
 					</a>
 				</li>
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
-					<a th:href="@{/logout}" href="/logout" data:tooltip="#{nav.main.logout}" tooltip-placement="bottom">
+					<a th:href="@{/logout}" href="/logout" data:uib-tooltip="#{nav.main.logout}" tooltip-placement="bottom">
 						<i class="fa fa-sign-out"></i>
 					</a>
 				</li>
