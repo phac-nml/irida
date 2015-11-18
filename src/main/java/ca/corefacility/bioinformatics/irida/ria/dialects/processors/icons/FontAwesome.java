@@ -125,6 +125,12 @@ public class FontAwesome {
 	private static final String BAN_ICON = "ban";
 
 	/*
+	 * Attribute for the popover question-circle
+	 */
+	private static final String QUESTIONCIRCLE_ATTRIBUTE = "question-circle";
+	private static final String QUESTIONCIRCLE_ICON = "question-circle";
+
+	/*
 	 * Attribute for email
 	 */
 	private static final String EMAIL_ATTRIBUTE = "email";
@@ -168,6 +174,7 @@ public class FontAwesome {
 			.put(SAMPLE_ATTRIBUTE, SAMPLE_ICON)
 			.put(USER_ATTRIBUTE, USER_ICON)
 			.put(BAN_ATTRIBUTE, BAN_ICON)
+			.put(QUESTIONCIRCLE_ATTRIBUTE, QUESTIONCIRCLE_ICON)
 			.put(EMAIL_ATTRIBUTE, EMAIL_ICON)
 			.put(EXTERNAL_LINK_ATTRIBUTE, EXTERNAL_LINK_ICON)
 			.build();
