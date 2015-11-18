@@ -8,7 +8,7 @@ description: "A tutorial on how to share your sequencing data that's stored in I
 Exporting data to Galaxy
 ========================
 {:.no_toc}
-`
+
 {% include tutorials/common/samples/galaxy-export.md %}
 
 
