@@ -822,12 +822,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0", 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.11.0", 
             "tool_state": "{\"kingdom\": \"{\\\"gcode\\\": \\\"11\\\", \\\"kingdom_select\\\": \\\"Bacteria\\\", \\\"__current_case__\\\": 1}\", \"__page__\": 0, \"norrna\": \"\\\"False\\\"\", \"usegenus\": \"\\\"False\\\"\", \"metagenome\": \"\\\"False\\\"\", \"centre\": \"\\\"IRIDA\\\"\", \"evalue\": \"\\\"1e-06\\\"\", \"proteins\": \"null\", \"compliant\": \"{\\\"mincontig\\\": \\\"200\\\", \\\"compliant_select\\\": \\\"no\\\", \\\"__current_case__\\\": 0, \\\"addgenes\\\": \\\"True\\\"}\", \"fast\": \"\\\"False\\\"\", \"strain\": \"\\\"\\\"\", \"locustag\": \"\\\"PROKKA\\\"\", \"__rerun_remap_job_id__\": null, \"plasmid\": \"\\\"\\\"\", \"increment\": \"\\\"1\\\"\", \"gffver\": \"\\\"3\\\"\", \"input\": \"null\", \"rfam\": \"\\\"True\\\"\", \"genus\": \"\\\"\\\"\", \"species\": \"\\\"\\\"\", \"notrna\": \"\\\"False\\\"\"}", 
-            "tool_version": "1.4.0", 
+            "tool_version": "1.11.0", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "18821f1f-f3bc-45d1-a989-4b210624759a"
+            "uuid": "4d558391-fc8e-4322-832f-0802d460a892"
         }, 
         "13": {
             "annotation": "", 
@@ -1025,5 +1025,5 @@
             "uuid": "7a3cdc6c-d6a3-45c7-8225-97e2b0cd97f4"
         }
     }, 
-    "uuid": "39089dd9-d80c-412a-8aef-502c326abeb6"
+    "uuid": "a177fca5-d7d4-40ee-b544-a4e07941d3aa"
 }
