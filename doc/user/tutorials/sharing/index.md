@@ -37,6 +37,8 @@ Once the user account is created go to the project containing the data you want 
 Downloading Sample Data
 -----------------------
 
+All project members are allowed to export the samples in a project to the command line (add a link to the command line tutorial), to Galaxy (add a link to the Galaxy tutorial) or to download sample data. External collaborators will most likely want to download sample data to their own computer so that they can manage the data locally. External collaborators can use IRIDA to download [multiple samples in a zip package](#downloading-multiple-samples) or they can [download individual files](#downloading-individual-files) by examining each sample.
+
 ### Downloading Multiple Samples
 
 {% include tutorials/common/samples/download-samples.md %}
