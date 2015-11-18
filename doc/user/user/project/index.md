@@ -29,13 +29,43 @@ The projects list provides a high-level overview of project details, including:
 * The IRIDA-generated identifier for the project,
 * The name of the project,
 * The project organism,
-* Your role on the project,
 * The number of samples created in the project,
 * The number of other user accounts with permissions to view or edit the project,
 * The date that the project was created in IRIDA,
 * The time that the project was last modified.
 
-You have **read-only** permissions on projects where you are listed as a **Collaborator** role. You have **modify** permissions on projects where you are listed as **Manager** role. You can view the role that you have on a project in the **Role** column.
+Filtering and Searching the Projects Table
+------------------------------------------
+
+There are two ways to find a specific project in the projects table - filtering and searching.
+
+**Searching**
+
+![Project search entry.](images/project-search.png)
+
+Search is always available in the text field directly above and to the right of the table.  This search across the project's id, name, and organism.
+
+![Projects search by out](images/projects-search-outbreak.png)
+
+**Filtering**
+
+![Button to open the projects filter modal.](images/project-filter-btn.png)
+
+Pressing the Filter button opens a dialogue that allows you to filter on specific items within the project - the name and the organism.  Each filter only applies to its specific part of a project.
+
+![Projects Filtering Modal](images/projects-filter-modal.png)
+
+Example: filtering the name by "outbreak" and organism by "listeria" gives the following results:
+
+![Result of filtering projects by name using outbreak](images/projects-filter-name-outbreak.png)
+
+You can see which filters are currently applied to the table under the filter button:
+
+![List of applied filters](images/projects-applied-filters.png)
+
+Clicking on the filters will clear that specific filter.
+
+**Refining Filtering**
 
 Creating a new project
 ----------------------
@@ -201,5 +231,3 @@ Starting from [viewing project details](#viewing-project-details), you can view 
 Recent activities include adding or modifying project members and adding new samples to a project:
 
 ![Project recent activities.](images/project-recent-activities.png)
-
-<a href="../dashboard/">Previous: Dashboard Overview</a><a href="../samples/" style="float: right;">Next: Managing Samples</a>

@@ -1,6 +1,16 @@
 Changes
 =======
 
+1.0.0-alpha7 to development
+---------------------------
+
+* [Workflow]: Upgraded SNVPhyl from version 0.2 to 0.3.
+
+1.0.0-alpha6 to 1.0.0-alpha7
+----------------------------
+* [UI] Feature: When new data is added to a project, both the project and sample modified times are changed so that you can find the most recently uploaded files in a project by sorting on the date modified column of the samples table.
+* [UI] Feature: All metadata fields for sample are shown on the samples details page, even if the field does not have an entered value.
+
 1.0.0-alpha5 to 1.0.0-alpha6
 ----------------------------
 * [UI] Feature: Added IRIDA logo to the header, and added a footer with some contact information. Also added a favicon.
