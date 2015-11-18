@@ -16,10 +16,7 @@ Each [project](../project) in IRIDA may contain a collection of samples that cor
 Viewing samples in a project
 ----------------------------
 
-Start by [viewing the project details](../project/#viewing-project-details) of a project. The list of samples in the project is shown in the middle of the 
-project details screen:
-
-![Project samples listing.](images/project-samples.png)
+{% include tutorials/common/samples/viewing-samples.md %}
 
 The samples listing shows high-level sample details, such as:
 
@@ -31,13 +28,13 @@ The samples listing shows high-level sample details, such as:
 
 ### Viewing individual sample details
 
-All of the sample details that are in IRIDA are currently provided by a user with the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon"> **Manager** role. To view details about an individual sample, start by [viewing the samples in a project](#viewing-samples-in-a-project), then click on the sample name in the samples table:
+All of the sample details that are in IRIDA are currently provided by a user with the project **Manager** role. To view details about an individual sample, start by [viewing the samples in a project](#viewing-samples-in-a-project), then click on the sample name in the samples table:
 
-![Sample name button.](images/sample-name-button.png)
+![Sample name button.]({{ site.baseurl }}/images/tutorials/common/samples/sample-name-button.png)
 
 The sample details page shows all of the details that are currently known about a sample:
 
-![Sample details page.](images/sample-details.png)
+![Sample details page.]({{ site.baseurl }}/images/tutorials/common/samples/sample-details.png)
 
 ### Editing sample details
 
@@ -49,19 +46,7 @@ You can provide as many or as few sample details that you want -- the sample det
 
 ### Viewing sequence files
 
-Start by [viewing the details of an individual sample](#viewing-individual-sample-details). On the sample details page, click on the "Files" tab, just above the sample details panel:
-
-![Sample details file tab.](images/sample-details-file-tab.png)
-
-Sequence files may have been uploaded as paired-end files or as single-end files, depending on how the isolate was sequenced.
-
-Single-end files will appear in the sample alone:
-
-![Single-end sequencing file.](images/sample-sequence-file-single-end.png)
-
-Paired-end files will appear in a pair:
-
-![Paired-end sequencing file.](images/sample-sequence-file-paired-end.png)
+{% include tutorials/common/samples/view-sequence-files.md %}
 
 #### Uploading Sequence Files
 
@@ -69,7 +54,7 @@ Paired-end files will appear in a pair:
 
 #### Downloading a sequence file
 
-You can download a sequence file by clicking on the <img src="images/download-icon.png" alt="Download icon" class="inline"> icon, on the right-hand side of the row for the sequence file.
+{% include tutorials/common/samples/download-sequence-file.md %}
 
 You can download all sequence files in a sample by following the instructions in the [exporting samples](#exporting-samples) section about [downloading samples](#downloading-samples).
 
@@ -240,17 +225,9 @@ All export options require that you [select the samples for export](#selecting-s
 
 #### Downloading samples
 
-You can download an individual sequence file from a sample by [navigating to the file](#viewing-sequence-files), then clicking on the <img src="images/download-icon.png" class="inline" alt="Download icon."> icon (see: [Downloading a sequence file](#downloading-a-sequence-file)).
+You can download an individual sequence file from a sample by [navigating to the file](#viewing-sequence-files), then clicking on the <span class="fa fa-fw fa-download"></span> icon (see: [Downloading a sequence file](#downloading-a-sequence-file)).
 
-You may also download **all** of the files in a sample, or even download the files from multiple samples, by [selecting the samples](#selecting-samples) that you want to download, clicking on the "Export" button just above the samples list and clicking on "Download":
-
-![Samples download button.](images/samples-download-button.png)
-
-IRIDA will provide you with a `zip` file containing the sequencing data for all of the selected samples. You can extract the files from the zip archive using the command-line program `unzip`, using the built-in Windows extractor tool, or using a program like [7-zip](http://7-zip.org)
-
-<blockquote>
-<b>WARNING</b>: sequencing data can make for a very large download, especially when downloading <i>all</i> of the sequencing data for a project. We strongly recommend that you <i>do not</i> download data to your PC, especially if you are going to be using Linux command-line tools and the <a href="#command-line-export">command-line export tool</a> option is available.
-</blockquote>
+{% include tutorials/common/samples/download-samples.md %}
 
 #### Command-line export
 

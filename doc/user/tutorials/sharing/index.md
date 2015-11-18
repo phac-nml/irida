@@ -28,11 +28,28 @@ If the person you would like to share data with within IRIDA does not have a use
 Adding a Project Member
 -----------------------
 
+Once the user account is created go to the project containing the data you want to share with this user, and select the **Members** tab.
 
+![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
+
+{% include tutorials/common/project-add-member.md %}
 
 Downloading Sample Data
 -----------------------
 
+Downloading Multiple Samples
+============================
+
+{% include tutorials/common/samples/download-samples.md %}
+
+Downloading Individual Files
+============================
+
+{% include tutorials/common/samples/view-individual-sample.md %}
+
+{% include tutorials/common/samples/view-sequence-files.md %}
+
+{% include tutorials/common/samples/download-sequence-file.md %}
 
 [web-upload]: ../web-upload/
 [uploader-tool]: ../uploader-tutorial/
