@@ -72,9 +72,36 @@ Viewing the Results
 
 Once the pipeline is complete, you will be given the option to download the results of the analysis.  Please click **Download** to download these results now.
 
+![assembly-download.png][]
+
+A number of files are provided in the downloaded results.  These are described below.
+
+1. `contigs-with-repeats-combined.fasta.zip`: The assembled contigs, after repeats were identified and low coverage/small contigs removed.
+2. `assembly-stats-with-repeats-combined.tsv`: A table of assembly statistics for the assembled contigs.
+3. `genome-combined.gbk.zip`:  The annotated contigs, in GenBank format.
+4. `prokka_stats-combined.txt.zip`:  The stats output from Prokka.
+5. `prokka-combined.log.zip`:  The log files from Prokka.
+6. `prokka-combined.err.zip`:  The error files from Prokka.
+7. `filter-spades-combined.txt.zip`:  Information on the contigs removed and filtering parameters.
+8. `contigs-without-repeats-combined.fasta.zip`:  The assembled and filtered contigs, minus any repeat regions.
+9. `contigs-all-combined.fasta.zip`:  All contigs output from SPAdes, without any flitering.
+10. `spades-combined.log.zip`:  The log files from SPAdes.
+11. `flash-combined.log.zip`:  The log files from FLASH used to merge paired-end reads.
+
+Viewing Provenance Information
+==============================
+
+To view the pipeline provenance information, please select the **Provenance** tab.
+
+![assembly-provenance.png][]
+
+This will display the individual steps of this pipeline and the parameters used at each step.
+
 [assembly-pipeline-page.png]: images/assembly-pipeline-page.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
 [pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
 [your-analyses-menu.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-menu.png
 [your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
 [assembly-pipeline-page-details.png]: images/assembly-pipeline-page-details.png
+[assembly-download.png]: images/assembly-download.png
+[assembly-provenance.png]: images/assembly-provenance.png
