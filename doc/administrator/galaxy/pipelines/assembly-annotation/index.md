@@ -15,7 +15,7 @@ This workflow uses the software [SPAdes][] and [Prokka][] for assembly and annot
 | **filter_spades_repeats** | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
 | **assemblystats**         | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
 | **spades**                | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
-| **prokka**                | 3ad7ef0ba385  | 6 (2014-10-27)                | [Galaxy Main Shed][] |
+| **prokka**                | f5e44aad6498  | 7 (2015-10-01)                | [Galaxy Main Shed][] |
 | **regex_find_replace**    | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
