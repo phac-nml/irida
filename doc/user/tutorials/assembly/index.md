@@ -13,6 +13,17 @@ This is a quick tutorial on how to assemble a set of genomes through IRIDA.
 * TOC
 {:toc}
 
+Pipeline Overview
+=================
+
+The assembly and annotation pipeline built into IRIDA proceeds through the following steps.
+
+1. Paired-end reads are merged using [FLASH][].
+2. The merged paired-end reads as well as the unmerged reads are passed to [SPAdes][] to perform a *de novo* assembly.
+3. The contigs returned by SPAdes are filtered to remove small and low coverage contigs.
+4. The filtered contigs are passed to [Prokka][] for genome annotation.
+5. A set of summary statistics are generated for the assembled genome.
+
 Initial Data
 ============
 
@@ -97,6 +108,9 @@ To view the pipeline provenance information, please select the **Provenance** ta
 
 This will display the individual steps of this pipeline and the parameters used at each step.
 
+[FLASH]: http://ccb.jhu.edu/software/FLASH/
+[SPAdes]: http://bioinf.spbau.ru/spades
+[Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
 [assembly-pipeline-page.png]: images/assembly-pipeline-page.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
 [pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
