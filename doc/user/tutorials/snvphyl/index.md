@@ -48,7 +48,7 @@ Selecting **Customize** brings up a page where parameters can be customized.
 
 ![snvphyl-parameters.png][]
 
-We will set the **Minimum read coverage** to `10` and select **Use these Parameters**.
+The default parameters will often be appropriate but we will modify the **Minimum read coverage** to `10` for this tutorial.  When finished please select **Use these Parameters**.
 
 Once a set of parameters has been chosen, the **Ready to Launch?** button may be used to start the pipeline.
 
