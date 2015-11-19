@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "Sharing data within IRIDA"
-search_title: "Sharing data within IRIDA"
-description: "A tutorial on how to share your sequencing data that's stored in IRIDA with other IRIDA users."
+title: "Exporting data to the command-line"
+search_title: "Exporting data to the command-line"
+description: "A tutorial on how to export data from IRIDA through the command line."
 ---
 
 Exporting data to the command-line

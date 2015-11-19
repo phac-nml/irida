@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "Sharing data within IRIDA"
-search_title: "Sharing data within IRIDA"
-description: "A tutorial on how to share your sequencing data that's stored in IRIDA with other IRIDA users."
+title: "Sharing some data from a project within IRIDA"
+search_title: "Sharing some data from a project within IRIDA"
+description: "A tutorial on how to share some of your sequencing data that's stored in IRIDA with other IRIDA users."
 ---
 
 Sharing some data from a project
