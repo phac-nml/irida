@@ -7,6 +7,7 @@ description: "A tutorial on how to perform de novo assemblies with IRIDA."
 
 Performing *de novo* assemblies with IRIDA
 ==========================================
+{:.no_toc}
 
 This is a quick tutorial on how to assemble a set of genomes through IRIDA.
 
@@ -18,7 +19,7 @@ Pipeline Overview
 
 The assembly and annotation pipeline built into IRIDA proceeds through the following steps.
 
-1. Paired-end reads are merged using [FLASH][].
+1. Paired-end reads are merged using [FLASh][].
 2. The merged paired-end reads as well as the unmerged reads are passed to [SPAdes][] to perform a *de novo* assembly.
 3. The contigs returned by SPAdes are filtered to remove small and low coverage contigs.
 4. The filtered contigs are passed to [Prokka][] for genome annotation.
@@ -111,7 +112,7 @@ A number of files are provided in the downloaded results.  These are described b
 8. `contigs-without-repeats-combined.fasta.zip`:  The assembled and filtered contigs, minus any repeat regions.
 9. `contigs-all-combined.fasta.zip`:  All contigs output from SPAdes, without any flitering.
 10. `spades-combined.log.zip`:  The log files from SPAdes.
-11. `flash-combined.log.zip`:  The log files from FLASH used to merge paired-end reads.
+11. `flash-combined.log.zip`:  The log files from FLASh used to merge paired-end reads.
 
 Viewing Provenance Information
 ==============================

@@ -7,6 +7,7 @@ description: "A tutorial on how to construct whole genome SNV phylogenies with S
 
 Building a whole genome SNV Phylogeny with SNVPhyl
 ==================================================
+{:.no_toc}
 
 This is a quick tutorial on how to construct a whole genome SNV phylogeny with [SNVPhyl][] through IRIDA.
 
