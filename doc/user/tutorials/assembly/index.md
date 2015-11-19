@@ -27,17 +27,31 @@ The assembly and annotation pipeline built into IRIDA proceeds through the follo
 Initial Data
 ============
 
-{% include tutorials/common/initial-data.md %}
+The data for this tutorial comes from <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>.  It is assumed the sequence files in `miseq-run-assembly-small/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][].  Before starting this tutorial you should have a project with samples that appear as:
+
+![assembly-tutorial-samples.png][]
 
 Adding Samples to the Cart
 ==========================
 
-{% include tutorials/common/adding-samples.md %}
+Before a pipeline can be run a set of samples and sequence read data must be selected and added to the cart.  For this tutorial please select all three samples and click the **Add to Cart** button.
+
+![select-samples.png][]
+
+Once the samples have been added to the cart, the samples can be reviewed by clicking on the **Cart** button at the top.
+
+![cart-button.png][]
 
 Selecting a Pipeline
 ====================
 
-{% include tutorials/common/selecting-pipeline.md %}
+Once inside the cart, the **Select a Pipeline** button can be used to select a pipeline to run on the selected samples.
+
+![select-a-pipeline.png][]
+
+From the **Select a Pipeline** view a number of different pipelines are available.
+
+![select-a-pipeline-view.png][]
 
 There are two different types of assembly pipelines available:
 
@@ -76,14 +90,14 @@ Clicking the pipeline name **AssemblyAnnotationCollection_...** will bring you t
 
 ![assembly-pipeline-page-details.png][]
 
-This page will continue to refresh as the pipeline progresses through each stage.  It will take a while (a few hours) for the assembly and annotation pipeline to complete.
+This page will continue to refresh as the pipeline progresses through each stage.  It will take a few minutes for the assembly and annotation pipeline to complete.
 
 Viewing the Results
 ===================
 
 Once the pipeline is complete, you will be given the option to download the results of the analysis.  Please click **Download** to download these results now.
 
-![assembly-download.png][]
+![assembly-pipeline-results.png][]
 
 A number of files are provided in the downloaded results.  These are described below.
 
@@ -111,11 +125,17 @@ This will display the individual steps of this pipeline and the parameters used 
 [FLASH]: http://ccb.jhu.edu/software/FLASH/
 [SPAdes]: http://bioinf.spbau.ru/spades
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
+[Web Upload Tutorial]: {{ site.baseurl }}/user/tutorials/web-upload
+[assembly-tutorial-samples.png]: images/assembly-tutorial-samples.png
+[select-samples.png]: images/select-samples.png
+[cart-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/cart-button.png
 [assembly-pipeline-page.png]: images/assembly-pipeline-page.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
+[select-a-pipeline.png]: images/select-a-pipeline.png
+[select-a-pipeline-view.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/select-a-pipeline-view.png
 [pipeline-launch.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/pipeline-launch.png
 [your-analyses-menu.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-menu.png
 [your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
 [assembly-pipeline-page-details.png]: images/assembly-pipeline-page-details.png
-[assembly-download.png]: images/assembly-download.png
+[assembly-pipeline-results.png]: images/assembly-pipeline-results.png
 [assembly-provenance.png]: images/assembly-provenance.png
