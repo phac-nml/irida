@@ -49,7 +49,7 @@
 <main layout:fragment="main" ddl:bundle-includes="sample-files">
 	<div class="row">
 		<div class="col-md-12">
-			<h1 id="page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
+			<h1 id="sample-page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
 			<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="alert alert-success"
 			     role="alert">
 				<strong th:text="${fileDeletedMessage}"></strong>
