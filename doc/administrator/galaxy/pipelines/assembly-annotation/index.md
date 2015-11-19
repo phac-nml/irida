@@ -48,7 +48,7 @@ The install progress can be checked by monitoring the Galaxy log file `$GALAXY_B
 
 ### Updating `tbl2asn`
 
-The assembly workflow makes use of the software [Prokka][] for geneome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built.  The next date of expiry will be **March 31, 2016**.  After this date, `tbl2asn` will have to be updated before the assembly workflow is to be run.  A quick way to update `tbl2asn` is the following.
+The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built.  The next date of expiry will be **March 31, 2016**.  After this date, `tbl2asn` will have to be updated before the assembly workflow can be run.  A quick way to update `tbl2asn` is the following.
 
 1. Download the new `tbl2asn` binary from <ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/>.
 2. Copy the binary over the previously installed locations in Galaxy.  These can be found with the command:
