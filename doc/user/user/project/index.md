@@ -104,7 +104,7 @@ Project members are users who have permissions to view or edit project metadata.
 
 If you are a project **Manager**, you can add new members to the project. Start by clicking on the "Members" tab, above the [project details panel](#viewing-project-details):
 
-![Project details members tab.](images/project-details-members-tab.png)
+![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
 
 A project <img src="images/collaborator-icon.png" class="inline" alt="Collaborator role icon."> **Collaborator** will only be able to *view* the project members:
 
@@ -116,17 +116,7 @@ A project <img src="images/manager-icon.png" class="inline" alt="Manager role ic
 
 ### Adding a project member
 
-To add a project member, click on the "Add Member" button, just below the project title:
-
-![Add project member button.](images/add-member-button.png)
-
-You can use the dialog that appears to select a user account (you can choose from a list, or click the "Select a User" field and start typing), and choose the **Project Role** that the new member should have:
-
-![Add project member dialog.](images/add-member-modal.png)
-
-**Remember**: a project collaborator has *read-only* permissions, and a project *manager* is allowed to modify project details.
-
-Once you've selected the user and role to add the new member, click on the "Submit" button.
+{% include tutorials/common/project-add-member.md %}
 
 ### Changing a project member role
 
