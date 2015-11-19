@@ -21,7 +21,7 @@ Initial Data
 Reference Genome
 ----------------
 
-SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  A number of example reference files are provided under the `references/` folder.  Please upload the file `08-5578.fasta` using the following steps.
+SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  A number of example reference files are provided under the `references/` folder in the sample data package.  Please upload the file `08-5578.fasta` using the following steps.
 
 {% include tutorials/common/uploading-a-reference.md %}
 
@@ -84,7 +84,7 @@ Once the pipeline is complete, you will see the generated phylogenetic tree with
 
 A number of files are provided within the download package.  These are described below:
 
-1. `phylogeneticTree.newick`:  The contains the constructed phylogenetic tree in newick format.
+1. `phylogeneticTree.newick`:  This contains the constructed phylogenetic tree in newick format.
 2. `phylogeneticTreeStats.txt`:  This contains additional information about the constructed tree.
 3. `snpMatrix.tsv`:  This contains a pair-wise SNV distance matrix.
 4. `vcf2core.tsv`:  This defines the number of core positions evaluated for constructing the phylogeny.

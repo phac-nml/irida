@@ -1,4 +1,4 @@
-1. Select the appropricate project from **Projects > Your Projects**.
+1. Select the appropriate project from **Projects > Your Projects**.
 
     ![your-projects-menu.png][]
 
