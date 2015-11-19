@@ -64,7 +64,9 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void clearFilters() {
-		driver.findElement(By.id("clearFilterBtn")).click();
+		WebElement clearBtn = driver.findElement(By.id("clearFilterBtn"));
+		waitForElementToBeClickable(clearBtn);
+		clearBtn.click();
 		waitForElementInvisible(By.className("projectsTable_processing"));
 	}
 
@@ -72,14 +74,14 @@ public class ProjectsPage extends AbstractPage {
 		openFilters();
 		WebElement input = driver.findElement(By.id("nameFilter"));
 		input.sendKeys(name);
-		submitFilter();
+		submitFilter("nameFilterClear");
 	}
 
 	public void filterByOrganism(String organism) {
 		openFilters();
 		WebElement input = driver.findElement(By.id("organismFilter"));
 		input.sendKeys(organism);
-		submitFilter();
+		submitFilter("organismFilterClear");
 	}
 
 	private void openFilters() {
@@ -87,9 +89,10 @@ public class ProjectsPage extends AbstractPage {
 		btn.click();
 	}
 
-	private void submitFilter() {
+	private void submitFilter(String filterClearerId) {
 		driver.findElement(By.id("filterProjectsBtn")).click();
-		waitForElementInvisible(By.className("projectsTable_processing"));
+		waitForElementInvisible(By.className("modal-header"));
+		waitForElementVisible(By.id(filterClearerId));
 	}
 
 	public void doSearch(String term) {
