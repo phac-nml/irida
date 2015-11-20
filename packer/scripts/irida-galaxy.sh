@@ -109,6 +109,18 @@ wait_for_galaxy
 mv /tmp/workflows /home/irida/galaxy/install
 mv /tmp/install-workflow-tools.py /home/irida/galaxy/install
 
+## Remove old versions of workflows before going through the install process.
+## No point in installing tools for old workflows that can't even be run anymore.
+pushd /home/irida/galaxy/install/workflows
+for x in * ; do 
+	pushd $x
+	for y in $(find -mindepth 1 -type d | sort | head -n -1) ; do
+		rm -r $y
+	done
+	popd
+done
+popd
+
 MASTER_API_KEY=$(grep master_api_key /home/irida/galaxy/galaxy-dist/config/galaxy.ini | awk '{print $3}')
 
 cd /home/irida/galaxy/install

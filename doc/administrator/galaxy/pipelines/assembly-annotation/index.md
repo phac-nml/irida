@@ -15,7 +15,7 @@ This workflow uses the software [SPAdes][] and [Prokka][] for assembly and annot
 | **filter_spades_repeats** | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
 | **assemblystats**         | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
 | **spades**                | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
-| **prokka**                | 3ad7ef0ba385  | 6 (2014-10-27)                | [Galaxy Main Shed][] |
+| **prokka**                | f5e44aad6498  | 7 (2015-10-01)                | [Galaxy Main Shed][] |
 | **regex_find_replace**    | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
@@ -46,6 +46,17 @@ The install progress can be checked by monitoring the Galaxy log file `$GALAXY_B
 
 **Note**: Prokka downloads several large databases and may take some time to install.
 
+### Updating `tbl2asn`
+
+The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built.  The next date of expiry will be **March 31, 2016**.  After this date, `tbl2asn` will have to be updated before the assembly workflow can be run.  A quick way to update `tbl2asn` is the following.
+
+1. Download the new `tbl2asn` binary from <ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/>.
+2. Copy the binary over the previously installed locations in Galaxy.  These can be found with the command:
+
+        find tool_dependencies/ -wholename '*f5e44aad6498/*tbl2asn' -or -wholename '*package_tbl2asn_24_3/*tbl2asn'
+
+    Where **tool_dependencies/** is the location of all the installed Galaxy tool dependencies.
+
 ## Step 3: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
@@ -71,6 +82,7 @@ If everything was successfull then all dependencies for this pipeline have been 
 
 [SPAdes]: http://bioinf.spbau.ru/spades
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
+[tbl2asn]: http://www.ncbi.nlm.nih.gov/genbank/tbl2asn2/
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
