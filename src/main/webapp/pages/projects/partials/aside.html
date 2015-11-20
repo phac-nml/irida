@@ -1,29 +1,30 @@
 <aside layout:fragment="aside">
-	<div class="sidebar" th:object="${project}">
-		<div class="sidebar__heading">
-			<h2 th:text="#{project.details}">Project Details</h2>
-		</div>
-		<div class="sidebar__body">
-			<div class="sidebar__item">
-				<div class="sidebar__icon"><fa:icon type="id" fixed="" /></div>
-				<div th:text="#{project.id}"></div>
-				<div class="sidebar__value" th:text="*{id}"></div>
-			</div>
-			<div class="sidebar__item" th:if="${project.organism} != null">
-				<div class="sidebar__icon"><fa:icon type="organism" fixed="" /></div>
-				<div th:text="#{project.organism}"></div>
-				<div class="sidebar__value" id="project-organism"><i th:text="*{organism}"></i></div>
-			</div>
-			<div class="sidebar__item">
-				<div class="sidebar__icon"><fa:icon type="date" fixed="" /></div>
-				<div th:text="#{project.created}"></div>
-				<div class="sidebar__value" id="project-created" th:text="${#calendars.format(project.createdDate, 'dd MMM yyyy')}">__DATE_CREATED__</div>
-			</div>
-			<div class="sidebar__item" th:if="${project.modifiedDate} != null">
-				<div class="sidebar__icon"><fa:icon type="date" fixed="" /></div>
-				<div th:text="#{project.modified}"></div>
-				<div class="sidebar__value" id="project-modified" data:livestamp="*{modifiedDate}" th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"></div>
-			</div>
-		</div>
-	</div>
+    <div class="list-group" th:object="${project}">
+        <div class="sidebar__heading list-group-item">
+            <h2 th:text="#{project.details}">Project Details</h2>
+        </div>
+        <div class="list-group-item">
+            <span class="sidebar__icon"><fa:icon type="id" fixed=""/></span>
+            <span th:text="#{project.id}"></span>
+            <span class="pull-right" th:text="*{id}"></span>
+        </div>
+        <div class="list-group-item" th:if="${project.organism} != null">
+            <span><span class="sidebar__icon"><fa:icon type="organism" fixed=""/></span>
+                <span th:text="#{project.organism}"></span></span>
+            <span class="pull-right width-truncate-100" data:tooltip="*{organism}" tooltip-append-to-body="true" id="project-organism"><i th:text="*{organism}"></i></span>
+        </div>
+        <div class="list-group-item">
+            <span class="sidebar__icon"><fa:icon type="date" fixed=""/></span>
+            <span th:text="#{project.created}"></span>
+            <span class="pull-right" id="project-created"
+                  th:text="${#calendars.format(project.createdDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+        </div>
+        <div class="list-group-item" th:if="${project.modifiedDate} != null">
+            <span class="sidebar__icon"><fa:icon type="date" fixed=""/></span>
+            <span th:text="#{project.modified}"></span>
+            <span class="pull-right" id="project-modified" data:livestamp="*{modifiedDate}"
+                  data:tooltip="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"
+                  tooltip-append-to-body="true"></span>
+        </div>
+    </div>
 </aside>

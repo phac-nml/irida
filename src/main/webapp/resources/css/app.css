@@ -8606,6 +8606,16 @@ input {
   color: #232323;
 }
 
+/* line 26, ../../styles/components/_typography.scss */
+.width-truncate-100 {
+  text-align: right;
+  width: 100px !important;
+  wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* line 1, ../../styles/components/_magnific-popup.scss */
 .image-link {
   cursor: -webkit-zoom-in;
