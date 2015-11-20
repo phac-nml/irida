@@ -67,7 +67,7 @@
                     size: 'sm'
                   });
                 };
-	        }).controller('ModalInstanceCtrl',function($modalInstance, $http){
+	        }).controller('ModalInstanceCtrl',function($uibModalInstance, $http){
               var vm = this;
 
               vm.ok = function(){
@@ -80,7 +80,7 @@
               };
 
               vm.cancel = function(){
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
               }
               
             });

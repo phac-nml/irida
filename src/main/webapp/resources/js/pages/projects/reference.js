@@ -58,17 +58,17 @@
     };
   }
 
-  function DeleteCtrl($modalInstance, file) {
+  function DeleteCtrl($uibModalInstance, file) {
     "use strict";
     var vm = this;
     vm.file = file;
 
     vm.delete = function () {
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     vm.close = function () {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
     };
   }
 
@@ -118,7 +118,7 @@
     .service('ProjectFileService', ['$rootScope', '$http', ProjectFileService])
     .service('ReferenceFileService', ['$rootScope', '$uibModal', '$http', 'notifications', ReferenceFileService])
     .controller('FilesCtrl', ['ProjectFileService', 'ReferenceFileService', FilesCtrl])
-    .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
+    .controller('DeleteCtrl', ['$uibModalInstance', 'file', DeleteCtrl])
     .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl])
   ;
 })(window.angular, window.jQuery, window._, window.PAGE, window.project);
