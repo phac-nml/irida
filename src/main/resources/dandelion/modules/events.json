@@ -1,5 +1,5 @@
 {
-  "dependencies": ["angular", "livestamp"],
+  "dependencies": ["angular", "livestampjs"],
   "assets": [
     {
       "type": "js",
