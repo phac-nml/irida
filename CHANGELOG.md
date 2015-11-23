@@ -5,6 +5,7 @@ Changes
 ---------------------------
 
 * [Workflow]: Upgraded SNVPhyl from version 0.2 to 0.3.
+* [UI]: Fixed issue where the organism would overflow on the project page sidebar.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
