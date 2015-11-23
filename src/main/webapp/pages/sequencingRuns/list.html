@@ -42,8 +42,8 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="5" class="text-center">
-                        <uib-pagination ng-controller="PagingCtrl as paging" ng-model="paging.page"
+                    <td colspan="5" class="text-center" ng-controller="PagingCtrl as paging">
+                        <uib-pagination ng-model="paging.page"
                             items-per-page="paging.count" total-items="paging.total" ng-change="paging.update()"></uib-pagination>
                     </td>
                 </tr>
