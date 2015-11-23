@@ -1,0 +1,1 @@
+// TODO: [Josh - 2015-11-20] This will be updated when the inline javascript is removed from the html.
