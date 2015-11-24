@@ -4,7 +4,7 @@ search_title: "IRIDA Web Interface Install Guide"
 description: "Install guide for setting up the IRIDA web interface."
 ---
 
-This document describes how to install the IRIDA web interface. We assume that you have either downloaded IRIDA as a `WAR` file distributable, or have [built IRIDA from source](./building), and also assume that you have completed [installing and configuring Galaxy](../galaxy).
+This document describes how to install the IRIDA web interface. We assume that you have completed [installing and configuring Galaxy](../galaxy).
 
 * This comment becomes the table of contents
 {:toc}
@@ -15,11 +15,7 @@ The IRIDA platform currently consists of three, separate components:
 2. Galaxy, and
 3. Command-line clients.
 
-The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can either build IRIDA from source, or download a pre-packaged `WAR`.
-
-Building IRIDA from source
-==========================
-If you would like to build IRIDA from source, please see the instructions for [building IRIDA](building/).
+The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can download IRIDA as a pre-packaged `WAR`
 
 Prerequisites
 =============
@@ -45,7 +41,15 @@ We provide *some* instructions for installing and setting up your production env
 
 Deploying IRIDA
 ===============
-Whether you are [building IRIDA from source](./building) or installing a pre-built `WAR` file, you need to follow the instructions immediately below to configure your system.
+Deploying IRIDA mainly involves deploying the `WAR` file into your Servlet container, but does also require some configuration outside of your Servlet container.
+
+Servlet Container Configuration
+-------------------------------
+One environment variable needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`.
+
+You can adjust this variable in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf`, and finding the `JAVA_OPTS` variable and setting `spring.profiles.active`:
+
+    JAVA_OPTS="-Dspring.profiles.active=prod"
 
 Core Configuration
 ------------------
