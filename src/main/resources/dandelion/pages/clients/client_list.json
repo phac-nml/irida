@@ -1,5 +1,5 @@
 {
-  "dependencies": ["datatables", "clients_base"],
+  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3", "clients_base"],
   "assets": [
     {
       "type": "js",
