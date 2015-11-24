@@ -1,5 +1,5 @@
 {
-  "dependencies": ["select2", "moment", "qtip2"],
+  "dependencies": ["datatables", "livestampjs", "qtip2"],
   "assets": [
     {
       "type": "js",
