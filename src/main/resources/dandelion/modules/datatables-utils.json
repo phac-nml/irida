@@ -1,6 +1,6 @@
 {
   "dependencies": [
-    "momentjs"
+    "moment"
   ],
   "assets": [
     {

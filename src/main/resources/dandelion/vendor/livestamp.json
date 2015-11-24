@@ -1,12 +1,9 @@
 {
-  "bundle": "livestamp",
   "dependencies": [
     "moment"
   ],
   "assets": [
     {
-      "name": "livestamp",
-      "version": "1.1.2",
       "type": "js",
       "locations": {
         "webapp": "/resources/bower_components/livestampjs/livestamp.js"

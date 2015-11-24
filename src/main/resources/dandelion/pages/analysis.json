@@ -1,5 +1,5 @@
 {
-  "dependencies": [ "angular-router", "PhyloCanvas", "SubNavDirective" ],
+  "dependencies": [ "angular-ui-router", "PhyloCanvas", "SubNavDirective" ],
   "assets": [
     {
       "type": "js",

@@ -10,7 +10,7 @@
     "animate.css",
     "utilities",
     "cart",
-    "angular.gravatar",
+    "angular-gravatar",
     "notifications"
   ],
   "assets": [
