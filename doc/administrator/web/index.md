@@ -15,7 +15,7 @@ The IRIDA platform currently consists of three, separate components:
 2. Galaxy, and
 3. Command-line clients.
 
-The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can download IRIDA as a pre-packaged `WAR`
+The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can download IRIDA as a pre-packaged `WAR` file at <https://irida.corefacility.ca/downloads/webapp/irida-latest.war>.
 
 Prerequisites
 =============
