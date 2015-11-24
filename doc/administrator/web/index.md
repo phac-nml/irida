@@ -115,11 +115,17 @@ Deploy the `WAR` File
 ---------------------
 Once you have adjusted the configuration files to your environment, you can deploy the `WAR` file to your servlet container.
 
+You can download the `WAR` file from: <https://irida.corefacility.ca/downloads/webapp/irida-latest.war>
+
+Tomcat's deployment directory is typically some variation of `/var/lib/tomcat/webapps/`. Deploying the `WAR` file in Tomcat is as simple as moving the `WAR` file you downloaded into that directory.
+
 On startup, IRIDA will:
 
 1. Automatically prepare the database on your system (using [Liquibase](http://liquibase.org)) using the database connection details you specified in [Core Configuration](#core-configuration).
 2. Install any internally configured workflows.
 3. Configure the connection to Galaxy.
+
+If IRIDA has successfully been deployed, you should be able to use your web browser to navigate to <http://localhost:8080/irida-latest/> (assuming you're deploying to the local machine, and also assuming that you've left the `WAR` file named `irida-latest.war`).
 
 Logging in for the first time
 -----------------------------
