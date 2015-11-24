@@ -45,7 +45,7 @@ Servlet Container Configuration
 -------------------------------
 One environment variable needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`.
 
-You can adjust this variable in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf`, and finding the `JAVA_OPTS` variable and setting `spring.profiles.active`:
+You can adjust this variable in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or `/etc/default/tomcat7` (Ubuntu), and finding the `JAVA_OPTS` variable and setting `spring.profiles.active`:
 
     JAVA_OPTS="-Dspring.profiles.active=prod"
 
