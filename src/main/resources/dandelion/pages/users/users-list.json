@@ -1,10 +1,10 @@
 {
-  "dependencies": ["datatables", "livestampjs", "qtip2"],
+  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3", "livestampjs", "qtip2"],
   "assets": [
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/js/pages/projects/project-members.js"
+        "webapp": "/resources/js/pages/users/users-list.js"
       }
     }
   ]
