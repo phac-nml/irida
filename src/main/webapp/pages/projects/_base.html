@@ -57,20 +57,19 @@
 		<section th:include="projects/partials/aside :: aside"></section>
 		<section layout:fragment="filter"></section>
 	</aside>
-</div>
 
-<th:block layout:fragment="scripts">
 	<script th:inline="javascript">
 		var project = {
 			id: /*[[${project.getId()}]]*/ 1
 		};
 	</script>
-	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
-	        src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+</div>
+
+<th:block layout:fragment="scripts">
 	<script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
 	        src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
 
-	<th:block layout:fragment="scripts"></th:block>
+	<th:block layout:fragment="page-scripts"></th:block>
 </th:block>
 </body>
 </html>

@@ -2,7 +2,8 @@
   "bundle": "project-samples",
   "dependencies": [
     "select2",
-    "bootstrap_dropdowns_enhancement"
+    "livestamp",
+    "bootstrap_dropdowns_enhancement",
     "angular-busy"
   ],
   "assets": [
