@@ -6,7 +6,7 @@
     <title th:text="#{client.details.title(${client.clientId})}">_USER PAGE_</title>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="client_details">
+<main layout:fragment="page" ddl:bundle-includes="client_details">
     <h1 th:text="${client.clientId}">_Name_</h1>
     <div class="row mrgn-tp-lg">
     	<!-- User details -->
@@ -123,7 +123,7 @@
            </form>
        </section>
 </main>
-<script layout:fragment="page-scripts">
+<script layout:fragment="scripts">
     var PAGE = {
         buttons: {
             ok: /*[[#{form.btn.confim}]]*/ 'OK',

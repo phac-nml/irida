@@ -5,6 +5,11 @@
 	<title th:text="${project.label}">Project</title>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
 	      href="/resources/bower_components/qtip2/jquery.qtip.min.css"/>
+	<script th:inline="javascript">
+		var project = {
+			id: /*[[${project.getId()}]]*/ 1
+		};
+	</script>
 </head>
 <body>
 
@@ -57,19 +62,11 @@
 		<section th:include="projects/partials/aside :: aside"></section>
 		<section layout:fragment="filter"></section>
 	</aside>
-
-	<script th:inline="javascript">
-		var project = {
-			id: /*[[${project.getId()}]]*/ 1
-		};
-	</script>
 </div>
 
-<th:block layout:fragment="scripts">
-	<script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
-	        src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
-
-	<th:block layout:fragment="page-scripts"></th:block>
+<th:block layout:fragment="page-scripts">
+	<!-- TODO: Clean up these nested tags. -->
+	<th:block layout:fragment="scripts"></th:block>
 </th:block>
 </body>
 </html>
