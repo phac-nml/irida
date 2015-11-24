@@ -16,11 +16,13 @@ All required packages for the web interface are in the CentOS repositories. You 
     sudo yum -y install epel-release # for the apache native runtime
     sudo yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-client tomcat-native
 
-Starting Tomcat on Startup
---------------------------
+Starting Tomcat and MariaDB on Startup
+--------------------------------------
 The last step is to make sure that Tomcat starts on startup:
 
 ```bash
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
 sudo systemctl enable tomcat
 sudo systemctl start tomcat
 ```
