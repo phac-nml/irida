@@ -27,7 +27,7 @@ Starting Tomcat and MariaDB on startup
 The last step is to make sure that Tomcat starts on startup:
 
 
-    systemctl enable mariadb
-    systemctl start mariadb
+    systemctl enable mysql # mysql is the service name for mariadb on Ubuntu
+    systemctl start mysql
     systemctl enable tomcat7
     systemctl start tomcat7
