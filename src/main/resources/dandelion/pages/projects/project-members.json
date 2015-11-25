@@ -1,0 +1,11 @@
+{
+  "dependencies": ["select2", "qtip2"],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/project-members.js"
+      }
+    }
+  ]
+}

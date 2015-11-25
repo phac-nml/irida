@@ -9,9 +9,14 @@
         margin-left: 20px;
         }
     </style>
+    <script th:inline="javascript">
+        var PAGE = {
+            validity: /*[[${given_tokenValidity}]]*/ '43200'
+        };
+    </script>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="client_create">
+<main layout:fragment="page" ddl:bundle-includes="client_create">
     <div class="row">
         <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
             <form role="form" action="/clients/create"
@@ -39,7 +44,6 @@
                             <div th:if="${#maps.containsKey(errors, 'tokenValidity')}" th:text="${errors.tokenValidity}"
                                  class="alert alert-warning">_Token Validity Error_
                             </div>
-
                             <select id="tokenValidity" name="accessTokenValiditySeconds"
                                     th:selected="${given_tokenValidity}" class="form-control input-full">
                                 <option class="tokenValidityInSeconds" th:each="time : ${available_token_validity}"

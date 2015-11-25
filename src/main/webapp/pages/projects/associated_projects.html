@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<main layout:fragment="main" th:object="${project}">
+<main layout:fragment="main" th:object="${project}" ddl:bundle-includes="project-associated">
     <div class="row">
         <div class="col-md-10">
             <h1 role="heading" th:text="#{project.associated.heading(${project.label})}"></h1>
@@ -81,8 +81,6 @@
 </main>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
-            src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>            
     <script th:replace="remote_apis/remote_api_connect"></script>
     <script th:inline="javascript">
     var unauthCount = 0; 
