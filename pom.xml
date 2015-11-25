@@ -349,6 +349,12 @@
 			<groupId>com.github.dandelion</groupId>
 			<artifactId>datatables-spring3</artifactId>
 			<version>${dandelion-spring3.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.github.dandelion</groupId>
+					<artifactId>dandelion-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.attoparser</groupId>
