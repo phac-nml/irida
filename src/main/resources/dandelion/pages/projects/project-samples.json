@@ -1,6 +1,6 @@
 {
   "dependencies": [
-    "select2",
+    "select2-bootstrap",
     "bootstrap_dropdowns_enhancement",
     "angular-busy"
   ],
