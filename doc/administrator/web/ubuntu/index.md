@@ -20,6 +20,8 @@ You can install the latest Oracle JRE on Ubuntu using a PPA. The `apt` repositor
 
     #### Install tomcat7 and mariadb-server
     apt-get install --yes tomcat7 libtcnative-1 mariadb-server
+    #### Tell tomcat7 where Java is installed
+    sed -i 's/#JAVA_HOME=.*/JAVA_HOME=\/usr\/lib\/jvm\/java-8-oracle/' /etc/default/tomcat7
 
 Starting Tomcat and MariaDB on startup
 --------------------------------------
