@@ -4,22 +4,22 @@
   /**
    * Controller for the modal to confirm removing a sequenceFile
    *
-   * @param {Object} $modalInstance Handle on the current modal
+   * @param {Object} $uibModalInstance Handle on the current modal
    * @param {long} id id for the file to delete.
    * @param {String} label Name of the file to remove from the Sample.
    * @constructor
    */
-  function FileDeletionController($modalInstance, id, label) {
+  function FileDeletionController($uibModalInstance, id, label) {
     var vm = this;
     vm.fileId = id;
     vm.label = label;
 
     vm.deleteFile = function() {
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     vm.cancel = function() {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
     };
   }
 
@@ -137,18 +137,18 @@
           animation: true,
           templateUrl: '/upload-error.html',
           controllerAs: 'rejectModalCtrl',
-          controller: ['$modalInstance', 'rejects', 'files', function(
-            $modalInstance, rejects, files) {
+          controller: ['$uibModalInstance', 'rejects', 'files', function(
+            $uibModalInstance, rejects, files) {
             var vm = this;
             vm.rejects = rejects;
             vm.good = files;
 
             vm.cancel = function() {
-              $modalInstance.dismiss();
+              $uibModalInstance.dismiss();
             };
 
             vm.finish = function() {
-              $modalInstance.close(_.filter(files, function(file) {
+              $uibModalInstance.close(_.filter(files, function(file) {
                 return file.selected;
               }));
             };
@@ -186,7 +186,7 @@
       '$uibModal', FileUploadController
     ])
     .controller('FileController', ['FileService', '$uibModal', FileController])
-    .controller('FileDeletionController', ['$modalInstance', 'id', 'label',
+    .controller('FileDeletionController', ['$uibModalInstance', 'id', 'label',
       FileDeletionController
     ]);
 })(window.angular, window.TL, window.PAGE);

@@ -660,7 +660,7 @@
     });
   }
 
-  function MergeCtrl($scope, $modalInstance, Select2Service, SamplesService, samples) {
+  function MergeCtrl($scope, $uibModalInstance, Select2Service, SamplesService, samples) {
     "use strict";
     var vm = this;
     vm.samples = samples;
@@ -671,7 +671,7 @@
     Select2Service.init("#samplesSelect");
 
     vm.close = function () {
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     vm.merge = function () {
@@ -691,7 +691,7 @@
     }, 300));
   }
   
-  function RemoveCtrl($scope, $modalInstance, SamplesService, samples) {
+  function RemoveCtrl($scope, $uibModalInstance, SamplesService, samples) {
     "use strict";
     var vm = this;
     
@@ -709,18 +709,18 @@
     };
     
     vm.close = function () {
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
     
   }
 
-  function CopyMoveCtrl($modalInstance, $rootScope, SamplesService, Select2Service, samples, type) {
+  function CopyMoveCtrl($uibModalInstance, $rootScope, SamplesService, Select2Service, samples, type) {
     "use strict";
     var vm = this;
     vm.samples = samples;
 
     vm.close = function () {
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     vm.go = function () {
@@ -772,7 +772,7 @@
     });
   }
 
-  function LinkerCtrl($modalInstance, SamplesService) {
+  function LinkerCtrl($uibModalInstance, SamplesService) {
     "use strict";
     var vm = this;
     vm.samples = SamplesService.getSelectedSampleNames();
@@ -780,7 +780,7 @@
     vm.total = SamplesService.samples.length;
 
     vm.close = function () {
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     vm.areAllSelected = function () {
@@ -918,11 +918,11 @@
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
     .controller('SamplesTableCtrl', ['$rootScope', 'SamplesService', 'FilterFactory', SamplesTableCtrl])
-    .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
-    .controller('RemoveCtrl', ['$scope', '$modalInstance', 'SamplesService', 'samples', RemoveCtrl])
-    .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
+    .controller('MergeCtrl', ['$scope', '$uibModalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
+    .controller('RemoveCtrl', ['$scope', '$uibModalInstance', 'SamplesService', 'samples', RemoveCtrl])
+    .controller('CopyMoveCtrl', ['$uibModalInstance', '$rootScope', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
-    .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
+    .controller('LinkerCtrl', ['$uibModalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', '$uibModal', 'FilterFactory', FilterCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
