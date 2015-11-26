@@ -6,6 +6,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -526,8 +527,14 @@ public class ProjectSamplesController {
 					if (usedFileNames.contains(fileName)) {
 						fileName = handleDuplicate(fileName, usedFileNames);
 					}
+					final ZipEntry entry = new ZipEntry(fileName);
+					// set the file creation time on the zip entry to be
+					// whatever the creation time is on the filesystem
+					final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+					entry.setCreationTime(attr.creationTime());
+					entry.setLastModifiedTime(attr.creationTime());
 
-					outputStream.putNextEntry(new ZipEntry(fileName));
+					outputStream.putNextEntry(entry);
 
 					usedFileNames.add(fileName);
 
