@@ -35,7 +35,7 @@
                 opened = true;
                 $uibModal.open({
                     templateUrl: '/session-modal.html',
-                    controller : ['$scope', '$http', '$window', '$modalInstance', function ($scope, $http, $window, $modalInstance) {
+                    controller : ['$scope', '$http', '$window', '$uibModalInstance', function ($scope, $http, $window, $uibModalInstance) {
                         $scope.poke = function () {
                             $interval.cancel(countdown);
                             $timeout.cancel(restartTimeout);
@@ -43,7 +43,7 @@
                             $http.head($window.location.href).success(function () {
                                 start();
                                 opened = false;
-                                $modalInstance.close();
+                                $uibModalInstance.close();
                             });
                         };
 

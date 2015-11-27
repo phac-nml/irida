@@ -259,12 +259,12 @@
 			};
 		}]);
 
-		pwd.controller('ResetCtrl', ['$rootScope', '$modalInstance', 'ResetService', function ($rootScope, $modalInstance, ResetService) {
+		pwd.controller('ResetCtrl', ['$rootScope', '$uibModalInstance', 'ResetService', function ($rootScope, $uibModalInstance, ResetService) {
 			"use strict";
 			var vm = this;
 
 			vm.close = function () {
-				$modalInstance.close();
+				$uibModalInstance.close();
 			};
 
 			vm.reset = function () {

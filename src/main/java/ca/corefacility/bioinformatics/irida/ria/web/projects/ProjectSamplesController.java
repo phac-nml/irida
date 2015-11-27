@@ -6,13 +6,16 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -507,6 +510,9 @@ public class ProjectSamplesController {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + ".zip\"");
 		response.setHeader("Transfer-Encoding", "chunked");
 
+		// storing used filenames to ensure we don't have a conflict
+		Set<String> usedFileNames = new HashSet<>();
+
 		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
 			for (Sample sample : samples) {
 				List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
@@ -517,7 +523,20 @@ public class ProjectSamplesController {
 					name.append("/").append(sample.getSampleName());
 					name.append("/").append(path.getFileName().toString());
 
-					outputStream.putNextEntry(new ZipEntry(name.toString()));
+					String fileName = name.toString();
+					if (usedFileNames.contains(fileName)) {
+						fileName = handleDuplicate(fileName, usedFileNames);
+					}
+					final ZipEntry entry = new ZipEntry(fileName);
+					// set the file creation time on the zip entry to be
+					// whatever the creation time is on the filesystem
+					final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+					entry.setCreationTime(attr.creationTime());
+					entry.setLastModifiedTime(attr.creationTime());
+
+					outputStream.putNextEntry(entry);
+
+					usedFileNames.add(fileName);
 
 					Files.copy(path, outputStream);
 
@@ -537,6 +556,30 @@ public class ProjectSamplesController {
 			// streams.
 			response.getOutputStream().close();
 		}
+	}
+	
+	/**
+	 * Rename a filename {@code original} and ensure it doesn't exist in
+	 * {@code usedNames}. Uses the windows style of renaming file.ext to file
+	 * (1).ext
+	 * 
+	 * @param original
+	 *            original file name
+	 * @param usedNames
+	 *            names that original must not conflict with
+	 * @return modified name
+	 */
+	private String handleDuplicate(String original, Set<String> usedNames) {
+		int lastDot = original.lastIndexOf('.');
+
+		int index = 0;
+		String result;
+		do {
+			index++;
+			result = original.substring(0, lastDot) + " (" + index + ")" + original.substring(lastDot);
+		} while (usedNames.contains(result));
+
+		return result;
 	}
 
 	/**

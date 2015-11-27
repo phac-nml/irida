@@ -11,7 +11,7 @@
         <div class="list-group-item" th:if="${project.organism} != null">
             <span class="sidebar__icon hidden-md"><fa:icon type="organism" fixed=""/></span>
             <span th:text="#{project.organism}"></span>
-            <span class="pull-right width-truncate-100" data:tooltip="*{organism}" tooltip-append-to-body="true" id="project-organism"><i th:text="*{organism}"></i></span>
+            <span class="pull-right width-truncate-100" data:uib-tooltip="*{organism}" tooltip-append-to-body="true" id="project-organism"><i th:text="*{organism}"></i></span>
         </div>
         <div class="list-group-item">
             <span class="sidebar__icon hidden-md"><fa:icon type="date" fixed=""/></span>
@@ -23,7 +23,7 @@
             <span class="sidebar__icon hidden-md"><fa:icon type="date" fixed=""/></span>
             <span th:text="#{project.modified}"></span>
             <span class="pull-right" id="project-modified" data:livestamp="*{modifiedDate}"
-                  data:tooltip="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"
+                  data:uib-tooltip="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"
                   tooltip-append-to-body="true"></span>
         </div>
     </div>
