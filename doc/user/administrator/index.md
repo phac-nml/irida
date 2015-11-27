@@ -82,20 +82,7 @@ External tools can interact with IRIDA using the IRIDA REST API. External tools 
 Creating a New System Client
 ----------------------------
 
-{% include_relative includes/start-from-the-clients-list.md %}
-
-You can add a new client by clicking on the "Add Client" button:
-
-![Add client button.](images/clients-list-add-client-button.png)
-
-When you add a client, you'll be required to provide the following information:
-
-1. A unique client ID,
-2. How long a token should be valid for once issued,
-3. The type of OAuth2 flow that a client should use,
-4. The scopes that the client is allowed to use (should the client be allowed to read, write, or both with the REST API).
-
-![Client details.](images/client-details.png)
+{% include tutorials/clients/creating-a-client.md %}
 
 ### Client ID
 {:.no_toc}
@@ -272,7 +259,7 @@ The overrepresented sequences page displays all of the overrepresented sequences
 
 Uploading Data to IRIDA
 =======================
-IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to IRIDA using the REST API. Please see the [uploading data guide](uploader/) for more information on how to upload data.
+IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to IRIDA using the REST API. Please see the [uploading data guide](uploader-tool/) for more information on how to upload data.
 
 Displaying IRIDA Platform Updates
 =================================
