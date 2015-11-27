@@ -3,13 +3,13 @@
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/js/vendor/PhyloCanvas.js"
+        "webapp": "/resources/vendor/PhyloCanvas/PhyloCanvas.js"
       }
     },
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/vendor/PhyloCanvas/PhyloCanvas.js"
+        "webapp": "/resources/js/modules/phylocanvas/PhyloCanvasDirective.js"
       }
     }
   ]
