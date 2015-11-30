@@ -82,6 +82,8 @@ You must enter the numeric project ID number into the sample sheet for every sam
 
 You may also alter this value after the sequencer has completed the run using a spreadsheet tool like Microsoft Excel. Find the file named `SampleSheet.csv` in the directory containing the results of your experiment and open the file with Microsoft Excel. Enter the numeric project ID in the `Sample_Project` column for each sample in the list. Make sure that you save the file as a CSV file.
 
+The uploader tool will create samples in the project(s) using the `Sample ID` field as the sample name. If a sample in the project already has a name in the `Sample ID` column (as might be the case with a top-up run), then the uploader will simply upload the new data to the existing sample.
+
 Uploading Data
 --------------
 
