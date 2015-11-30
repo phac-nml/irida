@@ -264,7 +264,7 @@
 		</div>
 	</form>
 </div>
-<th:block layout:fragment="page-scripts">
+<th:block layout:fragment="scripts">
 	<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0"
 	          th:replace="pipelines/templates/parameters :: modal (${parameterModalTitle}, ${parameters})"></th:block>
 	<script th:inline="javascript">

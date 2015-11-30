@@ -10,7 +10,7 @@
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/js/pages/sequencingRuns/sequencingRuns-list.js"
+        "webapp": "/resources/js/pages/sequencing-runs/sequencing-runs-list.js"
       }
     }
   ]
