@@ -30,8 +30,6 @@ For complete transparency, the installer will install several components require
 * PyLauncher for Windows (<https://bitbucket.org/vinay.sajip/pylauncher>)
 * The IRIDA MiSeq Uploader source code (<https://github.com/phac-nml/irida-miseq-uploader>)
 
-The installer **will not** install any additional toolbars or other applications.
-
 Launching the Uploader
 ----------------------
 
