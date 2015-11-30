@@ -29,43 +29,17 @@ The projects list provides a high-level overview of project details, including:
 * The IRIDA-generated identifier for the project,
 * The name of the project,
 * The project organism,
-* Your role on the project,
 * The number of samples created in the project,
 * The number of other user accounts with permissions to view or edit the project,
 * The date that the project was created in IRIDA,
 * The time that the project was last modified.
-
-You have **read-only** permissions on projects where you are listed as a **Collaborator** role. You have **modify** permissions on projects where you are listed as **Manager** role. You can view the role that you have on a project in the **Role** column.
-
-Creating a new project
-----------------------
-
-You can create a new project by clicking on the "Projects" menu at the top of the dashboard and selecting "Create New Project":
-
-![Create new project dashboard location.](images/create-new-project.png)
-
-When you create a new project, you'll need to provide a project name, and can optionally provide a project organism, a free-form project description, and a link to another web site that has more inforamtion about the project:
-
-![Create new project form.](images/create-new-project-form.png)
-
-A project name must be **at least** 5 characters long, and **must not** contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | &`
-
-If you choose to set a project organism, click on the "Select an Organism" drop-down menu and begin typing the name of the organism. For example, if you wanted to specify a project organism of "Salmonella enterica", you would begin to type "Sal" and the menu would allow you to choose from a set of well-defined organism names:
-
-![Project organism entry.](images/project-organism.png)
-
-The organism names are derived from the [NCBI taxonomy database](http://www.ncbi.nlm.nih.gov/taxonomy).
-
-When you've finished entering the details for your new project, click on the "Create Project" button. You will be redirected to the projects list.
-
-IRIDA will automatically generate a numeric project identifier for your project. The project identifier is used by external tools for uploading sequencing data to IRIDA. The project identifier can be found in the ["Project Details" panel](#viewing-project-details), or in the [projects list](#viewing-existing-projects).
 
 Filtering and Searching the Projects Table
 ------------------------------------------
 
 There are two ways to find a specific project in the projects table - filtering and searching.
 
-**Searching**
+### Searching
 
 ![Project search entry.](images/project-search.png)
 
@@ -73,7 +47,7 @@ Search is always available in the text field directly above and to the right of 
 
 ![Projects search by out](images/projects-search-outbreak.png)
 
-**Filtering**
+### Filtering
 
 ![Button to open the projects filter modal.](images/project-filter-btn.png)
 
@@ -91,7 +65,9 @@ You can see which filters are currently applied to the table under the filter bu
 
 Clicking on the filters will clear that specific filter.
 
-**Refining Filtering**
+### Creating a new project
+
+{% include tutorials/common/creating-a-project.md %}
 
 Viewing project details
 -----------------------
@@ -128,7 +104,7 @@ Project members are users who have permissions to view or edit project metadata.
 
 If you are a project **Manager**, you can add new members to the project. Start by clicking on the "Members" tab, above the [project details panel](#viewing-project-details):
 
-![Project details members tab.](images/project-details-members-tab.png)
+![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
 
 A project <img src="images/collaborator-icon.png" class="inline" alt="Collaborator role icon."> **Collaborator** will only be able to *view* the project members:
 
@@ -140,17 +116,7 @@ A project <img src="images/manager-icon.png" class="inline" alt="Manager role ic
 
 ### Adding a project member
 
-To add a project member, click on the "Add Member" button, just below the project title:
-
-![Add project member button.](images/add-member-button.png)
-
-You can use the dialog that appears to select a user account (you can choose from a list, or click the "Select a User" field and start typing), and choose the **Project Role** that the new member should have:
-
-![Add project member dialog.](images/add-member-modal.png)
-
-**Remember**: a project collaborator has *read-only* permissions, and a project *manager* is allowed to modify project details.
-
-Once you've selected the user and role to add the new member, click on the "Submit" button.
+{% include tutorials/common/project-add-member.md %}
 
 ### Changing a project member role
 
