@@ -16,10 +16,7 @@ Each [project](../project) in IRIDA may contain a collection of samples that cor
 Viewing samples in a project
 ----------------------------
 
-Start by [viewing the project details](../project/#viewing-project-details) of a project. The list of samples in the project is shown in the middle of the 
-project details screen:
-
-![Project samples listing.](images/project-samples.png)
+{% include tutorials/common/samples/viewing-samples.md %}
 
 The samples listing shows high-level sample details, such as:
 
@@ -31,13 +28,13 @@ The samples listing shows high-level sample details, such as:
 
 ### Viewing individual sample details
 
-All of the sample details that are in IRIDA are currently provided by a user with the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon"> **Manager** role. To view details about an individual sample, start by [viewing the samples in a project](#viewing-samples-in-a-project), then click on the sample name in the samples table:
+All of the sample details that are in IRIDA are currently provided by a user with the project **Manager** role. To view details about an individual sample, start by [viewing the samples in a project](#viewing-samples-in-a-project), then click on the sample name in the samples table:
 
-![Sample name button.](images/sample-name-button.png)
+![Sample name button.]({{ site.baseurl }}/images/tutorials/common/samples/sample-name-button.png)
 
 The sample details page shows all of the details that are currently known about a sample:
 
-![Sample details page.](images/sample-details.png)
+![Sample details page.]({{ site.baseurl }}/images/tutorials/common/samples/sample-details.png)
 
 ### Editing sample details
 
@@ -49,37 +46,15 @@ You can provide as many or as few sample details that you want -- the sample det
 
 ### Viewing sequence files
 
-Start by [viewing the details of an individual sample](#viewing-individual-sample-details). On the sample details page, click on the "Files" tab, just above the sample details panel:
-
-![Sample details file tab.](images/sample-details-file-tab.png)
-
-Sequence files may have been uploaded as paired-end files or as single-end files, depending on how the isolate was sequenced.
-
-Single-end files will appear in the sample alone:
-
-![Single-end sequencing file.](images/sample-sequence-file-single-end.png)
-
-Paired-end files will appear in a pair:
-
-![Paired-end sequencing file.](images/sample-sequence-file-paired-end.png)
+{% include tutorials/common/samples/view-sequence-files.md %}
 
 #### Uploading Sequence Files
 
-Sequence files can be uploaded by clicking on the "Upload Sequence Files" button, on the left hand side side of the sequence file table.  Files must have the extension `.fastq` or `.fastq.gz`, all other formats will be ignored.
-
-![Upload sequence file.](images/upload-sample-file-btn.png)
-
-You can select single or multiple files in the system file selection window.
-
-![Upload File Selection.](images/upload-sample-file-selection.png)
-
-Files will upload immediately and a progress bar will be displayed.  If you need to cancel an upload click the <img class="inline" src="images/upload-sample-cancel-btn.png" alt="Cancel Upload Button" /> button.
-
-![Cancel upload](images/upload-sample-progress-cancel.png)
+{% include tutorials/common/uploading-sample-files.md %}
 
 #### Downloading a sequence file
 
-You can download a sequence file by clicking on the <img src="images/download-icon.png" alt="Download icon" class="inline"> icon, on the right-hand side of the row for the sequence file.
+{% include tutorials/common/samples/download-sequence-file.md %}
 
 You can download all sequence files in a sample by following the instructions in the [exporting samples](#exporting-samples) section about [downloading samples](#downloading-samples).
 
@@ -92,21 +67,7 @@ You can only delete a sequence file from a sample if you have the project <img s
 Adding a new sample
 -------------------
 
-You can add a new sample to the project if you have the project Manager role on the project. To add a new sample to the project, click on the "Add New Sample" button in the "Samples" menu:
-
-![New sample button](images/add-sample-button.png)
-
-Clicking this button will take you to the Create New Sample page.  When creating a sample, you must define the sample name (only upper and lowercase letters, numbers, and the special characters <code>!, @, #, $, %, _, -</code>, and <code>`</code> are allowed) and optionally choose an organism for the sample:
-
-![Create new sample palge](images/create-sample-page.png)
-
-If you choose to set a sample organism, click on the "Organism" drop-down menu and begin typing the name of the organism. For example, if you wanted to specify a sample organism of “Escherichia coli O26:NM”, you would begin to type "Esc" and the menu would allow you to choose from a set of well-defined organism names:
-
-![Taxonomic terms](images/create-sample-page-organism.png)
-
-When you've finished choosing the name and organism for the sample, click on the "Create Sample" button.
-
-![Create Sample](images/create-sample-page-create.png)
+{% include tutorials/common/creating-a-sample.md %}
 
 Searching and filtering samples
 -------------------------------
@@ -195,21 +156,7 @@ When you click on the select button, you have the option to select samples by:
 
 ### Copying samples between projects
 
-Samples may be copied between projects. A sample that is copied into multiple projects is effectively *linked* between those projects -- the files contained within the sample are not physically duplicated, and any sample metadata changes in one project are reproduced in the sample in the copied project.
-
-You must be a project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** on **both** the project that you are copying the sample *from*, and the project that you are copying the sample *to*.
-
-Start by [selecting the samples](#selecting-samples) that you want to copy to the other project. When you've selected the samples that you want to copy, click on the "Samples" button just above the samples list, and select "Copy Samples":
-
-![Copy samples button.](images/copy-samples-button.png)
-
-In the dialog that appears you will be presented with a list of the samples that are going to be copied, and an option to choose the project that the samples should be copied to:
-
-![Copy samples dialog.](images/copy-samples-dialog.png)
-
-When you click on the drop-down box to select a project, you can either visually find the project that you want, or you can filter the projects by their name by typing into the text field.
-
-Once you've selected the project that you want to copy the samples to, click on the "Copy Samples" button.
+{% include tutorials/common/samples/copy-samples.md %}
 
 ### Moving samples between projects
 
@@ -264,85 +211,16 @@ All export options require that you [select the samples for export](#selecting-s
 
 #### Downloading samples
 
-You can download an individual sequence file from a sample by [navigating to the file](#viewing-sequence-files), then clicking on the <img src="images/download-icon.png" class="inline" alt="Download icon."> icon (see: [Downloading a sequence file](#downloading-a-sequence-file)).
+You can download an individual sequence file from a sample by [navigating to the file](#viewing-sequence-files), then clicking on the <span class="fa fa-fw fa-download"></span> icon (see: [Downloading a sequence file](#downloading-a-sequence-file)).
 
-You may also download **all** of the files in a sample, or even download the files from multiple samples, by [selecting the samples](#selecting-samples) that you want to download, clicking on the "Export" button just above the samples list and clicking on "Download":
-
-![Samples download button.](images/samples-download-button.png)
-
-IRIDA will provide you with a `zip` file containing the sequencing data for all of the selected samples. You can extract the files from the zip archive using the command-line program `unzip`, using the built-in Windows extractor tool, or using a program like [7-zip](http://7-zip.org)
-
-<blockquote>
-<b>WARNING</b>: sequencing data can make for a very large download, especially when downloading <i>all</i> of the sequencing data for a project. We strongly recommend that you <i>do not</i> download data to your PC, especially if you are going to be using Linux command-line tools and the <a href="#command-line-export">command-line export tool</a> option is available.
-</blockquote>
+{% include tutorials/common/samples/download-samples.md %}
 
 #### Command-line export
 
-The IRIDA package comes with a Linux command-line utility for *linking* to files in your current working directory. If you are working on a Linux workstation, we **strongly** encourage you to use the command-line utility for working with the sequencing data stored in IRIDA.
-
-Start by [selecting the samples](#selecting-samples) that you want to export to the command-line, clicking on the "Export" button just above the samples list and clicking "Command-line Linker":
-
-![Command-line linker button.](images/command-line-linker-button.png)
-
-The dialog that appears will provide you with a command that you can **copy** and **paste** into a terminal window:
-
-![Command-line linker dialog.](images/command-line-linker-dialog.png)
-
-Copy and paste the command into a terminal window and use the username and password that you use to log in to IRIDA:
-
-```bash
-[user@waffles ~]$ ngsArchive.pl -p 4 -s 51
-Writing files to /home/user
-Enter username: user
-Enter password: 
-Reading samples 1 from project 4
-Created 2 files for 1 samples in /home/user/Project
-[user@waffles ~]$ 
-```
-
-The folder structure that will be created in the current working directory will match the structure present in IRIDA:
-
-```bash
-[user@waffles ~]$ tree Project/
-Project/
-└── sample-1
-    ├── sample-1_S1_L001_R1_001.fastq -> /opt/irida/sequence-files/1/sample-1_S1_L001_R1_001.fastq
-    └── sample-1_S1_L001_R2_001.fastq -> /opt/irida/sequence-files/2/sample-2_S1_L001_R2_001.fastq
-
-1 directory, 2 files
-
-```
-
-Importantly, the files that are stored in your directory structure are *links* and not copies of the files. The purpose of links is to reduce the use of disk space on shared resources. An unfortunate side effect of the link structure is that you **cannot** change the contents of the files.
+{% include tutorials/common/samples/command-line.md %}
 
 #### Galaxy export
 
-Samples can also be exported directly to Galaxy. Samples exported from IRIDA into Galaxy are loaded into a [Galaxy data library](https://wiki.galaxyproject.org/Admin/DataLibraries/Libraries) that can be easily shared with multiple Galaxy users.
+{% include tutorials/common/samples/galaxy-export.md %}
 
-To export data from IRIDA to Galaxy, start in Galaxy and find the "IRIDA server" tool under the "Get Data" section:
-
-![IRIDA server import tool.](images/galaxy-export-inside-galaxy.png)
-
-If you are not already logged into IRIDA, you will be required to log in using your IRIDA username and password:
-
-![IRIDA login.](images/galaxy-irida-login.png)
-
-After you log in to IRIDA (or if you were already logged in), you will be directed to the list of projects that you have permission to view:
-
-![Galaxy IRIDA projects list.](images/galaxy-irida-projects-list.png)
-
-Navigate to the list of samples that you're interested in exporting by clicking on the project name. Then, [select the samples](#selecting-samples) that you want to export, click on the "Export" button just above the samples list and click "Send to Galaxy":
-
-![Export to Galaxy button.](images/export-to-galaxy-button.png)
-
-The dialog that appears will allow you to choose the e-mail address that should be assigned ownership of the data library. The e-mail address should be the e-mail address that you use as your username in Galaxy. You may also choose the name of the data library that the sequencing data should be exported to:
-
-![Export to Galaxy dialog.](images/export-to-galaxy-dialog.png)
-
-After you've entered your e-mail address and the name of the data library, click the "Upload Samples" button. You will be redirected back into Galaxy and a new history item will appear:
-
-![Export to Galaxy history item.](images/galaxy-history-item.png)
-
-You can view a report of the exported samples by clicking on the name of the history item. You can find your data library by clicking on "Shared Data" at the top of Galaxy and clicking on "Data Libraries":
-
-![Galaxy data libraries button.](images/galaxy-data-libraries-button.png)
+<a href="../project/">Previous: Managing Projects</a><a href="../pipelines/" style="float: right;">Next: Launching Pipelines</a>
