@@ -71,7 +71,8 @@ public class ExportUploadServiceTest {
 		assertTrue("submission.xml created", fileSystem.exists(createdDirectory + "/submission.xml"));
 		assertTrue("submit.ready created", fileSystem.exists(createdDirectory + "/submit.ready"));
 		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next();
-		assertTrue("seqfile created", fileSystem.exists(createdDirectory + "/" + createdFile.getFileName()));
+		assertTrue("seqfile created",
+				fileSystem.exists(createdDirectory + "/" + createdFile.getId() + "-" + createdFile.getFileName()));
 	}
 
 	@Test(expected = UploadException.class)
@@ -287,6 +288,7 @@ public class ExportUploadServiceTest {
 		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles();
 		Path tempFile = Files.createTempFile("sequencefile", ".fastq");
 		SequenceFile sequenceFile = new SequenceFile(tempFile);
+		sequenceFile.setId(1L);
 		ncbiBioSampleFiles.setFiles(Lists.newArrayList(sequenceFile));
 
 		submission.setBioSampleFiles(Lists.newArrayList(ncbiBioSampleFiles));
