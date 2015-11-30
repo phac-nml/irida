@@ -273,7 +273,9 @@ public class ExportUploadService {
 
 				// upload single end files
 				for (SequenceFile file : bsFile.getFiles()) {
+					// append file id to beginning of name to avoid collisions
 					String filename = file.getId() + "-" + file.getFileName();
+
 					uploadPath(client, filename, file.getFile());
 				}
 
@@ -281,6 +283,7 @@ public class ExportUploadService {
 				for (SequenceFilePair pair : bsFile.getPairs()) {
 					// upload forward
 					SequenceFile file = pair.getForwardSequenceFile();
+					// append file id to beginning of name to avoid collisions
 					String filename = file.getId() + "-" + file.getFileName();
 					uploadPath(client, filename, file.getFile());
 
