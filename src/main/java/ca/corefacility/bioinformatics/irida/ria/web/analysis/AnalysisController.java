@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -41,9 +44,14 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
@@ -194,6 +202,34 @@ public class AnalysisController {
 
 		// inform the view to display the tree preview
 		model.addAttribute("preview", "tree");
+	}
+	
+	@RequestMapping("/dev")
+	public String tomAnalysisList(){
+		return BASE + "analysis-list";
+	}
+	
+	@RequestMapping("/ajax/dev")
+	@ResponseBody
+	public DatatablesResponse<AnalysisTableResponse> getSubmissions(@DatatablesParams DatatablesCriterias criterias,
+			Locale locale) throws IridaWorkflowNotFoundException {
+		int currentPage = DatatablesUtils.getCurrentPage(criterias);
+		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
+
+		Page<AnalysisSubmission> submissions = analysisSubmissionService.list(currentPage, criterias.getLength(),
+				(Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
+				(String) sortProps.get(DatatablesUtils.SORT_STRING));
+
+		List<AnalysisTableResponse> responses = new ArrayList<>();
+		for (AnalysisSubmission sub : submissions) {
+			AnalysisTableResponse analysisTableResponse = new AnalysisTableResponse(sub, locale);
+			responses.add(analysisTableResponse);
+		}
+
+		DataSet<AnalysisTableResponse> dataSet = new DataSet<>(responses, submissions.getTotalElements(),
+				submissions.getTotalElements());
+
+		return DatatablesResponse.build(dataSet, criterias);
 	}
 
 	/**
@@ -390,5 +426,67 @@ public class AnalysisController {
 		}
 
 		return viewName;
+	}
+	
+	public class AnalysisTableResponse {
+		private Long id;
+		private String name;
+		private User submitter;
+		private AnalysisSubmission submission;
+		private String workflowId;
+		private String analysisState;
+		private String duration;
+
+		public AnalysisTableResponse(AnalysisSubmission submission, Locale locale)
+				throws IridaWorkflowNotFoundException {
+			this.submission = submission;
+			
+			this.id = submission.getId();
+			this.name = submission.getName();
+			this.submitter = submission.getSubmitter();
+
+			// get the workflow name
+			UUID workflowUUID = submission.getWorkflowId();
+			String type = workflowsService.getIridaWorkflow(workflowUUID).getWorkflowDescription().getAnalysisType()
+					.toString();
+			workflowId = messageSource.getMessage("workflow." + type + ".title", null, locale);
+
+			// get the analysis state message
+			String analysisState = submission.getAnalysisState().toString();
+			this.analysisState = messageSource.getMessage("analysis.state." + analysisState, null, locale);
+			
+			//get duration
+			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
+				Analysis analysis = submission.getAnalysis();
+				long dur = submission.getCreatedDate().getTime() - analysis.getCreatedDate().getTime();
+				duration = String.valueOf(Math.abs(dur));
+			}
+		}
+
+		public AnalysisSubmission getSubmission() {
+			return submission;
+		}
+
+		public String getWorkflowId() {
+			return workflowId;
+		}
+
+		public String getAnalysisState() {
+			return analysisState;
+		}
+
+		public String getDuration() {
+			return duration;
+		}
+		
+		public Long getId() {
+			return id;
+		}
+		public String getName() {
+			return name;
+		}
+		public User getSubmitter() {
+			return submitter;
+		}
 	}
 }
