@@ -196,7 +196,7 @@ public class ExportUploadService {
 				}
 
 			}
-			
+
 			disconnectFtpCient(client);
 		} catch (Exception e) {
 			logger.error("Couldn't connect to FTP site", e);
@@ -273,18 +273,24 @@ public class ExportUploadService {
 
 				// upload single end files
 				for (SequenceFile file : bsFile.getFiles()) {
-					uploadPath(client, file.getFileName(), file.getFile());
+					// append file id to beginning of name to avoid collisions
+					String filename = file.getId() + "-" + file.getFileName();
+
+					uploadPath(client, filename, file.getFile());
 				}
 
 				// upload paired end files
 				for (SequenceFilePair pair : bsFile.getPairs()) {
 					// upload forward
 					SequenceFile file = pair.getForwardSequenceFile();
-					uploadPath(client, file.getFileName(), file.getFile());
+					// append file id to beginning of name to avoid collisions
+					String filename = file.getId() + "-" + file.getFileName();
+					uploadPath(client, filename, file.getFile());
 
 					// upload reverse
 					file = pair.getReverseSequenceFile();
-					uploadPath(client, file.getFileName(), file.getFile());
+					filename = file.getId() + "-" + file.getFileName();
+					uploadPath(client, filename, file.getFile());
 				}
 
 			}
