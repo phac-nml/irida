@@ -17,7 +17,7 @@ var analysesTable = (function(tl){
     }
     
     function getHumanTime(data, type, full) {
-        if(!isNaN(data)) {
+        if(data) {
             return moment.duration(parseInt(data)).humanize();
       }
       return "";
