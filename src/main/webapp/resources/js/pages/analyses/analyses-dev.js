@@ -15,8 +15,16 @@ var analysesTable = (function(tl){
         }
         return data;
     }
+    
+    function getHumanTime(data, type, full) {
+        if(!isNaN(data)) {
+            return moment.duration(parseInt(data)).humanize();
+      }
+      return "";
+    }
 
     return {
-        createLinkButton: createLinkButton
+        createLinkButton: createLinkButton,
+        getHumanTime: getHumanTime
     };
 })(window.TL);

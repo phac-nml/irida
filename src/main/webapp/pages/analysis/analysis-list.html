@@ -19,7 +19,7 @@
             <th dt:property="submitter.label" dt:sortable="false">_Submitter_</th>
             <th dt:property="createdDate" dt:sortType="natural"
                 dt:renderFunction="datatables-utils#datatable.formatDate">_Created Date_</th>
-            <th dt:property="duration" dt:sortable="false">_Duration_</th>
+            <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-dev#analysesTable.getHumanTime">_Duration_</th>
             
         </tr>
         </thead>
