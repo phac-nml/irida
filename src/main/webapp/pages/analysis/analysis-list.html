@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page"
+      ddl:bundle-includes="analyses-dev"
       ddl:asset-css-excludes="datatables">
 <head>
     <title>_Analyses_</title>
@@ -13,7 +14,7 @@
         <thead>
         <tr>
             <th dt:property="analysisState">_State_</th>
-            <th dt:property="name">_Name_</th>
+            <th dt:property="name" dt:renderFunction="analyses-dev#analysesTable.createLinkButton">_Name_</th>
             <th dt:property="workflowId">_Workflow_</th>
             <th dt:property="submitter.label" dt:sortable="false">_Submitter_</th>
             <th dt:property="createdDate" dt:sortType="natural"
