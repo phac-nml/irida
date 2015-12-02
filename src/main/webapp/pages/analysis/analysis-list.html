@@ -13,14 +13,14 @@
     <table id="analysisTable" dt:table="true" dt:url="@{/analysis/ajax/dev}" dt:filterPlaceholder="none">
         <thead>
         <tr>
-            <th dt:property="analysisState">_State_</th>
+            <th dt:property="analysisState" dt:renderFunction="analyses-dev#analysesTable.displayProgress">_State_</th>
             <th dt:property="name" dt:renderFunction="analyses-dev#analysesTable.createLinkButton">_Name_</th>
             <th dt:property="workflowId">_Workflow_</th>
             <th dt:property="submitter.label" dt:sortable="false">_Submitter_</th>
             <th dt:property="createdDate" dt:sortType="natural"
                 dt:renderFunction="datatables-utils#datatable.formatDate">_Created Date_</th>
             <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-dev#analysesTable.getHumanTime">_Duration_</th>
-            
+
         </tr>
         </thead>
     </table>

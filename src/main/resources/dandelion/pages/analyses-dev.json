@@ -1,6 +1,14 @@
 {
   "assets": [
     {
+      "name": "analyses-dev-css",
+      "version": "0.0.1",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/pages/analyses-dev.css"
+      }
+    },
+    {
       "type": "js",
       "locations": {
         "webapp": "/resources/js/pages/analyses/analyses-dev.js"

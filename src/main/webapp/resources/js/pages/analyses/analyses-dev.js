@@ -15,7 +15,7 @@ var analysesTable = (function(tl){
         }
         return data;
     }
-    
+
     function getHumanTime(data, type, full) {
         if(data) {
             return moment.duration(parseInt(data)).humanize();
@@ -23,8 +23,15 @@ var analysesTable = (function(tl){
       return "";
     }
 
+    function displayProgress(data, type, full) {
+        var data = data + "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='"+full.percentComplete+"' aria-valuemin='0' aria-valuemax='100' style='width: "+full.percentComplete+"%;'></div></div>";
+        return data;
+    }
+
+
     return {
         createLinkButton: createLinkButton,
-        getHumanTime: getHumanTime
+        getHumanTime: getHumanTime,
+        displayProgress: displayProgress
     };
 })(window.TL);

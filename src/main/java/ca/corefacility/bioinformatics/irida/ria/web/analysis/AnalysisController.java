@@ -212,7 +212,7 @@ public class AnalysisController {
 	@RequestMapping("/ajax/dev")
 	@ResponseBody
 	public DatatablesResponse<AnalysisTableResponse> getSubmissions(@DatatablesParams DatatablesCriterias criterias,
-			Locale locale) throws IridaWorkflowNotFoundException {
+			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException, ExecutionManagerException {
 		int currentPage = DatatablesUtils.getCurrentPage(criterias);
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 
@@ -436,9 +436,10 @@ public class AnalysisController {
 		private String workflowId;
 		private String analysisState;
 		private String duration;
+		private String percentComplete;
 
 		public AnalysisTableResponse(AnalysisSubmission submission, Locale locale)
-				throws IridaWorkflowNotFoundException {
+				throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException, ExecutionManagerException {
 			this.submission = submission;
 			
 			this.id = submission.getId();
@@ -460,6 +461,12 @@ public class AnalysisController {
 				Analysis analysis = submission.getAnalysis();
 				long dur = submission.getCreatedDate().getTime() - analysis.getCreatedDate().getTime();
 				duration = String.valueOf(Math.abs(dur));
+			}
+			
+			if (!submission.getAnalysisState().equals(AnalysisState.ERROR)) {
+				float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
+						submission.getId());
+				this.percentComplete = Float.toString(percentComplete);
 			}
 		}
 
@@ -487,6 +494,9 @@ public class AnalysisController {
 		}
 		public User getSubmitter() {
 			return submitter;
+		}		
+		public String getPercentComplete() {
+			return percentComplete;
 		}
 	}
 }
