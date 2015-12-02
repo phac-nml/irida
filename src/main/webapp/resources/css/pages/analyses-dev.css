@@ -2,3 +2,8 @@
 .progress {
   height: 2px !important;
 }
+
+/* line 5, ../../../styles/pages/analyses-dev.scss */
+tr td {
+  vertical-align: middle !important;
+}
