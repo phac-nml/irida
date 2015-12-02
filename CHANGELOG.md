@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.0.0-alpha7 to 1.0.0-alpha8
+----------------------------
+* [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
+
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
 * [UI] Feature: When new data is added to a project, both the project and sample modified times are changed so that you can find the most recently uploaded files in a project by sorting on the date modified column of the samples table.
@@ -11,7 +15,6 @@ Changes
 * [UI]: Fixed issue with Analyses Filter overlapping the Analyses table on smaller screens.
 * [Developer]: Removed magnific-popups from the project samples page and replace with bootstrap modals through angular-ui.
 * [UI]: Fixed issue with downloading a sample with duplicate filenames.  Duplicates are now renamed with Windows style "file (1).fastq" names.
-* [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
 
 1.0.0-alpha5 to 1.0.0-alpha6
 ----------------------------
