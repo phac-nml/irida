@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -119,9 +118,6 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 
 	@OneToMany(mappedBy = "user")
 	private Collection<RemoteAPIToken> tokens;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
-	private Set<UserGroupJoin> userGroups;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.

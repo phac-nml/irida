@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -32,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
-import ca.corefacility.bioinformatics.irida.model.user.Organization;
 
 /**
  * A project object.
@@ -83,9 +81,6 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "localProject")
 	private List<RemoteRelatedProject> remoteRelatedProjects;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	private Organization organization;
-
 	private String organism;
 
 	public Project() {
@@ -117,8 +112,7 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 	public boolean equals(Object other) {
 		if (other instanceof Project) {
 			Project p = (Project) other;
-			return Objects.equals(createdDate, p.createdDate) && Objects.equals(name, p.name)
-					&& Objects.equals(organization, p.organization);
+			return Objects.equals(createdDate, p.createdDate) && Objects.equals(name, p.name);
 		}
 
 		return false;
@@ -126,7 +120,7 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, modifiedDate, name, organization);
+		return Objects.hash(createdDate, modifiedDate, name);
 	}
 
 	public String getName() {
@@ -176,14 +170,6 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 
 	public void setRemoteURL(String remoteURL) {
 		this.remoteURL = remoteURL;
-	}
-
-	public Organization getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(Organization organization) {
-		this.organization = organization;
 	}
 
 	public String getOrganism() {

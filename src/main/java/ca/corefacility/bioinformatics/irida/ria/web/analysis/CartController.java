@@ -364,8 +364,6 @@ public class CartController {
 		List<Map<String,Object>> sequenceFiles = new ArrayList<>();
 		for(Join<Sample, SequenceFile>seqJoin : seqJoinList) {
 			SequenceFile seq = seqJoin.getObject();
-			List<Join<Project,Sample>> projectSamples = projectService.getProjectsForSample(sample);
-			long projectId = projectSamples.get(0).getSubject().getId();
 			
 			String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
 					.getSequenceFileForSample(sample.getId(),seq.getId())).withSelfRel().getHref();
