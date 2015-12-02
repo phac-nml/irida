@@ -84,3 +84,4 @@ After you enter a new password you should automatically be redirected to the mai
 
 Once you've logged in, you can proceed to the [dashboard overview](../dashboard) page.
 
+<a href="../system-overview/">Previous: System Overview</a><a href="../dashboard/" style="float: right;">Next: Dashboard Overview</a>

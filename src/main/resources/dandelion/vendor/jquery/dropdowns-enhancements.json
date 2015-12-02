@@ -1,0 +1,20 @@
+{
+  "dependencies": [
+    "jquery",
+    "bootstrap"
+  ],
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/vendor/dropdowns-enhancement.min.css"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/vendor/dropdowns-enhancement.js"
+      }
+    }
+  ]
+}

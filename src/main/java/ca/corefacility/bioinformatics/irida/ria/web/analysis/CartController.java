@@ -368,7 +368,7 @@ public class CartController {
 			long projectId = projectSamples.get(0).getSubject().getId();
 			
 			String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
-					.getSequenceFileForSample(projectId, sample.getId(),seq.getId())).withSelfRel().getHref();
+					.getSequenceFileForSample(sample.getId(),seq.getId())).withSelfRel().getHref();
 			Map<String, Object> seqMap = ImmutableMap.of("selfRef",seqFileLoc);
 			sequenceFiles.add(seqMap);
 		}

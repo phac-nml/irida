@@ -198,3 +198,5 @@ You can click on each of the file names to expand the complete listing of *how* 
 You can further inspect the parameters of each of the tools that were used to generate the analysis by clicking on one of the steps:
 
 ![Actual pipeline parameters.](images/actual-pipeline-parameters.png)
+
+<a href="../samples/">Previous: Managing Samples</a>

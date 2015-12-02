@@ -243,13 +243,13 @@
           });
         }]);
 
-		pwd.controller('DetailsCtrl', ['$modal', function ($modal) {
+		pwd.controller('DetailsCtrl', ['$uibModal', function ($uibModal) {
 			"use strict";
 
 			var vm = this;
 
 			vm.resetPrompt = function () {
-				$modal.open({
+				$uibModal.open({
 					templateUrl: 'reset-modal.html',
 					controller: 'ResetCtrl as reset',
 					size: 'sm'
@@ -257,12 +257,12 @@
 			};
 		}]);
 
-		pwd.controller('ResetCtrl', ['$rootScope', '$modalInstance', 'ResetService', function ($rootScope, $modalInstance, ResetService) {
+		pwd.controller('ResetCtrl', ['$rootScope', '$uibModalInstance', 'ResetService', function ($rootScope, $uibModalInstance, ResetService) {
 			"use strict";
 			var vm = this;
 
 			vm.close = function () {
-				$modalInstance.close();
+				$uibModalInstance.close();
 			};
 
 			vm.reset = function () {

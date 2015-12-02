@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -58,7 +59,7 @@ public class ProjectAddSamplePage extends AbstractPage {
 
 	public void createSample() {
 		createBtn.click();
-		waitForTime(500);
+		waitForElementVisible(By.id("sample-page-title"));
 	}
 
 	public boolean isCreateButtonEnabled() {

@@ -1,3 +1,4 @@
+/* line 1, ../../../styles/components/datatables-custom.scss */
 .cell-width-200 {
   text-align: left;
   width: 200px !important;
@@ -5,16 +6,35 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px; }
+  font-size: 14px;
+}
 
+/* line 11, ../../../styles/components/datatables-custom.scss */
+.filter-row {
+  margin-bottom: 5px !important;
+}
+
+/* line 15, ../../../styles/components/datatables-custom.scss */
+.datatables-active-filters {
+  margin-bottom: 10px;
+}
+/* line 17, ../../../styles/components/datatables-custom.scss */
+.datatables-active-filters .label {
+  cursor: pointer;
+}
+/* line 19, ../../../styles/components/datatables-custom.scss */
+.datatables-active-filters .label:after {
+  content: ' \f00d';
+  font-family: 'FontAwesome';
+  margin-left: 3px;
+}
+
+/* line 27, ../../../styles/components/datatables-custom.scss */
 table th {
-  vertical-align: top !important; }
+  vertical-align: top !important;
+}
 
+/* line 31, ../../../styles/components/datatables-custom.scss */
 table td {
-  padding: 5px 18px !important; }
-
-.yadcf-filter-reset-button {
-  display: none !important; }
-
-.yadcf-filter-wrapper {
-  display: block !important; }
+  padding: 5px 18px !important;
+}

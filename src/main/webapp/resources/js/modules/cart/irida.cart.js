@@ -55,7 +55,7 @@
    * Controller for functions on the cart slider
    * @param CartService The cart service to communicate with the server
    */
-  function CartSliderController(CartService, $modal) {
+  function CartSliderController(CartService, $uibModal) {
     var vm = this;
 
     vm.clear = function () {
@@ -84,7 +84,7 @@
           if (data !== null) {
             var firstProjID = data[0].id;
 
-            $modal.open({
+            $uibModal.open({
               templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + firstProjID,
               controller: 'GalaxyDialogCtrl as gCtrl',
               resolve: {
@@ -201,13 +201,17 @@
     }
 
     function getSampleFormEntities(args) {
-      var defaults = {addtohistory: false},
+      var defaults = {
+          addtohistory: false,
+          makepairedcollection: false
+        },
         p = _.extend({}, defaults, args),
         params = {
         '_embedded': {
           'library': {'name': p.name},
           'user': {'email': p.email},
           'addtohistory': p.addtohistory,
+          'makepairedcollection': p.makepairedcollection,
           'oauth2': {
             'code': p.authToken,
             'redirect': p.redirectURI
@@ -248,9 +252,10 @@
     };
   }
 
-  function GalaxyDialogCtrl($modalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
+  function GalaxyDialogCtrl($uibModalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
     var vm = this;
     vm.addtohistory=true;
+    vm.makepairedcollection=true;
     vm.showOauthIframe = false;
     vm.showEmailLibInput = true;
     vm.redirectURI = TL.BASE_URL + 'galaxy/auth_code';
@@ -279,9 +284,9 @@
         vm.showEmailLibInput = true;
 
         if (openedByCart) {
-          GalaxyExportService.exportFromCart({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, authToken: authToken, redirectURI: vm.redirectURI}).then(sendSampleForm);
+          GalaxyExportService.exportFromCart({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}).then(sendSampleForm);
         } else {
-          sendSampleForm(GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, authToken: authToken, redirectURI: vm.redirectURI}));
+          sendSampleForm(GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}));
         }
       }
     });
@@ -316,7 +321,7 @@
       vm.email = email;
     };
     vm.close = function () {
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
   }
@@ -360,8 +365,8 @@
   angular
     .module('irida.cart', [])
     .service('CartService', ['$rootScope', '$http', '$q', CartService])
-    .controller('CartSliderController', ['CartService', '$modal', CartSliderController])
-    .controller('GalaxyDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
+    .controller('CartSliderController', ['CartService', '$uibModal', CartSliderController])
+    .controller('GalaxyDialogCtrl', ['$uibModalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
     .directive('cart', [CartDirective])
     .filter('cartFilter', [CartFilter])

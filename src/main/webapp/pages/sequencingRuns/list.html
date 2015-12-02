@@ -36,15 +36,15 @@
                     <td>{{run.sequencerType}}</td>
                     <td>{{run.uploadStatus}}</td>
                     <td class="createdDate" data-date="{{run.createdDate}}" tooltip-popup-delay='500'
-                        tooltip-placement="left" tooltip="{{run.createdDate | date:'medium'}}"><span>{{run.createdDate
+                        tooltip-placement="left" uib-tooltip="{{run.createdDate | date:'medium'}}"><span>{{run.createdDate
                             | date:'mediumDate'}}</span></td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="5" class="text-center">
-                        <div pagination="" ng-controller="PagingCtrl as paging" ng-model="paging.page"
-                            items-per-page="paging.count" total-items="paging.total" ng-change="paging.update()"></div>
+                    <td colspan="5" class="text-center" ng-controller="PagingCtrl as paging">
+                        <uib-pagination ng-model="paging.page"
+                            items-per-page="paging.count" total-items="paging.total" ng-change="paging.update()"></uib-pagination>
                     </td>
                 </tr>
             </tfoot>

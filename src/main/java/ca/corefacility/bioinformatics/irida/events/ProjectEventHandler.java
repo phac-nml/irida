@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 
 /**
  * Handles the creation of {@link ProjectEvent}s from methods annotated with
@@ -39,11 +40,15 @@ public class ProjectEventHandler {
 	private final ProjectEventRepository eventRepository;
 	private final ProjectSampleJoinRepository psjRepository;
 	private final ProjectRepository projectRepository;
+	private final SampleRepository sampleRepository;
 
-	public ProjectEventHandler(ProjectEventRepository eventRepository, ProjectSampleJoinRepository psjRepository, ProjectRepository projectRepository) {
+	public ProjectEventHandler(final ProjectEventRepository eventRepository,
+			final ProjectSampleJoinRepository psjRepository, final ProjectRepository projectRepository,
+			final SampleRepository sampleRepository) {
 		this.eventRepository = eventRepository;
 		this.psjRepository = psjRepository;
 		this.projectRepository = projectRepository;
+		this.sampleRepository = sampleRepository;
 	}
 
 	/**
@@ -56,6 +61,7 @@ public class ProjectEventHandler {
 	 */
 	public void delegate(MethodEvent methodEvent) {
 		Class<? extends ProjectEvent> eventClass = methodEvent.getEventClass();
+		final Date eventDate = new Date();
 
 		Collection<ProjectEvent> events = new ArrayList<>();
 		
@@ -66,14 +72,20 @@ public class ProjectEventHandler {
 		} else if (eventClass.equals(UserRoleSetProjectEvent.class)) {
 			events.add(handleUserRoleSetProjectEvent(methodEvent));
 		} else if (eventClass.equals(DataAddedToSampleProjectEvent.class)) {
-			events.addAll(handleSequenceFileAddedEvent(methodEvent));
+			final Collection<DataAddedToSampleProjectEvent> dataAddedEvents = handleSequenceFileAddedEvent(methodEvent);
+			for (final DataAddedToSampleProjectEvent e : dataAddedEvents) {
+				final Sample s = e.getSample();
+				s.setModifiedDate(eventDate);
+				sampleRepository.save(s);
+			}
+			events.addAll(dataAddedEvents);
 		} else {
 			logger.warn("No handler found for event class " + eventClass.getName());
 		}
 		
-		for(ProjectEvent e : events){
+		for (ProjectEvent e : events){
 			Project project = e.getProject();
-			project.setModifiedDate(new Date());
+			project.setModifiedDate(eventDate);
 			projectRepository.save(project);
 		}
 	}
@@ -144,9 +156,9 @@ public class ProjectEventHandler {
 	 * 
 	 * @param event
 	 */
-	private Collection<ProjectEvent> handleSequenceFileAddedEvent(MethodEvent event) {
+	private Collection<DataAddedToSampleProjectEvent> handleSequenceFileAddedEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
-		Collection<ProjectEvent> events = new ArrayList<>();
+		Collection<DataAddedToSampleProjectEvent> events = new ArrayList<>();
 		
 		if (Collection.class.isAssignableFrom(returnValue.getClass())) {
 			Collection<?> collection = (Collection<?>) returnValue;
@@ -177,10 +189,10 @@ public class ProjectEventHandler {
 	 *            a {@link SampleSequenceFileJoin} to turn into a
 	 *            {@link DataAddedToSampleProjectEvent}
 	 */
-	private Collection<ProjectEvent> handleIndividualSequenceFileAddedEvent(SampleSequenceFileJoin join) {
+	private Collection<DataAddedToSampleProjectEvent> handleIndividualSequenceFileAddedEvent(SampleSequenceFileJoin join) {
 		Sample subject = join.getSubject();
 
-		Collection<ProjectEvent> events = new ArrayList<>();
+		Collection<DataAddedToSampleProjectEvent> events = new ArrayList<>();
 
 		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(subject);
 		for (Join<Project, Sample> psj : projectForSample) {

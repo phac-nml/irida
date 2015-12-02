@@ -4,6 +4,12 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+1.0.0-alpha6 to 1.0.0-alpha7
+----------------------------
+
+* A new version of SNVPhyl should be installed in Galaxy (version 0.3).  You must install the repository `suite_snvphyl_0_3_0` with revision `bb2e651149da` from the [IRIDA Main Toolshed](https://irida.corefacility.ca/galaxy-shed/view/nml/suite_snvphyl_0_3_0/bb2e651149da).  Please see https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/#irida-whole-genome-phylogenomics for more information.
+* A new version of Prokka should be installed in Galaxy (version 1.11.0).  You must install the repository `prokka` with revision `f5e44aad6498` from the [Galaxy Main Toolshed](https://toolshed.g2.bx.psu.edu/view/crs4/prokka/f5e44aad6498).  Please see https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/ for more information.
+
 1.0.0-alpha5 to 1.0.0-alpha6
 ----------------------------
 * No special upgrade steps required, just deploy the new `war` file.

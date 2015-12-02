@@ -23,3 +23,11 @@
 .description-detail {
   color: $irida-colour-dark;
 }
+.width-truncate-100 {
+  text-align: right;
+  width: 100px !important;
+  wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

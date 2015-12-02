@@ -1,0 +1,13 @@
+{
+  "dependencies": [
+    "momentjs"
+  ],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/livestampjs/livestamp.js"
+      }
+    }
+  ]
+}

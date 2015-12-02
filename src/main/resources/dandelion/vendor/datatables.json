@@ -7,13 +7,13 @@
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"
+        "webapp": "/resources/bower_components/datatables/media/js/jquery.dataTables.js"
       }
     },
     {
       "type": "css",
       "locations": {
-        "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"
+        "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.css"
       }
     }
   ]
