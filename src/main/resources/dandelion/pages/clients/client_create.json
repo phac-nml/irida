@@ -1,5 +1,5 @@
 {
-  "dependencies": ["select2", "clients_base"],
+  "dependencies": ["select2-bootstrap", "moment", "clients_base"],
   "assets": [
     {
       "type": "js",

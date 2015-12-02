@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.0.0-alpha7 to 1.0.0-alpha8
+----------------------------
+* [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
+
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
 * [UI] Feature: When new data is added to a project, both the project and sample modified times are changed so that you can find the most recently uploaded files in a project by sorting on the date modified column of the samples table.

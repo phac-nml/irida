@@ -5,7 +5,18 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-	<script>window.dependencies = ['irida.sample.files'];</script>
+
+	<script th:inline="javascript">
+		var PAGE = {
+			sample: {
+				id: /*[[${sample.getId()}]]*/ '1'
+			},
+			i18n: {
+				leaving: /*[[#{project.samples.files.upload.page-leave}]]*/ "Leaving the page will cause your file upload to be cancelled."
+			}
+		};
+		window.dependencies = ['irida.sample.files'];
+	</script>
 </head>
 <body>
 
@@ -196,16 +207,6 @@
 			<button id="remove-file-confirm" type="submit" class="btn btn-warning remove-file-confirm" th:text="#{form.btn.remove}">OK</button>
 		</div>
 		</form>
-	</script>
-	<script th:inline="javascript">
-		var PAGE = {
-			sample: {
-				id: /*[[${sample.getId()}]]*/ '1'
-			},
-			i18n: {
-				leaving: /*[[#{project.samples.files.upload.page-leave}]]*/ "Leaving the page will cause your file upload to be cancelled."
-			}
-		};
 	</script>
 </th:block>
 </body>
