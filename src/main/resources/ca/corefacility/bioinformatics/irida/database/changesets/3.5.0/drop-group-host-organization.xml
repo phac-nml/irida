@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="drop-group-host-organization" author="fbristow">
+		<dropTable tableName="user_group" />
+		<dropTable tableName="user_group_AUD" />
+		<dropTable tableName="logicalGroup" />
+		<dropTable tableName="logicalGroup_AUD" />
+		
+		<dropColumn tableName="sample" columnName="cultureCollection" />
+		<dropColumn tableName="sample" columnName="genotype" />
+		<dropColumn tableName="sample" columnName="passageHistory" />
+		<dropColumn tableName="sample" columnName="pathotype" />
+		<dropColumn tableName="sample" columnName="serotype" />
+		<dropColumn tableName="sample" columnName="serovar" />
+		<dropColumn tableName="sample" columnName="subgroup" />
+		<dropColumn tableName="sample" columnName="subtype" />
+		<dropForeignKeyConstraint baseTableName="sample" constraintName="FK_SAMPLE_HOST"/>
+		<dropColumn tableName="sample" columnName="host_id" />
+		<dropColumn tableName="sample" columnName="specimenVoucher" />
+		<dropForeignKeyConstraint baseTableName="sample" constraintName="FK_SAMPLE_ORGANIZATION"/>
+		<dropColumn tableName="sample" columnName="organization_id" />
+		
+		<dropColumn tableName="sample_AUD" columnName="cultureCollection" />
+		<dropColumn tableName="sample_AUD" columnName="genotype" />
+		<dropColumn tableName="sample_AUD" columnName="passageHistory" />
+		<dropColumn tableName="sample_AUD" columnName="pathotype" />
+		<dropColumn tableName="sample_AUD" columnName="serotype" />
+		<dropColumn tableName="sample_AUD" columnName="serovar" />
+		<dropColumn tableName="sample_AUD" columnName="subgroup" />
+		<dropColumn tableName="sample_AUD" columnName="subtype" />
+		<dropColumn tableName="sample_AUD" columnName="host_id" />
+		<dropColumn tableName="sample_AUD" columnName="specimenVoucher" />
+		<dropColumn tableName="sample_AUD" columnName="organization_id" />
+		
+		<dropForeignKeyConstraint baseTableName="project" constraintName="FK_PROJECT_ORGANIZATION"/>
+		<dropColumn tableName="project" columnName="organization_id" />
+		<dropColumn tableName="project_AUD" columnName="organization_id" />
+		
+		<dropTable tableName="host" />
+		<dropTable tableName="host_AUD" />
+		<dropTable tableName="organization" />
+		<dropTable tableName="organization_AUD" />
+	</changeSet>
+</databaseChangeLog>
