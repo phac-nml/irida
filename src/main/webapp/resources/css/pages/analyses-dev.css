@@ -7,3 +7,11 @@
 tr td {
   vertical-align: middle !important;
 }
+
+/* line 9, ../../../styles/pages/analyses-dev.scss */
+.crop {
+  max-width: 250px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
