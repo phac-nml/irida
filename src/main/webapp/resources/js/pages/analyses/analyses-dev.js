@@ -24,7 +24,24 @@ var analysesTable = (function(tl){
     }
 
     function displayProgress(data, type, full) {
-        var data = data + "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='"+full.percentComplete+"' aria-valuemin='0' aria-valuemax='100' style='width: "+full.percentComplete+"%;'></div></div>";
+        //assign colours to the progress bar for complete and error
+        var stateClasses ={
+          'COMPLETED': "progress-bar-success",
+          'ERROR': "progress-bar-danger"
+        }
+
+        var stateClass = "";
+        if(stateClasses[full.submission.analysisState] != null){
+          stateClass = stateClasses[full.submission.analysisState];
+        }
+
+        //if error, we want to show the full red bar
+        var percent = full.percentComplete;
+        if(full.submission.analysisState === 'ERROR'){
+          percent = 100;
+        }
+
+        var data = data + "<div class='progress'><div class='progress-bar " + stateClass +"' role='progressbar' aria-valuenow='"+percent+"' aria-valuemin='0' aria-valuemax='100' style='width: "+percent+"%;'></div></div>";
         return data;
     }
 
