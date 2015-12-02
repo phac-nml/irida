@@ -21,7 +21,7 @@ The best method for getting in touch with the IRIDA development team is on our I
 
 You can either use your favourite IRC client, or use the Freenode web chat interface below.
 
-<iframe src="http://webchat.freenode.net?channels=%23irida&uio=MTY9dHJ1ZSYxMT0yMjY8a" width="100%" height="400"></iframe>
+<iframe src="https://webchat.freenode.net?channels=%23irida&uio=MTY9dHJ1ZSYxMT0yMjY8a" width="100%" height="400"></iframe>
 
 E-mail
 ------
