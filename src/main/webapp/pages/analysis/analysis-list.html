@@ -32,13 +32,13 @@
     <table id="analysisTable" dt:table="true" dt:url="@{/analysis/ajax/dev}" dt:filterPlaceholder="none">
         <thead>
         <tr>
-            <th dt:property="analysisState" dt:renderFunction="analyses-dev#analysesTable.displayProgress">_State_</th>
-            <th dt:property="name" dt:renderFunction="analyses-dev#analysesTable.createLinkButton">_Name_</th>
-            <th dt:property="workflowId">_Workflow_</th>
-            <th dt:property="submitter.label" dt:sortable="false">_Submitter_</th>
+            <th dt:property="analysisState" dt:renderFunction="analyses-dev#analysesTable.displayProgress" th:text="#{analyses.state}">_State_</th>
+            <th dt:property="name" dt:renderFunction="analyses-dev#analysesTable.createLinkButton" th:text="#{analyses.analysis-name}">_Name_</th>
+            <th dt:property="workflowId" th:text="#{analyses.type}">_Workflow_</th>
+            <th dt:property="submitter.label" dt:sortable="false" th:text="#{analyses.submitter}">_Submitter_</th>
             <th dt:property="createdDate" width="150px" dt:sortType="natural"
-                dt:renderFunction="datatables-utils#datatable.formatDate">_Created Date_</th>
-            <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-dev#analysesTable.getHumanTime">_Duration_</th>
+                dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{analysis.date-created}">_Created Date_</th>
+            <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-dev#analysesTable.getHumanTime" th:text="#{analysis.duration}">_Duration_</th>
 
         </tr>
         </thead>
