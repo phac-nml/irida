@@ -58,6 +58,8 @@ public class AnalysisSubmissionSpecification {
 	 * Search for analyses with a given name, {@link AnalysisState}, or Workflow
 	 * UUID
 	 * 
+	 * @param search
+	 *            Basic search string
 	 * @param name
 	 *            Analysis name
 	 * @param state
@@ -66,13 +68,17 @@ public class AnalysisSubmissionSpecification {
 	 *            Set of UUIDs to search
 	 * @return Specificaton for this search
 	 */
-	public static Specification<AnalysisSubmission> filterAnalyses(String name, AnalysisState state,
+	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, AnalysisState state,
 			Set<UUID> workflowIds) {
 		return new Specification<AnalysisSubmission>() {
 			@Override
 			public Predicate toPredicate(Root<AnalysisSubmission> analysisSubmissionRoot,
 					CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicateList = new ArrayList<>();
+
+				if (!Strings.isNullOrEmpty(search)) {
+					predicateList.add(criteriaBuilder.like(analysisSubmissionRoot.get("name"), "%" + search + "%"));
+				}
 				if (!Strings.isNullOrEmpty(name)) {
 					predicateList.add(criteriaBuilder.like(analysisSubmissionRoot.get("name"), "%" + name + "%"));
 				}

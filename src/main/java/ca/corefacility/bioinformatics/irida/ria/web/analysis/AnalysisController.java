@@ -219,14 +219,16 @@ public class AnalysisController {
 	@RequestMapping("/ajax/dev")
 	@ResponseBody
 	public DatatablesResponse<AnalysisTableResponse> getSubmissions(@DatatablesParams DatatablesCriterias criterias,
-			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException, ExecutionManagerException {
+			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException,
+			EntityNotFoundException, ExecutionManagerException {
 		int currentPage = DatatablesUtils.getCurrentPage(criterias);
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
-		
-		Specification<AnalysisSubmission> filters = getFilters(criterias);
-		
-		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage, criterias.getLength(),
-				(Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
+		String searchString = criterias.getSearch();
+
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias);
+
+		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
+				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
 				(String) sortProps.get(DatatablesUtils.SORT_STRING));
 
 		List<AnalysisTableResponse> responses = new ArrayList<>();
@@ -240,8 +242,8 @@ public class AnalysisController {
 
 		return DatatablesResponse.build(dataSet, criterias);
 	}
-	
-	private Specification<AnalysisSubmission> getFilters(DatatablesCriterias criterias) throws IridaWorkflowNotFoundException {
+
+	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias) throws IridaWorkflowNotFoundException {
 		List<ColumnDef> columnDefs = criterias.getColumnDefs();
 
 		String name = null;
@@ -265,7 +267,7 @@ public class AnalysisController {
 
 		}
 
-		return AnalysisSubmissionSpecification.filterAnalyses(name, state, workflowIds);
+		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, workflowIds);
 	}
 
 	/**
