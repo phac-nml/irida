@@ -18,7 +18,14 @@
           <button id="openFilterModal" class="btn btn-sm btn-default" data-toggle="modal" data-target="#filterModal">
             _Advanced Filter_
           </button>
-					<button id="clearFilterBtn" class="btn btn-sm btn-inverse" th:text="#{projects.filter.clear}">Clear</button>
+					<button id="clearFilterBtn" class="btn btn-sm btn-inverse">_Clear_</button>
+				</div>
+			</div>
+      <div dt:confType="extrahtml" dt:uid="1">
+				<div class="col-md-12 text-right">
+					<span id="nameFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">_Name_: <em id="nameFilterPreview"></em>&nbsp;</span>
+          <span id="analysisStateFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">_State_: <em id="analysisStateFilterPreview"></em>&nbsp;</span>
+          <span id="workflowIdFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">_Workflow_: <em id="workflowIdFilterPreview"></em>&nbsp;</span>
 				</div>
 			</div>
     </div>
@@ -75,7 +82,7 @@
 				</div>
 				<div class="modal-footer">
 					<button tabindex="-1" type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}"></button>
-					<button id="filterAnalysesBtn" type="submit" class="btn btn-primary" data-dismiss="modal" th:text="#{projects.filter.btn}">Filter Projects</button>
+					<button id="filterAnalysesBtn" type="submit" class="btn btn-primary" data-dismiss="modal">_Filter_</button>
 				</div>
 			</div>
 		</div>

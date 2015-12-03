@@ -5,7 +5,8 @@ var filterFormHandler = (function ($, _) {
   var fields = filterForm.elements,
       labels = {
         name: $('#nameFilterPreview'),
-        analysisState: $('#oanalysisStateFilterPreview')
+        analysisState: $('#analysisStateFilterPreview'),
+        workflowId: $('#workflowIdFilterPreview')
       };
 
   function getFieldValues() {
