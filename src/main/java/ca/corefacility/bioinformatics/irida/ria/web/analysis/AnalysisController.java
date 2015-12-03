@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -210,6 +211,8 @@ public class AnalysisController {
 	@RequestMapping("/dev")
 	public String tomAnalysisList(Model model){
 		model.addAttribute("states", AnalysisState.values());
+		
+		model.addAttribute("analysisTypes",workflowsService.getRegisteredWorkflowTypes());
 		return BASE + "analysis-list";
 	}
 	
@@ -238,11 +241,12 @@ public class AnalysisController {
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 	
-	private Specification<AnalysisSubmission> getFilters(DatatablesCriterias criterias) {
+	private Specification<AnalysisSubmission> getFilters(DatatablesCriterias criterias) throws IridaWorkflowNotFoundException {
 		List<ColumnDef> columnDefs = criterias.getColumnDefs();
 
 		String name = null;
 		AnalysisState state = null;
+		Set<UUID> workflowIds = null;
 		for (ColumnDef def : columnDefs) {
 			String columnName = def.getName();
 			if (!Strings.isNullOrEmpty(def.getSearch())) {
@@ -251,12 +255,17 @@ public class AnalysisController {
 					name = def.getSearch();
 				} else if (columnName.equalsIgnoreCase("analysisState")) {
 					state = AnalysisState.fromString(def.getSearch());
+				} else if (columnName.equalsIgnoreCase("workflowId")) {
+					AnalysisType workflow = AnalysisType.fromString(def.getSearch());
+					Set<IridaWorkflow> allWorkflowsByType = workflowsService.getAllWorkflowsByType(workflow);
+					workflowIds = allWorkflowsByType.stream().map(IridaWorkflow::getWorkflowIdentifier)
+							.collect(Collectors.toSet());
 				}
 			}
 
 		}
 
-		return AnalysisSubmissionSpecification.searchAnalysis(name, state, null, null);
+		return AnalysisSubmissionSpecification.filterAnalyses(name, state, workflowIds);
 	}
 
 	/**

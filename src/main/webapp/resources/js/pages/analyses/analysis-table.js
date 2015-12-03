@@ -12,6 +12,7 @@ var filterFormHandler = (function ($, _) {
     var vals = Object.create(null);
     vals.name = fields.nameFilter.value;
     vals.analysisState = fields.analysisStateFilter.value;
+    vals.workflowId = fields.workflowIdFilter.value;
     return vals;
   }
 
@@ -59,8 +60,9 @@ oTable_analysisTable.on('search.dt', function (e, settings) {
     "sName": "user",
     "fn"   : function (aoData) {
       var vals = filterFormHandler.getFieldValues();
-      aoData.columns[1].search.value = vals.name;
       aoData.columns[0].search.value = vals.analysisState;
+      aoData.columns[1].search.value = vals.name;
+      aoData.columns[2].search.value = vals.workflowId;
     }
   });
   filterFormHandler.updateFilterLabels();

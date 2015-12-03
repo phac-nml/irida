@@ -58,6 +58,14 @@
   							        th:text="#{'analysis.state.' + ${state}}"></option>
               </select>
 						</div>
+            <div class="form-group">
+							<label>_Workflows_</label>
+							<select id="workflowIdFilter" name="workflowId" class="form-control">
+                <option value="">_Select_</option>
+                <option th:each="workflow : ${analysisTypes}" th:value="${workflow}"
+  							        th:text="#{'workflow.' + ${workflow} + '.title'}"></option>
+              </select>
+						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
