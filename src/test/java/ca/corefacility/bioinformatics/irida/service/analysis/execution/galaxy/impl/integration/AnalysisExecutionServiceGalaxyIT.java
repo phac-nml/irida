@@ -759,7 +759,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, phyTreeCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -903,7 +903,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, phyTreeCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -1050,7 +1050,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, phyTreeCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -1197,7 +1197,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 7, phyTreeCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 6, phyTreeCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
