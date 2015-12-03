@@ -768,8 +768,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
@@ -912,8 +910,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
@@ -1059,8 +1055,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
@@ -1210,8 +1204,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("conditional.conditional_select"));
 		assertEquals("parameter conditional_select set incorrectly", "all2",
 				phyTreeCoreParameters.get("conditional.level2.level2_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 	}
 	
 	/**
