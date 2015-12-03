@@ -10,6 +10,13 @@
 <body>
 <div layout:fragment="page">
     <h1>_Analyses_</h1>
+    <button id="openFilterModal" class="btn btn-sm btn-default" data-toggle="modal" data-target="#filterModal">
+      _Advanced Filter_
+    </button>
+
+    <div dt:conf="analysisTable">
+      <div dt:confType="extrajs" dt:bundles="analysis-table" dt:placeholder="before_end_document_ready" />
+    </div>
     <table id="analysisTable" dt:table="true" dt:url="@{/analysis/ajax/dev}" dt:filterPlaceholder="none">
         <thead>
         <tr>
@@ -25,5 +32,41 @@
         </thead>
     </table>
 </div>
+
+
+<th:block layout:fragment="page-scripts">
+  <div class="modal fade" id="filterModal" role="dialog" aria-labelledby="#filterTitle">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="filterTitle">_Advanced Analysis Filters_</h4>
+				</div>
+				<div class="modal-body">
+					<form id="filterForm" name="filterForm">
+						<div class="form-group">
+							<label>_name_</label>
+							<input autofocus="autofocus" type="text" id="nameFilter" name="name" class="form-control"/>
+						</div>
+						<div class="form-group">
+							<label>_Analysis State_</label>
+							<select id="analysisStateFilter" name="analysisState" class="form-control">
+                <option value="">_Select_</option>
+                <option th:each="state : ${states}" th:value="${state}"
+  							        th:text="#{'analysis.state.' + ${state}}"></option>
+              </select>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button tabindex="-1" type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}"></button>
+					<button id="filterAnalysesBtn" type="submit" class="btn btn-primary" data-dismiss="modal" th:text="#{projects.filter.btn}">Filter Projects</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</th:block>
 </body>
 </html>

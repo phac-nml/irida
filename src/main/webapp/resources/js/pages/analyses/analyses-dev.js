@@ -45,10 +45,9 @@ var analysesTable = (function(tl){
         return data;
     }
 
-
     return {
         createLinkButton: createLinkButton,
         getHumanTime: getHumanTime,
-        displayProgress: displayProgress
+        displayProgress: displayProgress,
     };
 })(window.TL);

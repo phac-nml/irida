@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,11 +44,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
@@ -205,7 +208,8 @@ public class AnalysisController {
 	}
 	
 	@RequestMapping("/dev")
-	public String tomAnalysisList(){
+	public String tomAnalysisList(Model model){
+		model.addAttribute("states", AnalysisState.values());
 		return BASE + "analysis-list";
 	}
 	
@@ -215,8 +219,10 @@ public class AnalysisController {
 			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException, ExecutionManagerException {
 		int currentPage = DatatablesUtils.getCurrentPage(criterias);
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
-
-		Page<AnalysisSubmission> submissions = analysisSubmissionService.list(currentPage, criterias.getLength(),
+		
+		Specification<AnalysisSubmission> filters = getFilters(criterias);
+		
+		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage, criterias.getLength(),
 				(Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
 				(String) sortProps.get(DatatablesUtils.SORT_STRING));
 
@@ -230,6 +236,27 @@ public class AnalysisController {
 				submissions.getTotalElements());
 
 		return DatatablesResponse.build(dataSet, criterias);
+	}
+	
+	private Specification<AnalysisSubmission> getFilters(DatatablesCriterias criterias) {
+		List<ColumnDef> columnDefs = criterias.getColumnDefs();
+
+		String name = null;
+		AnalysisState state = null;
+		for (ColumnDef def : columnDefs) {
+			String columnName = def.getName();
+			if (!Strings.isNullOrEmpty(def.getSearch())) {
+
+				if (columnName.equals("name")) {
+					name = def.getSearch();
+				} else if (columnName.equalsIgnoreCase("analysisState")) {
+					state = AnalysisState.fromString(def.getSearch());
+				}
+			}
+
+		}
+
+		return AnalysisSubmissionSpecification.searchAnalysis(name, state, null, null);
 	}
 
 	/**
