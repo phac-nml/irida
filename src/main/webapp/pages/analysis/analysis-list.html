@@ -15,17 +15,17 @@
       <div dt:confType="extrajs" dt:bundles="analysis-table" dt:placeholder="before_end_document_ready" />
       <div dt:confType="extrahtml" dt:uid="0">
 				<div class="btn-toolbar pull-right" style="padding-left: 9px;">
-          <button id="openFilterModal" class="btn btn-sm btn-default" data-toggle="modal" data-target="#filterModal">
+          <button id="openFilterModal" class="btn btn-sm btn-default" data-toggle="modal" data-target="#filterModal" th:text="#{analysis.filter.title}">
             _Advanced Filter_
           </button>
-					<button id="clearFilterBtn" class="btn btn-sm btn-inverse">_Clear_</button>
+					<button id="clearFilterBtn" class="btn btn-sm btn-inverse" th:text="#{form.btn.clear}">_Clear_</button>
 				</div>
 			</div>
       <div dt:confType="extrahtml" dt:uid="1">
 				<div class="col-md-12 text-right">
-					<span id="nameFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">_Name_: <em id="nameFilterPreview"></em>&nbsp;</span>
-          <span id="analysisStateFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">_State_: <em id="analysisStateFilterPreview"></em>&nbsp;</span>
-          <span id="workflowIdFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">_Workflow_: <em id="workflowIdFilterPreview"></em>&nbsp;</span>
+					<span id="nameFilterClear" th:title="#{analysis.filter.remove}" class="label label-default hidden">_Name_: <em id="nameFilterPreview"></em>&nbsp;</span>
+          <span id="analysisStateFilterClear" th:title="#{analysis.filter.remove}" class="label label-default hidden">_State_: <em id="analysisStateFilterPreview"></em>&nbsp;</span>
+          <span id="workflowIdFilterClear" th:title="#{analysis.filter.remove}" class="label label-default hidden">_Workflow_: <em id="workflowIdFilterPreview"></em>&nbsp;</span>
 				</div>
 			</div>
     </div>
@@ -54,26 +54,26 @@
 					<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="filterTitle">_Advanced Analysis Filters_</h4>
+					<h4 class="modal-title" id="filterTitle" th:text="#{analysis.filter.title}">_Advanced Analysis Filters_</h4>
 				</div>
 				<div class="modal-body">
 					<form id="filterForm" name="filterForm">
 						<div class="form-group">
-							<label>_name_</label>
+							<label th:text="#{analysis.filter.name}">_name_</label>
 							<input autofocus="autofocus" type="text" id="nameFilter" name="name" class="form-control"/>
 						</div>
 						<div class="form-group">
-							<label>_Analysis State_</label>
+							<label th:text="#{analysis.filter.state}">_Analysis State_</label>
 							<select id="analysisStateFilter" name="analysisState" class="form-control">
-                <option value="">_Select_</option>
+                <option value="" th:text="#{analysis.filter.select.all}">_Select_</option>
                 <option th:each="state : ${states}" th:value="${state}"
   							        th:text="#{'analysis.state.' + ${state}}"></option>
               </select>
 						</div>
             <div class="form-group">
-							<label>_Workflows_</label>
+							<label th:text="#{analyses.type}">_Workflows_</label>
 							<select id="workflowIdFilter" name="workflowId" class="form-control">
-                <option value="">_Select_</option>
+                <option value="" th:text="#{analysis.filter.select.all}">_Select_</option>
                 <option th:each="workflow : ${analysisTypes}" th:value="${workflow}"
   							        th:text="#{'workflow.' + ${workflow} + '.title'}"></option>
               </select>
@@ -82,7 +82,7 @@
 				</div>
 				<div class="modal-footer">
 					<button tabindex="-1" type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}"></button>
-					<button id="filterAnalysesBtn" type="submit" class="btn btn-primary" data-dismiss="modal">_Filter_</button>
+					<button id="filterAnalysesBtn" type="submit" class="btn btn-primary" data-dismiss="modal" th:text="#{analysis.filter.button}">_Filter_</button>
 				</div>
 			</div>
 		</div>
