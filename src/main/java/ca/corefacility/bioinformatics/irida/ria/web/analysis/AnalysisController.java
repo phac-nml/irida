@@ -216,6 +216,7 @@ public class AnalysisController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping("/dev")
 	public String tomAnalysisList(Model model){
+		model.addAttribute("userList",false);
 		model.addAttribute("ajaxURL","/analysis/ajax/dev");
 		model.addAttribute("states", AnalysisState.values());
 		model.addAttribute("analysisTypes",workflowsService.getRegisteredWorkflowTypes());
@@ -224,6 +225,7 @@ public class AnalysisController {
 	
 	@RequestMapping("/dev/user")
 	public String userAnalysisList(Model model){
+		model.addAttribute("userList",true);
 		model.addAttribute("ajaxURL","/analysis/ajax/dev/user");
 		model.addAttribute("states", AnalysisState.values());
 		model.addAttribute("analysisTypes",workflowsService.getRegisteredWorkflowTypes());

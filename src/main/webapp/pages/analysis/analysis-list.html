@@ -9,7 +9,7 @@
 </head>
 <body>
 <div layout:fragment="page">
-    <h1>_Analyses_</h1>
+    <h1 th:text="#{${userList} ? 'analyses.user.page-title' : 'analyses.admin.page-title'}">_Analyses_</h1>
 
     <div dt:conf="analysisTable">
       <div dt:confType="extrajs" dt:bundles="analysis-table" dt:placeholder="before_end_document_ready" />
