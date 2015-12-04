@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,7 +27,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -107,7 +104,7 @@ public class AnalysisController {
 	@RequestMapping("/all")
 	public String getAdminAnalysisList(Model model) {
 		model.addAttribute("userList", false);
-		model.addAttribute("ajaxURL", "/analysis/ajax/dev");
+		model.addAttribute("ajaxURL", "/analysis/ajax/list/all");
 		model.addAttribute("states", AnalysisState.values());
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		return PAGE_ANALYSIS_LIST;
@@ -123,7 +120,7 @@ public class AnalysisController {
 	@RequestMapping()
 	public String getUserAnalysisList(Model model) {
 		model.addAttribute("userList", true);
-		model.addAttribute("ajaxURL", "/analysis/ajax/dev/user");
+		model.addAttribute("ajaxURL", "/analysis/ajax/list");
 		model.addAttribute("states", AnalysisState.values());
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		return PAGE_ANALYSIS_LIST;
@@ -220,7 +217,7 @@ public class AnalysisController {
 		model.addAttribute("preview", "tree");
 	}
 	
-	@RequestMapping("/ajax/dev")
+	@RequestMapping("/ajax/list/all")
 	@ResponseBody
 	public DatatablesResponse<AnalysisTableResponse> getSubmissions(@DatatablesParams DatatablesCriterias criterias,
 			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException,
@@ -247,7 +244,7 @@ public class AnalysisController {
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 	
-	@RequestMapping("/ajax/dev/user")
+	@RequestMapping("/ajax/list")
 	@ResponseBody
 	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForUser(@DatatablesParams DatatablesCriterias criterias, Principal principal,
 			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException,
@@ -276,13 +273,28 @@ public class AnalysisController {
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 
-	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias, User user) throws IridaWorkflowNotFoundException {
-		List<ColumnDef> columnDefs = criterias.getColumnDefs();
-
+	/**
+	 * Get a search specification for listing {@link AnalysisSubmission}s
+	 * 
+	 * @param searchString
+	 *            The basic search string to search
+	 * @param criterias
+	 *            {@link DatatablesCriterias} sent from the view
+	 * @param user
+	 *            User to filter results by. Send null if user is not requried
+	 * @return Specification to send to the repsoitory search method
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the requested workflow dows not exist
+	 */
+	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias, User user)
+			throws IridaWorkflowNotFoundException {
+		//properties to search
 		String name = null;
 		AnalysisState state = null;
 		Set<UUID> workflowIds = null;
-		for (ColumnDef def : columnDefs) {
+		
+		//get the properties from the criterias
+		for (ColumnDef def : criterias.getColumnDefs()) {
 			String columnName = def.getName();
 			if (!Strings.isNullOrEmpty(def.getSearch())) {
 
@@ -291,6 +303,7 @@ public class AnalysisController {
 				} else if (columnName.equalsIgnoreCase("analysisState")) {
 					state = AnalysisState.fromString(def.getSearch());
 				} else if (columnName.equalsIgnoreCase("workflowId")) {
+					//get the workflow from the workflow id string
 					AnalysisType workflow = AnalysisType.fromString(def.getSearch());
 					Set<IridaWorkflow> allWorkflowsByType = workflowsService.getAllWorkflowsByType(workflow);
 					workflowIds = allWorkflowsByType.stream().map(IridaWorkflow::getWorkflowIdentifier)
@@ -301,80 +314,6 @@ public class AnalysisController {
 		}
 
 		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, user, workflowIds);
-	}
-
-	/**
-	 * Get a list of analyses either for a user or an administrator
-	 *
-	 * @param all
-	 * 		{@link boolean} whether or not to show all the system analysis or just the users.
-	 * @param locale
-	 * 		{@link Locale} locale for the current user.
-	 * @param httpServletResponse
-	 * 		{@link HttpServletResponse} needed in case of error to update the response.
-	 *
-	 * @return A JSON object containing the analyses.
-	 */
-	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> ajaxGetAnalysesListForUser(@RequestParam boolean all,
-			Locale locale, HttpServletResponse httpServletResponse) {
-		Map<String, Object> response = new HashMap<>();
-
-		Set<AnalysisSubmission> analyses;
-		if (all) {
-			analyses = new HashSet<>(
-					(Collection<? extends AnalysisSubmission>) analysisSubmissionService.findAll());
-		} else {
-			analyses = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
-		}
-
-		List<Map<String, String>> analysesMap = new ArrayList<>();
-		try {
-			for (AnalysisSubmission sub : analyses) {
-				String remoteAnalysisId = sub.getRemoteAnalysisId();
-				UUID workflowUUID = sub.getWorkflowId();
-				String type = workflowsService.getIridaWorkflow(workflowUUID).getWorkflowDescription().getAnalysisType()
-						.toString();
-				String workflowName = messageSource.getMessage("workflow." + type + ".title", null, locale);
-
-				String analysisState = sub.getAnalysisState().toString();
-
-				Map<String, String> map = new HashMap<>();
-				map.put("id", sub.getId().toString());
-				map.put("label", sub.getLabel());
-				map.put("workflowId", sub.getWorkflowId().toString());
-				map.put("workflowName", workflowName);
-				map.put("remoteAnalysisId", Strings.isNullOrEmpty(remoteAnalysisId) ? "NOT SET" : remoteAnalysisId);
-				map.put("state", messageSource.getMessage("analysis.state." + analysisState, null, locale));
-				map.put("analysisState", analysisState.toUpperCase());
-				map.put("createdDate", String.valueOf(sub.getCreatedDate().getTime()));
-				map.put("submitter", sub.getSubmitter().getLabel());
-
-				if (sub.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-					Analysis analysis = sub.getAnalysis();
-					long duration = sub.getCreatedDate().getTime() - analysis.getCreatedDate().getTime();
-					map.put("duration", String.valueOf(Math.abs(duration)));
-				}
-
-				if (!sub.getAnalysisState().equals(AnalysisState.ERROR)) {
-					float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
-							sub.getId());
-					map.put("percentComplete", Float.toString(percentComplete));
-				}
-
-				analysesMap.add(map);
-			}
-			response.put("analyses", analysesMap);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Error finding workflow, ", e);
-			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			response.put("error", ImmutableMap.of("url", "errors/not_found"));
-		} catch (NoPercentageCompleteException e) {
-			logger.error("Error getting percent complete.", e);
-		} catch (ExecutionManagerException e) {
-			logger.error("ExecutionManagerException error", e);
-		}
-		return response;
 	}
 
 	// ************************************************************************************************
