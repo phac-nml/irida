@@ -39,6 +39,7 @@
             <th dt:property="createdDate" width="150px" dt:sortType="natural"
                 dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{analysis.date-created}">_Created Date_</th>
             <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-dev#analysesTable.getHumanTime" th:text="#{analysis.duration}">_Duration_</th>
+            <th width="40px" dt:sortable="false" dt:renderFunction="analyses-dev#analysesTable.downloadLink"></th>
 
         </tr>
         </thead>
@@ -87,6 +88,13 @@
 			</div>
 		</div>
 	</div>
+  <script th:inline="javascript">
+		var PAGE = {
+			"URLS": {
+				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
+			}
+		};
+	</script>
 </th:block>
 </body>
 </html>

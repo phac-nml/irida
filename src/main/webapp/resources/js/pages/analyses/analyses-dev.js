@@ -45,9 +45,19 @@ var analysesTable = (function(tl){
         return data;
     }
 
+    function downloadLink(data,type,full){
+        if(full.submission.analysisState === 'COMPLETED'){
+          return "<a class='btn btn-default btn-xs download-analysis-btn' href='" + PAGE.URLS.download + full.id + "'><i class='fa fa-download' /></a>";
+        }
+        else{
+          return "";
+        }
+    }
+
     return {
         createLinkButton: createLinkButton,
         getHumanTime: getHumanTime,
         displayProgress: displayProgress,
+        downloadLink: downloadLink
     };
 })(window.TL);
