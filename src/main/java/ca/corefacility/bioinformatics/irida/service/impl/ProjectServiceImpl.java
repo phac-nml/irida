@@ -356,7 +356,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc }
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
 				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE,
@@ -429,6 +429,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	@PostFilter("hasPermission(filterObject.subject, 'canReadProject')")
 	public List<Join<Project, Sample>> getProjectsForSample(Sample sample) {
 		return psjRepository.getProjectForSample(sample);
 	}
