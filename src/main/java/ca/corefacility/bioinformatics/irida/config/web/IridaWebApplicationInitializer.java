@@ -34,9 +34,6 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 		servletContext.setInitParameter("spring.profiles.default", "dev");
 		servletContext.setInitParameter("dandelion.profile.active", "dev");
 
-		servletContext.addFilter("slashfilter", new SlashFilter())
-				.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/api/*");
-		
 		// do the default setup
 		super.onStartup(servletContext);
 
@@ -66,7 +63,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[] { new HttpHeadFilter() };
+		return new Filter[] { new HttpHeadFilter(), new SlashFilter() };
 	}
 
 	@Override

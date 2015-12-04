@@ -40,7 +40,13 @@ public class SlashFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		chain.doFilter(new SlashReplacingHttpServletRequestWrapper((HttpServletRequest) request), response);
+		final HttpServletRequest servletRequest = (HttpServletRequest) request;
+		if (servletRequest.getRequestURI().contains("//")) {
+			final HttpServletRequest redirectedRequest = new SlashReplacingHttpServletRequestWrapper(servletRequest);
+			request.getRequestDispatcher(redirectedRequest.getRequestURI()).forward(request, response);
+		} else {
+			chain.doFilter(request, response);			
+		}
 	}
 
 	/**
