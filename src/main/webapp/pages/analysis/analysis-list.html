@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page"
-      ddl:bundle-includes="analyses-dev"
+      ddl:bundle-includes="analyses-list"
       ddl:asset-css-excludes="jquery.datatables">
 <head>
     <title>_Analyses_</title>
@@ -39,14 +39,14 @@
     <table id="analysisTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none">
         <thead>
         <tr>
-            <th dt:property="analysisState" dt:renderFunction="analyses-dev#analysesTable.displayProgress" th:text="#{analyses.state}">_State_</th>
-            <th dt:property="name" dt:renderFunction="analyses-dev#analysesTable.createLinkButton" th:text="#{analyses.analysis-name}">_Name_</th>
+            <th dt:property="analysisState" dt:renderFunction="analyses-list#analysesTable.displayProgress" th:text="#{analyses.state}">_State_</th>
+            <th dt:property="name" dt:renderFunction="analyses-list#analysesTable.createLinkButton" th:text="#{analyses.analysis-name}">_Name_</th>
             <th dt:property="workflowId" th:text="#{analyses.type}">_Workflow_</th>
             <th dt:property="submitter.label" dt:sortable="false" th:text="#{analyses.submitter}">_Submitter_</th>
             <th dt:property="createdDate" width="150px" dt:sortType="natural"
                 dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{analysis.date-created}">_Created Date_</th>
-            <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-dev#analysesTable.getHumanTime" th:text="#{analysis.duration}">_Duration_</th>
-            <th width="40px" dt:sortable="false" dt:renderFunction="analyses-dev#analysesTable.downloadLink"></th>
+            <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.getHumanTime" th:text="#{analysis.duration}">_Duration_</th>
+            <th width="40px" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.downloadLink"></th>
 
         </tr>
         </thead>

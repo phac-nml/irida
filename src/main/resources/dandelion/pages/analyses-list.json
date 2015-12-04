@@ -1,17 +1,17 @@
 {
   "assets": [
     {
-      "name": "analyses-dev-css",
+      "name": "analyses-list-css",
       "version": "0.0.1",
       "type": "css",
       "locations": {
-        "webapp": "/resources/css/pages/analyses-dev.css"
+        "webapp": "/resources/css/pages/analyses-list.css"
       }
     },
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/js/pages/analyses/analyses-dev.js"
+        "webapp": "/resources/js/pages/analyses/analyses-list.js"
       }
     }
   ]
