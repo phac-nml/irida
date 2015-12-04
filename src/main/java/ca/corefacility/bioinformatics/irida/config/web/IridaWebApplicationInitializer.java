@@ -18,6 +18,7 @@ import com.github.dandelion.core.web.DandelionServlet;
 import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
+import ca.corefacility.bioinformatics.irida.web.filter.SlashFilter;
 
 /**
  * REST API initializer with security.
@@ -33,6 +34,9 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 		servletContext.setInitParameter("spring.profiles.default", "dev");
 		servletContext.setInitParameter("dandelion.profile.active", "dev");
 
+		servletContext.addFilter("slashfilter", new SlashFilter()).addMappingForUrlPatterns(EnumSet.of(DispatcherType.FORWARD, DispatcherType.REQUEST,
+						DispatcherType.INCLUDE, DispatcherType.ASYNC, DispatcherType.ERROR), false, "/*");
+		
 		// do the default setup
 		super.onStartup(servletContext);
 
