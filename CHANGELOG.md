@@ -5,6 +5,7 @@ Changes
 ----------------------------
 * [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
 * [UI]: Password reset e-mails now include your username.
+* [Developer]: Fix up inconsistencies with tables created by Liquibase and tables created by Hibernate.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
