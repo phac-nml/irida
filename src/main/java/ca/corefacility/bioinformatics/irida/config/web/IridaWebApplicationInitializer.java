@@ -35,7 +35,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 		servletContext.setInitParameter("dandelion.profile.active", "dev");
 
 		servletContext.addFilter("slashfilter", new SlashFilter())
-				.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/*");
+				.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/api/*");
 		
 		// do the default setup
 		super.onStartup(servletContext);
