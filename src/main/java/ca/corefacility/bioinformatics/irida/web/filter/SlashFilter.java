@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +41,8 @@ public class SlashFilter implements Filter {
 			throws IOException, ServletException {
 		final HttpServletRequest servletRequest = (HttpServletRequest) request;
 		if (servletRequest.getRequestURI().contains("//")) {
-			final HttpServletRequest redirectedRequest = new SlashReplacingHttpServletRequestWrapper(servletRequest);
-			request.getRequestDispatcher(redirectedRequest.getRequestURI()).forward(request, response);
+			final String redirectURI = servletRequest.getRequestURI().replace("/{2,}", "/");
+			request.getRequestDispatcher(redirectURI).forward(request, response);
 		} else {
 			chain.doFilter(request, response);			
 		}
@@ -55,42 +54,5 @@ public class SlashFilter implements Filter {
 	@Override
 	public void destroy() {
 		logger.info("Destroying slash filter.");
-	}
-
-	/**
-	 * An {@link HttpServletRequestWrapper} that replaces two or more slashes in
-	 * the request URI or servlet path with single slashes.
-	 *
-	 */
-	private static class SlashReplacingHttpServletRequestWrapper extends HttpServletRequestWrapper {
-
-		private final String cachedRequestURI;
-		private final String cachedServletPath;
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public SlashReplacingHttpServletRequestWrapper(HttpServletRequest request) {
-			super(request);
-
-			this.cachedRequestURI = request.getRequestURI().replaceAll("/{2,}", "/");
-			this.cachedServletPath = request.getServletPath().replaceAll("/{2,}", "/");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public String getRequestURI() {
-			return cachedRequestURI;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public String getServletPath() {
-			return cachedServletPath;
-		}
 	}
 }
