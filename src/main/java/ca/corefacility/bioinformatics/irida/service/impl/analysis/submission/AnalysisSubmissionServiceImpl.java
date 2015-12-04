@@ -280,7 +280,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, int page, int size,
 			Direction order, String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);

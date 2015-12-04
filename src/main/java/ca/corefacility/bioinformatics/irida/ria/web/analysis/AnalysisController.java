@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisS
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.dandelion.datatables.core.ajax.ColumnDef;
@@ -80,13 +83,15 @@ public class AnalysisController {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
+	private UserService userService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
+		this.userService = userService;
 	}
 
 	// ************************************************************************************************
@@ -208,13 +213,24 @@ public class AnalysisController {
 		model.addAttribute("preview", "tree");
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping("/dev")
 	public String tomAnalysisList(Model model){
+		model.addAttribute("ajaxURL","/analysis/ajax/dev");
 		model.addAttribute("states", AnalysisState.values());
-		
 		model.addAttribute("analysisTypes",workflowsService.getRegisteredWorkflowTypes());
 		return BASE + "analysis-list";
 	}
+	
+	@RequestMapping("/dev/user")
+	public String userAnalysisList(Model model){
+		model.addAttribute("ajaxURL","/analysis/ajax/dev/user");
+		model.addAttribute("states", AnalysisState.values());
+		model.addAttribute("analysisTypes",workflowsService.getRegisteredWorkflowTypes());
+		return BASE + "analysis-list";
+	}
+	
+	
 	
 	@RequestMapping("/ajax/dev")
 	@ResponseBody
@@ -225,7 +241,36 @@ public class AnalysisController {
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 		String searchString = criterias.getSearch();
 
-		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias);
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null);
+
+		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
+				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
+				(String) sortProps.get(DatatablesUtils.SORT_STRING));
+
+		List<AnalysisTableResponse> responses = new ArrayList<>();
+		for (AnalysisSubmission sub : submissions) {
+			AnalysisTableResponse analysisTableResponse = new AnalysisTableResponse(sub, locale);
+			responses.add(analysisTableResponse);
+		}
+
+		DataSet<AnalysisTableResponse> dataSet = new DataSet<>(responses, submissions.getTotalElements(),
+				submissions.getTotalElements());
+
+		return DatatablesResponse.build(dataSet, criterias);
+	}
+	
+	@RequestMapping("/ajax/dev/user")
+	@ResponseBody
+	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForUser(@DatatablesParams DatatablesCriterias criterias, Principal principal,
+			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException,
+			EntityNotFoundException, ExecutionManagerException {
+		User principalUser = userService.getUserByUsername(principal.getName());
+		
+		int currentPage = DatatablesUtils.getCurrentPage(criterias);
+		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
+		String searchString = criterias.getSearch();
+
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, principalUser);
 
 		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
 				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
@@ -243,7 +288,7 @@ public class AnalysisController {
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 
-	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias) throws IridaWorkflowNotFoundException {
+	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias, User user) throws IridaWorkflowNotFoundException {
 		List<ColumnDef> columnDefs = criterias.getColumnDefs();
 
 		String name = null;
@@ -267,7 +312,7 @@ public class AnalysisController {
 
 		}
 
-		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, workflowIds);
+		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, user, workflowIds);
 	}
 
 	/**

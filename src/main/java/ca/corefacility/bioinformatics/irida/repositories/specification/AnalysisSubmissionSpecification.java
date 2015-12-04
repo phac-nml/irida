@@ -17,6 +17,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -68,7 +69,7 @@ public class AnalysisSubmissionSpecification {
 	 *            Set of UUIDs to search
 	 * @return Specificaton for this search
 	 */
-	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, AnalysisState state,
+	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, AnalysisState state, User user,
 			Set<UUID> workflowIds) {
 		return new Specification<AnalysisSubmission>() {
 			@Override
@@ -87,6 +88,9 @@ public class AnalysisSubmissionSpecification {
 				}
 				if (workflowIds != null && !workflowIds.isEmpty()) {
 					predicateList.add(criteriaBuilder.isTrue(analysisSubmissionRoot.get("workflowId").in(workflowIds)));
+				}
+				if(user != null){
+					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("submitter"), user));
 				}
 
 				if (predicateList.size() > 0) {

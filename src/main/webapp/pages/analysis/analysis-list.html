@@ -29,7 +29,7 @@
 				</div>
 			</div>
     </div>
-    <table id="analysisTable" dt:table="true" dt:url="@{/analysis/ajax/dev}" dt:filterPlaceholder="none">
+    <table id="analysisTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none">
         <thead>
         <tr>
             <th dt:property="analysisState" dt:renderFunction="analyses-dev#analysesTable.displayProgress" th:text="#{analyses.state}">_State_</th>
