@@ -45,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
@@ -71,11 +70,10 @@ public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
 	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
-	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
-	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
+	public static final String PAGE_ANALYSIS_LIST = BASE + "analysis-list";
 
 	/*
 	 * SERVICES
@@ -98,30 +96,39 @@ public class AnalysisController {
 	// PAGES
 	// ************************************************************************************************
 
-	@RequestMapping()
-	public String getUserAnalysesPage(Model model, Locale locale) {
-		String response = PAGE_USER_ANALYSIS;
-		try {
-			generateAnalysesPageModel(false, model, locale);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Workflow not found - See stack:", e);
-			response = REDIRECT_ERROR;
-		}
-		return response;
+	/**
+	 * Get the admin all {@link Analysis} list page
+	 * 
+	 * @param model
+	 *            Model for view variables
+	 * @return Name of the analysis page view
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping("/all")
+	public String getAdminAnalysisList(Model model) {
+		model.addAttribute("userList", false);
+		model.addAttribute("ajaxURL", "/analysis/ajax/dev");
+		model.addAttribute("states", AnalysisState.values());
+		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
+		return PAGE_ANALYSIS_LIST;
 	}
 
-	@RequestMapping("/all")
-	public String getAdminAnalysesPage(Model model, Locale locale) {
-		String response = PAGE_USER_ANALYSIS;
-		try {
-			generateAnalysesPageModel(true, model, locale);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Workflow not found - See stack:", e);
-			response = REDIRECT_ERROR;
-		}
-		return response;
+	/**
+	 * Get the user {@link Analysis} list page
+	 * 
+	 * @param model
+	 *            Model for view variables
+	 * @return Name of the analysis page view
+	 */
+	@RequestMapping()
+	public String getUserAnalysisList(Model model) {
+		model.addAttribute("userList", true);
+		model.addAttribute("ajaxURL", "/analysis/ajax/dev/user");
+		model.addAttribute("states", AnalysisState.values());
+		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
+		return PAGE_ANALYSIS_LIST;
 	}
-	
+
 	/**
 	 * View details about an individual analysis submission
 	 * 
@@ -212,27 +219,6 @@ public class AnalysisController {
 		// inform the view to display the tree preview
 		model.addAttribute("preview", "tree");
 	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping("/dev")
-	public String tomAnalysisList(Model model){
-		model.addAttribute("userList",false);
-		model.addAttribute("ajaxURL","/analysis/ajax/dev");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes",workflowsService.getRegisteredWorkflowTypes());
-		return BASE + "analysis-list";
-	}
-	
-	@RequestMapping("/dev/user")
-	public String userAnalysisList(Model model){
-		model.addAttribute("userList",true);
-		model.addAttribute("ajaxURL","/analysis/ajax/dev/user");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes",workflowsService.getRegisteredWorkflowTypes());
-		return BASE + "analysis-list";
-	}
-	
-	
 	
 	@RequestMapping("/ajax/dev")
 	@ResponseBody
@@ -445,53 +431,6 @@ public class AnalysisController {
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * Generate the model for the analyses page.
-	 *
-	 * @param isAdmin
-	 * 		If the user is an administrator and want all the analyses.
-	 * @param model
-	 * 		{@link Model} for the current view.
-	 * @param locale
-	 * 		{@link Locale} for the current user.
-	 *
-	 * @throws IridaWorkflowNotFoundException
-	 */
-	private void generateAnalysesPageModel(boolean isAdmin, Model model, Locale locale)
-			throws IridaWorkflowNotFoundException {
-		model.addAttribute("admin", isAdmin);
-		model.addAttribute("workflows", getAnalysisWorkflowTypes(locale));
-		model.addAttribute("states", AnalysisState.values());
-	}
-
-	/**
-	 * Utility method to get a list of the system Workflows.
-	 *
-	 * @param locale
-	 * 		{@link Locale} for the current user.
-	 *
-	 * @return {@link List} containing the workflows names and ids.
-	 * @throws IridaWorkflowNotFoundException
-	 */
-	private List<Map<String, String>> getAnalysisWorkflowTypes(Locale locale) throws IridaWorkflowNotFoundException {
-		Set<AnalysisType> workflows = workflowsService.getRegisteredWorkflowTypes();
-		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
-		for (AnalysisType type : workflows) {
-			IridaWorkflow flow = workflowsService.getDefaultWorkflowByType(type);
-			IridaWorkflowDescription description = flow.getWorkflowDescription();
-			String name = type.toString();
-			String key = "workflow." + name;
-			flows.add(ImmutableMap.of(
-					"id", description.getId().toString(),
-					"value", name,
-					"title",
-					messageSource
-							.getMessage(key + ".title", null, locale)
-			));
-		}
-		return flows;
 	}
 
 	/**
