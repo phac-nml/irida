@@ -4,6 +4,7 @@ Changes
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
 * [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
+* [UI]: Password reset e-mails now include your username.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
