@@ -43,7 +43,7 @@
             <th dt:property="name" dt:renderFunction="analyses-list#analysesTable.createLinkButton" th:text="#{analyses.analysis-name}">_Name_</th>
             <th dt:property="workflowId" th:text="#{analyses.type}">_Workflow_</th>
             <th dt:property="submitter.label" dt:sortable="false" th:text="#{analyses.submitter}">_Submitter_</th>
-            <th dt:property="createdDate" width="150px" dt:sortType="natural"
+            <th dt:property="createdDate" width="150px" dt:sortType="natural" dt:sortInitDirection="desc"
                 dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{analysis.date-created}">_Created Date_</th>
             <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.getHumanTime" th:text="#{analysis.duration}">_Duration_</th>
             <th width="40px" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.downloadLink"></th>
