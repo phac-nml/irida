@@ -30,6 +30,7 @@ var filterFormHandler = (function ($, _) {
     if (!labels[name]) {return;}
     var parent = labels[name].parent();
     if(_isValid(value)) {
+      value = _.capitalize(value.toLowerCase());
       labels[name].html(value);
       parent.removeClass('hidden').bind('click', function (){
         fields[name + "Filter"].value = "";
