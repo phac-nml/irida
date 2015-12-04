@@ -217,6 +217,24 @@ public class AnalysisController {
 		model.addAttribute("preview", "tree");
 	}
 	
+	/**
+	 * Get the list of all {@link AnalysisSubmission}s in the system
+	 * 
+	 * @param criterias
+	 *            {@link DatatablesCriterias} to filter or sort results
+	 * @param locale
+	 *            User's locale
+	 * @return {@link DatatablesResponse} containing
+	 *         {@link AnalysisTableResponse} objects
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the requested workflow doesn't exist
+	 * @throws NoPercentageCompleteException
+	 *             If a percentage complete cannot be calculated
+	 * @throws EntityNotFoundException
+	 *             If the submission cannot be found
+	 * @throws ExecutionManagerException
+	 *             If the submission cannot be read properly
+	 */
 	@RequestMapping("/ajax/list/all")
 	@ResponseBody
 	public DatatablesResponse<AnalysisTableResponse> getSubmissions(@DatatablesParams DatatablesCriterias criterias,
@@ -244,13 +262,34 @@ public class AnalysisController {
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 	
+	/**
+	 * Get the list of a users {@link AnalysisSubmission}s
+	 * 
+	 * @param criterias
+	 *            {@link DatatablesCriterias} to filter or sort results
+	 * @param principal
+	 *            Logged in user
+	 * @param locale
+	 *            User's locale
+	 * @return {@link DatatablesResponse} containing
+	 *         {@link AnalysisTableResponse} objects
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the requested workflow doesn't exist
+	 * @throws NoPercentageCompleteException
+	 *             If a percentage complete cannot be calculated
+	 * @throws EntityNotFoundException
+	 *             If the submission cannot be found
+	 * @throws ExecutionManagerException
+	 *             If the submission cannot be read properly
+	 */
 	@RequestMapping("/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForUser(@DatatablesParams DatatablesCriterias criterias, Principal principal,
-			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException,
-			EntityNotFoundException, ExecutionManagerException {
+	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForUser(
+			@DatatablesParams DatatablesCriterias criterias, Principal principal, Locale locale)
+			throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
+			ExecutionManagerException {
 		User principalUser = userService.getUserByUsername(principal.getName());
-		
+
 		int currentPage = DatatablesUtils.getCurrentPage(criterias);
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 		String searchString = criterias.getSearch();
@@ -391,6 +430,10 @@ public class AnalysisController {
 		return viewName;
 	}
 	
+	/**
+	 * Class holding the information to send to the client to display
+	 * {@link AnalysisSubmission}s
+	 */
 	public class AnalysisTableResponse {
 		private Long id;
 		private String name;
@@ -402,9 +445,10 @@ public class AnalysisController {
 		private String percentComplete;
 
 		public AnalysisTableResponse(AnalysisSubmission submission, Locale locale)
-				throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException, ExecutionManagerException {
+				throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
+				ExecutionManagerException {
 			this.submission = submission;
-			
+
 			this.id = submission.getId();
 			this.name = submission.getName();
 			this.submitter = submission.getSubmitter();
@@ -418,17 +462,17 @@ public class AnalysisController {
 			// get the analysis state message
 			String analysisState = submission.getAnalysisState().toString();
 			this.analysisState = messageSource.getMessage("analysis.state." + analysisState, null, locale);
-			
-			//get duration
+
+			// get duration
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 				Analysis analysis = submission.getAnalysis();
 				long dur = submission.getCreatedDate().getTime() - analysis.getCreatedDate().getTime();
 				duration = String.valueOf(Math.abs(dur));
 			}
-			
+
 			if (!submission.getAnalysisState().equals(AnalysisState.ERROR)) {
-				float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
-						submission.getId());
+				float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission
+						.getId());
 				this.percentComplete = Float.toString(percentComplete);
 			}
 		}
@@ -448,16 +492,19 @@ public class AnalysisController {
 		public String getDuration() {
 			return duration;
 		}
-		
+
 		public Long getId() {
 			return id;
 		}
+
 		public String getName() {
 			return name;
 		}
+
 		public User getSubmitter() {
 			return submitter;
-		}		
+		}
+
 		public String getPercentComplete() {
 			return percentComplete;
 		}
