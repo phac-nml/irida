@@ -58,8 +58,6 @@ public class SlashFilter implements Filter {
 	 */
 	private static class SlashReplacingHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
-		private static final Logger logger = LoggerFactory.getLogger(SlashReplacingHttpServletRequestWrapper.class);
-
 		private final String cachedRequestURI;
 		private final String cachedServletPath;
 
