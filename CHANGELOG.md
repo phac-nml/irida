@@ -3,6 +3,7 @@ Changes
 
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
+* [UI]: Fixed a bug where users would have permission to view a project page, but not view a sample page if the sample is attached to multiple projects.
 * [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
 * [UI]: Ignore the `__workflow_invocation_uuid__` parameter from Galaxy when importing execution provenance from Galaxy.
 * [UI]: Password reset e-mails now include your username.
