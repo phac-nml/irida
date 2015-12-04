@@ -9,6 +9,13 @@
         margin-left: 20px;
         }
     </style>
+	<script th:inline="javascript">
+		var PAGE = {
+			lang: {
+				tokenValidity: /*[[${given_tokenValidity}]]*/ 4800
+			}
+		};
+	</script>
 </head>
 <body>
 <main layout:fragment="page" ddl:bundle-includes="client_edit">

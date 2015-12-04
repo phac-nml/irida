@@ -145,7 +145,7 @@
     }
   }
 
-  angular.module('samples.new', [])
+  angular.module('samples.new', ["ngMessages"])
     .factory('SampleService', ['$http', SampleService])
     .directive('select2', ['$timeout', select2])
     .directive('serverValidated',[serverValidated])

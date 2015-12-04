@@ -8,7 +8,19 @@ ddl:bundle-includes="project-members">
     <link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
           href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
 
-    <script>window.dependencies=["irida.project.members"]</script>
+    <script th:inline="javascript">
+        var PAGE = {
+            langs: {
+                addMember: {
+                    error: /*[[#{project.members.add.error}]]*/ "An error occurred when adding the User to the Project."
+                }
+            },
+            urls: {
+                addMember: /*[[@{/projects/{id}/members(id=${project.getId()})}]]*/ '/projects/1/members'
+            }
+        };
+        window.dependencies = ["irida.project.members"]
+    </script>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-members" ng-controller="MembersController as membersCtrl">
@@ -81,19 +93,6 @@ ddl:bundle-includes="project-members">
             <button class="btn btn-default" type="button" ng-click="modalCtrl.cancel()">Cancel</button>
             <button id="submitAddMember" class="btn btn-primary" type="button" ng-click="modalCtrl.addMember()">OK</button>
         </div>
-    </script>
-
-    <script th:inline="javascript">
-        var PAGE = {
-            langs: {
-                addMember: {
-                    error: /*[[#{project.members.add.error}]]*/ "An error occurred when adding the User to the Project."
-                }
-            },
-            urls: {
-                addMember: /*[[@{/projects/{id}/members(id=${project.getId()})}]]*/ '/projects/1/members'
-            }
-        };
     </script>
 
 <script th:inline="javascript">

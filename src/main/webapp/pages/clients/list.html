@@ -4,9 +4,17 @@
       layout:decorator="clients/_base">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
+    <script th:inline="javascript">
+        var PAGE = {
+            urls: {
+                list: /*[[@{'/clients/ajax/list'}]]*/ '/clients/ajax/list',
+                clients: /*[[@{/clients/}]]*/ ''
+            }
+        };
+    </script>
 </head>
 <body>
-<main layout:fragment="page" ddl:bundle-includes="client_list">
+<main layout:fragment="page" ddl:bundle-includes="client_list" ddl:asset-css-excludes="jquery.datatables">
     <div class="col-md-12">
         <main role="main" property="mainContentOfPage">
             <h1 th:text="#{clients.title}">_Clients_</h1>
@@ -26,13 +34,5 @@
         </main>
     </div>
 </main>
-<script layout:fragment="scripts" th:inline="javascript">
-    var PAGE = {
-        urls: {
-            list: /*[[@{'/clients/ajax/list'}]]*/ '/clients/ajax/list',
-            clients: /*[[@{/clients/}]]*/ ''
-        }
-    };
-</script>
 </body>
 </html>

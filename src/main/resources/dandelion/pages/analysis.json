@@ -1,6 +1,18 @@
 {
-  "dependencies": [ "angular-router", "PhyloCanvas", "SubNavDirective" ],
+  "dependencies": [ "angular-ui-router", "PhyloCanvas", "SubNavDirective" ],
   "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/pages/analyses.css"
+      }
+    },
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/pages/sample_files.css"
+      }
+    },
     {
       "type": "js",
       "locations": {

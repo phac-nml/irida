@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-alpha7-SNAPSHOT</version>
+	<version>1.0.0-alpha7.1</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -349,6 +349,12 @@
 			<groupId>com.github.dandelion</groupId>
 			<artifactId>datatables-spring3</artifactId>
 			<version>${dandelion-spring3.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.github.dandelion</groupId>
+					<artifactId>dandelion-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.attoparser</groupId>
@@ -914,9 +920,9 @@
 		<thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
 		<thymeleaf-extras-data-attribute.version>1.3</thymeleaf-extras-data-attribute.version>
 		<thymeleaf-layout-dialect.version>1.3.1</thymeleaf-layout-dialect.version>
-		<dandelion-core.version>1.0.1</dandelion-core.version>
+		<dandelion-core.version>1.1.1-IRIDA</dandelion-core.version>
 		<dandelion-thymeleaf.version>1.1.1</dandelion-thymeleaf.version>
-		<dandelion-datatables.version>1.0.1</dandelion-datatables.version>
+		<dandelion-datatables.version>1.1.0</dandelion-datatables.version>
 		<dandelion-spring3.version>1.1.0</dandelion-spring3.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>

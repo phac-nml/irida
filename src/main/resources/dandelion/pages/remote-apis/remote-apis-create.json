@@ -1,0 +1,10 @@
+{
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/remote-apis/remote-apis-create.js"
+      }
+    }
+  ]
+}

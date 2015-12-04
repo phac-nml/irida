@@ -1,5 +1,5 @@
 {
-  "dependencies": ["select2", "qtip2"],
+  "dependencies": ["select2-bootstrap", "moment", "qtip2"],
   "assets": [
     {
       "type": "js",

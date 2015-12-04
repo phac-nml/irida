@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/_base" ddl:bundle-includes="project-samples">
+      layout:decorator="projects/_base">
 <head>
 	<title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
 	<script>window.dependencies = ['Samples'];</script>
@@ -21,6 +21,21 @@
 			filter: alpha(opacity=0);
 		}
 	</style>
+	<script th:inline="javascript">
+		var PAGE = {
+			urls: {
+				local: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
+				associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '',
+				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
+				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
+				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
+				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
+			},
+			i18n: {
+				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
+			}
+		};
+	</script>
 </head>
 <body>
 <aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
@@ -88,7 +103,7 @@
 		</div>
 	</div>
 </aside>
-<main layout:fragment="main" data:ng-init="${'projectId=' + project.getId()}">
+<main layout:fragment="main" data:ng-init="${'projectId=' + project.getId()}" ddl:bundle-includes="project-samples">
 	<div class="row">
 		<div class="col-md-12">
 			<h1 role="heading" th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
@@ -350,23 +365,5 @@
 		</div>
 	</div>
 </main>
-
-<th:block th:inline="javascript" layout:fragment="scripts">
-	<script>
-		var PAGE = {
-			urls: {
-				local: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
-				associated: /*[[@{/projects/{id}/associated/samples(id=${project.getId()})}]]*/ '',
-				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
-				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
-				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
-				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
-			},
-			i18n: {
-				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
-			}
-		};
-	</script>
-</th:block>
 </body>
 </html>

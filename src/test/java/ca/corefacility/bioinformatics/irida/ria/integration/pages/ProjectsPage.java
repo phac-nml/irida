@@ -72,7 +72,7 @@ public class ProjectsPage extends AbstractPage {
 
 	public void filterByName(String name) {
 		openFilters();
-		WebElement input = driver.findElement(By.id("nameFilter"));
+		WebElement input = waitForElementVisible(By.id("nameFilter"));
 		input.sendKeys(name);
 		submitFilter("nameFilterClear");
 	}
@@ -92,7 +92,6 @@ public class ProjectsPage extends AbstractPage {
 	private void submitFilter(String filterClearerId) {
 		driver.findElement(By.id("filterProjectsBtn")).click();
 		waitForElementInvisible(By.className("modal-header"));
-		waitForElementVisible(By.id(filterClearerId));
 	}
 
 	public void doSearch(String term) {

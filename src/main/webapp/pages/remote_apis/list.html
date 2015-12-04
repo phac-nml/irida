@@ -4,11 +4,21 @@
       layout:decorator="remote_apis/_base">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
-    href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css" />
+    <script th:inline="javascript">
+        var PAGE = {
+            urls: {
+                table: /*[[@{'/remote_api/ajax/list'}]]*/ '/remote_api/ajax/list',
+                linkBase: /*[[@{/remote_api/}]]*/ '/remote_api/'
+            },
+            lang: {
+                statusText: /*[[#{remoteapi.status.waiting}]]*/ "Waiting for response...",
+                connectText: /*[[#{remoteapi.status.connect.button}]]*/ 'Connect'
+            }
+        };
+    </script>
 </head>
 <body>
-<main layout:fragment="main">
+<main layout:fragment="main" ddl:bundle-includes="remote-apis-list" ddl:asset-css-excludes="jquery.datatables">
     <h1 th:text="#{remoteapi.title}">_Clients_</h1>
 
     <p th:text="#{remoteapi.status.description}">_Connect links on this page will redirect you to a remote IRIDA
@@ -28,75 +38,6 @@
     </table>
 </main>
 
-<th:block layout:fragment="scripts">
-
-    <script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
-            src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
-            src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function () {
-            $('#remoteapiTable').DataTable({
-                dom: "<'top'lf>rt<'bottom'ip><'clear'>",
-                processing: true,
-                serverSide: true,
-                deferRender: true,
-                ajax: /*[[@{'/remote_api/ajax/list'}]]*/ '/remote_api/ajax/list',
-                stateSave: true,
-                stateDuration: -1,
-                order: [[0, "desc"]],
-                columns: [
-                    {
-                        "data": "name",
-                        "render": function (data, type, row) {
-                            var urlbase = /*[[@{/remote_api/}]]*/ '/remote_api/';
-                            return '<a class="api-name" href="' + urlbase + row.id + '">' + data + '</a>';
-                        }
-                    },
-                    {
-                        "data": "createdDate"
-                    },
-                    {
-                        "sortable": false,
-                        "render": function (data, type, row) {
-                            var id = "status-" + row.id;
-                            var statusText = /*[[#{remoteapi.status.waiting}]]*/ "Waiting for response...";
-                            var span = "<div data-api-id='" + row.id + "' class='connection-status' id=" + id + ">" + statusText + "</div>";
-                            return span;
-                        }
-                    },
-                    {
-                        "sortable": false,
-                        render: function (data, type, row) {
-                            var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
-                            var id = "connect-button-" + row.id;
-
-                            var connectText = /*[[#{remoteapi.status.connect.button}]]*/ 'Connect';
-
-                            var button = "<button id='" + id + "' class='oauth-connect-link btn btn-default btn-xs hidden' data-api-id='" + row.id + "'>" + connectText + "</a>";
-                            return button;
-                        }
-                    }
-
-                ],
-                drawCallback: function (row, data, dataIndex) {
-                    $(".connection-status").each(function () {
-                        var resultDiv = "#" + $(this).attr("id");
-                        var apiId = $(this).data("api-id");
-                        var buttonId = "#connect-button-" + apiId;
-
-                        getApiStatus(apiId, resultDiv, buttonId, null);
-                    });
-
-                }
-
-            });
-        });
-
-        /*]]>*/
-    </script>
-    <script th:replace="remote_apis/remote_api_connect"></script>
-</th:block>
+<script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
 </body>
 </html>
