@@ -3,9 +3,16 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page"
       ddl:bundle-includes="analyses-dev"
-      ddl:asset-css-excludes="datatables">
+      ddl:asset-css-excludes="jquery.datatables">
 <head>
     <title>_Analyses_</title>
+    <script th:inline="javascript">
+  		var PAGE = {
+  			"URLS": {
+  				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
+  			}
+  		};
+  	</script>
 </head>
 <body>
 <div layout:fragment="page">
@@ -47,7 +54,7 @@
 </div>
 
 
-<th:block layout:fragment="page-scripts">
+<th:block layout:fragment="scripts">
   <div class="modal fade" id="filterModal" role="dialog" aria-labelledby="#filterTitle">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -88,13 +95,6 @@
 			</div>
 		</div>
 	</div>
-  <script th:inline="javascript">
-		var PAGE = {
-			"URLS": {
-				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
-			}
-		};
-	</script>
 </th:block>
 </body>
 </html>
