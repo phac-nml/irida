@@ -29,6 +29,9 @@
 			<column name="namespace" type="varchar(255)" />
 			<column name="release_date" type="date" />
 			<column name="directory_path" type="varchar(255)" />
+			<column name="organization" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 
 		<createTable tableName="ncbi_export_biosample">

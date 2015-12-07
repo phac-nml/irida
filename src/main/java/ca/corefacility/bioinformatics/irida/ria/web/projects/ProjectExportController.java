@@ -197,7 +197,8 @@ public class ProjectExportController {
 		}
 
 		NcbiExportSubmission ncbiExportSubmission = new NcbiExportSubmission(project, submitter,
-				submission.getBioProject(), submission.getNamespace(), submission.getReleaseDate(), bioSampleFiles);
+				submission.getBioProject(), submission.getOrganization(), submission.getNamespace(),
+				submission.getReleaseDate(), bioSampleFiles);
 
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 
@@ -278,6 +279,9 @@ public class ProjectExportController {
 		@JsonProperty
 		String namespace;
 
+		@JsonProperty
+		String organization;
+
 		@JsonProperty("release_date")
 		Date releaseDate;
 
@@ -301,6 +305,10 @@ public class ProjectExportController {
 
 		public Date getReleaseDate() {
 			return releaseDate;
+		}
+
+		public String getOrganization() {
+			return organization;
 		}
 
 	}
