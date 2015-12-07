@@ -3,6 +3,7 @@ Changes
 
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
+* [Developer]: Fix an issue where having multiple forward slashes in a URI would result in part of the URI being duplicated in links generated as part of the response.
 * [UI]: Fixed a bug where users would have permission to view a project page, but not view a sample page if the sample is attached to multiple projects.
 * [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
 * [UI]: Ignore the `__workflow_invocation_uuid__` parameter from Galaxy when importing execution provenance from Galaxy.
