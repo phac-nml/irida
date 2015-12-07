@@ -5,13 +5,42 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<changeSet id="schema-inconsistencies" author="fbristow">
+	
+	<changeSet id="schema-inconsistencies-part-revisions-index-liquibase" author="fbristow">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<indexExists tableName="Revisions" indexName="FK_REVISION_CREATED_BY" />
+		</preConditions>
 		<dropIndex tableName="Revisions" indexName="FK_REVISION_CREATED_BY" />
-		<dropIndex tableName="Revisions" indexName="FK_REVISIONS_CLIENT_DETAILS" />
-
+	</changeSet>
+	<changeSet id="schema-inconsistencies-part-revisions-index-hibernate" author="fbristow">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<indexExists tableName="Revisions" indexName="FK_9h58753k8cr3e19i4buy9dboc" />
+		</preConditions>
+		<dropIndex tableName="Revisions" indexName="FK_9h58753k8cr3e19i4buy9dboc" />
+	</changeSet>
+	
+	<changeSet id="schema-inconsistencies-part-miseq-run-aud-fk" author="fbristow">
+		<!-- has to be run before we can drop the index on this table. -->
 		<dropForeignKeyConstraint baseTableName="miseq_run_AUD"
 			constraintName="FK_MISEQ_RUN_REVISION" />
-		<dropIndex tableName="miseq_run_AUD" indexName="FK_MISEQ_RUN_REVISION" />
+	</changeSet>
+	
+	<changeSet id="schema-inconsistencies-part-miseq-run-aud-liquibase" author="fbristow">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<indexExists tableName="miseq_run_AUD" indexName="FK_MISEQ_RUN_REVISION" />
+		</preConditions>
+		<dropIndex tableName="miseq_run_AUD" indexName="FK_MISEQ_RUN_REVISION" />	
+	</changeSet>
+	<changeSet id="schema-inconsistencies-part-miseq-run-aud-hibernate" author="fbristow">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<indexExists tableName="miseq_run_AUD" indexName="FK_oxvcne374i54prd0c89mud85b" />
+		</preConditions>
+		<dropIndex tableName="miseq_run_AUD" indexName="FK_oxvcne374i54prd0c89mud85b" />	
+	</changeSet>
+
+	<changeSet id="schema-inconsistencies" author="fbristow">
+		<dropIndex tableName="Revisions" indexName="FK_REVISIONS_CLIENT_DETAILS" />
+
 		<addForeignKeyConstraint constraintName="FK_MISEQ_RUN_REVISION"
 			referencedTableName="sequencing_run_AUD" baseColumnNames="id,REV"
 			baseTableName="miseq_run_AUD" referencedColumnNames="id,REV" />
