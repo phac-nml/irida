@@ -1,14 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
  */
@@ -24,12 +25,13 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageSetUp() {
 		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
-		
-		//page.filterByName("submission");
-		
+
+		page.filterByName("submission");
+
 		assertEquals("Should be 6 analyses displayed on the page after filtering by name", 6,
 				page.getNumberOfAnalyses());
-		assertEquals("Should be 2 download buttons displayed, one for each completed analysis", 2, page.getNumberOfDownloadBtns());
+		assertEquals("Should be 2 download buttons displayed, one for each completed analysis", 2,
+				page.getNumberOfDownloadBtns());
 
 		assertEquals("Should display progress bars with percent complete for everything except error state", 6,
 				page.getNumberOfProgressBars());
@@ -42,14 +44,14 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
 
-		//page.filterByState("New");
+		page.filterByState("New");
 		assertEquals("Should be 1 analysis in the state of 'NEW'", 1, page.getNumberOfAnalyses());
 
-		//page.filterByState("Completed");
+		page.filterByState("Completed");
 		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
 
-		//page.filterByState("Prepared");
-		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessageDisplayed());
+		page.filterByState("Prepared");
+		assertEquals("Should be 0 analyses prepared'", 0, page.getNumberOfAnalyses());
 
 		// Clear
 		page.clearFilter();
@@ -57,7 +59,7 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Clear
 		page.clearFilter();
-		//page.filterByType("SNVPhyl Phylogenomics Pipeline");
+		page.filterByType("SNVPhyl Phylogenomics Pipeline");
 		assertEquals("Should be 6 analyses aftering filtering by type", 6, page.getNumberOfAnalyses());
 	}
 }
