@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.web.filter;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -40,11 +42,26 @@ public class SlashFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		final HttpServletRequest servletRequest = (HttpServletRequest) request;
-		if (servletRequest.getRequestURI().contains("//")) {
-			final String redirectURI = servletRequest.getRequestURI().replace("/{2,}", "/");
+		// in test (but not with curl!), the request URI was coming through like
+		// "/api%2F%2Fprojects/5/samples/1"
+		// and I expect that this was also true for the remote project stuff.
+		// Spring routed the URLs correctly as though they were decoded, but of
+		// course failed to render valid links, so decode the URI first, then
+		// check if there's doubled up slashes.
+		final String decodedUri = URLDecoder.decode(servletRequest.getRequestURI(), "UTF-8");
+		final boolean containsSlashes = decodedUri.contains("//");
+		final boolean isRequestRequest = servletRequest.getDispatcherType().equals(DispatcherType.REQUEST);
+
+		logger.trace("Request URI is: [" + decodedUri + "]");
+		if (containsSlashes && isRequestRequest) {
+
+			final String redirectURI = decodedUri.replaceAll("/{2,}", "/");
+			logger.trace("Handled redirect URI is: " + redirectURI);
 			request.getRequestDispatcher(redirectURI).forward(request, response);
 		} else {
-			chain.doFilter(request, response);			
+			logger.trace("Not handling double-slash request because request URI doesn't contain double slashes: ["
+					+ containsSlashes + "] or is not request request: [" + isRequestRequest + "]");
+			chain.doFilter(request, response);
 		}
 	}
 
