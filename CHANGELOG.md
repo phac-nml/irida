@@ -7,6 +7,7 @@ Changes
 * [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
 * [UI]: Ignore the `__workflow_invocation_uuid__` parameter from Galaxy when importing execution provenance from Galaxy.
 * [UI]: Password reset e-mails now include your username.
+* [UI]: Analysis list page reworked to use Datatables.  Now does server side paging for performance increases.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
