@@ -90,7 +90,6 @@
 		<!-- a big song and dance to get rid of the AUTO_INCREMENT on the id field of miseq_run_AUD and client_details_AUD -->
 		<sql>
 			ALTER TABLE client_details_AUD MODIFY id bigint(20) not null;
-			ALTER TABLE host_AUD MODIFY id bigint(20) not null;
 		</sql>
 		<dropForeignKeyConstraint baseTableName="miseq_run_AUD" constraintName="FK_MISEQ_RUN_REVISION"/>
 		<sql>
