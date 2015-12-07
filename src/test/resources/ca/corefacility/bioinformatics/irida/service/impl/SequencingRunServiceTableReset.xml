@@ -5,7 +5,6 @@
 	<sequencing_run />
 	<miseq_run />
 	<sequencing_run_entity />
-	<host />
 	<sample />
 	
 	<analysis />
@@ -50,8 +49,6 @@
 	<project_user />
 	<sequencefile_sample />
 	<project_sample />
-	<logicalGroup />
-	<user_group />
 	<project_referencefile />
 
 	<project_event />
@@ -95,9 +92,6 @@
 	<sample_AUD />
 	<remote_api_AUD />
 	<remote_api_token_AUD />
-	<logicalGroup_AUD />
-	<user_group_AUD />
-	<host_AUD />
 	<client_details_scope_AUD />
 	<client_details_grant_types_AUD />
 	<client_details_resource_ids_AUD />
