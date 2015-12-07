@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -123,17 +122,4 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @return the user entity with the updated password.
 	 */
 	public User changePassword(Long userId, String password);
-
-	/**
-	 * Get the set of {@link User} that belong to a {@link Group}.
-	 * 
-	 * @param g
-	 *            the {@link Group} to get {@link User} relationships for.
-	 * @return the collection of {@link Join} types between {@link User} and the
-	 *         specified {@link Group}.
-	 * @throws EntityNotFoundException
-	 *             if the {@link Group} cannot be found.
-	 */
-	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException;
-
 }

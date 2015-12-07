@@ -99,6 +99,9 @@ public class ProjectMembersController {
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role for the user on the project
+	 * @param locale
+     *  		  the reported locale of the browser
+     * @return map for showing success message.
 	 */
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
