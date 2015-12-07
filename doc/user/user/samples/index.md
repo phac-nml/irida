@@ -16,7 +16,7 @@ Each [project](../project) in IRIDA may contain a collection of samples that cor
 Viewing samples in a project
 ----------------------------
 
-Start by [viewing the project details](../project/#viewing-project-details) of a project. The list of samples in the project is shown in the middle of the 
+Start by [viewing the project details](../project/#viewing-project-details) of a project. The list of samples in the project is shown in the middle of the
 project details screen:
 
 ![Project samples listing.](images/project-samples.png)
@@ -130,7 +130,7 @@ As projects become larger, it becomes unwieldy to select a large subset of sampl
 
 * Create a `.txt` file that contains the name of each sample you want to select on a new line.  You can either:
     - Use a text editor like Windows Notepad or TextEdit on Mac (note: when creating a new text document in TextEdit, press cmd + shift + t to change to the `.txt` format)
-    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file. 
+    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file.
 
 Example (`project_5_filter.txt`):
 
@@ -250,11 +250,12 @@ Once you've finished choosing the sample to merge into, click on the "Complete M
 Exporting samples
 -----------------
 
-The [pipelines](../pipelines) available in IRIDA may not be enough for the types of analysis that you want to run on your sequencing data. You can export your sample data from IRIDA in three different ways:
+The [pipelines](../pipelines) available in IRIDA may not be enough for the types of analysis that you want to run on your sequencing data. You can export your sample data from IRIDA in a number of different ways:
 
 1. [Downloading samples](#downloading-samples),
 2. [To the command-line](#command-line-export), or
 3. [Directly to Galaxy](#galaxy-export)
+4. [Upload to NCBI](#ncbi-upload)
 
 All export options require that you [select the samples for export](#selecting-samples) before you are able to export the samples.
 
@@ -294,10 +295,10 @@ Copy and paste the command into a terminal window and use the username and passw
 [user@waffles ~]$ ngsArchive.pl -p 4 -s 51
 Writing files to /home/user
 Enter username: user
-Enter password: 
+Enter password:
 Reading samples 1 from project 4
 Created 2 files for 1 samples in /home/user/Project
-[user@waffles ~]$ 
+[user@waffles ~]$
 ```
 
 The folder structure that will be created in the current working directory will match the structure present in IRIDA:
@@ -346,3 +347,40 @@ After you've entered your e-mail address and the name of the data library, click
 You can view a report of the exported samples by clicking on the name of the history item. You can find your data library by clicking on "Shared Data" at the top of Galaxy and clicking on "Data Libraries":
 
 ![Galaxy data libraries button.](images/galaxy-data-libraries-button.png)
+
+#### NCBI Upload
+
+IRIDA can assist in uploading sequence files to NCBI's [Sequence Read Archive](http://www.ncbi.nlm.nih.gov/Traces/sra/).  IRIDA requires that BioProjects and BioSamples be created before uploading, and will assign uploaded sequence files to the given BioProject and BioSample identifiers.  More information about the metadata which must be entered during the upload process can be found at [NCBI Submission Quick Start Guide](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Experiment_)
+
+To begin submitting sequence files, select which samples you want to upload from the project samples page, then click the Export and Upload to NCBI SRA button.
+
+![Upload NCBI samples button](images/ncbi-select-samples.png)
+
+You will be forwarded to a page where you must enter metadata about the uploaded files.  Start by entering information about the upload:
+
+* BioProject ID - BioProject to submit files to. This project must be created in NCBI prior to this submission.
+* Organization - Name of organization submitting these samples.
+* Identifier Namespace - Prefix to use for submission identifiers in NCBI.  This prefix will be used to assign upload identifiers in the SRA but may not be visible in the uploaded files.
+* Release Date - Submission will not be made public until after the chosen release date.
+
+![NCBI project metadata](images/ncbi-project-metadata.png)
+
+Next you must fill in information about the samples to be uploaded.  More descriptions about these fields can be found in [NCBI's SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47528/) ([Library Information](http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._library_descriptor_te/), [Sequencing Platform Description](http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._platform_descriptor_t/)).
+
+* BioSample ID - NCBI BioSample to add files to. This sample must be created in NCBI prior to this submission.
+* Library Name - The submitter's name for this library.
+* Library Strategy - Sequencing technique intended for this library.
+* Library Source - The type of source material that is being sequenced.
+* Library Construction Protocol - Free form text describing the protocol by which the sequencing library was constructed.
+* Instrument Model - The sequencing platform used to produce the data.
+* Library Selection - Whether any method was used to select for or against, enrich, or screen the material being sequenced.
+
+After entering this metadata you can select which files should be uploaded from each sample.
+
+![NCBI sample metadata](images/ncbi-sample-metadata.png)
+
+Click `Submit` when the information is complete.
+
+After submitting you will be redirected to a page showing the information you have entered for the upload and the status of the upload.  IRIDA will periodically check for new submissions to upload to NCBI and can only upload one submission at a time so there may be a delay in sending your data.  After NCBI has assigned an accession number to your upload it will be displayed on this page.
+
+![NCBI submission details](images/ncbi-submission-details.png)
