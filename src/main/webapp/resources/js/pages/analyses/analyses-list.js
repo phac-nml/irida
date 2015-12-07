@@ -41,7 +41,7 @@ var analysesTable = (function(tl){
           percent = 100;
         }
 
-        var data = data + "<div class='progress'><div class='progress-bar " + stateClass +"' role='progressbar' aria-valuenow='"+percent+"' aria-valuemin='0' aria-valuemax='100' style='width: "+percent+"%;'></div></div>";
+        var data = data + "<div class='progress analysis__state'><div class='progress-bar " + stateClass +"' role='progressbar' aria-valuenow='"+percent+"' aria-valuemin='0' aria-valuemax='100' style='width: "+percent+"%;'></div></div>";
         return data;
     }
 

@@ -17,26 +17,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  */
 public class AnalysesUserPage extends AbstractPage {
-	@FindBy(id = "filter-clear")
+	@FindBy(id = "clearFilterBtn")
 	private WebElement filterClear;
-
-	@FindBy(id = "filter-name")
-	private WebElement filterName;
-
-	@FindBy(id = "filter-state")
-	private WebElement filterState;
-
-	@FindBy(id = "filter-type")
-	private WebElement filterType;
-
-	@FindBy(id = "filter-submitter")
-	private WebElement filterSubmitter;
-
-	@FindBy(id = "filter-date-early")
-	private WebElement filterDateEarly;
-
-	@FindBy(id = "filter-date-late")
-	private WebElement filterDateLate;
 
 	@FindBy(className = "analysis__state")
 	private List<WebElement> analysesList;
@@ -68,6 +50,7 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForTime(100);
 	}
 
+	/*
 	public void filterByName(String name) {
 		filterName.clear();
 		filterName.sendKeys(name);
@@ -105,6 +88,7 @@ public class AnalysesUserPage extends AbstractPage {
 		filterDateLate.sendKeys(Keys.ENTER);
 		waitForTime(100);
 	}
+	*/
 
 	public int getNumberOfProgressBars() {
 		return progressBars.size();

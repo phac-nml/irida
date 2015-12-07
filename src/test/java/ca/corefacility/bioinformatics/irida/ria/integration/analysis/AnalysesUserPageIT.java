@@ -24,7 +24,9 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageSetUp() {
 		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
-		page.filterByName("submission");
+		
+		//page.filterByName("submission");
+		
 		assertEquals("Should be 6 analyses displayed on the page after filtering by name", 6,
 				page.getNumberOfAnalyses());
 		assertEquals("Should be 2 download buttons displayed, one for each completed analysis", 2, page.getNumberOfDownloadBtns());
@@ -40,31 +42,22 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
 
-		page.filterByState("New");
+		//page.filterByState("New");
 		assertEquals("Should be 1 analysis in the state of 'NEW'", 1, page.getNumberOfAnalyses());
 
-		page.filterByState("Completed");
+		//page.filterByState("Completed");
 		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
 
-		page.filterByState("Prepared");
+		//page.filterByState("Prepared");
 		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessageDisplayed());
 
 		// Clear
 		page.clearFilter();
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
 
-		page.filterByDateEarly("06 Nov 2013");
-		assertEquals("Should be 3 analyses after filtering by date earliest", 3, page.getNumberOfAnalyses());
-
 		// Clear
 		page.clearFilter();
-
-		page.filterByDateLate("06 Jan 2014");
-		assertEquals("Should be 7 analyses after filtering by date earliest", 7, page.getNumberOfAnalyses());
-
-		// Clear
-		page.clearFilter();
-		page.filterByType("SNVPhyl Phylogenomics Pipeline");
+		//page.filterByType("SNVPhyl Phylogenomics Pipeline");
 		assertEquals("Should be 6 analyses aftering filtering by type", 6, page.getNumberOfAnalyses());
 	}
 }
