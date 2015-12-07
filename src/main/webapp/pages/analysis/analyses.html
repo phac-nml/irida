@@ -5,7 +5,15 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title th:text="#{${admin} ? 'analyses.admin.page-title' : 'analyses.user.page-title'}">My Title Goes Here</title>
-	<script>window.dependencies = ['irida.analysis.user'];</script>
+	<script th:inline="javascript">
+		window.dependencies = ['irida.analysis.user'];
+		var PAGE = {
+			"URLS": {
+				"analyses": /*[[@{/analysis/ajax/list(all=${admin})}]]*/ "/analysis/ajax/list",
+				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
+			}
+		};
+	</script>
 	<style>
 		.progress {
 			height: 2px;
@@ -147,15 +155,5 @@
 		</div>
 	</div>
 </div>
-<th:block layout:fragment="page-scripts">
-	<script th:inline="javascript">
-		var PAGE = {
-			"URLS": {
-				"analyses": /*[[@{/analysis/ajax/list(all=${admin})}]]*/ "/analysis/ajax/list",
-				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
-			}
-		};
-	</script>
-</th:block>
 </body>
 </html>

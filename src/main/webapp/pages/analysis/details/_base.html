@@ -7,15 +7,24 @@
       transition: all 0.5s ease;
     }
   </style>
-  <script>window.dependencies = ['irida.analysis'];</script>
+  <script th:inline="javascript">
+    window.dependencies = ['irida.analysis'];
+    var PAGE = {
+      URLS: {
+        download: /*[[@{/analysis/ajax/download/}]]*/ '',
+        status: /*[[@{/analysis/ajax/status/{id}(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/status'
+      },
+      NEWICK: /*[[${newick}]]*/ ''
+    };
+  </script>
 </head>
 <body>
-
   <div layout:fragment="page" ng-app="irida.analysis"
        th:with="isCompleted=${#strings.equalsIgnoreCase(analysisSubmission.getAnalysisState().toString(), 'COMPLETED')},
         isError=${#strings.equalsIgnoreCase(analysisSubmission.getAnalysisState().toString(), 'ERROR')},
-        analysis=${analysisSubmission.getAnalysis()}" ng-controller="StateController as stateController">
-    <main class="col-md-9 col-md-push-3" layout:fragment="main" ddl:bundle-includes="analysis">
+        analysis=${analysisSubmission.getAnalysis()}" ng-controller="StateController as stateController"
+       ddl:bundle-includes="analysis">
+    <main class="col-md-9 col-md-push-3" layout:fragment="main">
 
     </main>
     <aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
@@ -76,20 +85,10 @@
       </div>
     </aside>
   </div>
-  <th:block layout:fragment="page-scripts">
+  <th:block layout:fragment="scripts">
     <th:block layout:fragment="previewScripts"></th:block>
 
     <th:block layout:fragment="pageScripts"></th:block>
-
-    <script th:inline="javascript">
-      var PAGE = {
-        URLS: {
-          download: /*[[@{/analysis/ajax/download/}]]*/ '',
-          status: /*[[@{/analysis/ajax/status/{id}(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/status'
-        },
-        NEWICK: /*[[${newick}]]*/ ''
-      };
-    </script>
   </th:block>
 </body>
 

@@ -165,8 +165,7 @@ public class SamplesControllerTest {
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
-		when(userService.getUsersForProject(project)).thenReturn(
-				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER))));
+		when(projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)).thenReturn(true);
 
 		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
 

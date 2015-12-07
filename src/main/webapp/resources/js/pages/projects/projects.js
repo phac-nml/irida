@@ -24,15 +24,17 @@ var projectsTable = (function (tl) {
 })(window.TL);
 
 (function ($) {
-  var $filterBtn = $('#filterProjectsBtn');
+  $(function () {
+    var $filterBtn = $('#filterProjectsBtn');
 
-  $filterBtn.on('click', function () {
-    oTable_projectsTable.ajax.reload();
-  });
+    $filterBtn.on('click', function () {
+      oTable_projectsTable.ajax.reload();
+    });
 
-  $('#filterForm').on('keydown', function (e) {
-    if(e.which === 13) {
-      $filterBtn.click();
-    }
+    $('#filterForm').on('keydown', function (e) {
+      if (e.which === 13) {
+        $filterBtn.click();
+      }
+    });
   });
 })(window.jQuery);

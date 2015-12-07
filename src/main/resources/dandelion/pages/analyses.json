@@ -1,5 +1,5 @@
 {
-  "dependencies" : ["ng-table"],
+  "dependencies" : ["moment", "ng-table"],
   "assets": [
     {
       "name": "analyses-css",

@@ -4,6 +4,20 @@
       layout:decorator="clients/_base">
 <head>
     <title th:text="#{client.details.title(${client.clientId})}">_USER PAGE_</title>
+    <script th:inline="javascript">
+        var PAGE = {
+            buttons: {
+                ok: /*[[#{form.btn.confim}]]*/ 'OK',
+                cancel: /*[[#{form.btn.cancel}]]*/ 'Cancel'
+            },
+            removeNoty: {
+                text: /*[[#{client.remove.confirm(${client.clientId})}]]*/ "Remove client?"
+            },
+            revokeNoty: {
+                text: /*[[#{client.revoke.confirm(${client.clientId})}]]*/ "Revoke tokens?"
+            }
+        };
+    </script>
 </head>
 <body>
 <main layout:fragment="page" ddl:bundle-includes="client_details">
@@ -123,19 +137,5 @@
            </form>
        </section>
 </main>
-<script layout:fragment="scripts">
-    var PAGE = {
-        buttons: {
-            ok: /*[[#{form.btn.confim}]]*/ 'OK',
-            cancel: /*[[#{form.btn.cancel}]]*/ 'Cancel'
-        },
-        removeNoty: {
-            text: /*[[#{client.remove.confirm(${client.clientId})}]]*/ "Remove client?"
-        },
-        revokeNoty: {
-            text: /*[[#{client.revoke.confirm(${client.clientId})}]]*/ "Revoke tokens?"
-        }
-    };
-</script>
 </body>
 </html>
