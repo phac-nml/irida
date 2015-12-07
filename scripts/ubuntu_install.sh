@@ -31,7 +31,7 @@ if [ ! -e bin/chromedriver ] ; then
     mkdir -p bin
     pushd bin > /dev/null
     # Downlod chromedriver
-    wget 'http://chromedriver.storage.googleapis.com/2.10/chromedriver_linux64.zip'
+    wget 'http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip'
     unzip chromedriver_linux64.zip
     mv chromedriver ~/.irida-client/bin/
     rm -r chromedriver_linux64.zip
