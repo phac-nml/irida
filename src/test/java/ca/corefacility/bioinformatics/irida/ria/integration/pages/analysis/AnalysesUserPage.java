@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.openqa.selenium.Keys;
@@ -50,19 +51,39 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForTime(100);
 	}
 
-	/*
+	
 	public void filterByName(String name) {
+		//open filtering model
+		WebElement openModal = waitForElementToBeClickable(driver.findElement(By.id("openFilterModal")));
+		openModal.click();
+		
+		WebElement filterName = waitForElementVisible(By.id("nameFilter"));
+		
 		filterName.clear();
 		filterName.sendKeys(name);
+		
+		driver.findElement(By.id("filterAnalysesBtn")).click();
+		
 		waitForTime(400);
 	}
 
+	
 	public void filterByState(String text) {
+		//open filtering model
+		WebElement openModal = waitForElementToBeClickable(driver.findElement(By.id("openFilterModal")));
+		openModal.click();
+		
+		WebElement filterState = waitForElementVisible(By.id("analysisStateFilter"));
+		
 		Select state = new Select(filterState);
 		state.selectByVisibleText(text);
-		waitForTime(100);
+		
+		driver.findElement(By.id("filterAnalysesBtn")).click();
+		
+		waitForTime(400);
 	}
 
+	/*
 	public void filterByType(String text) {
 		Select type = new Select(filterType);
 		type.selectByVisibleText(text);
@@ -110,9 +131,5 @@ public class AnalysesUserPage extends AbstractPage {
 			}
 		}
 		return count;
-	}
-
-	public boolean isNoAnalysesMessageDisplayed() {
-		return driver.findElement(By.id("no-analyses")).isDisplayed();
 	}
 }

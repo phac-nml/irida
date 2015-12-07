@@ -37,8 +37,7 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 	public void testAdvancedFilters() {
 		AnalysesUserPage page = AnalysesUserPage.initializeAdminPage(driver());
 		assertEquals("Should be 9 analyses displayed on the page", 9, page.getNumberOfAnalyses());
-
-		/*
+		
 		page.filterByState("New");
 		assertEquals("Should be 1 analysis in the state of 'NEW'", 1, page.getNumberOfAnalyses());
 
@@ -46,8 +45,7 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
 
 		page.filterByState("Prepared");
-		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessageDisplayed());
-		*/
+		assertEquals("Should be 0 analysis in the state of 'PREPARED'", 0, page.getNumberOfAnalyses());
 
 		// Clear
 		page.clearFilter();
