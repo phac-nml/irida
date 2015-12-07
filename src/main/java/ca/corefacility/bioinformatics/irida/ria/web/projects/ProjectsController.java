@@ -363,6 +363,8 @@ public class ProjectsController {
 	/**
 	 * User mapping to get a list of all project they are on.
 	 *
+	 * @param criterias
+	 * 		the search criteria to apply
 	 * @param principal
 	 * 		{@link Principal} currently logged in user.
 	 *
@@ -408,6 +410,8 @@ public class ProjectsController {
 	/**
 	 * Admin mapping to get a list of all project they are on.
 	 *
+	 * @param criterias
+	 * 			the search criteria to apply
 	 * @return {@link List} of project {@link Map}
 	 */
 	@RequestMapping("/projects/admin/ajax/list")

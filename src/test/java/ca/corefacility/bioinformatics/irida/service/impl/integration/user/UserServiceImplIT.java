@@ -49,12 +49,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.user.GroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -73,18 +71,6 @@ public class UserServiceImplIT {
 	private ProjectService projectService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private GroupService groupService;
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetUsersForGroup() {
-		Group g = groupService.read(1L);
-		User u = userService.read(3L);
-		Collection<Join<User, Group>> users = userService.getUsersForGroup(g);
-		assertEquals("Wrong number of users for group.", 1, users.size());
-		assertEquals("Wrong user in group.", u, users.iterator().next().getSubject());
-	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "MANAGER")

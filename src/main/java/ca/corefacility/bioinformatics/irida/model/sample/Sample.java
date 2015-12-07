@@ -12,9 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,8 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.user.Organization;
-import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -102,10 +98,6 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 	 */
 	private String geographicLocationName;
 
-	@NotNull(message = "{sample.host.notnull}", groups = NCBISubmission.class)
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Host host = new Host();
-
 	/**
 	 * Describes the physical, environmental and/or local geographical source of
 	 * the biological sample from which the sample was derived.
@@ -121,83 +113,11 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 
 	private String longitude;
 
-	/**
-	 * Name of source institute and unique culture identifier. See the
-	 * description for the proper format and list of allowed institutes,
-	 * http://www.insdc.org/controlled-vocabulary-culturecollection-qualifier
-	 */
-	private String cultureCollection;
-
-	/**
-	 * observed genotype
-	 */
-	@Lob
-	private String genotype;
-
-	/**
-	 * Number of passages and passage method
-	 */
-	@Lob
-	private String passageHistory;
-
-	/**
-	 * Some bacterial specific pathotypes (example Eschericia coli - STEC, UPEC)
-	 */
-	private String pathotype;
-
-	/**
-	 * Taxonomy below subspecies; a variety (in bacteria, fungi or virus)
-	 * usually based on its antigenic properties. Same as serovar and serogroup.
-	 * e.g. serotype="H1N1" in Influenza A virus CY098518.
-	 */
-	private String serotype;
-
-	/**
-	 * Taxonomy below subspecies; a variety (in bacteria, fungi or virus)
-	 * usually based on its antigenic properties. Same as serovar and serotype.
-	 * Sometimes used as species identifier in bacteria with shaky taxonomy,
-	 * e.g. Leptospira, serovar saopaolo S76607 (65357 in Entrez).
-	 */
-	private String serovar;
-
-	/**
-	 * Identifier for the physical specimen. Use format:
-	 * "[<institution-code>:[<collection-code>:]]<specimen_id>", eg,
-	 * "UAM:Mamm:52179". Intended as a reference to the physical specimen that
-	 * remains after it was analyzed. If the specimen was destroyed in the
-	 * process of analysis, electronic images (e-vouchers) are an adequate
-	 * substitute for a physical voucher specimen. Ideally the specimens will be
-	 * deposited in a curated museum, herbarium, or frozen tissue collection,
-	 * but often they will remain in a personal or laboratory collection for
-	 * some time before they are deposited in a curated collection. There are
-	 * three forms of specimen_voucher qualifiers. If the text of the qualifier
-	 * includes one or more colons it is a 'structured voucher'. Structured
-	 * vouchers include institution-codes (and optional collection-codes) taken
-	 * from a controlled vocabulary maintained by the INSDC that denotes the
-	 * museum or herbarium collection where the specimen resides, please visit:
-	 * http://www.insdc.org/controlled-vocabulary-specimenvoucher-qualifier.
-	 */
-	private String specimenVoucher;
-
-	/**
-	 * Taxonomy below subspecies; sometimes used in viruses to denote subgroups
-	 * taken from a single isolate.
-	 */
-	private String subgroup;
-
-	/**
-	 * Used as classifier in viruses (e.g. HIV type 1, Group M, Subtype A).
-	 */
-	private String subtype;
-
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<ProjectSampleJoin> projects;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleSequenceFileJoin> sequenceFiles;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	private Organization organization;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE, mappedBy="sample")
 	@NotAudited
@@ -228,17 +148,8 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 					&& Objects.equals(organism, sample.organism) && Objects.equals(isolate, sample.isolate)
 					&& Objects.equals(strain, sample.strain) && Objects.equals(collectedBy, sample.collectedBy)
 					&& Objects.equals(collectionDate, sample.collectionDate)
-					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
-					&& Objects.equals(host, sample.host) && Objects.equals(isolationSource, sample.isolationSource)
-					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude)
-					&& Objects.equals(cultureCollection, sample.cultureCollection)
-					&& Objects.equals(genotype, sample.genotype)
-					&& Objects.equals(passageHistory, sample.passageHistory)
-					&& Objects.equals(pathotype, sample.pathotype) && Objects.equals(serotype, sample.serotype)
-					&& Objects.equals(serovar, sample.serovar)
-					&& Objects.equals(specimenVoucher, sample.specimenVoucher)
-					&& Objects.equals(subgroup, sample.subgroup) && Objects.equals(subtype, sample.subtype)
-					&& Objects.equals(organization, sample.organization);
+					&& Objects.equals(geographicLocationName, sample.geographicLocationName)&&  Objects.equals(isolationSource, sample.isolationSource)
+					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
 		}
 
 		return false;
@@ -247,9 +158,8 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism,
-				isolate, strain, collectedBy, collectionDate, geographicLocationName, host, isolationSource, latitude,
-				longitude, cultureCollection, genotype, passageHistory, pathotype, serotype, serovar, specimenVoucher,
-				subgroup, subtype, organization);
+				isolate, strain, collectedBy, collectionDate, geographicLocationName, isolationSource, latitude,
+				longitude);
 	}
 
 	@Override
@@ -299,14 +209,6 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	public Host getHost() {
-		return host;
-	}
-
-	public void setHost(Host host) {
-		this.host = host;
 	}
 
 	public String getStrain() {
@@ -379,85 +281,5 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 
 	public void setIsolationSource(String isolationSource) {
 		this.isolationSource = isolationSource;
-	}
-
-	public String getCultureCollection() {
-		return cultureCollection;
-	}
-
-	public void setCultureCollection(String cultureCollection) {
-		this.cultureCollection = cultureCollection;
-	}
-
-	public String getGenotype() {
-		return genotype;
-	}
-
-	public void setGenotype(String genotype) {
-		this.genotype = genotype;
-	}
-
-	public String getPassageHistory() {
-		return passageHistory;
-	}
-
-	public void setPassageHistory(String passageHistory) {
-		this.passageHistory = passageHistory;
-	}
-
-	public String getPathotype() {
-		return pathotype;
-	}
-
-	public void setPathotype(String pathotype) {
-		this.pathotype = pathotype;
-	}
-
-	public String getSerotype() {
-		return serotype;
-	}
-
-	public void setSerotype(String serotype) {
-		this.serotype = serotype;
-	}
-
-	public String getSerovar() {
-		return serovar;
-	}
-
-	public void setSerovar(String serovar) {
-		this.serovar = serovar;
-	}
-
-	public String getSpecimenVoucher() {
-		return specimenVoucher;
-	}
-
-	public void setSpecimenVoucher(String specimenVoucher) {
-		this.specimenVoucher = specimenVoucher;
-	}
-
-	public String getSubgroup() {
-		return subgroup;
-	}
-
-	public void setSubgroup(String subgroup) {
-		this.subgroup = subgroup;
-	}
-
-	public String getSubtype() {
-		return subtype;
-	}
-
-	public void setSubtype(String subtype) {
-		this.subtype = subtype;
-	}
-
-	public Organization getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(Organization organization) {
-		this.organization = organization;
 	}
 }

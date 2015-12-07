@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.user.UserServiceImpl;
@@ -53,7 +52,6 @@ public class UserServiceImplTest {
 	private ProjectUserJoinRepository pujRepository;
 	private Validator validator;
 	private PasswordEncoder passwordEncoder;
-	private UserGroupJoinRepository userGroupJoinRepository;
 
 	@Before
 	public void setUp() {
@@ -61,8 +59,7 @@ public class UserServiceImplTest {
 		userRepository = mock(UserRepository.class);
 		passwordEncoder = mock(PasswordEncoder.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
-		userGroupJoinRepository = mock(UserGroupJoinRepository.class);
-		userService = new UserServiceImpl(userRepository, pujRepository, userGroupJoinRepository, passwordEncoder,
+		userService = new UserServiceImpl(userRepository, pujRepository, passwordEncoder,
 				validator);
 	}
 
