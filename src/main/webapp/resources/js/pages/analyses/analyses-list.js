@@ -1,5 +1,5 @@
 /*
- * Used by the Investigations Listing Datatable (analyses.html)
+ * Used by the Analyses Listing Datatable (analyses.html)
  */
 var analysesTable = (function(tl, moment){
     /**
