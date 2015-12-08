@@ -408,15 +408,6 @@ public class AnalysisSubmissionServiceImplIT {
 	}
 
 	/**
-	 * Tests searching as a regular user and being dened.
-	 */
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "aaron", roles = "USER")
-	public void testSearchRegularUserDenied() {
-		analysisSubmissionService.search(new AnalysisSubmissionTestSpecification(), 1, 1, Direction.ASC, "createdDate");
-	}
-
-	/**
 	 * Tests searching as an admin user.
 	 */
 	@Test
