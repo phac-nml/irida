@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
 import java.util.List;
 
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,26 +16,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  */
 public class AnalysesUserPage extends AbstractPage {
-	@FindBy(id = "filter-clear")
+	@FindBy(id = "clearFilterBtn")
 	private WebElement filterClear;
-
-	@FindBy(id = "filter-name")
-	private WebElement filterName;
-
-	@FindBy(id = "filter-state")
-	private WebElement filterState;
-
-	@FindBy(id = "filter-type")
-	private WebElement filterType;
-
-	@FindBy(id = "filter-submitter")
-	private WebElement filterSubmitter;
-
-	@FindBy(id = "filter-date-early")
-	private WebElement filterDateEarly;
-
-	@FindBy(id = "filter-date-late")
-	private WebElement filterDateLate;
 
 	@FindBy(className = "analysis__state")
 	private List<WebElement> analysesList;
@@ -69,41 +50,46 @@ public class AnalysesUserPage extends AbstractPage {
 	}
 
 	public void filterByName(String name) {
+		// open filtering model
+		WebElement openModal = waitForElementToBeClickable(driver.findElement(By.id("openFilterModal")));
+		openModal.click();
+
+		WebElement filterName = waitForElementVisible(By.id("nameFilter"));
+
 		filterName.clear();
 		filterName.sendKeys(name);
+
+		driver.findElement(By.id("filterAnalysesBtn")).click();
+
 		waitForTime(400);
 	}
 
 	public void filterByState(String text) {
+		// open filtering model
+		WebElement openModal = waitForElementToBeClickable(driver.findElement(By.id("openFilterModal")));
+		openModal.click();
+
+		WebElement filterState = waitForElementVisible(By.id("analysisStateFilter"));
+
 		Select state = new Select(filterState);
 		state.selectByVisibleText(text);
-		waitForTime(100);
-	}
 
-	public void filterByType(String text) {
-		Select type = new Select(filterType);
-		type.selectByVisibleText(text);
-		waitForTime(100);
-	}
+		driver.findElement(By.id("filterAnalysesBtn")).click();
 
-	public void filterBySubmitter(String name) {
-		filterSubmitter.clear();
-		filterSubmitter.sendKeys(name);
 		waitForTime(400);
 	}
 
-	public void filterByDateEarly(String date) {
-		filterDateEarly.clear();
-		filterDateEarly.sendKeys(date);
-		filterDateEarly.sendKeys(Keys.ENTER);
-		waitForTime(100);
-	}
+	public void filterByType(String text) {
+		WebElement openModal = waitForElementToBeClickable(driver.findElement(By.id("openFilterModal")));
+		openModal.click();
 
-	public void filterByDateLate(String date) {
-		filterDateLate.clear();
-		filterDateLate.sendKeys(date);
-		filterDateLate.sendKeys(Keys.ENTER);
-		waitForTime(100);
+		WebElement filterType = waitForElementVisible(By.id("workflowIdFilter"));
+		Select type = new Select(filterType);
+		type.selectByVisibleText(text);
+
+		driver.findElement(By.id("filterAnalysesBtn")).click();
+
+		waitForTime(400);
 	}
 
 	public int getNumberOfProgressBars() {
@@ -126,9 +112,5 @@ public class AnalysesUserPage extends AbstractPage {
 			}
 		}
 		return count;
-	}
-
-	public boolean isNoAnalysesMessageDisplayed() {
-		return driver.findElement(By.id("no-analyses")).isDisplayed();
 	}
 }
