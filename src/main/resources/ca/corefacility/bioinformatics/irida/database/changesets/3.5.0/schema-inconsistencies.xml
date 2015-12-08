@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	
+	<changeSet id="schema-inconsistencies-part-revisions-index-liquibase" author="fbristow">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<indexExists tableName="Revisions" indexName="FK_REVISION_CREATED_BY" />
+		</preConditions>
+		<dropIndex tableName="Revisions" indexName="FK_REVISION_CREATED_BY" />
+	</changeSet>
+	<changeSet id="schema-inconsistencies-part-revisions-index-hibernate" author="fbristow">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<indexExists tableName="Revisions" indexName="FK_9h58753k8cr3e19i4buy9dboc" />
+		</preConditions>
+		<dropIndex tableName="Revisions" indexName="FK_9h58753k8cr3e19i4buy9dboc" />
+	</changeSet>
+	
+	<changeSet id="schema-inconsistencies-part-miseq-run-aud-fk" author="fbristow">
+		<!-- has to be run before we can drop the index on this table. -->
+		<dropForeignKeyConstraint baseTableName="miseq_run_AUD"
+			constraintName="FK_MISEQ_RUN_REVISION" />
+	</changeSet>
+	
+	<changeSet id="schema-inconsistencies-part-miseq-run-aud-liquibase" author="fbristow">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<indexExists tableName="miseq_run_AUD" indexName="FK_MISEQ_RUN_REVISION" />
+		</preConditions>
+		<dropIndex tableName="miseq_run_AUD" indexName="FK_MISEQ_RUN_REVISION" />	
+	</changeSet>
+	<changeSet id="schema-inconsistencies-part-miseq-run-aud-hibernate" author="fbristow">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<indexExists tableName="miseq_run_AUD" indexName="FK_oxvcne374i54prd0c89mud85b" />
+		</preConditions>
+		<dropIndex tableName="miseq_run_AUD" indexName="FK_oxvcne374i54prd0c89mud85b" />	
+	</changeSet>
+
+	<changeSet id="schema-inconsistencies" author="fbristow">
+		<dropIndex tableName="Revisions" indexName="FK_REVISIONS_CLIENT_DETAILS" />
+
+		<addForeignKeyConstraint constraintName="FK_MISEQ_RUN_REVISION"
+			referencedTableName="sequencing_run_AUD" baseColumnNames="id,REV"
+			baseTableName="miseq_run_AUD" referencedColumnNames="id,REV" />
+
+		<dropColumn tableName="related_project" columnName="modifiedDate" />
+		<dropColumn tableName="related_project_AUD" columnName="modifiedDate" />
+		
+		<!-- Liquibase will not do `modifyDataType` on MySQL, must do by hand. -->
+		<sql>
+			ALTER TABLE project_user MODIFY email_subscription BIT(1);
+			ALTER TABLE project_user_AUD MODIFY email_subscription BIT(1);
+			
+			ALTER TABLE user MODIFY credentialsNonExpired BIT(1);
+			ALTER TABLE user MODIFY enabled BIT(1);
+			ALTER TABLE user_AUD MODIFY credentialsNonExpired BIT(1);
+			ALTER TABLE user_AUD MODIFY enabled BIT(1);
+			
+			ALTER TABLE remote_api MODIFY description VARCHAR(255);
+			ALTER TABLE remote_api_AUD MODIFY description VARCHAR(255);
+		</sql>
+		
+		<addNotNullConstraint tableName="project_user" columnName="email_subscription" columnDataType="bit(1)"/>
+		<addNotNullConstraint tableName="user" columnName="credentialsNonExpired" columnDataType="bit(1)"/>
+		<addNotNullConstraint tableName="user" columnName="enabled" columnDataType="bit(1)"/>
+	
+		<dropDefaultValue tableName="miseq_run" columnName="id"/>
+		<addDefaultValue tableName="oauth_access_token" columnName="token_id" defaultValue="" />
+		<addNotNullConstraint tableName="password_reset" columnName="user_id" columnDataType="bigint(20)"/>
+		<addNotNullConstraint tableName="system_role_AUD" columnName="name" columnDataType="varchar(255)"/>
+		<dropDefaultValue tableName="system_role_AUD" columnName="name"/>
+		
+		<dropUniqueConstraint tableName="sequence_file_properties" constraintName="UK_SEQUENCE_FILE_PROPERTY_KEY" />
+		<dropForeignKeyConstraint baseTableName="sequence_file_properties" constraintName="FK_SEQUENCE_FILE_PROPERTIES"/>
+		
+		<dropUniqueConstraint tableName="system_role" constraintName="UK_SYSTEM_ROLE_NAME"/>
+		
+		<dropForeignKeyConstraint baseTableName="client_details_auto_approvable_scope" constraintName="FK_CLIENT_DETAILS_AUTO_APPROVABLE_SCOPE" />
+		<dropPrimaryKey tableName="client_details_auto_approvable_scope"/>
+		<dropNotNullConstraint tableName="client_details_auto_approvable_scope" columnName="auto_approvable_scope" columnDataType="varchar(255)"/>
+		<dropDefaultValue tableName="client_details_auto_approvable_scope" columnName="auto_approvable_scope"/>
+		<addForeignKeyConstraint constraintName="FK_CLIENT_DETAILS_AUTO_APPROVABLE_SCOPE"
+			referencedTableName="client_details" baseColumnNames="client_details_id"
+			baseTableName="client_details_auto_approvable_scope"
+			referencedColumnNames="id" />
+		<addDefaultValue tableName="client_details_auto_approvable_scope" columnName="auto_approvable_scope" defaultValueComputed="null"/>
+		
+		<!-- a big song and dance to get rid of the AUTO_INCREMENT on the id field of miseq_run_AUD and client_details_AUD -->
+		<sql>
+			ALTER TABLE client_details_AUD MODIFY id bigint(20) not null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="miseq_run_AUD" constraintName="FK_MISEQ_RUN_REVISION"/>
+		<sql>
+			ALTER TABLE sequencing_run_AUD MODIFY id bigint(20) not null;
+		</sql>
+		<addForeignKeyConstraint constraintName="FK_MISEQ_RUN_REVISION" referencedTableName="sequencing_run_AUD"
+			baseColumnNames="id,REV" baseTableName="miseq_run_AUD" referencedColumnNames="id,REV"/>
+	</changeSet>
+</databaseChangeLog>

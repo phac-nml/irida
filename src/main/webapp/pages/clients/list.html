@@ -4,11 +4,17 @@
       layout:decorator="clients/_base">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
-<link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
-      href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css" />
+    <script th:inline="javascript">
+        var PAGE = {
+            urls: {
+                list: /*[[@{'/clients/ajax/list'}]]*/ '/clients/ajax/list',
+                clients: /*[[@{/clients/}]]*/ ''
+            }
+        };
+    </script>
 </head>
 <body>
-<main layout:fragment="page">
+<main layout:fragment="page" ddl:bundle-includes="client_list" ddl:asset-css-excludes="jquery.datatables">
     <div class="col-md-12">
         <main role="main" property="mainContentOfPage">
             <h1 th:text="#{clients.title}">_Clients_</h1>
@@ -28,39 +34,5 @@
         </main>
     </div>
 </main>
-<th:block layout:fragment="pageScripts">
-    <script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
-            src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function () {
-            $('#clientsTable').DataTable({
-                dom: "<'top'lf>rt<'bottom'ip><'clear'>",
-                processing: true,
-                serverSide: true,
-                deferRender: true,
-                ajax: /*[[@{'/clients/ajax/list'}]]*/ '/clients/ajax/list',
-                stateSave: true,
-                stateDuration: -1,
-                order: [[1, "desc"]],
-                columnDefs: [
-                    {
-                        'className': "clientIdCol",
-                        'targets': 0
-                    },
-                    {
-                        'render': function (data, type, row) {
-                            return '<a class="clientLink" href="' +
-                                /*[[@{/clients/}]]*/ ''
-                            + row[0] + '">' + data + '</a>';
-                        },
-                        'targets': 1
-                    }
-                ]
-            });
-        });
-        /*]]>*/
-    </script>
-</th:block>
 </body>
 </html>

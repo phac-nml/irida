@@ -3,7 +3,15 @@
       layout:decorator="template/page">
 <head>
 	<title th:text="${user.label}">_USER PAGE_</title>
-	<script>window.dependencies = ['PasswordRest'];</script>
+	<script th:inline="javascript">
+		window.dependencies = ['PasswordRest'];
+		var PAGE = {
+			urls: {
+				reset: /*[[@{/password_reset/ajax/create/{id}(id=${user.getId()})}]]*/ 'password_reset/ajax/create/'
+			},
+			userId: /*[[${user.getId()}]]*/ 1
+		};
+	</script>
 </head>
 <body>
 <main layout:fragment="page">
@@ -164,7 +172,7 @@
 	</div>
 
 </main>
-<th:block layout:fragment="page-scripts" th:inline="javascript">
+<th:block layout:fragment="scripts" th:inline="javascript">
 	<script type="text/ng-template" id="reset-modal.html">
 		<div class="modal-header">
 			<h3 class="modal-title" id="lbx-title" th:text="#{user.passwordReset}">_Reset Password_</h3>
@@ -184,12 +192,6 @@
 	</script>
 
 	<script th:inline="javascript">
-		var PAGE = {
-			urls: {
-				reset: /*[[@{/password_reset/ajax/create/{id}(id=${user.getId()})}]]*/ 'password_reset/ajax/create/'
-			},
-            userId: /*[[${user.getId()}]]*/ 1
-		};
 
 		var pwd = angular.module('PasswordRest', []);
 
@@ -243,13 +245,13 @@
           });
         }]);
 
-		pwd.controller('DetailsCtrl', ['$modal', function ($modal) {
+		pwd.controller('DetailsCtrl', ['$uibModal', function ($uibModal) {
 			"use strict";
 
 			var vm = this;
 
 			vm.resetPrompt = function () {
-				$modal.open({
+				$uibModal.open({
 					templateUrl: 'reset-modal.html',
 					controller: 'ResetCtrl as reset',
 					size: 'sm'
@@ -257,12 +259,12 @@
 			};
 		}]);
 
-		pwd.controller('ResetCtrl', ['$rootScope', '$modalInstance', 'ResetService', function ($rootScope, $modalInstance, ResetService) {
+		pwd.controller('ResetCtrl', ['$rootScope', '$uibModalInstance', 'ResetService', function ($rootScope, $uibModalInstance, ResetService) {
 			"use strict";
 			var vm = this;
 
 			vm.close = function () {
-				$modalInstance.close();
+				$uibModalInstance.close();
 			};
 
 			vm.reset = function () {

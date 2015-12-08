@@ -759,7 +759,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, phyTreeCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -768,8 +768,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
@@ -788,7 +786,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", matrixCoreInputs.getToolVersion());
 		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, matrixCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, matrixCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				matrixCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -797,8 +795,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				matrixCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
@@ -817,7 +813,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", tableCoreInputs.getToolVersion());
 		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, tableCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, tableCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				tableCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -826,8 +822,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				tableCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
@@ -903,7 +897,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, phyTreeCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -912,8 +906,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
@@ -932,7 +924,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", matrixCoreInputs.getToolVersion());
 		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, matrixCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, matrixCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				matrixCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -941,9 +933,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				matrixCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				matrixCoreParameters.get("__workflow_invocation_uuid__"));
-
+		
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
 		Set<String> uploadedFileTypesMatrix = Sets.newHashSet();
@@ -961,7 +951,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", tableCoreInputs.getToolVersion());
 		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, tableCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, tableCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				tableCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -970,9 +960,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				tableCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				tableCoreParameters.get("__workflow_invocation_uuid__"));
-
+		
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
 		Set<String> uploadedFileTypesTable = Sets.newHashSet();
@@ -1050,7 +1038,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, phyTreeCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -1059,8 +1047,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
@@ -1079,7 +1065,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", matrixCoreInputs.getToolVersion());
 		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, matrixCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, matrixCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
 				matrixCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -1088,8 +1074,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				matrixCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
@@ -1108,7 +1092,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
 				"0.1.0", tableCoreInputs.getToolVersion());
 		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 5, tableCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 4, tableCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
 				tableCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -1117,8 +1101,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				tableCoreParameters.get("coverageMax"));
 		assertEquals("parameter conditional_select set incorrectly", "all",
 				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
@@ -1197,7 +1179,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 7, phyTreeCoreParameters.size());
+		assertEquals("incorrect number of non-file parameters", 6, phyTreeCoreParameters.size());
 		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
@@ -1210,8 +1192,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("conditional.conditional_select"));
 		assertEquals("parameter conditional_select set incorrectly", "all2",
 				phyTreeCoreParameters.get("conditional.level2.level2_select"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists",
-				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 	}
 	
 	/**

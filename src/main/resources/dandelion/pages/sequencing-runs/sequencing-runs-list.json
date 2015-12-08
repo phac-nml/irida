@@ -1,0 +1,17 @@
+{
+  "dependencies": ["angular-busy"],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/directives/datatables/irida-datatable.js"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/sequencing-runs/sequencing-runs-list.js"
+      }
+    }
+  ]
+}

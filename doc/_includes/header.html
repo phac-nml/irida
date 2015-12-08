@@ -2,7 +2,7 @@
 
   <div class="wrapper">
 
-    <a class="site-title" href="{{ site.baseurl }}/">{{ site.title }}</a>
+    <a class="site-title" href="{{ site.baseurl }}/">{{ site.title }}<img class="logo" src="{{ site.baseurl }}/images/IRIDA_LIGHT_300px.png" style="height: 56px;"/></a>
 
     <nav class="site-nav">
       <a href="#" class="menu-icon">
@@ -14,14 +14,36 @@
       </a>
 
       <div class="trigger">
-        {% for page in site.pages %}
-          {% if page.title %}
-          <a class="page-link" href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
-          {% endif %}
-        {% endfor %}
+          <a class="page-link" href="{{ site.baseurl }}/user/index.html">User Guides</a>
+          <a class="page-link" href="{{ site.baseurl }}/developer/index.html">Developer</a>
+          <a class="page-link" href="{{ site.baseurl }}/downloads/index.html">Downloads</a>
+          <a class="page-link" href="{{ site.baseurl }}/administrator/index.html">Install</a>
+          <a class="page-link" href="{{ site.baseurl }}/search/index.html">Search</a>
+          <a class="page-link" href="{{ site.baseurl }}/contact/index.html">Contact</a>
       </div>
     </nav>
 
-  </div>
 
+{% capture page_url_without_index_html %}{{ page.url | remove: "/index.html" }}{% endcapture %}
+{% if page_url_without_index_html != '' %}
+<ul class="breadcrumbs">
+<li><a href="{{ site.baseurl }}/">Home</a></li>
+{% assign splitted_url_parts = page_url_without_index_html | split: '/' %}
+{% capture forLoopMaxInt %}{{ splitted_url_parts.size | minus:1 }}{% endcapture %}
+{% for i in (1..forLoopMaxInt) %}
+    {% capture current_breadcrumb_url %}{{next_prepender}}/{{ splitted_url_parts[i] }}/index.html{% endcapture %}
+    {% capture current_breadcrumb_md_url %}{{next_prepender}}/{{ splitted_url_parts[i] }}/{% endcapture %}
+    {% capture next_prepender %}{{next_prepender}}/{{ splitted_url_parts[i] }}{% endcapture %}
+    {% for breadcrumb_page in site.pages %}
+        {% if current_breadcrumb_url == breadcrumb_page.url or current_breadcrumb_md_url == breadcrumb_page.url  %}
+            <li {% if i == forLoopMaxInt %}class="active"{% endif %}>
+                {% capture breadcrumb_page_page_url_without_index_html %}{{ breadcrumb_page.url | remove: "index.html" }}{% endcapture %}
+                <a href="{{ site.baseurl }}{{breadcrumb_page_page_url_without_index_html}}">{% if breadcrumb_page.title %}{{breadcrumb_page.title}}{% else %}{{breadcrumb_page.search_title}}{% endif %}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+</ul>
+{% endif %}
+  </div>
 </header>

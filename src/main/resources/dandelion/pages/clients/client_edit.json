@@ -1,0 +1,11 @@
+{
+  "dependencies": ["select2-bootstrap", "moment", "clients_base"],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/clients/client_edit.js"
+      }
+    }
+  ]
+}

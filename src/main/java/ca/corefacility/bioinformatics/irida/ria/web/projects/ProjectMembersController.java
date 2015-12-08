@@ -4,11 +4,13 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for handling project/members views and functions
@@ -50,16 +53,18 @@ public class ProjectMembersController {
 	private final ProjectControllerUtils projectUtils;
 	private final ProjectService projectService;
 	private final UserService userService;
+	private final MessageSource messageSource;
 
 	private static final List<ProjectRole> projectRoles = ImmutableList.of(ProjectRole.PROJECT_USER,
 			ProjectRole.PROJECT_OWNER);
 
 	@Autowired
 	public ProjectMembersController(ProjectControllerUtils projectUtils, ProjectService projectService,
-			UserService userService) {
+			UserService userService, MessageSource messageSource) {
 		this.projectUtils = projectUtils;
 		this.projectService = projectService;
 		this.userService = userService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -94,18 +99,24 @@ public class ProjectMembersController {
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role for the user on the project
+	 * @param locale
+     *  		  the reported locale of the browser
+     * @return map for showing success message.
 	 */
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@ResponseBody
-	public void addProjectMember(@PathVariable Long projectId, @RequestParam Long userId,
-			@RequestParam String projectRole) {
+	public Map<String, String> addProjectMember(@PathVariable Long projectId, @RequestParam Long userId,
+			@RequestParam String projectRole, Locale locale) {
 		logger.trace("Adding user " + userId + " to project " + projectId);
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		ProjectRole role = ProjectRole.fromString(projectRole);
 
 		projectService.addUserToProject(project, user, role);
+		return ImmutableMap.of(
+				"result", messageSource.getMessage("project.members.add.success", new Object[]{user.getLabel(), project.getLabel()}, locale)
+		);
 	}
 
 	/**

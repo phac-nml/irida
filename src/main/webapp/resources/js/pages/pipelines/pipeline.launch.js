@@ -182,13 +182,13 @@
 
   /**
    * Opens the modal dialog when the "Customize" button is pressed.
-   * @param $modal reference to the modal dialog.
+   * @param $uibModal reference to the modal dialog.
    */
-  function ParameterModalController($modal) {
+  function ParameterModalController($uibModal) {
     var vm = this;
 
     vm.openModal = function () {
-      $modal.open({
+      $uibModal.open({
         templateUrl: '/parameters.html',
         controller : 'ParameterController as paras'
       });
@@ -200,10 +200,10 @@
    * 
    * @param $rootScope the root scope
    * @param $http angular http reference
-   * @param $modalInstance the modal dialog
+   * @param $uibModalInstance the modal dialog
    * @param ParameterService the service for handling parameter state
    */
-  function ParameterController($rootScope, $http, $modalInstance, ParameterService) {
+  function ParameterController($rootScope, $http, $uibModalInstance, ParameterService) {
     var vm = this;
 
     vm.selectedParameters = ParameterService.getSelectedParameters().currentSettings;
@@ -221,14 +221,14 @@
       if (vm.saveParameters) {
     	  vm.saveAndUse();
       }
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     /**
      * Straight up close the modal.
      */
     vm.close = function () {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
     };
 
     /**
@@ -266,7 +266,7 @@
         transformRequest : undefined,
         data   : JSON.stringify(parametersToSave),
       }).success(function (data) {
-    	  $modalInstance.dismiss();
+    	  $uibModalInstance.dismiss();
     	  // on success, we can re-use the selected parameters in
     	  // this controller; update the id and label, then append
     	  // it to PIPELINE.parameters to have it magically appear!
@@ -371,8 +371,8 @@
 
   angular.module('irida.pipelines', ['irida.cart'])
     .controller('PipelineController', ['$rootScope', '$http','CartService', 'notifications', 'ParameterService', PipelineController])
-    .controller('ParameterModalController', ["$modal", ParameterModalController])
-    .controller('ParameterController', ['$rootScope', '$http', '$modalInstance', 'ParameterService', ParameterController])
+    .controller('ParameterModalController', ["$uibModal", ParameterModalController])
+    .controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
     .service('ParameterService', [ParameterService])
   ;
 })();

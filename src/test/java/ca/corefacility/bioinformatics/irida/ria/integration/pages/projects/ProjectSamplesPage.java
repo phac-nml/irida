@@ -66,10 +66,10 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public void selectPage(int pageNum) {
-		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li a"));
+		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
 		// Remove directions links if there are any
 		for (WebElement link : links) {
-			if (link.getText().equals("1")) {
+			if (link.findElement(By.tagName("a")).getText().equals("1")) {
 				break;
 			} else {
 				pageNum++;
@@ -89,12 +89,12 @@ public class ProjectSamplesPage extends AbstractPage {
 	 *            the element to click.
 	 */
 	public void clickAndWait(final WebElement el) {
-		el.click();
+		el.findElement(By.tagName("a")).click();
 
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver input) {
-				return !el.getAttribute("class").contains("active");
+				return el.getAttribute("class").contains("active");
 			}
 		});
 	}

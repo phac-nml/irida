@@ -64,7 +64,7 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Clear
 		page.clearFilter();
-		page.filterByType("Phylogenomics Pipeline");
+		page.filterByType("SNVPhyl Phylogenomics Pipeline");
 		assertEquals("Should be 6 analyses aftering filtering by type", 6, page.getNumberOfAnalyses());
 	}
 }

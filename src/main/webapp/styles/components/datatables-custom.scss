@@ -8,18 +8,26 @@
   font-size: 14px;
 }
 
+.filter-row {
+  margin-bottom: 5px!important;
+}
+
+.datatables-active-filters {
+  margin-bottom: 10px;
+  .label {
+    cursor: pointer;
+    &:after {
+      content: ' \f00d';
+      font-family: 'FontAwesome';
+      margin-left: 3px;
+    }
+  }
+}
+
 table th {
   vertical-align: top !important;
 }
 
 table td {
   padding: 5px 18px!important;
-}
-
-.yadcf-filter-reset-button {
-  display: none !important;
-}
-
-.yadcf-filter-wrapper {
-  display: block !important;
 }

@@ -4,11 +4,17 @@
       layout:decorator="template/page">
 <head>
     <title th:text="#{projects.title}">_USER LIST TITLE_</title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
-          href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css"/>
+    <script th:inline="javascript">
+        var PAGE = {
+            urls: {
+                table: /*[[@{/users/ajax/list}]]*/ '/users/ajax/list',
+                link: /*[[@{/users/}]]*/ ''
+            }
+        };
+    </script>
 </head>
 <body>
-<div layout:fragment="page">
+<div layout:fragment="page" ddl:bundle-includes="users-list" ddl:asset-css-excludes="jquery.datatables">
     <main class="col-md-12">
         <h1 th:text="#{users.title}">_Users_</h1>
         <a href="/users/create" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/users/create}"
@@ -30,44 +36,5 @@
         </table>
     </main>
 </div>
-<th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"
-            src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-    <script th:src="@{/resources/bower_components/moment/moment.js}"
-            src="/resources/bower_components/moment/moment.js"></script>
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
-            src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function () {
-            $('#usersTable').DataTable({
-                dom: "<'top'lf>rt<'bottom'ip><'clear'>",
-                processing: true,
-                serverSide: true,
-                deferRender: true,
-                ajax: /*[[@{/users/ajax/list}]]*/ '/users/ajax/list',
-                stateSave: true,
-                stateDuration: -1,
-                order: [[1, "desc"]],
-                columnDefs: [
-                    {
-                        'render': function (data, type, row) {
-                            return '<a href="' + /*[[@{/users/}]]*/ ''
-                            + row[0] + '">' + data + '</a>';
-                        },
-                        'targets': 1
-                    },
-                    {
-                        'render': function (data, type, row) {
-                            return '<span data-livestamp="' + data + '"></span>';
-                        },
-                        'targets': 7
-                    }
-                ]
-            });
-        });
-        /*]]>*/
-    </script>
-</th:block>
 </body>
 </html>
