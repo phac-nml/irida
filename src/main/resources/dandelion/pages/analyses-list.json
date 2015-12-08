@@ -1,4 +1,5 @@
 {
+  "dependencies": ["moment"],
   "assets": [
     {
       "name": "analyses-list-css",

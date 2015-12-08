@@ -1,7 +1,7 @@
 /*
  * Used by the Investigations Listing Datatable (analyses.html)
  */
-var analysesTable = (function(tl){
+var analysesTable = (function(tl, moment){
     /**
      * Fomat the content of the Analysis Name column to link to the analysis.
      * @param data - data for the name cell.
@@ -60,4 +60,4 @@ var analysesTable = (function(tl){
         displayProgress: displayProgress,
         downloadLink: downloadLink
     };
-})(window.TL);
+})(window.TL, window.moment);
