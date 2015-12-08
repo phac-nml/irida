@@ -49,13 +49,20 @@ public class SlashFilter implements Filter {
 		// course failed to render valid links, so decode the URI first, then
 		// check if there's doubled up slashes.
 		final String decodedUri = URLDecoder.decode(servletRequest.getRequestURI(), "UTF-8");
-		final boolean containsSlashes = decodedUri.contains("//");
+
+		// if there is a context path (likely there is when running in
+		// production in a servlet container like Tomcat) then you should strip
+		// the context path before you do any forwarding.
+		final String contextPath = servletRequest.getContextPath();
+		final String contextlessUri = decodedUri.replaceFirst(contextPath, "");
+
+		final boolean containsSlashes = contextlessUri.contains("//");
 		final boolean isRequestRequest = servletRequest.getDispatcherType().equals(DispatcherType.REQUEST);
 
-		logger.trace("Request URI is: [" + decodedUri + "]");
+		logger.trace("Request URI is: [" + contextlessUri + "]");
 		if (containsSlashes && isRequestRequest) {
 
-			final String redirectURI = decodedUri.replaceAll("/{2,}", "/");
+			final String redirectURI = contextlessUri.replaceAll("/{2,}", "/");
 			logger.trace("Handled redirect URI is: " + redirectURI);
 			request.getRequestDispatcher(redirectURI).forward(request, response);
 		} else {
