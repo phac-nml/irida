@@ -1,5 +1,5 @@
 /*
- * Used by the Investigations Listing Datatable (analyses.html)
+ * Used by the Analyses Listing Datatable (analyses.html)
  */
 var analysesTable = (function(tl){
     /**
@@ -60,4 +60,4 @@ var analysesTable = (function(tl){
         displayProgress: displayProgress,
         downloadLink: downloadLink
     };
-})(window.TL);
+})(window.TL, window.moment);
