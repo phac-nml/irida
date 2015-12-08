@@ -1,15 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * <p>
@@ -29,7 +28,7 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	public String getPageTitle() {
-		return driver.findElement(By.id("page-title")).getText();
+		return driver.findElement(By.id("sample-page-title")).getText();
 	}
 
 	public String getSequenceFileName() {

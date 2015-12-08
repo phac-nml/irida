@@ -4,7 +4,7 @@ search_title: "IRIDA Web Interface Install Guide"
 description: "Install guide for setting up the IRIDA web interface."
 ---
 
-This document describes how to install the IRIDA web interface. We assume that you have either downloaded IRIDA as a `WAR` file distributable, or have [built IRIDA from source](./building), and also assume that you have completed [installing and configuring Galaxy](../galaxy).
+This document describes how to install the IRIDA web interface. We assume that you have completed [installing and configuring Galaxy](../galaxy).
 
 * This comment becomes the table of contents
 {:toc}
@@ -15,11 +15,7 @@ The IRIDA platform currently consists of three, separate components:
 2. Galaxy, and
 3. Command-line clients.
 
-The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can either build IRIDA from source, or download a pre-packaged `WAR`.
-
-Building IRIDA from source
-==========================
-If you would like to build IRIDA from source, please see the instructions for [building IRIDA](building/).
+The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can download IRIDA as a pre-packaged `WAR` file at <https://irida.corefacility.ca/downloads/webapp/irida-latest.war>.
 
 Prerequisites
 =============
@@ -28,10 +24,8 @@ The following prerequisites are required for running the IRIDA web interfaces:
 
 * [Java](http://www.oracle.com/technetwork/java/index.html) 8 or higher.
 * A working servlet container supporting Servlet 3.0 ([Tomcat](https://tomcat.apache.org/), version 7 or higher, for example)
-* A working HTTP server (not required, but recommended, depending on your set up)
 * A working database server (the application is tested on [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/)).
 * A working install of Galaxy (we recommend that you run Galaxy and the IRIDA web interface on separate machines).
-
 The install guide assumes that you are using [Bash](https://www.gnu.org/software/bash/manual/bashref.html)
 
 Prerequisite install instructions
@@ -45,7 +39,15 @@ We provide *some* instructions for installing and setting up your production env
 
 Deploying IRIDA
 ===============
-Whether you are [building IRIDA from source](./building) or installing a pre-built `WAR` file, you need to follow the instructions immediately below to configure your system.
+Deploying IRIDA mainly involves deploying the `WAR` file into your Servlet container, but does also require some configuration outside of your Servlet container.
+
+Servlet Container Configuration
+-------------------------------
+One environment variable needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`.
+
+You can adjust this variable in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or `/etc/default/tomcat7` (Ubuntu), and finding the `JAVA_OPTS` variable and setting `spring.profiles.active`:
+
+    JAVA_OPTS="-Dspring.profiles.active=prod"
 
 Core Configuration
 ------------------
@@ -116,11 +118,17 @@ Deploy the `WAR` File
 ---------------------
 Once you have adjusted the configuration files to your environment, you can deploy the `WAR` file to your servlet container.
 
+You can download the `WAR` file from: <https://irida.corefacility.ca/downloads/webapp/irida-latest.war>
+
+Tomcat's deployment directory is typically some variation of `/var/lib/tomcat/webapps/`. Deploying the `WAR` file in Tomcat is as simple as moving the `WAR` file you downloaded into that directory.
+
 On startup, IRIDA will:
 
 1. Automatically prepare the database on your system (using [Liquibase](http://liquibase.org)) using the database connection details you specified in [Core Configuration](#core-configuration).
 2. Install any internally configured workflows.
 3. Configure the connection to Galaxy.
+
+If IRIDA has successfully been deployed, you should be able to use your web browser to navigate to <http://localhost:8080/irida-latest/> (assuming you're deploying to the local machine, and also assuming that you've left the `WAR` file named `irida-latest.war`).
 
 Logging in for the first time
 -----------------------------

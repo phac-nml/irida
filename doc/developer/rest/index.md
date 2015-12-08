@@ -470,13 +470,16 @@ A sample corresponds to a single isolate and contains the sequencing data and me
     "createdDate" : 1406733849000,
     "links" : [ {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/5/samples/1"
+    "href" : "http://localhost:8080/api/samples/1"
     }, {
     "rel" : "sample/sequenceFiles",
-    "href" : "http://localhost:8080/api/projects/5/samples/1/sequenceFiles"
+    "href" : "http://localhost:8080/api/samples/1/sequenceFiles"
     }, {
     "rel" : "sample/project",
     "href" : "http://localhost:8080/api/projects/5"
+    }, {
+    "rel" : "project/sample",
+    "href" : "http://localhost:8080/api/projects/5/samples/1"
     } ]
   }],
   "links" : [ {
@@ -500,6 +503,7 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `self` | A link to this sample. |
 | `sample/project` | A link to the project that owns this sample. |
 | `sample/sequenceFiles` | A link to the collection of sequence files in this sample. |
+| `project/sample` | A link to the relationship between the project and sample.  To remove a sample from a project, `DELETE` this resource. |
 | `sample/sequenceFiles/pairs` | A link to the collection of paired-end sequence files in this sample.  Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
 | `sample/sequenceFiles/unpaired` | A link to the collection of unpaired sequence files in this sample. Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
 
@@ -573,13 +577,13 @@ An individual sample contains the metadata associated with an isolate. The sampl
   "createdDate" : 1406733854000,
   "links" : [ {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/5/samples/5"
+    "href" : "http://localhost:8080/api/samples/5"
   }, {
     "rel" : "sample/project",
     "href" : "http://localhost:8080/api/projects/5"
   }, {
     "rel" : "sample/sequenceFiles",
-    "href" : "http://localhost:8080/api/projects/5/samples/5/sequenceFiles"
+    "href" : "http://localhost:8080/api/samples/5/sequenceFiles"
   } ]
   }
 
@@ -624,15 +628,15 @@ The sample will also contain a [list of paired-end sequence files](#sequence-fil
     "createdDate" : 1407344463000,
     "links" : [ {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/10"
+    "href" : "http://localhost:8080/api/samples/51/sequenceFiles/10"
     } ]
   } ],
   "links" : [ {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
+    "href" : "http://localhost:8080/api/samples/51/sequenceFiles"
   }, {
     "rel" : "sample",
-    "href" : "http://localhost:8080/api/projects/4/samples/51"
+    "href" : "http://localhost:8080/api/samples/51"
   } ]
   }
 
@@ -672,13 +676,13 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
   "createdDate" : 1407344463000,
   "links" : [ {
     "rel" : "sample/sequenceFiles",
-    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles"
+    "href" : "http://localhost:8080/api/samples/51/sequenceFiles"
   }, {
     "rel" : "self",
-    "href" : "http://localhost:8080/api/projects/4/samples/51/sequenceFiles/9"
+    "href" : "http://localhost:8080/api/samples/51/sequenceFiles/9"
   }, {
     "rel" : "sample",
-    "href" : "http://localhost:8080/api/projects/4/samples/51"
+    "href" : "http://localhost:8080/api/samples/51"
   } ]
   }
 
@@ -711,7 +715,7 @@ Listing sequence file pairs will display the sequnece files for a given sample w
         "fileName" : "02-2222_S1_L001_R2_001.fastq",
         "links" : [ {
           "rel" : "self",
-          "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+          "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
         } ],
         "identifier" : "2"
       }, {
@@ -722,7 +726,7 @@ Listing sequence file pairs will display the sequnece files for a given sample w
         "fileName" : "02-2222_S1_L001_R1_001.fastq",
         "links" : [ {
           "rel" : "self",
-          "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+          "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
         } ],
         "identifier" : "1"
       } ],
@@ -730,22 +734,25 @@ Listing sequence file pairs will display the sequnece files for a given sample w
       "label" : "02-2222_S1_L001_R2_001.fastq, 02-2222_S1_L001_R1_001.fastq",
       "links" : [ {
         "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/pairs/1"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/pairs/1"
       }, {
         "rel" : "pair/forward",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
       }, {
         "rel" : "pair/reverse",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
+      }, {
+        "rel" : "sequenceFilePair/sample",
+        "href" : "http://localhost:8080/api/samples/52"
       } ],
       "identifier" : "1"
     } ],
     "links" : [ {
       "rel" : "self",
-      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/pairs"
+      "href" : "http://localhost:8080/api/samples/52/sequenceFiles/pairs"
     }, {
       "rel" : "sample",
-      "href" : "http://localhost:8080/api/projects/5/samples/52"
+      "href" : "http://localhost:8080/api/samples/52"
     } ]
   }
 }
@@ -763,6 +770,7 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
 | `self` | A link to this sequence file pair record. |
 | `pair/forward` | A link to the forward oriented sequence file. |
 | `pair/reverse` | A link to the reverse oriented sequence file. |
+| `sequenceFilePair/sample` | A link to the sample that contains this sequence file. |
 
 ##### Properties
 {:.no_toc}
@@ -782,22 +790,22 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
       "file" : "/tmp/sequence-files/2/2/02-2222_S1_L001_R2_001.fastq",
       "createdDate" : 1406726674000,
       "modifiedDate" : 1406726674000,
-      "fileName" : "02-2222_S1_L001_R2_001.fastq",
       "label" : "02-2222_S1_L001_R2_001.fastq",
+      "fileName" : "02-2222_S1_L001_R2_001.fastq",
       "links" : [ {
         "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
       } ],
       "identifier" : "2"
     }, {
       "file" : "/tmp/sequence-files/1/2/02-2222_S1_L001_R1_001.fastq",
       "createdDate" : 1406726674000,
       "modifiedDate" : 1406726674000,
-      "fileName" : "02-2222_S1_L001_R1_001.fastq",
       "label" : "02-2222_S1_L001_R1_001.fastq",
+      "fileName" : "02-2222_S1_L001_R1_001.fastq",
       "links" : [ {
         "rel" : "self",
-        "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+        "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
       } ],
       "identifier" : "1"
     } ],
@@ -805,13 +813,16 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
     "label" : "02-2222_S1_L001_R2_001.fastq, 02-2222_S1_L001_R1_001.fastq",
     "links" : [ {
       "rel" : "self",
-      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/pairs/1"
+      "href" : "http://localhost:8080/api/samples/52/sequenceFiles/pairs/1"
     }, {
       "rel" : "pair/forward",
-      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/1"
+      "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
     }, {
       "rel" : "pair/reverse",
-      "href" : "http://localhost:8080/api/projects/5/samples/52/sequenceFiles/2"
+      "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
+    }, {
+      "rel" : "sequenceFilePair/sample",
+      "href" : "http://localhost:8080/api/samples/52"
     } ],
     "identifier" : "1"
   }
@@ -1012,6 +1023,8 @@ Each analysis submission corresponds to a collection of inputs (files and parame
 |------|-------------|
 | `self` | A link to this analysis submission. |
 | `analysis` | A link to the **completed** analysis created for this submission. This link will only appear when the analysis submission is in the `COMPLETED` state. |
+| `input/paired` | A link to the collection of paired-end input files used for this analysis. See [Sequence File Pairs Collection](#sequence-file-pairs-collection) for response format.|
+| `input/unpaired` | A link to the collection of single-end input files used for this analysis.  See [Sequence File Collection](#sequence-file-collection) for response format. |
 
 ##### Properties
 {:.no_toc}
@@ -1035,38 +1048,34 @@ Each analysis submission corresponds to a collection of inputs (files and parame
 
 ```javascript
 {
-    "resource": {
-        "analysisCleanedState": "NOT_CLEANED",
-        "analysisState": "COMPLETED",
-        "createdDate": 1434990870000,
-        "identifier": "1",
-        "inputParameters": {
-            "alternative-allele-fraction": "0.75",
-            "minimum-base-quality": "30",
-            "minimum-mapping-quality": "30",
-            "minimum-read-coverage": "15",
-            "repeat-minimum-length": "150",
-            "repeat-minimum-pid": "90"
-        },
-        "label": "SNVPhyl_20150622",
-        "links": [
-            {
-                "href": "http://localhost:8080/api/analysisSubmissions/1/analysis",
-                "rel": "analysis"
-            },
-            {
-                "href": "http://localhost:8080/api/analysisSubmissions/1",
-                "rel": "self"
-            }
-        ],
-        "modifiedDate": 1434991388000,
-        "name": "SNVPhyl_20150622",
-        "remoteFilesPaired": [],
-        "remoteFilesSingle": [],
-        "remoteInputDataId": "f605f7fc4b86cc72",
-        "remoteWorkflowId": "f605f7fc4b86cc72",
-        "workflowId": "ccca532d-b0be-4f2c-bd6d-9886aa722571"
-    }
+  "resource" : {
+    "name" : "Analysis-13",
+    "workflowId" : "3fd2719d-8729-4e91-bd01-c6c20b99874d",
+    "remoteInputDataId" : null,
+    "remoteWorkflowId" : null,
+    "remoteFilesSingle" : [ ],
+    "remoteFilesPaired" : [ ],
+    "inputParameters" : { },
+    "createdDate" : 1406559662000,
+    "modifiedDate" : null,
+    "analysisState" : "COMPLETED",
+    "analysisCleanedState" : "NOT_CLEANED",
+    "label" : "Analysis-13",
+    "links" : [ {
+      "rel" : "analysis",
+      "href" : "http://localhost:8080/api/analysisSubmissions/13/analysis"
+    }, {
+      "rel" : "input/unpaired",
+      "href" : "http://localhost:8080/api/analysisSubmissions/13/sequenceFiles/unpaired"
+    }, {
+      "rel" : "input/paired",
+      "href" : "http://localhost:8080/api/analysisSubmissions/13/sequenceFiles/pairs"
+    }, {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/analysisSubmissions/13"
+    } ],
+    "identifier" : "13"
+  }
 }
 ```
 

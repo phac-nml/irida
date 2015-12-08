@@ -1,6 +1,40 @@
 Changes
 =======
 
+1.0.0-alpha7 to 1.0.0-alpha8
+----------------------------
+* [Developer]: Fix an issue where having multiple forward slashes in a URI would result in part of the URI being duplicated in links generated as part of the response.
+* [UI]: Fixed a bug where users would have permission to view a project page, but not view a sample page if the sample is attached to multiple projects.
+* [Developer]: Upgraded to Dandelion Core, Thymeleaf, and Datatables 1.1.1
+* [UI]: Ignore the `__workflow_invocation_uuid__` parameter from Galaxy when importing execution provenance from Galaxy.
+* [UI]: Password reset e-mails now include your username.
+* [Developer]: Fix up inconsistencies with tables created by Liquibase and tables created by Hibernate.
+* [Developer] Removed several unused properties and classes to simplify data model.
+
+1.0.0-alpha6 to 1.0.0-alpha7
+----------------------------
+* [UI] Feature: When new data is added to a project, both the project and sample modified times are changed so that you can find the most recently uploaded files in a project by sorting on the date modified column of the samples table.
+* [UI] Feature: All metadata fields for sample are shown on the samples details page, even if the field does not have an entered value.
+* [Workflow]: Upgraded SNVPhyl from version 0.2 to 0.3.
+* [Workflow]: Upgraded Prokka in assembly and annotation pipelines from 1.4.0 to 1.11.0 (assembly and annotation to 0.3, assembly and annotation collection to 0.2).
+* [UI]: Fixed issue where the organism would overflow on the project page sidebar.
+* [UI]: Fixed issue with Analyses Filter overlapping the Analyses table on smaller screens.
+* [Developer]: Removed magnific-popups from the project samples page and replace with bootstrap modals through angular-ui.
+* [UI]: Fixed issue with downloading a sample with duplicate filenames.  Duplicates are now renamed with Windows style "file (1).fastq" names.
+
+1.0.0-alpha5 to 1.0.0-alpha6
+----------------------------
+* [UI] Feature: Added IRIDA logo to the header, and added a footer with some contact information. Also added a favicon.
+* [UI] Feature: Added ability to remove sequencing runs and all uploaded files from the web interface.
+* [UI] Feature: Upgrade to the latest version of Phylocanvas for rendering phylogenetic trees from SNVPhyl runs. We were falling back to PhyloSVG in Firefox on Linux because of a bug in Phylocanvas, but the bug has since been fixed, so now everyone gets Phylocanvas!
+* [UI] Feature/Bugfix: Updated the "Recent Activities" section to use angular directives. Also fixed a bug with how the links in recent activities were rendered.
+* [UI] Feature: Added a feature to filter samples in a project using a file with sample names. 
+* [UI] Feature: Paging is now down server side for the projects list, improving performance.
+* [Tools] Bugfix: Updated some of the permissions for listing projects for `ROLE_SEQUENCER` so that the new GUI uploader tool works.
+* [Developer] Feature: Fixed up a lot of the testing code to evaluate pass or fail based on the content of the page rather than the URL. This fixed timing issues in tests and actually validated some behaviour instead of assuming that stuff worked.
+* [Developer] Feature: Add forward and reverse links on paired-end sequencing files to the REST API.
+* [Developer] Bugfix: Moved the install directories in the VM to reside on `/home` from `/opt` because packer makes a giant home partition and we were running out of space when Galaxy was running in `/opt`.
+
 1.0.0-alpha4 to 1.0.0-alpha5
 ----------------------------
 * [UI] Feature: Announcements section added to dashboard.

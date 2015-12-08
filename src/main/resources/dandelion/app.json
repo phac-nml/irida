@@ -1,12 +1,16 @@
 {
-  "bundle": "app",
   "dependencies": [
+    "jquery",
+    "lodash",
+    "angular",
+    "angular-aria",
+    "angular-bootstrap",
+    "angular-animate",
     "font-awesome",
     "animate.css",
     "utilities",
     "cart",
-    "angular",
-    "angular.gravatar",
+    "angular-gravatar",
     "notifications"
   ],
   "assets": [

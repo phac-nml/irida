@@ -3,7 +3,20 @@
       layout:decorator="projects/_base">
 <head>
 	<title th:text="${project.label} + ' - ' + #{project.nav.referenceFiles}">TITLE</title>
-	<script>window.dependencies = ['References'];</script>
+	<script th:inline="javascript">
+		window.dependencies = ['References'];
+		var PAGE = {
+			urls: {
+				get: /*[[@{/projects/{id}/ajax/reference/all(id=${project.identifier})}]]*/ '/projects/1/ajax/reference/all',
+				remove: /*[[@{/referenceFiles/delete}]]*/ '/projects/1/ajax/reference/delete',
+				download: /*[[@{/referenceFiles/download/}]]*/ '/referenceFiles/download/',
+				upload: /*[[@{/referenceFiles/project/{id}/new(id=${project.identifier})}]]*/ 'referenceFiles/project/1/new'
+			},
+			templates: {
+				deleteFile: /*[[@{/projects/templates/referenceFiles/delete'}]]*/ '/projects/templates/referenceFiles/delete'
+			}
+		};
+	</script>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-reference-files" th:with="owner=(${isOwner} or ${isAdmin})">
@@ -51,10 +64,10 @@
 					<td>{{file.createdDate | date:'mediumDate'}}</td>
 					<td>
 						<div class="btn-toolbar pull-right">
-							<button ng-show="file.size > 0" class="btn btn-xs btn-default" ng-click="table.download(file.id)" data:tooltip="#{form.download}">
+							<button ng-show="file.size > 0" class="btn btn-xs btn-default" ng-click="table.download(file.id)" data:uib-tooltip="#{form.download}">
 								<span class="fa fa-fw fa-download"></span> <span class="sr-only" th:text="#{form.download}"></span>
 							</button>
-							<button th:if="${isOwner} or ${isAdmin}" class="btn btn-xs btn-default removeBtn" ng-click="table.deleteFile(file)" data:tooltip="#{form.btn.remove}">
+							<button th:if="${isOwner} or ${isAdmin}" class="btn btn-xs btn-default removeBtn" ng-click="table.deleteFile(file)" data:uib-tooltip="#{form.btn.remove}">
 								<span class="fa fa-fw fa-trash"></span> <span class="sr-only" th:text="#{form.btn.remove}"></span>
 							</button>
 						</div>
@@ -89,19 +102,6 @@
 			  </button>
 		  </div>
 	  </div>
-  </script>
-  <script>
-	  var PAGE = {
-		  urls: {
-			  get: /*[[@{/projects/{id}/ajax/reference/all(id=${project.identifier})}]]*/ '/projects/1/ajax/reference/all',
-			  remove: /*[[@{/referenceFiles/delete}]]*/ '/projects/1/ajax/reference/delete',
-			  download: /*[[@{/referenceFiles/download/}]]*/ '/referenceFiles/download/',
-			  upload: /*[[@{/referenceFiles/project/{id}/new(id=${project.identifier})}]]*/ 'referenceFiles/project/1/new'
-		  },
-		  templates: {
-			  deleteFile: /*[[@{/projects/templates/referenceFiles/delete'}]]*/ '/projects/templates/referenceFiles/delete'
-		  }
-	  };
   </script>
 </th:block>
 </body>

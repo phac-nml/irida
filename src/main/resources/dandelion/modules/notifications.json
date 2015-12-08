@@ -1,0 +1,14 @@
+{
+  "dependencies": [
+    "angular",
+    "noty"
+  ],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/services/notifications/irida-notifications.js"
+      }
+    }
+  ]
+}

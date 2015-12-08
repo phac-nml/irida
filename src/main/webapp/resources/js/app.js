@@ -3,8 +3,6 @@
   var deps = _.union(window.dependencies || [], [
     'ngAria',
     'ngAnimate',
-    'ngSanitize',
-    'ngMessages',
     'ui.bootstrap',
     'ui.gravatar',
     'irida.session',
@@ -46,15 +44,15 @@
         };
       }
     ])
-    .run(function(paginationConfig) {
-      paginationConfig.firstText = TL.lang.page.first;
-      paginationConfig.previousText = TL.lang.page.prev;
-      paginationConfig.nextText = TL.lang.page.next;
-      paginationConfig.lastText = TL.lang.page.last;
-      paginationConfig.boundaryLinks = true;
-      paginationConfig.directionLinks = true;
-      paginationConfig.maxSize = 8;
-      paginationConfig.rotate = false;
+    .run(function(uibPaginationConfig) {
+      uibPaginationConfig.firstText = TL.lang.page.first;
+      uibPaginationConfig.previousText = TL.lang.page.prev;
+      uibPaginationConfig.nextText = TL.lang.page.next;
+      uibPaginationConfig.lastText = TL.lang.page.last;
+      uibPaginationConfig.boundaryLinks = true;
+      uibPaginationConfig.directionLinks = true;
+      uibPaginationConfig.maxSize = 8;
+      uibPaginationConfig.rotate = false;
     })
     .controller('UIGalaxyController', [UIGalaxyController]);
 })(window.angular, window.$, window._, window.TL);

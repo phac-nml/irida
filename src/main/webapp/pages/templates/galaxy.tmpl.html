@@ -16,6 +16,22 @@
 			<input id="name" type="text" class="form-control" th:attr="ng-init='gCtrl.setName(\'' + ${name}+ '\'' + ',\'' + ${orgName} + '\');'"  ng-model="gCtrl.name"/>
 			<div id="galaxy-error" ng-show="gCtrl.errors" class="alert alert-danger" role="alert">{{gCtrl.errors}}</div>
 		</div>
+		<div class="form-group">
+			<label for="addtohistory">
+			<input id="addtohistory" type="checkbox" ng-model="gCtrl.addtohistory"/>&nbsp;
+				<th:block th:text="#{galaxy.label.addtohistory}"></th:block>
+			</label>
+			<br />
+			<div class="form-group-detail">
+				<label for="makepairedcollection" ng-show="gCtrl.addtohistory">
+				<input id="makepairedcollection" type="checkbox" ng-show="gCtrl.addtohistory" ng-model="gCtrl.makepairedcollection"/>&nbsp;
+					<th:block th:text="#{galaxy.label.makepairedcollection}"></th:block>
+					<span class="btn btn-link btn-xs btn-default pull-right" popover-trigger="mouseenter" data:popover="#{galaxy.help-popup}" data:popover-title="#{galaxy.help-popup-title}">
+						<fa:icon type="question-circle" />
+					</span>
+				</label>
+			</div>
+		</div>
 	</div>
 	<div class="modal-body" ng-show="gCtrl.showOauthIframe">
 		<iframe name="oauth2Iframe" ng-src="{{gCtrl.iframeSrc}}" style="zoom:0.60" width="99.6%" height="800" frameborder="0"></iframe>

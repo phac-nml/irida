@@ -1,4 +1,5 @@
 {
+  "dependencies": ["select2-bootstrap"],
   "assets": [
     {
       "type": "js",

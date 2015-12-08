@@ -87,4 +87,13 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectBadFastaFile();
 		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
 	}
+	
+	@Test
+	public void testAccessMultiProjectSamplePage() {
+		LoginPage.logout(driver());
+		LoginPage.loginAsUser(driver());
+		page = new SampleFilesPage(driver());
+		page.gotoPage(5L);
+		assertTrue("Page Title contains the sample label", page.getPageTitle().contains("sample5"));
+	}
 }

@@ -22,27 +22,8 @@ This section of the guide describes how to create, modify, and remove local user
 
 Creating a New User Account
 ---------------------------
-After logging in to IRIDA, click on the **Users** menu, and select "Create User":
 
-![Create user menu.](images/create-user-menu.png)
-
-Fill in the user details fields. All fields are required for a user account in IRIDA:
-
-![User details form.](images/user-details-form.png)
-
-By default, a user will be issued a randomly-generated, one-time-use key to activate their account. The first time the user logs in, they will be required to change their password. You may manually enter a user password by unchecking "Require User Activation":
-
-![Manual password entry.](images/manual-user-password.png)
-
-Passwords must have at least 1 upper-case character, 1 lower-case character, 1 number (0-9), and must be *at least* 8 characters long. If you manually set a password for a new user account, the user will not be required to change their password on first log in.
-
-When you click "Create User", an e-mail will be sent to the user (to the e-mail address you entered) including the URL for IRIDA (as configured in the [Administrator Install Guide](../../administrator/web/#web-configuration)). If you did not manually set a password for the user, the e-mail will include a link to activate the user account:
-
-![User welcome e-mail.](images/user-welcome-email.png)
-
-On successfully creating a new user account, you will see the user details that you entered:
-
-![User details page.](images/user-details-page.png)
+{% include tutorials/common/creating-a-user-account.md %}
 
 Updating an Existing User Account
 ---------------------------------
@@ -101,20 +82,7 @@ External tools can interact with IRIDA using the IRIDA REST API. External tools 
 Creating a New System Client
 ----------------------------
 
-{% include_relative includes/start-from-the-clients-list.md %}
-
-You can add a new client by clicking on the "Add Client" button:
-
-![Add client button.](images/clients-list-add-client-button.png)
-
-When you add a client, you'll be required to provide the following information:
-
-1. A unique client ID,
-2. How long a token should be valid for once issued,
-3. The type of OAuth2 flow that a client should use,
-4. The scopes that the client is allowed to use (should the client be allowed to read, write, or both with the REST API).
-
-![Client details.](images/client-details.png)
+{% include tutorials/clients/creating-a-client.md %}
 
 ### Client ID
 {:.no_toc}
@@ -291,7 +259,7 @@ The overrepresented sequences page displays all of the overrepresented sequences
 
 Uploading Data to IRIDA
 =======================
-IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to IRIDA using the REST API. Please see the [uploading data guide](uploader/) for more information on how to upload data.
+IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to IRIDA using the REST API. Please see the [uploading data guide](uploader-tool/) for more information on how to upload data.
 
 Displaying IRIDA Platform Updates
 =================================

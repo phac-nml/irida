@@ -34,7 +34,7 @@
     </div>
 
     </main>
-    <th:block layout:fragment="page-scripts">
+    <th:block layout:fragment="scripts">
       <script type="text/ng-template" id="myModalContent.html">
           <div class="modal-header">
               <h3 class="modal-title" th:text="#{sequencingruns.delete.confirmation}">I'm a modal!</h3>
@@ -57,19 +57,19 @@
 	        "use strict";
 
 	        var app = angular.module('irida.sequencingruns', ['ui.bootstrap']);
-	        app.controller('DeleteModalCtrl', function ($modal) {
+	        app.controller('DeleteModalCtrl', function ($uibModal) {
 		        var vm = this;
 	            vm.open = function (size) {
 
-                  $modal.open({
+                  $uibModal.open({
                     templateUrl: 'myModalContent.html',
                     controller: 'ModalInstanceCtrl as modal',
                     size: 'sm'
                   });
                 };
-	        }).controller('ModalInstanceCtrl',function($modalInstance, $http){
+	        }).controller('ModalInstanceCtrl',function($uibModalInstance, $http){
               var vm = this;
-              
+
               vm.ok = function(){
                 $http({
                   method: 'DELETE',
@@ -78,9 +78,9 @@
                   window.location = PAGE.urls.list
                 });
               };
-              
+
               vm.cancel = function(){
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
               }
               
             });

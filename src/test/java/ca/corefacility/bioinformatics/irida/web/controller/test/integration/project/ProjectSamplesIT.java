@@ -102,7 +102,7 @@ public class ProjectSamplesIT {
 		String location = r.getHeader(HttpHeaders.LOCATION);
 
 		assertNotNull(location);
-		assertTrue(location.matches("^" + ITestSystemProperties.BASE_URL + "/api/projects/[0-9]+/samples/[0-9]+$"));
+		assertTrue(location.matches("^" + ITestSystemProperties.BASE_URL + "/api/samples/[0-9]+$"));
 	}
 
 	@Test
@@ -115,7 +115,7 @@ public class ProjectSamplesIT {
 		String projectSamplesJson = asUser().get(projectSamplesUri).asString();
 		String sampleLabel = from(projectSamplesJson).get("resource.resources[0].sampleName");
 		// get the uri for a specific sample associated with a project
-		String sampleUri = from(projectSamplesJson).get("resource.resources[0].links.find{it.rel == 'self'}.href");
+		String sampleUri = from(projectSamplesJson).get("resource.resources[0].links.find{it.rel == 'project/sample'}.href");
 		// issue a delete against the service
 		Response r = asAdmin().expect().statusCode(HttpStatus.OK.value()).when().delete(sampleUri);
 
@@ -137,14 +137,13 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testUpdateProjectSample() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
-		String projectSampleUri = projectUri + "/samples/1";
+		String projectSampleUri = ITestSystemProperties.BASE_URL + "/api/samples/1";
 		Map<String, String> updatedFields = new HashMap<>();
 		String updatedName = "Totally-different-sample-name";
 		updatedFields.put("sampleName", updatedName);
 
 		asUser().and().body(updatedFields).expect()
-				.body("resource.links.rel", hasItems("self", "project", "sample/sequenceFiles")).when()
+				.body("resource.links.rel", hasItems("self", "sample/sequenceFiles")).when()
 				.patch(projectSampleUri);
 
 		// now confirm that the sample name was updated
@@ -158,6 +157,19 @@ public class ProjectSamplesIT {
 
 		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
 				.when().get(projectSampleUri);
+	}
+	
+	@Test
+	public void testReadSampleAsAdminWithDoubledUpSlashes() {
+		String projectUri = ITestSystemProperties.BASE_URL + "/api//projects/5";
+		String projectSampleUri = projectUri + "/samples/1";
+
+		final Response r = asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when().get(projectSampleUri);
+		final String responseBody = r.getBody().asString();
+		final String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'sample/project'}.href");
+		// now verify that we can actually get this (so doubled slash should not have affected the link)
+		asAdmin().expect().statusCode(HttpStatus.OK.value()).when().get(samplesUri);
 	}
 
 	@Test

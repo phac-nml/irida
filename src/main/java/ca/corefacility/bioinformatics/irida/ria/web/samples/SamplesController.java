@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +37,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -353,6 +351,8 @@ public class SamplesController extends BaseController {
 	 * @param response
 	 *            HTTP response object to update response status if there's an
 	 *            error.
+	 * @throws IOException
+	 * 			  on upload failure
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" })
 	public void uploadSequenceFiles(@PathVariable Long sampleId,
@@ -446,13 +446,8 @@ public class SamplesController extends BaseController {
 
 		List<Join<Project, Sample>> projectsForSample = projectService.getProjectsForSample(sample);
 		for (Join<Project, Sample> join : projectsForSample) {
-			Collection<Join<Project, User>> usersForProject = userService.getUsersForProject(join.getSubject());
-			for (Join<Project, User> puj : usersForProject) {
-				ProjectUserJoin casted = (ProjectUserJoin) puj;
-				if (casted.getObject().equals(userByUsername)
-						&& casted.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
-					return true;
-				}
+			if (projectService.userHasProjectRole(userByUsername, join.getSubject(), ProjectRole.PROJECT_OWNER)) {
+				return true;
 			}
 		}
 		return false;

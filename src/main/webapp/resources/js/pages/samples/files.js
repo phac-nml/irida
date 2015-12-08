@@ -4,22 +4,22 @@
   /**
    * Controller for the modal to confirm removing a sequenceFile
    *
-   * @param {Object} $modalInstance Handle on the current modal
+   * @param {Object} $uibModalInstance Handle on the current modal
    * @param {long} id id for the file to delete.
    * @param {String} label Name of the file to remove from the Sample.
    * @constructor
    */
-  function FileDeletionController($modalInstance, id, label) {
+  function FileDeletionController($uibModalInstance, id, label) {
     var vm = this;
     vm.fileId = id;
     vm.label = label;
 
     vm.deleteFile = function() {
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     vm.cancel = function() {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
     };
   }
 
@@ -27,10 +27,10 @@
    * Controller for the Buttons in the list of sequence files.
    *
    * @param {Object} fileService Service for API calls for sequenceFiles
-   * @param {Object} $modal Angular modal
+   * @param {Object} $uibModal Angular modal
    * @constructor
    */
-  function FileController(fileService, $modal) {
+  function FileController(fileService, $uibModal) {
     var vm = this;
 
     /**
@@ -51,7 +51,7 @@
      * @param {String} label Name of the sequenceFile to delete
      */
     vm.deleteFile = function(id, label) {
-      $modal.open({
+      $uibModal.open({
         templateUrl: '/confirm.html',
         controller: 'FileDeletionController as deleteCtrl',
         resolve: {
@@ -66,7 +66,7 @@
     };
 
     vm.deletePair = function(id, label1, label2) {
-      $modal.open({
+      $uibModal.open({
         templateUrl: '/confirm_pair.html',
         controller: 'FileDeletionController as deleteCtrl',
         resolve: {
@@ -89,7 +89,7 @@
    * @param {Object} $window
    * @constructor
    */
-  function FileUploadController(Upload, $timeout, $window, $modal) {
+  function FileUploadController(Upload, $timeout, $window, $uibModal) {
     var vm = this,
       fileUpload = undefined,
       url = TL.BASE_URL + 'samples/' + PAGE.sample.id +
@@ -133,22 +133,22 @@
       }
 
       if ($rejectedFiles && $rejectedFiles.length > 0) {
-        $modal.open({
+        $uibModal.open({
           animation: true,
           templateUrl: '/upload-error.html',
           controllerAs: 'rejectModalCtrl',
-          controller: ['$modalInstance', 'rejects', 'files', function(
-            $modalInstance, rejects, files) {
+          controller: ['$uibModalInstance', 'rejects', 'files', function(
+            $uibModalInstance, rejects, files) {
             var vm = this;
             vm.rejects = rejects;
             vm.good = files;
 
             vm.cancel = function() {
-              $modalInstance.dismiss();
+              $uibModalInstance.dismiss();
             };
 
             vm.finish = function() {
-              $modalInstance.close(_.filter(files, function(file) {
+              $uibModalInstance.close(_.filter(files, function(file) {
                 return file.selected;
               }));
             };
@@ -183,10 +183,10 @@
       'file.utils', 'ngFileUpload'
     ])
     .controller('FileUploadController', ['Upload', '$timeout', '$window',
-      '$modal', FileUploadController
+      '$uibModal', FileUploadController
     ])
-    .controller('FileController', ['FileService', '$modal', FileController])
-    .controller('FileDeletionController', ['$modalInstance', 'id', 'label',
+    .controller('FileController', ['FileService', '$uibModal', FileController])
+    .controller('FileDeletionController', ['$uibModalInstance', 'id', 'label',
       FileDeletionController
     ]);
 })(window.angular, window.TL, window.PAGE);

@@ -5,9 +5,15 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title th:text="#{${admin} ? 'analyses.admin.page-title' : 'analyses.user.page-title'}">My Title Goes Here</title>
-	<link rel="stylesheet" href="/resources/bower_components/ng-table/dist/ng-table.min.css"
-	      th:href="@{/resources/bower_components/ng-table/dist/ng-table.min.css}"/>
-	<script>window.dependencies = ['irida.analysis.user'];</script>
+	<script th:inline="javascript">
+		window.dependencies = ['irida.analysis.user'];
+		var PAGE = {
+			"URLS": {
+				"analyses": /*[[@{/analysis/ajax/list(all=${admin})}]]*/ "/analysis/ajax/list",
+				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
+			}
+		};
+	</script>
 	<style>
 		.progress {
 			height: 2px;
@@ -24,7 +30,7 @@
 <div layout:fragment="page" ddl:bundle-includes="analyses">
 	<div class="row">
 		<aside ng-controller="filterController as filter" class="col-sm-3">
-			<div class="sidenav__inner--fixed sidebar">
+			<div class="sidenav__inner sidebar">
 				<div class="sidebar__heading">
 					<h2>
 						<span th:text="#{form.filter}">Filter</span>
@@ -69,7 +75,7 @@
 
 						<div class="input-group">
 							<input id="filter-date-early" type="text" class="form-control"
-							       th:attr="datepicker-popup=#{datepicker.short}, close-text=#{datepicker.close}, current-text=#{datepicker.current}, clear=#{datepicker.clear}"
+							       th:attr="uib-datepicker-popup=#{datepicker.short}, close-text=#{datepicker.close}, current-text=#{datepicker.current}, clear=#{datepicker.clear}"
 							       ng-model="filter.minDate" is-open="filter.opened.minDate"
 							       max-date="filter.max" ng-change="filter.doDateFilter('minDate')"/>
 			              <span class="input-group-btn">
@@ -80,7 +86,7 @@
 
 						<div class="input-group">
 							<input id="filter-date-late" type="text" class="form-control"
-							       th:attr="datepicker-popup=#{datepicker.short}"
+							       th:attr="uib-datepicker-popup=#{datepicker.short}"
 							       ng-model="filter.maxDate" is-open="filter.opened.maxDate"
 							       max-date="filter.max" close-text="Close" ng-change="filter.doDateFilter('maxDate')"/>
 			              <span class="input-group-btn">
@@ -107,7 +113,7 @@
 						    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
 							<td class="analysis-percent" data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}
 								<span ng-if="analysis.analysisState !== 'ERROR'" class="md-caption">
-									<progressbar value="analysis.percentComplete"></progressbar>
+									<uib-progressbar value="analysis.percentComplete"></uib-progressbar>
 									{{ analysis.percentComplete | number:0 }}%
 								</span>
 							</td>
@@ -123,7 +129,7 @@
                                 {{analysis.submitter}}
                             </td>
 							<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">
-								<span tooltip="{{ analysis.createdDate | date:'medium' }}">{{analysis.createdDate | date:'mediumDate'}}</span>
+								<span uib-tooltip="{{ analysis.createdDate | date:'medium' }}">{{analysis.createdDate | date:'mediumDate'}}</span>
 							</td>
 							<td data:title="'\'' + #{analysis.duration} + '\''" sortable="'duration'">
 								{{ ctrl.convertTime(analysis.duration) }}
@@ -131,7 +137,7 @@
 							<td>
 								<button ng-show="analysis.analysisState==='COMPLETED'" aria-label="#{form.download}"
 								        class="btn btn-default btn-xs pull-right download-analysis-btn"
-								        ng-click="ctrl.download(analysis.id)" data:tooltip="#{form.download}">
+								        ng-click="ctrl.download(analysis.id)" data:uib-tooltip="#{form.download}">
 									<fa:icon type="download" />
 								</button>
 							</td>
@@ -149,17 +155,5 @@
 		</div>
 	</div>
 </div>
-<th:block layout:fragment="page-scripts">
-	<script th:inline="javascript">
-		var PAGE = {
-			"URLS": {
-				"analyses": /*[[@{/analysis/ajax/list(all=${admin})}]]*/ "/analysis/ajax/list",
-				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
-			}
-		};
-	</script>
-	<script src="/resources/bower_components/ng-table/dist/ng-table.min.js"
-	        th:src="@{/resources/bower_components/ng-table/dist/ng-table.min.js}"></script>
-</th:block>
 </body>
 </html>

@@ -6,13 +6,16 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -61,7 +64,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -197,32 +200,10 @@ public class ProjectSamplesController {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
 		List<Map<String, Object>> samples = new ArrayList<>(joinList.size());
+
 		for (Join<Project, Sample> join : joinList) {
 			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join
 					.getObject().getId());
-
-			// Galaxy Export Functionality:
-			List<Join<Sample, SequenceFile>> sampleSeqFiles = sequenceFileService.getSequenceFilesForSample(join
-					.getObject());
-			List<Map<String, Object>> sequences = new ArrayList<>();
-			Map<String, Object> embedded = new HashMap<>(1);
-			for (Join<Sample, SequenceFile> sampleSeqJoin : sampleSeqFiles) {
-
-				Map<String, Object> seqFileMap = new HashMap<>(1);
-				Map<String, Object> links = new HashMap<>(1);
-				Map<String, Object> self = new HashMap<>(1);
-				seqFileMap.put("_links", links);
-				links.put("self", self);
-				String seqFileLoc = linkTo(
-						methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId,
-								sampleSeqJoin.getSubject().getId(), sampleSeqJoin.getObject().getId())).withSelfRel()
-						.getHref();
-				self.put("href", seqFileLoc);
-				sequences.add(seqFileMap);
-			}
-			embedded.put("sample_files", sequences);
-			sampleMap.put("embedded", embedded);
-
 			samples.add(sampleMap);
 		}
 		result.put("samples", samples);
@@ -529,6 +510,9 @@ public class ProjectSamplesController {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + ".zip\"");
 		response.setHeader("Transfer-Encoding", "chunked");
 
+		// storing used filenames to ensure we don't have a conflict
+		Set<String> usedFileNames = new HashSet<>();
+
 		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
 			for (Sample sample : samples) {
 				List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
@@ -539,7 +523,20 @@ public class ProjectSamplesController {
 					name.append("/").append(sample.getSampleName());
 					name.append("/").append(path.getFileName().toString());
 
-					outputStream.putNextEntry(new ZipEntry(name.toString()));
+					String fileName = name.toString();
+					if (usedFileNames.contains(fileName)) {
+						fileName = handleDuplicate(fileName, usedFileNames);
+					}
+					final ZipEntry entry = new ZipEntry(fileName);
+					// set the file creation time on the zip entry to be
+					// whatever the creation time is on the filesystem
+					final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+					entry.setCreationTime(attr.creationTime());
+					entry.setLastModifiedTime(attr.creationTime());
+
+					outputStream.putNextEntry(entry);
+
+					usedFileNames.add(fileName);
 
 					Files.copy(path, outputStream);
 
@@ -559,6 +556,30 @@ public class ProjectSamplesController {
 			// streams.
 			response.getOutputStream().close();
 		}
+	}
+	
+	/**
+	 * Rename a filename {@code original} and ensure it doesn't exist in
+	 * {@code usedNames}. Uses the windows style of renaming file.ext to file
+	 * (1).ext
+	 * 
+	 * @param original
+	 *            original file name
+	 * @param usedNames
+	 *            names that original must not conflict with
+	 * @return modified name
+	 */
+	private String handleDuplicate(String original, Set<String> usedNames) {
+		int lastDot = original.lastIndexOf('.');
+
+		int index = 0;
+		String result;
+		do {
+			index++;
+			result = original.substring(0, lastDot) + " (" + index + ")" + original.substring(lastDot);
+		} while (usedNames.contains(result));
+
+		return result;
 	}
 
 	/**
@@ -619,7 +640,13 @@ public class ProjectSamplesController {
 		sampleMap.put("project", project);
 		sampleMap.put("sampleType", type);
 		sampleMap.put("identifier", identifier);
+		String href = linkTo(
+			methodOn(RESTProjectSamplesController.class).getProjectSample(
+					project.getId(), sample.getId()
+				)
+			).withSelfRel().getHref();
 
+		sampleMap.put("href", href);
 		return sampleMap;
 	}
 

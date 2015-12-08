@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,9 +21,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -348,13 +353,64 @@ public class ProjectSamplesControllerTest {
 		List<Join<Sample, SequenceFile>> filejoin = ImmutableList.of(new SampleSequenceFileJoin(sample, file));
 
 		when(projectService.read(project.getId())).thenReturn(project);
-		when(sampleService.read(sample.getId())).thenReturn(sample);
+		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(ImmutableList.of(sample));
 		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(filejoin);
 
 		controller.downloadSamples(project.getId(), ImmutableList.of(sample.getId()), response);
+		
+		verify(projectService).read(project.getId());
+		verify(sampleService).readMultiple(ImmutableList.of(sample.getId()));
+		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		
 		assertTrue("Response should contain a \"Content-Disposition\" header.",
 				response.containsHeader("Content-Disposition"));
 		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_project.zip\"",
 				response.getHeader("Content-Disposition"));
+		
+		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(response.getContentAsByteArray()))) {
+			ZipEntry nextEntry = zipStream.getNextEntry();
+			String fileName = nextEntry.getName();
+			assertTrue("incorrect file in zip stream: " + file.getFileName(), fileName.endsWith(file.getFileName()));
+		}
+	}
+	
+	@Test
+	public void testDownloadSamplesWithSameName() throws IOException {
+		Project project = TestDataFactory.constructProject();
+		Sample sample = TestDataFactory.constructSample();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+
+		Path path = Paths.get(FILE_PATH);
+		SequenceFile file = new SequenceFile(path);
+		List<Join<Sample, SequenceFile>> filejoin = ImmutableList.of(new SampleSequenceFileJoin(sample, file),
+				new SampleSequenceFileJoin(sample, file), new SampleSequenceFileJoin(sample, file));
+
+		when(projectService.read(project.getId())).thenReturn(project);
+		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(ImmutableList.of(sample));
+		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(filejoin);
+
+		controller.downloadSamples(project.getId(), ImmutableList.of(sample.getId()), response);
+
+		verify(projectService).read(project.getId());
+		verify(sampleService).readMultiple(ImmutableList.of(sample.getId()));
+		verify(sequenceFileService).getSequenceFilesForSample(sample);
+
+		assertTrue("Response should contain a \"Content-Disposition\" header.",
+				response.containsHeader("Content-Disposition"));
+		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_project.zip\"",
+				response.getHeader("Content-Disposition"));
+
+		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(response.getContentAsByteArray()))) {
+			Set<String> names = new HashSet<>();
+
+			ZipEntry nextEntry = zipStream.getNextEntry();
+			while (nextEntry != null) {
+				names.add(nextEntry.getName());
+				nextEntry = zipStream.getNextEntry();
+			}
+
+			assertEquals("should be 3 unique filenames", 3, names.size());
+		}
+
 	}
 }

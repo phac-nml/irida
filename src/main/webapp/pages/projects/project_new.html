@@ -9,6 +9,8 @@
           href="/resources/bower_components/select2/select2.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
           href="/resources/bower_components/select2/select2-bootstrap.css"/>
+
+    <script>window.dependencies=["irida.project.new"];</script>
 </head>
 <body>
 <div layout:fragment="page">
@@ -24,7 +26,7 @@
                     <div class="form-group" th:classappend="${#maps.containsKey(errors, 'name')} ? 'has-error'"
                          ng-class="{'has-error' : !new_project.name.$focused &amp;&amp; new_project.name.$invalid &amp;&amp; !new_project.name.$pristine}">
                         <label class="control-label" for="name"> <span th:text="#{projects.create.form.name}">__Project_Name__</span>&nbsp;
-                            <small tooltip-placement="right" data:tooltip="#{projects.create.form.required}"
+                            <small uib-tooltip-placement="right" data:uib-tooltip="#{projects.create.form.required}"
                                    class="fa fa-fw fa-asterisk"></small>
                         </label>
                         <input class="form-control input-full" type="text" id="name" name="name"
@@ -89,7 +91,7 @@
         </form>
     </div>
 </div>
-<th:block layout:fragment="page-scripts" th:inline="javascript">
+<th:block layout:fragment="scripts" th:inline="javascript">
     <script th:src="@{/resources/bower_components/select2/select2.min.js}"
             src="/resources/bower_components/select2/select2.min.js"></script>
     <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
@@ -133,16 +135,16 @@
         }).select2('val', /*[[${project} ? ${project.getOrganism()} : '']]*/ '');
 
         (function() {
-	        "use strict";
+            "use strict";
 
-	        var app = angular.module('irida');
-	        app.controller('NewProjectController', function () {
-		        var vm = this;
-	            vm.project = {
-	            	name: /*[[${project} ? ${project.getName()} : '']]*/ '',
-	            	remoteURL: /*[[${project} ? ${project.getRemoteURL()} : '']]*/ '',
-	            };
-	        });
+            angular.module("irida.project.new", ["ui.bootstrap"])
+                    .controller('NewProjectController', function () {
+                        var vm = this;
+                        vm.project = {
+                            name: /*[[${project} ? ${project.getName()} : '']]*/ '',
+                            remoteURL: /*[[${project} ? ${project.getRemoteURL()} : '']]*/ '',
+                        };
+                    });
         })();
     </script>
 </th:block>

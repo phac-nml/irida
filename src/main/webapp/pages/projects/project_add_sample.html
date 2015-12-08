@@ -6,13 +6,19 @@
   <title th:text="#{project.samples.new.title(${project.label})}">__NEW_SAMPLE__</title>
   <link rel="stylesheet" href="/resources/bower_components/select2/select2.css" th:href="@{/resources/bower_components/select2/select2.css}" />
   <link rel="stylesheet" href="/resources/bower_components/select2/select2-bootstrap.css" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}" />
-  <script>
+
+  <script th:inline="javascript">
+    var PAGE = {
+      project: {
+        id: /*[[${project.getId()}]]*/ '1'
+      }
+    };
     window.dependencies = ["samples.new"];
   </script>
 </head>
 
 <body>
-  <div layout:fragment="page">
+  <div layout:fragment="page" ddl:bundle-includes="project-add-samples">
     <div style="margin-top: 1rem;" class="col-md-8 col-md-offset-2 mrgn-tp-lg">
       <div class="panel panel-info ng-cloak" name="newSample">
         <div class="panel-heading">
@@ -48,18 +54,6 @@
       </div>
     </div>
   </div>
-
-  <th:block layout:fragment="page-scripts" th:inline="javascript">
-    <script th:inline="javascript">
-      var PAGE = {
-        project: {
-          id: /*[[${project.getId()}]]*/ '1'
-        }
-      };
-    </script>
-    <script src="/resources/bower_components/select2/select2.min.js" th:src="@{/resources/bower_components/select2/select2.min.js}"></script>
-    <script src="/resources/js/pages/projects/add-samples.js" th:src="@{/resources/js/pages/projects/add-samples.js}"></script>
-  </th:block>
 
 </body>
 

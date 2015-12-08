@@ -3,13 +3,13 @@
       layout:decorator="analysis/details/_base">
 
 <head lang="en">
-	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
-	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
-	      th:href="@{/resources/css/pages/sample_files.css}"/>
 	<style>
 		.tool i {
 			font-size: .75em;
 			color: #d5d5d5;
+		}
+		.progress {
+			margin-bottom:1rem;
 		}
 		.progress, .progress-bar {
 			height: 4px;
@@ -19,11 +19,11 @@
 </head>
 
 <body>
-<main layout:fragment="main">
+<main layout:fragment="main" ddl:bundle-includes="analysis-details">
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
 			<h1><th:block th:text="${analysisSubmission.label}"></th:block> <small ng-hide="stateController.state === 'ERROR'" ng-bind="stateController.percentage + '%'"></small></h1>
-			<progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></progressbar>
+			<uib-progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></uib-progressbar>
 	</div>
 	</div>
 	<div class="row">
