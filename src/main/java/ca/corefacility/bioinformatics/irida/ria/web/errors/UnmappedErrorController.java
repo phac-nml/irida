@@ -59,7 +59,7 @@ public class UnmappedErrorController {
 		/**
 		 * See comment on UnmappedErrorController#basic404
 		 */
-		logger.error("User requested page that does not exist via REST API: " + request);
+		logger.error("User requested page that does not exist via REST API: " + request.getRequestURI());
 		return "";
 	}
 }
