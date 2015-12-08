@@ -1,17 +1,13 @@
-/* line 1, ../../../styles/pages/analyses-list.scss */
-.progress {
+.progress-bar, .progress {
   height: 2px !important;
-}
+  margin-bottom: 0 !important;
+  line-height: 2px !important; }
 
-/* line 5, ../../../styles/pages/analyses-list.scss */
 tr td {
-  vertical-align: middle !important;
-}
+  vertical-align: middle !important; }
 
-/* line 9, ../../../styles/pages/analyses-list.scss */
 .crop {
   max-width: 250px !important;
   white-space: nowrap !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
+  text-overflow: ellipsis !important; }
