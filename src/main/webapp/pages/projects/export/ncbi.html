@@ -29,6 +29,11 @@
             <p class="help-block" th:text="#{project.export.bioproject.description}">_BioProject to add data to_</p>
           </div>
           <div class="form-group">
+            <label for="organization" th:text="#{project.export.organization.title}">_Organization_</label>
+            <input class="form-control" id="organization" required="required" />
+            <p class="help-block" th:text="#{project.export.organization.description}">_Name of organization__</p>
+          </div>
+          <div class="form-group">
             <label for="namespace" th:text="#{project.export.namespace.title}">_SRA Namespace_</label>
             <input class="form-control" id="namespace" required="required" />
             <p class="help-block" th:text="#{project.export.namespace.description}">_Namespace used for identifier creation_</p>
@@ -167,6 +172,7 @@
 
         var bioProject = $('#bioProject').val();
         var namespace = $('#namespace').val();
+        var organization = $('#organization').val();
         var release_date = $('#release_date').val();
 
         var samples = [];
@@ -207,6 +213,7 @@
 
         var submission = {
           bioProject: bioProject,
+          organization: organization,
           namespace: namespace,
           release_date: release_date,
           samples: samples

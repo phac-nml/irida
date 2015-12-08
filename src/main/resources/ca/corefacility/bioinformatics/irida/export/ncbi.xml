@@ -5,7 +5,7 @@
 	xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
 	<Description>
 		<Organization role="owner" type="institute">
-			<Name>IRIDA</Name>
+			<Name th:text="${submission.organization}">_IRIDA_</Name>
 			<Contact th:attr="email=${submission.submitter.email}">
 				<Name>
 					<First th:text="${submission.submitter.firstName}">_jane_</First>

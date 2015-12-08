@@ -22,6 +22,10 @@
                 <dd th:text="${submission.bioProjectId}"></dd>
               </dl>
               <dl>
+                <dt th:text="#{project.export.organization.title}">_organization_</dt>
+                <dd th:text="${submission.organization}"></dd>
+              </dl>
+              <dl>
                 <dt th:text="#{project.export.namespace.title}">_Namespace ID_</dt>
                 <dd th:text="${submission.ncbiNamespace}"></dd>
               </dl>
@@ -56,7 +60,7 @@
                     <dt th:text="#{project.export.accession}">_NCBI Accession_</dt>
                     <dd th:text="${sample.accession}"></dd>
                   </dl>
-                
+
                   <dl class="col-md-6">
                     <dt th:text="#{project.export.library_name.title}">_Library Name_</dt>
                     <dd th:text="${sample.libraryName}"></dd>
@@ -67,7 +71,7 @@
                     <dt th:text="#{project.export.instrument_model.title}">_Instrument Model_</dt>
                     <dd th:text="${sample.instrumentModel.value}"></dd>
                   </dl>
-                
+
                   <dl class="col-md-6">
                     <dt th:text="#{project.export.library_strategy.title}">_Library Strategy_</dt>
                     <dd th:text="${sample.libraryStrategy.value}"></dd>

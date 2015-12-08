@@ -50,6 +50,9 @@ public class NcbiExportSubmission implements MutableIridaThing {
 
 	@Column(name = "bio_project_id", nullable = false)
 	private String bioProjectId;
+	
+	@Column(name = "organization", nullable = false)
+	private String organization;
 
 	@Column(name = "namespace", nullable = false)
 	private String ncbiNamespace;
@@ -87,7 +90,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 		createdDate = new Date();
 	}
 
-	public NcbiExportSubmission(Project project, User submitter, String bioProjectId, String ncbiNamespace,
+	public NcbiExportSubmission(Project project, User submitter, String bioProjectId, String organization, String ncbiNamespace,
 			Date releaseDate, List<NcbiBioSampleFiles> bioSampleFiles) {
 		this();
 		this.project = project;
@@ -96,6 +99,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 		this.ncbiNamespace = ncbiNamespace;
 		this.releaseDate = releaseDate;
 		this.bioSampleFiles = bioSampleFiles;
+		this.organization = organization;
 	}
 
 	@Override
@@ -130,6 +134,14 @@ public class NcbiExportSubmission implements MutableIridaThing {
 
 	public Project getProject() {
 		return project;
+	}
+	
+	public String getOrganization() {
+		return organization;
+	}
+	
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 	public List<NcbiBioSampleFiles> getBioSampleFiles() {
