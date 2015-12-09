@@ -91,7 +91,7 @@ As projects become larger, it becomes unwieldy to select a large subset of sampl
 
 * Create a `.txt` file that contains the name of each sample you want to select on a new line.  You can either:
     - Use a text editor like Windows Notepad or TextEdit on Mac (note: when creating a new text document in TextEdit, press cmd + shift + t to change to the `.txt` format)
-    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file. 
+    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file.
 
 Example (`project_5_filter.txt`):
 
@@ -228,7 +228,7 @@ You can download an individual sequence file from a sample by [navigating to the
 
 #### NCBI Upload
 
-IRIDA can assist in uploading sequence files to NCBI's [Sequence Read Archive](http://www.ncbi.nlm.nih.gov/Traces/sra/).  IRIDA requires that BioProjects and BioSamples be created before uploading, and will assign uploaded sequence files to the given BioProject and BioSample identifiers.  More information about the metadata which must be entered during the upload process can be found at [NCBI Submission Quick Start Guide](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Experiment_)
+IRIDA can assist in uploading sequence files to NCBI's [Sequence Read Archive](http://www.ncbi.nlm.nih.gov/Traces/sra/).  IRIDA requires that BioProjects and BioSamples be created before uploading, and will assign uploaded sequence files to the given [BioProject](http://www.ncbi.nlm.nih.gov/bioproject/) and [BioSample](http://www.ncbi.nlm.nih.gov/biosample) identifiers.  More information about the metadata which must be entered during the upload process can be found at [NCBI Submission Quick Start Guide](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Experiment_).
 
 To begin submitting sequence files, select which samples you want to upload from the project samples page, then click the Export and Upload to NCBI SRA button.
 
@@ -253,13 +253,12 @@ Next you must fill in information about the samples to be uploaded.  More descri
 * Instrument Model - The sequencing platform used to produce the data.
 * Library Selection - Whether any method was used to select for or against, enrich, or screen the material being sequenced.
 
-After entering this metadata you can select which files should be uploaded from each sample.
+After entering this metadata you can select which files should be uploaded from each sample.  Only files selected with checkboxes will be uploaded to NCBI.
 
 ![NCBI sample metadata](images/ncbi-sample-metadata.png)
 
-Click `Submit` when the information is complete.
+Click the `Submit` at the bottom of the page when the information is complete.
 
 After submitting you will be redirected to a page showing the information you have entered for the upload and the status of the upload.  IRIDA will periodically check for new submissions to upload to NCBI and can only upload one submission at a time so there may be a delay in sending your data.  After NCBI has assigned an accession number to your upload it will be displayed on this page.
 
 ![NCBI submission details](images/ncbi-submission-details.png)
-
