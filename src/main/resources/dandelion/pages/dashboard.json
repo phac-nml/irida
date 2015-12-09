@@ -1,6 +1,6 @@
 {
   "bundle": "dashboard",
-  "dependencies": [ "events", "angular-marked" ],
+  "dependencies": [ "events", "marked", "angular-marked" ],
   "assets": [
     {
       "type": "js",
