@@ -10,6 +10,7 @@ Changes
 * [UI]: Password reset e-mails now include your username.
 * [Developer]: Fix up inconsistencies with tables created by Liquibase and tables created by Hibernate.
 * [Developer] Removed several unused properties and classes to simplify data model.
+* [UI]: Added ability to upload sequence files to NCBI from the Project/Samples table.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
