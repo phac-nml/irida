@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -247,25 +251,23 @@ public class ProjectExportController {
 	 * Ajax method for getting the {@link NcbiExportSubmission}s for a given
 	 * {@link Project}
 	 * 
+	 * @param criterias
+	 *            Datatables request object
 	 * @param projectId
 	 *            {@link Project} id
-	 * @return List of Map of submission params
+	 * @return DatatablesResponse of Map of submission params
 	 */
 	@RequestMapping("/ajax/projects/{projectId}/export/list")
 	@ResponseBody
-	public List<Map<String, Object>> getExportsForProject(@PathVariable Long projectId) {
+	public DatatablesResponse<NcbiExportSubmission> getExportsForProject(
+			@DatatablesParams DatatablesCriterias criterias, @PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		List<NcbiExportSubmission> submissions = exportSubmissionService.getSubmissionsForProject(project);
 
-		List<Map<String, Object>> subList = new ArrayList<>();
-		for (NcbiExportSubmission sub : submissions) {
-			Map<String, Object> subMap = new HashMap<>();
-			subMap.put("link", "projects/" + project.getId() + "/export/" + sub.getId());
-			subMap.put("submission", sub);
-			subList.add(subMap);
-		}
+		DataSet<NcbiExportSubmission> dataSet = new DataSet<NcbiExportSubmission>(submissions,
+				(long) submissions.size(), (long) submissions.size());
 
-		return subList;
+		return DatatablesResponse.build(dataSet, criterias);
 	}
 
 	/**
