@@ -224,41 +224,8 @@ You can download an individual sequence file from a sample by [navigating to the
 
 {% include tutorials/common/samples/galaxy-export.md %}
 
-<a href="../project/">Previous: Managing Projects</a><a href="../pipelines/" style="float: right;">Next: Launching Pipelines</a>
-
 #### NCBI Upload
 
-IRIDA can assist in uploading sequence files to NCBI's [Sequence Read Archive](http://www.ncbi.nlm.nih.gov/Traces/sra/).  IRIDA requires that BioProjects and BioSamples be created before uploading, and will assign uploaded sequence files to the given [BioProject](http://www.ncbi.nlm.nih.gov/bioproject/) and [BioSample](http://www.ncbi.nlm.nih.gov/biosample) identifiers.  More information about the metadata which must be entered during the upload process can be found at [NCBI Submission Quick Start Guide](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Experiment_).
+{% include tutorials/common/ncbi-export.md %}
 
-To begin submitting sequence files, select which samples you want to upload from the project samples page, then click the Export and Upload to NCBI SRA button.
-
-![Upload NCBI samples button](images/ncbi-select-samples.png)
-
-You will be forwarded to a page where you must enter metadata about the uploaded files.  Start by entering information about the upload:
-
-* BioProject ID - BioProject to submit files to. This project must be created in NCBI prior to this submission.
-* Organization - Name of organization submitting these samples.
-* Identifier Namespace - Prefix to use for submission identifiers in NCBI.  This prefix will be used to assign upload identifiers in the SRA but may not be visible in the uploaded files.
-* Release Date - Submission will not be made public until after the chosen release date.
-
-![NCBI project metadata](images/ncbi-project-metadata.png)
-
-Next you must fill in information about the samples to be uploaded.  More descriptions about these fields can be found in [NCBI's SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47528/) ([Library Information](http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._library_descriptor_te/), [Sequencing Platform Description](http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._platform_descriptor_t/)).
-
-* BioSample ID - NCBI BioSample to add files to. This sample must be created in NCBI prior to this submission.
-* Library Name - The submitter's name for this library.
-* Library Strategy - Sequencing technique intended for this library.
-* Library Source - The type of source material that is being sequenced.
-* Library Construction Protocol - Free form text describing the protocol by which the sequencing library was constructed.
-* Instrument Model - The sequencing platform used to produce the data.
-* Library Selection - Whether any method was used to select for or against, enrich, or screen the material being sequenced.
-
-After entering this metadata you can select which files should be uploaded from each sample.  Only files selected with checkboxes will be uploaded to NCBI.
-
-![NCBI sample metadata](images/ncbi-sample-metadata.png)
-
-Click the `Submit` at the bottom of the page when the information is complete.
-
-After submitting you will be redirected to a page showing the information you have entered for the upload and the status of the upload.  IRIDA will periodically check for new submissions to upload to NCBI and can only upload one submission at a time so there may be a delay in sending your data.  After NCBI has assigned an accession number to your upload it will be displayed on this page.
-
-![NCBI submission details](images/ncbi-submission-details.png)
+<a href="../project/">Previous: Managing Projects</a><a href="../pipelines/" style="float: right;">Next: Launching Pipelines</a>
