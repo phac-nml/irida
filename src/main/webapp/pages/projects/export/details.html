@@ -8,31 +8,55 @@
 
 <body>
 
-  <div layout:fragment="page">
-    <main class="col-md-9 col-md-push-3" layout:fragment="main">
+  <div layout:fragment="main">
+    <main class="col-md-12">
       <div class="row">
         <div class="col-md-12">
           <div class="panel panel-info">
             <div class="panel-heading">
-              <b class="panel-title" th:text="#{project.export.metadata}">_Project Data_</b>
+              <b class="panel-title" th:text="#{project.export.sidebar.title}">_Export_</b>
             </div>
             <div class="panel-body">
-              <dl>
-                <dt th:text="#{project.export.bioproject.title}">_BioProject ID_</dt>
-                <dd th:text="${submission.bioProjectId}"></dd>
-              </dl>
-              <dl>
-                <dt th:text="#{project.export.organization.title}">_organization_</dt>
-                <dd th:text="${submission.organization}"></dd>
-              </dl>
-              <dl>
-                <dt th:text="#{project.export.namespace.title}">_Namespace ID_</dt>
-                <dd th:text="${submission.ncbiNamespace}"></dd>
-              </dl>
-              <dl>
-                <dt th:text="#{project.export.release_date.title}">_Release date_</dt>
-                <dd th:text="${submission.releaseDate}"></dd>
-              </dl>
+              <div class="row">
+                <dl class="col-md-6">
+                  <dt th:text="#{iridaThing.id}">_ID_</dt>
+                  <dd th:text="${submission.getId()}">_1_</dd>
+                </dl>
+                <dl class="col-md-6">
+                  <dt th:text="#{project.export.status}">_Upload Status_</dt>
+                  <dd th:text="${submission.uploadState}"></dd>
+                </dl>
+              </div>
+              <div class="row">
+                <dl class="col-md-6">
+                  <dt th:text="#{project.export.submitter}">_Submitter_</dt>
+                  <dd><a href="#" th:href="@{/users/{id}(id=${submission.submitter.id})}" th:text="${submission.submitter.label}"></a></dd>
+                </dl>
+                <dl class="col-md-6">
+                  <dt th:text="#{iridaThing.timestamp}">_Created_</dt>
+                  <dd th:text="${#calendars.format(submission.getCreatedDate(), 'dd MMM yyyy')}"></dd>
+                </dl>
+              </div>
+              <div class="row">
+                <dl class="col-md-6">
+                  <dt th:text="#{project.export.bioproject.title}">_BioProject ID_</dt>
+                  <dd th:text="${submission.bioProjectId}"></dd>
+                </dl>
+                <dl class="col-md-6">
+                  <dt th:text="#{project.export.organization.title}">_organization_</dt>
+                  <dd th:text="${submission.organization}"></dd>
+                </dl>
+              </div>
+              <div class="row">
+                <dl class="col-md-6">
+                  <dt th:text="#{project.export.namespace.title}">_Namespace ID_</dt>
+                  <dd th:text="${submission.ncbiNamespace}"></dd>
+                </dl>
+                <dl class="col-md-6">
+                  <dt th:text="#{project.export.release_date.title}">_Release date_</dt>
+                  <dd th:text="${submission.releaseDate}"></dd>
+                </dl>
+              </div>
             </div>
           </div>
         </div>
@@ -125,65 +149,6 @@
       </div>
     </main>
 
-    <div class="col-md-3 col-md-pull-9">
-      <aside class="sidebar">
-        <div class="sidebar__heading">
-          <h2 id="sample-name" th:text="#{project.export.sidebar.title}">__NAME__</h2>
-        </div>
-        <div class="sidebar__body">
-          <div class="sidebar__item">
-            <div class="sidebar__item">
-              <fa:icon type="id" />
-            </div>
-            <div>
-            <em th:text="#{iridaThing.id}">ID</em>
-              </div>
-            <div id="sb-id" class="sidebar__value" th:text="${submission.getId()}"></div>
-          </div>
-          <div class="sidebar__item">
-            <div class="sidebar__icon">
-              <fa:icon type="pipelineState" />
-            </div>
-            <div>
-              <em th:text="#{project.export.status}">_Upload Status_</em>
-            </div>
-            <div class="sidebar__value" th:text="${submission.uploadState}"></div>
-          </div>
-          <div class="sidebar__item">
-            <div class="sidebar__icon">
-              <fa:icon type="user" />
-            </div>
-            <div>
-              <em th:text="#{project.export.submitter}">_Submitter_</em>
-            </div>
-            <div class="sidebar__value">
-              <a href="#" th:href="@{/users/{id}(id=${submission.submitter.id})}" th:text="${submission.submitter.label}"></a>
-            </div>
-          </div>
-          <div class="sidebar__item">
-            <div class="sidebar__icon">
-              <fa:icon type="project" />
-            </div>
-            <div>
-              <em th:text="#{project.export.project}">_Project_</em>
-            </div>
-            <div class="sidebar__value">
-              <a href="#" th:href="@{/projects/{id}(id=${submission.project.id})}" th:text="${submission.project.label}"></a>
-            </div>
-          </div>
-          <div class="sidebar__item">
-            <div class="sidebar__icon">
-              <fa:icon type="date" />
-            </div>
-            <div>
-              <em th:text="#{iridaThing.timestamp}">_Created_</em>
-            </div>
-            <div id="sb-created" class="sidebar__value" th:text="${#calendars.format(submission.getCreatedDate(), 'dd MMM yyyy')}"></div>
-          </div>
-
-        </div>
-      </aside>
-    </div>
   </div>
   <th:block layout:fragment="page-scripts">
     <th:block layout:fragment="pageScripts"></th:block>
