@@ -13,7 +13,7 @@ You will be forwarded to a page where you must enter metadata about the uploaded
 
 ![NCBI project metadata]({{ site.baseurl }}/images/tutorials/common/ncbi-export/ncbi-project-metadata.png)
 
-Next you must fill in information about the samples to be uploaded.  More descriptions about these fields can be found in [NCBI's SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47528/) ([Library Information](http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._library_descriptor_te/), [Sequencing Platform Description](http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._platform_descriptor_t/)).
+Next you must fill in information about the samples to be uploaded.  For more detailed information about these fields see [NCBI's SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47528/) ([Library Information](http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._library_descriptor_te/), [Sequencing Platform Description](http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._platform_descriptor_t/)).
 
 * BioSample ID - NCBI BioSample to add files to. This sample must be created in NCBI prior to this submission.
 * Library Name - The submitter's name for this library.
@@ -29,6 +29,6 @@ After entering this metadata you can select which files should be uploaded from 
 
 Click the `Submit` at the bottom of the page when the information is complete.
 
-After submitting you will be redirected to a page showing the information you have entered for the upload and the status of the upload.  IRIDA will periodically check for new submissions to upload to NCBI and can only upload one submission at a time so there may be a delay in sending your data.  After NCBI has assigned an accession number to your upload it will be displayed on this page.
+After submitting you will be redirected to a page showing the information you have entered for the upload and the status of the upload.  IRIDA will periodically check the status of uploads in the SRA and update their status as necessary.  After NCBI has assigned an accession number to your upload it will be displayed on this page.
 
 ![NCBI submission details]({{ site.baseurl }}/images/tutorials/common/ncbi-export/ncbi-submission-details.png)
