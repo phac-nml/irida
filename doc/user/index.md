@@ -43,6 +43,7 @@ You will sometimes want to be able to get data *out* of IRIDA, if you want to sh
 2. [Sharing *some* data from a project][sharing-some]
 3. [Exporting data to Galaxy][export-to-galaxy]
 4. [Exporting data to the command-line][export-to-command-line]
+4. [Exporting data to NCBI's Sequence Read Archive][export-to-ncbi]
 
 
 User Guide
@@ -69,5 +70,6 @@ If you are a system administrator or lab technician in a sequencing facility, yo
 [sharing-some]: tutorials/sharing-some/
 [export-to-galaxy]: tutorials/export-to-galaxy/
 [export-to-command-line]: tutorials/export-to-command-line/
+[export-to-ncbi]: tutorials/export-to-ncbi/
 [system-overview]: user/system-overview/
 [logging-in]: user/login/
