@@ -11,6 +11,7 @@ Changes
 * [Developer]: Fix up inconsistencies with tables created by Liquibase and tables created by Hibernate.
 * [Developer] Removed several unused properties and classes to simplify data model.
 * [UI]: Analysis list page reworked to use Datatables.  Now does server side paging for performance increases.
+* [UI]: Replace large checkboxes on Project Samples page with standard platform dependant checkboxes.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
