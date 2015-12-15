@@ -158,6 +158,19 @@ public class ProjectSamplesIT {
 		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
 				.when().get(projectSampleUri);
 	}
+	
+	@Test
+	public void testReadSampleAsAdminWithDoubledUpSlashes() {
+		String projectUri = ITestSystemProperties.BASE_URL + "/api//projects/5";
+		String projectSampleUri = projectUri + "/samples/1";
+
+		final Response r = asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when().get(projectSampleUri);
+		final String responseBody = r.getBody().asString();
+		final String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'sample/project'}.href");
+		// now verify that we can actually get this (so doubled slash should not have affected the link)
+		asAdmin().expect().statusCode(HttpStatus.OK.value()).when().get(samplesUri);
+	}
 
 	@Test
 	public void testReadSampleAsSequencer() {

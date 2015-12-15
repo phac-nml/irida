@@ -18,6 +18,7 @@ import com.github.dandelion.core.web.DandelionServlet;
 import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
+import ca.corefacility.bioinformatics.irida.web.filter.SlashFilter;
 
 /**
  * REST API initializer with security.
@@ -62,7 +63,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[] { new HttpHeadFilter() };
+		return new Filter[] { new HttpHeadFilter(), new SlashFilter() };
 	}
 
 	@Override

@@ -1,6 +1,11 @@
 Changes
 =======
 
+1.0.0-alpha7 to 1.0.0-alpha8
+----------------------------
+* [Developer]: Fix an issue where having multiple forward slashes in a URI would result in part of the URI being duplicated in links generated as part of the response.
+* [UI]: Fixed a bug where users would have permission to view a project page, but not view a sample page if the sample is attached to multiple projects.
+
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
 * [UI] Feature: When new data is added to a project, both the project and sample modified times are changed so that you can find the most recently uploaded files in a project by sorting on the date modified column of the samples table.

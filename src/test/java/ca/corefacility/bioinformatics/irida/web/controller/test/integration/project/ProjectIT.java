@@ -58,7 +58,7 @@ public class ProjectIT {
 	public void testCreateProjectBadFieldName() {
 		Response r = asUser().body("{ \"projectName\": \"some stupid project\" }").expect().response()
 				.statusCode(HttpStatus.BAD_REQUEST.value()).when().post(PROJECTS);
-		assertTrue(r.getBody().asString().contains("Unrecognized property"));
+		assertTrue("body should contain 'You must provide a project name.'", r.getBody().asString().contains("You must provide a project name."));
 	}
 
 	/**
