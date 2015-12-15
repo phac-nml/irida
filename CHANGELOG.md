@@ -11,6 +11,7 @@ Changes
 * [UI]: Fixed issue with Analyses Filter overlapping the Analyses table on smaller screens.
 * [Developer]: Removed magnific-popups from the project samples page and replace with bootstrap modals through angular-ui.
 * [UI]: Fixed issue with downloading a sample with duplicate filenames.  Duplicates are now renamed with Windows style "file (1).fastq" names.
+* [UI]: Fixed error with date a user joined a project on the Project Members Page.
 
 1.0.0-alpha5 to 1.0.0-alpha6
 ----------------------------
