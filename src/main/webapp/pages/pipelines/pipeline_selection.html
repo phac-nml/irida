@@ -31,7 +31,7 @@
 	<div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
 	<div class="row">
 		<div class="col-md-12 flex-row">
-			<div class="panel panel-default flex-panel" th:each="flow : ${workflows}">
+			<div class="panel panel-default flex-panel workflow" th:each="flow : ${workflows}">
 				<div class="panel-heading" th:classappend="${flow.name}">
 					<h3 class="panel-title" th:text="${flow.title}"></h3>
 				</div>
