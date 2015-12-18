@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="sample-sequencingobject" author="tom">
+
+		<!-- Create the join tables -->
+		<createTable tableName="sample_sequencingobject">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="sample_id" type="bigint(20)">
+				<constraints referencedTableName="sample"
+					referencedColumnNames="id" foreignKeyName="FK_SAMPLE_SEQUENCING_OBJECT_SAMPLE" />
+			</column>
+			<column name="sequencingobject_id" type="bigint(20)">
+				<constraints referencedTableName="sequencing_object"
+					referencedColumnNames="id" foreignKeyName="FK_SAMPLE_SEQUENCING_OBJECT_OBJECT" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sample_sequencingobject_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="sample_id" type="bigint(20)" />
+			<column name="sequencingobject_id" type="bigint(20)" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_SAMPLE_SEQUENCING_OBJECT_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<!-- Add pairs to sample_sequencingobject -->
+		<sql>
+			INSERT INTO sample_sequencingobject (sample_id,
+			sequencingobject_id,
+			created_date)
+			SELECT DISTINCT ss.sample_id,
+			p.pair_id, ss.createdDate
+			FROM
+			sequencefile_sample ss INNER JOIN
+			sequence_file_pair_files p ON
+			p.files_id=ss.sequencefile_id;
+		</sql>
+
+		<!-- Add single files to sample_sequencingobject -->
+		<sql>
+			INSERT INTO sample_sequencingobject (sample_id,
+			sequencingobject_id,
+			created_date)
+			SELECT ss.sample_id, f.id,
+			ss.createdDate FROM
+			sequencefile_sample ss
+			INNER JOIN
+			sequence_file_single_end f ON
+			ss.sequencefile_id=f.file_id
+		</sql>
+
+	</changeSet>
+</databaseChangeLog>

@@ -7,4 +7,5 @@
 	<include file="drop-group-host-organization.xml" relativeToChangelogFile="true" />
 	<include file="schema-inconsistencies.xml" relativeToChangelogFile="true" />
 	<include file="sequencing-object.xml" relativeToChangelogFile="true" />
+	<include file="sample-sequencingobject.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
