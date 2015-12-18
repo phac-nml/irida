@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +23,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 
+/**
+ * Objects that were obtained from some sequencing platform.
+ */
 @Entity
 @Table(name = "sequencing_object")
 @EntityListeners(AuditingEntityListener.class)
@@ -61,5 +64,11 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 		return createdDate;
 	}
 
-	public abstract Collection<SequenceFile> getPaths();
+	/**
+	 * Get the {@link SequenceFile}s associated with this
+	 * {@link SequencingObject}
+	 * 
+	 * @return a Set of {@link SequenceFile}
+	 */
+	public abstract Set<SequenceFile> getFiles();
 }
