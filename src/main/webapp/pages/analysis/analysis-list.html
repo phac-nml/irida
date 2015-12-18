@@ -5,11 +5,12 @@
       ddl:bundle-includes="analyses-list"
       ddl:asset-css-excludes="jquery.datatables">
 <head>
-    <title>_Analyses_</title>
+    <title th:text="#{analyses.user.page-title}">_Analyses_</title>
     <script th:inline="javascript">
   		var PAGE = {
   			"URLS": {
-  				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
+  				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/",
+  				"deleteUrl": /*[[@{/analysis/ajax/delete/}]]*/ "/analysis/ajax/delete/"
   			}
   		};
   	</script>
@@ -35,6 +36,7 @@
           <span id="workflowIdFilterClear" th:title="#{analysis.filter.remove}" class="label label-default hidden"><span th:text="#{analyses.type}">_Workflow_</span>: <em id="workflowIdFilterPreview"></em>&nbsp;</span>
 				</div>
 			</div>
+		<div dt:confType="callback" dt:type="createdRow" dt:function="analyses-list#analysesTable.deleteLinkCallback"></div>
     </div>
     <table id="analysisTable" dt:table="true" dt:url="@{${ajaxURL}}" dt:filterPlaceholder="none">
         <thead>
@@ -46,8 +48,7 @@
             <th dt:property="createdDate" width="150px" dt:sortType="natural" dt:sortInitDirection="desc"
                 dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{analysis.date-created}">_Created Date_</th>
             <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.getHumanTime" th:text="#{analysis.duration}">_Duration_</th>
-            <th width="40px" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.downloadLink"></th>
-
+            <th width="50px" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.downloadLink"></th>
         </tr>
         </thead>
     </table>
@@ -91,6 +92,25 @@
 				<div class="modal-footer">
 					<button tabindex="-1" type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}"></button>
 					<button id="filterAnalysesBtn" type="submit" class="btn btn-primary" data-dismiss="modal" th:text="#{analysis.filter.button}">_Filter_</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="deleteConfirmModal" role="dialog" aria-labelledby="#deleteConfirmTitle">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="deleteConfirmTitle" th:text="#{analysis.delete.title}">_Confirm delete analysis_</h4>
+				</div>
+				<div class="modal-body">
+        			<p th:text="#{analysis.delete.confirm.message}" />
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">Close</button>
+					<button type="button" class="btn btn-danger" id="delete-analysis-button" th:text="#{analysis.delete.delete.button}">Delete</button>
 				</div>
 			</div>
 		</div>
