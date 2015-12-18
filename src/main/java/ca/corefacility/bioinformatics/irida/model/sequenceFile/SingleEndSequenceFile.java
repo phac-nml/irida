@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -15,7 +15,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * {@link SequencingObject} from a single ended sequence run. This class will
@@ -53,8 +53,8 @@ public class SingleEndSequenceFile extends SequencingObject {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<SequenceFile> getPaths() {
-		return Lists.newArrayList(file);
+	public Set<SequenceFile> getFiles() {
+		return ImmutableSet.of(file);
 	}
 
 }

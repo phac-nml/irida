@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -172,10 +171,5 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		}
 
 		return false;
-	}
-
-	@Override
-	public Collection<SequenceFile> getPaths() {
-		return files;
 	}
 }
