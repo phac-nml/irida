@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="sequencing-objects" author="tom">
+		<createTable tableName="sequencing_object">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+		</createTable>
+
+		<createTable tableName="sequencing_object_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_SEQUENCING_OBJECT_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<sql>
+			INSERT INTO sequencing_object (id, created_date) SELECT id,
+			created_date FROM sequence_file_pair
+		</sql>
+
+		<dropColumn columnName="created_date" tableName="sequence_file_pair" />
+
+		<dropForeignKeyConstraint baseTableName="analysis_submission_sequence_file_pair"
+			constraintName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_PAIR_FILE_ID" />
+
+		<dropForeignKeyConstraint baseTableName="sequence_file_pair_files"
+			constraintName="FK_SEQUENCE_FILE_PAIR_FILES_PAIR" />
+
+		<modifyDataType columnName="id" newDataType="bigint(20)"
+			tableName="sequence_file_pair" />
+
+		<addForeignKeyConstraint baseColumnNames="id"
+			baseTableName="sequence_file_pair" constraintName="FK_SEQUENCE_FILE_PAIR_OBJECT"
+			referencedColumnNames="id" referencedTableName="sequencing_object" />
+
+		<addForeignKeyConstraint baseColumnNames="sequence_file_pair_id"
+			baseTableName="analysis_submission_sequence_file_pair"
+			constraintName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_PAIR_FILE_ID"
+			referencedColumnNames="id" referencedTableName="sequence_file_pair" />
+
+		<addForeignKeyConstraint baseColumnNames="pair_id"
+			baseTableName="sequence_file_pair_files" constraintName="FK_SEQUENCE_FILE_PAIR_FILES_PAIR"
+			referencedColumnNames="id" referencedTableName="sequence_file_pair" />
+
+	</changeSet>
+</databaseChangeLog>
