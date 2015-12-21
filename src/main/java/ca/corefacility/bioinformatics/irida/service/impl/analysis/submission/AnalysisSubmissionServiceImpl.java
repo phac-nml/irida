@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.hibernate.TransientPropertyValueException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -57,6 +61,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 /**
@@ -67,6 +72,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 @Service
 public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionServiceImpl.class);
 	
 	/**
 	 * A {@link Map} defining the progress transitions points for each state in
@@ -96,6 +102,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
+	private final AnalysisExecutionService analysisExecutionService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -119,7 +126,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
 			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService,
-			final GalaxyHistoriesService galaxyHistoriesService, Validator validator) {
+			final GalaxyHistoriesService galaxyHistoriesService, final AnalysisExecutionService analysisExecutionService,
+			final Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
@@ -127,6 +135,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
+		this.analysisExecutionService = analysisExecutionService;
 	}
 
 	/**
@@ -229,8 +238,27 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateAnalysisSubmission')")
+	@Transactional
 	public void delete(Long id) throws EntityNotFoundException {
+		final AnalysisSubmission submission = read(id);
+		try {
+			final Future<AnalysisSubmission> cleanupTask = analysisExecutionService.cleanupSubmission(submission);
+			// block on cleaning until the cleanup task is complete.
+			cleanupTask.get();
+		} catch (final ExecutionManagerException e) {
+			logger.error("Failed to cleanup analysis submission before deletion,"
+					+ " but proceeding with deletion anyway.", e);
+		} catch (final InterruptedException e) {
+			logger.error("The thread that was cleaning up the analysis submission was interrupted,"
+					+ " but proceeding with deletion anyway.", e);
+		} catch (final ExecutionException e) {
+			logger.error("A general execution exception happened when cleaning the analysis submission,"
+					+ " but proceeding with deletion anyway.", e);
+		} catch (final Exception e) {
+			logger.error("An unexpected exception happened when cleaning the analysis submission,"
+					+ " but proceeding with deletion anyway.", e);
+		}
 		super.delete(id);
 	}
 

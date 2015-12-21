@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.analysis.submission;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.concurrent.ExecutionException;
 
 import javax.validation.Validator;
 
@@ -22,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 
 /**
@@ -52,7 +56,10 @@ public class AnalysisSubmissionServiceImplTest {
 	private GalaxyWorkflowStatus galaxyWorkflowStatus;
 
 	private AnalysisSubmissionServiceImpl analysisSubmissionServiceImpl;
-
+	
+	@Mock
+	private AnalysisExecutionService analysisExecutionService;
+	
 	private static final Long ID = 1L;
 	private static final String HISTORY_ID = "1";
 
@@ -65,7 +72,7 @@ public class AnalysisSubmissionServiceImplTest {
 
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository, userRepository,
 				referenceFileRepository, sequenceFileService, sequenceFilePairService, galaxyHistoriesService,
-				validator);
+				analysisExecutionService, validator);
 
 		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(HISTORY_ID);
@@ -241,5 +248,78 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteError() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.ERROR);
 		analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID);
+	}
+	
+	/**
+	 * Tests that deleting a submission actually also tries to clean up the
+	 * submission in galaxy.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testDeleteSubmission() throws ExecutionManagerException {
+		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
+		analysisSubmissionServiceImpl.delete(ID);
+		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
+	}
+
+	/**
+	 * Tests that deleting a submission deletes the submission even if an
+	 * execution manager exception is thrown.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testDeleteSubmissionWorkflowError() throws ExecutionManagerException {
+		testDeleteSubmissionWithException(new ExecutionManagerException());
+	}
+	
+	/**
+	 * Tests that deleting a submission deletes the submission even if an
+	 * execution manager exception is thrown.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testDeleteSubmissionInterruptedException() throws ExecutionManagerException {
+		testDeleteSubmissionWithException(new InterruptedException());
+	}
+	
+	/**
+	 * Tests that deleting a submission deletes the submission even if an
+	 * execution manager exception is thrown.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testDeleteSubmissionExecutionException() throws ExecutionManagerException {
+		testDeleteSubmissionWithException(new ExecutionException(new Exception()));
+	}
+	
+	/**
+	 * Tests that deleting a submission deletes the submission even if an
+	 * execution manager exception is thrown.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testDeleteSubmissionException() throws ExecutionManagerException {
+		testDeleteSubmissionWithException(new Exception());
+	}
+
+	/**
+	 * Convenience method for testing behaviour when the cleanup operation
+	 * throws an exception.
+	 * 
+	 * @param e
+	 *            the exception to throw
+	 * @throws ExecutionManagerException
+	 */
+	private void testDeleteSubmissionWithException(final Exception e) throws ExecutionManagerException {
+		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
+		when(analysisExecutionService.cleanupSubmission(analysisSubmission)).thenThrow(new InterruptedException());
+		analysisSubmissionServiceImpl.delete(ID);
+		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
+		verify(analysisSubmissionRepository).delete(ID);
 	}
 }
