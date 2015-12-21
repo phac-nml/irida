@@ -31,6 +31,11 @@ public class SingleEndSequenceFile extends SequencingObject {
 	@NotNull
 	private SequenceFile file;
 
+	public SingleEndSequenceFile(SequenceFile file) {
+		super();
+		this.file = file;
+	}
+
 	/**
 	 * Throws {@link UnsupportedOperationException} because you should not be
 	 * able to update a file.
@@ -65,6 +70,10 @@ public class SingleEndSequenceFile extends SequencingObject {
 
 		file = files.iterator().next();
 
+	}
+	
+	public SequenceFile getFile() {
+		return file;
 	}
 
 }
