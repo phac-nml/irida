@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
@@ -77,10 +76,6 @@ public class AnalysisExecutionServiceGalaxyCleanupAsync {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(AnalysisCleanedState.CLEANING.equals(analysisSubmission.getAnalysisCleanedState()),
 				"analysisCleanedState not " + AnalysisCleanedState.CLEANING);
-		checkArgument(
-				AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState())
-						|| AnalysisState.ERROR.equals(analysisSubmission.getAnalysisState()), "analysisState must be "
-						+ AnalysisState.COMPLETED + " or " + AnalysisState.ERROR);
 
 		logger.debug("Cleaning up " + analysisSubmission);
 

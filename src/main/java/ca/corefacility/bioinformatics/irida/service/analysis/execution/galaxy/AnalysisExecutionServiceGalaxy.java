@@ -149,10 +149,6 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(AnalysisCleanedState.NOT_CLEANED.equals(analysisSubmission.getAnalysisCleanedState()),
 				"cleaned state is not " + AnalysisCleanedState.NOT_CLEANED);
-		checkArgument(
-				AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState())
-						|| AnalysisState.ERROR.equals(analysisSubmission.getAnalysisState()), "analysisState must be "
-						+ AnalysisState.COMPLETED + " or " + AnalysisState.ERROR);
 
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
 		
