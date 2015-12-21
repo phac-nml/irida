@@ -256,7 +256,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		} catch (final ExecutionException e) {
 			logger.error("A general execution exception happened when cleaning the analysis submission,"
 					+ " but proceeding with deletion anyway.", e);
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			logger.error("An unexpected exception happened when cleaning the analysis submission,"
 					+ " but proceeding with deletion anyway.", e);
 		}
