@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -48,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtiliti
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -101,12 +103,14 @@ public class SamplesController extends BaseController {
 	private final UserService userService;
 	private final SequenceFileWebUtilities sequenceFileUtilities;
 	private final SequenceFilePairService sequenceFilePairService;
+	
+	private final SequencingObjectService sequencingObjectService;
 
 	private final MessageSource messageSource;
 
 	@Autowired
 	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService,
-			SequenceFilePairService sequenceFilePairService, UserService userService, ProjectService projectService,
+			SequenceFilePairService sequenceFilePairService, UserService userService, ProjectService projectService, SequencingObjectService sequencingObjectService,
 			SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
@@ -114,6 +118,7 @@ public class SamplesController extends BaseController {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.sequencingObjectService = sequencingObjectService;
 		this.messageSource = messageSource;
 	}
 
@@ -390,7 +395,7 @@ public class SamplesController extends BaseController {
 	 */
 	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
-		sequenceFileService.createSequenceFileInSample(sequenceFile, sample);
+		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
 	}
 
 	/**
@@ -406,7 +411,7 @@ public class SamplesController extends BaseController {
 	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
 		SequenceFile firstFile = createSequenceFile(pair.get(0));
 		SequenceFile secondFile = createSequenceFile(pair.get(1));
-		sequenceFileService.createSequenceFilePairInSample(firstFile, secondFile, sample);
+		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
 	}
 
 	/**
