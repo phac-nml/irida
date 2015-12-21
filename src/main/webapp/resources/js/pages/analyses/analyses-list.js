@@ -59,9 +59,11 @@ var analysesTable = (function(tl, moment, $http){
     	$(row).find(".delete-analysis-btn").click(function () {
     		$("#deleteConfirmModal").on("show.bs.modal", function (event) {
     			var modal = $(this);
-    			modal.find("#delete-analysis-button").click(function() {
+    			var id = data.id;
+    			modal.find("#delete-analysis-button").off("click").click(function() {
+    				console.log("Going to delete analysis with id: [" + id + "]");
 		    		$.ajax({
-		    			url: PAGE.URLS.deleteUrl + data.id,
+		    			url: PAGE.URLS.deleteUrl + id,
 		    			type: 'DELETE',
 		    			success: function (result) {
 		    				oTable_analysisTable.ajax.reload();
