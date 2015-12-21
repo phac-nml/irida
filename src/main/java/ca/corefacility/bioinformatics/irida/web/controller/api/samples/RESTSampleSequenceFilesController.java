@@ -33,10 +33,13 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
@@ -111,17 +114,20 @@ public class RESTSampleSequenceFilesController {
 	 * Reference to the {@link MiseqRunService}
 	 */
 	private SequencingRunService miseqRunService;
+	
+	private SequencingObjectService sequencingObjectService;
 
 	protected RESTSampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService, SampleService sampleService,
-			SequencingRunService miseqRunService) {
+			SequencingRunService miseqRunService, SequencingObjectService sequencingObjectService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.sampleService = sampleService;
 		this.miseqRunService = miseqRunService;
+		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	/**
@@ -424,49 +430,34 @@ public class RESTSampleSequenceFilesController {
 			sf2.setSequencingRun(sequencingRun);
 			logger.trace("Added sequencing run to files" + runId);
 		}
-		// add the files
-		List<Join<Sample, SequenceFile>> createSequenceFilePairInSample = sequenceFileService
-				.createSequenceFilePairInSample(sf1, sf2, sample);
-		// get the joins
-		Iterator<Join<Sample, SequenceFile>> iterator = createSequenceFilePairInSample.iterator();
-		Join<Sample, SequenceFile> join1 = iterator.next();
-		Join<Sample, SequenceFile> join2 = iterator.next();
+		
+		SequenceFilePair sequenceFilePair = new SequenceFilePair(sf1, sf2);
+		
+		// add the files and join
+		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(sequenceFilePair, sample);
+		
 		// clean up the temporary files.
 		Files.deleteIfExists(target1);
 		Files.deleteIfExists(temp1);
 		Files.deleteIfExists(target2);
 		Files.deleteIfExists(temp2);
 		logger.trace("Deleted temp files");
-		// add 2 labeled relationship resources to a collection
-		ResourceCollection<LabelledRelationshipResource<Sample,SequenceFile>> sequenceResources = new ResourceCollection
-				<>(createSequenceFilePairInSample.size());
-		LabelledRelationshipResource<Sample,SequenceFile> lrr1 = new LabelledRelationshipResource<Sample,SequenceFile>(
-				join1.getLabel(),join1);
-		LabelledRelationshipResource<Sample,SequenceFile> lrr2 = new LabelledRelationshipResource<Sample,SequenceFile>(
-				join2.getLabel(),join2);
-		sequenceResources.add(lrr1);
-		sequenceResources.add(lrr2);
-		// add links to each labeled relationship resource
-		for(int i = 0; i < 2; i++) {
-			LabelledRelationshipResource<Sample,SequenceFile> lrr = sequenceResources.getResources().get(i);
-			lrr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-					.withRel(REL_SAMPLE_SEQUENCE_FILES));
-			lrr.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-					REL_SAMPLE));
-			Link selfLink = linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(
-					sampleId,lrr.getResource().getObject().getId())).withSelfRel();
-			lrr.add(selfLink);
-			response.addHeader(HttpHeaders.LOCATION, selfLink.getHref());
-		}	
+		
+		LabelledRelationshipResource<Sample,SequencingObject> relationshipResource = new LabelledRelationshipResource<Sample,SequencingObject>(createSequencingObjectInSample.getLabel(),createSequencingObjectInSample);
+		
 		// add a link back to the sample
-		sequenceResources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(
-				sampleId)).withRel(RESTSampleSequenceFilesController.REL_SAMPLE));
+		relationshipResource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(RESTSampleSequenceFilesController.REL_SAMPLE));
+		
+		//add a link to the newly created pair
+		relationshipResource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId, createSequencingObjectInSample.getObject().getId())).withRel(RESTSampleSequenceFilesController.REL_PAIR));
+		
 		// add a link to this collection
-		sequenceResources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).addNewSequenceFilePairToSample(
-				sample.getId(),file1, fileResource1, file2, fileResource2, response)).withSelfRel());
+		relationshipResource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).addNewSequenceFilePairToSample(
+						sample.getId(),file1, fileResource1, file2, fileResource2, response)).withSelfRel());
+		
 		// set the response status.
 		response.setStatus(HttpStatus.CREATED.value());
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceResources);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, relationshipResource);
 		// respond to the client
 		return modelMap;
 	}
