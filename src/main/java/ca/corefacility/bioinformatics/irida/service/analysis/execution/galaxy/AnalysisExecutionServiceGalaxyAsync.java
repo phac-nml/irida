@@ -14,8 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableMap;
-
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -31,8 +30,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Work
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
@@ -48,7 +47,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyAsync.class);
 
-	private final AnalysisSubmissionService analysisSubmissionService;
+	private final AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final AnalysisService analysisService;
 	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
@@ -74,11 +73,11 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *            {@link SequenceFileSnapshot}s
 	 */
 	@Autowired
-	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionRepository analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService,
 			SequenceFileSnapshotService sequenceFileSnapshotService) {
-		this.analysisSubmissionService = analysisSubmissionService;
+		this.analysisSubmissionRepository = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.workspaceService = workspaceService;
@@ -114,8 +113,8 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		}
 
 		// once complete update the state
-		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.FINISHED_DOWNLOADING));
+		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		AnalysisSubmission analysisPrepared = analysisSubmissionRepository.save(analysisSubmission);
 
 		return new AsyncResult<>(analysisPrepared);
 	}
@@ -156,9 +155,10 @@ public class AnalysisExecutionServiceGalaxyAsync {
 
 		logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + analysisSubmission);
 
-		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission.getId(), ImmutableMap
-				.of("remoteAnalysisId", analysisId, "remoteWorkflowId", workflowId, "analysisState",
-						AnalysisState.PREPARED));
+		analysisSubmission.setRemoteAnalysisId(analysisId);
+		analysisSubmission.setRemoteWorkflowId(workflowId);
+		analysisSubmission.setAnalysisState(AnalysisState.PREPARED);
+		AnalysisSubmission analysisPrepared = analysisSubmissionRepository.save(analysisSubmission);
 
 		return new AsyncResult<>(analysisPrepared);
 	}
@@ -194,8 +194,9 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		logger.trace("Executing " + analysisSubmission);
 		galaxyWorkflowService.runWorkflow(input);
 
-		AnalysisSubmission submittedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.RUNNING, "remoteInputDataId", libraryId));
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setRemoteInputDataId(libraryId);
+		AnalysisSubmission submittedAnalysis = analysisSubmissionRepository.save(analysisSubmission);
 
 		return new AsyncResult<>(submittedAnalysis);
 	}
@@ -225,7 +226,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 			IridaWorkflowAnalysisTypeException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
-		if (!analysisSubmissionService.exists(submittedAnalysis.getId())) {
+		if (!analysisSubmissionRepository.exists(submittedAnalysis.getId())) {
 			throw new EntityNotFoundException("Could not find analysis submission for " + submittedAnalysis);
 		}
 
@@ -235,8 +236,13 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		logger.trace("Saving results for " + submittedAnalysis);
 		Analysis savedAnalysis = analysisService.create(analysisResults);
 
-		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis.getId(),
-				ImmutableMap.of("analysis", savedAnalysis, "analysisState", AnalysisState.COMPLETED));
+		try {
+			submittedAnalysis.setAnalysis(savedAnalysis);
+		} catch (final AnalysisAlreadySetException e) {
+			logger.error("Pretty exceptional! We literally **just** saved the analysis.", e);
+		}
+		submittedAnalysis.setAnalysisState(AnalysisState.COMPLETED);
+		AnalysisSubmission completedSubmission = analysisSubmissionRepository.save(submittedAnalysis);
 
 		return new AsyncResult<>(completedSubmission);
 	}

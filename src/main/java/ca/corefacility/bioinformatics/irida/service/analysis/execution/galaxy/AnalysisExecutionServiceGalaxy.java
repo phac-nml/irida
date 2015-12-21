@@ -19,10 +19,9 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Service for performing analyses within a Galaxy execution manager.
@@ -30,7 +29,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService {
 
-	private final AnalysisSubmissionService analysisSubmissionService;
+	private final AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync;
 	private final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync;
@@ -50,11 +49,11 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 *            A service for cleaning up files in Galaxy.
 	 */
 	@Autowired
-	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionRepository analysisSubmissionService,
 			GalaxyHistoriesService galaxyHistoriesService,
 			AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync,
 			AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync) {
-		this.analysisSubmissionService = analysisSubmissionService;
+		this.analysisSubmissionRepository = analysisSubmissionService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.analysisExecutionServiceGalaxyAsync = analysisExecutionServiceGalaxyAsync;
 		this.analysisExecutionServiceGalaxyCleanupAsync = analysisExecutionServiceGalaxyCleanupAsync;
@@ -70,8 +69,9 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
 				+ AnalysisState.NEW);
 
-		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.DOWNLOADING));
+		analysisSubmission.setAnalysisState(AnalysisState.DOWNLOADING);
+		
+		AnalysisSubmission preparingAnalysis = analysisSubmissionRepository.save(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyAsync.downloadFilesForSubmission(preparingAnalysis);
 	}
@@ -86,8 +86,9 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisState.FINISHED_DOWNLOADING.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
 				+ AnalysisState.FINISHED_DOWNLOADING);
 
-		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.PREPARING));
+		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
+		
+		AnalysisSubmission preparingAnalysis = analysisSubmissionRepository.save(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyAsync.prepareSubmission(preparingAnalysis);
 	}
@@ -102,8 +103,9 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisState.PREPARED.equals(analysisSubmission.getAnalysisState()), " analysis should be "
 				+ AnalysisState.PREPARED);
 
-		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.SUBMITTING));
+		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
+		
+		AnalysisSubmission submittingAnalysis = analysisSubmissionRepository.save(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyAsync.executeAnalysis(submittingAnalysis);
 	}
@@ -118,8 +120,9 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
 				" analysis should be " + AnalysisState.FINISHED_RUNNING);
 
-		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(submittedAnalysis.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.COMPLETING));
+		submittedAnalysis.setAnalysisState(AnalysisState.COMPLETING);
+		
+		AnalysisSubmission submittingAnalysis = analysisSubmissionRepository.save(submittedAnalysis);
 
 		return analysisExecutionServiceGalaxyAsync.transferAnalysisResults(submittingAnalysis);
 	}
@@ -151,8 +154,9 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 						|| AnalysisState.ERROR.equals(analysisSubmission.getAnalysisState()), "analysisState must be "
 						+ AnalysisState.COMPLETED + " or " + AnalysisState.ERROR);
 
-		AnalysisSubmission cleaningAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANING));
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
+		
+		AnalysisSubmission cleaningAnalysis = analysisSubmissionRepository.save(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyCleanupAsync.cleanupSubmission(cleaningAnalysis);
 	}

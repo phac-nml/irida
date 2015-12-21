@@ -13,8 +13,8 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
@@ -45,9 +45,9 @@ public class AnalysisExecutionServiceConfig {
 	 * methods in {@link AnalysisExecutionServiceGalaxyAsync}.
 	 */
 	public static final int ASYNC_ORDER = AnalysisExecutionServiceAspect.ANALYSIS_EXECUTION_ASPECT_ORDER - 1;
-
+	
 	@Autowired
-	private AnalysisSubmissionService analysisSubmissionService;
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Autowired
 	private AnalysisService analysisService;
@@ -88,21 +88,21 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {
-		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
+		return new AnalysisExecutionServiceGalaxy(analysisSubmissionRepository, galaxyHistoriesService,
 				analysisExecutionServiceGalaxyAsync(), analysisExecutionServiceGalaxyCleanupAsync());
 	}
 
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
-		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
+		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionRepository, analysisService,
 				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, sequenceFileSnapshotService);
 	}
 	
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync() {
-		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionService,
+		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionRepository,
 				galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 	}
 

@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
@@ -65,6 +66,8 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 	@Mock
 	private AnalysisSubmissionService analysisSubmissionService;
+	@Mock
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	@Mock
 	private AnalysisService analysisService;
 	@Mock
@@ -144,11 +147,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisErrorCleaned = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
-				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
+				analysisSubmissionRepository, analysisService, galaxyWorkflowService, analysisWorkspaceService,
 				iridaWorkflowsService,sequenceFileSnapshotService);
 		AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync = new AnalysisExecutionServiceGalaxyCleanupAsync(
-				analysisSubmissionService, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
-		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
+				analysisSubmissionRepository, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
+		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionRepository, galaxyHistoriesService,
 				workflowManagementAsync, analysisExecutionServiceGalaxyCleanupAsync);
 
 		when(iridaWorkflowsService.getIridaWorkflow(WORKFLOW_ID)).thenReturn(iridaWorkflow);

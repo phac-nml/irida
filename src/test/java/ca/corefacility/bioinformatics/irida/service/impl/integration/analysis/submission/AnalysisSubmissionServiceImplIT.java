@@ -355,6 +355,7 @@ public class AnalysisSubmissionServiceImplIT {
 	/**
 	 * Tests deleting as a regular user.
 	 */
+	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testDeleteSubmissionOwnedBySelf() {
 		assertTrue("submission should exists", analysisSubmissionService.exists(1L));

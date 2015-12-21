@@ -242,6 +242,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	public void delete(Long id) throws EntityNotFoundException {
 		final AnalysisSubmission submission = read(id);
+		
 		try {
 			final Future<AnalysisSubmission> cleanupTask = analysisExecutionService.cleanupSubmission(submission);
 			// block on cleaning until the cleanup task is complete.
@@ -259,6 +260,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			logger.error("An unexpected exception happened when cleaning the analysis submission,"
 					+ " but proceeding with deletion anyway.", e);
 		}
+		
 		super.delete(id);
 	}
 
