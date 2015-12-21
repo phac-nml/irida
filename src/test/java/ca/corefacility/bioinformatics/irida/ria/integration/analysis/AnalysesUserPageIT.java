@@ -62,4 +62,13 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 		page.filterByType("SNVPhyl Phylogenomics Pipeline");
 		assertEquals("Should be 6 analyses aftering filtering by type", 6, page.getNumberOfAnalyses());
 	}
+	
+	@Test
+	public void testDeleteAnalysis() {
+		
+		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
+		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
+		page.deleteFirstAnalysis();
+		assertEquals("Should be 7 analyses displayed on the page (we just deleted one!)", 7, page.getNumberOfAnalyses());
+	}
 }
