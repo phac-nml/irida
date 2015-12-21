@@ -6,7 +6,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -330,18 +329,20 @@ public class RESTSampleSequenceFilesController {
 			sf.setSequencingRun(miseqRun);
 			logger.trace("Added seqfile to miseqrun");
 		}
+		
+		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
+		
+		//save the seqobject and sample
+		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(singleEndSequenceFile, sample);
 
-		// persist the changes by calling the sample service
-		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
-				sample);
-		logger.trace("Created seqfile in sample " + sampleSequenceFileRelationship.getObject().getId());
+		logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject().getId());
 		// clean up the temporary files.
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
 		logger.trace("Deleted temp file");
 		// prepare a link to the sequence file itself (on the sequence file
 		// controller)
-		Long sequenceFileId = sampleSequenceFileRelationship.getObject().getId();
+		Long sequenceFileId = singleEndSequenceFile.getFile().getId();
 		String location = linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
 						sequenceFileId)).withSelfRel().getHref();
