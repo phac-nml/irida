@@ -57,4 +57,14 @@ public class SingleEndSequenceFile extends SequencingObject {
 		return ImmutableSet.of(file);
 	}
 
+	@Override
+	public void setFiles(Set<SequenceFile> files) {
+		if (files.size() > 1) {
+			throw new IllegalArgumentException("SingleEndSequenceFile can only store 1 SequenceFile");
+		}
+
+		file = files.iterator().next();
+
+	}
+
 }
