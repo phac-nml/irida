@@ -33,6 +33,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @return the {@link Join} between the {@link SequenceFile} and its
 	 *         {@link Sample}.
 	 */
+	@Deprecated
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample);
 
 	/**
@@ -50,6 +51,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            The {@link Sample} to add to
 	 * @return The created {@link Join}s
 	 */
+	@Deprecated
 	public List<Join<Sample, SequenceFile>> createSequenceFilePairInSample(SequenceFile file1, SequenceFile file2,
 			Sample sample);
 
