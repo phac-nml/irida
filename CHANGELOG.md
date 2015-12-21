@@ -12,6 +12,7 @@ Changes
 * [Developer] Removed several unused properties and classes to simplify data model.
 * [UI]: Analysis list page reworked to use Datatables.  Now does server side paging for performance increases.
 * [UI]: Replace large checkboxes on Project Samples page with standard platform dependant checkboxes.
+* [UI]: Updated pipeline selection interface.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
