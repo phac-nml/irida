@@ -13,6 +13,7 @@ Changes
 * [UI]: Analysis list page reworked to use Datatables.  Now does server side paging for performance increases.
 * [UI]: Replace large checkboxes on Project Samples page with standard platform dependant checkboxes.
 * [UI]: Updated pipeline selection interface by adding the pipeline colour to the background of the name and making the panels equal in height.
+* [UI]: Fixed issue where samples in the cart could not be sent to galaxy.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
