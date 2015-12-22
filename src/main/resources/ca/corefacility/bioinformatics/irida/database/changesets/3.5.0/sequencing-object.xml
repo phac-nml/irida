@@ -133,5 +133,47 @@
 		<!-- Ditching the temporary column -->
 		<dropColumn columnName="tmp_file_id" tableName="sequencing_object" />
 
+		<!-- We need to add the existing sequence_file_single_end auditing records 
+			into its _AUD table. We'll steal the creation records from the sequence_file_AUD 
+			table -->
+		<!-- First some temporary columns -->
+		<addColumn tableName="Revisions">
+			<column name="tmp_seqobj_id" type="bigint(20)" />
+			<column name="tmp_created_date" type="datetime" />
+			<column name="tmp_file_id" type="bigint(20)" />
+		</addColumn>
+
+		<!-- Inserting sequence_file_AUD records which pertain to single end files 
+			into Revisions and temp columns -->
+		<sql>
+			INSERT INTO Revisions (timestamp, user_id, client_id,
+			tmp_seqobj_id, tmp_created_date, tmp_file_id)
+			SELECT r.timestamp,
+			r.user_id, r.client_id, s.id, f.created_date, f.id
+			FROM
+			sequence_file_AUD f INNER JOIN sequence_file_single_end s ON
+			f.id=s.file_id INNER JOIN Revisions r ON r.id=f.REV
+			WHERE f.REVTYPE=0
+		</sql>
+
+		<!-- Insert into sequencing_object_AUD -->
+		<sql>
+			INSERT INTO sequencing_object_AUD (id, created_date, REV,
+			REVTYPE) SELECT tmp_seqobj_id, tmp_created_date, id, '0' FROM
+			Revisions WHERE tmp_seqobj_id IS NOT NULL
+		</sql>
+
+		<!-- Insert into sequence_file_single_end_AUD -->
+		<sql>
+			INSERT INTO sequence_file_single_end_AUD (id, file_id, REV)
+			SELECT tmp_seqobj_id, tmp_file_id, id from Revisions WHERE
+			tmp_seqobj_id IS NOT NULL
+		</sql>
+
+		<!-- Ditch the temporary columns -->
+		<dropColumn tableName="Revisions" columnName="tmp_seqobj_id" />
+		<dropColumn tableName="Revisions" columnName="tmp_created_date" />
+		<dropColumn tableName="Revisions" columnName="tmp_file_id" />
+
 	</changeSet>
 </databaseChangeLog>
