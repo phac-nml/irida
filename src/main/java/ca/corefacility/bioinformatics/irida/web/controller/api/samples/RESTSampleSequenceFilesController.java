@@ -443,22 +443,27 @@ public class RESTSampleSequenceFilesController {
 		Files.deleteIfExists(target2);
 		Files.deleteIfExists(temp2);
 		logger.trace("Deleted temp files");
-		
-		LabelledRelationshipResource<Sample,SequencingObject> relationshipResource = new LabelledRelationshipResource<Sample,SequencingObject>(createSequencingObjectInSample.getLabel(),createSequencingObjectInSample);
-		
+
+		SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
+
 		// add a link back to the sample
-		relationshipResource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(RESTSampleSequenceFilesController.REL_SAMPLE));
-		
-		//add a link to the newly created pair
-		relationshipResource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId, createSequencingObjectInSample.getObject().getId())).withRel(RESTSampleSequenceFilesController.REL_PAIR));
-		
+		sequencingObject.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE));
+
+		// add a link to the newly created pair
+		sequencingObject.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId,
+						createSequencingObjectInSample.getObject().getId())).withRel(
+				RESTSampleSequenceFilesController.REL_PAIR));
+
 		// add a link to this collection
-		relationshipResource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).addNewSequenceFilePairToSample(
-						sample.getId(),file1, fileResource1, file2, fileResource2, response)).withSelfRel());
-		
+		sequencingObject.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).addNewSequenceFilePairToSample(sample.getId(), file1,
+						fileResource1, file2, fileResource2, response)).withSelfRel());
+
 		// set the response status.
 		response.setStatus(HttpStatus.CREATED.value());
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, relationshipResource);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequencingObject);
 		// respond to the client
 		return modelMap;
 	}
