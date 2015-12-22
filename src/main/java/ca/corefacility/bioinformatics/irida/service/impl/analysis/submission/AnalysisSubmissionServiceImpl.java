@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
@@ -41,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedExce
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -61,7 +60,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 /**
@@ -102,7 +101,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
-	private final AnalysisExecutionService analysisExecutionService;
+	
+	// required, but not constructor injected because we have circular dependencies :(
+	@Autowired
+	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -126,7 +128,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
 			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService,
-			final GalaxyHistoriesService galaxyHistoriesService, final AnalysisExecutionService analysisExecutionService,
+			final GalaxyHistoriesService galaxyHistoriesService,
 			final Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
@@ -135,6 +137,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
+	}
+	
+	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
 		this.analysisExecutionService = analysisExecutionService;
 	}
 
@@ -243,22 +248,20 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public void delete(Long id) throws EntityNotFoundException {
 		final AnalysisSubmission submission = read(id);
 		
-		try {
-			final Future<AnalysisSubmission> cleanupTask = analysisExecutionService.cleanupSubmission(submission);
-			// block on cleaning until the cleanup task is complete.
-			cleanupTask.get();
-		} catch (final ExecutionManagerException e) {
-			logger.error("Failed to cleanup analysis submission before deletion,"
-					+ " but proceeding with deletion anyway.", e);
-		} catch (final InterruptedException e) {
-			logger.error("The thread that was cleaning up the analysis submission was interrupted,"
-					+ " but proceeding with deletion anyway.", e);
-		} catch (final ExecutionException e) {
-			logger.error("A general execution exception happened when cleaning the analysis submission,"
-					+ " but proceeding with deletion anyway.", e);
-		} catch (final Throwable e) {
-			logger.error("An unexpected exception happened when cleaning the analysis submission,"
-					+ " but proceeding with deletion anyway.", e);
+		if (AnalysisCleanedState.NOT_CLEANED.equals(submission.getAnalysisCleanedState())) {
+			// We're "CLEANING" it right now!
+			submission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
+			try {
+				analysisExecutionService.cleanupSubmission(submission).get();
+			} catch (final ExecutionManagerException e) {
+				logger.error("Failed to cleanup analysis submission before deletion,"
+						+ " but proceeding with deletion anyway.", e);
+			} catch (final Throwable e) {
+				logger.error("An unexpected exception happened when cleaning the analysis submission,"
+						+ " but proceeding with deletion anyway.", e);
+			}
+		} else {
+			logger.debug("Not cleaning submission [" + id + "] when deleting, it's already cleaned.");
 		}
 		
 		super.delete(id);
