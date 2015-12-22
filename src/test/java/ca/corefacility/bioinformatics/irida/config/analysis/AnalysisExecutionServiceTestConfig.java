@@ -111,21 +111,21 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {
-		return new AnalysisExecutionServiceGalaxy(analysisSubmissionRepository, galaxyHistoriesService,
+		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
 				analysisExecutionServiceGalaxyAsync(), analysisExecutionServiceGalaxyCleanupAsync());
 	}
 
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
-		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionRepository, analysisService,
+		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
 				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService,sequenceFileSnapshotService);
 	}
 	
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync() {
-		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionRepository,
+		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionService,
 				galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 	}
 

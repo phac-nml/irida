@@ -14,11 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Service for cleaning up an {@link AnalysisSubmission} within a Galaxy
@@ -30,7 +33,7 @@ public class AnalysisExecutionServiceGalaxyCleanupAsync {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyCleanupAsync.class);
 
-	private final AnalysisSubmissionRepository analysisSubmissionRepository;
+	private final AnalysisSubmissionService analysisSubmissionService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final GalaxyLibrariesService galaxyLibrariesService;
@@ -39,7 +42,7 @@ public class AnalysisExecutionServiceGalaxyCleanupAsync {
 	 * Builds a new {@link AnalysisExecutionServiceGalaxyCleanupAsync} with the
 	 * given information.
 	 * 
-	 * @param analysisSubmissionRepository
+	 * @param analysisSubmissionService
 	 *            A service for analysis submissions.
 	 * @param galaxyWorkflowService
 	 *            A service for Galaxy workflows.
@@ -49,10 +52,10 @@ public class AnalysisExecutionServiceGalaxyCleanupAsync {
 	 *            A service for Galaxy libraries.
 	 */
 	@Autowired
-	public AnalysisExecutionServiceGalaxyCleanupAsync(AnalysisSubmissionRepository analysisSubmissionRepository,
+	public AnalysisExecutionServiceGalaxyCleanupAsync(AnalysisSubmissionService analysisSubmissionService,
 			GalaxyWorkflowService galaxyWorkflowService, GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyLibrariesService galaxyLibrariesService) {
-		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.analysisSubmissionService = analysisSubmissionService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyLibrariesService = galaxyLibrariesService;
@@ -96,8 +99,8 @@ public class AnalysisExecutionServiceGalaxyCleanupAsync {
 			galaxyWorkflowService.deleteWorkflow(analysisSubmission.getRemoteWorkflowId());
 		}
 
-		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
-		AnalysisSubmission cleanedAnalysis = analysisSubmissionRepository.save(analysisSubmission);
+		AnalysisSubmission cleanedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANED));
 
 		return new AsyncResult<>(cleanedAnalysis);
 	}
