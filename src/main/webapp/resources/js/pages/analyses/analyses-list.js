@@ -67,8 +67,15 @@ var analysesTable = (function(tl, moment, $http){
 		    			success: function (result) {
 		    				oTable_analysisTable.ajax.reload();
 		    				notifications.show({
-		    					       'msg' : result.result
-		    					     });
+		    					'msg' : result.result
+		    				});
+		    				modal.modal('hide');
+		    			}, error: function (request, status, error) {
+		    				console.log(error);
+		    				notifications.show({
+		    					'msg' : PAGE.i18n.unexpectedDeleteError,
+		    					'type': 'error'
+	    					});
 		    				modal.modal('hide');
 		    			}
 		    		});
