@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.concurrent.ExecutionException;
-
 import javax.validation.Validator;
 
 import org.junit.Before;
@@ -259,6 +257,7 @@ public class AnalysisSubmissionServiceImplTest {
 	@Test
 	public void testDeleteSubmission() throws ExecutionManagerException {
 		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.exists(ID)).thenReturn(true);
 		analysisSubmissionServiceImpl.delete(ID);
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
 	}
@@ -271,53 +270,9 @@ public class AnalysisSubmissionServiceImplTest {
 	 */
 	@Test
 	public void testDeleteSubmissionWorkflowError() throws ExecutionManagerException {
-		testDeleteSubmissionWithException(new ExecutionManagerException());
-	}
-	
-	/**
-	 * Tests that deleting a submission deletes the submission even if an
-	 * execution manager exception is thrown.
-	 * 
-	 * @throws ExecutionManagerException
-	 */
-	@Test
-	public void testDeleteSubmissionInterruptedException() throws ExecutionManagerException {
-		testDeleteSubmissionWithException(new InterruptedException());
-	}
-	
-	/**
-	 * Tests that deleting a submission deletes the submission even if an
-	 * execution manager exception is thrown.
-	 * 
-	 * @throws ExecutionManagerException
-	 */
-	@Test
-	public void testDeleteSubmissionExecutionException() throws ExecutionManagerException {
-		testDeleteSubmissionWithException(new ExecutionException(new Exception()));
-	}
-	
-	/**
-	 * Tests that deleting a submission deletes the submission even if an
-	 * execution manager exception is thrown.
-	 * 
-	 * @throws ExecutionManagerException
-	 */
-	@Test
-	public void testDeleteSubmissionException() throws ExecutionManagerException {
-		testDeleteSubmissionWithException(new Exception());
-	}
-
-	/**
-	 * Convenience method for testing behaviour when the cleanup operation
-	 * throws an exception.
-	 * 
-	 * @param e
-	 *            the exception to throw
-	 * @throws ExecutionManagerException
-	 */
-	private void testDeleteSubmissionWithException(final Exception e) throws ExecutionManagerException {
 		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
-		when(analysisExecutionService.cleanupSubmission(analysisSubmission)).thenThrow(new InterruptedException());
+		when(analysisSubmissionRepository.exists(ID)).thenReturn(true);
+		when(analysisExecutionService.cleanupSubmission(analysisSubmission)).thenThrow(new ExecutionManagerException());
 		analysisSubmissionServiceImpl.delete(ID);
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
 		verify(analysisSubmissionRepository).delete(ID);
