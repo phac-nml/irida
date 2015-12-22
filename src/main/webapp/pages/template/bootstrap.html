@@ -20,7 +20,7 @@
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="navbar-collapse" uib-collapse="navbarCollapsed">
-			<ul class="nav navbar-nav" ng-hide="uiGalaxyCtrl.inGalaxy">
+			<ul th:unless="${galaxyCallback}" class="nav navbar-nav">
 				<li uib-dropdown="">
 					<a href="#" uib-dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.project}">Projects</span>
@@ -87,7 +87,7 @@
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li sec:authorize="hasRole('ROLE_ADMIN')" class="uib-dropdown" uib-dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
+				<li th:unless="${galaxyCallback}" sec:authorize="hasRole('ROLE_ADMIN')" class="uib-dropdown" uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="">
 						<span th:text="#{nav.main.admin}">Admin</span>
 						<span class="caret"></span>
@@ -121,7 +121,7 @@
                         <!--*/&ndash;&gt;-->
 					<!--</ul>-->
 				<!--</li>-->
-				<li uib-dropdown="" ng-hide="uiGalaxyCtrl.inGalaxy">
+				<li th:unless="${galaxyCallback}" uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown"
 					   uib-dropdown-toggle="">
 						<span th:text="#{nav.main.help}">__Help__</span>
@@ -157,20 +157,20 @@
 						<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
 					</button>
 				</li>
-				<li ng-hide="uiGalaxyCtrl.inGalaxy">
+				<li th:unless="${galaxyCallback}">
 					<a href="#" th:href="@{/remote_api}" data:uib-tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">
 						<i class="glyphicon glyphicon-transfer"></i>
 					</a>
 				</li>
 
-				<li ng-hide="uiGalaxyCtrl.inGalaxy">
+				<li th:unless="${galaxyCallback}">
 					<a class="nav-gravatar" href="#" th:href="@{/users/current}" th:with="email=${#httpSession.getAttribute('CURRENT_USER_DETAILS') != null} ? ${#httpSession.getAttribute('CURRENT_USER_DETAILS').email} : 'anonymous@anonymous.ca'"
 					   data:uib-tooltip="#{nav.main.account}" tooltip-placement="bottom">
 						<img class="gravatar" data:gravatar-src-once="'\'' + ${email} + '\''"
 						     gravatar-size="28"/>
 					</a>
 				</li>
-				<li ng-hide="uiGalaxyCtrl.inGalaxy">
+				<li th:unless="${galaxyCallback}">
 					<a th:href="@{/logout}" href="/logout" data:uib-tooltip="#{nav.main.logout}" tooltip-placement="bottom">
 						<i class="fa fa-sign-out"></i>
 					</a>

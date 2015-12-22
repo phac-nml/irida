@@ -13,8 +13,7 @@
 <body>
 <th:block layout:fragment="content">
 	<div style="height: 100%;">
-		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}"
-		     ng-controller="UIGalaxyController as uiGalaxyCtrl">
+		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
 			<div class="st-content">
 				<div class="st-content-inner">
 					<nav th:replace="template/bootstrap :: #topnav"></nav>
@@ -119,12 +118,10 @@
                     </li>
 				</ul>
 				<div class="cart-control-bottom">
-					<a th:if="${galaxyCallback}" id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right" ng-cloak="" th:text="#{cart.btn.run}">Run Pipeline
+					<a th:unless="${galaxyCallback}" id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right" ng-cloak="" th:text="#{cart.btn.run}">Run Pipeline
 					</a>
-					<a th:unless="${galaxyCallback}" id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy(); cart.show=false"
-					        class="btn btn-primary pull-right"
-					        ng-show="uiGalaxyCtrl.inGalaxy" th:text="#{cart.btn.export}">Export to Galaxy
-					</a>
+					<a th:if="${galaxyCallback}" id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy(); cart.show=false"
+					        class="btn btn-primary pull-right" th:text="#{cart.btn.export}">Export to Galaxy</a>
 				</div>
 			</section>
 		</aside>
