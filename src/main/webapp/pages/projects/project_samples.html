@@ -143,13 +143,13 @@
 
 				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" uib-dropdown=""
 				     is-open="subnav.display.isopen">
-					<button th:unless="${galaxyCallback}" id="displayBtn" type="button" class="btn btn-default btn-sm ng-cloak"
+					<button id="displayBtn" type="button" class="btn btn-default btn-sm ng-cloak"
 					        uib-dropdown-toggle="">
 						<span th:text="#{project.samples.display.title}">_Display_</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul th:unless="${galaxyCallback}" class="uib-dropdown-menu noclose ng-cloak" role="menu">
+					<ul class="uib-dropdown-menu noclose ng-cloak" role="menu">
 						<li class="sample-type-selector local-sample">
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
@@ -176,12 +176,12 @@
 
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" uib-dropdown="" is-open="subnav.samplesOptions.open">
-					<button th:unless="${galaxyCallback}" id="samplesOptionsBtn" class="btn btn-default btn-sm ng-cloak" uib-dropdown-toggle="">
+					<button id="samplesOptionsBtn" class="btn btn-default btn-sm ng-cloak" uib-dropdown-toggle="">
 						<span>Samples</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul th:unless="${galaxyCallback}" class="uib-dropdown-menu ng-cloak" role="menu">
+					<ul class="uib-dropdown-menu ng-cloak" role="menu">
 						<li id="merge-li" ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
 						    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" tooltip-append-to-body="true"
 						    tooltip-placement="right">
