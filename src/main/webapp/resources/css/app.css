@@ -252,7 +252,8 @@ h1, h2, h3, h4, h5, h6 {
   background: #f3f3f3;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
-  overflow-y: scroll; }
+  overflow-y: auto;
+  overflow-x: hidden; }
 
 .cart-open .st-pusher {
   -webkit-transform: translate3d(-400px, 0, 0);
