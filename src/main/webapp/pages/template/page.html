@@ -117,7 +117,7 @@
                         </ul>
                     </li>
 				</ul>
-				<div class="cart-control-bottom">
+				<div class="cart-control-bottom btn-toolbar">
 					<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right" ng-cloak="" th:text="#{cart.btn.run}">Run Pipeline
 					</a>
 					<a th:if="${galaxyCallback}" id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy(); cart.show=false"
