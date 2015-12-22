@@ -146,8 +146,10 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				// Need to stop loading of "cloudlaunch.py" which loads up older bioblend.
 				// Easiest way is to delete this file.  This must be fixed after we upgrade Galaxy
 				Path cloudLaunchPyPath = bootStrapper.getRoot().toPath().resolve(Paths.get("lib", "galaxy", "webapps", "galaxy", "controllers", "cloudlaunch.py"));
-				logger.info("Deleting file " + cloudLaunchPyPath + " to fix launching old Galaxy in new Ubuntu");
-				Files.delete(cloudLaunchPyPath);
+				if (Files.exists(cloudLaunchPyPath)) {
+					Files.delete(cloudLaunchPyPath);
+					logger.info("Deleting file " + cloudLaunchPyPath + " to fix launching old Galaxy in new Ubuntu");
+				}
 				// end horrible hack
 		
 				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash,databaseURL, databaseConnectionString);
