@@ -15,7 +15,11 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 To install these tools, please proceed through the following steps.
 
-## Step 1: Install Perl Modules
+## Step 1: Install Build Dependencies
+
+SNVPhyl relies on `ncurses` version **2.9** which requires [GCC][] version **4.9** or **less**.  Please verify you have the correct version of GCC by running `gcc --version`.  If you have a more recent version installed please install version **4.9** before proceeding.
+
+## Step 2: Install Perl Modules
 
 Some Perl modules are required to be installed before the tools are installed.  In particular, the module `Readonly` needs to be installed.  This can by installed by running:
 
@@ -23,13 +27,13 @@ Some Perl modules are required to be installed before the tools are installed.  
 cpanm Readonly
 ```
 
-## Step 2: Install Galaxy Tools
+## Step 3: Install Galaxy Tools
 
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
 The install progress can be monitored in the Galaxy log file `$GALAXY_BASE_DIR/main.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
-## Step 3: Testing Pipeline
+## Step 4: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
 
@@ -54,6 +58,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 [SNVPhyl]: https://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/tree/development
+[GCC]: https://gcc.gnu.org/
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [IRIDA Main Shed]: https://irida.corefacility.ca/galaxy-shed
 [MUMMer]: http://mummer.sourceforge.net/
