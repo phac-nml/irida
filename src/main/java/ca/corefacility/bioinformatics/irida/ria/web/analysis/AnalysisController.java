@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -459,6 +460,7 @@ public class AnalysisController {
 		private String analysisState;
 		private String duration;
 		private String percentComplete;
+		private Date createdDate;
 
 		public AnalysisTableResponse(AnalysisSubmission submission, Locale locale)
 				throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
@@ -468,6 +470,7 @@ public class AnalysisController {
 			this.id = submission.getId();
 			this.name = submission.getName();
 			this.submitter = submission.getSubmitter();
+			this.createdDate = submission.getCreatedDate();
 
 			// get the workflow name
 			UUID workflowUUID = submission.getWorkflowId();
@@ -523,6 +526,10 @@ public class AnalysisController {
 
 		public String getPercentComplete() {
 			return percentComplete;
+		}
+		
+		public Date getCreatedDate() {
+			return createdDate;
 		}
 	}
 }

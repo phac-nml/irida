@@ -12,7 +12,8 @@ Changes
 * [Developer] Removed several unused properties and classes to simplify data model.
 * [UI]: Analysis list page reworked to use Datatables.  Now does server side paging for performance increases.
 * [UI]: Replace large checkboxes on Project Samples page with standard platform dependant checkboxes.
-* [UI]: Allow deletion and cancelling an analysis.
+* [UI]: Allow deleting and cancelling an analysis.
+* [UI]: Updated pipeline selection interface by adding the pipeline colour to the background of the name and making the panels equal in height.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------
