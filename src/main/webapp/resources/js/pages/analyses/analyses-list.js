@@ -61,7 +61,6 @@ var analysesTable = (function(tl, moment, $http){
     			var modal = $(this);
     			var id = data.id;
     			modal.find("#delete-analysis-button").off("click").click(function() {
-    				console.log("Going to delete analysis with id: [" + id + "]");
 		    		$.ajax({
 		    			url: PAGE.URLS.deleteUrl + id,
 		    			type: 'DELETE',
