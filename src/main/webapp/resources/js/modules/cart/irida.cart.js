@@ -82,7 +82,7 @@
       CartService.all()
         .then(function (data) {
           if (data !== null) {
-            var firstProjID = data[0].id;
+            var firstProjID = data.projects[0].id;
 
             $uibModal.open({
               templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + firstProjID,
