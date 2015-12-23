@@ -35,32 +35,6 @@ h1, h2, h3, h4, h5, h6 {
     animation-timing-function: ease-out; }
   100% {
     transform: translate3d(0, -65px, 0px); } }
-@-webkit-keyframes glow {
-  from {
-    background-color: #3092d0; }
-  50% {
-    background-color: #83bee3; }
-  to {
-    background-color: #3092d0; } }
-@-moz-keyframes glow {
-  from {
-    background-color: #3092d0; }
-  50% {
-    background-color: #83bee3; }
-  to {
-    background-color: #3092d0; } }
-@-webkit-keyframes glow {
-  from {
-    background-color: #3092d0; }
-  50% {
-    background-color: #83bee3; }
-  to {
-    background-color: #3092d0; } }
-.glow {
-  -webkit-animation: glow .5s .2s 1;
-  -moz-animation: glow .5s .2s 1;
-  animation: glow .5s .2s 1; }
-
 /*
   Subtle fade in effect that move the element up 20px and fades it into view
 */

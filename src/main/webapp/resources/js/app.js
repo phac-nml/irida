@@ -3,6 +3,7 @@
   var deps = _.union(window.dependencies || [], [
     'ngAria',
     'ngAnimate',
+    "angular-notification-icons",
     'ui.bootstrap',
     'ui.gravatar',
     'irida.session',

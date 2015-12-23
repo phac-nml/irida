@@ -149,13 +149,7 @@
 					</ul>
 				</li>
 				<li>
-					<button type="button" id="cart-show-btn" class="btn btn-info btn-sm navbar-btn"
-					        ng-class="cart.animation"
-					        ng-click="cart.show=!cart.show">
-						<span th:text="#{cart.label}"></span>
-						&nbsp;
-						<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
-					</button>
+					<notification-icon count="cart.count"><button id="cart-show-btn" class="btn btn-link navbar-btn" ng-click="cart.show=!cart.show"><span style="font-size: 20px" class="fa fa-fw fa-shopping-cart"></span></button></notification-icon>
 				</li>
 				<li ng-hide="uiGalaxyCtrl.inGalaxy">
 					<a href="#" th:href="@{/remote_api}" data:uib-tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">

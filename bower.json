@@ -38,7 +38,8 @@
     "angular-bootstrap": "0.14.3",
     "select2-bootstrap-css": "select2-bootstrap3-css#1.4.6",
     "noty": "2.3.7",
-    "datatables-bootstrap3-plugin": "~0.4.0"
+    "datatables-bootstrap3-plugin": "~0.4.0",
+    "angular-notification-icons": "~0.4.3"
   },
   "devDependencies": {},
   "resolutions": {
