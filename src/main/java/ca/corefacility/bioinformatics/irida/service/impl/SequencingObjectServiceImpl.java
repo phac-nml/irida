@@ -16,6 +16,11 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
+/**
+ * Implementation of {@link SequencingObjectService} using a
+ * {@link SequencingObjectRepository} and
+ * {@link SampleSequencingObjectJoinRepository} to persist and load objects.
+ */
 @Service
 public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, SequencingObject> implements
 		SequencingObjectService {
@@ -29,6 +34,9 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		this.ssoRepository = ssoRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
@@ -36,6 +44,9 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		return super.create(object);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
