@@ -1,7 +1,7 @@
 /*
  * Used by the Analyses Listing Datatable (analyses.html)
  */
-var analysesTable = (function(tl, moment, $http){
+var analysesTable = (function(tl, moment){
     /**
      * Fomat the content of the Analysis Name column to link to the analysis.
      * @param data - data for the name cell.
