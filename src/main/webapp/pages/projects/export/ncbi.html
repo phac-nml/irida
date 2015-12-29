@@ -55,9 +55,9 @@
 
         <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
           <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" class="sample-container" th:each="sample : ${samples}">
-            <h3>
-            <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
-          </h3>
+            <h2>
+              <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
+            </h2>
 
 
             <div class="row">
@@ -153,7 +153,7 @@
               </table>
 
             </th:block>
-
+            <hr/>
           </div>
           <button id="submit" class="btn btn-primary" th:text="#{global.btn.submit}">_Submit_</button>
 
