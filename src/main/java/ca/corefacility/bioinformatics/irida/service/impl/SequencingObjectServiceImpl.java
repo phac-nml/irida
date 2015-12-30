@@ -54,6 +54,11 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		// create the sequencing object
 		seqObject = create(seqObject);
 
+		/*
+		 * TODO:Verify that the SequencingRun matches the type of
+		 * sequencingobject being created
+		 */
+
 		// save the new join
 		SampleSequencingObjectJoin sampleSequencingObjectJoin = new SampleSequencingObjectJoin(sample, seqObject);
 		return ssoRepository.save(sampleSequencingObjectJoin);

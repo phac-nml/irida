@@ -1,22 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import javax.validation.Validator;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.springframework.core.task.TaskExecutor;
 
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
@@ -48,43 +38,5 @@ public class SequenceFileServiceTest {
 		this.validator = mock(Validator.class);
 		this.sequenceFileService = new SequenceFileServiceImpl(sequenceFileRepository, ssfRepository, pairRepository,
 				executor, fileProcessingChain, validator);
-	}
-
-	@Test
-	public void testCreateSequenceFileInSample() {
-		Sample s = new Sample();
-		SequenceFile sf = new SequenceFile();
-
-		when(sequenceFileRepository.save(sf)).thenReturn(sf);
-
-		sequenceFileService.createSequenceFileInSample(sf, s);
-
-		// verify that we're only actually running one file processor on the new
-		// sequence file.
-		verify(executor, times(1)).execute(any(Runnable.class));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testCreateSequenceFileInSampleWrongType() {
-		Sample s = new Sample();
-		SequenceFile sf = new SequenceFile();
-		SequencingRun run = new MiseqRun(LayoutType.PAIRED_END, "workflow");
-
-		sf.setSequencingRun(run);
-
-		sequenceFileService.createSequenceFileInSample(sf, s);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testCreateSequenceFilePairInSampleWrongType() {
-		Sample s = new Sample();
-		SequenceFile sf = new SequenceFile();
-		SequenceFile sf2 = new SequenceFile();
-		SequencingRun run = new MiseqRun(LayoutType.SINGLE_END, "workflow");
-
-		sf.setSequencingRun(run);
-		sf2.setSequencingRun(run);
-
-		sequenceFileService.createSequenceFilePairInSample(sf, sf2, s);
 	}
 }
