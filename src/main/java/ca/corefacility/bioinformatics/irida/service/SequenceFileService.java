@@ -64,6 +64,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            from.
 	 * @return the references to {@link SequenceFile}.
 	 */
+	@Deprecated
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample);
 
 	/**
