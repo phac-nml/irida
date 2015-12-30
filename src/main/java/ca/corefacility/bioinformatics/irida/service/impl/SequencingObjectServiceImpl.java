@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collection;
+
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
@@ -62,6 +64,15 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		// save the new join
 		SampleSequencingObjectJoin sampleSequencingObjectJoin = new SampleSequencingObjectJoin(sample, seqObject);
 		return ssoRepository.save(sampleSequencingObjectJoin);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
+	public Collection<SampleSequencingObjectJoin> getSequencingObjectsForSample(Sample sample) {
+		return ssoRepository.getSequencesForSample(sample);
 	}
 
 }
