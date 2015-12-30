@@ -63,7 +63,6 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSp
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -102,7 +101,6 @@ public class ProjectSamplesController {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
-	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
@@ -115,12 +113,11 @@ public class ProjectSamplesController {
 
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-			UserService userService, SequenceFileService sequenceFileService, SequencingObjectService sequencingObjectService,
+			UserService userService, SequencingObjectService sequencingObjectService,
 			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
-		this.sequenceFileService = sequenceFileService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.dateFormatter = new DateFormatter();
