@@ -54,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -76,6 +77,7 @@ public class ProjectSamplesControllerTest {
 	private SampleService sampleService;
 	private UserService userService;
 	private SequenceFileService sequenceFileService;
+	private SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 	private ProjectControllerUtils projectUtils;
 
@@ -89,7 +91,7 @@ public class ProjectSamplesControllerTest {
 		messageSource = mock(MessageSource.class);
 
 		controller = new ProjectSamplesController(projectService, sampleService, userService, sequenceFileService,
-				projectUtils, messageSource);
+				sequencingObjectService, projectUtils, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
