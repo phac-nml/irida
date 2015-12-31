@@ -197,20 +197,25 @@ public class RESTSampleSequenceFilesController {
 		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService
 				.getSequenceFilePairsForSample(sample);
 
+		Collection<SampleSequencingObjectJoin> sequencesForSampleOfType = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+
 		ResourceCollection<SequenceFilePair> resources = new ResourceCollection<>(sequenceFilePairsForSample.size());
-		for (SequenceFilePair pair : sequenceFilePairsForSample) {
+
+		for (SampleSequencingObjectJoin j : sequencesForSampleOfType) {
+			SequenceFilePair pair = (SequenceFilePair) j.getObject();
+
 			pair = addSequenceFilePairLinks(pair, sampleId);
 
 			resources.add(pair);
 		}
 
 		// add a link to this collection
-		resources.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
+		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
 				.withSelfRel());
 		// add a link back to the sample
-		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE));
+		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 		return modelMap;
