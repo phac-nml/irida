@@ -3,16 +3,16 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.sample;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
 /**
  * Repository for storing and retrieving {@link SampleSequencingObjectJoin}s
  */
-public interface SampleSequencingObjectJoinRepository extends CrudRepository<SampleSequencingObjectJoin, Long> {
+public interface SampleSequencingObjectJoinRepository extends IridaJpaRepository<SampleSequencingObjectJoin, Long> {
 	/**
 	 * Get the {@link SequenceFile}s associated with a sample
 	 * 
