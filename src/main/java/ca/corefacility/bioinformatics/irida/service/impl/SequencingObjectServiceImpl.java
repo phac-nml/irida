@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
 /**
@@ -73,6 +74,17 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public Collection<SampleSequencingObjectJoin> getSequencingObjectsForSample(Sample sample) {
 		return ssoRepository.getSequencesForSample(sample);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
+	@Override
+	public Collection<SampleSequencingObjectJoin> getSequencesForSampleOfType(Sample sample,
+			Class<? extends SequencingObject> type) {
+
+		return ssoRepository.findAll(SampleSequencingObjectSpecification.getSequenceOfTypeForSample(sample, type));
 	}
 
 }

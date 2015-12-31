@@ -25,9 +25,25 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	public SampleSequencingObjectJoin createSequencingObjectInSample(SequencingObject seqObject, Sample sample);
 
 	/**
-	 * Get all the {@link SequencingObject}s associate with a given {@link Sample}
-	 * @param sample The {@link Sample} to get sequences for
+	 * Get all the {@link SequencingObject}s associate with a given
+	 * {@link Sample}
+	 * 
+	 * @param sample
+	 *            The {@link Sample} to get sequences for
 	 * @return A collection of {@link SampleSequencingObjectJoin}
 	 */
 	public Collection<SampleSequencingObjectJoin> getSequencingObjectsForSample(Sample sample);
+
+	/**
+	 * Get a collection of {@link SampleSequencingObjectJoin}s assocaited with a
+	 * given {@link Sample} and of the given class type
+	 * 
+	 * @param sample
+	 *            the {@link Sample} used in the join
+	 * @param type
+	 *            The type of {@link SequencingObject} that must be in the join
+	 * @return a Collection of {@link SampleSequencingObjectJoin}
+	 */
+	public Collection<SampleSequencingObjectJoin> getSequencesForSampleOfType(Sample sample,
+			Class<? extends SequencingObject> type);
 }
