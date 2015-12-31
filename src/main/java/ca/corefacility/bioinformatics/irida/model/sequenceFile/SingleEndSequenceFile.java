@@ -31,6 +31,11 @@ public class SingleEndSequenceFile extends SequencingObject {
 	@NotNull
 	private SequenceFile file;
 
+	// Default constructor for hibernate
+	@SuppressWarnings("unused")
+	private SingleEndSequenceFile() {
+	}
+
 	public SingleEndSequenceFile(SequenceFile file) {
 		super();
 		this.file = file;
@@ -71,7 +76,7 @@ public class SingleEndSequenceFile extends SequencingObject {
 		file = files.iterator().next();
 
 	}
-	
+
 	public SequenceFile getFile() {
 		return file;
 	}
