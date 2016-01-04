@@ -6,7 +6,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,13 +31,16 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
@@ -111,17 +112,20 @@ public class RESTSampleSequenceFilesController {
 	 * Reference to the {@link MiseqRunService}
 	 */
 	private SequencingRunService miseqRunService;
+	
+	private SequencingObjectService sequencingObjectService;
 
 	protected RESTSampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService, SampleService sampleService,
-			SequencingRunService miseqRunService) {
+			SequencingRunService miseqRunService, SequencingObjectService sequencingObjectService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.sampleService = sampleService;
 		this.miseqRunService = miseqRunService;
+		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	/**
@@ -324,18 +328,20 @@ public class RESTSampleSequenceFilesController {
 			sf.setSequencingRun(miseqRun);
 			logger.trace("Added seqfile to miseqrun");
 		}
+		
+		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
+		
+		//save the seqobject and sample
+		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(singleEndSequenceFile, sample);
 
-		// persist the changes by calling the sample service
-		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
-				sample);
-		logger.trace("Created seqfile in sample " + sampleSequenceFileRelationship.getObject().getId());
+		logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject().getId());
 		// clean up the temporary files.
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
 		logger.trace("Deleted temp file");
 		// prepare a link to the sequence file itself (on the sequence file
 		// controller)
-		Long sequenceFileId = sampleSequenceFileRelationship.getObject().getId();
+		Long sequenceFileId = singleEndSequenceFile.getFile().getId();
 		String location = linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
 						sequenceFileId)).withSelfRel().getHref();
@@ -424,49 +430,39 @@ public class RESTSampleSequenceFilesController {
 			sf2.setSequencingRun(sequencingRun);
 			logger.trace("Added sequencing run to files" + runId);
 		}
-		// add the files
-		List<Join<Sample, SequenceFile>> createSequenceFilePairInSample = sequenceFileService
-				.createSequenceFilePairInSample(sf1, sf2, sample);
-		// get the joins
-		Iterator<Join<Sample, SequenceFile>> iterator = createSequenceFilePairInSample.iterator();
-		Join<Sample, SequenceFile> join1 = iterator.next();
-		Join<Sample, SequenceFile> join2 = iterator.next();
+		
+		SequenceFilePair sequenceFilePair = new SequenceFilePair(sf1, sf2);
+		
+		// add the files and join
+		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(sequenceFilePair, sample);
+		
 		// clean up the temporary files.
 		Files.deleteIfExists(target1);
 		Files.deleteIfExists(temp1);
 		Files.deleteIfExists(target2);
 		Files.deleteIfExists(temp2);
 		logger.trace("Deleted temp files");
-		// add 2 labeled relationship resources to a collection
-		ResourceCollection<LabelledRelationshipResource<Sample,SequenceFile>> sequenceResources = new ResourceCollection
-				<>(createSequenceFilePairInSample.size());
-		LabelledRelationshipResource<Sample,SequenceFile> lrr1 = new LabelledRelationshipResource<Sample,SequenceFile>(
-				join1.getLabel(),join1);
-		LabelledRelationshipResource<Sample,SequenceFile> lrr2 = new LabelledRelationshipResource<Sample,SequenceFile>(
-				join2.getLabel(),join2);
-		sequenceResources.add(lrr1);
-		sequenceResources.add(lrr2);
-		// add links to each labeled relationship resource
-		for(int i = 0; i < 2; i++) {
-			LabelledRelationshipResource<Sample,SequenceFile> lrr = sequenceResources.getResources().get(i);
-			lrr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-					.withRel(REL_SAMPLE_SEQUENCE_FILES));
-			lrr.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-					REL_SAMPLE));
-			Link selfLink = linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(
-					sampleId,lrr.getResource().getObject().getId())).withSelfRel();
-			lrr.add(selfLink);
-			response.addHeader(HttpHeaders.LOCATION, selfLink.getHref());
-		}	
+
+		SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
+
 		// add a link back to the sample
-		sequenceResources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(
-				sampleId)).withRel(RESTSampleSequenceFilesController.REL_SAMPLE));
+		sequencingObject.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE));
+
+		// add a link to the newly created pair
+		sequencingObject.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId,
+						createSequencingObjectInSample.getObject().getId())).withRel(
+				RESTSampleSequenceFilesController.REL_PAIR));
+
 		// add a link to this collection
-		sequenceResources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).addNewSequenceFilePairToSample(
-				sample.getId(),file1, fileResource1, file2, fileResource2, response)).withSelfRel());
+		sequencingObject.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).addNewSequenceFilePairToSample(sample.getId(), file1,
+						fileResource1, file2, fileResource2, response)).withSelfRel());
+
 		// set the response status.
 		response.setStatus(HttpStatus.CREATED.value());
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceResources);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequencingObject);
 		// respond to the client
 		return modelMap;
 	}

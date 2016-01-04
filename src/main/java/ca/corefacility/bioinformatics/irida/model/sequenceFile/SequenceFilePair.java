@@ -45,7 +45,7 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 */
 	private static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_.*");
 
-	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Size(min = 2, max = 2)
 	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
 	private Set<SequenceFile> files;

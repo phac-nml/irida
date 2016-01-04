@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
@@ -55,6 +56,7 @@ public class SampleSequenceFilesControllerTest {
 	private SequenceFilePairService sequenceFilePairService;
 	private SampleService sampleService;
 	private SequencingRunService miseqRunService;
+	private SequencingObjectService sequencingObjectService;
 
 	@Before
 	public void setUp() {
@@ -63,7 +65,7 @@ public class SampleSequenceFilesControllerTest {
 		sequenceFilePairService = mock(SequenceFilePairService.class);
 		miseqRunService= mock(SequencingRunService.class);
 
-		controller = new RESTSampleSequenceFilesController(sequenceFileService, sequenceFilePairService, sampleService, miseqRunService);
+		controller = new RESTSampleSequenceFilesController(sequenceFileService, sequenceFilePairService, sampleService, miseqRunService, sequencingObjectService);
 	}
 
 	@Test

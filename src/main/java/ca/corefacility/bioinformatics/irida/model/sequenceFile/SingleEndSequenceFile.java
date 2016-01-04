@@ -31,6 +31,11 @@ public class SingleEndSequenceFile extends SequencingObject {
 	@NotNull
 	private SequenceFile file;
 
+	public SingleEndSequenceFile(SequenceFile file) {
+		super();
+		this.file = file;
+	}
+
 	/**
 	 * Throws {@link UnsupportedOperationException} because you should not be
 	 * able to update a file.
@@ -55,6 +60,20 @@ public class SingleEndSequenceFile extends SequencingObject {
 	@Override
 	public Set<SequenceFile> getFiles() {
 		return ImmutableSet.of(file);
+	}
+
+	@Override
+	public void setFiles(Set<SequenceFile> files) {
+		if (files.size() > 1) {
+			throw new IllegalArgumentException("SingleEndSequenceFile can only store 1 SequenceFile");
+		}
+
+		file = files.iterator().next();
+
+	}
+	
+	public SequenceFile getFile() {
+		return file;
 	}
 
 }
