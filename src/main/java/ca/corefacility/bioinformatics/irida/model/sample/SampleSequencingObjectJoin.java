@@ -50,7 +50,7 @@ public class SampleSequencingObjectJoin implements Join<Sample, SequencingObject
 	@Column(name = "created_date")
 	private final Date createdDate;
 
-	public SampleSequencingObjectJoin() {
+	private SampleSequencingObjectJoin() {
 		createdDate = new Date();
 	}
 
