@@ -25,6 +25,9 @@
 			</column>
 		</createTable>
 
+		<addUniqueConstraint columnNames="sequencingobject_id"
+			constraintName="UK_SEQUENCEOBJECT_SAMPLE_FILE" tableName="sample_sequencingobject" />
+
 		<createTable tableName="sample_sequencingobject_AUD">
 			<column name="id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
