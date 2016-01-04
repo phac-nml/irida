@@ -3,9 +3,9 @@
  *
  * This script allows notification to be called through jQuery or angular using the same API:
  *
- * notificatoins.show({
+ * notifications.show({
  *      'msg' : 'the main body',
- *      'type': 'success' // Optional from: 'success', 'error', 'information', 'warning'
+ *      'type': 'success', // Optional from: 'success', 'error', 'information', 'warning'
  *      'timeout': 5000 // Optional false will make it go away only on click.  Or pass number of milliseconds.
  *    });
  */

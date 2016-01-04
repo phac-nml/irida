@@ -4,15 +4,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.AsyncResult;
 
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -53,6 +60,7 @@ import com.sun.jersey.api.client.ClientResponse;
 @Import({ IridaWorkflowsTestConfig.class })
 @Profile("test")
 public class IridaApiNoGalaxyTestConfig {
+	private static final Logger logger = LoggerFactory.getLogger(IridaApiNoGalaxyTestConfig.class);
 
 	/**
 	 * @return An ExecutorService executing code in the same thread for testing
@@ -61,6 +69,19 @@ public class IridaApiNoGalaxyTestConfig {
 	@Bean
 	public Executor uploadExecutor() {
 		return MoreExecutors.sameThreadExecutor();
+	}
+	
+	@Bean
+	public AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync() {
+		return new AnalysisExecutionServiceGalaxyCleanupAsync(null, null, null, null) {
+			
+			@Override
+			public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission)
+					throws ExecutionManagerException {
+				logger.info("\"Cleaning\" up submission [" + analysisSubmission + "] (but secretly doing nothing!)");
+				return new AsyncResult<AnalysisSubmission>(analysisSubmission);
+			}
+		};
 	}
 	
 	@Bean

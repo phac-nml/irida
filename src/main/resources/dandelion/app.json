@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "jquery",
+    "bootstrap3",
     "lodash",
     "angular",
     "angular-aria",
@@ -31,8 +32,12 @@
       }
     },
     {
-      "name": "app",
-      "version": "0.0.1",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/app.css"
+      }
+    },
+    {
       "type": "js",
       "locations": {
         "webapp": "/resources/js/app.js"

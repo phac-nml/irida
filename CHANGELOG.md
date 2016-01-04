@@ -10,6 +10,11 @@ Changes
 * [UI]: Password reset e-mails now include your username.
 * [Developer]: Fix up inconsistencies with tables created by Liquibase and tables created by Hibernate.
 * [Developer] Removed several unused properties and classes to simplify data model.
+* [UI]: Analysis list page reworked to use Datatables.  Now does server side paging for performance increases.
+* [UI]: Replace large checkboxes on Project Samples page with standard platform dependant checkboxes.
+* [UI]: Allow deleting and cancelling an analysis.
+* [UI]: Updated pipeline selection interface by adding the pipeline colour to the background of the name and making the panels equal in height.
+* [UI]: Fixed issue where samples in the cart could not be sent to galaxy.
 * [UI]: Added ability to upload sequence files to NCBI from the Project/Samples table.
 
 1.0.0-alpha6 to 1.0.0-alpha7
@@ -22,6 +27,7 @@ Changes
 * [UI]: Fixed issue with Analyses Filter overlapping the Analyses table on smaller screens.
 * [Developer]: Removed magnific-popups from the project samples page and replace with bootstrap modals through angular-ui.
 * [UI]: Fixed issue with downloading a sample with duplicate filenames.  Duplicates are now renamed with Windows style "file (1).fastq" names.
+* [UI]: Fixed error with date a user joined a project on the Project Members Page.
 
 1.0.0-alpha5 to 1.0.0-alpha6
 ----------------------------

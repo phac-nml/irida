@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-alpha7.3</version>
+	<version>1.0.0-alpha8-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -940,8 +940,8 @@
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
-		<selenium-driver.version>2.42.2</selenium-driver.version>
-		<selenium-chrome-driver.version>2.42.2</selenium-chrome-driver.version>
+		<selenium-driver.version>2.48.2</selenium-driver.version>
+		<selenium-chrome-driver.version>2.48.2</selenium-chrome-driver.version>
 		<attoparser.version>1.3</attoparser.version>
 		<thymeleaf.extras.springsecurity3.version>2.1.1.RELEASE</thymeleaf.extras.springsecurity3.version>
 		<thymeleaf.extras.conditionalcomments.version>2.1.1.RELEASE</thymeleaf.extras.conditionalcomments.version>

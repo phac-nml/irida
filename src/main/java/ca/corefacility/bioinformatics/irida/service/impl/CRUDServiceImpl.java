@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  */
 public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped> implements
 		CRUDService<KeyType, ValueType> {
-	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
+	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database: ";
 
 	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
 
@@ -71,7 +71,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	public ValueType read(KeyType id) throws EntityNotFoundException {
 		ValueType value = repository.findOne(id);
 		if (value == null) {
-			throw new EntityNotFoundException(NO_SUCH_ID_EXCEPTION);
+			throw new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id);
 		}
 		return value;
 	}
@@ -83,7 +83,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Transactional
 	public void delete(KeyType id) throws EntityNotFoundException {
 		if (!exists(id)) {
-			throw new EntityNotFoundException(NO_SUCH_ID_EXCEPTION);
+			throw new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id);
 		}
 
 		repository.delete(id);

@@ -8,7 +8,7 @@ var datatable = (function(moment, tl, page) {
    * @returns {*}
    */
   function formatDate(date) {
-    if (moment !== undefined && tl.date && tl.date.moment.short) {
+    if (moment !== undefined && date !== undefined && tl.date && tl.date.moment.short) {
       return '<div><span style="display: none !important;">' + date + '</span>' + moment(date).format(tl.date.moment.short) + '</div>';
     } else {
       return new Date(date);

@@ -144,13 +144,12 @@
 				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" uib-dropdown=""
 				     is-open="subnav.display.isopen">
 					<button id="displayBtn" type="button" class="btn btn-default btn-sm ng-cloak"
-					        ng-hide="uiGalaxyCtrl.inGalaxy"
 					        uib-dropdown-toggle="">
 						<span th:text="#{project.samples.display.title}">_Display_</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="uib-dropdown-menu noclose ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
+					<ul class="uib-dropdown-menu noclose ng-cloak" role="menu">
 						<li class="sample-type-selector local-sample">
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
@@ -177,13 +176,12 @@
 
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" uib-dropdown="" is-open="subnav.samplesOptions.open">
-					<button id="samplesOptionsBtn" class="btn btn-default btn-sm ng-cloak" uib-dropdown-toggle=""
-					        ng-hide="uiGalaxyCtrl.inGalaxy">
+					<button id="samplesOptionsBtn" class="btn btn-default btn-sm ng-cloak" uib-dropdown-toggle="">
 						<span>Samples</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="uib-dropdown-menu ng-cloak" role="menu" ng-hide="uiGalaxyCtrl.inGalaxy">
+					<ul class="uib-dropdown-menu ng-cloak" role="menu">
 						<li id="merge-li" ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
 						    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" tooltip-append-to-body="true"
 						    tooltip-placement="right">
@@ -328,13 +326,11 @@
 				<tbody>
 				<tr class="sample-row" ng-class="{'selected': entry.selected, 'local-sample' : entry.sampleType=='LOCAL', 'associated-sample' : entry.sampleType=='ASSOCIATED', 'remote-sample' : entry.sampleType=='REMOTE'}"
 				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
-					<td>
-						<div class="large-checkbox">
-							<input class="sample-select" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}"
-							       type="checkbox"
-							       ng-model="entry.selected"
-							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.identifier}}"></label>
-						</div>
+					<td width="40px">
+						<input class="sample-select" id="s-{{entry.identifier}}" name="s-{{entry.identifier}}"
+						       type="checkbox"
+						       ng-model="entry.selected"
+						       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.identifier}}"></label>
 					</td>
 					<td class="sample-name">
 						<a class="btn btn-default btn-xs" ng-if="entry.sampleType!='REMOTE'"
