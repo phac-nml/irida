@@ -38,11 +38,11 @@ public class SampleSequencingObjectJoin implements Join<Sample, SequencingObject
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sequencingobject_id")
-	private SequencingObject sequencingObject;
+	private final SequencingObject sequencingObject;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sample_id")
-	private Sample sample;
+	private final Sample sample;
 
 	@CreatedDate
 	@NotNull
@@ -50,12 +50,18 @@ public class SampleSequencingObjectJoin implements Join<Sample, SequencingObject
 	@Column(name = "created_date")
 	private final Date createdDate;
 
+	/**
+	 * Default constructor for hibernate
+	 */
+	@SuppressWarnings("unused")
 	private SampleSequencingObjectJoin() {
 		createdDate = new Date();
+		sequencingObject = null;
+		sample = null;
 	}
 
 	public SampleSequencingObjectJoin(Sample subject, SequencingObject object) {
-		this();
+		createdDate = new Date();
 		this.sequencingObject = object;
 		this.sample = subject;
 	}
