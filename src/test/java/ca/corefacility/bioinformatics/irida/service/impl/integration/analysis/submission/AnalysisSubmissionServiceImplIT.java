@@ -336,8 +336,8 @@ public class AnalysisSubmissionServiceImplIT {
 	 * Tests deleting as a regular user and being denied.
 	 */
 	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "aaron", roles = "USER")
-	public void testDeleteRegularUser() {
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testDeleteSubmissionOwnedByOtherAsUser() {
 		analysisSubmissionService.delete(1L);
 	}
 
@@ -347,6 +347,17 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testDeleteAdminUser() {
+		assertTrue("submission should exists", analysisSubmissionService.exists(1L));
+		analysisSubmissionService.delete(1L);
+		assertFalse("submission should have been deleted", analysisSubmissionService.exists(1L));
+	}
+	
+	/**
+	 * Tests deleting as a regular user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testDeleteSubmissionOwnedBySelf() {
 		assertTrue("submission should exists", analysisSubmissionService.exists(1L));
 		analysisSubmissionService.delete(1L);
 		assertFalse("submission should have been deleted", analysisSubmissionService.exists(1L));

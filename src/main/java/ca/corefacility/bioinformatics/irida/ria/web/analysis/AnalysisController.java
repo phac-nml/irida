@@ -359,6 +359,22 @@ public class AnalysisController {
 	// ************************************************************************************************
 	// AJAX
 	// ************************************************************************************************
+	
+	/**
+	 * Delete an {@link AnalysisSubmission} by id.
+	 * 
+	 * @param analysisSubmissionId
+	 *            the submission ID to delete.
+	 */
+	@RequestMapping("/ajax/delete/{analysisSubmissionId}")
+	@ResponseBody
+	public Map<String, String> deleteAjaxAnalysisSubmission(@PathVariable Long analysisSubmissionId, final Locale locale) {
+		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(analysisSubmissionId);
+		analysisSubmissionService.delete(analysisSubmissionId);
+		return ImmutableMap.of(
+				"result", messageSource.getMessage("analysis.delete.message", new Object[]{ deletedSubmission.getLabel() }, locale)
+		);
+	}
 
 	/**
 	 * Download all output files from an {@link AnalysisSubmission}
