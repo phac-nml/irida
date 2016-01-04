@@ -79,7 +79,7 @@ The main configuration parameters you will need to change are:
   * `ncbi.upload.user` - FTP Username
   * `ncbi.upload.password` - FTP password
   * `ncbi.upload.baseDirectory` - base directory in which to create SRA submissions
-  * `ncbi.upload.namespace` - Preface for file upload identifiers to NCBI.  This namespace is used for guaranteeing upload IDs are unique.
+  * `ncbi.upload.namespace` - Prefix for file upload identifiers to NCBI. The namespace is used to guarantee upload IDs are unique.  This configuration option is used as a placeholder and may still be set by the user.
 
 Web Configuration
 -----------------
@@ -88,7 +88,7 @@ The IRIDA platform also looks for a web application configuration file at `/etc/
 {% highlight ini %}
 {% include_relative config/web.conf %}
 {% endhighlight %}
-    
+
 If this file does not exist the platform will use internal configuration values which will probably not correspond to your production environment.
 
 The `mail.server.*` configuration parameters will need to correspond to a configured mail server, such as [Postfix][].  This will be used by IRIDA to send email notifications to users on the creation of an account or on password resets.
