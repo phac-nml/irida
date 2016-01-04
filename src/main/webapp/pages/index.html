@@ -3,7 +3,12 @@
 
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-  <script>window.dependencies = ['irida.dashboard'];</script>
+  <script th:inline="javascript">
+    var PAGE = {
+      updates: /*[[${updates}]]*/ '## Nothing Here!'
+    };
+    window.dependencies = ['irida.dashboard'];
+  </script>
 </head>
 
 <body>
@@ -37,13 +42,6 @@
     </section>
   </div>
 </div>
-  <th:block layout:fragment="scripts">
-    <script th:inline="javascript">
-      var PAGE = {
-          updates: /*[[${updates}]]*/ '## Nothing Here!'
-      };
-    </script>
-  </th:block>
 </body>
 
 </html>
