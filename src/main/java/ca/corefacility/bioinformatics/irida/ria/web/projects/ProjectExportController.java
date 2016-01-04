@@ -13,6 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +62,9 @@ public class ProjectExportController {
 	public static final String EXPORT_DETAILS_VIEW = "projects/export/details";
 	public static final String EXPORT_LIST_VIEW = "projects/export/list";
 
+	@Value("${ncbi.upload.namespace}")
+	private String namespace = "";
+	
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final SequenceFileService sequenceFileService;
@@ -157,6 +161,7 @@ public class ProjectExportController {
 		model.addAttribute("library_selection", NcbiLibrarySelection.values());
 		model.addAttribute("library_source", NcbiLibrarySource.values());
 		model.addAttribute("library_strategy", NcbiLibraryStrategy.values());
+		model.addAttribute("defaultNamespace", namespace);
 		model.addAttribute("activeNav", "export");
 
 		return NCBI_EXPORT_VIEW;

@@ -79,6 +79,7 @@ The main configuration parameters you will need to change are:
   * `ncbi.upload.user` - FTP Username
   * `ncbi.upload.password` - FTP password
   * `ncbi.upload.baseDirectory` - base directory in which to create SRA submissions
+  * `ncbi.upload.namespace` - Preface for file upload identifiers to NCBI.  This namespace is used for guaranteeing upload IDs are unique.
 
 Web Configuration
 -----------------
