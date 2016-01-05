@@ -138,8 +138,13 @@ public class AbstractPage {
 	}
 
 	// Cart is available on all pages.
+	public boolean isCartCountVisible() {
+		// Only displays count if count > 0
+		return driver.findElement(By.className("angular-notifications-icon")).isDisplayed();
+	}
+
 	public int getCartCount() {
-		return Integer.parseInt(driver.findElement(By.id("cart-count")).getText());
+		return Integer.parseInt(driver.findElement(By.cssSelector("#cart-count-notification .angular-notifications-icon div")).getText());
 	}
 
 	public void showCart() {
