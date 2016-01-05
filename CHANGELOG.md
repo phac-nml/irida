@@ -15,6 +15,7 @@ Changes
 * [UI]: Allow deleting and cancelling an analysis.
 * [UI]: Updated pipeline selection interface by adding the pipeline colour to the background of the name and making the panels equal in height.
 * [UI]: Fixed issue where samples in the cart could not be sent to galaxy.
+* [UI]: Added ability to upload sequence files to NCBI from the Project/Samples table.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------

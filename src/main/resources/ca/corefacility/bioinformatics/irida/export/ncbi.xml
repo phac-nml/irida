@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<Submission schema_version="2.0" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
+	<Description>
+		<Organization role="owner" type="institute">
+			<Name th:text="${submission.organization}">_IRIDA_</Name>
+			<Contact th:attr="email=${submission.submitter.email}">
+				<Name>
+					<First th:text="${submission.submitter.firstName}">_jane_</First>
+					<Last th:text="${submission.submitter.lastName}">_doe_</Last>
+				</Name>
+			</Contact>
+		</Organization>
+		<Hold th:attr="release_date=${submission.releaseDate}"></Hold>
+	</Description>
+
+	<Action th:each="sample : ${submission.bioSampleFiles}">
+		<AddFiles target_db="SRA" th:each="file : ${sample.files}">
+			<File th:attr="file_path=${file.getId() + '-' + file.getFileName()}">
+				<DataType>generic-data</DataType>
+			</File>
+			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
+			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
+			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
+			<Attribute name="library_source" th:text="${sample.librarySource.value}">_Source_</Attribute>
+			<Attribute name="library_selection" th:text="${sample.librarySelection.value}">_Selection_</Attribute>
+			<Attribute name="library_layout">SINGLE</Attribute>
+			<Attribute name="library_construction_protocol" th:text="${sample.libraryConstructionProtocol}">_Protocol_</Attribute>
+			<AttributeRefId name="BioProject">
+				<RefId>
+					<PrimaryId db="BioProject" th:text="${submission.bioProjectId}">_Project_</PrimaryId>
+				</RefId>
+			</AttributeRefId>
+			<AttributeRefId name="BioSample">
+				<RefId>
+					<PrimaryId db="BioSample" th:text="${sample.getBioSample()}">_Sample_</PrimaryId>
+				</RefId>
+			</AttributeRefId>
+			<Identifier>
+				<SPUID th:attr="spuid_namespace=${submission.ncbiNamespace}"
+					th:text="${sample.id}">_spuid_</SPUID>
+			</Identifier>
+		</AddFiles>
+		<AddFiles target_db="SRA" th:each="pair : ${sample.pairs}" th:with="forward=${pair.getForwardSequenceFile()}, reverse=${pair.getReverseSequenceFile()}">
+			<File th:attr="file_path=${forward.getId() + '-' + forward.getFileName()}">
+				<DataType>generic-data</DataType>
+			</File>
+			<File th:attr="file_path=${reverse.getId() + '-' + reverse.getFileName()}">
+				<DataType>generic-data</DataType>
+			</File>
+			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
+			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
+			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
+			<Attribute name="library_source" th:text="${sample.librarySource.value}">_Source_</Attribute>
+			<Attribute name="library_selection" th:text="${sample.librarySelection.value}">_Selection_</Attribute>
+			<Attribute name="library_layout">PAIRED</Attribute>
+			<Attribute name="library_construction_protocol" th:text="${sample.libraryConstructionProtocol}">_Protocol_</Attribute>
+			<AttributeRefId name="BioProject">
+				<RefId>
+					<PrimaryId db="BioProject" th:text="${submission.bioProjectId}">_Project_</PrimaryId>
+				</RefId>
+			</AttributeRefId>
+			<AttributeRefId name="BioSample">
+				<RefId>
+					<PrimaryId db="BioSample" th:text="${sample.getBioSample()}">_Sample_</PrimaryId>
+				</RefId>
+			</AttributeRefId>
+			<Identifier>
+				<SPUID th:attr="spuid_namespace=${submission.ncbiNamespace}"
+					th:text="${sample.id}">_spuid_</SPUID>
+			</Identifier>
+		</AddFiles>
+	</Action>
+</Submission>

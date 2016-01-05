@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTa
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventEmailScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.export.ExportUploadService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -61,13 +62,21 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private ExportUploadService uploadService;
+
 	@Autowired 	
 	private ProjectEventEmailScheduledTask eventEmailTask;
-	
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
 	 */
 	private static final long ANALYSIS_EXECUTION_TASK_RATE = 15000; // 15 seconds
+	
+	// rate in MS of the upload task rate
+	private static final long UPLOAD_EXECUTION_TASK_RATE = 60000; // 60 seconds
+	
+	// rate in MS of the upload status checking
+	private static final long UPLOAD_STATUS_TASK_RATE = 300000; // 5 minutes
 	
 	/**
 	 * Rate in milliseconds of the cleanup task.
@@ -128,7 +137,23 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	public void cleanupAnalysisSubmissions() {
 		analysisExecutionScheduledTask().cleanupAnalysisSubmissions();
 	}
-	
+
+	/**
+	 * Launch the NCBI uploader
+	 */
+	@Scheduled(initialDelay = 1000, fixedDelay = UPLOAD_EXECUTION_TASK_RATE)
+	public void ncbiUpload() {
+		uploadService.launchUpload();
+	}
+
+	/**
+	 * Launch the NCBI status checking
+	 */
+	@Scheduled(initialDelay = UPLOAD_STATUS_TASK_RATE, fixedDelay = UPLOAD_STATUS_TASK_RATE)
+	public void ncbiUploadStatus() {
+		uploadService.updateRunningUploads();
+	}
+
 	/**
 	 * Check for any new events for users who are subscribed to projects and
 	 * email them

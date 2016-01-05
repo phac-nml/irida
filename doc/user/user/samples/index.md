@@ -91,7 +91,7 @@ As projects become larger, it becomes unwieldy to select a large subset of sampl
 
 * Create a `.txt` file that contains the name of each sample you want to select on a new line.  You can either:
     - Use a text editor like Windows Notepad or TextEdit on Mac (note: when creating a new text document in TextEdit, press cmd + shift + t to change to the `.txt` format)
-    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file. 
+    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file.
 
 Example (`project_5_filter.txt`):
 
@@ -197,11 +197,12 @@ Once you've finished choosing the sample to merge into, click on the "Complete M
 Exporting samples
 -----------------
 
-The [pipelines](../pipelines) available in IRIDA may not be enough for the types of analysis that you want to run on your sequencing data. You can export your sample data from IRIDA in three different ways:
+The [pipelines](../pipelines) available in IRIDA may not be enough for the types of analysis that you want to run on your sequencing data. You can export your sample data from IRIDA in a number of different ways:
 
 1. [Downloading samples](#downloading-samples),
 2. [To the command-line](#command-line-export), or
 3. [Directly to Galaxy](#galaxy-export)
+4. [Upload to NCBI](#ncbi-upload)
 
 All export options require that you [select the samples for export](#selecting-samples) before you are able to export the samples.
 
@@ -222,5 +223,9 @@ You can download an individual sequence file from a sample by [navigating to the
 #### Galaxy export
 
 {% include tutorials/common/samples/galaxy-export.md %}
+
+#### NCBI Upload
+
+{% include tutorials/common/ncbi-export.md %}
 
 <a href="../project/">Previous: Managing Projects</a><a href="../pipelines/" style="float: right;">Next: Launching Pipelines</a>

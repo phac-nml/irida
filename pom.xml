@@ -203,6 +203,12 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>${commons.net.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
 			<version>${javax.interceptor-api.version}</version>
@@ -491,6 +497,12 @@
 			<artifactId>selenium-chrome-driver</artifactId>
 			<scope>test</scope>
 			<version>${selenium-chrome-driver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockftpserver</groupId>
+			<artifactId>MockFtpServer</artifactId>
+			<version>${mockftpserver.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Logging -->
@@ -898,6 +910,7 @@
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
+		<commons.net.version>3.3</commons.net.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
@@ -934,6 +947,7 @@
 		<thymeleaf.extras.conditionalcomments.version>2.1.1.RELEASE</thymeleaf.extras.conditionalcomments.version>
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
+		<mockftpserver.version>2.6</mockftpserver.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>

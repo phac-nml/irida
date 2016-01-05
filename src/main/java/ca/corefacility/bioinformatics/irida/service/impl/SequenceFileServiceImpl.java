@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -99,7 +100,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -132,6 +133,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile read(Long id) throws EntityNotFoundException {
 		return super.read(id);
+	}
+
+	@Override
+	@PreAuthorize("permitAll()")
+	@PostFilter("hasPermission(filterObject, 'canReadSequenceFile')")
+	public Iterable<SequenceFile> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
 	}
 
 	/**
@@ -288,8 +296,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
 
 		for (SequenceFile file : sequenceFiles) {
-			Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository
-					.getSampleForSequenceFile(file);
+			Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository.getSampleForSequenceFile(file);
 			Sample sample = sampleSequenceFile.getSubject();
 			SequenceFile sequenceFile = sampleSequenceFile.getObject();
 
@@ -305,7 +312,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		return sampleSequenceFiles;
 	}
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
