@@ -6,6 +6,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -142,16 +143,24 @@ public class RESTSampleSequenceFilesController {
 		ModelMap modelMap = new ModelMap();
 		logger.debug("Reading seq files for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
-		List<Join<Sample, SequenceFile>> relationships = sequenceFileService.getSequenceFilesForSample(sample);
+		
+		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(sample);
+		
+		ResourceCollection<SequenceFile> resources = new ResourceCollection<>();
+		/*
+		 * Note: This is a kind of antiquated seeing we should be referencing
+		 * sequencing objects instead. At the very least the link we're pointing
+		 * to here should be going through the sequencing object
+		 */
+		for (SampleSequencingObjectJoin r : sequencingObjectsForSample) {
+			for (SequenceFile sf : r.getObject().getFiles()) {
 
-		ResourceCollection<SequenceFile> resources = new ResourceCollection<>(relationships.size());
-		for (Join<Sample, SequenceFile> r : relationships) {
-			SequenceFile sf = r.getObject();
+				sf.add(linkTo(
+						methodOn(RESTSampleSequenceFilesController.class)
+								.getSequenceFileForSample(sampleId, sf.getId())).withSelfRel());
+				resources.add(sf);
 
-			sf.add(linkTo(
-					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
-							sf.getId())).withSelfRel());
-			resources.add(sf);
+			}
 		}
 
 		// add a link to this collection
@@ -188,20 +197,25 @@ public class RESTSampleSequenceFilesController {
 		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService
 				.getSequenceFilePairsForSample(sample);
 
+		Collection<SampleSequencingObjectJoin> sequencesForSampleOfType = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+
 		ResourceCollection<SequenceFilePair> resources = new ResourceCollection<>(sequenceFilePairsForSample.size());
-		for (SequenceFilePair pair : sequenceFilePairsForSample) {
+
+		for (SampleSequencingObjectJoin j : sequencesForSampleOfType) {
+			SequenceFilePair pair = (SequenceFilePair) j.getObject();
+
 			pair = addSequenceFilePairLinks(pair, sampleId);
 
 			resources.add(pair);
 		}
 
 		// add a link to this collection
-		resources.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
+		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
 				.withSelfRel());
 		// add a link back to the sample
-		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE));
+		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 		return modelMap;

@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +55,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -61,7 +63,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSp
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
@@ -99,8 +101,8 @@ public class ProjectSamplesController {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
-	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private final SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 
 	/*
@@ -111,12 +113,12 @@ public class ProjectSamplesController {
 
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-			UserService userService, SequenceFileService sequenceFileService,
+			UserService userService, SequencingObjectService sequencingObjectService,
 			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
-		this.sequenceFileService = sequenceFileService;
+		this.sequencingObjectService = sequencingObjectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
@@ -515,32 +517,35 @@ public class ProjectSamplesController {
 
 		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
 			for (Sample sample : samples) {
-				List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
-						.getSequenceFilesForSample(sample);
-				for (Join<Sample, SequenceFile> join : sequenceFilesForSample) {
-					Path path = join.getObject().getFile();
-					StringBuilder name = new StringBuilder(project.getName());
-					name.append("/").append(sample.getSampleName());
-					name.append("/").append(path.getFileName().toString());
+				Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
+						.getSequencingObjectsForSample(sample);
 
-					String fileName = name.toString();
-					if (usedFileNames.contains(fileName)) {
-						fileName = handleDuplicate(fileName, usedFileNames);
+				for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
+					for (SequenceFile file : join.getObject().getFiles()) {
+						Path path = file.getFile();
+						StringBuilder name = new StringBuilder(project.getName());
+						name.append("/").append(sample.getSampleName());
+						name.append("/").append(path.getFileName().toString());
+
+						String fileName = name.toString();
+						if (usedFileNames.contains(fileName)) {
+							fileName = handleDuplicate(fileName, usedFileNames);
+						}
+						final ZipEntry entry = new ZipEntry(fileName);
+						// set the file creation time on the zip entry to be
+						// whatever the creation time is on the filesystem
+						final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+						entry.setCreationTime(attr.creationTime());
+						entry.setLastModifiedTime(attr.creationTime());
+
+						outputStream.putNextEntry(entry);
+
+						usedFileNames.add(fileName);
+
+						Files.copy(path, outputStream);
+
+						outputStream.closeEntry();
 					}
-					final ZipEntry entry = new ZipEntry(fileName);
-					// set the file creation time on the zip entry to be
-					// whatever the creation time is on the filesystem
-					final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-					entry.setCreationTime(attr.creationTime());
-					entry.setLastModifiedTime(attr.creationTime());
-
-					outputStream.putNextEntry(entry);
-
-					usedFileNames.add(fileName);
-
-					Files.copy(path, outputStream);
-
-					outputStream.closeEntry();
 				}
 			}
 			outputStream.finish();
