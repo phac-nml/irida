@@ -177,6 +177,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 			Long sampleId = sampleForSequeneFile.getSubject().getId();
 
+			//TODO: Once we've updated to using SingleEndSequenceFiles in Analysis remap the links here
 			file = RESTSampleSequenceFilesController.addSequenceFileLinks(file, sampleId);
 
 			resources.add(file);
