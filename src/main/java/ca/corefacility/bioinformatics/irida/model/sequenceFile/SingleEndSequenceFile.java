@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.nio.file.Path;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,6 +16,10 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 
@@ -77,8 +83,89 @@ public class SingleEndSequenceFile extends SequencingObject {
 
 	}
 
-	public SequenceFile getFile() {
+	public SequenceFile getSequenceFile() {
 		return file;
+	}
+
+	/**
+	 * Proxying SequenceFile inner properties
+	 */
+
+	public Path getFile() {
+		return getSequenceFile().getFile();
+	}
+
+	public void setFile(Path file) {
+		getSequenceFile().setFile(file);
+	}
+
+	@JsonIgnore
+	public SequencingRun getSequencingRun() {
+		return getSequenceFile().getSequencingRun();
+	}
+
+	@JsonIgnore
+	public void setSequencingRun(SequencingRun sequencingRun) {
+		getSequenceFile().setSequencingRun(sequencingRun);
+	}
+
+	/**
+	 * Add one optional property to the map of properties
+	 * 
+	 * @param key
+	 *            The key of the property to add
+	 * @param value
+	 *            The value of the property to add
+	 */
+	@JsonAnySetter
+	public void addOptionalProperty(String key, String value) {
+		getSequenceFile().addOptionalProperty(key, value);
+	}
+
+	/**
+	 * Get the Map of optional properties
+	 * 
+	 * @return A {@code Map<String,String>} of all the optional propertie
+	 */
+	@JsonAnyGetter
+	public Map<String, String> getOptionalProperties() {
+		return getSequenceFile().getOptionalProperties();
+	}
+
+	/**
+	 * Get an individual optional property
+	 * 
+	 * @param key
+	 *            The key of the property to read
+	 * @return A String of the property's value
+	 */
+	public String getOptionalProperty(String key) {
+		return getSequenceFile().getOptionalProperty(key);
+	}
+
+	/**
+	 * Get the size of the file.
+	 *
+	 * @return The String representation of the file size
+	 */
+	@JsonIgnore
+	public String getFileSize() {
+		return getSequenceFile().getFileSize();
+	}
+
+	/**
+	 * Set the Map of optional properties
+	 * 
+	 * @param optionalProperties
+	 *            A {@code Map<String,String>} of all the optional properties
+	 *            for this object
+	 */
+	public void setOptionalProperties(Map<String, String> optionalProperties) {
+		getSequenceFile().setOptionalProperties(optionalProperties);
+	}
+
+	public String getFileName() {
+		return getFile().getFileName().toString();
 	}
 
 }
