@@ -145,7 +145,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 			Long sampleId = sampleForSequeneFile.getSubject().getId();
 
-			pair = RESTSampleSequenceFilesController.addSequenceFilePairLinks(pair, sampleId);
+			pair = RESTSampleSequenceFilesController.addSequencingObjectLinks(pair, sampleId);
 
 			resources.add(pair);
 		}
