@@ -83,6 +83,7 @@ public class SingleEndSequenceFile extends SequencingObject {
 
 	}
 
+	@JsonIgnore
 	public SequenceFile getSequenceFile() {
 		return file;
 	}
