@@ -201,7 +201,7 @@ public class RESTSampleSequenceFilesController {
 	 * @return The {@link SequencingObject}s of the given type for the
 	 *         {@link Sample}
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{objectType}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}", method = RequestMethod.GET)
 	public ModelMap listSequencingObjectsOfTypeForSample(@PathVariable Long sampleId, @PathVariable String objectType) {
 		ModelMap modelMap = new ModelMap();
 
@@ -245,7 +245,7 @@ public class RESTSampleSequenceFilesController {
 	 *            ID of the {@link SequencingObject}
 	 * @return A single {@link SequencingObject}
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{objectType}/{objectId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.GET)
 	public ModelMap readSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType,
 			@PathVariable Long objectId) {
 		ModelMap modelMap = new ModelMap();
@@ -274,7 +274,7 @@ public class RESTSampleSequenceFilesController {
 	 *            ID of the {@link SequenceFile} to read
 	 * @return a {@link SequenceFile}
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.GET)
 	public ModelMap readSequenceFileForSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType,
 			@PathVariable Long objectId, @PathVariable Long fileId) {
 		ModelMap modelMap = new ModelMap();
@@ -422,7 +422,7 @@ public class RESTSampleSequenceFilesController {
 	 * @throws IOException
 	 *             if we can't write the files to disk
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/pairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@RequestMapping(value = "/api/samples/{sampleId}/pairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ModelMap addNewSequenceFilePairToSample(@PathVariable Long sampleId, @RequestPart("file1") MultipartFile file1,
 			@RequestPart(value = "parameters1") SequenceFileResource fileResource1,
 			@RequestPart("file2") MultipartFile file2,
@@ -601,7 +601,7 @@ public class RESTSampleSequenceFilesController {
 	 * @return a response including links to the {@link Project} and
 	 *         {@link Sample}.
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.PATCH, consumes = {
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ModelMap updateSequenceFile(@PathVariable Long sampleId, @PathVariable String objectType,
 			@PathVariable Long objectId, @PathVariable Long fileId, @RequestBody Map<String, Object> updatedFields) {
