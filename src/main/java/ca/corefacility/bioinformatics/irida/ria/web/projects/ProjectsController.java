@@ -2,15 +2,20 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -19,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -58,8 +64,18 @@ import ca.corefacility.bioinformatics.irida.util.TreeNode;
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.CsvExport;
+import com.github.dandelion.datatables.core.export.ExportConf;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.core.html.HtmlTable;
+import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.github.jsonldjava.utils.Obj;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
@@ -91,6 +107,7 @@ public class ProjectsController {
 	private final UserService userService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
+	private final MessageSource messageSource;
 
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
@@ -105,15 +122,24 @@ public class ProjectsController {
 	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
 	public static final String GALAXY_CLIENT_ID_NAME = "galaxyExportToolClientID";
 
+	// CONSTANTS
+	private final List<Map<String, String>> EXPORT_TYPES = ImmutableList.of(
+			ImmutableMap.of("format", ReservedFormat.XLSX, "name", "Excel"),
+			ImmutableMap.of("format", ReservedFormat.CSV, "name", "CSV")
+	);
+
+
+
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService) {
+			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
+		this.messageSource = messageSource;
 		this.fileSizeConverter = new FileSizeConverter();
 	}
 
@@ -136,6 +162,7 @@ public class ProjectsController {
 			@RequestParam(value = "galaxyCallbackUrl", required = false) String galaxyCallbackURL,
 			@RequestParam(value = "galaxyClientID", required = false) String galaxyClientID, HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
+		model.addAttribute("exportTypes", EXPORT_TYPES);
 
 		// External exporting functionality
 		if (galaxyCallbackURL != null && galaxyClientID != null) {
@@ -158,6 +185,8 @@ public class ProjectsController {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public String getAllProjectsPage(Model model) {
 		model.addAttribute("ajaxURL", "/projects/admin/ajax/list");
+		model.addAttribute("isAdmin", true);
+		model.addAttribute("exportTypes", EXPORT_TYPES);
 		return LIST_PROJECTS_PAGE;
 	}
 
@@ -437,6 +466,49 @@ public class ProjectsController {
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 
+	@RequestMapping("/projects/ajax/export")
+	public void exportProjectsTableAsExcel(@RequestParam(value = "dtf") String type,
+			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin, HttpServletRequest request,
+			HttpServletResponse response, Locale locale) throws IOException {
+		List<Project> projects = (List<Project>) projectService.findAll();
+		List<Map<String, Object>> projectMap = projects.stream().map(this::createProjectMap)
+				.collect(Collectors.toList());
+
+		// Build export configuration
+		ExportConf exportConf;
+		if (type.equals(ReservedFormat.XLSX)) {
+			exportConf = new ExportConf.Builder(ReservedFormat.XLSX)
+					.header(true)
+					.exportClass(new XlsxExport())
+					.build();
+		} else {
+			exportConf = new ExportConf.Builder(ReservedFormat.CSV)
+					.header(true)
+					.exportClass(new CsvExport())
+					.build();
+		}
+
+		// Format the file name based on ISO standard date format.
+		Date date = new Date();
+		DateFormat dateFormat = new SimpleDateFormat(
+				messageSource.getMessage("date.iso-8601", null, locale));
+		exportConf.setFileName("IRIDA_projects_" + dateFormat.format(date));
+
+		// Build the table to export
+		HtmlTable table = new HtmlTableBuilder<Map<String, Object>>()
+				.newBuilder("projects", projectMap, request, exportConf)
+				.column().fillWithProperty("id").title("ID")
+				.column().fillWithProperty("name").title("Name")
+				.column().fillWithProperty("description").title("Description")
+				.column().fillWithProperty("organism").title("Organism")
+				.column().fillWithProperty("samples").title("Samples")
+				.column().fillWithProperty("createdDate").title("Created Date")
+				.column().fillWithProperty("modifiedDate").title("Modified Date")
+				.build();
+
+		ExportUtils.renderExport(table, exportConf, response);
+	}
+
 	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
 	 *
@@ -508,7 +580,8 @@ public class ProjectsController {
 
 		map.put("id", project.getId());
 		map.put("name", project.getName());
-		map.put("organism", project.getOrganism());
+		map.put("description", Strings.isNullOrEmpty(project.getProjectDescription()) ? "" : project.getProjectDescription());
+		map.put("organism", Strings.isNullOrEmpty(project.getOrganism()) ? "" : project.getOrganism());
 		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
 		map.put("createdDate", project.getCreatedDate());
 		map.put("modifiedDate", project.getModifiedDate());

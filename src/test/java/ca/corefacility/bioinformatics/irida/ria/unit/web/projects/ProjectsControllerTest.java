@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -72,6 +73,7 @@ public class ProjectsControllerTest {
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
 	private TaxonomyService taxonomyService;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
@@ -80,7 +82,8 @@ public class ProjectsControllerTest {
 		userService = mock(UserService.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		controller = new ProjectsController(projectService, sampleService, userService, projectUtils, taxonomyService);
+		messageSource = mock(MessageSource.class);
+		controller = new ProjectsController(projectService, sampleService, userService, projectUtils, taxonomyService, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();

@@ -6,6 +6,11 @@
       layout:decorator="template/page">
 <head>
 	<title th:text="#{projects.title}">List of Projects</title>
+	<style>
+		.dataTables_paginate {
+			text-align: center!important;
+		}
+	</style>
 </head>
 <body>
 <div layout:fragment="page"
@@ -27,6 +32,16 @@
 				<div class="col-md-12 text-right">
 					<span id="nameFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">Name: <em id="nameFilterPreview"></em>&nbsp;</span>
 					<span id="organismFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">Organism: <em id="organismFilterPreview"></em></span>
+				</div>
+			</div>
+			<div dt:confType="extrahtml" dt:uid="2">
+				<div class="dropdown">
+					<button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><fa:icon type="download" fixed="true"/>&nbsp;Report&nbsp;&nbsp;<span class="caret"></span></button>
+					<ul class="dropdown-menu" aria-labelledby="reportMenu">
+						<li role="menuitem" th:each="type : ${exportTypes}">
+							<a th:href="@{'/projects/ajax/export?dtf=' + ${type.format}}" href="/projects/ajax/export/xlsx" th:text="${type.name}">Excel</a>
+						</li>
+					</ul>
 				</div>
 			</div>
         </div>
