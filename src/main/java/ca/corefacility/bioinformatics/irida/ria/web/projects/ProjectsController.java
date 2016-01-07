@@ -72,7 +72,6 @@ import com.github.dandelion.datatables.core.export.ReservedFormat;
 import com.github.dandelion.datatables.core.html.HtmlTable;
 import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.github.jsonldjava.utils.Obj;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -466,6 +465,22 @@ public class ProjectsController {
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 
+	/**
+	 * Get a listing of all project available to current user.
+	 *
+	 * @param type
+	 * 		{@link String} Type of export.  See {@link ReservedFormat}
+	 * @param isAdmin
+	 * 		{@link Boolean} If the current user is viewing the admin section
+	 * @param request
+	 * 		{@link HttpServletRequest}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 * @param locale
+	 * 		{@link Locale} Current users locale
+	 *
+	 * @throws IOException
+	 */
 	@RequestMapping("/projects/ajax/export")
 	public void exportProjectsTableAsExcel(@RequestParam(value = "dtf") String type,
 			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin, HttpServletRequest request,
