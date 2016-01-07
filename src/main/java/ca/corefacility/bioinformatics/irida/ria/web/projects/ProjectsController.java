@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -484,8 +485,23 @@ public class ProjectsController {
 	@RequestMapping("/projects/ajax/export")
 	public void exportProjectsTableAsExcel(@RequestParam(value = "dtf") String type,
 			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) throws IOException {
-		List<Project> projects = (List<Project>) projectService.findAll();
+			HttpServletResponse response, Principal principal, Locale locale) throws IOException {
+		List<Project> projects;
+
+		// If viewing the admin projects page give the user all the projects.
+		if (isAdmin) {
+			projects = (List<Project>) projectService.findAll();
+		}
+		// If on the users projects page, give the user their projects.
+		else {
+			projects = new ArrayList<>();
+			User user = userService.getUserByUsername(principal.getName());
+			List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
+			for(Join<Project, User> join : projectsForUser) {
+				projects.add(join.getSubject());
+			}
+		}
+
 		List<Map<String, Object>> projectMap = projects.stream().map(this::createProjectMap)
 				.collect(Collectors.toList());
 
