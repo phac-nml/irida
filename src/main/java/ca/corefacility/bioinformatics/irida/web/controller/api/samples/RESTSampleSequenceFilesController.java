@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -284,17 +285,14 @@ public class RESTSampleSequenceFilesController {
 		SequencingObject readSequenceFilePairForSample = sequencingObjectService.readSequencingObjectForSample(sample,
 				objectId, SequencingObject.class);
 
-		SequenceFile file = null;
-		for (SequenceFile f : readSequenceFilePairForSample.getFiles()) {
-			if (f.getId().equals(fileId)) {
-				file = f;
-			}
-		}
+		Optional<SequenceFile> findFirst = readSequenceFilePairForSample.getFiles().stream()
+				.filter(f -> f.getId() == fileId).findFirst();
 
-		if (file == null) {
+		if (!findFirst.isPresent()) {
 			throw new EntityNotFoundException("File with id " + fileId
 					+ " is not associated with this sequencing object");
 		}
+		SequenceFile file = findFirst.get();
 
 		file.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
 				REL_SAMPLE_SEQUENCE_FILES));
