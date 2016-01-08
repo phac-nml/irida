@@ -35,15 +35,15 @@ public class SingleEndSequenceFile extends SequencingObject {
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@NotNull
-	private SequenceFile file;
+	private final SequenceFile file;
 
 	// Default constructor for hibernate
 	@SuppressWarnings("unused")
 	private SingleEndSequenceFile() {
+		file = null;
 	}
 
 	public SingleEndSequenceFile(SequenceFile file) {
-		super();
 		this.file = file;
 	}
 
@@ -73,16 +73,6 @@ public class SingleEndSequenceFile extends SequencingObject {
 		return ImmutableSet.of(file);
 	}
 
-	@Override
-	public void setFiles(Set<SequenceFile> files) {
-		if (files.size() > 1) {
-			throw new IllegalArgumentException("SingleEndSequenceFile can only store 1 SequenceFile");
-		}
-
-		file = files.iterator().next();
-
-	}
-
 	@JsonIgnore
 	public SequenceFile getSequenceFile() {
 		return file;
@@ -96,18 +86,14 @@ public class SingleEndSequenceFile extends SequencingObject {
 		return getSequenceFile().getFile();
 	}
 
-	public void setFile(Path file) {
-		getSequenceFile().setFile(file);
-	}
-
 	@JsonIgnore
 	public SequencingRun getSequencingRun() {
-		return getSequenceFile().getSequencingRun();
+		return file.getSequencingRun();
 	}
 
 	@JsonIgnore
 	public void setSequencingRun(SequencingRun sequencingRun) {
-		getSequenceFile().setSequencingRun(sequencingRun);
+		file.setSequencingRun(sequencingRun);
 	}
 
 	/**
@@ -120,7 +106,7 @@ public class SingleEndSequenceFile extends SequencingObject {
 	 */
 	@JsonAnySetter
 	public void addOptionalProperty(String key, String value) {
-		getSequenceFile().addOptionalProperty(key, value);
+		file.addOptionalProperty(key, value);
 	}
 
 	/**
@@ -130,7 +116,7 @@ public class SingleEndSequenceFile extends SequencingObject {
 	 */
 	@JsonAnyGetter
 	public Map<String, String> getOptionalProperties() {
-		return getSequenceFile().getOptionalProperties();
+		return file.getOptionalProperties();
 	}
 
 	/**
@@ -141,7 +127,7 @@ public class SingleEndSequenceFile extends SequencingObject {
 	 * @return A String of the property's value
 	 */
 	public String getOptionalProperty(String key) {
-		return getSequenceFile().getOptionalProperty(key);
+		return file.getOptionalProperty(key);
 	}
 
 	/**
@@ -151,7 +137,7 @@ public class SingleEndSequenceFile extends SequencingObject {
 	 */
 	@JsonIgnore
 	public String getFileSize() {
-		return getSequenceFile().getFileSize();
+		return file.getFileSize();
 	}
 
 	/**
@@ -162,11 +148,11 @@ public class SingleEndSequenceFile extends SequencingObject {
 	 *            for this object
 	 */
 	public void setOptionalProperties(Map<String, String> optionalProperties) {
-		getSequenceFile().setOptionalProperties(optionalProperties);
+		file.setOptionalProperties(optionalProperties);
 	}
 
 	public String getFileName() {
-		return getFile().getFileName().toString();
+		return file.getFileName().toString();
 	}
 
 }
