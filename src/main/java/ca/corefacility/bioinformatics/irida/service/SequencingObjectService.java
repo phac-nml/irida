@@ -46,4 +46,16 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 */
 	public Collection<SampleSequencingObjectJoin> getSequencesForSampleOfType(Sample sample,
 			Class<? extends SequencingObject> type);
+
+	/**
+	 * Read a {@link SequencingObject} and verify that it belongs to a given
+	 * {@link Sample}.
+	 * 
+	 * @param sample
+	 *            the {@link Sample} to get the {@link SequencingObject} for
+	 * @param objectId
+	 *            The {@link SequencingObject} ID
+	 * @return A {@link SequencingObject} object
+	 */
+	public SequencingObject readSequencingObjectForSample(Sample sample, Long objectId);
 }

@@ -24,6 +24,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
@@ -285,10 +287,14 @@ public class RESTProjectSamplesController {
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withSelfRel());
 		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(s.getId())).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(s.getId()))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
-		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getUnpairedSequenceFilesForSample(s.getId()))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+		s.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
+						RESTSampleSequenceFilesController.objectLabels.get(SequenceFilePair.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
+		s.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
+						RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
 
 		return s;
 	}

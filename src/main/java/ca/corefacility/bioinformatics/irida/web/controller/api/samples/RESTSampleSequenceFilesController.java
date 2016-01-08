@@ -7,15 +7,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -49,6 +48,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -71,31 +72,39 @@ public class RESTSampleSequenceFilesController {
 	 * Rel to get to the new location of the {@link SequenceFile}.
 	 */
 	public static final String REL_SAMPLE_SEQUENCE_FILES = "sample/sequenceFiles";
-	
+
 	/**
 	 * Rel for paired sequence files for a given sample
 	 */
 	public static final String REL_SAMPLE_SEQUENCE_FILE_PAIRS = "sample/sequenceFiles/pairs";
-	
+
 	/**
 	 * rel for the unpaired sequence files for a given sample
 	 */
 	public static final String REL_SAMPLE_SEQUENCE_FILE_UNPAIRED = "sample/sequenceFiles/unpaired";
-	
+
 	public static final String REL_SEQUENCEFILE_SAMPLE = "sequenceFile/sample";
 	public static final String REL_PAIR_SAMPLE = "sequenceFilePair/sample";
-	
+
 	/**
 	 * rel for forward and reverse files
 	 */
 	public static final String REL_PAIR_FORWARD = "pair/forward";
 	public static final String REL_PAIR_REVERSE = "pair/reverse";
-	
+
 	/**
 	 * The key used in the request to add an existing {@link SequenceFile} to a
 	 * {@link Sample}.
 	 */
-	public static final String SEQUENCE_FILE_ID_KEY = "sequenceFileId";	
+	public static final String SEQUENCE_FILE_ID_KEY = "sequenceFileId";
+
+	/**
+	 * Filetype labels for different {@link SequencingObject} subclasses. These
+	 * will be used in the hrefs for reading {@link SequencingObject}s
+	 */
+	public static BiMap<Class<? extends SequencingObject>, String> objectLabels = ImmutableBiMap.of(
+			SequenceFilePair.class, "pairs", SingleEndSequenceFile.class, "unpaired");
+
 	/**
 	 * Reference to the {@link SequenceFileService}.
 	 */
@@ -103,7 +112,7 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Reference to the {@link SequenceFilePairService}
 	 */
-	private SequenceFilePairService  sequenceFilePairService;
+	private SequenceFilePairService sequenceFilePairService;
 	/**
 	 * Reference to the {@link SampleService}.
 	 */
@@ -113,14 +122,15 @@ public class RESTSampleSequenceFilesController {
 	 * Reference to the {@link MiseqRunService}
 	 */
 	private SequencingRunService miseqRunService;
-	
+
 	private SequencingObjectService sequencingObjectService;
 
 	protected RESTSampleSequenceFilesController() {
 	}
 
 	@Autowired
-	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService, SampleService sampleService,
+	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService,
+			SequenceFilePairService sequenceFilePairService, SampleService sampleService,
 			SequencingRunService miseqRunService, SequencingObjectService sequencingObjectService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
@@ -143,9 +153,10 @@ public class RESTSampleSequenceFilesController {
 		ModelMap modelMap = new ModelMap();
 		logger.debug("Reading seq files for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
-		
-		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(sample);
-		
+
+		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
+				.getSequencingObjectsForSample(sample);
+
 		ResourceCollection<SequenceFile> resources = new ResourceCollection<>();
 		/*
 		 * Note: This is a kind of antiquated seeing we should be referencing
@@ -155,9 +166,11 @@ public class RESTSampleSequenceFilesController {
 		for (SampleSequencingObjectJoin r : sequencingObjectsForSample) {
 			for (SequenceFile sf : r.getObject().getFiles()) {
 
+				String fileLabel = objectLabels.get(r.getObject().getClass());
 				sf.add(linkTo(
-						methodOn(RESTSampleSequenceFilesController.class)
-								.getSequenceFileForSample(sampleId, sf.getId())).withSelfRel());
+						methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
+								fileLabel, r.getId(), sf.getId())).withSelfRel());
+
 				resources.add(sf);
 
 			}
@@ -169,50 +182,54 @@ public class RESTSampleSequenceFilesController {
 		// add a link back to the sample
 		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE));
-		
-		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
-		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getUnpairedSequenceFilesForSample(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+
+		resources.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(sample.getId(),
+						RESTSampleSequenceFilesController.objectLabels.get(SequenceFilePair.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
+		resources.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(sample.getId(),
+						RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class))).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 		return modelMap;
 	}
 
 	/**
-	 * Read the {@link SequenceFilePair}s for a given {@link Sample} and
-	 * {@link Project}
+	 * List all {@link SequencingObject}s of a given type for a {@link Sample}
 	 * 
 	 * @param sampleId
-	 *            Sample to read from
-	 * @return The {@link SequenceFilePair} entities
+	 *            ID of the {@link Sample} to read from
+	 * @param objectType
+	 *            {@link SequencingObject} type
+	 * @return The {@link SequencingObject}s of the given type for the
+	 *         {@link Sample}
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/pairs", method = RequestMethod.GET)
-	public ModelMap getSequenceFilePairsForSample(@PathVariable Long sampleId) {
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}", method = RequestMethod.GET)
+	public ModelMap listSequencingObjectsOfTypeForSample(@PathVariable Long sampleId, @PathVariable String objectType) {
 		ModelMap modelMap = new ModelMap();
 
-		logger.debug("Reading seq file pair for sample " + sampleId);
+		logger.debug("Reading seq file  for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
 
-		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService
-				.getSequenceFilePairsForSample(sample);
+		Class<? extends SequencingObject> type = objectLabels.inverse().get(objectType);
 
-		Collection<SampleSequencingObjectJoin> sequencesForSampleOfType = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> unpairedSequenceFilesForSample = sequencingObjectService
+				.getSequencesForSampleOfType(sample, type);
 
-		ResourceCollection<SequenceFilePair> resources = new ResourceCollection<>(sequenceFilePairsForSample.size());
+		ResourceCollection<SequencingObject> resources = new ResourceCollection<>(unpairedSequenceFilesForSample.size());
+		for (SampleSequencingObjectJoin join : unpairedSequenceFilesForSample) {
+			SequencingObject sequencingObject = join.getObject();
 
-		for (SampleSequencingObjectJoin j : sequencesForSampleOfType) {
-			SequenceFilePair pair = (SequenceFilePair) j.getObject();
-
-			pair = addSequenceFilePairLinks(pair, sampleId);
-
-			resources.add(pair);
+			sequencingObject = addSequencingObjectLinks(sequencingObject, sampleId);
+			resources.add(sequencingObject);
 		}
 
 		// add a link to this collection
-		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFilePairsForSample(sampleId))
-				.withSelfRel());
+		resources.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(sampleId,
+						objectType)).withSelfRel());
 		// add a link back to the sample
 		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE));
@@ -220,72 +237,77 @@ public class RESTSampleSequenceFilesController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 		return modelMap;
 	}
-	
+
 	/**
-	 * Read the {@link SequenceFile}s for a given {@link Sample} and
-	 * {@link Project} which are not paired
-	 * 
-	 * @param sampleId
-	 *            Sample to read from
-	 * @return The {@link SequenceFile} entities
-	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/unpaired", method = RequestMethod.GET)
-	public ModelMap getUnpairedSequenceFilesForSample(@PathVariable Long sampleId) {
-		ModelMap modelMap = new ModelMap();
-
-		logger.debug("Reading seq file  for sample " + sampleId);
-		Sample sample = sampleService.read(sampleId);
-
-		List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
-				.getUnpairedSequenceFilesForSample(sample);
-
-		ResourceCollection<SequenceFile> resources = new ResourceCollection<>(unpairedSequenceFilesForSample.size());
-		for (Join<Sample, SequenceFile> join : unpairedSequenceFilesForSample) {
-			SequenceFile file = join.getObject();
-
-			file = addSequenceFileLinks(file, sampleId);
-
-			resources.add(file);
-		}
-
-		// add a link to this collection
-		resources.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class)
-						.getUnpairedSequenceFilesForSample(sampleId)).withSelfRel());
-		// add a link back to the sample
-		resources.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE));
-
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
-		return modelMap;
-	}
-	
-	/**
-	 * Read an individual {@link SequenceFilePair} from a {@link Project} and
+	 * Read a single {@link SequencingObject} of the given type from a
 	 * {@link Sample}
 	 * 
 	 * @param sampleId
-	 *            sample id
-	 * @param pairId
-	 *            id of the {@link SequenceFilePair}
-	 * @return {@link SequenceFilePair} entity
+	 *            {@link Sample} identifier
+	 * @param objectType
+	 *            type of {@link SequencingObject}
+	 * @param objectId
+	 *            ID of the {@link SequencingObject}
+	 * @return A single {@link SequencingObject}
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/pairs/{pairId}", method = RequestMethod.GET)
-	public ModelMap readSequenceFilePair(@PathVariable Long sampleId,
-			@PathVariable Long pairId) {
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.GET)
+	public ModelMap readSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType,
+			@PathVariable Long objectId) {
+		ModelMap modelMap = new ModelMap();
+		Sample sample = sampleService.read(sampleId);
+		SequencingObject sequencingObject = sequencingObjectService.readSequencingObjectForSample(sample, objectId);
+
+		sequencingObject = addSequencingObjectLinks(sequencingObject, sampleId);
+
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequencingObject);
+
+		return modelMap;
+	}
+
+	/**
+	 * Read a single {@link SequenceFile} for a given {@link Sample} and
+	 * {@link SequencingObject}
+	 * 
+	 * @param sampleId
+	 *            ID of the {@link Sample}
+	 * @param objectType
+	 *            type of {@link SequencingObject}
+	 * @param objectId
+	 *            id of the {@link SequencingObject}
+	 * @param fileId
+	 *            ID of the {@link SequenceFile} to read
+	 * @return a {@link SequenceFile}
+	 */
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.GET)
+	public ModelMap readSequenceFileForSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType,
+			@PathVariable Long objectId, @PathVariable Long fileId) {
 		ModelMap modelMap = new ModelMap();
 
 		Sample sample = sampleService.read(sampleId);
 
-		SequenceFilePair readSequenceFilePairForSample = sequenceFilePairService.readSequenceFilePairForSample(sample,
-				pairId);
+		SequencingObject readSequenceFilePairForSample = sequencingObjectService.readSequencingObjectForSample(sample,
+				objectId);
 
-		readSequenceFilePairForSample = addSequenceFilePairLinks(readSequenceFilePairForSample, sampleId);
-		
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, readSequenceFilePairForSample);
+		Optional<SequenceFile> findFirst = readSequenceFilePairForSample.getFiles().stream()
+				.filter(f -> f.getId() == fileId).findFirst();
+
+		if (!findFirst.isPresent()) {
+			throw new EntityNotFoundException("File with id " + fileId
+					+ " is not associated with this sequencing object");
+		}
+		SequenceFile file = findFirst.get();
+
+		file.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
+				REL_SAMPLE_SEQUENCE_FILES));
+		file.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
+
+		file.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
+						objectType, objectId, fileId)).withSelfRel());
+
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, file);
 
 		return modelMap;
-
 	}
 
 	/**
@@ -304,11 +326,11 @@ public class RESTSampleSequenceFilesController {
 	 *             if we can't write the file to disk.
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ModelMap addNewSequenceFileToSample(@PathVariable Long sampleId,
-			@RequestPart("file") MultipartFile file,
-			@RequestPart(value = "parameters", required = false) SequenceFileResource fileResource, HttpServletResponse response) throws IOException {
+	public ModelMap addNewSequenceFileToSample(@PathVariable Long sampleId, @RequestPart("file") MultipartFile file,
+			@RequestPart(value = "parameters", required = false) SequenceFileResource fileResource,
+			HttpServletResponse response) throws IOException {
 		ModelMap modelMap = new ModelMap();
-		
+
 		logger.debug("Adding sequence file to sample " + sampleId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
 		// load the sample from the database
@@ -342,11 +364,12 @@ public class RESTSampleSequenceFilesController {
 			sf.setSequencingRun(miseqRun);
 			logger.trace("Added seqfile to miseqrun");
 		}
-		
+
 		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
-		
-		//save the seqobject and sample
-		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(singleEndSequenceFile, sample);
+
+		// save the seqobject and sample
+		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
+				.createSequencingObjectInSample(singleEndSequenceFile, sample);
 
 		logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject().getId());
 		// clean up the temporary files.
@@ -355,34 +378,32 @@ public class RESTSampleSequenceFilesController {
 		logger.trace("Deleted temp file");
 		// prepare a link to the sequence file itself (on the sequence file
 		// controller)
-		Long sequenceFileId = singleEndSequenceFile.getFile().getId();
-		String location = linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
-						sequenceFileId)).withSelfRel().getHref();
-		
-		// Changed, because sfr.setResource(sf) 
+		String objectType = objectLabels.get(SingleEndSequenceFile.class);
+		Long sequenceFileId = singleEndSequenceFile.getSequenceFile().getId();
+		Link selfRel = linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
+						objectType, singleEndSequenceFile.getId(), sequenceFileId)).withSelfRel();
+
+		// Changed, because sfr.setResource(sf)
 		// and sfr.setResource(sampleSequenceFileRelationship.getObject())
 		// both will not pass a GET-POST comparison integration test.
 		SequenceFile sequenceFile = sequenceFileService.read(sequenceFileId);
-		
+
 		// add links to the resource
 		sequenceFile.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
 				.withRel(REL_SAMPLE_SEQUENCE_FILES));
-		sequenceFile.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
-						sequenceFileId)).withSelfRel());
-		sequenceFile.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-				REL_SAMPLE));
+		sequenceFile.add(selfRel);
+		sequenceFile.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceFile);
 		// add a location header.
-		response.addHeader(HttpHeaders.LOCATION, location);
+		response.addHeader(HttpHeaders.LOCATION, selfRel.getHref());
 		// set the response status.
 		response.setStatus(HttpStatus.CREATED.value());
 
 		// respond to the client
 		return modelMap;
 	}
-	
+
 	/**
 	 * Add a pair of {@link SequenceFile}s to a {@link Sample}
 	 * 
@@ -402,12 +423,13 @@ public class RESTSampleSequenceFilesController {
 	 * @throws IOException
 	 *             if we can't write the files to disk
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/pairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ModelMap addNewSequenceFilePairToSample(@PathVariable Long sampleId, @RequestPart("file1") MultipartFile file1,
+	@RequestMapping(value = "/api/samples/{sampleId}/pairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ModelMap addNewSequenceFilePairToSample(@PathVariable Long sampleId,
+			@RequestPart("file1") MultipartFile file1,
 			@RequestPart(value = "parameters1") SequenceFileResource fileResource1,
 			@RequestPart("file2") MultipartFile file2,
-			@RequestPart(value = "parameters2") SequenceFileResource fileResource2,
-			HttpServletResponse response) throws IOException {
+			@RequestPart(value = "parameters2") SequenceFileResource fileResource2, HttpServletResponse response)
+			throws IOException {
 		logger.debug("Adding pair of sequence files to sample " + sampleId);
 		logger.trace("First uploaded file size: " + file1.getSize() + " bytes");
 		logger.trace("Second uploaded file size: " + file2.getSize() + " bytes");
@@ -431,25 +453,26 @@ public class RESTSampleSequenceFilesController {
 		sf2.setFile(target2);
 		// get the sequencing run
 		SequencingRun sequencingRun = null;
-		
+
 		if (!Objects.equal(fileResource1.getMiseqRunId(), fileResource2.getMiseqRunId())) {
 			throw new IllegalArgumentException("Cannot upload a pair of files from different sequencing runs");
 		}
 
 		Long runId = fileResource1.getMiseqRunId();
-		
+
 		if (runId != null) {
 			sequencingRun = miseqRunService.read(runId);
 			sf1.setSequencingRun(sequencingRun);
 			sf2.setSequencingRun(sequencingRun);
 			logger.trace("Added sequencing run to files" + runId);
 		}
-		
+
 		SequenceFilePair sequenceFilePair = new SequenceFilePair(sf1, sf2);
-		
+
 		// add the files and join
-		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(sequenceFilePair, sample);
-		
+		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
+				.createSequencingObjectInSample(sequenceFilePair, sample);
+
 		// clean up the temporary files.
 		Files.deleteIfExists(target1);
 		Files.deleteIfExists(temp1);
@@ -464,10 +487,10 @@ public class RESTSampleSequenceFilesController {
 				RESTSampleSequenceFilesController.REL_SAMPLE));
 
 		// add a link to the newly created pair
+		String objectType = objectLabels.get(SingleEndSequenceFile.class);
 		sequencingObject.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId,
-						createSequencingObjectInSample.getObject().getId())).withRel(
-				RESTSampleSequenceFilesController.REL_PAIR));
+				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
+						sequencingObject.getId())).withRel(RESTSampleSequenceFilesController.REL_PAIR));
 
 		// add a link to this collection
 		sequencingObject.add(linkTo(
@@ -493,8 +516,7 @@ public class RESTSampleSequenceFilesController {
 	 * @return a status indicating the success of the move.
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
-	public ModelMap removeSequenceFileFromSample(@PathVariable Long sampleId,
-			@PathVariable Long sequenceFileId) {
+	public ModelMap removeSequenceFileFromSample(@PathVariable Long sampleId, @PathVariable Long sequenceFileId) {
 		ModelMap modelMap = new ModelMap();
 		// load the project, sample and sequence file from the database
 		Sample s = sampleService.read(sampleId);
@@ -510,8 +532,7 @@ public class RESTSampleSequenceFilesController {
 		// file (as it is associated with the
 		// project)
 		RootResource resource = new RootResource();
-		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-				REL_SAMPLE));
+		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
 		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
 				.withRel(REL_SAMPLE_SEQUENCE_FILES));
 
@@ -528,47 +549,46 @@ public class RESTSampleSequenceFilesController {
 	 * @param sequenceFileId
 	 *            the identifier of the {@link SequenceFile}.
 	 * @return a representation of the {@link SequenceFile}.
+	 * @deprecated use
+	 *             {@link RESTSampleSequenceFilesController#readSequencingObject(Long, String, Long)}
+	 *             instead
 	 */
+	@Deprecated
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET)
-	public ModelMap getSequenceFileForSample(@PathVariable Long sampleId,
-			@PathVariable Long sequenceFileId) {
+	public ModelMap getSequenceFileForSample(@PathVariable Long sampleId, @PathVariable Long sequenceFileId) {
 		ModelMap modelMap = new ModelMap();
-		Sample sample = sampleService.read(sampleId);
+		sampleService.read(sampleId);
 
 		// if the relationships exist, load the sequence file from the database
-		// and prepare for serialization.
-		Join<Sample, SequenceFile> sequenceFileForSample = sequenceFileService.getSequenceFileForSample(sample, sequenceFileId);
-		SequenceFile sf = sequenceFileForSample.getObject();
+		SequenceFile sf = sequenceFileService.read(sequenceFileId);
 
 		// add links to the resource
-		sf.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-				.withRel(REL_SAMPLE_SEQUENCE_FILES));
+		sf.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
+				REL_SAMPLE_SEQUENCE_FILES));
 		sf.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
-						sequenceFileId)).withSelfRel());
-		sf.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-				REL_SAMPLE));
-		
+				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId, sequenceFileId))
+				.withSelfRel());
+		sf.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
+
 		/**
 		 * if a SequenceFilePair exists for this file, add the rel
 		 */
-		try{
+		try {
 			logger.trace("Getting paired file for " + sequenceFileId);
 			SequenceFile pairedFileForSequenceFile = sequenceFilePairService.getPairedFileForSequenceFile(sf);
 			sf.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
 							pairedFileForSequenceFile.getId())).withRel(REL_PAIR));
-		}
-		catch(EntityNotFoundException ex){
+		} catch (EntityNotFoundException ex) {
 			logger.trace("No pair for file " + sequenceFileId);
 		}
-		
+
 		// add the resource to the response
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sf);
 
 		return modelMap;
 	}
-	
+
 	/**
 	 * Update a {@link SequenceFile} details.
 	 *
@@ -581,35 +601,39 @@ public class RESTSampleSequenceFilesController {
 	 * @return a response including links to the {@link Project} and
 	 *         {@link Sample}.
 	 */
-    @RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.PATCH,
-            consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ModelMap updateSequenceFile(@PathVariable Long sampleId,
-			@PathVariable Long sequenceFileId, @RequestBody Map<String, Object> updatedFields) {
-        ModelMap modelMap = new ModelMap();
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.PATCH, consumes = {
+			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public ModelMap updateSequenceFile(@PathVariable Long sampleId, @PathVariable String objectType,
+			@PathVariable Long objectId, @PathVariable Long fileId, @RequestBody Map<String, Object> updatedFields) {
+		ModelMap modelMap = new ModelMap();
 
-        // confirm that the project is related to the sample
-        sampleService.read(sampleId);
+		// confirm that the project is related to the sample
+		Sample sample = sampleService.read(sampleId);
 
-        // issue an update request
-		sequenceFileService.update(sequenceFileId, updatedFields);
+		SequencingObject readSequenceFilePairForSample = sequencingObjectService.readSequencingObjectForSample(sample,
+				objectId);
 
-        // respond to the client with a link to self, sequence files collection and project.
-        RootResource resource = new RootResource();
-        resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId, sequenceFileId))
-                .withSelfRel());
-        resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-                .withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-        resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(RESTProjectSamplesController.REL_PROJECT_SAMPLES));
+		// issue an update request
+		sequenceFileService.update(fileId, updatedFields);
 
-        modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
+		// respond to the client with a link to self, sequence files collection
+		// and project.
+		RootResource resource = new RootResource();
+		resource.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
+						objectType, readSequenceFilePairForSample.getId(), fileId)).withSelfRel());
+		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
+				RESTProjectSamplesController.REL_PROJECT_SAMPLES));
 
-        return modelMap;
-    }
-    
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
+
+		return modelMap;
+	}
+
 	/**
-	 * Add the {@link SequenceFile} and self rel links to a
-	 * {@link SequenceFilePair}. Also adds the forward and reverse file links
-	 * and a link to the pair's sample
+	 * add the forward and reverse file links and a link to the pair's sample
 	 * 
 	 * @param pair
 	 *            The {@link SequenceFilePair} to enhance
@@ -617,34 +641,67 @@ public class RESTSampleSequenceFilesController {
 	 *            the id of the {@link Sample} the pair is in
 	 * @return The {@link SequenceFilePair} with added links
 	 */
-	public static SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long sampleId) {
+	private static SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long sampleId) {
 		SequenceFile forward = pair.getForwardSequenceFile();
-		ControllerLinkBuilder forwardLink = linkTo(methodOn(RESTSampleSequenceFilesController.class)
-				.getSequenceFileForSample(sampleId, forward.getId()));
+		String forwardLink = forward.getLink("self").getHref();
 
 		SequenceFile reverse = pair.getReverseSequenceFile();
-		ControllerLinkBuilder reverseLink = linkTo(methodOn(RESTSampleSequenceFilesController.class)
-				.getSequenceFileForSample(sampleId, reverse.getId()));
+		String reverseLink = reverse.getLink("self").getHref();
 
-		forward.add(forwardLink.withSelfRel());
-		reverse.add(reverseLink.withSelfRel());
-
-		pair.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequenceFilePair(sampleId, pair.getId()))
-				.withSelfRel());
-		pair.add(forwardLink.withRel(REL_PAIR_FORWARD));
-		pair.add(reverseLink.withRel(REL_PAIR_REVERSE));
-
-		pair.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_PAIR_SAMPLE));
+		pair.add(new Link(forwardLink, REL_PAIR_FORWARD));
+		pair.add(new Link(reverseLink, REL_PAIR_REVERSE));
 
 		return pair;
 	}
 
 	/**
-	 * Add the {@link Sample} and self rel links to a {@link SequenceFile}
-	 * @param file {@link SequenceFile} to add links to 
-	 * @param sampleId id of the {@link Sample} the file exists in
-	 * @return modified {@link SequenceFile}
+	 * Add the links for a {@link SequencingObject} to its sample, self, to each
+	 * individual {@link SequenceFile}
+	 * 
+	 * @param sequencingObject
+	 *            {@link SequencingObject} to enhance
+	 * @param sampleId
+	 *            ID of the {@link Sample} for the object
+	 * @return the enhanced {@link SequencingObject}
 	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends SequencingObject> T addSequencingObjectLinks(T sequencingObject, Long sampleId) {
+
+		String objectType = objectLabels.get(sequencingObject.getClass());
+
+		sequencingObject.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
+						sequencingObject.getId())).withSelfRel());
+
+		sequencingObject.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
+				RESTSampleSequenceFilesController.REL_SAMPLE));
+
+		for (SequenceFile file : sequencingObject.getFiles()) {
+			file.add(linkTo(
+					methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
+							objectType, sequencingObject.getId(), file.getId())).withSelfRel());
+		}
+
+		if (sequencingObject instanceof SequenceFilePair) {
+			sequencingObject = (T) addSequenceFilePairLinks((SequenceFilePair) sequencingObject, sampleId);
+		}
+
+		return sequencingObject;
+	}
+
+	/**
+	 * Add the {@link Sample} and self rel links to a {@link SequenceFile}
+	 * 
+	 * @param file
+	 *            {@link SequenceFile} to add links to
+	 * @param sampleId
+	 *            id of the {@link Sample} the file exists in
+	 * @return modified {@link SequenceFile}
+	 * @deprecated Use
+	 *             {@link RESTSampleSequenceFilesController#addSequencingObjectLinks(SequencingObject, Long)}
+	 *             instead
+	 */
+	@Deprecated
 	public static SequenceFile addSequenceFileLinks(SequenceFile file, Long sampleId) {
 		file.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId, file.getId()))

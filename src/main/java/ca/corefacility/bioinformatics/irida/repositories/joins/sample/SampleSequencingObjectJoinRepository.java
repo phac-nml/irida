@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
 /**
@@ -22,4 +23,17 @@ public interface SampleSequencingObjectJoinRepository extends IridaJpaRepository
 	 */
 	@Query("select j from SampleSequencingObjectJoin j where j.sample = ?1")
 	public List<SampleSequencingObjectJoin> getSequencesForSample(Sample sample);
+
+	/**
+	 * Read a {@link SampleSequencingObjectJoin} with the given {@link Sample}
+	 * and {@link SequencingObject} by id
+	 * 
+	 * @param sample
+	 *            {@link Sample} to get the join for
+	 * @param sequenceId
+	 *            ID of the {@link SequencingObject} to get the join for
+	 * @return A {@link SampleSequencingObjectJoin}
+	 */
+	@Query("from SampleSequencingObjectJoin j where j.sample = ?1 and j.sequencingObject.id = ?2")
+	public SampleSequencingObjectJoin readObjectForSample(Sample sample, Long sequenceId);
 }

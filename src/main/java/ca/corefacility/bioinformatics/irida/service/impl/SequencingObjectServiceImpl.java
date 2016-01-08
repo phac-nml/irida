@@ -87,4 +87,15 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		return ssoRepository.findAll(SampleSequencingObjectSpecification.getSequenceOfTypeForSample(sample, type));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
+	public SequencingObject readSequencingObjectForSample(Sample sample, Long objectId) {
+		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, objectId);
+
+		return readObjectForSample.getObject();
+	}
+
 }
