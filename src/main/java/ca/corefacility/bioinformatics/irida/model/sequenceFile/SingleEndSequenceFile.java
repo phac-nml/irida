@@ -83,7 +83,7 @@ public class SingleEndSequenceFile extends SequencingObject {
 	 */
 
 	public Path getFile() {
-		return getSequenceFile().getFile();
+		return file.getFile();
 	}
 
 	@JsonIgnore
