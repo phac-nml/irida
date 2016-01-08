@@ -1,6 +1,10 @@
 @import "../helpers/variables";
 @import "../helpers/mixins";
 
+h1 {
+  margin-top: 0!important;
+}
+
 .description {
   color: $irida-colour-grey-dark;
   font-size: $irida-font-h3-size;

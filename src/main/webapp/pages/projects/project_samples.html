@@ -38,7 +38,8 @@
 	</script>
 </head>
 <body>
-<aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
+<th:block layout:fragment="main" ddl:bundle-includes="project-samples">
+<aside class="col-md-3 sidebar ng-cloak" ng-controller="FilterCtrl as sf">
 	<div class="sidebar__heading clearfix">
 		<h2 class="pull-left" th:text="#{project.sample.filter-title}">Samples Filter</h2>
 		<span ng-show="sampleCount === 0 || sf.count !== sampleCount" class="badge badge-primary pull-right ng-cloak"><span
@@ -103,12 +104,7 @@
 		</div>
 	</div>
 </aside>
-<main layout:fragment="main" data:ng-init="${'projectId=' + project.getId()}" ddl:bundle-includes="project-samples">
-	<div class="row">
-		<div class="col-md-12">
-			<h1 role="heading" th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
-		</div>
-	</div>
+<main class="col-md-9" data:ng-init="${'projectId=' + project.getId()}">
 	<div class="row mrgn-bttm-md">
 		<div class="col-md-12 ng-cloak" ng-controller="SubNavCtrl as subnav">
 			<div class="btn-toolbar pull-left">
@@ -368,5 +364,6 @@
 		</div>
 	</div>
 </main>
+</th:block>
 </body>
 </html>

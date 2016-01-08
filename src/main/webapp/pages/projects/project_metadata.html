@@ -9,10 +9,9 @@
 
 <main layout:fragment="main" th:object="${project}">
 	<div class="row">
-		<div class="col-md-12 clearfix">
-			<h1 class="pull-left" th:text="#{project.metadata.title(${project.label})}"></h1>
+		<div class="col-md-12 clearfix" style="margin-bottom: 1rem;">
 			<a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right"
-			                                                                                    th:href="@{'/projects/' + *{id} + '/metadata/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
+			   th:href="@{'/projects/' + *{id} + '/metadata/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
 		</div>
 	</div>
 

@@ -10,7 +10,6 @@
 <main layout:fragment="main" th:object="${project}" ddl:bundle-includes="project-associated">
     <div class="row">
         <div class="col-md-10">
-            <h1 role="heading" th:text="#{project.associated.heading(${project.label})}"></h1>
         </div>
         <div class="col-md-2">
             <a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right" 

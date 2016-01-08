@@ -26,9 +26,7 @@ ddl:bundle-includes="project-members">
 <main layout:fragment="main" ddl:bundle-includes="project-members" ng-controller="MembersController as membersCtrl">
     <div class="row">
         <div class="col-md-12">
-            <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
-
-            <div class="btn-toolbar" role="toolbar">
+            <div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
                 <div class="btn-group">
                     <button id="add-members-button" class="btn btn-default"
                        th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
