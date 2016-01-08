@@ -17,6 +17,7 @@ Changes
 * [UI]: Fixed issue where samples in the cart could not be sent to galaxy.
 * [UI]: Added ability to upload sequence files to NCBI from the Project/Samples table.
 * [UI]: New feature to download complete list of projects either in excel or csv format.
+* [UI]: Fixed bug on Analysis Details page and updated style of the progress bar.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------

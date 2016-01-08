@@ -9,17 +9,17 @@
 			color: #d5d5d5;
 		}
 		.progress {
-			margin-bottom:1rem;
+			margin-bottom: 1rem!important;
 		}
 		.progress, .progress-bar {
-			height: 4px;
+			height: 4px!important;
 			border-radius: 0;
 		}
 	</style>
 </head>
 
 <body>
-<main layout:fragment="main" ddl:bundle-includes="analysis-details">
+<main layout:fragment="main">
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
 			<h1><th:block th:text="${analysisSubmission.label}"></th:block> <small ng-hide="stateController.state === 'ERROR'" ng-bind="stateController.percentage + '%'"></small></h1>
