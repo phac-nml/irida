@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
@@ -46,6 +47,7 @@ public class PipelineControllerTest {
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
 	private SequenceFilePairService sequenceFilePairService;
+	private SequencingObjectService sequencingObjectService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
 	private ProjectService projectService;
@@ -74,10 +76,10 @@ public class PipelineControllerTest {
 		cartController = mock(CartController.class);
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 
-		controller = new PipelineController(sequenceFileService, sequenceFilePairService, referenceFileService,
-				analysisSubmissionService, workflowsService, projectService, userService, sequenceFileRemoteService,
-				cartController, messageSource, namedParameterService, sequenceFilePairRemoteService,
-				remoteSequenceFileService, remoteSequenceFilePairService);
+		controller = new PipelineController(sequenceFileService, sequenceFilePairService, sequencingObjectService,
+				referenceFileService, analysisSubmissionService, workflowsService, projectService, userService,
+				sequenceFileRemoteService, cartController, messageSource, namedParameterService,
+				sequenceFilePairRemoteService, remoteSequenceFileService, remoteSequenceFilePairService);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
