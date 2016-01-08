@@ -1,5 +1,6 @@
 {
   "dependencies": [
+    "ng-datatables",
     "select2-bootstrap",
     "bootstrap_dropdowns_enhancement"
   ],
@@ -8,6 +9,13 @@
       "type": "css",
       "locations": {
         "webapp": "/resources/css/pages/project_samples.css"
+      }
+    },
+    {
+      "name": "irida.projects.samples.service",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.service.js"
       }
     },
     {
