@@ -3,7 +3,7 @@
       layout:decorator="projects/_base">
 <head>
 	<title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
-	<script>window.dependencies = ['Samples'];</script>
+	<script>window.dependencies = ['irida.projects.samples.controller'];</script>
 	<style>
 		.fileinput {
 			position: relative;
