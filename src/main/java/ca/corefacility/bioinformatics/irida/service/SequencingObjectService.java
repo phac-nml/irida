@@ -49,15 +49,13 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 
 	/**
 	 * Read a {@link SequencingObject} and verify that it belongs to a given
-	 * {@link Sample}. This generic method will return the given type.
+	 * {@link Sample}.
 	 * 
 	 * @param sample
 	 *            the {@link Sample} to get the {@link SequencingObject} for
 	 * @param objectId
 	 *            The {@link SequencingObject} ID
-	 * @param type
-	 *            The subclass of {@link SequencingObject} to retrieve
-	 * @return A {@link SequencingObject} subclass object
+	 * @return A {@link SequencingObject} object
 	 */
-	public <T extends SequencingObject> T readSequencingObjectForSample(Sample sample, Long objectId, Class<T> type);
+	public SequencingObject readSequencingObjectForSample(Sample sample, Long objectId);
 }

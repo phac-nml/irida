@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
 
 /**
  * Implementation of {@link SequencingObjectService} using a
@@ -91,19 +90,12 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
-	public <T extends SequencingObject> T readSequencingObjectForSample(Sample sample, Long objectId, Class<T> type) {
+	public SequencingObject readSequencingObjectForSample(Sample sample, Long objectId) {
 		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, objectId);
 
-		SequencingObject object = readObjectForSample.getObject();
-
-		if (!type.isAssignableFrom(object.getClass())) {
-			throw new GenericsException("Object " + object + " is not of the requested type: " + type);
-		}
-
-		return (T) object;
+		return readObjectForSample.getObject();
 	}
 
 }
