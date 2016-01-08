@@ -39,7 +39,7 @@
 					<button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><fa:icon type="download" fixed="true"/>&nbsp;<span th:text="#{projects.export}">Export</span>&nbsp;&nbsp;<span class="caret"></span></button>
 					<ul class="dropdown-menu" aria-labelledby="reportMenu">
 						<li role="menuitem" th:each="type : ${exportTypes}">
-							<a th:href="@{'/projects/ajax/export?dtf=' + ${type.format} + '&amp;?admin=' + ${isAdmin}}" href="/projects/ajax/export/xlsx" th:text="#{'projects.export.' + ${type.format}}">Excel</a>
+							<a th:href="@{'/projects/ajax/export?dtf=' + ${type.format} + '&amp;admin=' + ${isAdmin}}" href="/projects/ajax/export/xlsx" th:text="#{'projects.export.' + ${type.format}}">Excel</a>
 						</li>
 					</ul>
 				</div>

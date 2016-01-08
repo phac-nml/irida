@@ -163,6 +163,7 @@ public class ProjectsController {
 			@RequestParam(value = "galaxyClientID", required = false) String galaxyClientID, HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("exportTypes", EXPORT_TYPES);
+		model.addAttribute("isAdmin", false);
 
 		// External exporting functionality
 		if (galaxyCallbackURL != null && galaxyClientID != null) {
