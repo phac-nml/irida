@@ -21,3 +21,16 @@
   z-index: 500;
   margin-bottom: $irida-global-spacing !important;
 }
+
+.nav-tabs.subnav {
+  margin-bottom: 1rem;
+  li:not(.active) a {
+    background-color: #eeeeee;
+    color: #222222;
+    transition: all .2s ease-in-out;
+
+    &:hover {
+      background-color: #BBBBBB;
+    }
+  }
+}

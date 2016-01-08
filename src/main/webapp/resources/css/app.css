@@ -312,6 +312,15 @@ input {
   z-index: 500;
   margin-bottom: 0.9375rem !important; }
 
+.nav-tabs.subnav {
+  margin-bottom: 1rem; }
+  .nav-tabs.subnav li:not(.active) a {
+    background-color: #eeeeee;
+    color: #222222;
+    transition: all .2s ease-in-out; }
+    .nav-tabs.subnav li:not(.active) a:hover {
+      background-color: #BBBBBB; }
+
 .irida-notifications {
   position: absolute;
   top: 10px;
@@ -440,6 +449,9 @@ input {
   padding: .2rem 0 0 0;
   font-size: 1.3rem;
   color: #939393; }
+
+h1 {
+  margin-top: 0 !important; }
 
 .description {
   color: #939393;
