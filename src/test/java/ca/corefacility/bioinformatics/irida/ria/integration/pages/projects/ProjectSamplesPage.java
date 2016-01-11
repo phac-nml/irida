@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -298,7 +299,9 @@ public class ProjectSamplesPage extends AbstractPage {
 
 	// Filtering
 	public int getTotalSampleCount() {
-		return Integer.parseInt(driver.findElement(By.id("sample-count")).getText());
+		Select select = new Select(driver.findElement(By.id("count")));
+		select.selectByValue("All");
+		return driver.findElements(By.cssSelector("tbody tr")).size();
 	}
 
 	public int getFilteredSampleCount() {

@@ -101,6 +101,6 @@ public class ProjectsPage extends AbstractPage {
 
 	public void clickLinkToProject(int row) {
 		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.className("item-link"));
-		links.get(row).click();
+		submitAndWait(links.get(row));
 	}
 }

@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-alpha8-SNAPSHOT</version>
+	<version>1.0.0-alpha9-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -349,6 +349,11 @@
 		<dependency>
 			<groupId>com.github.dandelion</groupId>
 			<artifactId>datatables-thymeleaf</artifactId>
+			<version>${dandelion-datatables.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.dandelion</groupId>
+			<artifactId>datatables-export-poi-ooxml</artifactId>
 			<version>${dandelion-datatables.version}</version>
 		</dependency>
 		<dependency>
