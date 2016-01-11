@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.0.0-alpha8 to 1.0.0-alpha9
+----------------------------
+* [UI]: Fixed a bug in the quick viewing of FastQC analyses graphs.
+
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
 * [Developer]: Fix an issue where having multiple forward slashes in a URI would result in part of the URI being duplicated in links generated as part of the response.
