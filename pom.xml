@@ -578,6 +578,13 @@
 			<artifactId>galaxybootstrap</artifactId>
 			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
+
+		<!-- Image manipulation -->
+		<dependency>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>${imgscalr.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -953,6 +960,7 @@
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>
+		<imgscalr.version>4.2</imgscalr.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>

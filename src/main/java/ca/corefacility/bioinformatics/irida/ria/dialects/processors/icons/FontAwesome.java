@@ -147,6 +147,14 @@ public class FontAwesome {
 	public static final String EXTERNAL_LINK_ICON = "external-link";
 
 	/*
+	 * Attribute for next and previous buttons.
+	 */
+	public static final String NEXT_ATTRIBUTE = "next";
+	public static final String NEXT_ICON = "chevron-circle-right";
+	public static final String PREVIOUS_ATTRIBUTE = "prev";
+	public static final String PREVIOUS_ICON = "chevron-circle-left";
+
+	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
     * attribute to append this class. This will line up the icons properly.
     */
@@ -182,6 +190,8 @@ public class FontAwesome {
 			.put(EMAIL_ATTRIBUTE, EMAIL_ICON)
 			.put(EXTERNAL_LINK_ATTRIBUTE, EXTERNAL_LINK_ICON)
 			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
+			.put(NEXT_ATTRIBUTE, NEXT_ICON)
+			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
 			.build();
 	// @formatter:on
 
