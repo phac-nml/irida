@@ -54,7 +54,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testPageSetUp() {
-		assertEquals("Page h1 tag is properly set.", "project Members", membersPage.getTitle());
+		assertEquals("Page h1 tag is properly set.", "project", membersPage.getTitle());
 		List<String> names = membersPage.getProjectMembersNames();
 		for (String name : names) {
 			assertTrue("Has the correct members names", COLLABORATORS_NAMES.contains(name));
