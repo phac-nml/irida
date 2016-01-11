@@ -33,34 +33,69 @@
 		</div>
 		<div class="btn-group btn-group-sm">
 			<button class="btn btn-default">
-				<span class="fa fa-fw fa-compress"></span>
+				<fa:icon type="merge" fixed="true" />
 				<span th:text="#{project.samples.nav.merge}">Merge</span>
 			</button>
 			<button class="btn btn-default">
-				<span class="fa fa-fw fa-copy"></span>
+				<fa:icon type="copy" fixed="true" />
 				<span th:text="#{project.samples.nav.copy}">_COPY_</span>
 			</button>
 			<button class="btn btn-default">
-				<span class="fa fa-truck fa-fw"></span>
+				<fa:icon type="move" fixed="true" />
 				<span th:text="#{project.samples.nav.move}"></span>
 			</button>
 			<button class="btn btn-default">
-				<i class="fa fa-trash fa-fw"></i>
+				<fa:icon type="delete" fixed="true" />
 				<span th:text="#{project.samples.nav.remove}"></span>
 			</button>
 		</div>
 
-		<div class="btn-group btn-group-sm">
-			<button class="btn btn-default">
+		<div class="btn-group btn-group-sm" uib-dropdown="">
+			<button id="export-btn" class="btn btn-default" uib-dropdown-toggle="">
 				<span th:text="#{project.samples.export.label}">Export</span>
 				<span class="caret"></span>
 			</button>
+			<ul class="ng-cloak" uib-dropdown-menu="" role="menu" aria-labelledby="export-btn">
+				<li class="dropdown-header">Export Samples</li>
+				<li role="menuitem">
+					<a id="exportDownloadBtn" href="#">
+						<fa:icon type="download" fixed="true" />
+						<span th:text="#{form.download}">_Download</span>
+					</a>
+				</li>
+				<!--TODO: Fix tooltip-->
+				<li role="menuitem" th:if="${linkerAvailable}" ng-class="{disabled: ! subnav.localSelected}"
+				    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" uib-tooltip-append-to-body="true"
+				    uib-tooltip-placement="right">
+					<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()">
+						<fa:icon type="terminal" fixed="true" />
+						<span th:text="#{project.samples.export.linker}"></span>
+					</a>
+				</li>
+				<li role="menuitem">
+					<a id="exportNcbiButton" href="#" ng-click="subnav.export.ncbi()">
+						<fa:icon type="upload" fixed="true" />
+						<span th:text="#{project.samples.export.ncbi}">_Upload to NCBI_</span>
+					</a>
+				</li>
+				<li role="menuitem" th:if="${galaxyCallback}">
+					<a href="#" ng-click="subnav.export.galaxy(); cart.show=false">
+						<fa:icon type="cloud" fixed="true" />
+						<span th:text="#{project.samples.export.galaxy}"></span>
+					</a>
+				</li>
+				<li role="separator" class="divider"></li>
+				<li class="dropdown-header">Export table to File</li>
+				<li role="menuitem">
+					<a href="">Excel</a>
+				</li>
+			</ul>
 		</div>
 
 		<div class="btn-group btn-group-sm">
 			<button id="cart-add-btn"
 			        class="btn btn-primary" ng-disabled="subnav.count&lt;1">
-				<i class="fa fa-fw fa-cart-plus"></i>
+				<fa:icon type="cart-plus" fixed="true" />
 				<span th:text="#{project.samples.nav.add-to-cart}">Add to Cart></span>
 			</button>
 		</div>

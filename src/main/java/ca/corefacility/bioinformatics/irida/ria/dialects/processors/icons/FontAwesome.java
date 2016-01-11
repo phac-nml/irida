@@ -19,6 +19,11 @@ public class FontAwesome {
 	 */
 	private static final String ICON_BASE = "fa fa-";
 	/*
+	Attribute for adding items to the caart
+	 */
+	private static final String CART_ADD_ATTRIBUTE = "cart-plus";
+	private static final String CART_ADD_ICON = "cart-plus";
+	/*
 	Attribute to remove an item from a list.
 	 */
 	private static final String REMOVE_ATTRIBUTE = "remove";
@@ -43,6 +48,11 @@ public class FontAwesome {
 	 */
 	private static final String COPY_ATTRIBUTE = "copy";
 	private static final String COPY_ICON = "copy";
+	/*
+	Attribute to be used when the move action is required
+	 */
+	private static final String MOVE_ATTRIBUTE = "move";
+	private static final String MOVE_ICON = "truck";
 	/*
 	Attribute to be used in a warning message.
 	 */
@@ -147,6 +157,12 @@ public class FontAwesome {
 	public static final String EXTERNAL_LINK_ICON = "external-link";
 
 	/*
+	 * Attribute for cloud upload
+	 */
+	public static final String CLOUD_ATTRIBUTE = "cloud";
+	public static final String CLOUD_ICON = "cloud";
+
+	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
     * attribute to append this class. This will line up the icons properly.
     */
@@ -157,6 +173,7 @@ public class FontAwesome {
 	 */
 	// @formatter:off
 	private static final Map<String, String> FA_ATTRIBUTE_TO_CLASS_MAP = new ImmutableMap.Builder<String, String>()
+			.put(CART_ADD_ATTRIBUTE, CART_ADD_ICON)
 			.put(REMOVE_ATTRIBUTE, REMOVE_ICON)
 			.put(DELETE_ATTRIBUTE, DELETE_ICON)
 			.put(SAVE_ATTRIBUTE, SAVE_ICON)
@@ -172,6 +189,7 @@ public class FontAwesome {
 			.put(PIPELINE_STATE_ATTRIBUTE, PIPELINE_STATE_ICON)
 			.put(FILE_ATTRIBUTE, FILE_ICON)
 			.put(COPY_ATTRIBUTE, COPY_ICON)
+			.put(MOVE_ATTRIBUTE, MOVE_ICON)
 			.put(TERMINAL_ATTRIBUTE, TERMINAL_ICON)
 			.put(COLLAPSE_SHOW_ATTRIBUTE, COLLAPSE_SHOW_ICON)
 			.put(COLLAPSE_CLOSE_ATTRIBUTE, COLLAPSE_CLOSE_ICON)
@@ -182,6 +200,7 @@ public class FontAwesome {
 			.put(EMAIL_ATTRIBUTE, EMAIL_ICON)
 			.put(EXTERNAL_LINK_ATTRIBUTE, EXTERNAL_LINK_ICON)
 			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
+			.put(CLOUD_ATTRIBUTE, CLOUD_ICON)
 			.build();
 	// @formatter:on
 

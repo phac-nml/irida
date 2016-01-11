@@ -6,7 +6,7 @@
 		vm.selected = {};
 
 		vm.dtOptions = DTOptionsBuilder.newOptions()
-			.withDOM('pitrfl');
+			.withDOM("<'row filter-row'<'col-sm-6'2><'col-sm-6'0f>><'row datatables-active-filters'1><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
 
 		vm.updateAllSelected = function () {
 			vm.samples.forEach(function (sample, index) {
