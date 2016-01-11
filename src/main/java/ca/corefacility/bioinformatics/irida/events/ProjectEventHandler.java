@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -152,7 +152,7 @@ public class ProjectEventHandler {
 
 	/**
 	 * Create one or more {@link DataAddedToSampleProjectEvent}. Can be run on
-	 * methods which return a {@link SampleSequenceFileJoin}.
+	 * methods which return a {@link SampleSequencingObjectJoin}.
 	 * 
 	 * @param event
 	 */
@@ -164,18 +164,18 @@ public class ProjectEventHandler {
 			Collection<?> collection = (Collection<?>) returnValue;
 
 			Object singleElement = collection.iterator().next();
-			if (!(singleElement instanceof SampleSequenceFileJoin)) {
+			if (!(singleElement instanceof SampleSequencingObjectJoin)) {
 				throw new IllegalArgumentException(
 						"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
 			}
 
-			events.addAll(handleIndividualSequenceFileAddedEvent((SampleSequenceFileJoin) singleElement));
+			events.addAll(handleIndividualSequenceFileAddedEvent((SampleSequencingObjectJoin) singleElement));
 		} else {
-			if (!(returnValue instanceof SampleSequenceFileJoin)) {
+			if (!(returnValue instanceof SampleSequencingObjectJoin)) {
 				throw new IllegalArgumentException(
 						"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
 			}
-			events.addAll(handleIndividualSequenceFileAddedEvent((SampleSequenceFileJoin) returnValue));
+			events.addAll(handleIndividualSequenceFileAddedEvent((SampleSequencingObjectJoin) returnValue));
 		}
 		
 		return events;
@@ -186,10 +186,10 @@ public class ProjectEventHandler {
 	 * {@link Sample} belongs to
 	 * 
 	 * @param join
-	 *            a {@link SampleSequenceFileJoin} to turn into a
+	 *            a {@link SampleSequencingObjectJoin} to turn into a
 	 *            {@link DataAddedToSampleProjectEvent}
 	 */
-	private Collection<DataAddedToSampleProjectEvent> handleIndividualSequenceFileAddedEvent(SampleSequenceFileJoin join) {
+	private Collection<DataAddedToSampleProjectEvent> handleIndividualSequenceFileAddedEvent(SampleSequencingObjectJoin join) {
 		Sample subject = join.getSubject();
 
 		Collection<DataAddedToSampleProjectEvent> events = new ArrayList<>();

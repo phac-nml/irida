@@ -570,19 +570,6 @@ public class RESTSampleSequenceFilesController {
 				.withSelfRel());
 		sf.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
 
-		/**
-		 * if a SequenceFilePair exists for this file, add the rel
-		 */
-		try {
-			logger.trace("Getting paired file for " + sequenceFileId);
-			SequenceFile pairedFileForSequenceFile = sequenceFilePairService.getPairedFileForSequenceFile(sf);
-			sf.add(linkTo(
-					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
-							pairedFileForSequenceFile.getId())).withRel(REL_PAIR));
-		} catch (EntityNotFoundException ex) {
-			logger.trace("No pair for file " + sequenceFileId);
-		}
-
 		// add the resource to the response
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sf);
 

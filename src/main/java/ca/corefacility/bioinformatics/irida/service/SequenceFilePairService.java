@@ -25,6 +25,7 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 * @throws EntityNotFoundException
 	 *             If a pair cannot be found
 	 */
+	@Deprecated
 	public SequenceFile getPairedFileForSequenceFile(SequenceFile file) throws EntityNotFoundException;
 
 	/**
