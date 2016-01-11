@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -11,10 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -99,6 +104,33 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, objectId);
 
 		return readObjectForSample.getObject();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequencingObject')")
+	@Override
+	public Map<Sample, SequencingObject> getUniqueSamplesForSequenceFiles(Set<SequencingObject> sequenceFiles)
+			throws DuplicateSampleException {
+		Map<Sample, SequencingObject> sequenceFilePairsSampleMap = new HashMap<>();
+
+		for (SequencingObject filePair : sequenceFiles) {
+			SequenceFile pair1 = filePair.getFiles().iterator().next();
+
+			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(filePair);
+
+			Sample sample = join.getSubject();
+			if (sequenceFilePairsSampleMap.containsKey(sample)) {
+				SequencingObject previousPair = sequenceFilePairsSampleMap.get(sample);
+				throw new DuplicateSampleException("Sequence file pairs " + pair1 + ", " + previousPair
+						+ " have the same sample " + sample);
+			} else {
+				sequenceFilePairsSampleMap.put(sample, filePair);
+			}
+		}
+
+		return sequenceFilePairsSampleMap;
 	}
 
 }
