@@ -54,6 +54,10 @@ public class ProjectSamplesPage extends AbstractPage {
 		return driver.findElement(By.tagName("h1")).getText();
 	}
 
+	public String getActivePage() {
+		return driver.findElement(By.cssSelector(".nav-tabs li.active a")).getText();
+	}
+
 	public int getNumberOfSamplesDisplayed() {
 		return driver.findElements(By.className("sample-row")).size();
 	}
