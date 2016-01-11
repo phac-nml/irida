@@ -65,7 +65,7 @@ public class SampleSequenceFilesControllerTest {
 		sequenceFilePairService = mock(SequenceFilePairService.class);
 		miseqRunService= mock(SequencingRunService.class);
 
-		controller = new RESTSampleSequenceFilesController(sequenceFileService, sequenceFilePairService, sampleService, miseqRunService, sequencingObjectService);
+		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, miseqRunService, sequencingObjectService);
 	}
 
 	@Test
