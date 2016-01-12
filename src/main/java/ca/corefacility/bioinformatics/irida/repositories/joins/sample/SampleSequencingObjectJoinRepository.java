@@ -36,4 +36,15 @@ public interface SampleSequencingObjectJoinRepository extends IridaJpaRepository
 	 */
 	@Query("from SampleSequencingObjectJoin j where j.sample = ?1 and j.sequencingObject.id = ?2")
 	public SampleSequencingObjectJoin readObjectForSample(Sample sample, Long sequenceId);
+
+	/**
+	 * Get the {@link SampleSequencingObjectJoin} for a given
+	 * {@link SequencingObject}
+	 * 
+	 * @param seqObject
+	 *            the {@link SequencingObject} to get the join for
+	 * @return a {@link SampleSequencingObjectJoin}
+	 */
+	@Query("from SampleSequencingObjectJoin j where j.sequencingObject = ?1")
+	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject);
 }

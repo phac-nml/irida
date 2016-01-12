@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -58,4 +61,18 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @return A {@link SequencingObject} object
 	 */
 	public SequencingObject readSequencingObjectForSample(Sample sample, Long objectId);
+
+	/**
+	 * Gets a map of {@link SequencingObject}s and corresponding {@link Sample}
+	 * s.
+	 *
+	 * @param sequenceFiles
+	 *            A {@link Set} of {@link SequencingObject}s.
+	 * @return A {@link Map} of between {@link Sample} and
+	 *         {@link SequencingObject}.
+	 * @throws DuplicateSampleException
+	 *             If there is a duplicate sample.
+	 */
+	public Map<Sample, SequencingObject> getUniqueSamplesForSequenceFiles(Set<SequencingObject> sequenceFiles)
+			throws DuplicateSampleException;
 }

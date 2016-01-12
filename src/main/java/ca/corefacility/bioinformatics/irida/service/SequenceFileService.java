@@ -78,6 +78,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @throws EntityNotFoundException
 	 *             if the file doesn't exist in the sample
 	 */
+	@Deprecated
 	public Join<Sample, SequenceFile> getSequenceFileForSample(Sample sample, Long identifier)
 			throws EntityNotFoundException;
 
@@ -99,6 +100,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            the sample to get unpaired sequence files for.
 	 * @return A List of {@link SampleSequenceFileJoin}s
 	 */
+	@Deprecated
 	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);
 
 	/**

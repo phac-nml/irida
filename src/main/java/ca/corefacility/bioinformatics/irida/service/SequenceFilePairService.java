@@ -25,6 +25,7 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 * @throws EntityNotFoundException
 	 *             If a pair cannot be found
 	 */
+	@Deprecated
 	public SequenceFile getPairedFileForSequenceFile(SequenceFile file) throws EntityNotFoundException;
 
 	/**
@@ -36,6 +37,7 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 *            the second file in the pairl
 	 * @return A new {@link SequenceFilePair} object
 	 */
+	@Deprecated
 	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2);
 
 	/**
@@ -45,6 +47,7 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 *            the sample to get pairs for.
 	 * @return a List of {@link SequenceFilePair}s
 	 */
+	@Deprecated
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
 
 	/**
@@ -56,6 +59,7 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 *            ID of the pair to read
 	 * @return {@link SequenceFilePair}
 	 */
+	@Deprecated
 	public SequenceFilePair readSequenceFilePairForSample(Sample sample, Long id);
 
 	/**

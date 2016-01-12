@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +40,10 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -235,9 +238,17 @@ public class SamplesController extends BaseController {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
 
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SingleEndSequenceFile.class);
+
+		List<SequencingObject> filePairs = filePairJoins.stream().map(SampleSequencingObjectJoin::getObject)
+				.collect(Collectors.toList());
+
 		// SequenceFile
-		model.addAttribute("paired_end", sequenceFilePairService.getSequenceFilePairsForSample(sample));
-		model.addAttribute("single_end", sequenceFileService.getUnpairedSequenceFilesForSample(sample));
+		model.addAttribute("paired_end", filePairs);
+		model.addAttribute("single_end", singleFileJoins);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
@@ -260,11 +271,13 @@ public class SamplesController extends BaseController {
 	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) {
 		Sample sample = sampleService.read(sampleId);
 
-		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getUnpairedSequenceFilesForSample(sample);
+		Collection<SampleSequencingObjectJoin> joinList = sequencingObjectService.getSequencesForSampleOfType(sample,
+				SingleEndSequenceFile.class);
 
 		List<Map<String, Object>> response = new ArrayList<>();
-		for (Join<Sample, SequenceFile> join : joinList) {
-			response.add(sequenceFileUtilities.getFileDataMap(join.getObject()));
+		for (SampleSequencingObjectJoin join : joinList) {
+			// there will only be one file in this type of object
+			response.add(sequenceFileUtilities.getFileDataMap(((SingleEndSequenceFile) join.getObject()).getSequenceFile()));
 		}
 		return response;
 	}

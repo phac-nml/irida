@@ -366,16 +366,14 @@ public class CartController {
 		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
 				.getSequencingObjectsForSample(sample);
 
-		/**
-		 * TODO: This is a little bit sketchy. We should likely be pointing to
-		 * the sequencing objects
-		 */
 		List<Map<String, Object>> sequenceFiles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
 			for (SequenceFile seq : join.getObject().getFiles()) {
+				String objectType = RESTSampleSequenceFilesController.objectLabels.get(join.getObject().getClass());
 				String seqFileLoc = linkTo(
-						methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sample.getId(),
-								seq.getId())).withSelfRel().getHref();
+						methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(
+								sample.getId(), objectType, join.getObject().getId(), seq.getId())).withSelfRel()
+						.getHref();
 				Map<String, Object> seqMap = ImmutableMap.of("selfRef", seqFileLoc);
 				sequenceFiles.add(seqMap);
 			}

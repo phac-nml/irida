@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,10 +34,12 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -51,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
@@ -95,6 +99,7 @@ public class PipelineController extends BaseController {
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
 	private SequenceFilePairService sequenceFilePairService;
+	private SequencingObjectService sequencingObjectService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private ProjectService projectService;
 	private UserService userService;
@@ -115,13 +120,17 @@ public class PipelineController extends BaseController {
 
 	@Autowired
 	public PipelineController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
-			ReferenceFileService referenceFileService, AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
+			SequencingObjectService sequencingObjectService, ReferenceFileService referenceFileService,
+			AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService iridaWorkflowsService,
+			ProjectService projectService, UserService userService,
 			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
 			MessageSource messageSource, final WorkflowNamedParametersService namedParameterService,
-			SequenceFilePairRemoteService sequenceFilePairRemoteService, SequenceFileSnapshotService remoteSequenceFileService, SequenceFilePairSnapshotService remoteSequenceFilePairService) {
+			SequenceFilePairRemoteService sequenceFilePairRemoteService,
+			SequenceFileSnapshotService remoteSequenceFileService,
+			SequenceFilePairSnapshotService remoteSequenceFilePairService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
+		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -250,12 +259,17 @@ public class PipelineController extends BaseController {
 
 					// Paired end reads
 					if (description.acceptsPairedSequenceFiles()) {
-						files.put("paired_end", sequenceFilePairService.getSequenceFilePairsForSample(sample));
+						Collection<SampleSequencingObjectJoin> pairs = sequencingObjectService.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+						files.put("paired_end",
+								pairs.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList()));
 					}
 
 					// Singe end reads
 					if (description.acceptsSingleSequenceFiles()) {
-						files.put("single_end", sequenceFileService.getUnpairedSequenceFilesForSample(sample));
+						Collection<SampleSequencingObjectJoin> singles = sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+						files.put("single_end",
+								singles.stream().map(SampleSequencingObjectJoin::getObject)
+										.collect(Collectors.toList()));
 					}
 
 					sampleMap.put("files", files);

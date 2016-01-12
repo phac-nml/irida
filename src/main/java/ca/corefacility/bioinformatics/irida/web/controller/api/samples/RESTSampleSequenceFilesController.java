@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -109,10 +108,7 @@ public class RESTSampleSequenceFilesController {
 	 * Reference to the {@link SequenceFileService}.
 	 */
 	private SequenceFileService sequenceFileService;
-	/**
-	 * Reference to the {@link SequenceFilePairService}
-	 */
-	private SequenceFilePairService sequenceFilePairService;
+
 	/**
 	 * Reference to the {@link SampleService}.
 	 */
@@ -129,11 +125,9 @@ public class RESTSampleSequenceFilesController {
 	}
 
 	@Autowired
-	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService,
-			SequenceFilePairService sequenceFilePairService, SampleService sampleService,
+	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService, SampleService sampleService,
 			SequencingRunService miseqRunService, SequencingObjectService sequencingObjectService) {
 		this.sequenceFileService = sequenceFileService;
-		this.sequenceFilePairService = sequenceFilePairService;
 		this.sampleService = sampleService;
 		this.miseqRunService = miseqRunService;
 		this.sequencingObjectService = sequencingObjectService;
@@ -569,19 +563,6 @@ public class RESTSampleSequenceFilesController {
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId, sequenceFileId))
 				.withSelfRel());
 		sf.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
-
-		/**
-		 * if a SequenceFilePair exists for this file, add the rel
-		 */
-		try {
-			logger.trace("Getting paired file for " + sequenceFileId);
-			SequenceFile pairedFileForSequenceFile = sequenceFilePairService.getPairedFileForSequenceFile(sf);
-			sf.add(linkTo(
-					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId,
-							pairedFileForSequenceFile.getId())).withRel(REL_PAIR));
-		} catch (EntityNotFoundException ex) {
-			logger.trace("No pair for file " + sequenceFileId);
-		}
 
 		// add the resource to the response
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sf);
