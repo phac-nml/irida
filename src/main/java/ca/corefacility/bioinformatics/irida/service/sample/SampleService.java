@@ -125,6 +125,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sequenceFile
 	 *            the {@link SequenceFile} that we're moving.
 	 */
+	@Deprecated
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
 	
 	/**
