@@ -183,15 +183,15 @@ public class SampleSequenceFilesControllerTest {
 	@Test(expected = EntityNotFoundException.class)
 	public void testCantGetSequenceFileForOtherSample() {
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf = new SequenceFile();
-		sf.setId(5L);
+
+		Long objectId = 5L;
+		Long fileId = 3L;
 
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenThrow(
+		when(sequencingObjectService.readSequencingObjectForSample(s, objectId)).thenThrow(
 				new EntityNotFoundException("not in sample"));
 
-		controller.getSequenceFileForSample(s.getId(), sf.getId());
-
+		controller.readSequenceFileForSequencingObject(s.getId(), "unpaired", objectId, fileId);
 	}
 
 	@Test
