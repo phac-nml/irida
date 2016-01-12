@@ -169,6 +169,14 @@ public class FontAwesome {
 	private static final String CARET_DOWN_ICON = "caret-down";
 
 	/*
+	 * Attribute for next and previous buttons.
+	 */
+	public static final String NEXT_ATTRIBUTE = "next";
+	public static final String NEXT_ICON = "chevron-circle-right";
+	public static final String PREVIOUS_ATTRIBUTE = "prev";
+	public static final String PREVIOUS_ICON = "chevron-circle-left";
+
+	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
     * attribute to append this class. This will line up the icons properly.
     */
@@ -208,6 +216,8 @@ public class FontAwesome {
 			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
 			.put(CLOUD_ATTRIBUTE, CLOUD_ICON)
 			.put(CARET_DOWN_ATTRIBUTE, CARET_DOWN_ICON)
+			.put(NEXT_ATTRIBUTE, NEXT_ICON)
+			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
 			.build();
 	// @formatter:on
 

@@ -40,7 +40,8 @@
     "noty": "2.3.7",
     "datatables-bootstrap3-plugin": "~0.4.0",
     "angular-notification-icons": "~0.4.3",
-    "angular-datatables": "~0.5.2"
+    "angular-datatables": "~0.5.2",
+    "angular-bootstrap-lightbox": "0.10.0"
   },
   "devDependencies": {},
   "resolutions": {
