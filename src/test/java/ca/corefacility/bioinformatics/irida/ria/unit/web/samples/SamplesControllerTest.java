@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -39,12 +38,10 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -153,7 +150,6 @@ public class SamplesControllerTest {
 				model.containsAttribute(SamplesController.LATITUDE));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFiles() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -166,10 +162,12 @@ public class SamplesControllerTest {
 		User user = new User();
 		Project project = new Project();
 
-		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+		List<SampleSequencingObjectJoin> files = Lists.newArrayList(new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
+				.thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
@@ -181,8 +179,8 @@ public class SamplesControllerTest {
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService).read(sampleId);
-		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
-		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SequenceFilePair.class);
 	}
 
 	@Test
@@ -197,11 +195,12 @@ public class SamplesControllerTest {
 		User user = new User();
 		user.setSystemRole(Role.ROLE_ADMIN);
 
-		@SuppressWarnings("unchecked")
-		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+		List<SampleSequencingObjectJoin> files = Lists.newArrayList(new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
+				.thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 
 		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
@@ -210,12 +209,11 @@ public class SamplesControllerTest {
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService).read(sampleId);
-		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
-		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		verifyZeroInteractions(projectService);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFilesNoAccess() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -228,10 +226,14 @@ public class SamplesControllerTest {
 		User user = new User();
 		Project project = new Project();
 
-		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+		List<SampleSequencingObjectJoin> files = Lists.newArrayList(new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+
+		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
+				.thenReturn(files);
+
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
@@ -244,8 +246,8 @@ public class SamplesControllerTest {
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService).read(sampleId);
-		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
-		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SequenceFilePair.class);
 	}
 
 	@Test
@@ -339,24 +341,24 @@ public class SamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
 
-		List<MultipartFile> fileList = createMultipartFileList(ArrayUtils.addAll(MULTIPARTFILE_PATHS, MULTIPARTFILE_PAIR_PATHS));
+		List<MultipartFile> fileList = createMultipartFileList(ArrayUtils.addAll(MULTIPARTFILE_PATHS,
+				MULTIPARTFILE_PAIR_PATHS));
 
-		ArgumentCaptor<SequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
-		ArgumentCaptor<SequenceFile> sequenceFileOneArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
-		ArgumentCaptor<SequenceFile> sequenceFileTwoArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<SequencingObject> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequencingObject.class);
 
 		HttpServletResponse response = new MockHttpServletResponse();
 		controller.uploadSequenceFiles(sample.getId(), fileList, response);
 
 		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
-		verify(sequenceFileService, times(2)).createSequenceFileInSample(sequenceFileArgumentCaptor.capture(),
-				any(Sample.class));
-		verify(sequenceFileService, times(1)).createSequenceFilePairInSample(sequenceFileOneArgumentCaptor.capture(),
-				sequenceFileTwoArgumentCaptor.capture(), any(Sample.class));
-		assertEquals("Should have the correct file name", "pair_test_R1_001.fastq",
-				sequenceFileOneArgumentCaptor.getValue().getLabel());
-		assertEquals("Should have the correct file name", "pair_test_R2_001.fastq",
-				sequenceFileTwoArgumentCaptor.getValue().getLabel());
+		verify(sequencingObjectService, times(3)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
+				eq(sample));
+
+		List<SequencingObject> allValues = sequenceFileArgumentCaptor.getAllValues();
+
+		assertEquals("Should have created 2 single end sequence files", 2,
+				allValues.stream().filter(o -> o instanceof SingleEndSequenceFile).count());
+		assertEquals("Should have created 1 file pair", 1, allValues.stream()
+				.filter(o -> o instanceof SequenceFilePair).count());
 	}
 
 	/**
