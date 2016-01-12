@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysis
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
@@ -54,6 +55,7 @@ public class SampleServiceImplTest {
 	private AnalysisRepository analysisRepository;
 	private SequenceFilePairRepository sequenceFilePairRepository;
 	private AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
+	private SampleSequencingObjectJoinRepository ssoRepository;
 	private Validator validator;
 	
 	private AssembledGenomeAnalysis assembledGenome1;
@@ -77,7 +79,8 @@ public class SampleServiceImplTest {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, analysisRepository,
-				sequenceFilePairRepository, assembledGenomeAnalysisRepository, validator);
+				ssoRepository, sequenceFilePairRepository, assembledGenomeAnalysisRepository, validator);
+		
 	}
 	
 	@Test

@@ -32,13 +32,16 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
@@ -72,6 +75,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	
 	private final SequenceFilePairRepository sequenceFilePairRepository;
 	
+	private SampleSequencingObjectJoinRepository ssoRepository;
+	
 	private final AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
 
 	/**
@@ -99,7 +104,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
-			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository,
+			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			final SequenceFilePairRepository sequenceFilePairRepository, AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository,
 			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
@@ -109,6 +114,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.analysisRepository = analysisRepository;
 		this.sequenceFilePairRepository = sequenceFilePairRepository;
 		this.assembledGenomeAnalysisRepository = assembledGenomeAnalysisRepository;
+		this.ssoRepository = ssoRepository;
 	}
 	
 	/**
@@ -211,7 +217,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canUpdateSample')")
 	public void removeSequenceFilePairFromSample(Sample sample, SequenceFilePair pair) {
-		pair.getFiles().forEach((f) -> removeSequenceFileFromSample(sample, f));
+		removeSequencingObjectFromSample(sample, pair);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canUpdateSample')")
+	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) {
+		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, object.getId());
+		ssoRepository.delete(readObjectForSample);
 	}
 
 	/**

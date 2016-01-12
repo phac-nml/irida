@@ -254,7 +254,7 @@ public class SamplesControllerTest {
 
 		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 		HttpServletRequest request = new MockHttpServletRequest();
-		controller.removeFileFromSample(attributes, sampleId, fileId, request, Locale.US);
+		controller.removeSequencingObjectFromSample(attributes, sampleId, fileId, request, Locale.US);
 
 		verify(sampleService).removeSequenceFileFromSample(sample, file);
 	}

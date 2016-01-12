@@ -14,8 +14,10 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -125,6 +127,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sequenceFile
 	 *            the {@link SequenceFile} that we're moving.
 	 */
+	@Deprecated
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
 	
 	/**
@@ -136,7 +139,19 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param pair
 	 *            the {@link SequenceFilePair} containing the files to remove
 	 */
+	@Deprecated
 	public void removeSequenceFilePairFromSample(Sample sample, SequenceFilePair pair);
+	
+	/**
+	 * Remove a {@link SequencingObject} from a given {@link Sample}. This will
+	 * delete the {@link SampleSequencingObjectJoin} object
+	 * 
+	 * @param sample
+	 *            {@link Sample} to remove sequences from
+	 * @param object
+	 *            {@link SequencingObject} to remove
+	 */
+	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object);
 
 	/**
 	 * Merge multiple samples into one. Merging samples copies the
