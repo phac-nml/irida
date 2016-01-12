@@ -136,6 +136,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param pair
 	 *            the {@link SequenceFilePair} containing the files to remove
 	 */
+	@Deprecated
 	public void removeSequenceFilePairFromSample(Sample sample, SequenceFilePair pair);
 
 	/**

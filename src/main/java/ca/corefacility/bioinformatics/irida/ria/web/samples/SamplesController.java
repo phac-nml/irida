@@ -283,7 +283,7 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
-	 * Remove a given sequence file from a sample
+	 * Remove a given {@link SequencingObject} from a sample
 	 *
 	 * @param attributes
 	 *            the redirect attributes where we can add flash-scoped messages
@@ -291,7 +291,7 @@ public class SamplesController extends BaseController {
 	 * @param sampleId
 	 *            the {@link Sample} id
 	 * @param fileId
-	 *            The {@link SequenceFile} id
+	 *            The {@link SequencingObject} id
 	 * @param request
 	 *            {@link HttpServletRequest}
 	 * @param locale
@@ -302,58 +302,20 @@ public class SamplesController extends BaseController {
 	public String removeFileFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
 			@RequestParam Long fileId, HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
-		SequenceFile sequenceFile = sequenceFileService.read(fileId);
+		SequencingObject sequencingObject = sequencingObjectService.readSequencingObjectForSample(sample, fileId);
 
 		try {
-			sampleService.removeSequenceFileFromSample(sample, sequenceFile);
-			attributes.addFlashAttribute("fileDeleted", true);
-			attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage(
-					"samples.files.removed.message", new Object[] { sequenceFile.getLabel() }, locale));
-		} catch (Exception e) {
-			logger.error("Could not remove sequence file from sample: ", e);
-			attributes.addFlashAttribute("fileDeleted", true);
-			attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage("samples.files.remove.error",
-					new Object[] { sequenceFile.getLabel() }, locale));
-		}
-
-		return "redirect:" + request.getHeader("referer");
-	}
-
-	/**
-	 * Delete a {@link SequenceFilePair} from a {@link Sample}. This will remove
-	 * both {@link SequenceFile}s from the {@link Sample}
-	 * 
-	 * @param attributes
-	 *            the redirect attributes where we can add flash-scoped messages
-	 *            for the client.
-	 * @param sampleId
-	 *            ID of the {@link Sample} to remove from
-	 * @param pairId
-	 *            ID of the {@link SequenceFilePair} to remove
-	 * @param request
-	 *            {@link HttpServletRequest}
-	 * @param locale
-	 *            Locale of the request
-	 * @return Redirect back to the page
-	 */
-	@RequestMapping(value = "/samples/{sampleId}/files/delete/pair", method = RequestMethod.POST)
-	public String removeFilePairFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
-			@RequestParam Long pairId, HttpServletRequest request, Locale locale) {
-		Sample sample = sampleService.read(sampleId);
-		SequenceFilePair sequenceFilePair = sequenceFilePairService.read(pairId);
-
-		try {
-			sampleService.removeSequenceFilePairFromSample(sample, sequenceFilePair);
+			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
 			attributes.addFlashAttribute("fileDeleted", true);
 			attributes.addFlashAttribute(
 					"fileDeletedMessage",
 					messageSource.getMessage("samples.files.removed.message",
-							new Object[] { sequenceFilePair.getLabel() }, locale));
+							new Object[] { sequencingObject.getLabel() }, locale));
 		} catch (Exception e) {
-			logger.error("Could not remove sequence file pair from sample: ", e);
+			logger.error("Could not remove sequence file from sample: ", e);
 			attributes.addFlashAttribute("fileDeleted", true);
 			attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage("samples.files.remove.error",
-					new Object[] { sequenceFilePair.getLabel() }, locale));
+					new Object[] { sequencingObject.getLabel() }, locale));
 		}
 
 		return "redirect:" + request.getHeader("referer");
