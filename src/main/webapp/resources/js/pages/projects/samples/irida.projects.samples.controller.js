@@ -10,6 +10,7 @@
 		};
 
 		vm.dtOptions = tableService.createTableOptions();
+		vm.dtColumnDefs = tableService.createColumnDefinitions();
 
 		samplesService.fetchSamples().then(function (samples) {
 			vm.samples = samples;
@@ -29,6 +30,10 @@
 				vm.allSelected = false;
 			}
 			updateEnabled();
+		};
+
+		vm.displayProjectsModal = function() {
+			$log.warn("TODO: Implement displaying multiple projects");
 		};
 
 		vm.merge = function () {

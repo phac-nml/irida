@@ -21,14 +21,20 @@
 			}
 		};
 	</script>
+	<style>
+		.dataTables_paginate {
+			display: flex;
+			justify-content: center;
+		}
+	</style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables" ng-controller="SamplesController as samplesCtrl">
 
-	<table datatable="ng" class="table"  dt-options="samplesCtrl.dtOptions" dt-instance="samplesCtrl.dtInstanceCallback">
+	<table datatable="ng" class="table"  dt-options="samplesCtrl.dtOptions" dt-instance="samplesCtrl.dtInstanceCallback" dt-column-defs="samplesCtrl.dtColumnDefs">
 		<thead>
 		<tr>
-			<th width="30px"><input type="checkbox" ng-model="samplesCtrl.allSelected" ng-click="samplesCtrl.updateAllSelected()" /></th>
+			<th width="10px"><input type="checkbox" ng-model="samplesCtrl.allSelected" ng-click="samplesCtrl.updateAllSelected()" /></th>
 			<th th:text="#{project.samples.table.name}">[Name]</th>
 			<th th:text="#{project.samples.table.modified}" width="130px">[Modified Date]</th>
 			<th th:text="#{project.samples.table.created}" width="130px">[Created Date]</th>
@@ -48,14 +54,10 @@
 
 <th:block layout:fragment="scripts">
 	<script type="text/ng-template" id="buttons.html">
-		<div class="btn-toolbar" style="margin-bottom: 1rem;">
+		<div class="btn-toolbar">
 			<!-- PROJECTS TO DISPLAY -->
-			<div class="btn-group btn-group-sm">
-				<button class="btn btn-default">
-					<span th:text="#{project.samples.display.title}">_Display_</span>
-					<fa:icon type="caret-down" fixed="true" />
-				</button>
-			</div>
+			<button id="display-projects-btn" class="btn btn-default btn-sm" th:text="#{project.samples.display.title}"
+			        ng-click="samplesCtrl.displayProjectsModal()"></button>
 
 			<!-- SAMPLE ACTIONS -->
 			<div class="btn-group btn-group-sm">
@@ -84,7 +86,6 @@
 					<fa:icon type="caret-down" fixed="true" />
 				</button>
 				<ul class="ng-cloak" uib-dropdown-menu="" role="menu" aria-labelledby="export-btn">
-					<li class="dropdown-header">Export Samples</li>
 					<li role="menuitem">
 						<a id="exportDownloadBtn" href="#">
 							<fa:icon type="download" fixed="true"/>
@@ -113,7 +114,6 @@
 						</a>
 					</li>
 					<li role="separator" class="divider"></li>
-					<li class="dropdown-header">Export table to File</li>
 					<li role="menuitem">
 						<a href="">Excel</a>
 					</li>
