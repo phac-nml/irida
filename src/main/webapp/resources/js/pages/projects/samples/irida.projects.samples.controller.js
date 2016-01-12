@@ -24,11 +24,7 @@
 		};
 
 		vm.sampleChanged = function (index) {
-			if (vm.selected.length === vm.samples.length) {
-				vm.allSelected = true;
-			} else {
-				vm.allSelected = false;
-			}
+			vm.allSelected = vm.selected.length === vm.samples.length;
 			updateEnabled();
 		};
 
