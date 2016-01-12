@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -197,41 +198,46 @@ public class SampleSequenceFilesControllerTest {
 	@Test
 	public void testAddNewSequenceFileToSample() throws IOException {
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf = TestDataFactory.constructSequenceFile();
-		Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
+		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
+		SequenceFile sf = so.getSequenceFile();
+		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
+
 		SequenceFileResource resource = new SequenceFileResource();
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
 				.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s)))
-				.thenReturn(r);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s)))
+				.thenReturn(sso);
+
 		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
-		ModelMap modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource,response);
+		ModelMap modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
 		verify(sampleService).read(s.getId());
 		verify(sampleService, times(1)).read(s.getId());
-		verify(sequenceFileService).createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s));
-		
+		verify(sequencingObjectService)
+				.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s));
+
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertNotNull("object must not be null",o);
-		assertTrue("object must be a SequenceFile",o instanceof SequenceFile);
+		assertNotNull("object must not be null", o);
+		assertTrue("object must be a SequenceFile", o instanceof SequenceFile);
 		SequenceFile sfr = (SequenceFile) o;
 
-		assertEquals("response must have CREATED status",HttpStatus.CREATED.value(), response.getStatus());
+		assertEquals("response must have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
 		Link self = sfr.getLink(Link.REL_SELF);
 		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-		
+
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
-		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
-		assertNotNull("self reference must exist",self);
-		assertEquals("self reference must be correct",sequenceFileLocation, self.getHref());
-		assertNotNull("sequence files link must exist",sampleSequenceFiles);
-		assertEquals("sequence files location must be correct",sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
-		assertNotNull("sample link must exist",sample);
-		assertEquals("sample location must be correct",sampleLocation, sample.getHref());
-		
+		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + sf.getId();
+		assertNotNull("self reference must exist", self);
+		assertEquals("self reference must be correct", sequenceFileLocation, self.getHref());
+		assertNotNull("sequence files link must exist", sampleSequenceFiles);
+		assertEquals("sequence files location must be correct", sampleLocation + "/sequenceFiles",
+				sampleSequenceFiles.getHref());
+		assertNotNull("sample link must exist", sample);
+		assertEquals("sample location must be correct", sampleLocation, sample.getHref());
+
 		Files.delete(f);
 	}
 	

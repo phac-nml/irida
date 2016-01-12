@@ -365,6 +365,8 @@ public class RESTSampleSequenceFilesController {
 		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
 				.createSequencingObjectInSample(singleEndSequenceFile, sample);
 
+		singleEndSequenceFile = (SingleEndSequenceFile) createSequencingObjectInSample.getObject();
+
 		logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject().getId());
 		// clean up the temporary files.
 		Files.deleteIfExists(target);
