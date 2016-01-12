@@ -163,7 +163,7 @@ public class RESTSampleSequenceFilesController {
 				String fileLabel = objectLabels.get(r.getObject().getClass());
 				sf.add(linkTo(
 						methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
-								fileLabel, r.getId(), sf.getId())).withSelfRel());
+								fileLabel, r.getObject().getId(), sf.getId())).withSelfRel());
 
 				resources.add(sf);
 
