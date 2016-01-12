@@ -3,7 +3,7 @@ Changes
 
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
-* [UI]: Fixed a bug in the quick viewing of FastQC analyses graphs.
+* [UI]: Fixed a bug where clicking on FastQC quality charts attempted to download the images instead of viewing them in the browser.
 
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
