@@ -67,10 +67,8 @@ import com.google.common.collect.Lists;
 public class SamplesControllerTest {
 	public static final String[] MULTIPARTFILE_PATHS = { "src/test/resources/files/test_file_1.fastq",
 			"src/test/resources/files/test_file_2.fastq" };
-	public static final String[] MULTIPARTFILE_PAIR_PATHS = {
-			"src/test/resources/files/pairs/pair_test_R1_001.fastq",
-			"src/test/resources/files/pairs/pair_test_R2_001.fastq"
-	};
+	public static final String[] MULTIPARTFILE_PAIR_PATHS = { "src/test/resources/files/pairs/pair_test_R1_001.fastq",
+			"src/test/resources/files/pairs/pair_test_R2_001.fastq" };
 
 	// Services
 	private SamplesController controller;
@@ -255,16 +253,16 @@ public class SamplesControllerTest {
 		Long sampleId = 1L;
 		Long fileId = 2L;
 		Sample sample = new Sample();
-		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
+		SequencingObject file = new SingleEndSequenceFile(new SequenceFile(Paths.get("/tmp")));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sequenceFileService.read(fileId)).thenReturn(file);
+		when(sequencingObjectService.readSequencingObjectForSample(sample, fileId)).thenReturn(file);
 
 		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 		HttpServletRequest request = new MockHttpServletRequest();
 		controller.removeFileFromSample(attributes, sampleId, fileId, request, Locale.US);
 
-		verify(sampleService).removeSequenceFileFromSample(sample, file);
+		verify(sampleService).removeSequencingObjectFromSample(sample, file);
 	}
 
 	// ************************************************************************************************
@@ -301,7 +299,8 @@ public class SamplesControllerTest {
 
 		List<MultipartFile> fileList = createMultipartFileList(MULTIPARTFILE_PATHS);
 
-		ArgumentCaptor<SingleEndSequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SingleEndSequenceFile.class);
+		ArgumentCaptor<SingleEndSequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor
+				.forClass(SingleEndSequenceFile.class);
 
 		HttpServletResponse response = new MockHttpServletResponse();
 		controller.uploadSequenceFiles(sample.getId(), fileList, response);
@@ -363,7 +362,9 @@ public class SamplesControllerTest {
 
 	/**
 	 * Create a list of {@link MultipartFile}
-	 * @param list A list of paths to files.
+	 * 
+	 * @param list
+	 *            A list of paths to files.
 	 * @return
 	 * @throws IOException
 	 */
@@ -372,7 +373,8 @@ public class SamplesControllerTest {
 		for (String pathName : list) {
 			Path path = Paths.get(pathName);
 			byte[] bytes = Files.readAllBytes(path);
-			fileList.add(new MockMultipartFile(path.getFileName().toString(), path.getFileName().toString(), "octet-stream", bytes));
+			fileList.add(new MockMultipartFile(path.getFileName().toString(), path.getFileName().toString(),
+					"octet-stream", bytes));
 		}
 		return fileList;
 	}
