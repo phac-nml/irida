@@ -74,9 +74,7 @@ public class SampleSequenceFilesControllerTest {
 	@Test
 	public void testGetSampleSequenceFiles() throws IOException {
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf = TestDataFactory.constructSequenceFile();
-		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
-		so.setId(2L);
+		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
 		SampleSequencingObjectJoin r = new SampleSequencingObjectJoin(s, so);
 
 		List<SampleSequencingObjectJoin> relationships = Lists.newArrayList(r);
@@ -102,7 +100,8 @@ public class SampleSequenceFilesControllerTest {
 		Link selfCollection = resources.getLink(Link.REL_SELF);
 		Link sample = resources.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
-		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + sf.getId();
+		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/"
+				+ so.getSequenceFile().getId();
 
 		assertEquals(sampleLocation + "/sequenceFiles", selfCollection.getHref());
 		assertEquals(sampleLocation, sample.getHref());
@@ -111,15 +110,13 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFile sfr = resources.iterator().next();
 		Link self = sfr.getLink(Link.REL_SELF);
 		assertEquals(sequenceFileLocation, self.getHref());
-		assertEquals(sf.getFile(), sfr.getFile());
+		assertEquals(so.getSequenceFile().getFile(), sfr.getFile());
 	}
 
 	@Test
 	public void testRemoveSequenceFileFromSample() throws IOException {
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf = TestDataFactory.constructSequenceFile();
-		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
-		so.setId(2L);
+		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
 
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
