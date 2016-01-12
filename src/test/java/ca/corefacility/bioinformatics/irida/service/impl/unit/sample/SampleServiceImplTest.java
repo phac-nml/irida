@@ -79,7 +79,8 @@ public class SampleServiceImplTest {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, analysisRepository,
-				sequenceFilePairRepository, ssoRepository, assembledGenomeAnalysisRepository, validator);
+				ssoRepository, sequenceFilePairRepository, assembledGenomeAnalysisRepository, validator);
+		
 	}
 	
 	@Test
