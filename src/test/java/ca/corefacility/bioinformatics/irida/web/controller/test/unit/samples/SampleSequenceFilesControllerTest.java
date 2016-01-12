@@ -30,7 +30,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -64,6 +66,7 @@ public class SampleSequenceFilesControllerTest {
 		sequenceFileService = mock(SequenceFileService.class);
 		sequenceFilePairService = mock(SequenceFilePairService.class);
 		miseqRunService= mock(SequencingRunService.class);
+		sequencingObjectService = mock(SequencingObjectService.class);
 
 		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, miseqRunService, sequencingObjectService);
 	}
@@ -72,19 +75,22 @@ public class SampleSequenceFilesControllerTest {
 	public void testGetSampleSequenceFiles() throws IOException {
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
-		Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
-		@SuppressWarnings("unchecked")
-		List<Join<Sample, SequenceFile>> relationships = Lists.newArrayList(r);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+		so.setId(2L);
+		SampleSequencingObjectJoin r = new SampleSequencingObjectJoin(s, so);
+
+		List<SampleSequencingObjectJoin> relationships = Lists.newArrayList(r);
 
 		// mock out the service calls
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.getSequenceFilesForSample(s)).thenReturn(relationships);
+
+		when(sequencingObjectService.getSequencingObjectsForSample(s)).thenReturn(relationships);
 
 		ModelMap modelMap = controller.getSampleSequenceFiles(s.getId());
 
 		// verify that the service calls were used.
 		verify(sampleService).read(s.getId());
-		verify(sequenceFileService).getSequenceFilesForSample(s);
+		verify(sequencingObjectService).getSequencingObjectsForSample(s);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
@@ -96,7 +102,7 @@ public class SampleSequenceFilesControllerTest {
 		Link selfCollection = resources.getLink(Link.REL_SELF);
 		Link sample = resources.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
-		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
+		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + sf.getId();
 
 		assertEquals(sampleLocation + "/sequenceFiles", selfCollection.getHref());
 		assertEquals(sampleLocation, sample.getHref());
