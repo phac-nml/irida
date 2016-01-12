@@ -50,8 +50,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -100,24 +98,20 @@ public class SamplesController extends BaseController {
 
 	// Services
 	private final SampleService sampleService;
-	private final SequenceFileService sequenceFileService;
 
 	private final ProjectService projectService;
 	private final UserService userService;
 	private final SequenceFileWebUtilities sequenceFileUtilities;
-	private final SequenceFilePairService sequenceFilePairService;
 	
 	private final SequencingObjectService sequencingObjectService;
 
 	private final MessageSource messageSource;
 
 	@Autowired
-	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService,
-			SequenceFilePairService sequenceFilePairService, UserService userService, ProjectService projectService, SequencingObjectService sequencingObjectService,
-			SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
+	public SamplesController(SampleService sampleService, UserService userService, ProjectService projectService,
+			SequencingObjectService sequencingObjectService, SequenceFileWebUtilities sequenceFileUtilities,
+			MessageSource messageSource) {
 		this.sampleService = sampleService;
-		this.sequenceFileService = sequenceFileService;
-		this.sequenceFilePairService = sequenceFilePairService;
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sequenceFileUtilities = sequenceFileUtilities;

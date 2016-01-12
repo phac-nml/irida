@@ -53,8 +53,6 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -73,8 +71,6 @@ public class SamplesControllerTest {
 	// Services
 	private SamplesController controller;
 	private SampleService sampleService;
-	private SequenceFileService sequenceFileService;
-	private SequenceFilePairService sequenceFilePairService;
 	private UserService userService;
 	private ProjectService projectService;
 	private SequenceFileWebUtilities sequenceFileWebUtilities;
@@ -84,15 +80,13 @@ public class SamplesControllerTest {
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
-		sequenceFileService = mock(SequenceFileService.class);
-		sequenceFilePairService = mock(SequenceFilePairService.class);
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		sequenceFileWebUtilities = new SequenceFileWebUtilities();
 		messageSource = mock(MessageSource.class);
-		controller = new SamplesController(sampleService, sequenceFileService, sequenceFilePairService, userService,
-				projectService, sequencingObjectService, sequenceFileWebUtilities, messageSource);
+		controller = new SamplesController(sampleService, userService, projectService, sequencingObjectService,
+				sequenceFileWebUtilities, messageSource);
 	}
 
 	// ************************************************************************************************
