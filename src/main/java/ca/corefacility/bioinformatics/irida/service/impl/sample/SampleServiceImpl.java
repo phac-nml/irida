@@ -104,7 +104,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
-			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository,
+			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			final SequenceFilePairRepository sequenceFilePairRepository, AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository,
 			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
@@ -114,6 +114,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.analysisRepository = analysisRepository;
 		this.sequenceFilePairRepository = sequenceFilePairRepository;
 		this.assembledGenomeAnalysisRepository = assembledGenomeAnalysisRepository;
+		this.ssoRepository = ssoRepository;
 	}
 	
 	/**
