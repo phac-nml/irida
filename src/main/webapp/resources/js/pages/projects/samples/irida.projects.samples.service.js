@@ -39,7 +39,28 @@
 		};
 	}
 
-	ng.module("irida.projects.samples.service", [])
-		.factory("samplesService", ["$http", "$q", samplesService]);
+	function tableService($compile, $templateCache, DTOptionsBuilder) {
+		var table;
+		function createTableOptions() {
+			return DTOptionsBuilder.newOptions()
+				.withDOM("<'row filter-row'<'col-sm-9 buttons'><'col-sm-3'0f>><'row datatables-active-filters'1><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
+		}
+
+		function initTable($scope, instance) {
+			table = instance;
+			table.DataTable.on("draw.dt", function () {
+				ng.element(".buttons").html($compile($templateCache.get("buttons.html"))($scope));
+			});
+		}
+
+		return {
+			createTableOptions: createTableOptions,
+			initTable: initTable
+		};
+	}
+
+	ng.module("irida.projects.samples.service", ["datatables"])
+		.factory("samplesService", ["$http", "$q", samplesService])
+		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", tableService]);
 	;
 })(window.angular, window._, window.PAGE);

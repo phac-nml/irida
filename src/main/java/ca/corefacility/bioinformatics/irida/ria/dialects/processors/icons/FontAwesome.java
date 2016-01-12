@@ -153,14 +153,20 @@ public class FontAwesome {
 	/*
 	 * Attribute for an external link
 	 */
-	public static final String EXTERNAL_LINK_ATTRIBUTE = "external-link";
-	public static final String EXTERNAL_LINK_ICON = "external-link";
+	private static final String EXTERNAL_LINK_ATTRIBUTE = "external-link";
+	private static final String EXTERNAL_LINK_ICON = "external-link";
 
 	/*
 	 * Attribute for cloud upload
 	 */
-	public static final String CLOUD_ATTRIBUTE = "cloud";
-	public static final String CLOUD_ICON = "cloud";
+	private static final String CLOUD_ATTRIBUTE = "cloud";
+	private static final String CLOUD_ICON = "cloud";
+
+	/*
+	 * Attribute for an dropdown carets
+	 */
+	private static final String CARET_DOWN_ATTRIBUTE = "caret-down";
+	private static final String CARET_DOWN_ICON = "caret-down";
 
 	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
@@ -201,6 +207,7 @@ public class FontAwesome {
 			.put(EXTERNAL_LINK_ATTRIBUTE, EXTERNAL_LINK_ICON)
 			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
 			.put(CLOUD_ATTRIBUTE, CLOUD_ICON)
+			.put(CARET_DOWN_ATTRIBUTE, CARET_DOWN_ICON)
 			.build();
 	// @formatter:on
 

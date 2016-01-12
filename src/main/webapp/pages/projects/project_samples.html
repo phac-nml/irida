@@ -49,18 +49,21 @@
 <th:block layout:fragment="scripts">
 	<script type="text/ng-template" id="buttons.html">
 		<div class="btn-toolbar" style="margin-bottom: 1rem;">
+			<!-- PROJECTS TO DISPLAY -->
 			<div class="btn-group btn-group-sm">
 				<button class="btn btn-default">
 					<span th:text="#{project.samples.display.title}">_Display_</span>
-					<span class="caret"></span>
+					<fa:icon type="caret-down" fixed="true" />
 				</button>
 			</div>
+
+			<!-- SAMPLE ACTIONS -->
 			<div class="btn-group btn-group-sm">
-				<button class="btn btn-default">
+				<button class="btn btn-default" ng-click="samplesCtrl.merge()">
 					<fa:icon type="merge" fixed="true"/>
 					<span th:text="#{project.samples.nav.merge}">Merge</span>
 				</button>
-				<button class="btn btn-default">
+				<button class="btn btn-default" ng-click="samplesCtrl.copy()">
 					<fa:icon type="copy" fixed="true"/>
 					<span th:text="#{project.samples.nav.copy}">_COPY_</span>
 				</button>
@@ -74,10 +77,11 @@
 				</button>
 			</div>
 
+			<!-- SAMPLE EXPORT -->
 			<div class="btn-group btn-group-sm" uib-dropdown="">
 				<button id="export-btn" class="btn btn-default" uib-dropdown-toggle="">
 					<span th:text="#{project.samples.export.label}">Export</span>
-					<span class="caret"></span>
+					<fa:icon type="caret-down" fixed="true" />
 				</button>
 				<ul class="ng-cloak" uib-dropdown-menu="" role="menu" aria-labelledby="export-btn">
 					<li class="dropdown-header">Export Samples</li>
@@ -116,9 +120,10 @@
 				</ul>
 			</div>
 
+			<!-- CART ACTIONS -->
 			<div class="btn-group btn-group-sm">
 				<button id="cart-add-btn"
-				        class="btn btn-primary" ng-disabled="subnav.count&lt;1">
+				        class="btn btn-primary" ng-disabled="samplesCtrl.disabled.lessThanOne" ng-click="samplesCtrl.addToCart()">
 					<fa:icon type="cart-plus" fixed="true"/>
 					<span th:text="#{project.samples.nav.add-to-cart}">Add to Cart></span>
 				</button>

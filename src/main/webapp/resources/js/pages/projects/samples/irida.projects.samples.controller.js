@@ -1,18 +1,25 @@
 (function (ng) {
 	"use strict";
 
-	function SamplesController($scope, $templateCache, $compile, service, DTOptionsBuilder) {
+	function SamplesController($scope, $log, samplesService, tableService) {
 		var vm = this;
-		vm.selected = {};
-		vm.dtInstance = {};
+		vm.selected = Object.create(null);
+		vm.disabled = {
+			lessThanTwo: true,
+			lessThanOne: true
+		};
 
-		vm.dtOptions = DTOptionsBuilder.newOptions()
-			.withDOM("<'row filter-row'<'col-sm-9 buttons'><'col-sm-3'0f>><'row datatables-active-filters'1><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
+		vm.dtOptions = tableService.createTableOptions();
+
+		samplesService.fetchSamples().then(function (samples) {
+			vm.samples = samples;
+		});
 
 		vm.updateAllSelected = function () {
 			vm.samples.forEach(function (sample, index) {
 				vm.selected[index] = vm.allSelected;
 			});
+			updateEnabled();
 		};
 
 		vm.sampleChanged = function (index) {
@@ -21,26 +28,49 @@
 			} else {
 				vm.allSelected = false;
 			}
+			updateEnabled();
 		};
 
-		service.fetchSamples().then(function (samples) {
-			vm.samples = samples;
-		});
+		vm.merge = function () {
+			$log.warn("TODO: Implement merge functionality");
+		};
 
+		vm.copy = function () {
+			$log.warn("TODO: Implement copy functionality");
+		};
 
-		var buttons = $templateCache.get("buttons.html");
+		vm.move = function () {
+			$log.warn("TODO: Implement move functionality");
+		};
+
+		vm.delete = function () {
+			$log.warn("TODO: Implement delete functionality");
+		};
+
+		vm.addToCart = function () {
+				$log.warn("TODO: Implement add to cart functionality");
+			};
 
 		vm.dtInstanceCallback = function(instance) {
-			vm.dtInstance = instance;
-
-			vm.dtInstance.DataTable.on("draw.dt", function () {
-				console.log('Drawn');
-				ng.element(".buttons").html($compile(buttons)($scope));
-			});
+			tableService.initTable($scope, instance);
 		};
+
+		function updateEnabled() {
+			// Remove false values
+			for(var prop in vm.selected) {
+				if(!vm.selected[prop]){
+					delete vm.selected[prop];
+				}
+			}
+			// Update UI buttons depending on the number of samples selected
+			var count = Object.keys(vm.selected).length;
+			vm.disabled = {
+				lessThanTwo: count < 2,
+				lessThanOne: count < 1
+			};
+		}
 	}
 
-	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "datatables"])
-		.controller("SamplesController", ["$scope", "$templateCache", "$compile", "samplesService", "DTOptionsBuilder", SamplesController]);
-	;
+	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service"])
+		.controller("SamplesController", ["$scope", "$log",  "samplesService", "tableService", SamplesController]);
 })(window.angular);
