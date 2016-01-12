@@ -299,7 +299,7 @@ public class SamplesController extends BaseController {
 	 * @return map stating the request was successful
 	 */
 	@RequestMapping(value = "/samples/{sampleId}/files/delete", method = RequestMethod.POST)
-	public String removeFileFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
+	public String removeSequencingObjectFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
 			@RequestParam Long fileId, HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		SequencingObject sequencingObject = sequencingObjectService.readSequencingObjectForSample(sample, fileId);
