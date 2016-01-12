@@ -499,28 +499,24 @@ public class RESTSampleSequenceFilesController {
 	}
 
 	/**
-	 * Remove a {@link SequenceFile} from a {@link Sample}. The
-	 * {@link SequenceFile} will be moved to the {@link Project} that is related
-	 * to this {@link Sample}.
+	 * Remove a {@link SequencingObject} from a {@link Sample}.
 	 * 
 	 * @param sampleId
 	 *            the source {@link Sample} identifier.
-	 * @param sequenceFileId
-	 *            the identifier of the {@link SequenceFile} to move.
+	 * @param objectId
+	 *            the identifier of the {@link SequencingObject} to move.
 	 * @return a status indicating the success of the move.
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
-	public ModelMap removeSequenceFileFromSample(@PathVariable Long sampleId, @PathVariable Long sequenceFileId) {
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.DELETE)
+	public ModelMap removeSequenceFileFromSample(@PathVariable Long sampleId, @PathVariable String objectType,
+			@PathVariable Long objectId) {
 		ModelMap modelMap = new ModelMap();
 		// load the project, sample and sequence file from the database
 		Sample s = sampleService.read(sampleId);
-		SequenceFile sf = sequenceFileService.read(sequenceFileId);
+		SequencingObject seqObject = sequencingObjectService.readSequencingObjectForSample(s, objectId);
 
-		// ask the service to remove the sample from the sequence file and
-		// associate it with the project. The service
-		// responds with the new relationship between the project and the
-		// sequence file.
-		sampleService.removeSequenceFileFromSample(s, sf);
+		// ask the service to remove the sample from the sequence file
+		sampleService.removeSequencingObjectFromSample(s, seqObject);
 
 		// respond with a link to the sample, the new location of the sequence
 		// file (as it is associated with the

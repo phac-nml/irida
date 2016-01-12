@@ -118,16 +118,17 @@ public class SampleSequenceFilesControllerTest {
 	public void testRemoveSequenceFileFromSample() throws IOException {
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+		so.setId(2L);
 
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
+		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ModelMap modelMap = controller.removeSequenceFileFromSample(s.getId(), sf.getId());
+		ModelMap modelMap = controller.removeSequenceFileFromSample(s.getId(), "unpaired", so.getId());
 
 		verify(sampleService, times(1)).read(s.getId());
-		verify(sequenceFileService, times(1)).read(sf.getId());
-
-		verify(sampleService, times(1)).removeSequenceFileFromSample(s, sf);
+		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
+		verify(sampleService, times(1)).removeSequencingObjectFromSample(s, so);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);
