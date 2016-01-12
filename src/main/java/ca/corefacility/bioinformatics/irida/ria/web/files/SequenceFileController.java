@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -169,8 +168,9 @@ public class SequenceFileController {
 				BufferedImage thumbnail = Scalr
 						.resize(image, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, 160, Scalr.OP_ANTIALIAS);
 				ImageIO.write(thumbnail, "png", response.getOutputStream());
+			} else {
+				response.getOutputStream().write(chart);
 			}
-			response.getOutputStream().write(chart);
 		}
 		response.flushBuffer();
 	}
