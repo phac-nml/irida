@@ -1,12 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
+import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -144,7 +149,7 @@ public class SequenceFileController {
 	 */
 	@RequestMapping(value = "/sequenceFiles/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
 	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type,
-			HttpServletResponse response) throws IOException {
+			HttpServletResponse response, @RequestParam(defaultValue = "false") boolean thumb) throws IOException {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
 		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(file);
 		if (fastQC != null) {
@@ -158,7 +163,14 @@ public class SequenceFileController {
 			} else {
 				throw new EntityNotFoundException("Image not found");
 			}
-			response.getOutputStream().write(chart);
+			if (thumb) {
+				BufferedImage image = ImageIO.read(new ByteArrayInputStream(chart));
+				BufferedImage thumbnail = Scalr
+						.resize(image, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, 160, Scalr.OP_ANTIALIAS);
+				ImageIO.write(thumbnail, "png", response.getOutputStream());
+			} else {
+				response.getOutputStream().write(chart);
+			}
 		}
 		response.flushBuffer();
 	}
