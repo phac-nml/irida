@@ -1,7 +1,7 @@
 (function (ng) {
 	"use strict";
 
-	function SamplesController($scope, $templateCache, service, DTOptionsBuilder) {
+	function SamplesController($scope, $templateCache, $compile, service, DTOptionsBuilder) {
 		var vm = this;
 		vm.selected = {};
 		vm.dtInstance = {};
@@ -30,12 +30,17 @@
 
 		var buttons = $templateCache.get("buttons.html");
 
-		$scope.$on('event:dataTableLoaded', function () {
-			console.log("You got it!");
-		});
+		vm.dtInstanceCallback = function(instance) {
+			vm.dtInstance = instance;
+
+			vm.dtInstance.DataTable.on("draw.dt", function () {
+				console.log('Drawn');
+				ng.element(".buttons").html($compile(buttons)($scope));
+			});
+		};
 	}
 
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "datatables"])
-		.controller("SamplesController", ["$scope", "$templateCache", "samplesService", "DTOptionsBuilder", SamplesController]);
+		.controller("SamplesController", ["$scope", "$templateCache", "$compile", "samplesService", "DTOptionsBuilder", SamplesController]);
 	;
 })(window.angular);

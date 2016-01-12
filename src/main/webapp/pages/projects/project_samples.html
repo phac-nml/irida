@@ -25,7 +25,7 @@
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables" ng-controller="SamplesController as samplesCtrl">
 
-	<table datatable="ng" class="table"  dt-options="samplesCtrl.dtOptions" dt-instance="samplesCtrl.dtInstance">
+	<table datatable="ng" class="table"  dt-options="samplesCtrl.dtOptions" dt-instance="samplesCtrl.dtInstanceCallback">
 		<thead>
 		<tr>
 			<th width="30px"><input type="checkbox" ng-model="samplesCtrl.allSelected" ng-click="samplesCtrl.updateAllSelected()" /></th>
