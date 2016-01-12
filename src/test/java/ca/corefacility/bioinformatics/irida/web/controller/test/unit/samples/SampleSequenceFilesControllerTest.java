@@ -146,40 +146,37 @@ public class SampleSequenceFilesControllerTest {
 	@Test
 	public void testGetSequenceFileForSample() throws IOException {
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf = TestDataFactory.constructSequenceFile();
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s, sf);
-		SequenceFile pairFile = TestDataFactory.constructSequenceFile();
+		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
 
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenReturn(join);
-		when(sequenceFilePairService.getPairedFileForSequenceFile(sf)).thenReturn(pairFile);
+		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ModelMap modelMap = controller.getSequenceFileForSample(s.getId(), sf.getId());
+		ModelMap modelMap = controller.readSequenceFileForSequencingObject(s.getId(),
+				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(), so.getSequenceFile()
+						.getId());
 
 		verify(sampleService).read(s.getId());
-		verify(sequenceFileService).getSequenceFileForSample(s, sf.getId());
-		verify(sequenceFilePairService).getPairedFileForSequenceFile(sf);
+		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);
 		assertTrue(o instanceof SequenceFile);
 		SequenceFile sfr = (SequenceFile) o;
-		assertEquals(sf.getFile(), sfr.getFile());
+		assertEquals(so.getSequenceFile().getFile(), sfr.getFile());
 
 		Link self = sfr.getLink(Link.REL_SELF);
 		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-		Link pair = sfr.getLink(RESTSampleSequenceFilesController.REL_PAIR);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
-		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
+		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/"
+				+ so.getSequenceFile().getId();
 
 		assertNotNull(self);
 		assertEquals(sequenceFileLocation, self.getHref());
 		assertNotNull(sampleSequenceFiles);
 		assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
 		assertNotNull(sample);
-		assertNotNull(pair);
 		assertEquals(sampleLocation, sample.getHref());
 	}
 
