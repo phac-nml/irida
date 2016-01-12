@@ -4,12 +4,37 @@
       layout:decorator="sequenceFiles/_base">
 <head>
     <title th:text="${file.getLabel()}"></title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
-          href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
+    <script th:inline="javascript">
+        window.dependencies = ["irida.sequence-files"];
+        window.PAGE = {
+            images: [
+                {
+                    "url": /*[[@{/sequenceFiles/img/{id}/perbase(id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
+                    "caption": /*[[#{sf.img.perbase}]]*/ "Quality Score Distribution Over all Sequence Files"
+                },
+                {
+                    "url": /*[[@{/sequenceFiles/img/{id}/persequence(id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
+                    "caption": /*[[#{sf.img.persequence}]]*/ "Quality score distribution over all sequences"
+                },
+                {
+                    "url": /*[[@{/sequenceFiles/img/{id}/duplicationlevel(id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
+                    "caption": /*[[#{sf.img.dublicationlevel}]]*/ "Sequence Duplication Level"
+                }
+            ]
+        };
+    </script>
+    <style>
+        .modal-dialog {
+            width: 830px!important;
+        }
+        .media:not(:last-of-type) {
+            padding-bottom:1rem;
+        }
+    </style>
 </head>
 <body>
 
-<main layout:fragment="main">
+<main layout:fragment="main" ddl:bundle-includes="sequence-files">
     <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
 
     <p class="lead" th:text="${fastQC.description}">...</p>
@@ -17,70 +42,34 @@
     <section class="sequenceFile">
         <h2 th:text="#{sf.quality-charts}">__Quality_Charts__</h2>
 
-        <div class="row">
-            <div class="col-md-4">
-                <a class="image-link" th:href="@{/sequenceFiles/img/{id}/perbase(id=${file.getId()})}" href="#"
-                   title="Quality scores across all bases">
-                    <img th:src="@{/sequenceFiles/img/{id}/perbase(id=${file.getId()})}" src=""
-                         th:alt="#{sf.img.perbase}"
-                         alt="Quality scores across all bases"/></a>
-            </div>
-            <div class="col-md-8">
-                <h2 th:text="#{sf.img.perbase}"></h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <a class="image-link" th:href="@{/sequenceFiles/img/{id}/persequence(id=${file.getId()})}"
-                   href="#"
-                   title="Quality score distribution over all sequences">
-                    <img th:src="@{/sequenceFiles/img/{id}/persequence(id=${file.getId()})}"
-                         src="/sequenceFile/img/1-persequence"
-                         th:alt="#{sf.img.persequence}"
-                         alt="Quality score distribution over all sequences"/></a>
-            </div>
-            <div class="col-md-8">
-                <h2 th:text="#{sf.img.persequence}"></h2>
+        <div ng-controller="FastQCController as fastqc">
+            <div class="media" ng-repeat="image in fastqc.images">
+                <div class="media-left">
+                    <a href="#" ng-click="fastqc.openLightbox($index)">
+                        <img ng-src="{{image.url}}?thumb=true" class="media-object"/>
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading" ng-bind="image.caption"></h4>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-4">
-                <a class="image-link" th:href="@{/sequenceFiles/img/{id}/duplicationlevel(id=${file.getId()})}"
-                   href="#" title="Sequence Duplication Level">
-                    <img th:src="@{/sequenceFiles/img/{id}/duplicationlevel(id=${file.getId()})}"
-                         src="/sequenceFile/img/1-duplicationlevel"
-                         th:alt="#{sf.img.dublicationlevel}" alt="Sequence Duplication Level"/></a>
-            </div>
-            <div class="col-md-8">
-                <h2 th:text="#{sf.img.dublicationlevel}"></h2>
-            </div>
-        </div>
+
     </section>
 </main>
-<th:block layout:fragment="pageScripts" th:inline="javascript">
-    <script>
-        $(document).ready(function () {
-            $('.image-link').magnificPopup({
-                removalDelay: 300,
-                mainClass: 'mfp-with-zoom',
-                type: 'image',
-                closeBtnInside: true,
-                image: {
-                    verticalFit: true,
-                    titleSrc: function (item) {
-                        return item.el.attr('title');
-                    }
-                },
-                zoom: {
-                    enabled: true,
-                    duration: 300,
-                    easing: 'ease-in-out',
-                    opener: function (openerElement) {
-                        return openerElement.is('img') ? openerElement : openerElement.find('img');
-                    }
-                }
-            });
-        });
+
+<th:block layout:fragment="scripts">
+    <script type="text/ng-template" id="lightbox.html">
+        <div class="modal-header">
+            <h3 class="modal-title clearfix text-center">
+                <button ng-click="Lightbox.prevImage()" class="btn btn-default btn-sm pull-left"><fa:icon type="prev" fixed="ture" /></button>
+                <span ng-bind="Lightbox.imageCaption"></span>
+                <button ng-click="Lightbox.nextImage()" class="btn btn-default btn-sm pull-right"><fa:icon type="next" fixed="ture" /></button>
+            </h3>
+        </div>
+        <div class="modal-body">
+            <img ng-src="{{Lightbox.imageUrl}}" alt=""/>
+        </div>
     </script>
 </th:block>
 </body>

@@ -523,17 +523,6 @@ input {
   margin-top: 5px;
   font-size: 1.4em; }
 
-.sequenceFile main > div {
-  margin-top: 10px; }
-.sequenceFile .col-md-8 h2 {
-  font-size: 18px;
-  margin: 0; }
-.sequenceFile a img {
-  border: 4px solid #d9edf7;
-  border-radius: 4px; }
-.sequenceFile .col-md-4 img {
-  width: 100%; }
-
 iframe.remote-api-frame {
   border: none;
   width: 100%;
