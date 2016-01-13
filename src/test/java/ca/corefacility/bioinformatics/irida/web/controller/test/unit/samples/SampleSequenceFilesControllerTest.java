@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -34,14 +33,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
@@ -58,7 +54,6 @@ import com.google.common.net.HttpHeaders;
 public class SampleSequenceFilesControllerTest {
 	private RESTSampleSequenceFilesController controller;
 	private SequenceFileService sequenceFileService;
-	private SequenceFilePairService sequenceFilePairService;
 	private SampleService sampleService;
 	private SequencingRunService miseqRunService;
 	private SequencingObjectService sequencingObjectService;
@@ -67,11 +62,11 @@ public class SampleSequenceFilesControllerTest {
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
-		sequenceFilePairService = mock(SequenceFilePairService.class);
-		miseqRunService= mock(SequencingRunService.class);
+		miseqRunService = mock(SequencingRunService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 
-		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, miseqRunService, sequencingObjectService);
+		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, miseqRunService,
+				sequencingObjectService);
 	}
 
 	@Test
@@ -242,7 +237,7 @@ public class SampleSequenceFilesControllerTest {
 
 		Files.delete(f);
 	}
-	
+
 	@Test
 	public void testAddNewSequenceFilePairToSample() throws IOException {
 		Sample s = TestDataFactory.constructSample();
@@ -321,35 +316,30 @@ public class SampleSequenceFilesControllerTest {
 		Files.delete(f2);
 	}
 
-	@Test (expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testAddNewSequenceFilePairToSampleMismatchedRunIDs() throws IOException {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf1 = TestDataFactory.constructSequenceFile();
-		SequenceFile sf2 = TestDataFactory.constructSequenceFile();
-		Join<Sample, SequenceFile> r1 = new SampleSequenceFileJoin(s, sf1);
-		Join<Sample, SequenceFile> r2 = new SampleSequenceFileJoin(s, sf2);
-		List<Join<Sample, SequenceFile>> relationships = Lists.newArrayList();
-		relationships.add(r1);
-		relationships.add(r2);
+		SequenceFilePair pair = TestDataFactory.constructSequenceFilePair();
+
+		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
+
 		SequenceFileResource resource1 = new SequenceFileResource();
 		SequenceFileResource resource2 = new SequenceFileResource();
 		resource1.setMiseqRunId(1L);
 		resource2.setMiseqRunId(2L);
 		Path f1 = Files.createTempFile(null, null);
 		Path f2 = Files.createTempFile(null, null);
-		MockMultipartFile mmf1 = new MockMultipartFile("filename1", "filename1", "blurgh1", 
+		MockMultipartFile mmf1 = new MockMultipartFile("filename1", "filename1", "blurgh1",
 				FileCopyUtils.copyToByteArray(f1.toFile()));
-		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2", 
+		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
-		when(sequenceFileService.createSequenceFilePairInSample(any(SequenceFile.class),
-				any(SequenceFile.class),any(Sample.class))).thenReturn(relationships);
-		controller.addNewSequenceFilePairToSample(s.getId(),
-				mmf1, resource1, mmf2, resource2, response);
-				
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
+				.thenReturn(sso);
+		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
 	}
 
 }
