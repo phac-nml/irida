@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -477,21 +478,14 @@ public class RESTSampleSequenceFilesController {
 		logger.trace("Deleted temp files");
 
 		SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
-
-		// add a link back to the sample
-		sequencingObject.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-				RESTSampleSequenceFilesController.REL_SAMPLE));
-
-		// add a link to the newly created pair
-		String objectType = objectLabels.get(SingleEndSequenceFile.class);
-		sequencingObject.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
-						sequencingObject.getId())).withRel(RESTSampleSequenceFilesController.REL_PAIR));
-
-		// add a link to this collection
-		sequencingObject.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).addNewSequenceFilePairToSample(sample.getId(), file1,
-						fileResource1, file2, fileResource2, response)).withSelfRel());
+		
+		sequencingObject = addSequencingObjectLinks(sequencingObject, sampleId);
+		
+		sequencingObject.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
+				.withRel(REL_SAMPLE_SEQUENCE_FILES));		
+		
+		// add location header
+		response.addHeader(HttpHeaders.LOCATION, sequencingObject.getLink("self").getHref());
 
 		// set the response status.
 		response.setStatus(HttpStatus.CREATED.value());
@@ -621,14 +615,18 @@ public class RESTSampleSequenceFilesController {
 	 * @return The {@link SequenceFilePair} with added links
 	 */
 	private static SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long sampleId) {
-		SequenceFile forward = pair.getForwardSequenceFile();
-		String forwardLink = forward.getLink("self").getHref();
+		try {
+			SequenceFile forward = pair.getForwardSequenceFile();
+			String forwardLink = forward.getLink("self").getHref();
 
-		SequenceFile reverse = pair.getReverseSequenceFile();
-		String reverseLink = reverse.getLink("self").getHref();
+			SequenceFile reverse = pair.getReverseSequenceFile();
+			String reverseLink = reverse.getLink("self").getHref();
 
-		pair.add(new Link(forwardLink, REL_PAIR_FORWARD));
-		pair.add(new Link(reverseLink, REL_PAIR_REVERSE));
+			pair.add(new Link(forwardLink, REL_PAIR_FORWARD));
+			pair.add(new Link(reverseLink, REL_PAIR_REVERSE));
+		} catch (NoSuchElementException ex) {
+			logger.error("Couldn't resolve forward and reverse files in pair " + pair.getId());
+		}
 
 		return pair;
 	}
@@ -648,19 +646,23 @@ public class RESTSampleSequenceFilesController {
 
 		String objectType = objectLabels.get(sequencingObject.getClass());
 
+		// link to self
 		sequencingObject.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
 						sequencingObject.getId())).withSelfRel());
 
+		// link to the sample
 		sequencingObject.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE));
 
+		// link to the individual files
 		for (SequenceFile file : sequencingObject.getFiles()) {
 			file.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
 							objectType, sequencingObject.getId(), file.getId())).withSelfRel());
 		}
 
+		// if it's a pair, add forward/reverse links
 		if (sequencingObject instanceof SequenceFilePair) {
 			sequencingObject = (T) addSequenceFilePairLinks((SequenceFilePair) sequencingObject, sampleId);
 		}

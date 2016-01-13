@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
@@ -32,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
@@ -244,9 +246,16 @@ public class SampleSequenceFilesControllerTest {
 	@Test
 	public void testAddNewSequenceFilePairToSample() throws IOException {
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf1 = TestDataFactory.constructSequenceFile();
-		SequenceFile sf2 = TestDataFactory.constructSequenceFile();
+
+		SequenceFilePair pair = TestDataFactory.constructSequenceFilePair();
+		Iterator<SequenceFile> iterator = pair.getFiles().iterator();
+		SequenceFile sf1 = iterator.next();
+		SequenceFile sf2 = iterator.next();
+
 		sf1.setId(3245L);
+
+		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
+
 		Join<Sample, SequenceFile> r1 = new SampleSequenceFileJoin(s, sf1);
 		Join<Sample, SequenceFile> r2 = new SampleSequenceFileJoin(s, sf2);
 		List<Join<Sample, SequenceFile>> relationships = Lists.newArrayList();
@@ -256,60 +265,62 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFileResource resource2 = new SequenceFileResource();
 		Path f1 = Files.createTempFile(null, null);
 		Path f2 = Files.createTempFile(null, null);
-		MockMultipartFile mmf1 = new MockMultipartFile("filename1", "filename1", "blurgh1", 
+		MockMultipartFile mmf1 = new MockMultipartFile("filename1", "filename1", "blurgh1",
 				FileCopyUtils.copyToByteArray(f1.toFile()));
-		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2", 
+		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		// mock out the service calls
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.createSequenceFilePairInSample(any(SequenceFile.class),
-				any(SequenceFile.class),any(Sample.class))).thenReturn(relationships);
-		ModelMap modelMap = controller.addNewSequenceFilePairToSample(s.getId(),
-				mmf1, resource1, mmf2, resource2, response);
+
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
+				.thenReturn(sso);
+
+		ModelMap modelMap = controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2,
+				response);
+
 		verify(sampleService).read(s.getId());
-		verify(sequenceFileService).createSequenceFilePairInSample(any(SequenceFile.class),
-				any(SequenceFile.class),any(Sample.class));
+		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s));
+
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertNotNull("Object should not be null",o);
-		assertTrue("Object should be an instance of ResourceCollection",o instanceof ResourceCollection);
-		@SuppressWarnings("unchecked")
-		ResourceCollection<LabelledRelationshipResource<Sample,SequenceFile>> rc =
-				(ResourceCollection<LabelledRelationshipResource<Sample,SequenceFile>>) o;
-		assertTrue("Resource collection should have only 2 LabelledRelationshipResource instances",rc.size() == 2);
-		Link selfCollection = rc.getLink(Link.REL_SELF);
-		Link sampleRC = rc.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
+		assertNotNull("Object should not be null", o);
+		assertTrue("Object should be an instance of SequenceFilePair", o instanceof SequenceFilePair);
+
+		SequenceFilePair returnVal = (SequenceFilePair) o;
+
+		Link selfCollection = returnVal.getLink(Link.REL_SELF);
+		Link sampleRC = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
+		Link sampleSequenceFiles = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
-		String sequenceFilesLocation = sampleLocation + "/sequenceFiles/pairs";
-		assertEquals("Collection location should be correct",sequenceFilesLocation, selfCollection.getHref());
-		assertEquals("Sample location should be correct",sampleLocation,sampleRC.getHref());
-		
-		String sequenceFileLocation1 = sampleLocation + "/sequenceFiles/" + sf1.getId();
-		String sequenceFileLocation2 = sampleLocation + "/sequenceFiles/" + sf2.getId();
-		String[] sequenceFileLocs = new String[] {sequenceFileLocation1,sequenceFileLocation2};	
-		List<String> locations = response.getHeaders(HttpHeaders.LOCATION);
-		assertNotNull("Header sequence file locations should not be null",locations);
-		assertFalse("Header sequence file locations should not be empty",locations.isEmpty());
-		assertEquals("The header should have 2 sequence file locations",2, locations.size());
-		SequenceFile[] sequences = new SequenceFile[] {sf1,sf2};
-		for(int i = 0; i< 2; i++) {
-			LabelledRelationshipResource<Sample,SequenceFile> lrr = rc.getResources().get(i);
-			Link self = lrr.getLink(Link.REL_SELF);
-			Link sampleSequenceFiles = lrr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-			Link sample = lrr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-			assertNotNull("Self link should not be null",self);
-			assertEquals("Self reference should be correct",sequenceFileLocs[i], self.getHref());
-			assertNotNull("Sequence file location should not be null",sampleSequenceFiles);
-			assertEquals("Sequence file location should be correct",sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
-			assertNotNull("Sample location should not be null",sample);
-			assertEquals("Sample location should be correct",sampleLocation, sample.getHref());
-			assertEquals("Header sequence file location should be correct","http://localhost/api/samples/" + s.getId() + "/sequenceFiles/" + sequences[i].getId(), locations.get(i));
+		String pairLocation = sampleLocation + "/pairs/" + pair.getId();
+		assertEquals("Pair location should be correct", pairLocation, selfCollection.getHref());
+		assertEquals("Sample location should be correct", sampleLocation, sampleRC.getHref());
+		assertEquals("Sequence file location should be correct", sampleLocation + "/sequenceFiles",
+				sampleSequenceFiles.getHref());
+
+		String sequenceFileLocation1 = pairLocation + "/files/" + sf1.getId();
+		String sequenceFileLocation2 = pairLocation + "/files/" + sf2.getId();
+
+		String[] sequenceFileLocs = new String[] { sequenceFileLocation1, sequenceFileLocation2 };
+		String locationHeader = response.getHeader(HttpHeaders.LOCATION);
+
+		assertEquals("The location header should have the self rel", pairLocation, locationHeader);
+
+		Iterator<SequenceFile> filesIterator = returnVal.getFiles().iterator();
+
+		for (int i = 0; i < 2; i++) {
+			SequenceFile returnedFile = filesIterator.next();
+			Link self = returnedFile.getLink(Link.REL_SELF);
+
+			assertNotNull("Self link should not be null", self);
+			assertEquals("Self reference should be correct", sequenceFileLocs[i], self.getHref());
 		}
-		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
+		assertEquals("HTTP status must be CREATED", HttpStatus.CREATED.value(), response.getStatus());
 		Files.delete(f1);
 		Files.delete(f2);
 	}
-	
+
 	@Test (expected = IllegalArgumentException.class)
 	public void testAddNewSequenceFilePairToSampleMismatchedRunIDs() throws IOException {
 		Project p = TestDataFactory.constructProject();
