@@ -16,6 +16,32 @@
 	</div>
 
 	<section th:object="${project}">
+		<div class="row">
+			<div class="col-md-4 col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title" th:text="#{project.metadata.id}"></h3>
+					</div>
+					<div class="panel-body" th:text="*{identifier}"></div>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title" th:text="#{project.metadata.createdDate}"></h3>
+					</div>
+					<div class="panel-body" th:text="*{#dates.format(createdDate, #messages.msg('locale.date.long'))}"></div>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title" th:text="#{project.metadata.modifiedDate}"></h3>
+					</div>
+					<div class="panel-body" th:text="*{#dates.format(modifiedDate, #messages.msg('locale.date.long'))}"></div>
+				</div>
+			</div>
+		</div>
 		<div class="panel panel-info">
 			<div class="panel-heading">
 				<h3 class="panel-title" th:text="#{projects.create.form.name}">Project Name</h3>
