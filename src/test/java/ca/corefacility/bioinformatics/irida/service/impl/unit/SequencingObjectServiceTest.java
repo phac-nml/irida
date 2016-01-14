@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -29,15 +30,18 @@ public class SequencingObjectServiceTest {
 	SequencingObjectService service;
 	SequencingObjectRepository repository;
 	SampleSequencingObjectJoinRepository ssoRepository;
-	Validator validator;
 	TaskExecutor executor;
+	FileProcessingChain fileProcessingChain;
+	Validator validator;
 
 	@Before
 	public void setUp() {
 		repository = mock(SequencingObjectRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
+		executor = mock(TaskExecutor.class);
+		fileProcessingChain = mock(FileProcessingChain.class);
 		
-		service = new SequencingObjectServiceImpl(repository, ssoRepository, validator);
+		service = new SequencingObjectServiceImpl(repository, ssoRepository, executor, fileProcessingChain, validator);
 	}
 
 	@Test

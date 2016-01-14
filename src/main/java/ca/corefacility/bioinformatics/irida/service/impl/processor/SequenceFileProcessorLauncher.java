@@ -8,8 +8,13 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 
+/**
+ * {@link SequenceFile} processor which launches a {@link FileProcessingChain}
+ * on a collection of {@link SequenceFile} ids
+ */
 public class SequenceFileProcessorLauncher implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileProcessorLauncher.class);
 

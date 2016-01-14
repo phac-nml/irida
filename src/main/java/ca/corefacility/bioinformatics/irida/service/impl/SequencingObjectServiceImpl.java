@@ -2,14 +2,19 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +26,12 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileProcessorLauncher;
 
 /**
  * Implementation of {@link SequencingObjectService} using a
@@ -36,12 +43,18 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		SequencingObjectService {
 
 	private final SampleSequencingObjectJoinRepository ssoRepository;
+	private TaskExecutor fileProcessingChainExecutor;
+	private FileProcessingChain fileProcessingChain;
 
 	@Autowired
 	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
-			SampleSequencingObjectJoinRepository ssoRepository, Validator validator) {
+			SampleSequencingObjectJoinRepository ssoRepository,
+			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
+			Validator validator) {
 		super(repository, validator, SequencingObject.class);
 		this.ssoRepository = ssoRepository;
+		this.fileProcessingChainExecutor = executor;
+		this.fileProcessingChain = fileProcessingChain;
 	}
 
 	/**
@@ -51,7 +64,11 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingObject create(SequencingObject object) throws ConstraintViolationException, EntityExistsException {
-		return super.create(object);
+		SequencingObject so = super.create(object);
+		List<Long> ids = so.getFiles().stream().map(SequenceFile::getId).collect(Collectors.toList());
+		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, ids,
+				SecurityContextHolder.getContext()));
+		return so;
 	}
 
 	/**
