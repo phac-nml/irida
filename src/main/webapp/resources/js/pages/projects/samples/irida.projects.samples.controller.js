@@ -16,29 +16,24 @@
 			lessThanOne: true
 		};
 
+		vm.dtColumnDefs = tableService.createTableColumnDefs();
 		vm.dtOptions = tableService.createTableOptions();
 		samplesService.fetchSamples().then(function (samples) {
 			vm.samples = samples;
 		});
 
-		vm.updateAllSelected = function () {
-			// Find out what the current filter is.
-			var search = tableService.getSearchTerm();
-			console.log(search);
+		vm.selectAll = function () {
+			var search = tableService.selectAllNone(vm.allSelected);
+			// Update the samples
 			vm.samples.forEach(function (sample, index) {
-				vm.selected[index] = vm.allSelected;
+				sample.selected = vm.allSelected;
 			});
-			updateEnabled();
 		};
 
-		vm.sampleChanged = function (index) {
-			vm.allSelected = vm.selected.length === vm.samples.length;
-			updateEnabled();
-		};
-
-		vm.rowClick = function($event, item) {
+		vm.rowClick = function(item) {
 			// Means it is about to become unselected
-			if(!$($event.currentTarget).hasClass("selected")) {
+			item.selected = !item.selected;
+			if(item.selected) {
 				selected.push(item);
 			}
 			else {
@@ -76,21 +71,6 @@
 		vm.dtInstanceCallback = function(instance) {
 			tableService.initTable($scope, instance);
 		};
-
-		function updateEnabled() {
-			// Remove false values
-			for(var prop in vm.selected) {
-				if(!vm.selected[prop]){
-					delete vm.selected[prop];
-				}
-			}
-			// Update UI buttons depending on the number of samples selected
-			var count = Object.keys(vm.selected).length;
-			vm.disabled = {
-				lessThanTwo: count < 2,
-				lessThanOne: count < 1
-			};
-		}
 	}
 
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service"])
