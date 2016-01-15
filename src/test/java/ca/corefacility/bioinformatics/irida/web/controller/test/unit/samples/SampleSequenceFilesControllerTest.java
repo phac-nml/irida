@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
@@ -242,10 +243,16 @@ public class SampleSequenceFilesControllerTest {
 	public void testAddNewSequenceFilePairToSample() throws IOException {
 		Sample s = TestDataFactory.constructSample();
 
+		String file1Name = "file1_R1_01.fastq.gz";
+		String file2Name = "file2_R2_01.fastq.gz";
+
 		SequenceFilePair pair = TestDataFactory.constructSequenceFilePair();
 		Iterator<SequenceFile> iterator = pair.getFiles().iterator();
 		SequenceFile sf1 = iterator.next();
 		SequenceFile sf2 = iterator.next();
+
+		sf1.setFile(Paths.get(file1Name));
+		sf2.setFile(Paths.get(file2Name));
 
 		sf1.setId(3245L);
 
@@ -260,9 +267,9 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFileResource resource2 = new SequenceFileResource();
 		Path f1 = Files.createTempFile(null, null);
 		Path f2 = Files.createTempFile(null, null);
-		MockMultipartFile mmf1 = new MockMultipartFile("filename1", "filename1", "blurgh1",
+		MockMultipartFile mmf1 = new MockMultipartFile(file1Name, file1Name, "blurgh1",
 				FileCopyUtils.copyToByteArray(f1.toFile()));
-		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
+		MockMultipartFile mmf2 = new MockMultipartFile(file2Name, file2Name, "blurgh2",
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		// mock out the service calls

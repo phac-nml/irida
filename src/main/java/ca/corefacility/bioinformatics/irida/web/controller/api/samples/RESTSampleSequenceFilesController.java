@@ -478,12 +478,12 @@ public class RESTSampleSequenceFilesController {
 		logger.trace("Deleted temp files");
 
 		SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
-		
+
 		sequencingObject = addSequencingObjectLinks(sequencingObject, sampleId);
-		
+
 		sequencingObject.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-				.withRel(REL_SAMPLE_SEQUENCE_FILES));		
-		
+				.withRel(REL_SAMPLE_SEQUENCE_FILES));
+
 		// add location header
 		response.addHeader(HttpHeaders.LOCATION, sequencingObject.getLink("self").getHref());
 
@@ -615,18 +615,14 @@ public class RESTSampleSequenceFilesController {
 	 * @return The {@link SequenceFilePair} with added links
 	 */
 	private static SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long sampleId) {
-		try {
-			SequenceFile forward = pair.getForwardSequenceFile();
-			String forwardLink = forward.getLink("self").getHref();
+		SequenceFile forward = pair.getForwardSequenceFile();
+		String forwardLink = forward.getLink("self").getHref();
 
-			SequenceFile reverse = pair.getReverseSequenceFile();
-			String reverseLink = reverse.getLink("self").getHref();
+		SequenceFile reverse = pair.getReverseSequenceFile();
+		String reverseLink = reverse.getLink("self").getHref();
 
-			pair.add(new Link(forwardLink, REL_PAIR_FORWARD));
-			pair.add(new Link(reverseLink, REL_PAIR_REVERSE));
-		} catch (NoSuchElementException ex) {
-			logger.error("Couldn't resolve forward and reverse files in pair " + pair.getId());
-		}
+		pair.add(new Link(forwardLink, REL_PAIR_FORWARD));
+		pair.add(new Link(reverseLink, REL_PAIR_REVERSE));
 
 		return pair;
 	}
