@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -163,7 +164,7 @@ public class RESTSampleSequenceFilesController {
 				String fileLabel = objectLabels.get(r.getObject().getClass());
 				sf.add(linkTo(
 						methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
-								fileLabel, r.getId(), sf.getId())).withSelfRel());
+								fileLabel, r.getObject().getId(), sf.getId())).withSelfRel());
 
 				resources.add(sf);
 
@@ -365,6 +366,8 @@ public class RESTSampleSequenceFilesController {
 		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
 				.createSequencingObjectInSample(singleEndSequenceFile, sample);
 
+		singleEndSequenceFile = (SingleEndSequenceFile) createSequencingObjectInSample.getObject();
+
 		logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject().getId());
 		// clean up the temporary files.
 		Files.deleteIfExists(target);
@@ -476,20 +479,13 @@ public class RESTSampleSequenceFilesController {
 
 		SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
 
-		// add a link back to the sample
-		sequencingObject.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-				RESTSampleSequenceFilesController.REL_SAMPLE));
+		sequencingObject = addSequencingObjectLinks(sequencingObject, sampleId);
 
-		// add a link to the newly created pair
-		String objectType = objectLabels.get(SingleEndSequenceFile.class);
-		sequencingObject.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
-						sequencingObject.getId())).withRel(RESTSampleSequenceFilesController.REL_PAIR));
+		sequencingObject.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
+				.withRel(REL_SAMPLE_SEQUENCE_FILES));
 
-		// add a link to this collection
-		sequencingObject.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).addNewSequenceFilePairToSample(sample.getId(), file1,
-						fileResource1, file2, fileResource2, response)).withSelfRel());
+		// add location header
+		response.addHeader(HttpHeaders.LOCATION, sequencingObject.getLink("self").getHref());
 
 		// set the response status.
 		response.setStatus(HttpStatus.CREATED.value());
@@ -499,28 +495,24 @@ public class RESTSampleSequenceFilesController {
 	}
 
 	/**
-	 * Remove a {@link SequenceFile} from a {@link Sample}. The
-	 * {@link SequenceFile} will be moved to the {@link Project} that is related
-	 * to this {@link Sample}.
+	 * Remove a {@link SequencingObject} from a {@link Sample}.
 	 * 
 	 * @param sampleId
 	 *            the source {@link Sample} identifier.
-	 * @param sequenceFileId
-	 *            the identifier of the {@link SequenceFile} to move.
+	 * @param objectId
+	 *            the identifier of the {@link SequencingObject} to move.
 	 * @return a status indicating the success of the move.
 	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
-	public ModelMap removeSequenceFileFromSample(@PathVariable Long sampleId, @PathVariable Long sequenceFileId) {
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.DELETE)
+	public ModelMap removeSequenceFileFromSample(@PathVariable Long sampleId, @PathVariable String objectType,
+			@PathVariable Long objectId) {
 		ModelMap modelMap = new ModelMap();
 		// load the project, sample and sequence file from the database
 		Sample s = sampleService.read(sampleId);
-		SequenceFile sf = sequenceFileService.read(sequenceFileId);
+		SequencingObject seqObject = sequencingObjectService.readSequencingObjectForSample(s, objectId);
 
-		// ask the service to remove the sample from the sequence file and
-		// associate it with the project. The service
-		// responds with the new relationship between the project and the
-		// sequence file.
-		sampleService.removeSequenceFileFromSample(s, sf);
+		// ask the service to remove the sample from the sequence file
+		sampleService.removeSequencingObjectFromSample(s, seqObject);
 
 		// respond with a link to the sample, the new location of the sequence
 		// file (as it is associated with the
@@ -650,19 +642,23 @@ public class RESTSampleSequenceFilesController {
 
 		String objectType = objectLabels.get(sequencingObject.getClass());
 
+		// link to self
 		sequencingObject.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
 						sequencingObject.getId())).withSelfRel());
 
+		// link to the sample
 		sequencingObject.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE));
 
+		// link to the individual files
 		for (SequenceFile file : sequencingObject.getFiles()) {
 			file.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
 							objectType, sequencingObject.getId(), file.getId())).withSelfRel());
 		}
 
+		// if it's a pair, add forward/reverse links
 		if (sequencingObject instanceof SequenceFilePair) {
 			sequencingObject = (T) addSequenceFilePairLinks((SequenceFilePair) sequencingObject, sampleId);
 		}

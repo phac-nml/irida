@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,21 +38,21 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -65,16 +65,12 @@ import com.google.common.collect.Lists;
 public class SamplesControllerTest {
 	public static final String[] MULTIPARTFILE_PATHS = { "src/test/resources/files/test_file_1.fastq",
 			"src/test/resources/files/test_file_2.fastq" };
-	public static final String[] MULTIPARTFILE_PAIR_PATHS = {
-			"src/test/resources/files/pairs/pair_test_R1_001.fastq",
-			"src/test/resources/files/pairs/pair_test_R2_001.fastq"
-	};
+	public static final String[] MULTIPARTFILE_PAIR_PATHS = { "src/test/resources/files/pairs/pair_test_R1_001.fastq",
+			"src/test/resources/files/pairs/pair_test_R2_001.fastq" };
 
 	// Services
 	private SamplesController controller;
 	private SampleService sampleService;
-	private SequenceFileService sequenceFileService;
-	private SequenceFilePairService sequenceFilePairService;
 	private UserService userService;
 	private ProjectService projectService;
 	private SequenceFileWebUtilities sequenceFileWebUtilities;
@@ -84,14 +80,13 @@ public class SamplesControllerTest {
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
-		sequenceFileService = mock(SequenceFileService.class);
-		sequenceFilePairService = mock(SequenceFilePairService.class);
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
+		sequencingObjectService = mock(SequencingObjectService.class);
 		sequenceFileWebUtilities = new SequenceFileWebUtilities();
 		messageSource = mock(MessageSource.class);
-		controller = new SamplesController(sampleService, sequenceFileService, sequenceFilePairService, userService,
-				projectService, sequencingObjectService, sequenceFileWebUtilities, messageSource);
+		controller = new SamplesController(sampleService, userService, projectService, sequencingObjectService,
+				sequenceFileWebUtilities, messageSource);
 	}
 
 	// ************************************************************************************************
@@ -147,7 +142,6 @@ public class SamplesControllerTest {
 				model.containsAttribute(SamplesController.LATITUDE));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFiles() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -160,10 +154,12 @@ public class SamplesControllerTest {
 		User user = new User();
 		Project project = new Project();
 
-		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+		List<SampleSequencingObjectJoin> files = Lists.newArrayList(new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
+				.thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
@@ -175,8 +171,8 @@ public class SamplesControllerTest {
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService).read(sampleId);
-		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
-		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SequenceFilePair.class);
 	}
 
 	@Test
@@ -191,11 +187,12 @@ public class SamplesControllerTest {
 		User user = new User();
 		user.setSystemRole(Role.ROLE_ADMIN);
 
-		@SuppressWarnings("unchecked")
-		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+		List<SampleSequencingObjectJoin> files = Lists.newArrayList(new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
+				.thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 
 		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
@@ -204,12 +201,11 @@ public class SamplesControllerTest {
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService).read(sampleId);
-		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
-		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		verifyZeroInteractions(projectService);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFilesNoAccess() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -222,10 +218,14 @@ public class SamplesControllerTest {
 		User user = new User();
 		Project project = new Project();
 
-		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+		List<SampleSequencingObjectJoin> files = Lists.newArrayList(new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+
+		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
+				.thenReturn(files);
+
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
@@ -238,8 +238,8 @@ public class SamplesControllerTest {
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService).read(sampleId);
-		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
-		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SequenceFilePair.class);
 	}
 
 	@Test
@@ -247,16 +247,16 @@ public class SamplesControllerTest {
 		Long sampleId = 1L;
 		Long fileId = 2L;
 		Sample sample = new Sample();
-		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
+		SequencingObject file = new SingleEndSequenceFile(new SequenceFile(Paths.get("/tmp")));
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sequenceFileService.read(fileId)).thenReturn(file);
+		when(sequencingObjectService.readSequencingObjectForSample(sample, fileId)).thenReturn(file);
 
 		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 		HttpServletRequest request = new MockHttpServletRequest();
 		controller.removeSequencingObjectFromSample(attributes, sampleId, fileId, request, Locale.US);
 
-		verify(sampleService).removeSequenceFileFromSample(sample, file);
+		verify(sampleService).removeSequencingObjectFromSample(sample, file);
 	}
 
 	// ************************************************************************************************
@@ -266,15 +266,17 @@ public class SamplesControllerTest {
 	@Test
 	public void testGetFilesForSample() throws IOException {
 		Sample sample = TestDataFactory.constructSample();
-		List<Join<Sample, SequenceFile>> joinList = new ArrayList<>();
+		List<SampleSequencingObjectJoin> joinList = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			Path path = Paths.get("/tmp/sequence-files/fake-file" + i + ".fast");
 			SequenceFile file = new SequenceFile(path);
 			file.setId(1L + i);
-			joinList.add(new SampleSequenceFileJoin(sample, file));
+			joinList.add(new SampleSequencingObjectJoin(sample, new SingleEndSequenceFile(file)));
+
 		}
 		when(sampleService.read(1L)).thenReturn(sample);
-		when(sequenceFileService.getUnpairedSequenceFilesForSample(sample)).thenReturn(joinList);
+		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class)).thenReturn(
+				joinList);
 		List<Map<String, Object>> result = controller.getFilesForSample(1L);
 		assertEquals("Should have the correct number of sequence file records.", joinList.size(), result.size());
 
@@ -291,15 +293,17 @@ public class SamplesControllerTest {
 
 		List<MultipartFile> fileList = createMultipartFileList(MULTIPARTFILE_PATHS);
 
-		ArgumentCaptor<SequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<SingleEndSequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor
+				.forClass(SingleEndSequenceFile.class);
 
 		HttpServletResponse response = new MockHttpServletResponse();
 		controller.uploadSequenceFiles(sample.getId(), fileList, response);
 
 		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
-		verify(sequenceFileService, times(2)).createSequenceFileInSample(sequenceFileArgumentCaptor.capture(), any(Sample.class));
-		assertEquals("Should have the correct file name", "test_file_2.fastq",
-				sequenceFileArgumentCaptor.getValue().getLabel());
+		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
+				eq(sample));
+		assertEquals("Should have the correct file name", "test_file_2.fastq", sequenceFileArgumentCaptor.getValue()
+				.getLabel());
 	}
 
 	@Test
@@ -309,19 +313,20 @@ public class SamplesControllerTest {
 
 		List<MultipartFile> fileList = createMultipartFileList(MULTIPARTFILE_PAIR_PATHS);
 
-		ArgumentCaptor<SequenceFile> sequenceFileOneArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
-		ArgumentCaptor<SequenceFile> sequenceFileTwoArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<SequenceFilePair> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFilePair.class);
 
 		HttpServletResponse response = new MockHttpServletResponse();
 		controller.uploadSequenceFiles(sample.getId(), fileList, response);
 
 		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
-		verify(sequenceFileService, times(1)).createSequenceFilePairInSample(sequenceFileOneArgumentCaptor.capture(),
-				sequenceFileTwoArgumentCaptor.capture(), any(Sample.class));
-		assertEquals("Should have the correct file name", "pair_test_R1_001.fastq",
-				sequenceFileOneArgumentCaptor.getValue().getLabel());
-		assertEquals("Should have the correct file name", "pair_test_R2_001.fastq",
-				sequenceFileTwoArgumentCaptor.getValue().getLabel());
+
+		verify(sequencingObjectService)
+				.createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(), eq(sample));
+
+		assertEquals("Should have the correct file name", "pair_test_R1_001.fastq", sequenceFileArgumentCaptor
+				.getValue().getForwardSequenceFile().getLabel());
+		assertEquals("Should have the correct file name", "pair_test_R2_001.fastq", sequenceFileArgumentCaptor
+				.getValue().getReverseSequenceFile().getLabel());
 	}
 
 	@Test
@@ -329,29 +334,31 @@ public class SamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
 
-		List<MultipartFile> fileList = createMultipartFileList(ArrayUtils.addAll(MULTIPARTFILE_PATHS, MULTIPARTFILE_PAIR_PATHS));
+		List<MultipartFile> fileList = createMultipartFileList(ArrayUtils.addAll(MULTIPARTFILE_PATHS,
+				MULTIPARTFILE_PAIR_PATHS));
 
-		ArgumentCaptor<SequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
-		ArgumentCaptor<SequenceFile> sequenceFileOneArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
-		ArgumentCaptor<SequenceFile> sequenceFileTwoArgumentCaptor = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<SequencingObject> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequencingObject.class);
 
 		HttpServletResponse response = new MockHttpServletResponse();
 		controller.uploadSequenceFiles(sample.getId(), fileList, response);
 
 		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
-		verify(sequenceFileService, times(2)).createSequenceFileInSample(sequenceFileArgumentCaptor.capture(),
-				any(Sample.class));
-		verify(sequenceFileService, times(1)).createSequenceFilePairInSample(sequenceFileOneArgumentCaptor.capture(),
-				sequenceFileTwoArgumentCaptor.capture(), any(Sample.class));
-		assertEquals("Should have the correct file name", "pair_test_R1_001.fastq",
-				sequenceFileOneArgumentCaptor.getValue().getLabel());
-		assertEquals("Should have the correct file name", "pair_test_R2_001.fastq",
-				sequenceFileTwoArgumentCaptor.getValue().getLabel());
+		verify(sequencingObjectService, times(3)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
+				eq(sample));
+
+		List<SequencingObject> allValues = sequenceFileArgumentCaptor.getAllValues();
+
+		assertEquals("Should have created 2 single end sequence files", 2,
+				allValues.stream().filter(o -> o instanceof SingleEndSequenceFile).count());
+		assertEquals("Should have created 1 file pair", 1, allValues.stream()
+				.filter(o -> o instanceof SequenceFilePair).count());
 	}
 
 	/**
 	 * Create a list of {@link MultipartFile}
-	 * @param list A list of paths to files.
+	 * 
+	 * @param list
+	 *            A list of paths to files.
 	 * @return
 	 * @throws IOException
 	 */
@@ -360,7 +367,8 @@ public class SamplesControllerTest {
 		for (String pathName : list) {
 			Path path = Paths.get(pathName);
 			byte[] bytes = Files.readAllBytes(path);
-			fileList.add(new MockMultipartFile(path.getFileName().toString(), path.getFileName().toString(), "octet-stream", bytes));
+			fileList.add(new MockMultipartFile(path.getFileName().toString(), path.getFileName().toString(),
+					"octet-stream", bytes));
 		}
 		return fileList;
 	}

@@ -29,8 +29,10 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
@@ -74,13 +76,14 @@ public class SampleServiceImplTest {
 		analysisRepository = mock(AnalysisRepository.class);
 		sequenceFilePairRepository = mock(SequenceFilePairRepository.class);
 		assembledGenomeAnalysisRepository = mock(AssembledGenomeAnalysisRepository.class);
+		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		assembledGenome1 = mock(AssembledGenomeAnalysis.class);
 		assembledGenome2 = mock(AssembledGenomeAnalysis.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, analysisRepository,
 				ssoRepository, sequenceFilePairRepository, assembledGenomeAnalysisRepository, validator);
-		
+
 	}
 	
 	@Test
@@ -149,13 +152,15 @@ public class SampleServiceImplTest {
 		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
 		sf.setId(2222L);
-		SampleSequenceFileJoin sampleSequenceFileJoin = new SampleSequenceFileJoin(s, sf);
-		
-		when(ssfRepository.readFileForSample(s, sf)).thenReturn(sampleSequenceFileJoin);
+		SingleEndSequenceFile obj = new SingleEndSequenceFile(sf);
+		obj.setId(2L);
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, obj);
 
-		sampleService.removeSequenceFileFromSample(s, sf);
-		
-		verify(ssfRepository).delete(sampleSequenceFileJoin);
+		when(ssoRepository.readObjectForSample(s, obj.getId())).thenReturn(join);
+
+		sampleService.removeSequencingObjectFromSample(s, obj);
+
+		verify(ssoRepository).delete(join);
 	}
 
 	@Test

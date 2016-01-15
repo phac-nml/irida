@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.events;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Set;
@@ -14,9 +14,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
@@ -28,13 +25,17 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ProjectEventHandlerTest {
 	private ProjectEventHandler handler;
@@ -114,14 +115,14 @@ public class ProjectEventHandlerTest {
 		verify(projectRepository).save(any(Project.class));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testHandleSequenceFileAddedEventSingle() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
 		Project project = new Project();
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile();
-		SampleSequenceFileJoin returnValue = new SampleSequenceFileJoin(sample, file);
+		SingleEndSequenceFile seqObj = new SingleEndSequenceFile(file);
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
@@ -130,7 +131,7 @@ public class ProjectEventHandlerTest {
 				new DataAddedToSampleProjectEvent(project, sample));
 
 		Object[] args = {};
-		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
+		MethodEvent methodEvent = new MethodEvent(clazz, join, args);
 
 		handler.delegate(methodEvent);
 
@@ -143,16 +144,16 @@ public class ProjectEventHandlerTest {
 		verify(sampleRepository).save(any(Sample.class));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testHandleSequenceFileAddedEventMultipleReturn() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
 		Project project = new Project();
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile();
-		SequenceFile file2 = new SequenceFile();
-		SampleSequenceFileJoin returnValue1 = new SampleSequenceFileJoin(sample, file);
-		SampleSequenceFileJoin returnValue2 = new SampleSequenceFileJoin(sample, file2);
+		SingleEndSequenceFile seqObj1 = new SingleEndSequenceFile(file);
+		SingleEndSequenceFile seqObj2 = new SingleEndSequenceFile(file);
+		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(sample, seqObj1);
+		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(sample, seqObj2);
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
@@ -161,7 +162,7 @@ public class ProjectEventHandlerTest {
 				new DataAddedToSampleProjectEvent(project, sample));
 
 		Object[] args = {};
-		MethodEvent methodEvent = new MethodEvent(clazz, Lists.newArrayList(returnValue1, returnValue2), args);
+		MethodEvent methodEvent = new MethodEvent(clazz, Lists.newArrayList(join1, join2), args);
 
 		handler.delegate(methodEvent);
 
@@ -174,7 +175,6 @@ public class ProjectEventHandlerTest {
 		verify(sampleRepository).save(any(Sample.class));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testHandleSequenceFileAddedEventMultipleProjects() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
@@ -182,7 +182,8 @@ public class ProjectEventHandlerTest {
 		Project project2 = new Project("p2");
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile();
-		SampleSequenceFileJoin returnValue = new SampleSequenceFileJoin(sample, file);
+		SingleEndSequenceFile seqObj = new SingleEndSequenceFile(file);
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample), new ProjectSampleJoin(project2, sample)));
@@ -191,7 +192,7 @@ public class ProjectEventHandlerTest {
 				new DataAddedToSampleProjectEvent(project, sample));
 
 		Object[] args = {};
-		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
+		MethodEvent methodEvent = new MethodEvent(clazz, join, args);
 
 		handler.delegate(methodEvent);
 

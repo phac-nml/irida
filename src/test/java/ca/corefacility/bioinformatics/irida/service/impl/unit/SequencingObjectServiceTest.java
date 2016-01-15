@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import javax.validation.Validator;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.task.TaskExecutor;
 
@@ -30,8 +32,12 @@ public class SequencingObjectServiceTest {
 	Validator validator;
 	TaskExecutor executor;
 
+	@Before
 	public void setUp() {
-		new SequencingObjectServiceImpl(repository, ssoRepository, validator);
+		repository = mock(SequencingObjectRepository.class);
+		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
+		
+		service = new SequencingObjectServiceImpl(repository, ssoRepository, validator);
 	}
 
 	@Test
