@@ -1,14 +1,6 @@
 (function (ng) {
 	"use strict";
 
-	function getFilteredSamples() {
-		return function(samples, term, filter) {
-			return samples.map(function (sample) {
-
-			});
-		};
-	}
-
 	function SamplesController($scope, $log, samplesService, tableService) {
 		var vm = this, selected = [];
 		vm.disabled = {
