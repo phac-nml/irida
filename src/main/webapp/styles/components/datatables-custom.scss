@@ -24,6 +24,11 @@
   }
 }
 
+.dataTables_paginate {
+  display: flex;
+  justify-content: center;
+}
+
 table th {
   vertical-align: top !important;
 }
