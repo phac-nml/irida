@@ -28,6 +28,7 @@
 			vm.samples.forEach(function (sample, index) {
 				sample.selected = vm.allSelected;
 			});
+			updateButtons();
 		};
 
 		vm.rowClick = function(item) {
@@ -42,6 +43,7 @@
 					selected.splice(index, 1);
 				}
 			}
+			updateButtons();
 		};
 
 		vm.displayProjectsModal = function() {
@@ -71,6 +73,14 @@
 		vm.dtInstanceCallback = function(instance) {
 			tableService.initTable($scope, instance);
 		};
+
+		function updateButtons(){
+			var count = _.filter(vm.samples, {selected: true}).length;
+			vm.disabled = {
+				lessThanTwo: count < 2,
+				lessThanOne: count < 1
+			};
+		}
 	}
 
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service"])
