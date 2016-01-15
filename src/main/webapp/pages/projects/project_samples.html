@@ -43,7 +43,8 @@
 		<tbody>
 		<tr ng-repeat="item in ::samplesCtrl.samples">
 			<td><input type="checkbox" ng-model="samplesCtrl.selected[$index]" ng-click="samplesCtrl.sampleChanged($index)"/></td>
-			<td ng-bind="item.sample.label"></td>
+			<td>
+				<a data:ng-href="@{'/samples/{{item.sample.identifier}}'}" ng-bind="item.sample.label"></a></td>
 			<td ng-bind="item.sample.modifiedDate | date"></td>
 			<td ng-bind="item.sample.createdDate | date"></td>
 		</tr>
