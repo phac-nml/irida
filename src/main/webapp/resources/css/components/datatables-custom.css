@@ -10,6 +10,9 @@
 .filter-row {
   margin-bottom: 5px !important; }
 
+.table-selectable tbody tr {
+  cursor: pointer; }
+
 .datatables-active-filters {
   margin-bottom: 10px; }
   .datatables-active-filters .label {

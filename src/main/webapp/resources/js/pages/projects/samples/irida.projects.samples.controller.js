@@ -1,22 +1,30 @@
 (function (ng) {
 	"use strict";
 
+	function getFilteredSamples() {
+		return function(samples, term, filter) {
+			return samples.map(function (sample) {
+
+			});
+		};
+	}
+
 	function SamplesController($scope, $log, samplesService, tableService) {
-		var vm = this;
-		vm.selected = Object.create(null);
+		var vm = this, selected = [];
 		vm.disabled = {
 			lessThanTwo: true,
 			lessThanOne: true
 		};
 
 		vm.dtOptions = tableService.createTableOptions();
-		vm.dtColumnDefs = tableService.createColumnDefinitions();
-
 		samplesService.fetchSamples().then(function (samples) {
 			vm.samples = samples;
 		});
 
 		vm.updateAllSelected = function () {
+			// Find out what the current filter is.
+			var search = tableService.getSearchTerm();
+			console.log(search);
 			vm.samples.forEach(function (sample, index) {
 				vm.selected[index] = vm.allSelected;
 			});
@@ -26,6 +34,19 @@
 		vm.sampleChanged = function (index) {
 			vm.allSelected = vm.selected.length === vm.samples.length;
 			updateEnabled();
+		};
+
+		vm.rowClick = function($event, item) {
+			// Means it is about to become unselected
+			if(!$($event.currentTarget).hasClass("selected")) {
+				selected.push(item);
+			}
+			else {
+				var index = selected.indexOf(item);
+				if(index > -1) {
+					selected.splice(index, 1);
+				}
+			}
 		};
 
 		vm.displayProjectsModal = function() {

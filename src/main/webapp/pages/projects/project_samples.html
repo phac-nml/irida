@@ -25,18 +25,16 @@
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables" ng-controller="SamplesController as samplesCtrl">
 
-	<table id="samplesTable" datatable="ng" class="table"  dt-options="samplesCtrl.dtOptions" dt-instance="samplesCtrl.dtInstanceCallback" dt-column-defs="samplesCtrl.dtColumnDefs">
+	<table id="samplesTable" datatable="ng" class="table table-hover table-selectable"  dt-options="samplesCtrl.dtOptions" dt-instance="samplesCtrl.dtInstanceCallback">
 		<thead>
 		<tr>
-			<th width="10px"><input id="selectAll" type="checkbox" ng-model="samplesCtrl.allSelected" ng-click="samplesCtrl.updateAllSelected()" /></th>
 			<th th:text="#{project.samples.table.name}">[Name]</th>
 			<th th:text="#{project.samples.table.modified}" width="130px">[Modified Date]</th>
 			<th th:text="#{project.samples.table.created}" width="130px">[Created Date]</th>
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="item in ::samplesCtrl.samples">
-			<td><input type="checkbox" ng-model="samplesCtrl.selected[$index]" ng-click="samplesCtrl.sampleChanged($index)"/></td>
+		<tr ng-repeat="item in ::samplesCtrl.samples" ng-click="samplesCtrl.rowClick($event, item)">
 			<td>
 				<a data:ng-href="@{'/samples/{{item.sample.identifier}}'}" ng-bind="item.sample.label"></a></td>
 			<td ng-bind="item.sample.modifiedDate | date"></td>

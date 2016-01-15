@@ -1,0 +1,25 @@
+{
+  "dependencies": ["ng-datatables"],
+  "assets": [
+    {
+      "name": "irida.datatables.select",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/vendor/datatables/select.bootstrap.css"
+      }
+    },
+    {
+      "name": "irida.datatables.select",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/datatables-select/js/dataTables.select.js"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/bower_components/angular-datatables/dist/plugins/select/angular-datatables.select.min.js"
+      }
+    }
+  ]
+}

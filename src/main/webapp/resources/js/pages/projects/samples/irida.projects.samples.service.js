@@ -39,11 +39,14 @@
 		};
 	}
 
-	function tableService($compile, $templateCache, DTOptionsBuilder, DTColumnDefBuilder) {
+	function tableService($compile, $templateCache, DTOptionsBuilder) {
 		var table;
 		function createTableOptions() {
 			return DTOptionsBuilder.newOptions()
 				.withOption("order", [[2, "desc"]])
+				.withSelect({
+					style:    'multi'
+				})
 				.withDOM("<'row filter-row'<'col-sm-9 buttons'><'col-sm-3'0f>><'row datatables-active-filters'1><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
 		}
 
@@ -54,22 +57,19 @@
 			});
 		}
 
-		function createColumnDefinitions () {
-			var defs = [
-				DTColumnDefBuilder.newColumnDef(0).notSortable()
-			];
-			return defs;
+		function getSearchTerm() {
+			return table.DataTable.data();
 		}
 
 		return {
-			createTableOptions: createTableOptions,
-			createColumnDefinitions: createColumnDefinitions,
-			initTable: initTable
+			createTableOptions     : createTableOptions,
+			getSearchTerm          : getSearchTerm,
+			initTable              : initTable
 		};
 	}
 
-	ng.module("irida.projects.samples.service", ["datatables"])
+	ng.module("irida.projects.samples.service", ["datatables", "datatables.select"])
 		.factory("samplesService", ["$http", "$q", samplesService])
-		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", tableService]);
+		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", tableService]);
 	;
 })(window.angular, window._, window.PAGE);
