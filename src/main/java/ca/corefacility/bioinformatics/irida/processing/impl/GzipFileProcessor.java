@@ -45,6 +45,9 @@ public class GzipFileProcessor implements FileProcessor {
 		this.objectRepository = objectRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	public void process(final Long sequencingObjectId) throws FileProcessorException {
@@ -56,7 +59,12 @@ public class GzipFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Process a single {@link SequenceFile}
+	 * 
+	 * @param sequenceFile
+	 *            file to process
+	 * @throws FileProcessorException
+	 *             if an error occurs while processing
 	 */
 	public void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path file = sequenceFile.getFile();

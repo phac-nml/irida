@@ -49,7 +49,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
  */
 public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
-	
+
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
 
 	private final SequenceFileRepository sequenceFileRepository;
@@ -68,26 +68,34 @@ public class FastqcFileProcessor implements FileProcessor {
 	 *            {@link SequencingObjectRepository} to read
 	 *            {@link SequencingObject}s
 	 */
-	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository, final SequencingObjectRepository objectRepository) {
+	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
+			final SequencingObjectRepository objectRepository) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.objectRepository = objectRepository;
-	}
-	
-	@Override
-	public void process(final Long sequencingObjectId) throws FileProcessorException {
-		SequencingObject seqObj = objectRepository.findOne(sequencingObjectId);
-		
-		for(SequenceFile file : seqObj.getFiles()){
-			processSingleFile(file);
-		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	
-	public void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
+	@Override
+	public void process(final Long sequencingObjectId) throws FileProcessorException {
+		SequencingObject seqObj = objectRepository.findOne(sequencingObjectId);
+
+		for (SequenceFile file : seqObj.getFiles()) {
+			processSingleFile(file);
+		}
+	}
+
+	/**
+	 * Process a single {@link SequenceFile}
+	 * 
+	 * @param sequenceFile
+	 *            file to process
+	 * @throws FileProcessorException
+	 *             if an error occurs while processing
+	 */
+	private void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC
 				.builder()
@@ -121,7 +129,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			logger.trace("Saving FastQC analysis.");
 			analysis.overrepresentedSequences(overrepresentedSequences);
-			
+
 			sequenceFile.setFastQCAnalysis(analysis.build());
 
 			sequenceFileRepository.save(sequenceFile);
@@ -180,8 +188,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param analysis
 	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores,
-			AnalysisFastQCBuilder analysis) throws IOException {
+	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, AnalysisFastQCBuilder analysis)
+			throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
