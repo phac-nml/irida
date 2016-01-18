@@ -48,8 +48,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
-	
 
+    public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
