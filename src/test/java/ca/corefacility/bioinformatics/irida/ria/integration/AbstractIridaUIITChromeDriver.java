@@ -49,19 +49,10 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
 	
-    public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
+
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
-
-    /**
-     * Code to execute *once* before the class.
-     */
-    @BeforeClass
-    public static void setUp() {
-        driver().manage().window().setSize(new Dimension(1400, 900));
-        driver().manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
-    }
     
     /**
      * Code to execute before *each* test.
