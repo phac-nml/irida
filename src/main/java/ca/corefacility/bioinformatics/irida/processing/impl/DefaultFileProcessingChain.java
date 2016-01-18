@@ -46,7 +46,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Exception> launchChain(Long sequenceFileId) throws FileProcessorTimeoutException {
+	public List<Exception> launchChain(Long sequencingObjectId) throws FileProcessorTimeoutException {
 		List<Exception> ignoredExceptions = new ArrayList<>();
 		Integer waiting = 0;
 
@@ -54,7 +54,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		// initially saved to the database, but not necessarily before the
 		// transaction has completed and closed, so we need to block until the
 		// file has been persisted in the database.
-		while (!sequencingObjectRepository.exists(sequenceFileId)) {
+		while (!sequencingObjectRepository.exists(sequencingObjectId)) {
 			if (waiting > timeout) {
 				throw new FileProcessorTimeoutException("Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.");
 			}
@@ -69,7 +69,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		
 		for (FileProcessor fileProcessor : fileProcessors) {
 			try {
-				fileProcessor.process(sequenceFileId);
+				fileProcessor.process(sequencingObjectId);
 			} catch (FileProcessorException e) {
 				// if the file processor modifies the file, then just fast fail,
 				// we can't proceed with the remaining file processors. If the
@@ -79,7 +79,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 					throw e;
 				} else {
 					ignoredExceptions.add(e);
-					logger.error("File processor [" + fileProcessor.getClass() + "] failed to process [" + sequenceFileId
+					logger.error("File processor [" + fileProcessor.getClass() + "] failed to process [" + sequencingObjectId
 							+ "], but proceeding with the remaining processors because the "
 							+ "file would not be modified by the processor. Stack trace follows.", e);
 				}
