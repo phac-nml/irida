@@ -61,14 +61,14 @@ public class AbstractIridaUIITChromeDriver {
     @BeforeClass
     public static void setUp() {
 //        driver = new ChromeDriver();
+//        driver.manage().window().setSize(new Dimension(1400, 900));
+//        driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
         //Only create new instance if it doesn't exist
         if (driver == null) {
             driver = new ChromeDriver();
             driver.manage().window().setSize(new Dimension(1400, 900));
             driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
         }
-//        driver.manage().window().setSize(new Dimension(1400, 900));
-//        driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
     }
     
     /**
@@ -104,6 +104,8 @@ public class AbstractIridaUIITChromeDriver {
      * @return the instance of {@link WebDriver} used in the tests.
      */
     public static WebDriver driver() {
+        if (driver == null)
+            setUp();
         return driver;
     }
     
