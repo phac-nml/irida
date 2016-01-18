@@ -67,6 +67,10 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	@Autowired 	
 	private ProjectEventEmailScheduledTask eventEmailTask;
+	
+	@Value("${irida.scheduled.threads")
+	private int threadCount = 2;
+
 	/**
 	 * Rate in milliseconds of the analysis execution tasks.
 	 */
@@ -206,14 +210,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	/**
 	 * Builds a new Executor for scheduled tasks.
+	 * 
 	 * @return A new Executor for scheduled tasks.
 	 */
 	private Executor taskExecutor() {
-		ScheduledExecutorService delegateExecutor = Executors
-				.newSingleThreadScheduledExecutor();
+		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(threadCount);
+
 		SecurityContext schedulerContext = createSchedulerSecurityContext();
-		return new DelegatingSecurityContextScheduledExecutorService(
-				delegateExecutor, schedulerContext);
+		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
 	}
 
 	/**
