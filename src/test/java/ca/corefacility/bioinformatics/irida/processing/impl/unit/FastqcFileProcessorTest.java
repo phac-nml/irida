@@ -25,10 +25,11 @@ import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
@@ -38,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
  */
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
-	private SequenceFileRepository sequenceFileRepository;
 	private SequencingObjectRepository objectRepository;
 	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
@@ -51,7 +51,6 @@ public class FastqcFileProcessorTest {
 	@Before
 	public void setUp() {
 		messageSource = mock(MessageSource.class);
-		sequenceFileRepository = mock(SequenceFileRepository.class);
 		objectRepository = mock(SequencingObjectRepository.class);
 		fileProcessor = new FastqcFileProcessor(messageSource, objectRepository);
 	}
@@ -64,8 +63,9 @@ public class FastqcFileProcessorTest {
 		Files.write(fasta, FASTA_FILE_CONTENTS.getBytes());
 		SequenceFile sf = new SequenceFile(fasta);
 		sf.setId(1L);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
-		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
+		when(objectRepository.findOne(1L)).thenReturn(so);
 
 		fileProcessor.process(1L);
 	}
@@ -77,11 +77,12 @@ public class FastqcFileProcessorTest {
 		Files.write(fastq, FASTQ_FILE_CONTENTS.getBytes());
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fastq));
 
-		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<SequencingObject> argument = ArgumentCaptor.forClass(SequencingObject.class);
 
 		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
-		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+		when(objectRepository.findOne(1L)).thenReturn(so);
 		try {
 			fileProcessor.process(1L);
 		} catch (Exception e) {
@@ -89,8 +90,12 @@ public class FastqcFileProcessorTest {
 			fail();
 		}
 
-		verify(sequenceFileRepository).save(argument.capture());
-		SequenceFile updatedFile = argument.getValue();
+		verify(objectRepository).save(argument.capture());
+
+		SequencingObject updatedObject = argument.getValue();
+		assertEquals("There should be 1 file associated with this SequencingObject", 1, updatedObject.getFiles().size());
+
+		SequenceFile updatedFile = updatedObject.getFiles().iterator().next();
 		final Field fastqcAnalysis = ReflectionUtils.findField(SequenceFile.class, "fastqcAnalysis");
 		ReflectionUtils.makeAccessible(fastqcAnalysis);
 		AnalysisFastQC updated = (AnalysisFastQC) fastqcAnalysis.get(updatedFile);
@@ -114,7 +119,6 @@ public class FastqcFileProcessorTest {
 
 		assertNotNull("Duplication level chart was not created.", updated.getDuplicationLevelChart());
 		assertTrue("Duplication level chart was not created.", ((byte[]) updated.getDuplicationLevelChart()).length > 0);
-
 
 		Iterator<OverrepresentedSequence> ovrs = updated.getOverrepresentedSequences().iterator();
 		assertTrue("No overrepresented sequences added to analysis.", ovrs.hasNext());
