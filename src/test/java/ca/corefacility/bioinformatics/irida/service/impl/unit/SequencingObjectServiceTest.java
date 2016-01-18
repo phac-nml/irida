@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
@@ -41,11 +42,13 @@ public class SequencingObjectServiceTest {
 	@Before
 	public void setUp() {
 		repository = mock(SequencingObjectRepository.class);
+		sequenceFileRepository = mock(SequenceFileRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		executor = mock(TaskExecutor.class);
 		fileProcessingChain = mock(FileProcessingChain.class);
 
-		service = new SequencingObjectServiceImpl(repository, sequenceFileRepository, ssoRepository, executor, fileProcessingChain, validator);
+		service = new SequencingObjectServiceImpl(repository, sequenceFileRepository, ssoRepository, executor,
+				fileProcessingChain, validator);
 	}
 
 	@Test
@@ -58,6 +61,7 @@ public class SequencingObjectServiceTest {
 
 		service.createSequencingObjectInSample(sf, s);
 
+		verify(sequenceFileRepository, times(1)).save(any(SequenceFile.class));
 		// verify that we're only actually running one file processor on the new
 		// sequence file.
 		verify(executor, times(1)).execute(any(Runnable.class));
