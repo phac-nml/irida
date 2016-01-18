@@ -39,6 +39,10 @@ public class IntegrationTestListener extends RunListener {
 		driver.quit();
 	}
 
+	/**
+	 * Get a reference to the {@link WebDriver} used in the tests.
+	 * @return the instance of {@link WebDriver} used in the tests.
+	 */
 	public static WebDriver driver() {
 		return driver;
 	}

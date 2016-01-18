@@ -50,8 +50,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 public class AbstractIridaUIITChromeDriver {
 	
     public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
-
-//    private static WebDriver driver;
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
@@ -61,7 +59,6 @@ public class AbstractIridaUIITChromeDriver {
      */
     @BeforeClass
     public static void setUp() {
-//        driver = driver();
         driver().manage().window().setSize(new Dimension(1400, 900));
         driver().manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
     }
@@ -91,7 +88,6 @@ public class AbstractIridaUIITChromeDriver {
      */
     @AfterClass
     public static void destroy() {
-//        driver.quit();
     }
 
     /**
