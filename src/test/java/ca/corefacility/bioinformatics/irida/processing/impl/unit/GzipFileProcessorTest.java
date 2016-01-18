@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -40,6 +41,7 @@ public class GzipFileProcessorTest {
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
+		objectRepository = mock(SequencingObjectRepository.class);
 		fileProcessor = new GzipFileProcessor(sequenceFileRepository, objectRepository, Boolean.FALSE);
 	}
 
@@ -55,7 +57,7 @@ public class GzipFileProcessorTest {
 		out.close();
 		sf.setFile(compressed);
 
-		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 		when(sequenceFileRepository.save(any(SequenceFile.class))).thenThrow(new RuntimeException());
 		fileProcessor.process(1L);
 	}
@@ -73,7 +75,7 @@ public class GzipFileProcessorTest {
 		out.close();
 		sf.setFile(compressed);
 
-		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 
 		fileProcessor.process(1L);
 
@@ -88,7 +90,7 @@ public class GzipFileProcessorTest {
 		SequenceFile sf = constructSequenceFile();
 		Path original = sf.getFile();
 
-		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 
 		fileProcessor.process(1L);
 
@@ -116,7 +118,7 @@ public class GzipFileProcessorTest {
 		out.close();
 
 		when(sequenceFileRepository.save(sf)).thenReturn(sfUpdated);
-		when(sequenceFileRepository.findOne(id)).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 
 		sf.setFile(compressed);
 
@@ -154,7 +156,7 @@ public class GzipFileProcessorTest {
 
 		sf.setFile(compressed);
 
-		when(sequenceFileRepository.findOne(id)).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 
 		fileProcessor.process(id);
 

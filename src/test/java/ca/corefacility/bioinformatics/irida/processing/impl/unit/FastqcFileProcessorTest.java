@@ -25,6 +25,7 @@ import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
@@ -52,6 +53,7 @@ public class FastqcFileProcessorTest {
 	public void setUp() {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
+		objectRepository = mock(SequencingObjectRepository.class);
 		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, objectRepository);
 	}
 
@@ -64,7 +66,7 @@ public class FastqcFileProcessorTest {
 		SequenceFile sf = new SequenceFile(fasta);
 		sf.setId(1L);
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
-		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
+		when(objectRepository.findOne(1L)).thenReturn(new SingleEndSequenceFile(sf));
 
 		fileProcessor.process(1L);
 	}
@@ -80,7 +82,7 @@ public class FastqcFileProcessorTest {
 
 		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
-		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
+		when(objectRepository.findOne(1L)).thenReturn(new SingleEndSequenceFile(sf));
 		try {
 			fileProcessor.process(1L);
 		} catch (Exception e) {
@@ -113,7 +115,6 @@ public class FastqcFileProcessorTest {
 
 		assertNotNull("Duplication level chart was not created.", updated.getDuplicationLevelChart());
 		assertTrue("Duplication level chart was not created.", ((byte[]) updated.getDuplicationLevelChart()).length > 0);
-
 
 		Iterator<OverrepresentedSequence> ovrs = updated.getOverrepresentedSequences().iterator();
 		assertTrue("No overrepresented sequences added to analysis.", ovrs.hasNext());
