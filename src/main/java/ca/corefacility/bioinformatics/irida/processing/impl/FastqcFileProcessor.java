@@ -31,11 +31,12 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC.AnalysisFastQCBuilder;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
@@ -47,11 +48,12 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
  */
 public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
-	
+
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
 
-	private final SequenceFileRepository sequenceFileRepository;
+	// private final SequenceFileRepository sequenceFileRepository;
 	private final MessageSource messageSource;
+	private final SequencingObjectRepository sequencingObjectRepository;
 
 	/**
 	 * Create a new {@link FastqcFileProcessor}
@@ -62,17 +64,27 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param sequenceFileRepository
 	 *            the sequence file repository.
 	 */
-	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository) {
+	public FastqcFileProcessor(final MessageSource messageSource,
+			final SequencingObjectRepository sequencingObjectRepository) {
 		this.messageSource = messageSource;
-		this.sequenceFileRepository = sequenceFileRepository;
+		this.sequencingObjectRepository = sequencingObjectRepository;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void process(final Long sequenceFileId) throws FileProcessorException {
-		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
+	public void process(final Long objectId) throws FileProcessorException {
+		SequencingObject seqObject = sequencingObjectRepository.findOne(objectId);
+
+		for (SequenceFile file : seqObject.getFiles()) {
+			file = processSingleFile(file);
+		}
+
+		sequencingObjectRepository.save(seqObject);
+	}
+
+	private SequenceFile processSingleFile(final SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC
 				.builder()
@@ -106,14 +118,15 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			logger.trace("Saving FastQC analysis.");
 			analysis.overrepresentedSequences(overrepresentedSequences);
-			
+
 			sequenceFile.setFastQCAnalysis(analysis.build());
 
-			sequenceFileRepository.save(sequenceFile);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 		}
+
+		return sequenceFile;
 	}
 
 	/**
@@ -165,8 +178,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param analysis
 	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores,
-			AnalysisFastQCBuilder analysis) throws IOException {
+	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, AnalysisFastQCBuilder analysis)
+			throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);

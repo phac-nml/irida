@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -22,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Tests for {@link GzipFileProcessor}.
@@ -32,12 +34,14 @@ public class GzipFileProcessorTest {
 
 	private GzipFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
+	private SequencingObjectRepository objectRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
 
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
+		objectRepository = mock(SequencingObjectRepository.class);
+		fileProcessor = new GzipFileProcessor(objectRepository, Boolean.FALSE);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -59,7 +63,7 @@ public class GzipFileProcessorTest {
 
 	@Test
 	public void testDeleteOriginalFile() throws IOException {
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE);
+		fileProcessor = new GzipFileProcessor(objectRepository, Boolean.TRUE);
 		final SequenceFile sf = constructSequenceFile();
 
 		// compress the file, update the sequence file reference

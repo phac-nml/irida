@@ -12,10 +12,7 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +26,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileProcessorLauncher;
-
-import com.google.common.collect.Lists;
 
 /**
  * Implementation for managing {@link SequenceFile}.
@@ -60,17 +53,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	private final SequenceFilePairRepository pairRepository;
 
 	/**
-	 * Executor for running pipelines asynchronously.
-	 */
-	private final TaskExecutor fileProcessingChainExecutor;
-	/**
-	 * File processing chain to execute on sequence files.
-	 */
-	private final FileProcessingChain fileProcessingChain;
-
-	private static final String FILE_PROPERTY = "file";
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param sequenceFileRepository
@@ -81,22 +63,15 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            the sample sequence file repository.
 	 * @param pairRepository
 	 *            the sequence file pair repository.
-	 * @param executor
-	 *            the task executor for processing sequence files.
-	 * @param fileProcessingChain
-	 *            the processing chain for processing sequence file.
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
 			SampleSequenceFileJoinRepository ssfRepository, SequenceFilePairRepository pairRepository,
-			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
 			Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.ssfRepository = ssfRepository;
 		this.pairRepository = pairRepository;
-		this.fileProcessingChainExecutor = executor;
-		this.fileProcessingChain = fileProcessingChain;
 	}
 
 	/**
@@ -140,12 +115,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile sf = super.update(id, updatedFields);
-
-		// only launch the file processing chain if the file has been modified.
-		if (updatedFields.containsKey(FILE_PROPERTY)) {
-			fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, Lists
-					.newArrayList(sf.getId()), SecurityContextHolder.getContext()));
-		}
 
 		return sf;
 	}

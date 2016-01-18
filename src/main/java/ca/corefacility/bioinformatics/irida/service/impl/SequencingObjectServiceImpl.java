@@ -2,10 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -65,8 +63,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingObject create(SequencingObject object) throws ConstraintViolationException, EntityExistsException {
 		SequencingObject so = super.create(object);
-		List<Long> ids = so.getFiles().stream().map(SequenceFile::getId).collect(Collectors.toList());
-		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, ids,
+		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, so.getId(),
 				SecurityContextHolder.getContext()));
 		return so;
 	}

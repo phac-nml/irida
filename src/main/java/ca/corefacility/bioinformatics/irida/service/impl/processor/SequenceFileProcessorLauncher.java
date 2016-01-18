@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.processor;
 
-import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContext;
@@ -19,13 +17,13 @@ public class SequenceFileProcessorLauncher implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileProcessorLauncher.class);
 
 	private final FileProcessingChain fileProcessingChain;
-	private final Collection<Long> sequenceFileIds;
+	private final Long sequencingObjectId;
 	private final SecurityContext securityContext;
 
-	public SequenceFileProcessorLauncher(FileProcessingChain fileProcessingChain, Collection<Long> sequenceFileIds,
+	public SequenceFileProcessorLauncher(FileProcessingChain fileProcessingChain, Long sequencingObjectId,
 			SecurityContext securityContext) {
 		this.fileProcessingChain = fileProcessingChain;
-		this.sequenceFileIds = sequenceFileIds;
+		this.sequencingObjectId = sequencingObjectId;
 		this.securityContext = securityContext;
 	}
 
@@ -44,9 +42,7 @@ public class SequenceFileProcessorLauncher implements Runnable {
 
 		// proceed with analysis
 		try {
-			for (Long id : sequenceFileIds) {
-				fileProcessingChain.launchChain(id);
-			}
+			fileProcessingChain.launchChain(sequencingObjectId);
 		} catch (FileProcessorTimeoutException e) {
 			logger.error(
 					"FileProcessingChain did *not* execute -- the transaction opened by SequenceFileService never closed.",

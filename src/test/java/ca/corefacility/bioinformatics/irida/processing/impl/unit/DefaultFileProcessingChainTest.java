@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Tests for {@link DefaultFileProcessingChain}.
@@ -25,15 +26,17 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 public class DefaultFileProcessingChainTest {
 
 	private SequenceFileRepository sequenceFileRepository;
+	private SequencingObjectRepository objectRepository;
 
 	@Before
 	public void setUp() {
 		this.sequenceFileRepository = mock(SequenceFileRepository.class);
+		this.objectRepository = mock(SequencingObjectRepository.class);
 	}
 
 	@Test(expected = FileProcessorTimeoutException.class)
 	public void testExceedsTimeout() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(sequenceFileRepository);
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository);
 		fileProcessingChain.setTimeout(1);
 		fileProcessingChain.setSleepDuration(0);
 		
@@ -45,7 +48,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testProcessEmptyChain() {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(sequenceFileRepository);
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository);
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
 		when(sequenceFileRepository.exists(1L)).thenReturn(true);
@@ -59,7 +62,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFailWithContinueChain() {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(sequenceFileRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository,
 				new FailingFileProcessor());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
@@ -80,7 +83,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFastFailProcessorChain() {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(sequenceFileRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository,
 				new FailingFileProcessor());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
@@ -99,7 +102,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFailOnProcessorChain() {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(sequenceFileRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository,
 				new FailingFileProcessorNoContinue());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);

@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutExcep
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Default implementation of {@link FileProcessingChain}. Simply iterates
@@ -31,15 +31,15 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	
 	private Integer sleepDuration = 1000;
 
-	private final SequenceFileRepository sequenceFileRepository;
+	private final SequencingObjectRepository sequencingObjectRepository;
 
-	public DefaultFileProcessingChain(SequenceFileRepository sequenceFileRepository, FileProcessor... fileProcessors) {
-		this(sequenceFileRepository, Arrays.asList(fileProcessors));
+	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository, FileProcessor... fileProcessors) {
+		this(sequencingObjectRepository, Arrays.asList(fileProcessors));
 	}
 
-	public DefaultFileProcessingChain(SequenceFileRepository sequenceFileRepository, List<FileProcessor> fileProcessors) {
+	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository, List<FileProcessor> fileProcessors) {
 		this.fileProcessors = fileProcessors;
-		this.sequenceFileRepository = sequenceFileRepository;
+		this.sequencingObjectRepository = sequencingObjectRepository;
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		// initially saved to the database, but not necessarily before the
 		// transaction has completed and closed, so we need to block until the
 		// file has been persisted in the database.
-		while (!sequenceFileRepository.exists(sequenceFileId)) {
+		while (!sequencingObjectRepository.exists(sequenceFileId)) {
 			if (waiting > timeout) {
 				throw new FileProcessorTimeoutException("Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.");
 			}
