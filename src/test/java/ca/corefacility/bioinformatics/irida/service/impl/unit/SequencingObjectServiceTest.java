@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequencingObjectServiceImpl;
@@ -31,6 +32,7 @@ public class SequencingObjectServiceTest {
 
 	SequencingObjectService service;
 	SequencingObjectRepository repository;
+	SequenceFileRepository sequenceFileRepository;
 	SampleSequencingObjectJoinRepository ssoRepository;
 	TaskExecutor executor;
 	FileProcessingChain fileProcessingChain;
@@ -43,7 +45,7 @@ public class SequencingObjectServiceTest {
 		executor = mock(TaskExecutor.class);
 		fileProcessingChain = mock(FileProcessingChain.class);
 
-		service = new SequencingObjectServiceImpl(repository, ssoRepository, executor, fileProcessingChain, validator);
+		service = new SequencingObjectServiceImpl(repository, sequenceFileRepository, ssoRepository, executor, fileProcessingChain, validator);
 	}
 
 	@Test

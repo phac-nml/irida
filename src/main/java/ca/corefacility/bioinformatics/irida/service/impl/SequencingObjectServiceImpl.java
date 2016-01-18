@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -41,11 +42,12 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		SequencingObjectService {
 
 	private final SampleSequencingObjectJoinRepository ssoRepository;
+	private final SequenceFileRepository sequenceFileRepository;
 	private TaskExecutor fileProcessingChainExecutor;
 	private FileProcessingChain fileProcessingChain;
 
 	@Autowired
-	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
+	public SequencingObjectServiceImpl(SequencingObjectRepository repository, SequenceFileRepository sequenceFileRepository,
 			SampleSequencingObjectJoinRepository ssoRepository,
 			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
 			Validator validator) {
@@ -53,6 +55,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		this.ssoRepository = ssoRepository;
 		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
+		this.sequenceFileRepository = sequenceFileRepository;
 	}
 
 	/**
@@ -62,6 +65,10 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingObject create(SequencingObject object) throws ConstraintViolationException, EntityExistsException {
+		for(SequenceFile file : object.getFiles()){
+			file = sequenceFileRepository.save(file);
+		}
+
 		SequencingObject so = super.create(object);
 		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, so.getId(),
 				SecurityContextHolder.getContext()));
