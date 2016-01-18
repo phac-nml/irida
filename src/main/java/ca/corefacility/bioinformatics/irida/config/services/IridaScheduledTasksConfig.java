@@ -68,7 +68,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Autowired 	
 	private ProjectEventEmailScheduledTask eventEmailTask;
 	
-	@Value("${irida.scheduled.threads")
+	@Value("${irida.scheduled.threads}")
 	private int threadCount = 2;
 
 	/**
