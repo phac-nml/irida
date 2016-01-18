@@ -28,7 +28,9 @@ import uk.ac.babraham.FastQC.Modules.PerSequenceQualityScores;
 import uk.ac.babraham.FastQC.Modules.QCModule;
 import uk.ac.babraham.FastQC.Sequence.Sequence;
 import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
+import uk.ac.babraham.FastQC.Sequence.SequenceFormatException;
 import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -77,14 +79,20 @@ public class FastqcFileProcessor implements FileProcessor {
 	public void process(final Long objectId) throws FileProcessorException {
 		SequencingObject seqObject = sequencingObjectRepository.findOne(objectId);
 
-		for (SequenceFile file : seqObject.getFiles()) {
-			file = processSingleFile(file);
-		}
+		try {
+			for (SequenceFile file : seqObject.getFiles()) {
+				file = processSingleFile(file);
+			}
 
-		sequencingObjectRepository.save(seqObject);
+			sequencingObjectRepository.save(seqObject);
+		} catch (Exception e) {
+			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
+			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
+		}
 	}
 
-	private SequenceFile processSingleFile(final SequenceFile sequenceFile) throws FileProcessorException {
+	private SequenceFile processSingleFile(final SequenceFile sequenceFile) throws SequenceFormatException,
+			IOException, AnalysisAlreadySetException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC
 				.builder()
@@ -92,39 +100,34 @@ public class FastqcFileProcessor implements FileProcessor {
 				.description(
 						messageSource.getMessage("fastqc.file.processor.analysis.description", null,
 								LocaleContextHolder.getLocale()));
-		try {
-			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
-					.getSequenceFile(fileToProcess.toFile());
-			BasicStats basicStats = new BasicStats();
-			PerBaseQualityScores pbqs = new PerBaseQualityScores();
-			PerSequenceQualityScores psqs = new PerSequenceQualityScores();
-			OverRepresentedSeqs overRep = new OverRepresentedSeqs();
-			QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs, overRep };
 
-			logger.debug("Launching FastQC analysis modules on all sequences.");
-			while (fastQCSequenceFile.hasNext()) {
-				Sequence sequence = fastQCSequenceFile.next();
-				for (QCModule module : moduleList) {
-					module.processSequence(sequence);
-				}
+		uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(fileToProcess
+				.toFile());
+		BasicStats basicStats = new BasicStats();
+		PerBaseQualityScores pbqs = new PerBaseQualityScores();
+		PerSequenceQualityScores psqs = new PerSequenceQualityScores();
+		OverRepresentedSeqs overRep = new OverRepresentedSeqs();
+		QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs, overRep };
+
+		logger.debug("Launching FastQC analysis modules on all sequences.");
+		while (fastQCSequenceFile.hasNext()) {
+			Sequence sequence = fastQCSequenceFile.next();
+			for (QCModule module : moduleList) {
+				module.processSequence(sequence);
 			}
-
-			logger.debug("Finished FastQC analysis modules.");
-			handleBasicStats(basicStats, analysis);
-			handlePerBaseQualityScores(pbqs, analysis);
-			handlePerSequenceQualityScores(psqs, analysis);
-			handleDuplicationLevel(overRep.duplicationLevelModule(), analysis);
-			Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
-
-			logger.trace("Saving FastQC analysis.");
-			analysis.overrepresentedSequences(overrepresentedSequences);
-
-			sequenceFile.setFastQCAnalysis(analysis.build());
-
-		} catch (Exception e) {
-			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
-			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 		}
+
+		logger.debug("Finished FastQC analysis modules.");
+		handleBasicStats(basicStats, analysis);
+		handlePerBaseQualityScores(pbqs, analysis);
+		handlePerSequenceQualityScores(psqs, analysis);
+		handleDuplicationLevel(overRep.duplicationLevelModule(), analysis);
+		Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
+
+		logger.trace("Saving FastQC analysis.");
+		analysis.overrepresentedSequences(overrepresentedSequences);
+
+		sequenceFile.setFastQCAnalysis(analysis.build());
 
 		return sequenceFile;
 	}
