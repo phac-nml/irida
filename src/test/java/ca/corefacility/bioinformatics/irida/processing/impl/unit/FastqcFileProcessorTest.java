@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -38,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
+	private SequencingObjectRepository objectRepository;
 	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
@@ -50,7 +52,7 @@ public class FastqcFileProcessorTest {
 	public void setUp() {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository);
+		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, objectRepository);
 	}
 
 	@Test(expected = FileProcessorException.class)

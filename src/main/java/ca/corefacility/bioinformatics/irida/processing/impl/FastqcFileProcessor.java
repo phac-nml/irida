@@ -31,11 +31,13 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC.AnalysisFastQCBuilder;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
@@ -51,6 +53,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
 
 	private final SequenceFileRepository sequenceFileRepository;
+	private final SequencingObjectRepository objectRepository;
 	private final MessageSource messageSource;
 
 	/**
@@ -62,17 +65,26 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param sequenceFileRepository
 	 *            the sequence file repository.
 	 */
-	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository) {
+	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository, final SequencingObjectRepository objectRepository) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
+		this.objectRepository = objectRepository;
+	}
+	
+	@Override
+	public void process(final Long sequencingObjectId) throws FileProcessorException {
+		SequencingObject seqObj = objectRepository.findOne(sequencingObjectId);
+		
+		for(SequenceFile file : seqObj.getFiles()){
+			processSingleFile(file);
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public void process(final Long sequenceFileId) throws FileProcessorException {
-		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
+	
+	public void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC
 				.builder()

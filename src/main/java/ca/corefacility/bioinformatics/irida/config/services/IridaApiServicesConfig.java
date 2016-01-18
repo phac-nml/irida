@@ -53,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessin
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -115,9 +116,12 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository) {
-		final FileProcessor gzipFileProcessor = new GzipFileProcessor(sequencingObjectRepository, removeCompressedFiles);
-		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(messageSource(), sequencingObjectRepository);
+	public FileProcessingChain fileProcessorChain(SequenceFileRepository fileRepository,
+			SequencingObjectRepository sequencingObjectRepository) {
+		final FileProcessor gzipFileProcessor = new GzipFileProcessor(fileRepository, sequencingObjectRepository,
+				removeCompressedFiles);
+		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(messageSource(), fileRepository,
+				sequencingObjectRepository);
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor);
 
 		if (!decompressFiles) {
