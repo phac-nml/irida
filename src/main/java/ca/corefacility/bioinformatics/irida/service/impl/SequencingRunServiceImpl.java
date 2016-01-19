@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -30,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
@@ -42,11 +44,12 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SampleRepository sampleRepository;
 	private SequenceFileRepository sequenceFileRepository;
+	private SequencingObjectRepository objectRepository;
 	private SequenceFilePairRepository pairRepository;
 	private AnalysisSubmissionRepository submissionRepository;
 
 	@Autowired
-	public SequencingRunServiceImpl(SequencingRunRepository repository, SequenceFileRepository sequenceFileRepository,
+	public SequencingRunServiceImpl(SequencingRunRepository repository, SequenceFileRepository sequenceFileRepository, SequencingObjectRepository objectRepository,
 			SampleSequenceFileJoinRepository ssfRepository, SampleRepository sampleRepository,
 			SequenceFilePairRepository pairRepository, AnalysisSubmissionRepository submissionRepository,
 			Validator validator) {
@@ -54,6 +57,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 		this.ssfRepository = ssfRepository;
 		this.sampleRepository = sampleRepository;
 		this.sequenceFileRepository = sequenceFileRepository;
+		this.objectRepository = objectRepository;
 		this.pairRepository = pairRepository;
 		this.submissionRepository = submissionRepository;
 	}
@@ -83,11 +87,11 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
-	public void addSequenceFileToSequencingRun(SequencingRun run, SequenceFile file) {
+	public void addSequenceFileToSequencingRun(SequencingRun run, SequencingObject seqobject) {
 		// attach a copy of the file to the current transaction.
-		file = sequenceFileRepository.findOne(file.getId());
-		file.setSequencingRun(run);
-		sequenceFileRepository.save(file);
+		seqobject = objectRepository.findOne(seqobject.getId());
+		seqobject.setSequencingRun(run);
+		objectRepository.save(seqobject);
 	}
 
 	/**
