@@ -173,11 +173,11 @@ public class SequenceFileController {
 	 */
 	private void createDefaultPageInfo(Long sequenceFileId, Model model) {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
-		SequencingRun run = sequencingRunService.getSequencingRunForSequenceFile(file);
+		//SequencingRun run = sequencingRunService.getSequencingRunForSequenceFile(file);
 		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(file);
 		model.addAttribute("file", file);
 		model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
 		model.addAttribute("fastQC", fastQC);
-		model.addAttribute("run", run);
+		//model.addAttribute("run", run);
 	}
 }

@@ -124,20 +124,6 @@ public class SequencingRunServiceImplIT {
 	}
 
 	@Test
-	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	public void testGetMiseqRunForSequenceFile() {
-		SequenceFile sf = sequenceFileService.read(2L);
-
-		try {
-			SequencingRun j = miseqRunService.getSequencingRunForSequenceFile(sf);
-			assertEquals("Join had wrong miseq run.", Long.valueOf(2L), j.getId());
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Test failed for unknown reason.");
-		}
-	}
-
-	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
 		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");

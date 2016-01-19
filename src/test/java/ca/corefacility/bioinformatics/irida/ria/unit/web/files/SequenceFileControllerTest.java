@@ -20,8 +20,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
@@ -52,9 +50,7 @@ public class SequenceFileControllerTest {
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
-		SequencingRun run = new SequencingRunEntity();
 		when(sequenceFileService.read(anyLong())).thenReturn(file);
-		when(sequencingRunService.getSequencingRunForSequenceFile(file)).thenReturn(run);
 	}
 
 	/**

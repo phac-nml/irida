@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 /**
@@ -20,12 +19,4 @@ public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 	 */
 	public void addSequenceFileToSequencingRun(SequencingRun run, SequencingObject seqobject);
 
-	/**
-	 * Get the {@link SequencingRun} for the given {@link SequenceFile}
-	 * 
-	 * @param file
-	 *            The {@link SequenceFile} for to get the run for
-	 * @return A SequencingRun for the file
-	 */
-	public SequencingRun getSequencingRunForSequenceFile(SequenceFile file);
 }
