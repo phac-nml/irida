@@ -113,7 +113,7 @@ public class SequencingRunServiceImplIT {
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 		sf.setFile(sequenceFile);
 		sequenceFileService.update(1L, ImmutableMap.of("file", sequenceFile));
-		miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
+		//miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
 		SequencingRun saved = miseqRunService.read(1L);
 		SequenceFile savedFile = sequenceFileService.read(1L);
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
@@ -234,7 +234,7 @@ public class SequencingRunServiceImplIT {
 
 		sequenceFileService.createSequenceFileInSample(sf, sample);
 
-		miseqRunService.addSequenceFileToSequencingRun(run, sf);
+		//miseqRunService.addSequenceFileToSequencingRun(run, sf);
 
 		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);

@@ -254,7 +254,7 @@ public class SequenceFileServiceImplIT {
 		sequenceFileService.createSequenceFileInSample(sf, s);
 
 		SequencingRun mr = sequencingRunService.read(1L);
-		sequencingRunService.addSequenceFileToSequencingRun(mr, sf);
+		//sequencingRunService.addSequenceFileToSequencingRun(mr, sf);
 	}
 
 	@Test
