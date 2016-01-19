@@ -25,7 +25,7 @@
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables" ng-controller="SamplesController as samplesCtrl">
 
-	<table id="samplesTable" datatable="ng" class="table table-hover table-selectable"  dt-options="samplesCtrl.dtOptions" dt-column-defs="samplesCtrl.dtColumnDefs" dt-instance="samplesCtrl.dtInstanceCallback">
+	<table id="samplesTable" datatable="ng" class="table table-hover ng-cloak table-selectable"  dt-options="samplesCtrl.dtOptions" dt-column-defs="samplesCtrl.dtColumnDefs" dt-instance="samplesCtrl.dtInstanceCallback">
 		<thead>
 		<tr>
 			<th width="20px">
