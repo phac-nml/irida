@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
@@ -57,14 +56,12 @@ public class SequenceFileController {
 	 * SERVICES
 	 */
 	private SequenceFileService sequenceFileService;
-	private SequencingRunService sequencingRunService;
         private final AnalysisService analysisService;
 
 	@Autowired
 	public SequenceFileController(SequenceFileService sequenceFileService, SequencingRunService sequencingRunService,
                                       final AnalysisService analysisService) {
 		this.sequenceFileService = sequenceFileService;
-		this.sequencingRunService = sequencingRunService;
 		this.dateFormatter = new DateFormatter();
                 this.analysisService = analysisService;
 	}
