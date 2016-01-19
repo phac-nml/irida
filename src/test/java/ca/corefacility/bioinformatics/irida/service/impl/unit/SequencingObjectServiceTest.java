@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
 
 import javax.validation.Validator;
 
@@ -19,65 +21,75 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequencingObjectServiceImpl;
+import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
 public class SequencingObjectServiceTest {
 
 	SequencingObjectService service;
 	SequencingObjectRepository repository;
+	SequenceFileRepository sequenceFileRepository;
 	SampleSequencingObjectJoinRepository ssoRepository;
-	Validator validator;
 	TaskExecutor executor;
+	FileProcessingChain fileProcessingChain;
+	Validator validator;
 
 	@Before
 	public void setUp() {
 		repository = mock(SequencingObjectRepository.class);
+		sequenceFileRepository = mock(SequenceFileRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
-		
-		service = new SequencingObjectServiceImpl(repository, ssoRepository, validator);
+		executor = mock(TaskExecutor.class);
+		fileProcessingChain = mock(FileProcessingChain.class);
+
+		service = new SequencingObjectServiceImpl(repository, sequenceFileRepository, ssoRepository, executor,
+				fileProcessingChain, validator);
 	}
 
 	@Test
-	public void testCreateSequenceFileInSample() {
+	public void testCreateSequenceFileInSample() throws IOException {
 		Sample s = new Sample();
 
-		SingleEndSequenceFile sf = new SingleEndSequenceFile(null);
+		SingleEndSequenceFile sf = TestDataFactory.constructSingleEndSequenceFile();
 
 		when(repository.save(sf)).thenReturn(sf);
 
 		service.createSequencingObjectInSample(sf, s);
 
+		verify(sequenceFileRepository, times(1)).save(any(SequenceFile.class));
 		// verify that we're only actually running one file processor on the new
 		// sequence file.
 		verify(executor, times(1)).execute(any(Runnable.class));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testCreateSequenceFileInSampleWrongType() {
+	public void testCreateSequenceFileInSampleWrongType() throws IOException {
 		Sample s = new Sample();
-		SequenceFile sf = new SequenceFile();
-		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
 		SequencingRun run = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 
-		sf.setSequencingRun(run);
+		so.getSequenceFile().setSequencingRun(run);
+
+		when(repository.save(so)).thenReturn(so);
 
 		service.createSequencingObjectInSample(so, s);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testCreateSequenceFilePairInSampleWrongType() {
+	public void testCreateSequenceFilePairInSampleWrongType() throws IOException {
 		Sample s = new Sample();
-		SequenceFile sf = new SequenceFile();
-		SequenceFile sf2 = new SequenceFile();
+
 		SequencingRun run = new MiseqRun(LayoutType.SINGLE_END, "workflow");
 
-		SequenceFilePair so = new SequenceFilePair(sf, sf2);
+		SequenceFilePair so = TestDataFactory.constructSequenceFilePair();
+		so.getFiles().forEach(sf -> sf.setSequencingRun(run));
 
-		sf.setSequencingRun(run);
-		sf2.setSequencingRun(run);
+		when(repository.save(so)).thenReturn(so);
 
 		service.createSequencingObjectInSample(so, s);
 	}

@@ -12,17 +12,12 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -31,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -59,17 +53,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	private final SequenceFilePairRepository pairRepository;
 
 	/**
-	 * Executor for running pipelines asynchronously.
-	 */
-	private final TaskExecutor fileProcessingChainExecutor;
-	/**
-	 * File processing chain to execute on sequence files.
-	 */
-	private final FileProcessingChain fileProcessingChain;
-
-	private static final String FILE_PROPERTY = "file";
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param sequenceFileRepository
@@ -80,24 +63,17 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            the sample sequence file repository.
 	 * @param pairRepository
 	 *            the sequence file pair repository.
-	 * @param executor
-	 *            the task executor for processing sequence files.
-	 * @param fileProcessingChain
-	 *            the processing chain for processing sequence file.
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
 			SampleSequenceFileJoinRepository ssfRepository, SequenceFilePairRepository pairRepository,
-			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
 			Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.ssfRepository = ssfRepository;
 		this.pairRepository = pairRepository;
-		this.fileProcessingChainExecutor = executor;
-		this.fileProcessingChain = fileProcessingChain;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -118,8 +94,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		// Send the file to the database repository to be stored (in super)
 		logger.trace("Calling super.create");
 		SequenceFile sf = super.create(sequenceFile);
-		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(),
-				SecurityContextHolder.getContext()));
+
 		return sf;
 	}
 
@@ -140,12 +115,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile sf = super.update(id, updatedFields);
-
-		// only launch the file processing chain if the file has been modified.
-		if (updatedFields.containsKey(FILE_PROPERTY)) {
-			fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(),
-					SecurityContextHolder.getContext()));
-		}
 
 		return sf;
 	}
@@ -211,54 +180,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	}
 
 	/**
-	 * Executes {@link FileProcessingChain} asynchronously in a
-	 * {@link TaskExecutor}.
-	 * 
-	 * 
-	 */
-	private static final class SequenceFileProcessorLauncher implements Runnable {
-		private final FileProcessingChain fileProcessingChain;
-		private final Long sequenceFileId;
-		private final SecurityContext securityContext;
-
-		public SequenceFileProcessorLauncher(FileProcessingChain fileProcessingChain, Long sequenceFileId,
-				SecurityContext securityContext) {
-			this.fileProcessingChain = fileProcessingChain;
-			this.sequenceFileId = sequenceFileId;
-			this.securityContext = securityContext;
-		}
-
-		@Override
-		public void run() {
-			// when running in single-threaded mode, the security context should
-			// already be populated in the current thread and and we shouldn't
-			// have to overwrite and erase the context before execution.
-			boolean copiedSecurityContext = true;
-			SecurityContext context = SecurityContextHolder.getContext();
-			if (context == null || context.getAuthentication() == null) {
-				SecurityContextHolder.setContext(securityContext);
-			} else {
-				copiedSecurityContext = false;
-			}
-
-			// proceed with analysis
-			try {
-				fileProcessingChain.launchChain(sequenceFileId);
-			} catch (FileProcessorTimeoutException e) {
-				logger.error(
-						"FileProcessingChain did *not* execute -- the transaction opened by SequenceFileService never closed.",
-						e);
-			}
-
-			// erase the security context if we copied the context into the
-			// current thread.
-			if (copiedSecurityContext) {
-				SecurityContextHolder.clearContext();
-			}
-		}
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -284,8 +205,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
 
 		for (SequenceFile file : sequenceFiles) {
-			Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository
-					.getSampleForSequenceFile(file);
+			Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository.getSampleForSequenceFile(file);
 			Sample sample = sampleSequenceFile.getSubject();
 			SequenceFile sequenceFile = sampleSequenceFile.getObject();
 
@@ -301,7 +221,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		return sampleSequenceFiles;
 	}
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
