@@ -24,6 +24,6 @@ public interface SequenceFileRepository extends FilesystemSupplementedRepository
 	 *            the run to load the files for.
 	 * @return the files created as part of a run.
 	 */
-	@Query("select f from SequenceFile f where f.sequencingRun = ?1")
+	@Query("select f from SequenceFile f")
 	public Set<SequenceFile> findSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 }
