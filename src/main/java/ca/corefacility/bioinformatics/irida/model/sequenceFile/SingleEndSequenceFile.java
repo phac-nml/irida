@@ -16,8 +16,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -84,16 +82,6 @@ public class SingleEndSequenceFile extends SequencingObject {
 
 	public Path getFile() {
 		return file.getFile();
-	}
-
-	@JsonIgnore
-	public SequencingRun getSequencingRun() {
-		return file.getSequencingRun();
-	}
-
-	@JsonIgnore
-	public void setSequencingRun(SequencingRun sequencingRun) {
-		file.setSequencingRun(sequencingRun);
 	}
 
 	/**
