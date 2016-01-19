@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -127,10 +126,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		// check for consistency with the sequencing run
+		
+		/*
+		 * Removing the check for wrong type of run
 		SequencingRun sequencingRun = sequenceFile.getSequencingRun();
 		if (sequencingRun != null && sequencingRun.getLayoutType() != LayoutType.SINGLE_END) {
 			throw new IllegalArgumentException("Attempting to add single end files to a non single end run.");
-		}
+		}*/
 
 		SequenceFile created = create(sequenceFile);
 		SampleSequenceFileJoin join = ssfRepository.save(new SampleSequenceFileJoin(sample, created));
@@ -146,10 +148,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	public List<Join<Sample, SequenceFile>> createSequenceFilePairInSample(SequenceFile file1, SequenceFile file2,
 			Sample sample) {
 		// check for consistency with the sequencing run
+		
+		/*
+		 * Removing the check for wrong type of run
 		SequencingRun sequencingRun = file1.getSequencingRun();
 		if (sequencingRun != null && sequencingRun.getLayoutType() != LayoutType.PAIRED_END) {
 			throw new IllegalArgumentException("Attempting to add paired-end files to a non paired-end run.");
-		}
+		}*/
 
 		file1 = create(file1);
 		file2 = create(file2);
