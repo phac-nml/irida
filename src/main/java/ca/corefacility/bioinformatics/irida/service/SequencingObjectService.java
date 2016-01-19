@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -75,4 +76,14 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 */
 	public Map<Sample, SequencingObject> getUniqueSamplesForSequenceFiles(Set<SequencingObject> sequenceFiles)
 			throws DuplicateSampleException;
+	
+	/**
+	 * Get all the {@link SequencingObject}s associated with a given
+	 * {@link SequencingRun}
+	 * 
+	 * @param sequencingRun
+	 *            the run to get objects for
+	 * @return a set of {@link SequencingObject}
+	 */
+	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun);
 }
