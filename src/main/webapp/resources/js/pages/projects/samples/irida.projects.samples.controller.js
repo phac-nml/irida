@@ -64,7 +64,7 @@
 			vm.selected = [];
 			vm.samples.forEach(function (sample) {
 				sample.selected = vm.allSelected;
-				vm.selected.push(sample);
+				if(vm.allSelected) vm.selected.push(sample);
 			});
 			vm.updateButtons();
 		};
