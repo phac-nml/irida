@@ -40,3 +40,12 @@ table th {
 table td {
   padding: 5px 18px!important;
 }
+
+tr {
+  background-color: white;
+  transition: background-color 0.3s ease;
+}
+
+tr.selected {
+  background-color: #d9edf7 !important;
+}

@@ -68,7 +68,7 @@
 				.withOption("order", [[2, "desc"]])
 				// Add extra DOM features. See [https://datatables.net/reference/option/dom]
 				// This matches the other tables in the project see datatables.properties to see full layout.
-				.withDOM("<'row filter-row'<'col-sm-9 buttons'><'col-sm-3'0f>><'row datatables-active-filters'1><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
+				.withDOM("<'row filter-row'<'col-sm-9 buttons'><'col-sm-3'0f>><'row' <'col-md-6 col-sm-12 sample-count'> <'col-md-6 col-sm-12 datatables-active-filters'1>><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
 		}
 
 		// Create any special columns in the table.
@@ -79,10 +79,17 @@
 			];
 		}
 
+		/**
+		 * Initials DOM surrounding the datatable.
+		 * @param $scope - angular $scope surrounding the table.
+		 * @param instance - the datatable instance.
+		 */
 		function initTable($scope, instance) {
 			table = instance;
+			// Once the datatable is created add the accessory components.
 			table.DataTable.on("draw.dt", function () {
 				ng.element(".buttons").html($compile($templateCache.get("buttons.html"))($scope));
+				ng.element(".sample-count").html($compile($templateCache.get("selectedCounts.html"))($scope));
 			});
 		}
 

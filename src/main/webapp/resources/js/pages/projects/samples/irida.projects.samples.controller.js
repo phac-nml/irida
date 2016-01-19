@@ -10,7 +10,8 @@
 	 * @constructor
 	 */
 	function SamplesController($scope, $log, samplesService, tableService) {
-		var vm = this, index = 0;
+		var vm = this;
+		vm.selected = [];
 
 		// BUTTON STATE
 		vm.disabled = {
@@ -26,42 +27,6 @@
 		samplesService.fetchSamples().then(function (samples) {
 			vm.samples = samples;
 		});
-
-		vm.selectAll = function () {
-			// Select via datatables
-			tableService.selectAllNone(vm.allSelected);
-
-			// Update the samples, this updates the checkboxes.
-			vm.samples.forEach(function (sample) {
-				sample.selected = vm.allSelected;
-			});
-			updateButtons();
-		};
-
-		// Datatables selects the row, need to update the angular models.
-		vm.rowClick = function($event, $index, item) {
-			console.log("CLICKED");
-			if($event.shiftKey) {
-
-			}
-			else  {
-				$event.stopPropagation();
-				item.selected = !item.selected;
-				tableService.selectRow($event.currentTarget, item.selected);
-			}
-			updateButtons();
-		};
-
-		vm.checkboxClick = function($event, $index, item) {
-			$event.stopPropagation();
-			index = $index;
-			var rows = $("tbody tr");
-			rows.forEach(function (row) {
-				console.log($(row).data("index"));
-			});
-			console.log();
-			updateButtons();
-		};
 
 		vm.displayProjectsModal = function() {
 			$log.warn("TODO: Implement displaying multiple projects");
@@ -93,12 +58,25 @@
 		};
 
 		/**
+		 * Responsible for selecting all or none of the samples
+		 */
+		vm.selectAll = function() {
+			vm.selected = [];
+			vm.samples.forEach(function (sample) {
+				sample.selected = vm.allSelected;
+				vm.selected.push(sample);
+			});
+			vm.updateButtons();
+		};
+
+		/**
 		 * Determine how many samples are selected and update the buttons.
 		 */
-		function updateButtons(){
+		vm.updateButtons = function (){
 			var count = vm.samples.filter(function (sample) {
 				return sample.selected;
 			}).length;
+			vm.allSelected = vm.samples.length === count;
 			vm.disabled = {
 				lessThanTwo: count < 2,
 				lessThanOne: count < 1
@@ -106,6 +84,6 @@
 		}
 	}
 
-	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service"])
+	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "selectionModel"])
 		.controller("SamplesController", ["$scope", "$log",  "samplesService", "tableService", SamplesController]);
 })(window.angular);

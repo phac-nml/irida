@@ -37,9 +37,13 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="item in ::samplesCtrl.samples" data-index="{{$index}}" ng-click="samplesCtrl.rowClick($event, $index, item)">
+		<tr ng-repeat="item in ::samplesCtrl.samples"
+		    selection-model=""
+		    selection-model-selected-items="samplesCtrl.selected"
+		    selection-model-mode="'multiple-additive'"
+		    selection-model-on-change="samplesCtrl.updateButtons()">
 			<td>
-				<input type="checkbox" ng-model="item.selected" ng-click="samplesCtrl.checkboxClick($event, $index, item)"/>
+				<input type="checkbox" ng-model="item.selected" ng-click="item.selected = !item.selected"/>
 			</td>
 			<td>
 				<a data:ng-href="@{'/samples/{{item.sample.identifier}}'}" ng-bind="item.sample.label"></a></td>
@@ -53,5 +57,11 @@
 
 <th:block layout:fragment="scripts">
 	<script type="text/ng-template" id="buttons.html" th:include="projects/partials/samples.tmpl :: toolbar"></script>
+
+	<script th:inline="javascript" type="text/ng-template" id="selectedCounts.html">
+		<ng-pluralize count="samplesCtrl.selected.length"
+		              data:when="#{project.samples.table.selected}"
+		></ng-pluralize>
+	</script>
 </th:block>
 </html>

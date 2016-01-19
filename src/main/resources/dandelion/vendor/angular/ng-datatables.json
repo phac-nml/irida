@@ -15,6 +15,13 @@
       }
     },
     {
+      "name": "irida.datatables.custom",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/components/datatables-custom.css"
+      }
+    },
+    {
       "name": "datatables-bootstrap",
       "type": "js",
       "locations": {
