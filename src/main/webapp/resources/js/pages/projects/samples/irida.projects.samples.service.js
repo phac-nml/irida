@@ -66,10 +66,6 @@
 			return DTOptionsBuilder.newOptions()
 				// Which row to sort by: Modified date, Descending.
 				.withOption("order", [[2, "desc"]])
-				// Using the select plugin. See [http://datatables.net/extensions/select/] for options
-				.withSelect({
-					style   : 'os'
-				})
 				// Add extra DOM features. See [https://datatables.net/reference/option/dom]
 				// This matches the other tables in the project see datatables.properties to see full layout.
 				.withDOM("<'row filter-row'<'col-sm-9 buttons'><'col-sm-3'0f>><'row datatables-active-filters'1><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
@@ -90,32 +86,14 @@
 			});
 		}
 
-		function selectRow(row, select) {
-			if (select) {
-				table.DataTable.row($(row)).select();
-			} else {
-				table.DataTable.row($(row)).deselect();
-			}
-		}
-
-		function selectAllNone(selectAll) {
-			if (selectAll) {
-				table.DataTable.rows({filter: 'applied'}).select();
-			} else {
-				table.DataTable.rows({filter: 'applied'}).deselect();
-			}
-		}
-
 		return {
 			createTableOptions   : createTableOptions,
 			createTableColumnDefs: createTableColumnDefs,
-			selectRow            : selectRow,
-			selectAllNone        : selectAllNone,
 			initTable            : initTable
 		};
 	}
 
-	ng.module("irida.projects.samples.service", ["datatables", "datatables.select"])
+	ng.module("irida.projects.samples.service", ["datatables"])
 		.factory("samplesService", ["$http", "$q", samplesService])
 		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", tableService]);
 })(window.angular, window.jQuery, window._, window.PAGE);

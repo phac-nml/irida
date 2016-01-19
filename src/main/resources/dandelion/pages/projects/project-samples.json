@@ -2,8 +2,7 @@
   "dependencies": [
     "ng-datatables",
     "select2-bootstrap",
-    "bootstrap_dropdowns_enhancement",
-    "ng-datatables-select"
+    "bootstrap_dropdowns_enhancement"
   ],
   "assets": [
     {

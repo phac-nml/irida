@@ -54,8 +54,12 @@
 
 		vm.checkboxClick = function($event, $index, item) {
 			$event.stopPropagation();
-			//index = $index;
-			tableService.selectRow($event.currentTarget.parentElement.parentElement, item.selected);
+			index = $index;
+			var rows = $("tbody tr");
+			rows.forEach(function (row) {
+				console.log($(row).data("index"));
+			});
+			console.log();
 			updateButtons();
 		};
 

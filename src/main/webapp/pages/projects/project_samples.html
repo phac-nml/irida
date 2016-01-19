@@ -37,7 +37,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="item in ::samplesCtrl.samples" ng-click="samplesCtrl.rowClick($event, $index, item)">
+		<tr ng-repeat="item in ::samplesCtrl.samples" data-index="{{$index}}" ng-click="samplesCtrl.rowClick($event, $index, item)">
 			<td>
 				<input type="checkbox" ng-model="item.selected" ng-click="samplesCtrl.checkboxClick($event, $index, item)"/>
 			</td>
