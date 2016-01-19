@@ -535,28 +535,4 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	//		page.addSamplesToGlobalCart();
 	//		assertEquals(1, page.getCartCount());
 	//	}
-	//
-	//	private int getSampleFlagCount(String command) {
-	//		Pattern pattern = Pattern.compile("-s");
-	//		Matcher matcher = pattern.matcher(command);
-	//		int count = 0;
-	//		while (matcher.find()) {
-	//			count++;
-	//		}
-	//		return count;
-	//	}
-	//
-	//	private void selectFirstThreeSamples() {
-	//		page.selectSampleByRow(0);
-	//		page.selectSampleByRow(1);
-	//		page.selectSampleByRow(2);
-	//	}
-	//
-	//	private void jumpAroundLists() {
-	//		page.selectPage(1);
-	//		page.selectPage(3);
-	//		page.selectPage(2);
-	//		page.selectPage(1);
-	//		page.selectPage(2);
-	//	}
 }
