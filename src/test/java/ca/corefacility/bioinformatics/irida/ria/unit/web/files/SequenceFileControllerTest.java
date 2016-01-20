@@ -103,7 +103,6 @@ public class SequenceFileControllerTest {
 		assertTrue("Model should contain information about the file.", model.containsAttribute("file"));
 		assertTrue("Model should contain the created date for the file.", model.containsAttribute("created"));
 		assertTrue("Model should contain the fastQC data for the file.", model.containsAttribute("fastQC"));
-		assertTrue("Model should contain the sequencing run.", model.containsAttribute("run"));
 		assertTrue("Model should contain the active nav id", model.containsAttribute(SequenceFileController.ACTIVE_NAV));
 	}
 }
