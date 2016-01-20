@@ -26,6 +26,7 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="created_date" type="datetime" />
+			<column name="sequencing_run_id" type="bigint(20)" />
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
 					referencedTableName="Revisions" foreignKeyName="FK_SEQUENCING_OBJECT_AUD" />
@@ -190,6 +191,11 @@
 			UPDATE sequencing_object o INNER JOIN sequence_file_single_end s
 			ON s.id=o.id INNER JOIN sequence_file f ON s.file_id=f.id SET
 			o.sequencing_run_id=f.sequencing_run_id
+		</sql>
+
+		<sql>
+			UPDATE sequencing_object_AUD a INNER JOIN sequencing_object o ON
+			a.id=o.id SET a.sequencing_run_id=o.sequencing_run_id
 		</sql>
 
 		<dropForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN"
