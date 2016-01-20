@@ -17,6 +17,6 @@ public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 	 * @param seqobject
 	 *            The {@link SequencingObject}
 	 */
-	public void addSequenceFileToSequencingRun(SequencingRun run, SequencingObject seqobject);
+	public void addSequencingObjectToSequencingRun(SequencingRun run, SequencingObject seqobject);
 
 }

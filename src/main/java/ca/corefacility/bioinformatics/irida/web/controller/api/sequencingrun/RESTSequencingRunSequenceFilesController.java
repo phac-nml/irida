@@ -69,7 +69,7 @@ public class RESTSequencingRunSequenceFilesController {
 		// then, get the miseq run
 		SequencingRun run = miseqRunService.read(sequencingrunId);
 		// then add the user to the project with the specified role.
-		miseqRunService.addSequenceFileToSequencingRun(run, sequencingObject);
+		miseqRunService.addSequencingObjectToSequencingRun(run, sequencingObject);
 
 		MiseqRun miseqRun;
 		if (run instanceof MiseqRun) {
