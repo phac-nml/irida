@@ -1,16 +1,11 @@
 {
   "dependencies": [
+    "ng-datatables",
     "select2-bootstrap",
     "bootstrap_dropdowns_enhancement",
-    "angular-busy"
+    "selection-model"
   ],
   "assets": [
-    {
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/directives/datatables/irida-datatable.js"
-      }
-    },
     {
       "type": "css",
       "locations": {
@@ -18,9 +13,16 @@
       }
     },
     {
+      "name": "irida.projects.samples.service",
       "type": "js",
       "locations": {
-        "webapp": "/resources/js/pages/projects/samples.js"
+        "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.service.js"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.controller.js"
       }
     }
   ]

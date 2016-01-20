@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="stylesheet" href="/resources/bower_components/bootstrap/dist/css/bootstrap.css"/>
+</head>
+<body>
+<div class="btn-toolbar" th:fragment="toolbar">
+	<!-- PROJECTS TO DISPLAY -->
+	<button id="display-projects-btn" class="btn btn-default btn-sm" th:text="#{project.samples.display.title}"
+	        ng-click="samplesCtrl.displayProjectsModal()"></button>
+
+	<!-- SAMPLE ACTIONS -->
+	<div class="btn-group btn-group-sm">
+		<button id="mergeBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanTwo" ng-click="samplesCtrl.merge()">
+			<fa:icon type="merge" fixed="true"/>
+			<span th:text="#{project.samples.nav.merge}">Merge</span>
+		</button>
+		<button id="copyBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne" ng-click="samplesCtrl.copy()">
+			<fa:icon type="copy" fixed="true"/>
+			<span th:text="#{project.samples.nav.copy}">_COPY_</span>
+		</button>
+		<button id="moveBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne">
+			<fa:icon type="move" fixed="true"/>
+			<span th:text="#{project.samples.nav.move}"></span>
+		</button>
+		<button id="removeBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne">
+			<fa:icon type="delete" fixed="true"/>
+			<span th:text="#{project.samples.nav.remove}"></span>
+		</button>
+	</div>
+
+	<!-- SAMPLE EXPORT -->
+	<div class="btn-group btn-group-sm" uib-dropdown="">
+		<button id="export-btn" class="btn btn-default" uib-dropdown-toggle=""
+		        ng-disabled="samplesCtrl.disabled.lessThanOne">
+			<span th:text="#{project.samples.export.label}">Export</span>
+			<fa:icon type="caret-down" fixed="true"/>
+		</button>
+		<ul class="ng-cloak" uib-dropdown-menu="" role="menu" aria-labelledby="export-btn">
+			<li role="menuitem">
+				<a id="exportDownloadBtn" href="#">
+					<fa:icon type="download" fixed="true"/>
+					<span th:text="#{form.download}">_Download</span>
+				</a>
+			</li>
+			<!--TODO: Fix tooltip-->
+			<li role="menuitem" th:if="${linkerAvailable}" ng-class="{disabled: ! subnav.localSelected}"
+			    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" uib-tooltip-append-to-body="true"
+			    uib-tooltip-placement="right">
+				<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()">
+					<fa:icon type="terminal" fixed="true"/>
+					<span th:text="#{project.samples.export.linker}"></span>
+				</a>
+			</li>
+			<li role="menuitem">
+				<a id="exportNcbiButton" href="#" ng-click="subnav.export.ncbi()">
+					<fa:icon type="upload" fixed="true"/>
+					<span th:text="#{project.samples.export.ncbi}">_Upload to NCBI_</span>
+				</a>
+			</li>
+			<li role="menuitem" th:if="${galaxyCallback}">
+				<a href="#" ng-click="subnav.export.galaxy(); cart.show=false">
+					<fa:icon type="cloud" fixed="true"/>
+					<span th:text="#{project.samples.export.galaxy}"></span>
+				</a>
+			</li>
+			<li role="separator" class="divider"></li>
+			<li role="menuitem">
+				<a href="">Excel</a>
+			</li>
+		</ul>
+	</div>
+
+	<!-- CART ACTIONS -->
+	<div class="btn-group btn-group-sm">
+		<button id="cart-add-btn"
+		        class="btn btn-primary" ng-disabled="samplesCtrl.disabled.lessThanOne"
+		        ng-click="samplesCtrl.addToCart()">
+			<fa:icon type="cart-plus" fixed="true"/>
+			<span th:text="#{project.samples.nav.add-to-cart}">Add to Cart></span>
+		</button>
+	</div>
+</div>
+</body>
+</html>
