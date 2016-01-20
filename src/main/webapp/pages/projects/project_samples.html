@@ -22,6 +22,14 @@
 		};
 	</script>
 	<style>
+		.btn input[type=checkbox] {
+			margin: 0!important;
+		}
+		.selection-heading {
+			padding-left: 0!important;
+			width: 70px!important;
+			text-align: right;
+		}
 		.counts {
 			line-height: 2rem;
 			height: 2rem;
@@ -34,8 +42,21 @@
 	<table id="samplesTable" datatable="ng" class="table table-hover ng-cloak table-selectable"  dt-options="samplesCtrl.dtOptions" dt-column-defs="samplesCtrl.dtColumnDefs" dt-instance="samplesCtrl.dtInstanceCallback">
 		<thead>
 		<tr>
-			<th width="20px">
-				<input type="checkbox" id="selectAll" ng-click="samplesCtrl.selectAll()" ng-model="samplesCtrl.allSelected" />
+			<th class="selection-heading">
+				<div class="btn-group btn-group-sm" uib-dropdown="">
+					<button class="btn btn-default" ng-click="samplesCtrl.allSelected = !samplesCtrl.allSelected; samplesCtrl.selectAll($event)">
+						<!--<span ng-if="samplesCtrl.allSelected">Select None</span>-->
+						<!--<span ng-if="!samplesCtrl.allSelected">Select All</span>-->
+						<input type="checkbox" ng-model="samplesCtrl.allSelected" ng-click="samplesCtrl.selectAll($event)"/>
+					</button>
+					<button class="btn btn-default" uib-dropdown-toggle="">
+						<span class="caret"></span>
+					</button>
+					<ul uib-dropdown-menu="">
+						<li role="menuitem">
+							<a href="#" ng-click="samplesCtrl.selectPage($event)">Select Page</a></li>
+					</ul>
+				</div>
 			</th>
 			<th th:text="#{project.samples.table.name}">[Name]</th>
 			<th th:text="#{project.samples.table.modified}" width="130px">[Modified Date]</th>
@@ -43,9 +64,9 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="item in ::samplesCtrl.samples" ng-click="samplesCtrl.rowClick(item)" ng-class="item.selected ? 'selected' : ''">
+		<tr ng-repeat="item in ::samplesCtrl.samples" ng-click="item.selected = !item.selected; samplesCtrl.rowClick($event, item)" ng-class="item.selected ? 'selected' : ''" data-index="{{$index}}">
 			<td>
-				<input type="checkbox" ng-model="item.selected" ng-click="item.selected = !item.selected"/>
+				<input type="checkbox" ng-model="item.selected" ng-click="samplesCtrl.rowClick($event, item)"/>
 			</td>
 			<td>
 				<a data:ng-href="@{'/samples/{{item.sample.identifier}}'}" ng-bind="item.sample.label"></a></td>

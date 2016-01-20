@@ -93,10 +93,16 @@
 			});
 		}
 
+		function getPageSampleIds() {
+			console.log(table);
+			return table.dataTable._('tr', {"filter":"applied"});
+		}
+
 		return {
 			createTableOptions   : createTableOptions,
 			createTableColumnDefs: createTableColumnDefs,
-			initTable            : initTable
+			initTable            : initTable,
+			getPageSampleIds     : getPageSampleIds
 		};
 	}
 

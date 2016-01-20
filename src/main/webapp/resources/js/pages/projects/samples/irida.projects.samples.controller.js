@@ -60,32 +60,44 @@
 		/**
 		 * Responsible for selecting all or none of the samples
 		 */
-		vm.selectAll = function() {
+		vm.selectAll = function($event) {
+			$event.stopPropagation();
 			vm.selected = [];
 			vm.samples.forEach(function (sample) {
 				sample.selected = vm.allSelected;
 				if(vm.allSelected) vm.selected.push(sample);
 			});
-			vm.updateButtons();
+			updateButtons();
 		};
 
-		vm.rowClick = function(item) {
-			item.selected = !item.selected;
+		vm.rowClick = function($event, item) {
 			if(item.selected) {
 				vm.selected.push(item);
 			}
 			else {
 				vm.selected.splice(vm.selected.indexOf(item), 1);
 			}
+			$event.stopPropagation();
+			updateButtons();
+		};
+
+		vm.selectPage = function ($event) {
+			var rows = angular.element("tbody tr");
+			rows.each(function(index, row) {
+				var index = $(row).data("index"),
+					item = vm.samples[index];
+				if(!item.selected) {
+					item.selected = true;
+					vm.selected.push(item);
+				}
+			})
 		};
 
 		/**
 		 * Determine how many samples are selected and update the buttons.
 		 */
-		vm.updateButtons = function (){
-			var count = vm.samples.filter(function (sample) {
-				return sample.selected;
-			}).length;
+		function updateButtons(){
+			var count = vm.selected.length;
 			vm.allSelected = vm.samples.length === count;
 			vm.disabled = {
 				lessThanTwo: count < 2,
