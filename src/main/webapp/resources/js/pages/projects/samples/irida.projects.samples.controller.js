@@ -69,6 +69,16 @@
 			vm.updateButtons();
 		};
 
+		vm.rowClick = function(item) {
+			item.selected = !item.selected;
+			if(item.selected) {
+				vm.selected.push(item);
+			}
+			else {
+				vm.selected.splice(vm.selected.indexOf(item), 1);
+			}
+		};
+
 		/**
 		 * Determine how many samples are selected and update the buttons.
 		 */

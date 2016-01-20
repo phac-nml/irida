@@ -21,6 +21,12 @@
 			}
 		};
 	</script>
+	<style>
+		.counts {
+			line-height: 2rem;
+			height: 2rem;
+		}
+	</style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables" ng-controller="SamplesController as samplesCtrl">
@@ -37,11 +43,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="item in ::samplesCtrl.samples"
-		    selection-model=""
-		    selection-model-selected-items="samplesCtrl.selected"
-		    selection-model-mode="'multiple-additive'"
-		    selection-model-on-change="samplesCtrl.updateButtons()">
+		<tr ng-repeat="item in ::samplesCtrl.samples" ng-click="samplesCtrl.rowClick(item)" ng-class="item.selected ? 'selected' : ''">
 			<td>
 				<input type="checkbox" ng-model="item.selected" ng-click="item.selected = !item.selected"/>
 			</td>
