@@ -34,7 +34,8 @@ table td {
 
 tr {
   background-color: white;
-  transition: background-color 0.3s ease; }
+  transition: all 0.3s ease; }
 
-tr.selected {
-  background-color: #d9edf7 !important; }
+tr.selected, tr.selected a {
+  background-color: #337ab7 !important;
+  color: white !important; }

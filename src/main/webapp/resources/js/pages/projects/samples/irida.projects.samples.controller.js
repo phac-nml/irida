@@ -84,6 +84,6 @@
 		}
 	}
 
-	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "selectionModel"])
+	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service"])
 		.controller("SamplesController", ["$scope", "$log",  "samplesService", "tableService", SamplesController]);
 })(window.angular);
