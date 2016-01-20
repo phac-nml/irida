@@ -91,6 +91,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            references from.
 	 * @return the references to {@link SequenceFile}.
 	 */
+	@Deprecated
 	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 
 	/**
