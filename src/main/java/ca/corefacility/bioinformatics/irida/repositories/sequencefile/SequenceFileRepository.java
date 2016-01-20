@@ -25,5 +25,6 @@ public interface SequenceFileRepository extends FilesystemSupplementedRepository
 	 * @return the files created as part of a run.
 	 */
 	@Query("select f from SequenceFile f")
+	@Deprecated
 	public Set<SequenceFile> findSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 }
