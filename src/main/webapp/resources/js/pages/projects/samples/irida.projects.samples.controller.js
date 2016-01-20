@@ -70,6 +70,11 @@
 			updateButtons();
 		};
 
+		/**
+		 * Handles user clicking the datatable row.  Updates selected samples
+		 * @param $event
+		 * @param item
+		 */
 		vm.rowClick = function($event, item) {
 			if(item.selected) {
 				vm.selected.push(item);
@@ -81,8 +86,11 @@
 			updateButtons();
 		};
 
-		vm.selectPage = function ($event) {
-			var rows = angular.element("tbody tr");
+		/**
+		 * Selection of all samples on the current page.
+		 */
+		vm.selectPage = function () {
+			var rows = ng.element("tbody tr");
 			rows.each(function(index, row) {
 				var index = $(row).data("index"),
 					item = vm.samples[index];
