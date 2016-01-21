@@ -103,6 +103,8 @@
 					var rowIndex = ng.element(row).data("index"),
 						rowItem = vm.samples[rowIndex];
 
+					// Check to see if it was the previous clicked row or the currently clicked row.
+					// This will mark the beginning or end of the selections.
 					if(rowIndex === $index || rowItem === previousIndex) { found = !found; }
 					if(found && !rowItem.selected) {
 						rowItem.selected = true;
