@@ -26,9 +26,7 @@
 			margin: 0!important;
 		}
 		.selection-heading {
-			padding-left: 0!important;
-			width: 70px!important;
-			text-align: right;
+			width: 40px!important;
 		}
 		.counts {
 			line-height: 2rem;
@@ -44,17 +42,13 @@
 		<tr>
 			<th class="selection-heading">
 				<div class="btn-group btn-group-sm" uib-dropdown="">
-					<button class="btn btn-default" ng-click="samplesCtrl.allSelected = !samplesCtrl.allSelected; samplesCtrl.selectAll($event)">
-						<!--<span ng-if="samplesCtrl.allSelected">Select None</span>-->
-						<!--<span ng-if="!samplesCtrl.allSelected">Select All</span>-->
+					<button class="btn btn-default"  uib-dropdown-toggle="" data:uib-tooltip="#{lists.select-title}" tooltip-append-to-body="true">
 						<input type="checkbox" ng-model="samplesCtrl.allSelected" ng-click="samplesCtrl.selectAll($event)"/>
-					</button>
-					<button class="btn btn-default" uib-dropdown-toggle="">
 						<span class="caret"></span>
 					</button>
 					<ul uib-dropdown-menu="">
 						<li role="menuitem">
-							<a href="#" ng-click="samplesCtrl.selectPage($event)">Select Page</a></li>
+							<a href="#" ng-click="samplesCtrl.selectPage($event)" th:text="#{lists.select-page}">Select Page</a></li>
 					</ul>
 				</div>
 			</th>
