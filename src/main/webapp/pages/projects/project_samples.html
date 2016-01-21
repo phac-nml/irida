@@ -32,6 +32,11 @@
 			line-height: 2rem;
 			height: 2rem;
 		}
+		tbody {
+			user-select: none;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+		}
 	</style>
 </head>
 <body>
@@ -42,13 +47,13 @@
 		<tr>
 			<th class="selection-heading">
 				<div class="btn-group btn-group-sm" uib-dropdown="">
-					<button class="btn btn-default"  uib-dropdown-toggle="" data:uib-tooltip="#{lists.select-title}" tooltip-append-to-body="true">
-						<input type="checkbox" ng-model="samplesCtrl.allSelected" ng-click="samplesCtrl.selectAll($event)"/>
+					<button id="selectDropdownToggle" class="btn btn-default"  uib-dropdown-toggle="" data:uib-tooltip="#{lists.select-title}" tooltip-append-to-body="true">
+						<input id="selectAllBtn" type="checkbox" ng-model="samplesCtrl.allSelected" ng-click="samplesCtrl.selectAll($event)"/>
 						<span class="caret"></span>
 					</button>
 					<ul uib-dropdown-menu="">
 						<li role="menuitem">
-							<a href="#" ng-click="samplesCtrl.selectPage($event)" th:text="#{lists.select-page}">Select Page</a></li>
+							<a id="selectPageBtn" href="#" ng-click="samplesCtrl.selectPage($event)" th:text="#{lists.select-page}">Select Page</a></li>
 					</ul>
 				</div>
 			</th>
@@ -58,9 +63,9 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="item in ::samplesCtrl.samples" ng-click="item.selected = !item.selected; samplesCtrl.rowClick($event, item)" ng-class="item.selected ? 'selected' : ''" data-index="{{$index}}">
+		<tr ng-repeat="item in ::samplesCtrl.samples" ng-click="item.selected = !item.selected; samplesCtrl.rowClick($event, $index)" ng-class="item.selected ? 'selected' : ''" data-index="{{$index}}">
 			<td>
-				<input type="checkbox" ng-model="item.selected" ng-click="samplesCtrl.rowClick($event, item)"/>
+				<input type="checkbox" ng-model="item.selected" ng-click="samplesCtrl.rowClick($event, $index)"/>
 			</td>
 			<td>
 				<a data:ng-href="@{'/samples/{{item.sample.identifier}}'}" ng-bind="item.sample.label"></a></td>
@@ -76,7 +81,7 @@
 	<script type="text/ng-template" id="buttons.html" th:include="projects/partials/samples.tmpl :: toolbar"></script>
 
 	<script th:inline="javascript" type="text/ng-template" id="selectedCounts.html">
-		<ng-pluralize count="samplesCtrl.selected.length"
+		<ng-pluralize id="selected-count-info" count="samplesCtrl.selected.length"
 		              data:when="#{project.samples.table.selected}"
 		></ng-pluralize>
 	</script>

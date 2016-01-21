@@ -10,8 +10,12 @@
 	 * @constructor
 	 */
 	function SamplesController($scope, $log, samplesService, tableService) {
-		var vm = this;
+		var vm = this, previousIndex = null;
 		vm.selected = [];
+
+		$scope.$on("DATATABLE_UPDATED", function () {
+			previousIndex = null;
+		});
 
 		// BUTTON STATE
 		vm.disabled = {
@@ -75,14 +79,41 @@
 		 * @param $event
 		 * @param item
 		 */
-		vm.rowClick = function($event, item) {
+		vm.rowClick = function($event, $index) {
+			$event.stopPropagation();
+			var item = vm.samples[$index];
+
+			// Start by selecting or deselecting the item
 			if(item.selected) {
 				vm.selected.push(item);
 			}
 			else {
 				vm.selected.splice(vm.selected.indexOf(item), 1);
 			}
-			$event.stopPropagation();
+
+			// Check for multiple selection
+			if (!item.selected) {
+				// This would be a deselection, and would result in no further actions.
+				previousIndex = null;
+			} else if (previousIndex !== null && $event.shiftKey) {
+				// Multi-select here
+				// Get the table rows
+				var found = false;
+				ng.element('tbody tr').each(function (i, row) {
+					var rowIndex = ng.element(row).data("index"),
+						rowItem = vm.samples[rowIndex];
+
+					if(rowIndex === $index || rowItem === previousIndex) { found = !found; }
+					if(found && !rowItem.selected) {
+						rowItem.selected = true;
+						vm.selected.push(rowItem);
+					}
+				});
+				updateButtons();
+			} else {
+				previousIndex = item;
+			}
+
 			updateButtons();
 		};
 

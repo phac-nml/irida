@@ -2,12 +2,12 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -24,8 +24,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "samplesTable")
 	private WebElement samplesTable;
 
-	@FindBy(id = "selectAll")
+	@FindBy(id = "selectAllBtn")
 	private WebElement selectAll;
+
+	@FindBy(id = "selected-count-info")
+	private WebElement selectedCountInfo;
 
 	@FindBy(css = "tbody input[type=checkbox]")
 	private List<WebElement> sampleCheckboxes;
@@ -97,9 +100,18 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return pagination.size() - 2;
 	}
 
+	public String getSelectedInfoText() {
+		return selectedCountInfo.getText();
+	}
+
 	// Actions
 	public void selectSample(int row) {
 		sampleCheckboxes.get(row).click();
+	}
+
+	public void selectSampleWithShift(int row) {
+		Actions actions = new Actions(driver);
+		actions.keyDown(Keys.SHIFT).click(sampleCheckboxes.get(row)).perform();
 	}
 
 	public void selectAllOrNone() {
