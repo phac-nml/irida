@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -354,13 +353,14 @@ public class RESTSampleSequenceFilesController {
 		} else {
 			sf = new SequenceFile();
 		}
+
 		sf.setFile(target);
-		if (miseqRun != null) {
-			sf.setSequencingRun(miseqRun);
-			logger.trace("Added seqfile to miseqrun");
-		}
 
 		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
+		if (miseqRun != null) {
+			singleEndSequenceFile.setSequencingRun(miseqRun);
+			logger.trace("Added seqfile to miseqrun");
+		}
 
 		// save the seqobject and sample
 		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
@@ -457,14 +457,13 @@ public class RESTSampleSequenceFilesController {
 
 		Long runId = fileResource1.getMiseqRunId();
 
+		SequenceFilePair sequenceFilePair = new SequenceFilePair(sf1, sf2);
+
 		if (runId != null) {
 			sequencingRun = miseqRunService.read(runId);
-			sf1.setSequencingRun(sequencingRun);
-			sf2.setSequencingRun(sequencingRun);
+			sequenceFilePair.setSequencingRun(sequencingRun);
 			logger.trace("Added sequencing run to files" + runId);
 		}
-
-		SequenceFilePair sequenceFilePair = new SequenceFilePair(sf1, sf2);
 
 		// add the files and join
 		SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService

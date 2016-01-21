@@ -19,7 +19,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -41,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
@@ -92,10 +90,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@CollectionTable(name = "sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"sequence_file_id", "property_key" }, name = "UK_SEQUENCE_FILE_PROPERTY_KEY"))
 	private Map<String, String> optionalProperties;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sequencing_run_id")
-	private SequencingRun sequencingRun;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@NotAudited
@@ -178,16 +172,6 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@JsonIgnore
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
-	}
-
-	@JsonIgnore
-	public SequencingRun getSequencingRun() {
-		return sequencingRun;
-	}
-
-	@JsonIgnore
-	public void setSequencingRun(SequencingRun sequencingRun) {
-		this.sequencingRun = sequencingRun;
 	}
 
 	/**

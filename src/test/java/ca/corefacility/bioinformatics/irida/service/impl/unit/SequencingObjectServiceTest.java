@@ -73,7 +73,7 @@ public class SequencingObjectServiceTest {
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
 		SequencingRun run = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 
-		so.getSequenceFile().setSequencingRun(run);
+		so.setSequencingRun(run);
 
 		when(repository.save(so)).thenReturn(so);
 
@@ -87,7 +87,7 @@ public class SequencingObjectServiceTest {
 		SequencingRun run = new MiseqRun(LayoutType.SINGLE_END, "workflow");
 
 		SequenceFilePair so = TestDataFactory.constructSequenceFilePair();
-		so.getFiles().forEach(sf -> sf.setSequencingRun(run));
+		so.setSequencingRun(run);
 
 		when(repository.save(so)).thenReturn(so);
 

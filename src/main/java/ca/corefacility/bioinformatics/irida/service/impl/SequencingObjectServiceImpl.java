@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEv
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -45,6 +46,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	private final SequenceFileRepository sequenceFileRepository;
 	private TaskExecutor fileProcessingChainExecutor;
 	private FileProcessingChain fileProcessingChain;
+	private final SequencingObjectRepository repository;
 
 	@Autowired
 	public SequencingObjectServiceImpl(SequencingObjectRepository repository, SequenceFileRepository sequenceFileRepository,
@@ -52,6 +54,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
 			Validator validator) {
 		super(repository, validator, SequencingObject.class);
+		this.repository = repository;
 		this.ssoRepository = ssoRepository;
 		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
@@ -152,6 +155,13 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		}
 
 		return sequenceFilePairsSampleMap;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
+	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun) {
+		return repository.findSequencingObjectsForSequencingRun(sequencingRun);
 	}
 
 }

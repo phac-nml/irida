@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,11 +23,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
@@ -45,6 +39,11 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
@@ -113,7 +112,7 @@ public class SequencingRunServiceImplIT {
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 		sf.setFile(sequenceFile);
 		sequenceFileService.update(1L, ImmutableMap.of("file", sequenceFile));
-		miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
+		//miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
 		SequencingRun saved = miseqRunService.read(1L);
 		SequenceFile savedFile = sequenceFileService.read(1L);
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
@@ -121,20 +120,6 @@ public class SequencingRunServiceImplIT {
 
 		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(savedFile);
 		assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	public void testGetMiseqRunForSequenceFile() {
-		SequenceFile sf = sequenceFileService.read(2L);
-
-		try {
-			SequencingRun j = miseqRunService.getSequencingRunForSequenceFile(sf);
-			assertEquals("Join had wrong miseq run.", Long.valueOf(2L), j.getId());
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Test failed for unknown reason.");
-		}
 	}
 
 	@Test
@@ -248,7 +233,7 @@ public class SequencingRunServiceImplIT {
 
 		sequenceFileService.createSequenceFileInSample(sf, sample);
 
-		miseqRunService.addSequenceFileToSequencingRun(run, sf);
+		//miseqRunService.addSequenceFileToSequencingRun(run, sf);
 
 		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);

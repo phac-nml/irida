@@ -20,8 +20,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
@@ -52,9 +50,7 @@ public class SequenceFileControllerTest {
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
-		SequencingRun run = new SequencingRunEntity();
 		when(sequenceFileService.read(anyLong())).thenReturn(file);
-		when(sequencingRunService.getSequencingRunForSequenceFile(file)).thenReturn(run);
 	}
 
 	/**
@@ -107,7 +103,6 @@ public class SequenceFileControllerTest {
 		assertTrue("Model should contain information about the file.", model.containsAttribute("file"));
 		assertTrue("Model should contain the created date for the file.", model.containsAttribute("created"));
 		assertTrue("Model should contain the fastQC data for the file.", model.containsAttribute("fastQC"));
-		assertTrue("Model should contain the sequencing run.", model.containsAttribute("run"));
 		assertTrue("Model should contain the active nav id", model.containsAttribute(SequenceFileController.ACTIVE_NAV));
 	}
 }

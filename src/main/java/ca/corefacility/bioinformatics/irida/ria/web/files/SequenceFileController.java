@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
@@ -57,16 +56,14 @@ public class SequenceFileController {
 	 * SERVICES
 	 */
 	private SequenceFileService sequenceFileService;
-	private SequencingRunService sequencingRunService;
-        private final AnalysisService analysisService;
+	private final AnalysisService analysisService;
 
 	@Autowired
 	public SequenceFileController(SequenceFileService sequenceFileService, SequencingRunService sequencingRunService,
-                                      final AnalysisService analysisService) {
+			final AnalysisService analysisService) {
 		this.sequenceFileService = sequenceFileService;
-		this.sequencingRunService = sequencingRunService;
 		this.dateFormatter = new DateFormatter();
-                this.analysisService = analysisService;
+		this.analysisService = analysisService;
 	}
 
 	/**
@@ -173,11 +170,9 @@ public class SequenceFileController {
 	 */
 	private void createDefaultPageInfo(Long sequenceFileId, Model model) {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
-		SequencingRun run = sequencingRunService.getSequencingRunForSequenceFile(file);
 		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(file);
 		model.addAttribute("file", file);
 		model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
 		model.addAttribute("fastQC", fastQC);
-		model.addAttribute("run", run);
 	}
 }
