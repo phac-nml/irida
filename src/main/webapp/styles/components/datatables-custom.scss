@@ -41,11 +41,16 @@ table td {
   padding: 5px 18px!important;
 }
 
-tr {
-  background-color: white;
-  transition: background-color 0.3s ease;
+tr a {
+  background-color: transparent!important;
 }
 
-tr.selected {
-  background-color: #d9edf7 !important;
+tr {
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+tr.selected, tr.selected a {
+  background-color: #337ab7 !important;
+  color: white!important;
 }
