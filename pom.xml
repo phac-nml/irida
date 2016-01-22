@@ -1026,28 +1026,19 @@
 		<profile>
 			<id>ui_testing</id>
 			<properties>
-				<include.tests>**/ria/integration/**PageIT.java, **/ria/integration/*/**PageIT.java</include.tests>
+				<include.tests>**/ria/integration/**/*PageIT.java</include.tests>
 			</properties>
 		</profile>
 		<profile>
 			<id>service_testing</id>
 			<properties>
-				<include.tests>**/**IT.java</include.tests>
-				<!--<include.tests>**/integration/**IT.java</include.tests>
-				<include.tests>**/integration/*/**IT.java</include.tests>
-				<include.tests>**/repositories/**IT.java</include.tests>
-				<include.tests>**/repositories/*/**IT.java</include.tests> -->
-				<!-- Galaxy tests are run in Galaxy profile, not here -->
-				<exclude.tests>**/**Galaxy*IT.java</exclude.tests>
-				<exclude.tests>**/ria/integration/**PageIT.java</exclude.tests>
-				<exclude.tests>**/ria/integration/*/**PageIT.java</exclude.tests>
-				<exclude.tests>**/web/controller/test/integration/*/**IT.java</exclude.tests>
+				<include.tests>**/service/impl/integration/**/*IT.java</include.tests>
 			</properties>
 		</profile>
 		<profile>
 			<id>rest_testing</id>
 			<properties>
-				<include.tests>**/web/controller/test/integration/*/**IT.java</include.tests>
+				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
 			</properties>
 		</profile>
 		<profile>
