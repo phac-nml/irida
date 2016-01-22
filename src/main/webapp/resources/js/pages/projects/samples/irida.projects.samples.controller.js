@@ -56,27 +56,30 @@
 
 			modal.result.then(function (items) {
 				// TODO: Hide table during refresh?
-				samplesService.fetchSamples(items).then(function(samples) {
-					// Need to know if the sample should be selected, and remove any that are no longer in the table.;
-					var s = [];
-					samples.forEach(function(sample) {
-						if(_.find(vm.selected, function(item) {
-								// Check to see if the selected item matches the sample and from the right project.
-								if (item.sample.identifier === sample.sample.identifier &&
-								item.project.identifier === sample.project.identifier){
-									s.push(item);
-									return true;
-								}
-							})) {
-							sample.selected = true;
-						}
+				if (!_.isEqual(items, display)) {
+					display = items;
+					samplesService.fetchSamples(items).then(function (samples) {
+						// Need to know if the sample should be selected, and remove any that are no longer in the table.;
+						var s = [];
+						samples.forEach(function (sample) {
+							if (_.find(vm.selected, function (item) {
+									// Check to see if the selected item matches the sample and from the right project.
+									if (item.sample.identifier === sample.sample.identifier &&
+										item.project.identifier === sample.project.identifier) {
+										s.push(item);
+										return true;
+									}
+								})) {
+								sample.selected = true;
+							}
+						});
+						vm.selected = s;
+						// Determine if the project name needs to be displayed in the table.
+						vm.showProjectname = display.local.length > 0;
+						// Update the samples;
+						vm.samples = samples;
 					});
-					vm.selected = s;
-					// Determine if the project name needs to be displayed in the table.
-					vm.showProjectname = display.local.length > 0;
-					// Update the samples;
-					vm.samples = samples;
-				});
+				}
 			})
 		};
 
@@ -195,7 +198,7 @@
 	function AssociatedProjectsCtrl($uibModalInstance, associatedProjectsService, display) {
 		var vm = this;
 		vm.projects = {};
-		vm.display = display;
+		vm.display = _.clone(display);
 		vm.local = {};
 
 		// Get the local project
