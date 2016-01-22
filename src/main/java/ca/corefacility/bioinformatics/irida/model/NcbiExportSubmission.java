@@ -70,7 +70,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@Column(name = "release_date")
+	@Column(name = "release_date", nullable=false)
 	@Temporal(TemporalType.DATE)
 	private Date releaseDate;
 

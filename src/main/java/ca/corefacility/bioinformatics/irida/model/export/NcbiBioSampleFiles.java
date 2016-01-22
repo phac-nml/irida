@@ -44,29 +44,29 @@ public class NcbiBioSampleFiles {
 	private List<SequenceFilePair> pairs;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "instrument_model")
+	@Column(name = "instrument_model", nullable = false)
 	private NcbiInstrumentModel instrumentModel;
 
-	@Column(name = "library_name")
+	@Column(name = "library_name", nullable = false)
 	private String libraryName;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "library_selection")
+	@Column(name = "library_selection", nullable = false)
 	private NcbiLibrarySelection librarySelection;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "library_source")
+	@Column(name = "library_source", nullable = false)
 	private NcbiLibrarySource librarySource;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "library_strategy")
+	@Column(name = "library_strategy", nullable = false)
 	private NcbiLibraryStrategy libraryStrategy;
 
-	@Column(name = "library_construction_protocol")
+	@Column(name = "library_construction_protocol", nullable = false)
 	private String libraryConstructionProtocol;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "submission_status")
+	@Column(name = "submission_status", nullable = false)
 	private ExportUploadState submissionStatus;
 
 	@Column(name = "accession")
