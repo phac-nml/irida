@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -150,6 +151,15 @@ public class ProjectExportController {
 			sampleMap.put("files", files);
 			sampleList.add(sampleMap);
 		}
+		
+		sampleList.sort(new Comparator<Map<String,Object>>() {
+			@Override
+			public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+				String s1Name = (String) o1.get("name");
+				String s2Name = (String) o2.get("name");
+				return s1Name.compareTo(s2Name);
+			}
+		});
 
 		model.addAttribute("project", project);
 		model.addAttribute("samples", sampleList);
