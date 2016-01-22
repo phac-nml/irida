@@ -1032,12 +1032,13 @@
 		<profile>
 			<id>service_testing</id>
 			<properties>
+				<include.tests>**/**IT.java</include.tests>
 				<!--<include.tests>**/integration/**IT.java</include.tests>
 				<include.tests>**/integration/*/**IT.java</include.tests>
 				<include.tests>**/repositories/**IT.java</include.tests>
 				<include.tests>**/repositories/*/**IT.java</include.tests> -->
 				<!-- Galaxy tests are run in Galaxy profile, not here -->
-				<exclude.tests>**/*Galaxy*IT.java</exclude.tests>
+				<exclude.tests>**/**Galaxy*IT.java</exclude.tests>
 				<exclude.tests>**/ria/integration/**PageIT.java</exclude.tests>
 				<exclude.tests>**/ria/integration/*/**PageIT.java</exclude.tests>
 				<exclude.tests>**/web/controller/test/integration/*/**IT.java</exclude.tests>
