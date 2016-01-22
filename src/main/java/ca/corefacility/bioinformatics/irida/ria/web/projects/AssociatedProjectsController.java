@@ -139,6 +139,20 @@ public class AssociatedProjectsController {
 	}
 
 	/**
+	 * Get a list of the local associated projects.
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @return
+	 */
+	@RequestMapping("/{projectId}/ajax/associated")
+	public @ResponseBody List<Project> jaxAssociatedProjects(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
+		List<Project> projects = new ArrayList<>(relatedProjectJoins.size());
+		projects.addAll(relatedProjectJoins.stream().map(RelatedProjectJoin::getObject).collect(Collectors.toList()));
+		return projects;
+	}
+
+	/**
 	 * Add an associated project to a project
 	 * 
 	 * @param projectId
