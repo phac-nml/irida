@@ -632,6 +632,12 @@
 							</value>
 						</property>
 					</properties>
+					<!-- Profiles for parallel integration tests-->
+
+					<!--includes>
+						<include>**/ria/integration/**PageIT.java</include>
+						<include>**/ria/integration/*/**PageIT.java</include>
+					</includes-->
 				</configuration>
 				<executions>
 					<execution>
@@ -644,6 +650,9 @@
 							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude> 
 								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude> 
 								</excludes> -->
+							<includes>
+								<include>${include.tests}</include>
+							</includes>
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
@@ -1005,5 +1014,45 @@
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
 	</properties>
+
+	<!-- Failsafe integration test profiles -->
+	<profiles>
+		<profile>
+			<id>ui_testing</id>
+			<properties>
+				<include.tests>**/ria/integration/**PageIT.java</include.tests>
+				<include.tests>**/ria/integration/*/**PageIT.java</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>service_testing</id>
+			<properties>
+				<include.tests>SNVPhylAnalysisIT.java</include.tests>
+				<include.tests>**/repositories/**IT.java</include.tests>
+				<include.tests>**/repositories/*/**IT.java</include.tests>
+				<!--
+				<include.tests>**/service/analysis/execution/galaxy/impl/integration/**IT.java</include.tests>
+				<include.tests>**/service/analysis/workspace/galaxy/impl/integration/**IT.java</include.tests>
+				-->
+				<include.tests>**/impl/integration/**IT.java</include.tests>
+				<include.tests>**/impl/integration/*/**IT.java</include.tests>
+				<include.tests>**/workflow/integration/*/**IT.java</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>rest_testing</id>
+			<properties>
+				<include.tests>**/web/controller/test/integration/*/**IT.java</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>galaxy_testing</id>
+			<properties>
+				<include.tests>/*Galaxy*IT.java</include.tests>
+			</properties>
+		</profile>
+	</profiles>
 </project>
