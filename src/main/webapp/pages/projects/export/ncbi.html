@@ -238,6 +238,11 @@
       */
       $(".remove-button").on("click", function(){
         $(this).closest(".sample-container").remove();
+
+        //If there's only one sample, remove the remove button.  we can't have an empty submission
+        if($(".remove-button").size() == 1){
+          $(".remove-button").remove();
+        }
       })
 
       /*

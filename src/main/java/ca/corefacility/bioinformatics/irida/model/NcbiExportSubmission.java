@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -50,7 +51,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 
 	@Column(name = "bio_project_id", nullable = false)
 	private String bioProjectId;
-	
+
 	@Column(name = "organization", nullable = false)
 	private String organization;
 
@@ -59,6 +60,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "ncbi_export_submission_biosample")
+	@Size(min = 1)
 	private List<NcbiBioSampleFiles> bioSampleFiles;
 
 	@Column(name = "created_date", nullable = false)
@@ -90,8 +92,8 @@ public class NcbiExportSubmission implements MutableIridaThing {
 		createdDate = new Date();
 	}
 
-	public NcbiExportSubmission(Project project, User submitter, String bioProjectId, String organization, String ncbiNamespace,
-			Date releaseDate, List<NcbiBioSampleFiles> bioSampleFiles) {
+	public NcbiExportSubmission(Project project, User submitter, String bioProjectId, String organization,
+			String ncbiNamespace, Date releaseDate, List<NcbiBioSampleFiles> bioSampleFiles) {
 		this();
 		this.project = project;
 		this.submitter = submitter;
@@ -135,11 +137,11 @@ public class NcbiExportSubmission implements MutableIridaThing {
 	public Project getProject() {
 		return project;
 	}
-	
+
 	public String getOrganization() {
 		return organization;
 	}
-	
+
 	public void setOrganization(String organization) {
 		this.organization = organization;
 	}
