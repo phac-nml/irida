@@ -60,7 +60,7 @@
             <div class="sample-container" th:if="${hasPaired or hasSingles}">
               <h2>
                 <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
-                <button type="button" class="btn btn-danger btn-xs remove-button">Remove</button>
+                <button type="button" th:text="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button">Remove</button>
               </h2>
 
 
