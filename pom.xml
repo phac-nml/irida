@@ -653,6 +653,9 @@
 							<includes>
 								<include>${include.tests}</include>
 							</includes>
+							<excludes>
+								<!-- <exclude>${exclude.tests}</exclude> -->
+							</excludes>
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
@@ -1023,23 +1026,21 @@
 		<profile>
 			<id>ui_testing</id>
 			<properties>
-				<include.tests>**/ria/integration/**PageIT.java</include.tests>
-				<include.tests>**/ria/integration/*/**PageIT.java</include.tests>
+				<include.tests>**/ria/integration/**PageIT.java, **/ria/integration/*/**PageIT.java</include.tests>
 			</properties>
 		</profile>
 		<profile>
 			<id>service_testing</id>
 			<properties>
-				<include.tests>SNVPhylAnalysisIT.java</include.tests>
+				<!--<include.tests>**/integration/**IT.java</include.tests>
+				<include.tests>**/integration/*/**IT.java</include.tests>
 				<include.tests>**/repositories/**IT.java</include.tests>
-				<include.tests>**/repositories/*/**IT.java</include.tests>
-				<!--
-				<include.tests>**/service/analysis/execution/galaxy/impl/integration/**IT.java</include.tests>
-				<include.tests>**/service/analysis/workspace/galaxy/impl/integration/**IT.java</include.tests>
-				-->
-				<include.tests>**/impl/integration/**IT.java</include.tests>
-				<include.tests>**/impl/integration/*/**IT.java</include.tests>
-				<include.tests>**/workflow/integration/*/**IT.java</include.tests>
+				<include.tests>**/repositories/*/**IT.java</include.tests> -->
+				<!-- Galaxy tests are run in Galaxy profile, not here -->
+				<exclude.tests>**/*Galaxy*IT.java</exclude.tests>
+				<exclude.tests>**/ria/integration/**PageIT.java</exclude.tests>
+				<exclude.tests>**/ria/integration/*/**PageIT.java</exclude.tests>
+				<exclude.tests>**/web/controller/test/integration/*/**IT.java</exclude.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -1051,7 +1052,7 @@
 		<profile>
 			<id>galaxy_testing</id>
 			<properties>
-				<include.tests>/*Galaxy*IT.java</include.tests>
+				<include.tests>**/*Galaxy*IT.java</include.tests>
 			</properties>
 		</profile>
 	</profiles>
