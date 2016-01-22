@@ -7,5 +7,4 @@
 	<include file="drop-group-host-organization.xml" relativeToChangelogFile="true" />
 	<include file="schema-inconsistencies.xml" relativeToChangelogFile="true" />
 	<include file="ncbi-upload.xml" relativeToChangelogFile="true" />
-	<include file="ncbi-non-nullable.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
