@@ -57,6 +57,7 @@
           <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" class="sample-container" th:each="sample : ${samples}">
             <h2>
               <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
+              <button type="button" class="btn btn-danger btn-xs remove-button">Remove</button>
             </h2>
 
 
@@ -231,6 +232,13 @@
           }
         });
       });
+
+      /**
+      * Remove the parent sample
+      */
+      $(".remove-button").on("click", function(){
+        $(this).closest(".sample-container").remove();
+      })
 
       /*
        * Disable the submit button if nothing is selected
