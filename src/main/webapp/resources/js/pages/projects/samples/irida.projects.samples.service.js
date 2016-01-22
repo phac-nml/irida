@@ -90,6 +90,9 @@
 			table.DataTable.on("draw.dt", function () {
 				ng.element(".buttons").html($compile($templateCache.get("buttons.html"))($scope));
 				ng.element(".counts").html($compile($templateCache.get("selectedCounts.html"))($scope));
+			}).on("page.dt, order.dt, search.dt", function () {
+				// Let the controller now when data changes in the table
+				$scope.$emit("DATATABLE_UPDATED");
 			});
 		}
 

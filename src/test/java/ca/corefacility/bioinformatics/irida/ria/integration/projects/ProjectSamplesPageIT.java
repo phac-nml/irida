@@ -99,6 +99,24 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("'Next' button should be enabled", page.isNextBtnEnabled());
 		assertEquals("Should be 3 pages of samples", 3, page.getPaginationCount());
 	}
+
+	@Test
+	public void testSampleSelection() {
+		logger.info("Testing sample selection for: Project Samples");
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
+
+		page.selectSample(0);
+		page.selectSampleWithShift(4);
+		assertEquals("Should be 5 selected samples", "5 Samples Selected", page.getSelectedInfoText());
+
+		page.selectAllOrNone();
+		// Again, this is only the count for the current page!
+		assertEquals("Should be 21 selected samples", "21 Samples Selected", page.getSelectedInfoText());
+		page.selectAllOrNone();
+		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
+
+	}
 	//	@Test
 	//	public void testDefaultMerge() {
 	//		LoginPage.loginAsManager(driver());
