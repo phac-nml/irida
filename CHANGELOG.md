@@ -4,6 +4,7 @@ Changes
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
 * [UI]: Fixed a bug where clicking on FastQC quality charts attempted to download the images instead of viewing them in the browser.
+* [Developer]: Added thread pool for scheduled task submission with new configuration key `irida.scheduled.threads`.
 
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------

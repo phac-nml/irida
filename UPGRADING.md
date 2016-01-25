@@ -4,6 +4,10 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+1.0.0-alpha8 to 1.0.0-alpha8.2
+----------------------------
+* Add `irida.scheduled.threads` key to `/etc/irida/irida.conf` file with the size of your desired thread pool.  Suggested size is `2`.
+
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
 * No special upgrate steps required, just deploy the new `war` file.
