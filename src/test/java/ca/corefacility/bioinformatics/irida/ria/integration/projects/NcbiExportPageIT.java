@@ -31,8 +31,8 @@ public class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		page = NcbiExportPage.goTo(driver(), 1L, Lists.newArrayList(1L, 2L, 4L));
 
 		List<String> sampleNames = page.getSampleNames();
-		assertEquals(2, sampleNames.size());
-		assertEquals(1, page.countDisabledSamples());
+		assertEquals("should be 2 samples to submit", 2, sampleNames.size());
+		assertEquals("should be 1 disabled sample", 1, page.countDisabledSamples());
 	}
 
 	@Test
@@ -46,6 +46,18 @@ public class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 
 		ExportDetailsPage exportPage = ExportDetailsPage.initPage(driver());
 
-		assertEquals(ExportUploadState.NEW.toString(), exportPage.getUploadStatus());
+		assertEquals("submission should be created with new status", ExportUploadState.NEW.toString(),
+				exportPage.getUploadStatus());
+	}
+
+	@Test
+	public void testRemoveSubmission() {
+		page = NcbiExportPage.goTo(driver(), 1L, Lists.newArrayList(1L, 2L));
+
+		assertEquals("should be 2 samples", 2, page.getSampleNames().size());
+
+		page.removeFirstSample();
+
+		assertEquals("should be 1 sample after removal", 1, page.getSampleNames().size());
 	}
 }
