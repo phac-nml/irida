@@ -59,7 +59,7 @@
               hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
             <div class="sample-container" th:if="${hasPaired or hasSingles}">
               <h2>
-                <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
+                <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
                 <button type="button" th:text="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button">Remove</button>
               </h2>
 
@@ -157,7 +157,7 @@
 
               </th:block>
             </div>
-            <div class="alert alert-warning" role="alert" th:text="#{project.export.warning.nofiles(${sample.name})}" th:if="${!hasPaired and !hasSingles}">No files</div>
+            <div class="alert alert-warning sample-no-files" role="alert" th:text="#{project.export.warning.nofiles(${sample.name})}" th:if="${!hasPaired and !hasSingles}">No files</div>
             <hr/>
           </div>
           <button id="submit" class="btn btn-primary" th:text="#{global.btn.submit}">_Submit_</button>
