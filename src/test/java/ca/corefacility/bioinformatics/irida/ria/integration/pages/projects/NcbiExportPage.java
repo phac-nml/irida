@@ -32,6 +32,15 @@ public class NcbiExportPage extends AbstractPage {
 
 	@FindBy(id = "submit")
 	WebElement submitButton;
+	
+	@FindBy(id="bioProject")
+	WebElement bioProject;
+	
+	@FindBy(id="organization")
+	WebElement organization;
+	
+	@FindBy(id="namespace")
+	WebElement namespace;
 
 	public NcbiExportPage(WebDriver driver) {
 		super(driver);
@@ -54,6 +63,11 @@ public class NcbiExportPage extends AbstractPage {
 
 	public int countDisabledSamples() {
 		return disabledSamples.size();
+	}
+	public void fillTopLevelProperties(String bioProject, String organization, String namespace){
+		this.bioProject.sendKeys(bioProject);
+		this.organization.sendKeys(organization);
+		this.namespace.sendKeys(namespace);
 	}
 
 	public void fillSamplesWithInfo(String bioSample, String protocol) {
