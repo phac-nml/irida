@@ -243,17 +243,26 @@
       $(".remove-button").on("click", function(){
         $(this).closest(".sample-container").remove();
 
+        checkNumberValidSamples();
+
+      });
+
+      /**
+      * Check how many valid samples exist and show remove button if needed
+      */
+      function checkNumberValidSamples(){
         //If there's only one sample, remove the remove button.  we can't have an empty submission
-        if($(".remove-button").size() == 1){
+        if($(".sample-container").size() == 1){
           $(".remove-button").remove();
         }
-      })
+      }
 
       /*
        * Disable the submit button if nothing is selected
        */
       $(document).ready(function() {
         $(".empty-file-warning").hide();
+        checkNumberValidSamples();
       });
 
       function disableSubmit(fileBoxes, submitButton) {
