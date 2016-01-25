@@ -45,12 +45,20 @@
 		td input[type="checkbox"] {
 			margin-left: 11px;
 		}
+		.project-checkboxes {
+		}
+		.project-checkboxes .checkbox {
+			display: inline-block;
+			width: 33.333333%;
+			white-space: nowrap;
+			overflow: hidden;
+		}
 	</style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables" ng-controller="SamplesController as samplesCtrl">
 
-	<table id="samplesTable" datatable="ng" class="table table-hover ng-cloak table-selectable"  dt-options="samplesCtrl.dtOptions" dt-column-defs="samplesCtrl.dtColumnDefs" dt-instance="samplesCtrl.dtInstanceCallback">
+	<table id="samplesTable" datatable="ng" class="table table-hover ng-cloak table-selectable"  dt-options="samplesCtrl.dtOptions" dt-column-defs="samplesCtrl.dtColumnDefs" dt-instance="samplesCtrl.dtInstanceCallback" dt-disable-deep-watchers="true">
 		<thead>
 		<tr>
 			<th class="selection-heading">
@@ -109,9 +117,13 @@
 			<strong ng-hide="associatedProjectsCtrl.projects.local">
 				<fa:icon type="loading" fixed="true"/>
 				&nbsp;<th:block th:text="#{project.samples.associated.modal.fetching-local}"></th:block></strong>
-			<div ng-repeat="project in associatedProjectsCtrl.projects.local" class="checkbox"><label>
-				<input type="checkbox" ng-model="project.selected"/>
-				{{project.label}}</label></div>
+			<div class="project-checkboxes">
+				<div ng-repeat="project in associatedProjectsCtrl.projects.local" class="checkbox">
+					<label>
+						<input type="checkbox" ng-model="project.selected"/>
+						&nbsp;{{project.label}} </label>
+				</div>
+			</div>
 			<div class="alert alert-info" ng-show="associatedProjectsCtrl.projects.local.length === 0">
 				<strong th:text="#{project.samples.associated.modal.no-local}">No Locally Associated Projects</strong>
 			</div>

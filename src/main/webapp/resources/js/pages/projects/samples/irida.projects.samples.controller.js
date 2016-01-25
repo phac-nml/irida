@@ -56,6 +56,7 @@
 
 			modal.result.then(function (items) {
 				// TODO: Hide table during refresh?
+				// Check to make sure their are updates to the table to process.
 				if (!_.isEqual(items, display)) {
 					display = items;
 					samplesService.fetchSamples(items).then(function (samples) {
@@ -73,6 +74,7 @@
 								sample.selected = true;
 							}
 						});
+						// Update the samples that are selected and currently in the table.
 						vm.selected = s;
 						// Determine if the project name needs to be displayed in the table.
 						vm.showProjectname = display.local.length > 0;
