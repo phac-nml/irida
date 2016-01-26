@@ -70,6 +70,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs.WorkflowInput;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -360,7 +361,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 			IridaWorkflowException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values()))
+				.inputFilesSingleEnd(Sets.newHashSet(sampleSingleSequenceFileMap.values()))
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -371,10 +372,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
-				sampleSequenceFileMap);
-		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class)))
-				.thenReturn(ImmutableMap.of());
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getPairedInputFiles())).thenReturn(
+				ImmutableMap.of());
 
 		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))
 				.thenReturn(refDataset);
@@ -387,7 +388,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				REFERENCE_FILE_ID);
 
 		when(
-				analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(any(Map.class), eq(workflowHistory),
+				analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(any(Map.class), eq(workflowHistory),
 						eq(workflowLibrary))).thenReturn(collectionResponseSingle);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
@@ -404,7 +405,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				workflowInputsMap.containsKey(REFERENCE_FILE_ID));
 		assertTrue("workflow inputs should contain sequence file single entry",
 				workflowInputsMap.containsKey(SEQUENCE_FILE_SINGLE_ID));
-		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesSingle(any(Map.class), any(History.class),
+		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesSingleEnd(any(Map.class), any(History.class),
 				any(Library.class));
 		verify(analysisCollectionServiceGalaxy, never()).uploadSequenceFilesPaired(any(Map.class), any(History.class),
 				any(Library.class));
@@ -434,9 +435,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class)))
-				.thenReturn(ImmutableMap.of());
-		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getInputFilesSingleEnd())).thenReturn(
+				ImmutableMap.of());
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getPairedInputFiles())).thenReturn(
 				sampleSequenceFilePairMap);
 
 		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))
@@ -467,7 +468,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				workflowInputsMap.containsKey(REFERENCE_FILE_ID));
 		assertTrue("workflow inputs should contain sequence file paired entry",
 				workflowInputsMap.containsKey(SEQUENCE_FILE_PAIRED_ID));
-		verify(analysisCollectionServiceGalaxy, never()).uploadSequenceFilesSingle(any(Map.class), any(History.class),
+		verify(analysisCollectionServiceGalaxy, never()).uploadSequenceFilesSingleEnd(any(Map.class), any(History.class),
 				any(Library.class));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesPaired(any(Map.class), any(History.class),
 				any(Library.class));
