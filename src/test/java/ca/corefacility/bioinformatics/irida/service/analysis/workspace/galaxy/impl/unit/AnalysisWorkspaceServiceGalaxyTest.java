@@ -172,7 +172,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	private CollectionResponse collectionResponseSingle;
 	private CollectionResponse collectionResponsePaired;
 	
-	private Set<SequenceFile> singleInputFiles;
+	private Set<SingleEndSequenceFile> singleInputFiles;
 
 	/**
 	 * Sets up variables for testing.
@@ -249,7 +249,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		collectionResponsePaired = new CollectionResponse();
 		collectionResponsePaired.setId(COLLECTION_PAIRED_ID);
 		
-		singleInputFiles = Sets.newHashSet(new SequenceFile());
+		singleInputFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
 	}
 
 	private Path createTempFile(String prefix, String suffix) throws IOException {
@@ -485,7 +485,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 			IridaWorkflowException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values()))
+				.inputFilesSingleEnd(Sets.newHashSet(sampleSingleSequenceFileMap.values()))
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -506,13 +506,12 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException 
 	 */
-	@SuppressWarnings("unchecked")
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	public void testPrepareAnalysisFilesSinglePairedDuplicateFail() throws ExecutionManagerException,
 			IridaWorkflowException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values()))
+				.inputFilesSingleEnd(Sets.newHashSet(sampleSingleSequenceFileMap.values()))
 				.inputFilesPaired( Sets.newHashSet(sampleSequenceFilePairMapSampleA.values()))
 				.referenceFile(referenceFile)
 				.build();
@@ -524,9 +523,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
-				sampleSequenceFileMap);
-		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
+		
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getPairedInputFiles())).thenReturn(
 				sampleSequenceFilePairMapSampleA);
 
 		workflowPreparation.prepareAnalysisFiles(submission);
@@ -539,7 +539,6 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException 
 	 */
-	@SuppressWarnings("unchecked")
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesPairedNoAcceptFail() throws ExecutionManagerException,
 			IridaWorkflowException {
@@ -556,9 +555,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class)))
-				.thenReturn(ImmutableMap.of());
-		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getInputFilesSingleEnd())).thenReturn(
+				ImmutableMap.of());
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getPairedInputFiles())).thenReturn(
 				sampleSequenceFilePairMap);
 
 		workflowPreparation.prepareAnalysisFiles(submission);
@@ -571,13 +570,12 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException 
 	 */
-	@SuppressWarnings("unchecked")
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesSingleNoAcceptFail() throws ExecutionManagerException,
 			IridaWorkflowException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values()))
+				.inputFilesSingleEnd(Sets.newHashSet(sampleSingleSequenceFileMap.values()))
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -588,10 +586,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
-				sampleSequenceFileMap);
-		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class)))
-				.thenReturn(ImmutableMap.of());
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getPairedInputFiles())).thenReturn(
+				ImmutableMap.of());
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
@@ -602,13 +600,12 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException 
 	 */
-	@SuppressWarnings("unchecked")
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesNoSubmittedFilesFail() throws ExecutionManagerException,
 			IridaWorkflowException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet())
+				.inputFilesSingleEnd(Sets.newHashSet())
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -619,10 +616,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
-				sampleSequenceFileMap);
-		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class)))
-				.thenReturn(ImmutableMap.of());
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getPairedInputFiles())).thenReturn(
+				ImmutableMap.of());
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
@@ -636,10 +633,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesRequiresReferenceFail() throws ExecutionManagerException,
 			IridaWorkflowException {
-		submission = AnalysisSubmission.builder(workflowId)
-				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values()))
-				.build();
+		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
+				.inputFilesSingleEnd(Sets.newHashSet(sampleSingleSequenceFileMap.values())).build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 
@@ -659,7 +654,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 			IridaWorkflowException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values()))
+				.inputFilesSingleEnd(Sets.newHashSet(sampleSingleSequenceFileMap.values()))
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -677,13 +672,12 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException 
 	 */
-	@SuppressWarnings("unchecked")
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesSinglePairedNoAcceptFail() throws ExecutionManagerException,
 			IridaWorkflowException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values()))
+				.inputFilesSingleEnd(Sets.newHashSet(sampleSingleSequenceFileMap.values()))
 				.inputFilesPaired(Sets.newHashSet(sampleSequenceFilePairMap.values()))
 				.referenceFile(referenceFile)
 				.build();
@@ -695,9 +689,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
-				sampleSequenceFileMap);
-		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getPairedInputFiles())).thenReturn(
 				sampleSequenceFilePairMap);
 
 		workflowPreparation.prepareAnalysisFiles(submission);
@@ -714,7 +708,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IridaWorkflowParameterException.class)
 	public void testPrepareAnalysisFilesFailParameters() throws ExecutionManagerException, IridaWorkflowException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
-				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values())).referenceFile(referenceFile).build();
+				.inputFilesSingleEnd(Sets.newHashSet(sampleSingleSequenceFileMap.values()))
+				.referenceFile(referenceFile).build();
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 
@@ -723,10 +718,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(galaxyLibrariesService.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
-				sampleSequenceFileMap);
-		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class)))
-				.thenReturn(ImmutableMap.of());
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequenceFiles(submission.getPairedInputFiles())).thenReturn(
+				ImmutableMap.of());
 
 		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))
 				.thenReturn(refDataset);
@@ -750,7 +745,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(singleInputFiles)
+				.inputFilesSingleEnd(singleInputFiles)
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -787,7 +782,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 			ExecutionManagerException, IOException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(singleInputFiles)
+				.inputFilesSingleEnd(singleInputFiles)
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
