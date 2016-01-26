@@ -135,11 +135,11 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequencingObject')")
 	@Override
-	public Map<Sample, SequencingObject> getUniqueSamplesForSequenceFiles(Set<SequencingObject> sequenceFiles)
+	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequenceFiles(Set<T> sequenceFiles)
 			throws DuplicateSampleException {
-		Map<Sample, SequencingObject> sequenceFilePairsSampleMap = new HashMap<>();
+		Map<Sample, T> sequenceFilePairsSampleMap = new HashMap<>();
 
-		for (SequencingObject filePair : sequenceFiles) {
+		for (T filePair : sequenceFiles) {
 			SequenceFile pair1 = filePair.getFiles().iterator().next();
 
 			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(filePair);
