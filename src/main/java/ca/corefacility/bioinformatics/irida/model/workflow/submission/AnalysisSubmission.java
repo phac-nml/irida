@@ -198,12 +198,13 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this();
 		checkNotNull(builder.workflowId, "workflowId is null");
 
-		checkArgument(builder.inputFilesSingle != null || builder.inputFilesPaired != null
+		checkArgument(builder.inputFilesSingleEnd != null || builder.inputFilesPaired != null
 				|| builder.remoteFilesSingle != null || builder.remoteFilesPaired != null,
 				"all input file collections are null.  You must supply at least one set of input files");
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
 		//this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
+		this.inputFilesSingleEnd = (builder.inputFilesSingleEnd != null) ? builder.inputFilesSingleEnd : Sets.newHashSet();
 		this.inputFilesPaired = (builder.inputFilesPaired != null) ? builder.inputFilesPaired : Sets.newHashSet();
 		this.inputParameters = (builder.inputParameters != null) ? ImmutableMap.copyOf(builder.inputParameters)
 				: ImmutableMap.of();
@@ -518,6 +519,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	public static class Builder {
 		private String name;
 		private Set<SequenceFile> inputFilesSingle;
+		private Set<SingleEndSequenceFile> inputFilesSingleEnd;
 		private Set<SequenceFilePair> inputFilesPaired;
 		private Set<SequenceFileSnapshot> remoteFilesSingle;
 		private Set<SequenceFilePairSnapshot> remoteFilesPaired;
@@ -560,11 +562,26 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		 *            The inputFilesSingle for this submission.
 		 * @return A {@link Builder}.
 		 */
+		@Deprecated
 		public Builder inputFilesSingle(Set<SequenceFile> inputFilesSingle) {
 			checkNotNull(inputFilesSingle, "inputFilesSingle is null");
 			checkArgument(!inputFilesSingle.isEmpty(), "inputFilesSingle is empty");
 
 			this.inputFilesSingle = inputFilesSingle;
+			return this;
+		}
+
+		/**
+		 * Sets this {@link SingleEndSequenceFile}s for this submission
+		 * 
+		 * @param inputFilesSingleEnd
+		 *            {@link SingleEndSequenceFile}s for this submission
+		 * @return a {@link Builder}
+		 */
+		public Builder inputFilesSingleEnd(Set<SingleEndSequenceFile> inputFilesSingleEnd) {
+			checkNotNull(inputFilesSingleEnd);
+			checkArgument(!inputFilesSingleEnd.isEmpty());
+			this.inputFilesSingleEnd = inputFilesSingleEnd;
 			return this;
 		}
 
@@ -683,7 +700,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		}
 
 		public AnalysisSubmission build() {
-			checkArgument(inputFilesSingle != null || inputFilesPaired != null || remoteFilesSingle != null
+			checkArgument(inputFilesSingleEnd != null || inputFilesPaired != null || remoteFilesSingle != null
 					|| remoteFilesPaired != null,
 					"all input file collections are null.  You must supply at least one set of input files");
 
