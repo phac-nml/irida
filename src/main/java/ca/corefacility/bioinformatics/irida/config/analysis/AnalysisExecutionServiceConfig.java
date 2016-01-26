@@ -113,10 +113,10 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
-		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService, sequenceFileService,
-				sequenceFilePairService, galaxyLibrariesService, iridaWorkflowsService,
-				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy,
-				sampleRemoteService, sequencingObjectService);
+		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
+				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy(),
+				analysisProvenanceService(), analysisParameterServiceGalaxy, sampleRemoteService,
+				sequencingObjectService);
 	}
 
 	@Lazy

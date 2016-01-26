@@ -231,9 +231,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		workflowDetails.setId(WORKFLOW_ID);
 
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				sequenceFileService, sequenceFilePairService, galaxyLibrariesService, iridaWorkflowsService,
-				analysisCollectionServiceGalaxy, analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy,
-				sampleRemoteService, sequencingObjectService);
+				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy,
+				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy, sampleRemoteService,
+				sequencingObjectService);
 
 		output1Dataset = new Dataset();
 		output1Dataset.setId("1");
