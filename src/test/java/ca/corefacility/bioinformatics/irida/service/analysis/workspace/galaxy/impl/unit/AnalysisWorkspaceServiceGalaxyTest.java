@@ -52,12 +52,10 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -70,7 +68,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs.WorkflowInput;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -95,13 +92,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	@Mock
 	private SequenceFileRepository sequenceFileRepository;
-
-	@Mock
-	private SequenceFileService sequenceFileService;
-
-	@Mock
-	private SequenceFilePairService sequenceFilePairService;
-
+	
 	@Mock
 	private IridaWorkflowsService iridaWorkflowsService;
 
@@ -162,7 +153,6 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	private IridaWorkflow iridaWorkflowPaired = IridaWorkflowTestBuilder.buildTestWorkflowPaired();
 	private IridaWorkflow iridaWorkflowSinglePaired = IridaWorkflowTestBuilder.buildTestWorkflowSinglePaired();
 
-	private Map<Sample, SequenceFile> sampleSequenceFileMap;
 	private Map<Sample, SingleEndSequenceFile> sampleSingleSequenceFileMap;
 	private Map<Sample, SequenceFilePair> sampleSequenceFilePairMap;
 	private Map<Sample, SequenceFilePair> sampleSequenceFilePairMapSampleA;
@@ -205,7 +195,6 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		Sample sampleC = new Sample();
 		sampleC.setSampleName("SampleC");
 
-		sampleSequenceFileMap = ImmutableMap.of(sampleA, sFileA);
 		sampleSingleSequenceFileMap = ImmutableMap.of(sampleA, singleEndSequenceFile);
 		sampleSequenceFilePairMap = ImmutableMap.of(sampleB, sequenceFilePair);
 		sampleSequenceFilePairMapSampleA = ImmutableMap.of(sampleA, sequenceFilePair);
