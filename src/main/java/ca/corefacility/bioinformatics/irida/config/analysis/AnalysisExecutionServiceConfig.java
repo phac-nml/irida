@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
@@ -80,6 +81,9 @@ public class AnalysisExecutionServiceConfig {
 	SampleRemoteService sampleRemoteService;
 	
 	@Autowired
+	SequencingObjectService sequencingObjectService;
+	
+	@Autowired
 	private ToolsClient toolsClient;
 	
 	@Autowired
@@ -109,9 +113,10 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
-		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				sequenceFileService, sequenceFilePairService, galaxyLibrariesService, iridaWorkflowsService,
-				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy, sampleRemoteService);
+		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService, sequenceFileService,
+				sequenceFilePairService, galaxyLibrariesService, iridaWorkflowsService,
+				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy,
+				sampleRemoteService, sequencingObjectService);
 	}
 
 	@Lazy
