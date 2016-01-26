@@ -117,12 +117,12 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Column(name = "remote_workflow_id")
 	private String remoteWorkflowId;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_sequence_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
-	private Set<SequenceFile> inputFilesSingle;
+	//@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	//@JoinTable(name = "analysis_submission_sequence_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
+	//private Set<SequenceFile> inputFilesSingle;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_sequence_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
+	@JoinTable(name = "analysis_submission_sequence_file_single_end", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
 	private Set<SingleEndSequenceFile> inputFilesSingleEnd;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -203,7 +203,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 				"all input file collections are null.  You must supply at least one set of input files");
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
-		this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
+		//this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
 		this.inputFilesPaired = (builder.inputFilesPaired != null) ? builder.inputFilesPaired : Sets.newHashSet();
 		this.inputParameters = (builder.inputParameters != null) ? ImmutableMap.copyOf(builder.inputParameters)
 				: ImmutableMap.of();
@@ -252,7 +252,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@JsonIgnore
 	@Deprecated
 	public Set<SequenceFile> getSingleInputFiles() {
-		return inputFilesSingle;
+		throw new UnsupportedOperationException();
 	}
 	
 	@JsonIgnore
@@ -735,7 +735,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, inputFilesSingle,
+		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, inputFilesSingleEnd,
 				inputFilesPaired, createdDate, modifiedDate, analysisState, analysisCleanedState, analysis,
 				referenceFile, namedParameters, submitter);
 	}
@@ -749,7 +749,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 					&& Objects.equals(remoteAnalysisId, p.remoteAnalysisId)
 					&& Objects.equals(remoteInputDataId, p.remoteInputDataId)
 					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId)
-					&& Objects.equals(inputFilesSingle, p.inputFilesSingle)
+					&& Objects.equals(inputFilesSingleEnd, p.inputFilesSingleEnd)
 					&& Objects.equals(inputFilesPaired, p.inputFilesPaired)
 					&& Objects.equals(analysisState, p.analysisState)
 					&& Objects.equals(analysisCleanedState, p.analysisCleanedState)

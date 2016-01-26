@@ -144,7 +144,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	@Override
 	public String prepareAnalysisWorkspace(AnalysisSubmission analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
+		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "inputFiles are null");
 		checkArgument(analysisSubmission.getRemoteAnalysisId() == null, "analysis id should be null");
 
 		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
@@ -225,9 +225,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		Library workflowLibrary = galaxyLibrariesService.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
-		Map<Sample, SequenceFile> sampleSequenceFilesSingle = sequenceFileService.getUniqueSamplesForSequenceFiles(
-				analysisSubmission
-						.getSingleInputFiles());
 		
 		Map<Sample, SingleEndSequenceFile> uniqueSingleEndFiles = sequencingObjectService
 				.getUniqueSamplesForSequenceFiles(analysisSubmission.getInputFilesSingleEnd());

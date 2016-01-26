@@ -203,5 +203,54 @@
 		<dropColumn columnName="sequencing_run_id" tableName="sequence_file" />
 		<dropColumn columnName="sequencing_run_id" tableName="sequence_file_AUD" />
 
+
+		<!-- Add the analyses for single files -->
+		<createTable tableName="analysis_submission_sequence_file_single_end">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SINGLE_FILE_ANALYSIS"
+					referencedColumnNames="id" referencedTableName="analysis_submission" />
+			</column>
+			<column name="sequencing_object_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SINGLE_FILE_FILE"
+					referencedColumnNames="id" referencedTableName="sequence_file_single_end" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_submission_sequence_file_single_end_AUD">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="sequencing_object_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_ANALYSIS_SINGLE_FILE_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<sql>
+			INSERT INTO analysis_submission_sequence_file_single_end
+			(analysis_submission_id, sequencing_object_id) SELECT
+			a.analysis_submission_id, o.id FROM
+			analysis_submission_sequence_file_single a INNER JOIN
+			sequence_file_single_end o ON a.sequence_file_id=o.file_id
+		</sql>
+
+		<sql>
+			INSERT INTO analysis_submission_sequence_file_single_end_AUD
+			(analysis_submission_id, sequencing_object_id, REV, REVTYPE)
+			SELECT
+			a.analysis_submission_id, o.id, a.REV, a.REVTYPE FROM
+			analysis_submission_sequence_file_single_AUD a INNER JOIN
+			sequence_file_single_end o ON a.sequence_file_id=o.file_id
+		</sql>
+
+		<dropTable tableName="analysis_submission_sequence_file_single" />
+		<dropTable tableName="analysis_submission_sequence_file_single_AUD" />
+		
 	</changeSet>
 </databaseChangeLog>
