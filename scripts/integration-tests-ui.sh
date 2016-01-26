@@ -6,4 +6,4 @@ echo 'drop database if exists irida_test; drop database if exists irida_galaxy_t
 pushd lib
 ./install-libs.sh
 popd
-xvfb-run -a mvn clean verify -Pui_testing -Dliquibase.config.port=3307 -Djetty.port=8081 -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
+xvfb-run -a mvn clean verify -Pui_testing -Djdbc.url="jdbc:mysql://localhost:3307/irida_test" -Djetty.port=8081 -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
