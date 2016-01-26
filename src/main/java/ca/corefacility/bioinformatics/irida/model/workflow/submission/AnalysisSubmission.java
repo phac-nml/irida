@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
@@ -119,6 +120,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
 	private Set<SequenceFile> inputFilesSingle;
+	
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinTable(name = "analysis_submission_sequence_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
+	private Set<SingleEndSequenceFile> inputFilesSingleEnd;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_pair_id", nullable = false))
@@ -245,8 +250,14 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 * @return The set of single-end input sequence files.
 	 */
 	@JsonIgnore
+	@Deprecated
 	public Set<SequenceFile> getSingleInputFiles() {
 		return inputFilesSingle;
+	}
+	
+	@JsonIgnore
+	public Set<SingleEndSequenceFile> getInputFilesSingleEnd() {
+		return inputFilesSingleEnd;
 	}
 
 	/**
