@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -68,15 +67,10 @@ public class TestDataFactory {
 		s.setId(1L);
 		return s;
 	}
-
-	/**
-	 * Construct a {@link ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile}
-	 *
-	 * @return A fake sequence files with a randomly generated path.
-	 */
-	public static SequenceFile constructSequenceFile() {
+	
+	public static SingleEndSequenceFile constructSingleEndSequenceFile(){
 		Path path = Paths.get("/tmp/sequence-files/fake-file1.fast");
-		return new SequenceFile(path);
+		return new SingleEndSequenceFile(new SequenceFile(path));
 	}
 
 	/**
@@ -90,12 +84,12 @@ public class TestDataFactory {
 	}
 
 	public static AnalysisSubmission constructAnalysisSubmission() {
-		Set<SequenceFile> files = new HashSet<>();
-		files.add(constructSequenceFile());
+		Set<SingleEndSequenceFile> files = new HashSet<>();
+		files.add(constructSingleEndSequenceFile());
 		Long id = 5L;
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID())
 				.name("submission-" + id)
-				.inputFilesSingle(files)
+				.inputFilesSingleEnd(files)
 				.build();
 		analysisSubmission.setId(id);
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
