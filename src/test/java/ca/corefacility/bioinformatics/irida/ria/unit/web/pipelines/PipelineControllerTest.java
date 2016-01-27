@@ -76,7 +76,7 @@ public class PipelineControllerTest {
 		cartController = mock(CartController.class);
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 
-		controller = new PipelineController(sequenceFileService, sequenceFilePairService, sequencingObjectService,
+		controller = new PipelineController(sequencingObjectService,
 				referenceFileService, analysisSubmissionService, workflowsService, projectService, userService,
 				sequenceFileRemoteService, cartController, messageSource, namedParameterService,
 				sequenceFilePairRemoteService, remoteSequenceFileService, remoteSequenceFilePairService);

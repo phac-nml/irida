@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -37,10 +35,10 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -55,8 +53,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParame
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
@@ -65,7 +61,6 @@ import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapsho
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
@@ -101,8 +96,6 @@ public class PipelineController extends BaseController {
 	 * SERVICES
 	 */
 	private ReferenceFileService referenceFileService;
-	private SequenceFileService sequenceFileService;
-	private SequenceFilePairService sequenceFilePairService;
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private ProjectService projectService;
@@ -123,8 +116,7 @@ public class PipelineController extends BaseController {
 	private CartController cartController;
 
 	@Autowired
-	public PipelineController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
-			SequencingObjectService sequencingObjectService, ReferenceFileService referenceFileService,
+	public PipelineController(SequencingObjectService sequencingObjectService, ReferenceFileService referenceFileService,
 			AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService iridaWorkflowsService,
 			ProjectService projectService, UserService userService,
 			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
@@ -132,8 +124,6 @@ public class PipelineController extends BaseController {
 			SequenceFilePairRemoteService sequenceFilePairRemoteService,
 			SequenceFileSnapshotService remoteSequenceFileService,
 			SequenceFilePairSnapshotService remoteSequenceFilePairService) {
-		this.sequenceFileService = sequenceFileService;
-		this.sequenceFilePairService = sequenceFilePairService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -440,7 +430,16 @@ public class PipelineController extends BaseController {
 			}
 
 			if (paired != null) {
-				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
+				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(paired);
+				
+				readMultiple.forEach(f -> {
+					if (f instanceof SingleEndSequenceFile) {
+						throw new IllegalArgumentException("file " + f.getId() + " not a single end file");
+					}
+					
+					sequenceFilePairs.add((SequenceFilePair) f);
+				});
+				
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
 				sequencingObjectService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFilePairs));
 			}
