@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnaps
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
@@ -57,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 /**
@@ -96,6 +98,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
+	private final SequencingObjectService sequencingObjectService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -118,7 +121,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
-			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService,
+			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService, final SequencingObjectService sequencingObjectService,
 			final GalaxyHistoriesService galaxyHistoriesService, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
@@ -127,6 +130,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
+		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	/**
@@ -316,7 +320,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
+			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
 			IridaWorkflowNamedParameters namedParameters, String name) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
@@ -326,13 +330,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		
 		
 		if (description.acceptsSingleSequenceFiles()) {
-			final Map<Sample, SequenceFile> samplesMap = sequenceFileService.getUniqueSamplesForSequenceFiles(Sets
-					.newHashSet(sequenceFiles));
+			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFiles));
 			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFilesSingle(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFilesSingleEnd(ImmutableSet.of(samplesMap.get(s)));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -395,8 +398,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Paired end reads
 		if (description.acceptsPairedSequenceFiles()) {
-			final Map<Sample, SequenceFilePair> samplesMap = sequenceFilePairService
-					.getUniqueSamplesForSequenceFilePairs(Sets.newHashSet(sequenceFilePairs));
+			final Map<Sample, SequenceFilePair> samplesMap = sequencingObjectService
+					.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFilePairs));
 			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
@@ -468,7 +471,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
+			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
 			IridaWorkflowNamedParameters namedParameters, String name) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
@@ -483,7 +486,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		// Add any single end sequencing files.
 		if (description.acceptsSingleSequenceFiles()) {
 			if (!sequenceFiles.isEmpty()) {
-				builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+				builder.inputFilesSingleEnd(Sets.newHashSet(sequenceFiles));
 			}
 
 			// add remote files
