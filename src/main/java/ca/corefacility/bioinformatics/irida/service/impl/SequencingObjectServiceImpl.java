@@ -49,8 +49,8 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	private final SequencingObjectRepository repository;
 
 	@Autowired
-	public SequencingObjectServiceImpl(SequencingObjectRepository repository, SequenceFileRepository sequenceFileRepository,
-			SampleSequencingObjectJoinRepository ssoRepository,
+	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
+			SequenceFileRepository sequenceFileRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
 			Validator validator) {
 		super(repository, validator, SequencingObject.class);
@@ -68,7 +68,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingObject create(SequencingObject object) throws ConstraintViolationException, EntityExistsException {
-		for(SequenceFile file : object.getFiles()){
+		for (SequenceFile file : object.getFiles()) {
 			file = sequenceFileRepository.save(file);
 		}
 
@@ -156,12 +156,24 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 
 		return sequenceFilePairsSampleMap;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
 	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun) {
 		return repository.findSequencingObjectsForSequencingRun(sequencingRun);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadSequencingObject')")
+	public Iterable<SequencingObject> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
 	}
 
 }

@@ -27,10 +27,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
@@ -40,10 +36,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteExcep
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -56,10 +52,12 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Implementation of an AnalysisSubmissionService.
@@ -95,8 +93,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final ReferenceFileRepository referenceFileRepository;
-	private final SequenceFileService sequenceFileService;
-	private final SequenceFilePairService sequenceFilePairService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final SequencingObjectService sequencingObjectService;
 
@@ -109,10 +105,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 *            A repository for accessing user information.
 	 * @param referenceFileRepository
 	 *            the reference file repository
-	 * @param sequenceFileService
-	 *            the sequence file service.
-	 * @param sequenceFilePairService
-	 *            the sequence file pair service
+	 * @param sequencingObjectService
+	 *            the {@link SequencingObject} service.
+
 	 * @param galaxyHistoriesService
 	 *            The {@link galaxyHistoriesService}.
 	 * @param validator
@@ -121,14 +116,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
-			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService, final SequencingObjectService sequencingObjectService,
-			final GalaxyHistoriesService galaxyHistoriesService, Validator validator) {
+			final SequencingObjectService sequencingObjectService, final GalaxyHistoriesService galaxyHistoriesService,
+			Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.referenceFileRepository = referenceFileRepository;
-		this.sequenceFileService = sequenceFileService;
-		this.sequenceFilePairService = sequenceFilePairService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.sequencingObjectService = sequencingObjectService;
 	}

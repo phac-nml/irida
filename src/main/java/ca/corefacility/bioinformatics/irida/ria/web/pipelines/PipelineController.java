@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -39,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnaps
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -62,6 +65,7 @@ import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapsho
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
@@ -417,19 +421,28 @@ public class PipelineController extends BaseController {
 			}
 
 			// Get a list of the files to submit
-			List<SequenceFile> sequenceFiles = new ArrayList<>();
+			List<SingleEndSequenceFile> singleEndFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
 
 			if (single != null) {
-				sequenceFiles = (List<SequenceFile>) sequenceFileService.readMultiple(single);
+				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(single);
+				
+				readMultiple.forEach(f -> {
+					if (f instanceof SingleEndSequenceFile) {
+						throw new IllegalArgumentException("file " + f.getId() + " not a single end file");
+					}
+					
+					singleEndFiles.add((SingleEndSequenceFile) f);
+				});
+				
 				// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequenceFileService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFiles));
+				sequencingObjectService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(singleEndFiles));
 			}
 
 			if (paired != null) {
 				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(Sets.newHashSet(sequenceFilePairs));
+				sequencingObjectService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFilePairs));
 			}
 			
 			
@@ -482,10 +495,10 @@ public class PipelineController extends BaseController {
 			}
 
 			if (description.getInputs().requiresSingleSample()) {
-				analysisSubmissionService.createSingleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
+				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
 						params, namedParameters, name);
 			} else {
-				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
+				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
 						params, namedParameters, name);
 			}
 

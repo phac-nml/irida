@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 
 /**
@@ -44,6 +45,10 @@ public class AnalysisSubmissionServiceImplTest {
 	private SequenceFileService sequenceFileService;
 	@Mock
 	private SequenceFilePairService sequenceFilePairService;
+	
+	@Mock
+	private SequencingObjectService sequencingObjectService;
+	
 	@Mock
 	private Validator validator;
 	@Mock
@@ -64,7 +69,7 @@ public class AnalysisSubmissionServiceImplTest {
 		MockitoAnnotations.initMocks(this);
 
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository, userRepository,
-				referenceFileRepository, sequenceFileService, sequenceFilePairService, galaxyHistoriesService,
+				referenceFileRepository, sequencingObjectService, galaxyHistoriesService,
 				validator);
 
 		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
