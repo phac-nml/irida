@@ -21,10 +21,13 @@ import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -68,6 +71,16 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingObject create(SequencingObject object) throws ConstraintViolationException, EntityExistsException {
+
+		SequencingRun sequencingRun = object.getSequencingRun();
+		if (sequencingRun != null) {
+			if (object instanceof SingleEndSequenceFile && sequencingRun.getLayoutType() != LayoutType.SINGLE_END) {
+				throw new IllegalArgumentException("Attempting to add a single end file to a non single end run");
+			} else if (object instanceof SequenceFilePair && sequencingRun.getLayoutType() != LayoutType.PAIRED_END) {
+				throw new IllegalArgumentException("Attempting to add a paired end file to a non paired end run");
+			}
+		}
+
 		for (SequenceFile file : object.getFiles()) {
 			file = sequenceFileRepository.save(file);
 		}
@@ -88,11 +101,6 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	public SampleSequencingObjectJoin createSequencingObjectInSample(SequencingObject seqObject, Sample sample) {
 		// create the sequencing object
 		seqObject = create(seqObject);
-
-		/*
-		 * TODO:Verify that the SequencingRun matches the type of
-		 * sequencingobject being created
-		 */
 
 		// save the new join
 		SampleSequencingObjectJoin sampleSequencingObjectJoin = new SampleSequencingObjectJoin(sample, seqObject);
