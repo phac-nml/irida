@@ -38,7 +38,7 @@
 	<workflow_named_parameter_values/>
 
 	<analysis_submission />
-	<analysis_submission_sequence_file_single />
+	<analysis_submission_sequence_file_single_end />
 	<analysis_submission_parameters />
 
 	<password_reset />
@@ -47,6 +47,7 @@
 	<remote_related_project />
 	<project_user />
 	<sequencefile_sample />
+	<sample_sequencingobject />
 	<project_sample />
 	<project_referencefile />
 
@@ -54,6 +55,8 @@
 
 	<assembled_genome_analysis />
 
+	<sequencing_object />
+	<sequence_file_single_end />
 	<sequence_file_pair />
 	<sequence_file_pair_files />
 	
@@ -80,8 +83,9 @@
 	<sequence_file_AUD />
 	<sequence_file_properties_AUD />
 	<sequencefile_sample_AUD />
+	<sample_sequencingobject_AUD />
 	<analysis_submission_AUD />
-	<analysis_submission_sequence_file_single_AUD />
+	<analysis_submission_sequence_file_single_end_AUD />
 	<analysis_submission_sequence_file_pair_AUD />
 	<analysis_submission_parameters_AUD />
 	<system_role_AUD />
@@ -98,6 +102,8 @@
 	<project_referencefile_AUD />
 	<reference_file_AUD />
 	<remote_related_project_AUD />
+	<sequencing_object_AUD />
+	<sequence_file_single_end_AUD />
 	<sequence_file_pair_AUD />
 	<sequence_file_pair_files_AUD />
 	<remote_sequence_file_AUD />
