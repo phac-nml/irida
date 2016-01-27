@@ -1,31 +1,13 @@
 (function(ng, $, lodash, page){
 	"use strict";
 
-	function samplesNotificationService($rootScope, $compile, $timeout, $templateCache, notifications) {
-		function showSampleUpdate(items) {
-			var message = $templateCache.get("samplesUpdate.html"),
-			    elm = ng.element(message),
-			    scope = $rootScope.$new();
-			scope.items = items;
-			$compile(elm)(scope);
-			// Need a digest loop
-			$timeout(function() {
-				notifications.show({msg: elm, type: "information"});
-			});
-		}
-
-		return {
-			showSampleUpdate: showSampleUpdate
-		};
-	}
-
 	/**
 	 * Service to handle server calls for project samples.
 	 * @param {Object} $http Angular http object.
 	 * @param {Object} $q Angular promises.
 	 * @returns {{fetchSamples: fetchSamples}}.
 	 */
-	function samplesService ($http, $q, notificationsService) {
+	function samplesService ($http, $q, compiledNotification) {
 		var initialized = false; // Show samples loading notification only if not the first load
 		// Private Methods
 		function getProjectSamples() {
@@ -70,7 +52,7 @@
 					}
 				});
 				if (initialized) {
-					notificationsService.showSampleUpdate(items);
+					compiledNotification.show(items, "samplesUpdate.html", {type: "information"});
 				}
 				else {
 					initialized = true;
@@ -147,8 +129,7 @@
 	}
 
 	ng.module("irida.projects.samples.service", ["datatables", "irida.notifications"])
-		.factory("samplesNotificationService", ["$rootScope", "$compile", "$timeout", "$templateCache", "notifications", samplesNotificationService])
-		.factory("samplesService", ["$http", "$q", "samplesNotificationService", samplesService])
+		.factory("samplesService", ["$http", "$q", "compiledNotification", samplesService])
 		.factory("associatedProjectsService", ["$http", "$q", associatedProjectsService])
 		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", tableService]);
 })(window.angular, window.jQuery, window._, window.PAGE);
