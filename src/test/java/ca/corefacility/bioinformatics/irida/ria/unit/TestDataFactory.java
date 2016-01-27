@@ -23,7 +23,9 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -122,13 +124,15 @@ public class TestDataFactory {
 		return user;
 	}
 
-	public static List<Join<Sample, SequenceFile>> generateSequenceFilesForSample(Sample sample) {
-		List<Join<Sample, SequenceFile>> join = new ArrayList<>();
-		for (int i = 0; i < 5; i++) {
+	public static List<SampleSequencingObjectJoin> generateSequencingObjectsForSample(Sample sample) {
+		List<SampleSequencingObjectJoin> join = new ArrayList<>();
+		for (long i = 0; i < 5; i++) {
 			Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
 			SequenceFile file = new SequenceFile(path);
-			file.setId((long) i);
-			join.add(new SampleSequenceFileJoin(sample, file));
+			file.setId(i);
+			SingleEndSequenceFile obj = new SingleEndSequenceFile(file);
+			obj.setId(i);
+			join.add(new SampleSequencingObjectJoin(sample, obj));
 		}
 		return join;
 	}
