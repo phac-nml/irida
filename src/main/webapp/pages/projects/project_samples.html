@@ -109,28 +109,48 @@
 			<h3 class="modal-title" th:text="#{project.samples.associated.modal.title}">Projects to include in table</h3>
 		</div>
 		<div class="modal-body">
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" ng-model="associatedProjectsCtrl.display.project" />&nbsp;<th:block th:text="${project.label}"></th:block></label>
-			</div>
-			<h3>Local Projects</h3>
-			<strong ng-hide="associatedProjectsCtrl.projects.local">
-				<fa:icon type="loading" fixed="true"/>
-				&nbsp;<th:block th:text="#{project.samples.associated.modal.fetching-local}"></th:block></strong>
-			<div class="project-checkboxes">
-				<div ng-repeat="project in associatedProjectsCtrl.projects.local" class="checkbox">
-					<label>
-						<input type="checkbox" ng-model="project.selected"/>
-						&nbsp;{{project.label}} </label>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">[LOCAL PROJECTS]</h3>
 				</div>
-			</div>
-			<div class="alert alert-info" ng-show="associatedProjectsCtrl.projects.local.length === 0">
-				<strong th:text="#{project.samples.associated.modal.no-local}">No Locally Associated Projects</strong>
+				<div class="panel-body">
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" ng-model="associatedProjectsCtrl.display.project"/>
+							&nbsp;<th:block th:text="${project.label}"></th:block>
+						</label>
+					</div>
+					<strong ng-hide="associatedProjectsCtrl.projects.local">
+						<fa:icon type="loading" fixed="true"/>
+						&nbsp;
+						<th:block th:text="#{project.samples.associated.modal.fetching-local}"></th:block>
+					</strong>
+					<div class="project-checkboxes">
+						<div ng-repeat="project in associatedProjectsCtrl.projects.local" class="checkbox">
+							<label>
+								<input type="checkbox" ng-model="project.selected"/>
+								&nbsp;{{project.label}} </label>
+						</div>
+					</div>
+					<div class="alert alert-info" ng-show="associatedProjectsCtrl.projects.local.length === 0">
+						<strong th:text="#{project.samples.associated.modal.no-local}">No Locally Associated
+							Projects</strong>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default" ng-click="associatedProjectsCtrl.close()" th:text="#{form.btn.cancel}">[Cancel]</button>
 			<button class="btn btn-primary" ng-click="associatedProjectsCtrl.showProjects()" th:text="#{project.samples.associated.modal.selectBtn}">[Show Selected Projects]</button>
+		</div>
+	</script>
+
+	<script type="text/ng-template" id="samplesUpdate.html" th:inline="javascript">
+		<div>
+			<strong th:text="#{project.samples.display.notification.title}">Displaying:</strong><br/>
+			<ul>
+				<li ng-repeat='item in items' th:text="#{project.samples.display.notification.item}"></li>
+			</ul>
 		</div>
 	</script>
 </th:block>

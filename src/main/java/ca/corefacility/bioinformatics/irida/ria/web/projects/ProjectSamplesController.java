@@ -207,6 +207,7 @@ public class ProjectSamplesController {
 			samples.add(sampleMap);
 		}
 		result.put("samples", samples);
+		result.put("project", project);
 		return result;
 	}
 

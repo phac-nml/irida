@@ -1,15 +1,33 @@
 (function(ng, $, lodash, page){
 	"use strict";
 
+	function samplesNotificationService($rootScope, $compile, $timeout, $templateCache, notifications) {
+		function showSampleUpdate(items) {
+			var message = $templateCache.get("samplesUpdate.html"),
+			    elm = ng.element(message),
+			    scope = $rootScope.$new();
+			scope.items = items;
+			$compile(elm)(scope);
+			// Need a digest loop
+			$timeout(function() {
+				notifications.show({msg: elm, type: "information"});
+			});
+		}
+
+		return {
+			showSampleUpdate: showSampleUpdate
+		};
+	}
+
 	/**
 	 * Service to handle server calls for project samples.
 	 * @param {Object} $http Angular http object.
 	 * @param {Object} $q Angular promises.
 	 * @returns {{fetchSamples: fetchSamples}}.
 	 */
-	function samplesService ($http, $q) {
+	function samplesService ($http, $q, notificationsService) {
+		var initialized = false; // Show samples loading notification only if not the first load
 		// Private Methods
-		var samples = {};
 		function getProjectSamples() {
 			return $http.get(page.urls.samples.project);
 		}
@@ -44,12 +62,19 @@
 			}
 
 			return $q.all(promises).then(function (responses) {
-				var samples = [];
+				var samples = [], items = [];
 				responses.forEach(function (response) {
 					if (response.data.hasOwnProperty("samples")) {
 						samples = samples.concat(response.data.samples);
+						items.push({samples: response.data.samples.length, project: response.data.project.label});
 					}
 				});
+				if (initialized) {
+					notificationsService.showSampleUpdate(items);
+				}
+				else {
+					initialized = true;
+				}
 				return samples;
 			});
 		}
@@ -121,8 +146,9 @@
 		};
 	}
 
-	ng.module("irida.projects.samples.service", ["datatables"])
-		.factory("samplesService", ["$http", "$q", samplesService])
+	ng.module("irida.projects.samples.service", ["datatables", "irida.notifications"])
+		.factory("samplesNotificationService", ["$rootScope", "$compile", "$timeout", "$templateCache", "notifications", samplesNotificationService])
+		.factory("samplesService", ["$http", "$q", "samplesNotificationService", samplesService])
 		.factory("associatedProjectsService", ["$http", "$q", associatedProjectsService])
 		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", tableService]);
 })(window.angular, window.jQuery, window._, window.PAGE);
