@@ -4,16 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -25,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
-
 
 import com.google.common.collect.ImmutableSet;
 
@@ -58,11 +54,11 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	public NcbiExportSubmission create(NcbiExportSubmission object) throws ConstraintViolationException,
 			EntityExistsException {
 		List<NcbiBioSampleFiles> bioSampleFiles = object.getBioSampleFiles();
-		bioSampleFiles.forEach(s -> {
-			if (s.getFiles().isEmpty() && s.getPairs().isEmpty()) {
-				throw new IllegalArgumentException("NcbiExportSubmission must have files associated");
-			}
-		});
+		
+		if (bioSampleFiles.stream().anyMatch(s -> s.getFiles().isEmpty() && s.getPairs().isEmpty())) {
+			throw new IllegalArgumentException("NcbiExportSubmission must have files associated");
+		}
+
 		return super.create(object);
 	}
 
