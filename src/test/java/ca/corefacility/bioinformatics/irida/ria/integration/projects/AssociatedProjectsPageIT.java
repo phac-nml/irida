@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiU
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,7 @@ public class AssociatedProjectsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testRemoteAssociatedProjectNoLocal() {
 		Long otherProject = 3L;
 		LoginPage.loginAsAdmin(driver());
