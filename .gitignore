@@ -14,3 +14,4 @@ doc/_site
 *.swp
 /.idea/
 src/main/webapp/resources/css
+src/main/webapp/node
