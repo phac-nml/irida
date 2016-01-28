@@ -12,6 +12,10 @@
   margin-bottom: 5px !important;
 }
 
+.table-selectable tbody tr {
+  cursor: pointer;
+}
+
 .datatables-active-filters {
   margin-bottom: 10px;
 }
@@ -26,10 +30,36 @@
   margin-left: 3px;
 }
 
+.dataTables_paginate {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
 table th {
   vertical-align: top !important;
 }
 
 table td {
   padding: 5px 18px !important;
+}
+
+tr a {
+  background-color: transparent !important;
+}
+
+tr {
+  background-color: white;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+tr.selected, tr.selected a {
+  background-color: #337ab7 !important;
+  color: white !important;
 }
