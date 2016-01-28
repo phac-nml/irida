@@ -54,105 +54,110 @@
         <label class="col-sm-2 control-label" th:text="#{project.export.files}">_Files_</label>
 
         <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
-          <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" class="sample-container" th:each="sample : ${samples}">
-            <h2>
-              <a href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
-            </h2>
+          <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" th:each="sample : ${samples}"
+              th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
+              hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
+            <div class="sample-container" th:if="${hasPaired or hasSingles}">
+              <h2>
+                <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
+                <button type="button" th:text="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button">Remove</button>
+              </h2>
 
 
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label th:text="#{project.export.biosample.title}">_BioSample ID_</label>
-                <input class="form-control bioSample" name="bioSample" required="required" />
-                <p class="help-block" th:text="#{project.export.biosample.description}">_biosample to add data to_</p>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label th:text="#{project.export.biosample.title}">_BioSample ID_</label>
+                  <input class="form-control bioSample" name="bioSample" required="required" />
+                  <p class="help-block" th:text="#{project.export.biosample.description}">_biosample to add data to_</p>
+                </div>
+
+                <div class="form-group col-md-6">
+                  <label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label>
+                  <input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" />
+                  <p class="help-block" th:utext="#{project.export.library_construction_protocol.description}">_protocol used ot crate library_</p>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label th:text="#{project.export.library_name.title}">_Library Name_</label>
+                  <input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" />
+                  <p class="help-block" th:utext="#{project.export.library_name.description}">_name of sequencing library_</p>
+                </div>
+
+                <div class="form-group col-md-6">
+                  <label th:text="#{project.export.instrument_model.title}">_Instrument Model_</label>
+                  <select class="form-control instrument_model" name="instrument_model" required="required">
+                    <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
+                  </select>
+                  <p class="help-block" th:utext="#{project.export.instrument_model.descripton}">_instrument used to sequence data_</p>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label th:text="#{project.export.library_strategy.title}">_Library Strategy_</label>
+                  <select class="form-control library_strategy" name="library_strategy" required="required">
+                    <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
+                  </select>
+                  <p class="help-block" th:utext="#{project.export.library_strategy.description}">_strategy used to create sequencing library_</p>
+                </div>
+
+                <div class="form-group col-md-6">
+                  <label th:text="#{project.export.library_selection.title}">_Library Selection_</label>
+                  <select class="form-control library_selection" name="library_selection" required="required">
+                    <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
+                  </select>
+                  <p class="help-block" th:utext="#{project.export.library_selection.description}">_how data for library was selected_</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label th:text="#{project.export.library_source.title}">_Library Source_</label>
+                  <select class="form-control library_source" name="library_source" required="required">
+                    <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
+                  </select>
+                  <p class="help-block" th:utext="#{project.export.library_source.description}">_source material of library_</p>
+                </div>
               </div>
 
-              <div class="form-group col-md-6">
-                <label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label>
-                <input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" />
-                <p class="help-block" th:utext="#{project.export.library_construction_protocol.description}">_protocol used ot crate library_</p>
-              </div>
+              <th:block >
+                <div class="alert alert-danger empty-file-warning" role="alert">
+                  <p th:text="#{project.export.warning.nofiles}">_One or more files must be selected for upload_</p>
+                </div>
+                <table class="table" th:if="${hasPaired or hasSingles}">
 
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label th:text="#{project.export.library_name.title}">_Library Name_</label>
-                <input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" />
-                <p class="help-block" th:utext="#{project.export.library_name.description}">_name of sequencing library_</p>
-              </div>
+                  <!--/* (15-03-26 ) PAIRED END DATA */-->
+                  <th:block th:if="${hasPaired}" th:with="pairs=${sample.files.paired_end}">
+                    <th:block th:each="pair : ${pairs}">
+                      <tr class="paired_end paired_end__forward">
+                        <td class="td_radio" rowspan="2">
+                          <!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
+                          <input type="checkbox" class="paired_files file-checkbox" data-type="paired_end" th:value="${pair.getId()}" th:name="${sample.id}" th:checked="${#sets.contains(newestPairs, pair.getId())}" />
+                        </td>
+                        <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward', relative='false')"></td>
+                      </tr>
+                      <tr class="paired_end paired_end__reverse">
+                        <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+                      </tr>
+                    </th:block>
+                  </th:block>
 
-              <div class="form-group col-md-6">
-                <label th:text="#{project.export.instrument_model.title}">_Instrument Model_</label>
-                <select class="form-control instrument_model" name="instrument_model" required="required">
-                  <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
-                </select>
-                <p class="help-block" th:utext="#{project.export.instrument_model.descripton}">_instrument used to sequence data_</p>
-              </div>
-
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label th:text="#{project.export.library_strategy.title}">_Library Strategy_</label>
-                <select class="form-control library_strategy" name="library_strategy" required="required">
-                  <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
-                </select>
-                <p class="help-block" th:utext="#{project.export.library_strategy.description}">_strategy used to create sequencing library_</p>
-              </div>
-
-              <div class="form-group col-md-6">
-                <label th:text="#{project.export.library_selection.title}">_Library Selection_</label>
-                <select class="form-control library_selection" name="library_selection" required="required">
-                  <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
-                </select>
-                <p class="help-block" th:utext="#{project.export.library_selection.description}">_how data for library was selected_</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label th:text="#{project.export.library_source.title}">_Library Source_</label>
-                <select class="form-control library_source" name="library_source" required="required">
-                  <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
-                </select>
-                <p class="help-block" th:utext="#{project.export.library_source.description}">_source material of library_</p>
-              </div>
-            </div>
-
-            <th:block th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
-								hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
-              <div class="alert alert-danger empty-file-warning" role="alert">
-                <p th:text="#{project.export.warning.nofiles}">_One or more files must be selected for upload_</p>
-              </div>
-              <table class="table" th:if="${hasPaired or hasSingles}">
-
-                <!--/* (15-03-26 ) PAIRED END DATA */-->
-                <th:block th:if="${hasPaired}" th:with="pairs=${sample.files.paired_end}">
-                  <th:block th:each="pair : ${pairs}">
-                    <tr class="paired_end paired_end__forward">
-                      <td class="td_radio" rowspan="2">
-                        <!--/* (15-03-26 ) Checked only if it is the first pair in the set. */-->
-                        <input type="checkbox" class="paired_files file-checkbox" data-type="paired_end" th:value="${pair.getId()}" th:name="${sample.id}" th:checked="${#sets.contains(newestPairs, pair.getId())}" />
+                  <!--/* (15-03-26 ) SINGLE END DATA */-->
+                  <th:block th:if="${hasSingles}" th:with="files=${sample.files.single_end}">
+                    <tr class="single_end" th:each="join : ${files}" th:with="file=${join.getObject()}">
+                      <td class="td_radio">
+                        <!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
+                        <input type="checkbox" class="single_files file-checkbox" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" th:checked="${#sets.contains(newestSingles, file.getId())}" />
                       </td>
-                      <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward', relative='false')"></td>
-                    </tr>
-                    <tr class="paired_end paired_end__reverse">
-                      <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse')"></td>
+                      <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='single')"></td>
                     </tr>
                   </th:block>
-                </th:block>
+                </table>
 
-                <!--/* (15-03-26 ) SINGLE END DATA */-->
-                <th:block th:if="${hasSingles}" th:with="files=${sample.files.single_end}">
-                  <tr class="single_end" th:each="join : ${files}" th:with="file=${join.getObject()}">
-                    <td class="td_radio">
-                      <!--/* (15-03-26 ) Checked only if there are no pairs and it is the first one in the file set */-->
-                      <input type="checkbox" class="single_files file-checkbox" data-type="single_end" th:value="${file.getId()}" th:name="${sample.id}" th:checked="${#sets.contains(newestSingles, file.getId())}" />
-                    </td>
-                    <td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${file},icon='single')"></td>
-                  </tr>
-                </th:block>
-              </table>
-
-            </th:block>
+              </th:block>
+            </div>
+            <div class="alert alert-warning sample-no-files" role="alert" th:text="#{project.export.warning.nofiles(${sample.name})}" th:if="${!hasPaired and !hasSingles}">No files</div>
             <hr/>
           </div>
           <button id="submit" class="btn btn-primary" th:text="#{global.btn.submit}">_Submit_</button>
@@ -232,11 +237,32 @@
         });
       });
 
+      /**
+      * Remove the parent sample
+      */
+      $(".remove-button").on("click", function(){
+        $(this).closest(".sample-container").remove();
+
+        checkNumberValidSamples();
+
+      });
+
+      /**
+      * Check how many valid samples exist and show remove button if needed
+      */
+      function checkNumberValidSamples(){
+        //If there's only one sample, remove the remove button.  we can't have an empty submission
+        if($(".sample-container").size() == 1){
+          $(".remove-button").remove();
+        }
+      }
+
       /*
        * Disable the submit button if nothing is selected
        */
       $(document).ready(function() {
         $(".empty-file-warning").hide();
+        checkNumberValidSamples();
       });
 
       function disableSubmit(fileBoxes, submitButton) {
