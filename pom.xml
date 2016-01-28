@@ -888,7 +888,7 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>0.0.27</version>
+				<version>${frontend-maven-plugin.version}</version>
 
 				<!-- optional -->
 				<configuration>
@@ -1015,6 +1015,7 @@
 		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
+		<frontend-maven-plugin.version>0.0.27</frontend-maven-plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
