@@ -3,6 +3,7 @@ Changes
 
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
+* [Developer]: Replaced Grunt with Gulp for better front-end compilation of assets.
 * [UI]: Fixed a bug where clicking on FastQC quality charts attempted to download the images instead of viewing them in the browser.
 * [Developer]: Added thread pool for scheduled task submission with new configuration key `irida.scheduled.threads`.
 
