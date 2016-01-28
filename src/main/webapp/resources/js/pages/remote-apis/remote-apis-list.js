@@ -1,3 +1,4 @@
+/*globals getApiStatus*/
 (function ($, page) {
     $(document).ready(function () {
         $('#remoteapiTable').DataTable({
@@ -34,7 +35,7 @@
                 }
 
             ],
-            drawCallback: function (row, data, dataIndex) {
+            drawCallback: function () {
                 $(".connection-status").each(function () {
                     var resultDiv = "#" + $(this).attr("id");
                     var apiId = $(this).data("api-id");

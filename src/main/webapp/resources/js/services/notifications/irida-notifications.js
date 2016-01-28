@@ -10,7 +10,7 @@
  *    });
  */
 
-(function (angular) {
+(function (angular, noty) {
   "use strict";
   window.notifications = (function() {
     var types = {'success':true, 'error':true, 'information':true, 'warning': true},
@@ -62,4 +62,4 @@
         window.notifications.show(o);
       };
     }]);
-})(window.angular);
+})(window.angular, window.noty);
