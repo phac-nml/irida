@@ -24,7 +24,7 @@
     }
 
     function SessionFactory($timeout, $interval, $window, $uibModal) {
-        var modalWait = 120000, // 2 minutes
+        var modalWait = 300000, // 5 minutes
             initialWait = TL.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
             timeout,
             restartTimeout,

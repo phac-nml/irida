@@ -12,6 +12,7 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,6 +105,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile read(Long id) throws EntityNotFoundException {
 		return super.read(id);
+	}
+
+	@Override
+	@PreAuthorize("permitAll()")
+	@PostFilter("hasPermission(filterObject, 'canReadSequenceFile')")
+	public Iterable<SequenceFile> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
 	}
 
 	/**

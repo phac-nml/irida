@@ -56,7 +56,8 @@ $cart-width: 400px;
   background: $irida-colour-grey-light;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .cart-open .st-pusher {

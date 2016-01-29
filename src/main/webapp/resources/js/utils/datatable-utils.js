@@ -8,7 +8,7 @@ var datatable = (function(moment, tl, page) {
    * @returns {*}
    */
   function formatDate(date) {
-    if (moment !== undefined && tl.date && tl.date.moment.short) {
+    if (moment !== undefined && date !== undefined && tl.date && tl.date.moment.short) {
       return '<div><span style="display: none !important;">' + date + '</span>' + moment(date).format(tl.date.moment.short) + '</div>';
     } else {
       return new Date(date);
@@ -41,6 +41,15 @@ var datatable = (function(moment, tl, page) {
     } else {
       return data;
     }
+  }
+  
+  /**
+   * Return the size of the list passed in the data param
+   * @param data column data.  Should be a JSON list
+   * @returns size of the data list
+   */
+  function displayListSize(data) {
+    return data.length;
   }
 
   function forceContentSize(data, type, full) {
@@ -88,6 +97,7 @@ var datatable = (function(moment, tl, page) {
     formatDate: formatDate,
     i18n: i18n,
     forceContentSize: forceContentSize,
-    tableDrawn: tableDrawn
+    tableDrawn: tableDrawn,
+    displayListSize: displayListSize
   };
 })(window.moment, window.TL, window.PAGE);

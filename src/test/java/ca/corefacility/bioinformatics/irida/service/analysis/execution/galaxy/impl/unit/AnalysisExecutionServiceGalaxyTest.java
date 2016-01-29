@@ -624,17 +624,4 @@ public class AnalysisExecutionServiceGalaxyTest {
 		verify(galaxyLibrariesService, never()).deleteLibrary(LIBRARY_ID);
 		verify(galaxyWorkflowService).deleteWorkflow(REMOTE_WORKFLOW_ID);
 	}
-
-	/**
-	 * Tests failure to clean up a running submission.
-	 * 
-	 * @throws ExecutionManagerException
-	 * @throws ExecutionException
-	 * @throws InterruptedException
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testCleanupRunningSubmissionFail() throws ExecutionManagerException, InterruptedException,
-			ExecutionException {
-		workflowManagement.cleanupSubmission(analysisRunning);
-	}
 }

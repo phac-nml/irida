@@ -116,7 +116,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		page.clickClearAndFindMore();
 
 		assertTrue("Should be on projects page", driver().getCurrentUrl().endsWith("/projects"));
-		assertEquals("cart should be empty", 0, page.getCartCount());
+		assertFalse("cart should be empty", page.isCartCountVisible());
 	}
 
 	@Test

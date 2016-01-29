@@ -8,7 +8,6 @@
 
 <body>
   <main layout:fragment="main">
-    <h1 th:text="#{project.activities.title(${project.label})}"></h1>
     <div ddl:bundle-includes="events">
       <div class="row">
          <div class="col-md-12"> <events data:url="@{/events/project/{id}(id=${project.getId()})}"></events></div>

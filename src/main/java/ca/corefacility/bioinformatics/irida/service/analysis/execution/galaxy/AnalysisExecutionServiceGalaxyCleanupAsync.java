@@ -5,16 +5,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.Future;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
@@ -79,10 +79,6 @@ public class AnalysisExecutionServiceGalaxyCleanupAsync {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(AnalysisCleanedState.CLEANING.equals(analysisSubmission.getAnalysisCleanedState()),
 				"analysisCleanedState not " + AnalysisCleanedState.CLEANING);
-		checkArgument(
-				AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState())
-						|| AnalysisState.ERROR.equals(analysisSubmission.getAnalysisState()), "analysisState must be "
-						+ AnalysisState.COMPLETED + " or " + AnalysisState.ERROR);
 
 		logger.debug("Cleaning up " + analysisSubmission);
 

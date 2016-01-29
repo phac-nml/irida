@@ -3,27 +3,13 @@
   var deps = _.union(window.dependencies || [], [
     'ngAria',
     'ngAnimate',
+    "angular-notification-icons",
     'ui.bootstrap',
     'ui.gravatar',
     'irida.session',
     'irida.notifications',
     'irida.cart'
   ]);
-
-  function UIGalaxyController() {
-    var vm = this;
-
-    //A page is in Galaxy if it's in an iframe and IRIDA was accessed from Galaxy
-    vm.inGalaxy = inIframe() && TL.galaxyCallback;
-
-    function inIframe() {
-      try {
-        return window.self !== window.top;
-      } catch (e) {
-        return true;
-      }
-    }
-  }
 
   angular.module('irida', deps)
     .config(function($httpProvider) {
@@ -53,6 +39,5 @@
       uibPaginationConfig.directionLinks = true;
       uibPaginationConfig.maxSize = 8;
       uibPaginationConfig.rotate = false;
-    })
-    .controller('UIGalaxyController', [UIGalaxyController]);
+    });
 })(window.angular, window.$, window._, window.TL);

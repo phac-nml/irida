@@ -24,6 +24,9 @@ public class AnalysesUserPage extends AbstractPage {
 
 	@FindBy(className = "download-analysis-btn")
 	private List<WebElement> downloadAnalysisBtn;
+	
+	@FindBy(className = "delete-analysis-btn")
+	private List<WebElement> deleteAnalysisBtn;
 
 	@FindBy(className = "progress-bar")
 	private List<WebElement> progressBars;
@@ -42,6 +45,13 @@ public class AnalysesUserPage extends AbstractPage {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("table tbody tr")));
 		return PageFactory.initElements(driver, AnalysesUserPage.class);
+	}
+	
+	public void deleteFirstAnalysis() {
+		deleteAnalysisBtn.iterator().next().click();
+		WebElement deleteButton = waitForElementToBeClickable(driver.findElement(By.id("delete-analysis-button")));
+		deleteButton.click();
+		waitForDatatableAjax();
 	}
 
 	public void clearFilter() {
