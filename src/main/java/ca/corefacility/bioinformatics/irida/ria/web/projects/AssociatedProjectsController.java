@@ -147,9 +147,7 @@ public class AssociatedProjectsController {
 	public @ResponseBody List<Project> ajaxAssociatedProjects(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
-		List<Project> projects = new ArrayList<>(relatedProjectJoins.size());
-		projects.addAll(relatedProjectJoins.stream().map(RelatedProjectJoin::getObject).collect(Collectors.toList()));
-		return projects;
+		return relatedProjectJoins.stream().map(RelatedProjectJoin::getObject).collect(Collectors.toList());
 	}
 
 	/**
