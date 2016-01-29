@@ -11,12 +11,6 @@
 <body>
 
 <main layout:fragment="main" th:object="${project}">
-	<div class="row">
-		<div class="col-md-10">
-			<h1 role="heading" th:text="#{project.metadata.title(*{label})}"></h1>
-		</div>
-	</div>
-
 	<section>
 		<form th:action="@{/projects/{projectId}/metadata/edit(projectId=${project.getId()})}" method="post" role="form"
 		      class="panel panel-info" th:object="${project}">

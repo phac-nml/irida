@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 /**
@@ -85,7 +87,7 @@ public class AbstractPage {
 
 	public void clickElement(By finder) {
 		boolean clicked = false;
-		do{
+		do {
 			try {
 				final WebElement el = driver.findElement(finder);
 				waitForElementToBeClickable(el);
@@ -101,15 +103,16 @@ public class AbstractPage {
 		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
-	
+
 	public Collection<WebElement> waitForElementsVisible(By locator) {
-		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.visibilityOfElementLocated(locator));
+		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)
+				.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		return driver.findElements(locator);
 	}
 
 	public void waitForElementInvisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions
-				.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
+				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	public static void waitForTime(int length) {
@@ -129,13 +132,19 @@ public class AbstractPage {
 	public boolean isElementOnScreen(String id) {
 		driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
 		boolean exists = driver.findElements(By.id(id)).size() != 0;
-		driver.manage().timeouts().implicitlyWait(AbstractIridaUIITChromeDriver.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(AbstractIridaUIITChromeDriver.DRIVER_TIMEOUT_IN_SECONDS,
+				TimeUnit.SECONDS);
 		return exists;
 	}
 
 	// Cart is available on all pages.
+	public boolean isCartCountVisible() {
+		// Only displays count if count > 0
+		return driver.findElement(By.className("angular-notifications-icon")).isDisplayed();
+	}
+
 	public int getCartCount() {
-		return Integer.parseInt(driver.findElement(By.id("cart-count")).getText());
+		return Integer.parseInt(driver.findElement(By.cssSelector("#cart-count-notification .angular-notifications-icon div")).getText());
 	}
 
 	public void showCart() {
@@ -171,9 +180,10 @@ public class AbstractPage {
 
 	/**
 	 * Test for breadcrumbs on any given page.
-	 * @param expected {@link List} containing {@link Map} of expected crumbs
-	 *                             - href: expected href
-	 *                             - text: expected text displayed
+	 * 
+	 * @param expected
+	 *            {@link List} containing {@link Map} of expected crumbs - href:
+	 *            expected href - text: expected text displayed
 	 */
 	public void checkBreadCrumbs(List<Map<String, String>> expected) {
 		List<WebElement> crumbs = driver.findElement(By.className("breadcrumbs")).findElements(By.tagName("a"));
@@ -196,7 +206,7 @@ public class AbstractPage {
 	public String getApplicationPort() {
 		return APPLICATION_PORT;
 	}
-	
+
 	/**
 	 * Convenience method to make sure that form submission actually happens
 	 * before proceeding to checking later steps.
@@ -209,5 +219,18 @@ public class AbstractPage {
 		submitButton.click();
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.stalenessOf(oldHtml));
 	}
-	
+
+	/**
+	 * Wait for jQuery AJAX calls to complete on a page with Data tables.
+	 */
+	public void waitForDatatableAjax() {
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new Predicate<WebDriver>() {
+			@Override
+			public boolean apply(WebDriver input) {
+				return (Boolean) ((JavascriptExecutor) driver)
+						.executeScript("return jQuery.active == 0");
+			}			
+		});
+	}
+
 }

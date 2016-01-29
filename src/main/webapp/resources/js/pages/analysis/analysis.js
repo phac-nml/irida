@@ -44,33 +44,12 @@
     }
 
     /**
-     * Set up polling if the state is not 'completed' or 'error'
-     * @param fn Callback function with how to handle the results.
-     * @private
-     */
-    function _poll(fn) {
-      var interval = $interval(function () {
-        _getState().then(function (data) {
-          // 100 set for complete and error states
-          if (parseInt(data.percentComplete) === 100) {
-            $interval.cancel(interval);
-            window.location.reload();
-          }
-          fn(data);
-        });
-      }, 5000);
-    }
-
-    /**
      * Exported function to call the server for information about the current analysis.
      * @param fn Callback function with how to handle the results.
      */
     svc.getAnalysisState = function (fn) {
       _getState().then(function (data) {
         fn(data);
-        if (parseInt(data.percentComplete) !== 100) {
-          _poll(fn);
-        }
       });
     };
 

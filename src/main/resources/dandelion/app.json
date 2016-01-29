@@ -1,11 +1,14 @@
 {
   "dependencies": [
     "jquery",
+    "bootstrap3",
+    "moment",
     "lodash",
     "angular",
     "angular-aria",
     "angular-bootstrap",
     "angular-animate",
+    "angular-notification-icons",
     "font-awesome",
     "animate.css",
     "utilities",
@@ -31,8 +34,12 @@
       }
     },
     {
-      "name": "app",
-      "version": "0.0.1",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/app.css"
+      }
+    },
+    {
       "type": "js",
       "locations": {
         "webapp": "/resources/js/app.js"

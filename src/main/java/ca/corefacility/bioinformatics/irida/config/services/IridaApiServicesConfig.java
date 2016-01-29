@@ -38,6 +38,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
@@ -245,5 +248,23 @@ public class IridaApiServicesConfig {
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
 		jaxb2marshaller.setPackagesToScan(new String[] { "ca.corefacility.bioinformatics.irida.model.workflow" });
 		return jaxb2marshaller;
+	}
+
+	/*
+	 * Template engine for constructing ncbi export submissions
+	 */
+	@Bean(name = "exportUploadTemplateEngine")
+	public SpringTemplateEngine exportUploadTemplateEngine() {
+		SpringTemplateEngine exportUploadTemplateEngine = new SpringTemplateEngine();
+
+		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
+		classLoaderTemplateResolver.setPrefix("/ca/corefacility/bioinformatics/irida/export/");
+		classLoaderTemplateResolver.setSuffix(".xml");
+
+		classLoaderTemplateResolver.setTemplateMode(StandardTemplateModeHandlers.XML.getTemplateModeName());
+		classLoaderTemplateResolver.setCharacterEncoding("UTF-8");
+
+		exportUploadTemplateEngine.addTemplateResolver(classLoaderTemplateResolver);
+		return exportUploadTemplateEngine;
 	}
 }

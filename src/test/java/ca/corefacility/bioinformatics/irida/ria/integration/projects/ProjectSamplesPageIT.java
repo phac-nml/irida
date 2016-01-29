@@ -59,7 +59,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		logger.info("Testing page set up for: Project Samples");
 		LoginPage.loginAsManager(driver());
 		page.goToPage();
-		assertTrue(page.getTitle().contains("Samples"));
+		assertTrue(page.getTitle().equals("project"));
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
 
 		page.showSamplesDropdownMenu();
@@ -562,7 +562,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.clearCart();
 
-		assertEquals("cart should have been emptied", 0, page.getCartCount());
+		assertFalse(page.isCartCountVisible());
 		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
 	}
 
@@ -572,7 +572,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.goToPage();
 
 		assertFalse(page.isCartVisible());
-		assertEquals(0, page.getCartCount());
+		assertFalse(page.isCartCountVisible());
 
 		selectFirstThreeSamples();
 		page.addSamplesToGlobalCart();
@@ -582,7 +582,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.removeProjectFromCart(1L);
 
-		assertEquals("cart should have been emptied", 0, page.getCartCount());
+		assertFalse(page.isCartCountVisible());
 		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
 	}
 
@@ -649,7 +649,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.enableRemoteProjects();
 
-		assertEquals("1 remote sample sould be displayed", 1, page.getNumberOfRemoteSamplesDisplayed());
+		assertEquals("1 remote sample should be displayed", 1, page.getNumberOfRemoteSamplesDisplayed());
 
 		page.selectSampleByClass("remote-sample");
 		page.addSamplesToGlobalCart();

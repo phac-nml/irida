@@ -74,6 +74,12 @@ The main configuration parameters you will need to change are:
   * `galaxy.execution.url=http://localhost/`
   * `galaxy.execution.apiKey=xxxx`
   * `galaxy.execution.email=user@localhost`
+4. **NCBI SRA export configuration** - An SRA bulk upload user account must be created with NCBI to allow automated SRA uploads.  See [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Establishing_a_Center_A_) for details.
+  * `ncbi.upload.host` - FTP host to upload ncbi exports
+  * `ncbi.upload.user` - FTP Username
+  * `ncbi.upload.password` - FTP password
+  * `ncbi.upload.baseDirectory` - base directory in which to create SRA submissions
+  * `ncbi.upload.namespace` - Prefix for file upload identifiers to NCBI. The namespace is used to guarantee upload IDs are unique.  This configuration option is used as a placeholder and may still be set by the user.
 
 Web Configuration
 -----------------
@@ -82,7 +88,7 @@ The IRIDA platform also looks for a web application configuration file at `/etc/
 {% highlight ini %}
 {% include_relative config/web.conf %}
 {% endhighlight %}
-    
+
 If this file does not exist the platform will use internal configuration values which will probably not correspond to your production environment.
 
 The `mail.server.*` configuration parameters will need to correspond to a configured mail server, such as [Postfix][].  This will be used by IRIDA to send email notifications to users on the creation of an account or on password resets.

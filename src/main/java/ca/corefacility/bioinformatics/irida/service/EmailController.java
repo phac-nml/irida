@@ -48,14 +48,32 @@ public interface EmailController {
 	public void sendSubscriptionUpdateEmail(User user, List<ProjectEvent> events) throws MailSendException;
 
 	/**
-	 * Send an e-mail to the administrative user with an exception when there's a serious storage related exception.
+	 * Send an e-mail to the administrative user with an exception when there's
+	 * a serious storage related exception.
 	 * 
-	 * @param adminEmailAddress 
-	 * 			  the address to which notifications should be sent.
+	 * @param adminEmailAddress
+	 *            the address to which notifications should be sent.
 	 * @param rootCause
 	 *            the exception to send to the user.
 	 */
-	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause) throws MailSendException;
+	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause)
+			throws MailSendException;
+
+	/**
+	 * Send an email to the administrators with an exception when there's an
+	 * error uploading data or getting upload status from NCBI's SRA.
+	 * 
+	 * @param adminEmailAddress
+	 *            Address of the admin to email to
+	 * @param rootCause
+	 *            exception to display in the email
+	 * @param submissionId
+	 *            the ID of the NCBI export submission that failed
+	 * @throws MailSendException
+	 *             If there's an error sending the message
+	 */
+	public void sendNCBIUploadExceptionEmail(final String adminEmailAddress, final Exception rootCause,
+			Long submissionId) throws MailSendException;
 
 	/**
 	 * Is the mail server configured?

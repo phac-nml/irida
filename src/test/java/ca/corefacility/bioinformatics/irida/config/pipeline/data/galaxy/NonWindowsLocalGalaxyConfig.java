@@ -141,6 +141,16 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		
 				BootStrapper bootStrapper = downloadGalaxy(localGalaxy, repositoryURL, branchName, revisionHash);
 				localGalaxy.setBootStrapper(bootStrapper);
+				
+				// A horrible hack to make older Galaxy work on newer Ubuntu machines.
+				// Need to stop loading of "cloudlaunch.py" which loads up older bioblend.
+				// Easiest way is to delete this file.  This must be fixed after we upgrade Galaxy
+				Path cloudLaunchPyPath = bootStrapper.getRoot().toPath().resolve(Paths.get("lib", "galaxy", "webapps", "galaxy", "controllers", "cloudlaunch.py"));
+				if (Files.exists(cloudLaunchPyPath)) {
+					Files.delete(cloudLaunchPyPath);
+					logger.info("Deleting file " + cloudLaunchPyPath + " to fix launching old Galaxy in new Ubuntu");
+				}
+				// end horrible hack
 		
 				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash,databaseURL, databaseConnectionString);
 				localGalaxy.setGalaxyProperties(galaxyProperties);
