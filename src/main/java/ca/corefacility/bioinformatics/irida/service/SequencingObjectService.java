@@ -74,7 +74,7 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @throws DuplicateSampleException
 	 *             If there is a duplicate sample.
 	 */
-	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequenceFiles(Set<T> sequenceFiles)
+	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequencingObjects(Set<T> sequenceFiles)
 			throws DuplicateSampleException;
 	
 	/**

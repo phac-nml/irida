@@ -323,7 +323,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		
 		
 		if (description.acceptsSingleSequenceFiles()) {
-			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFiles));
+			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
 			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
@@ -392,7 +392,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		// Paired end reads
 		if (description.acceptsPairedSequenceFiles()) {
 			final Map<Sample, SequenceFilePair> samplesMap = sequencingObjectService
-					.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFilePairs));
+					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
 			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
