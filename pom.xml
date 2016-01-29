@@ -1034,7 +1034,11 @@
 			<id>service_testing</id>
 			<properties>
 				<include.tests>**/service/impl/integration/**/*IT.java</include.tests>
-				<exclude.tests>**/*Galaxy*IT.java</exclude.tests>
+				<exclude.tests>**/*Galaxy*IT.java,
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisSubmissionCleanupServiceImplIT.java
+				</exclude.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -1046,7 +1050,12 @@
 		<profile>
 			<id>galaxy_testing</id>
 			<properties>
-				<include.tests>**/*Galaxy*IT.java</include.tests>
+				<include.tests>
+					**/*Galaxy*IT.java,
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisSubmissionCleanupServiceImplIT.java
+				</include.tests>
 			</properties>
 		</profile>
 		<profile>

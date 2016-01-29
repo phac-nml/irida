@@ -6,4 +6,5 @@ echo 'drop database if exists irida_test; drop database if exists irida_galaxy_t
 pushd lib
 ./install-libs.sh
 popd
-xvfb-run mvn clean verify -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
+
+
