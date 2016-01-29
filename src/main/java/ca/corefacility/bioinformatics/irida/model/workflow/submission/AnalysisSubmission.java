@@ -116,10 +116,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 */
 	@Column(name = "remote_workflow_id")
 	private String remoteWorkflowId;
-
-	//@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	//@JoinTable(name = "analysis_submission_sequence_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
-	//private Set<SequenceFile> inputFilesSingle;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_single_end", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
@@ -203,7 +199,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 				"all input file collections are null.  You must supply at least one set of input files");
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
-		//this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
 		this.inputFilesSingleEnd = (builder.inputFilesSingleEnd != null) ? builder.inputFilesSingleEnd : Sets.newHashSet();
 		this.inputFilesPaired = (builder.inputFilesPaired != null) ? builder.inputFilesPaired : Sets.newHashSet();
 		this.inputParameters = (builder.inputParameters != null) ? ImmutableMap.copyOf(builder.inputParameters)

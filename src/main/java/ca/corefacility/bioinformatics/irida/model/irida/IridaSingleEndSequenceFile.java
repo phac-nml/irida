@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.irida;
 
+/**
+ * Interface describing a sequence file with only {@link IridaSequenceFile}
+ * associated (not paired).
+ */
 public interface IridaSingleEndSequenceFile {
 
 	/**
