@@ -144,7 +144,7 @@ public class AssociatedProjectsController {
 	 * @return
 	 */
 	@RequestMapping("/{projectId}/ajax/associated")
-	public @ResponseBody List<Project> jaxAssociatedProjects(@PathVariable Long projectId) {
+	public @ResponseBody List<Project> ajaxAssociatedProjects(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
 		List<Project> projects = new ArrayList<>(relatedProjectJoins.size());
