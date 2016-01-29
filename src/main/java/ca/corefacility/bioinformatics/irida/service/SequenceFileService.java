@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * Service for managing {@link SequenceFile} entities.
  * 
  */
-@Deprecated
 public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 
 	/**
