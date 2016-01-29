@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -122,15 +123,17 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 				referencedSamples.add(sampleForSequencingObject.getSubject());
 			}
 
-			Set<AnalysisSubmission> pairSubmissions = new HashSet<>();
+			Set<AnalysisSubmission> submissions = new HashSet<>();
 			// Get the analysis submissions this file is included in
 			if (sequencingObject instanceof SequenceFilePair) {
-				pairSubmissions = submissionRepository
+				submissions = submissionRepository
 						.findAnalysisSubmissionForSequenceFilePair((SequenceFilePair) sequencingObject);
+			} else if (sequencingObject instanceof SingleEndSequenceFile) {
+				submissions = submissionRepository.findAnalysisSubmissionForSequenceFile((SingleEndSequenceFile) sequencingObject);
 			}
 
 			// If there are no submissions, we can delete the pair and file
-			if (pairSubmissions.isEmpty()) {
+			if (submissions.isEmpty()) {
 				logger.trace("Deleting file " + sequencingObject.getId());
 
 				objectRepository.delete(sequencingObject);
