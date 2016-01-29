@@ -10,17 +10,21 @@ popd
 
 # TODO: create common script for running each test profile
 
-/bin/bash ./scripts/integration-tests-rest.sh | while read line; do echo "[REST] $line"; done &
-##/bin/bash ./scripts/integration-tests-rest.sh > rest_out2.txt &
+# REST API integration tests
+#/bin/bash ./scripts/integration-tests-rest.sh | while read line; do echo "[REST] $line"; done &
+#/bin/bash ./scripts/integration-tests-rest.sh > rest_out2.txt &
 
+# Service layer integration tests
 /bin/bash ./scripts/integration-tests-service.sh | while read line; do echo "[SERVICE] $line"; done &
-##/bin/bash ./scripts/integration-tests-service.sh > service_out2.txt &
+#/bin/bash ./scripts/integration-tests-service.sh > service_out2.txt &
 
-/bin/bash ./scripts/integration-tests-ui.sh | while read line; do echo "[UI] $line"; done &
+# UI integration tests
+#/bin/bash ./scripts/integration-tests-ui.sh | while read line; do echo "[UI] $line"; done &
 #/bin/bash ./scripts/integration-tests-ui.sh > ui_out2.txt &
 
+# Galaxy integration tests
 /bin/bash ./scripts/integration-tests-galaxy.sh | while read line; do echo "[GALAXY] $line"; done &
-##/bin/bash ./scripts/integration-tests-galaxy.sh > galaxy_out.txt &
+#/bin/bash ./scripts/integration-tests-galaxy.sh > galaxy_out.txt &
 
 wait
 echo "All integration tests complete"
