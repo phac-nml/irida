@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -184,4 +186,12 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		return super.readMultiple(idents);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequencingObject')")
+	public SequencingObject read(Long id) throws EntityNotFoundException {
+		return super.read(id);
+	}
 }
