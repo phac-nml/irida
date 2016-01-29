@@ -33,10 +33,12 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -72,6 +74,9 @@ public class SequencingRunServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private SequenceFilePairService pairService;
+	
+	@Autowired
+	private SequencingObjectService objectService;
 
 	@Autowired
 	private AnalysisService analysisService;
@@ -228,12 +233,13 @@ public class SequencingRunServiceImplIT {
 
 		SequenceFile sf = new SequenceFile();
 		sf.setFile(p);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		Sample sample = sampleService.read(1L);
 		SequencingRun run = miseqRunService.read(2L);
 
-		sequenceFileService.createSequenceFileInSample(sf, sample);
+		objectService.createSequencingObjectInSample(so, sample);
 
-		//miseqRunService.addSequenceFileToSequencingRun(run, sf);
+		miseqRunService.addSequencingObjectToSequencingRun(run, so);
 
 		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
