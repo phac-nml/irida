@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
@@ -74,7 +75,7 @@ public class SequencingRunServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private SequenceFilePairService pairService;
-	
+
 	@Autowired
 	private SequencingObjectService objectService;
 
@@ -106,7 +107,7 @@ public class SequencingRunServiceImplIT {
 	}
 
 	private void testAddSequenceFileToMiseqRun() throws IOException {
-		SequenceFile sf = sequenceFileService.read(1L);
+
 		SequencingRun miseqRun = miseqRunService.read(1L);
 		// we can't actually know a file name in the XML file that we use to
 		// populate the database for these tests, so the files don't exist
@@ -115,15 +116,21 @@ public class SequencingRunServiceImplIT {
 		// that we can link to.
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-		sf.setFile(sequenceFile);
-		sequenceFileService.update(1L, ImmutableMap.of("file", sequenceFile));
-		//miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
-		SequencingRun saved = miseqRunService.read(1L);
-		SequenceFile savedFile = sequenceFileService.read(1L);
-		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
-		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
+		SequenceFile sf = new SequenceFile(sequenceFile);
+		SequencingObject so = new SingleEndSequenceFile(sf);
+		so = objectService.create(so);
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(savedFile);
+		miseqRunService.addSequencingObjectToSequencingRun(miseqRun, so);
+		SequencingRun saved = miseqRunService.read(1L);
+
+		SequencingObject readObject = objectService.read(so.getId());
+		SequenceFile readFile = readObject.getFiles().iterator().next();
+
+		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService
+				.getSequencingObjectsForSequencingRun(saved);
+		assertTrue("Saved miseq run should have seqence file", sequencingObjectsForSequencingRun.contains(so));
+
+		AnalysisFastQC analysis = readFile.getFastQCAnalysis();
 		assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
 	}
 
