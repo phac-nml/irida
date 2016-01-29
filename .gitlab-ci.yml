@@ -1,14 +1,4 @@
 job1:
-#running service layer tests
-  script: "scripts/integration-tests-service.sh"
+  script: "scripts/run-all.sh"
 job2:
-#running ui tests
-  script: "scripts/integration-tests-ui.sh"
-job3:
-#running rest api tests
-  script: "scripts/integration-tests-rest.sh"
-job4:
-#lastly, run all tests involving Galaxy
-  script: "scripts/integration-tests-galaxy.sh"
-job5:
   script: "scripts/build-docs.sh"
