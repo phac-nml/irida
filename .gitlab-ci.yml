@@ -1,14 +1,26 @@
-job1:
+
+stages:
+  - build
+  - test
+  - deploy
+
+
+service_job:
 #running service layer tests
   script: "scripts/integration-tests-service.sh"
-job2:
+  stage: test
+ui_job:
 #running ui tests
   script: "scripts/integration-tests-ui.sh"
-job3:
+  stage: test
+rest_job:
 #running rest api tests
   script: "scripts/integration-tests-rest.sh"
-job4:
+  stage: test
+galaxy_job:
 #lastly, run all tests involving Galaxy
   script: "scripts/integration-tests-galaxy.sh"
-job5:
+  stage: test
+build-docs_job:
   script: "scripts/build-docs.sh"
+  stage: build

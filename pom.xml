@@ -623,7 +623,6 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven.failsafe.plugin.version}</version>
 				<configuration>
-					<printSummary>true</printSummary>
 					<encoding>UTF-8</encoding>
 					<properties>
 						<property>
@@ -633,12 +632,6 @@
 							</value>
 						</property>
 					</properties>
-					<!-- Profiles for parallel integration tests-->
-
-					<!--includes>
-						<include>**/ria/integration/**PageIT.java</include>
-						<include>**/ria/integration/*/**PageIT.java</include>
-					</includes-->
 				</configuration>
 				<executions>
 					<execution>
