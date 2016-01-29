@@ -48,10 +48,14 @@
 				responses.forEach(function (response) {
 					if (response.data.hasOwnProperty("samples")) {
 						samples = samples.concat(response.data.samples);
+						// This is adding information to build up the message to display to the users so that
+						// they know how many samples from which project were added to the table.
 						items.push({samples: response.data.samples.length, project: response.data.project.label});
 					}
 				});
 				if (initialized) {
+					// Show a notification of the currently displayed samples only if it is not
+					// on the page load (ie. current project samples only)
 					compiledNotification.show(items, "samplesUpdate.html", {type: "information"});
 				}
 				else {
