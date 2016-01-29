@@ -218,13 +218,14 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 				.getUniqueSamplesForSequencingObjects(analysisSubmission.getPairedInputFiles());
 
 		/*
-		 * Remotes to be reactivated later
-		Map<Sample, IridaSequenceFile> singleFiles = sampleRemoteService
-				.getUniqueSamplesforSequenceFileSnapshots(analysisSubmission.getRemoteFilesSingle());
-
-		Map<Sample, IridaSequenceFilePair> pairedFiles = sampleRemoteService
-				.getUniqueSamplesforSequenceFilePairSnapshots(analysisSubmission.getRemoteFilesPaired());
+		 * TODO: Remotes to be reactivated later
 		 */
+		// Map<Sample, IridaSequenceFile> singleFiles = sampleRemoteService
+		// .getUniqueSamplesforSequenceFileSnapshots(analysisSubmission.getRemoteFilesSingle());
+		//
+		// Map<Sample, IridaSequenceFilePair> pairedFiles = sampleRemoteService
+		// .getUniqueSamplesforSequenceFilePairSnapshots(analysisSubmission.getRemoteFilesPaired());
+		// 
 		
 		
 		Map<Sample, IridaSequenceFilePair> pairedFiles = new HashMap<>();
