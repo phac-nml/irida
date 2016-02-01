@@ -3,6 +3,7 @@ var eslint = require('gulp-eslint');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
+var browserSync = require('browser-sync').create();
 
 
 var scss = {
@@ -30,15 +31,21 @@ gulp.task('sass', function () {
 	return gulp
 		.src(scss.files)
 		.pipe(sass(scss.options).on("error", sass.logError))
-		.pipe(sourcemaps.write())
 		.pipe(autoprefixer(autoprefixerOptions))
-		.pipe(gulp.dest(scss.output));
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest(scss.output))
+		.pipe(browserSync.stream());
+});
+
+gulp.task('serve', function() {
+	browserSync.init({
+		proxy: "localhost:8080/"
+	});
+	gulp.watch(scss.files, ['sass']);
 });
 
 gulp.task('watch', function () {
 	gulp.watch(scss.files, ['sass']);
 });
 
-gulp.task('default', ['lint', 'sass'],function () {
-
-});
+gulp.task('default', ['serve']);
