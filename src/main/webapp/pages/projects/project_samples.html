@@ -81,17 +81,21 @@
 			<h3 class="modal-title" th:text="#{project.samples.associated.modal.title}">Projects to include in table</h3>
 		</div>
 		<div class="modal-body">
-			<div class="checkbox">
-				<label data:uib-tooltip="#{project.samples.associated.modal.current-project}" tooltip-placement="right" tooltip-append-to-body="true">
-					<input type="checkbox" ng-model="associatedProjectsCtrl.display.project"/>
-					&nbsp;
-					<th:block th:text="${project.label}"></th:block>
-				</label></div>
 			<h4 th:text="#{project.samples.associated.modal.local}">Local Associated Projects</h4>
-			<div ng-repeat="project in associatedProjectsCtrl.projects.local" class="checkbox">
+			<div class="project-checkboxes">
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" ng-model="associatedProjectsCtrl.display.project"/>
+						&nbsp;
+						<b th:text="${project.label}"></b>
+						<span class="label label-info" th:text="#{project.samples.associated.modal.current-project}">Current Project</span>
+					</label>
+				</div>
+				<div ng-repeat="project in associatedProjectsCtrl.projects.local" class="checkbox project">
 				<label>
 					<input type="checkbox" ng-model="project.selected"/>
 					&nbsp;{{project.label}} </label>
+				</div>
 			</div>
 			<strong ng-hide="associatedProjectsCtrl.projects.local">
 				<fa:icon type="loading" fixed="true"/>
