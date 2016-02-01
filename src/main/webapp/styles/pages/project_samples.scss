@@ -1,12 +1,27 @@
-.sample-row, .sample-type-selector {
-  border-left: 1rem solid transparent;
+
+.btn input[type=checkbox] {
+  margin: 0!important;
 }
-.local-sample {
-  border-color: #133b54;
+.selection-heading {
+  width: 40px!important;
 }
-.associated-sample {
-  border-color: #43ac6a;
+.counts {
+  line-height: 2rem;
+  height: 2rem;
 }
-.remote-sample {
-  border-color: #a3a300;
+tbody {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+td input[type="checkbox"] {
+  margin-left: 11px;
+}
+.project-checkboxes {
+  .checkbox {
+    display: inline-block;
+    width: 33.333333%;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }
