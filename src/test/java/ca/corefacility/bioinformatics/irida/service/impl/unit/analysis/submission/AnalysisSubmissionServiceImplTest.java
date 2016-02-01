@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit.analysis.submissi
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import javax.validation.Validator;
 
@@ -13,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -23,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 
 /**
@@ -57,7 +60,10 @@ public class AnalysisSubmissionServiceImplTest {
 	private GalaxyWorkflowStatus galaxyWorkflowStatus;
 
 	private AnalysisSubmissionServiceImpl analysisSubmissionServiceImpl;
-
+	
+	@Mock
+	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
+	
 	private static final Long ID = 1L;
 	private static final String HISTORY_ID = "1";
 
@@ -71,6 +77,7 @@ public class AnalysisSubmissionServiceImplTest {
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository, userRepository,
 				referenceFileRepository, sequencingObjectService, galaxyHistoriesService,
 				validator);
+		analysisSubmissionServiceImpl.setAnalysisExecutionService(analysisExecutionService);
 
 		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(HISTORY_ID);
@@ -246,5 +253,37 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteError() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.ERROR);
 		analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID);
+	}
+	
+	/**
+	 * Tests that deleting a submission actually also tries to clean up the
+	 * submission in galaxy.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testDeleteSubmission() throws ExecutionManagerException {
+		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.exists(ID)).thenReturn(true);
+		when(analysisSubmission.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
+		analysisSubmissionServiceImpl.delete(ID);
+		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
+	}
+
+	/**
+	 * Tests that deleting a submission deletes the submission even if an
+	 * execution manager exception is thrown.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testDeleteSubmissionWorkflowError() throws ExecutionManagerException {
+		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.exists(ID)).thenReturn(true);
+		when(analysisExecutionService.cleanupSubmission(analysisSubmission)).thenThrow(new ExecutionManagerException());
+		when(analysisSubmission.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
+		analysisSubmissionServiceImpl.delete(ID);
+		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
+		verify(analysisSubmissionRepository).delete(ID);
 	}
 }

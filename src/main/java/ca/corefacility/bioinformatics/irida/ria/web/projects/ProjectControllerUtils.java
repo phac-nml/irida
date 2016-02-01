@@ -72,16 +72,6 @@ public class ProjectControllerUtils {
 
 		model.addAttribute("isOwner", isOwner);
 
-		int sampleSize = sampleService.getSamplesForProject(project).size();
-		model.addAttribute("samples", sampleSize);
-
-		int userSize = userService.getUsersForProject(project).size();
-		model.addAttribute("users", userSize);
-
-		int relatedCount = projectService.getRelatedProjects(project).size();
-		int remoteRelatedCount = remoteRelatedProjectService.getRemoteProjectsForProject(project).size();
-		model.addAttribute("related_project_count", relatedCount + remoteRelatedCount);
-
 		// TODO: (Josh - 14-06-23) Get list of recent activities on project.
 	}
 }

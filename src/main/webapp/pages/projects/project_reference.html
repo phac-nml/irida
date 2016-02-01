@@ -21,16 +21,13 @@
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-reference-files" th:with="owner=(${isOwner} or ${isAdmin})">
 	<div class="row">
-		<div class="col-md-12">
-			<h1>
-				<th:block th:text="#{project.nav.referenceFiles}">TITLE</th:block>
+		<div class="col-md-12 clearfix">
 				<span class="pull-right" th:if="${owner}" ng-controller="FileUploadCtrl as upload">
 					<button class="btn btn-default uploadRefBtn" ngf-select="upload.onFileSelect($files)">
 						<span class="fa fa-fw fa-upload"></span>
 						<span th:text="#{referenceFile.upload-btn}"></span>
 					</button>
 				</span>
-			</h1>
 		</div>
 	</div>
 	<div class="ng-cloak row" ng-controller="FilesCtrl as table">

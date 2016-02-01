@@ -207,19 +207,43 @@ public class EmailControllerImpl implements EmailController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause) throws MailSendException {
+	public void sendFilesystemExceptionEmail(final String adminEmailAddress, final Exception rootCause)
+			throws MailSendException {
 		final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
 		try {
 			message.setSubject("IRIDA Storage Exception: " + rootCause.getMessage());
 			message.setTo(adminEmailAddress);
 			message.setFrom(serverEmail);
-			message.setText("An exeption related to storage has occurred that requires your attention, stack as follows: " + rootCause);
-			
+			message.setText("An exeption related to storage has occurred that requires your attention, stack as follows: "
+					+ rootCause);
+
 			javaMailSender.send(mimeMessage);
 		} catch (final MessagingException e) {
 			logger.error("Error trying to send exception email. (Ack.)", e);
 			throw new MailSendException("Failed to send e-mail for storage related-exception.", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sendNCBIUploadExceptionEmail(String adminEmailAddress, Exception rootCause, Long submissionId)
+			throws MailSendException {
+		final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+		try {
+			message.setSubject("IRIDA NCBI Upload Exception: " + rootCause.getMessage());
+			message.setTo(adminEmailAddress);
+			message.setFrom(serverEmail);
+			message.setText("An exeption occurred when attempting to communicate with NCBI's SRA.  Submission "
+					+ submissionId + " had an error:" + rootCause);
+
+			javaMailSender.send(mimeMessage);
+		} catch (final MessagingException e) {
+			logger.error("Error trying to send exception email.", e);
+			throw new MailSendException("Failed to send e-mail for NCBI SRA related-exception.", e);
 		}
 	}
 }

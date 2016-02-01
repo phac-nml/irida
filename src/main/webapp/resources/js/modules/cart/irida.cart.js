@@ -2,8 +2,7 @@
   'use strict';
 
   function CartController($scope, $timeout, cart) {
-    var vm = this,
-      initialized = false;
+    var vm = this;
     vm.show = false;
     vm.projects = [];
     vm.remote = [];
@@ -31,15 +30,6 @@
           vm.count += vm.getRemoteCount();
           if (collapse) {
             vm.collapsed.remote = true;
-          }
-          if (initialized && prev !== vm.count) {
-            vm.animation = 'glow';
-            $timeout(function () {
-              vm.animation = '';
-            }, 3000);
-          } else {
-            // This is just to prevent animation on page load.
-            initialized = true;
           }
         });
     }
@@ -82,7 +72,7 @@
       CartService.all()
         .then(function (data) {
           if (data !== null) {
-            var firstProjID = data[0].id;
+            var firstProjID = data.projects[0].id;
 
             $uibModal.open({
               templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + firstProjID,

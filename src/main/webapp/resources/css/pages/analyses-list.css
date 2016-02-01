@@ -1,13 +1,16 @@
 .progress-bar, .progress {
   height: 2px !important;
   margin-bottom: 0 !important;
-  line-height: 2px !important; }
+  line-height: 2px !important;
+}
 
 tr td {
-  vertical-align: middle !important; }
+  vertical-align: middle !important;
+}
 
 .crop {
   max-width: 250px !important;
   white-space: nowrap !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important; }
+  text-overflow: ellipsis !important;
+}

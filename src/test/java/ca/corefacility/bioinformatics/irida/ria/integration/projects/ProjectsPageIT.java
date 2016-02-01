@@ -75,7 +75,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 	public void testLinkingToSpecificProject() {
 		projectsPage.clickLinkToProject(0);
 		ProjectSamplesPage page = new ProjectSamplesPage(driver());
-		assertEquals("Should link to the project page.", page.getTitle(), "project Samples");
+		assertEquals("Should link to the project page.", page.getActivePage(), "Samples");
 	}
 
 	/**

@@ -14,6 +14,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.hibernate.TransientPropertyValueException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -33,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedExce
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -53,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 import com.google.common.collect.ImmutableMap;
@@ -67,6 +71,7 @@ import com.google.common.collect.Sets;
 @Service
 public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionServiceImpl.class);
 	
 	/**
 	 * A {@link Map} defining the progress transitions points for each state in
@@ -95,6 +100,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final SequencingObjectService sequencingObjectService;
+	
+	// required, but not constructor injected because we have circular dependencies :(
+	@Autowired
+	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -124,6 +133,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.referenceFileRepository = referenceFileRepository;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.sequencingObjectService = sequencingObjectService;
+	}
+	
+	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
+		this.analysisExecutionService = analysisExecutionService;
 	}
 
 	/**
@@ -226,8 +239,27 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateAnalysisSubmission')")
+	@Transactional
 	public void delete(Long id) throws EntityNotFoundException {
+		final AnalysisSubmission submission = read(id);
+		
+		if (AnalysisCleanedState.NOT_CLEANED.equals(submission.getAnalysisCleanedState())) {
+			// We're "CLEANING" it right now!
+			submission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
+			try {
+				analysisExecutionService.cleanupSubmission(submission).get();
+			} catch (final ExecutionManagerException e) {
+				logger.error("Failed to cleanup analysis submission before deletion,"
+						+ " but proceeding with deletion anyway.", e);
+			} catch (final Throwable e) {
+				logger.error("An unexpected exception happened when cleaning the analysis submission,"
+						+ " but proceeding with deletion anyway.", e);
+			}
+		} else {
+			logger.debug("Not cleaning submission [" + id + "] when deleting, it's already cleaned.");
+		}
+		
 		super.delete(id);
 	}
 
@@ -323,7 +355,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		
 		
 		if (description.acceptsSingleSequenceFiles()) {
-			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFiles));
+			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
 			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
@@ -392,7 +424,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		// Paired end reads
 		if (description.acceptsPairedSequenceFiles()) {
 			final Map<Sample, SequenceFilePair> samplesMap = sequencingObjectService
-					.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFilePairs));
+					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
 			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());

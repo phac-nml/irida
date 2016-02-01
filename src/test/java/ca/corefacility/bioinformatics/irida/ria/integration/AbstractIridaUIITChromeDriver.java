@@ -5,21 +5,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.concurrent.TimeUnit;
 
+import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -47,23 +44,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
-	
-    public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
 
-    private static WebDriver driver;
+    public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationTestListener.DRIVER_TIMEOUT_IN_SECONDS;
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
-
-    /**
-     * Code to execute *once* before the class.
-     */
-    @BeforeClass
-    public static void setUp() {
-        driver = new ChromeDriver();
-        driver.manage().window().setSize(new Dimension(1400, 900));
-        driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
-    }
     
     /**
      * Code to execute before *each* test.
@@ -71,7 +56,7 @@ public class AbstractIridaUIITChromeDriver {
     @Before
     public void setUpTest() {
     	// logout before everything else.
-    	LoginPage.logout(driver);
+    	LoginPage.logout(driver());
     }
 
     /**
@@ -90,7 +75,6 @@ public class AbstractIridaUIITChromeDriver {
      */
     @AfterClass
     public static void destroy() {
-        driver.quit();
     }
 
     /**
@@ -98,7 +82,7 @@ public class AbstractIridaUIITChromeDriver {
      * @return the instance of {@link WebDriver} used in the tests.
      */
     public static WebDriver driver() {
-        return driver;
+        return IntegrationTestListener.driver();
     }
     
     /**
@@ -115,7 +99,7 @@ public class AbstractIridaUIITChromeDriver {
     	@Override
     	protected void failed(final Throwable t, final Description description) {
     		logger.debug("Handling exception of type [" + t.getClass() + "], taking screenshot.");
-    		final TakesScreenshot takesScreenshot = (TakesScreenshot) driver;
+    		final TakesScreenshot takesScreenshot = (TakesScreenshot) driver();
     		
     		final Path screenshot = Paths.get(takesScreenshot.getScreenshotAs(OutputType.FILE).toURI());
     		

@@ -165,7 +165,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequencingObject')")
 	@Override
-	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequenceFiles(Set<T> sequenceFiles)
+	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequencingObjects(Set<T> sequenceFiles)
 			throws DuplicateSampleException {
 		Map<Sample, T> sequenceFilePairsSampleMap = new HashMap<>();
 

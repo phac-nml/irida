@@ -1,6 +1,12 @@
 Changes
 =======
 
+1.0.0-alpha8 to 1.0.0-alpha9
+----------------------------
+* [Developer]: Replaced Grunt with Gulp for better front-end compilation of assets.
+* [UI]: Fixed a bug where clicking on FastQC quality charts attempted to download the images instead of viewing them in the browser.
+* [Developer]: Added thread pool for scheduled task submission with new configuration key `irida.scheduled.threads`.
+
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
 * [Developer]: Fix an issue where having multiple forward slashes in a URI would result in part of the URI being duplicated in links generated as part of the response.
@@ -12,6 +18,12 @@ Changes
 * [Developer] Removed several unused properties and classes to simplify data model.
 * [UI]: Analysis list page reworked to use Datatables.  Now does server side paging for performance increases.
 * [UI]: Replace large checkboxes on Project Samples page with standard platform dependant checkboxes.
+* [UI]: Allow deleting and cancelling an analysis.
+* [UI]: Updated pipeline selection interface by adding the pipeline colour to the background of the name and making the panels equal in height.
+* [UI]: Fixed issue where samples in the cart could not be sent to galaxy.
+* [UI]: Added ability to upload sequence files to NCBI from the Project/Samples table.
+* [UI]: New feature to download complete list of projects either in excel or csv format.
+* [UI]: Fixed bug on Analysis Details page and updated style of the progress bar.
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------

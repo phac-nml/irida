@@ -426,7 +426,7 @@ public class PipelineController extends BaseController {
 				});
 				
 				// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequencingObjectService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(singleEndFiles));
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(singleEndFiles));
 			}
 
 			if (paired != null) {
@@ -441,7 +441,7 @@ public class PipelineController extends BaseController {
 				});
 				
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequencingObjectService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFilePairs));
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
 			}
 			
 			
