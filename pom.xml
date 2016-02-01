@@ -644,6 +644,12 @@
 							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude> 
 								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude> 
 								</excludes> -->
+							<includes>
+								<include>${include.tests}</include>
+							</includes>
+							<excludes>
+								<exclude>${exclude.tests}</exclude>
+							</excludes>
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
@@ -1005,5 +1011,56 @@
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
 	</properties>
+
+	<!-- Failsafe integration test profiles -->
+	<profiles>
+		<profile>
+			<id>ui_testing</id>
+			<properties>
+				<include.tests>**/ria/integration/**/*IT.java</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>service_testing</id>
+			<properties>
+				<include.tests>
+					**/service/impl/integration/**/*IT.java,
+					**/service/workflow/integration/**/*IT.java,
+					**/repositories/**/*IT.java	
+				</include.tests>
+				<exclude.tests>**/*Galaxy*IT.java,
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisSubmissionCleanupServiceImplIT.java
+				</exclude.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>rest_testing</id>
+			<properties>
+				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>galaxy_testing</id>
+			<properties>
+				<include.tests>
+					**/*Galaxy*IT.java,
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisSubmissionCleanupServiceImplIT.java,
+					**/SNVPhylAnalysisIT.java,
+				</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>all_testing</id>
+			<properties>
+				<include.tests>**/*IT.java, **/IT*.java</include.tests>
+			</properties>
+		</profile>
+	</profiles>
 </project>
