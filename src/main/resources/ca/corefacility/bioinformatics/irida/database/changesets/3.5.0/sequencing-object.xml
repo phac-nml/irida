@@ -91,7 +91,8 @@
 			referencedColumnNames="id" referencedTableName="sequence_file_pair" />
 
 		<addForeignKeyConstraint baseColumnNames="pairs_id"
-			baseTableName="sequence_file_pair_files" constraintName="FK_NCBI_SUBMISSION_PAIR_FILE_PAIR"
+			baseTableName="ncbi_export_biosample_sequence_file_pair"
+			constraintName="FK_NCBI_SUBMISSION_PAIR_FILE_PAIR"
 			referencedColumnNames="id" referencedTableName="sequence_file_pair" />
 
 		<!-- Create a table for SingleEndSequenceFile -->
