@@ -46,7 +46,7 @@ import com.google.common.collect.Sets;
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
-public class SequenceFilePairServiceImplIT {
+public class SequencingObjectServiceImplIT {
 	@Autowired
 	private SampleService sampleService;
 
