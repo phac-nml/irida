@@ -4,6 +4,9 @@ stages:
   - test
   - deploy
 
+before-script:
+  script:
+    - "scripts/test-cleanup.sh"
 
 service_job:
 #running service layer tests
