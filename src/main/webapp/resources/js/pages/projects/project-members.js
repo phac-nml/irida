@@ -1,4 +1,4 @@
-(function (angular, page) {
+(function (angular, $, page) {
     /**
      * Custom Select2 directive for searching through users that on not
      * currently on this project.
@@ -46,7 +46,7 @@
                 url   : page.urls.addMember,
                 data  : user
             }).then(function (data) {
-                PAGE.table.ajax.reload();
+                page.table.ajax.reload();
                 notifications.show({'msg': data.data.result});
             }, function () {
                 notifications.show({'msg': page.langs.addMember.error, type: 'error'});
@@ -91,4 +91,4 @@
         .controller('MembersController', ['MembersService', '$uibModal', MembersController])
         .controller('NewMemberModalController', ['$uibModalInstance', NewMemberModalController])
     ;
-})(window.angular, window.PAGE);
+})(window.angular, window.jQuery, window.PAGE);

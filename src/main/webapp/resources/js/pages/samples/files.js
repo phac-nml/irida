@@ -1,4 +1,4 @@
-(function(angular, TL, PAGE) {
+(function(ng, _, tl, page) {
   'use strict';
 
   /**
@@ -39,7 +39,7 @@
      * @param {long} id Id for the sequenceFile to download
      */
     vm.download = function(id) {
-      var url = TL.BASE_URL + 'sequenceFiles/download/' + id;
+      var url = tl.BASE_URL + 'sequenceFiles/download/' + id;
       fileService.download(url);
     };
 
@@ -92,14 +92,14 @@
   function FileUploadController(Upload, $timeout, $window, $uibModal) {
     var vm = this,
       fileUpload = undefined,
-      url = TL.BASE_URL + 'samples/' + PAGE.sample.id +
+      url = tl.BASE_URL + 'samples/' + page.sample.id +
       '/sequenceFiles/upload';
 
     function uploadGoodFiles(files) {
       vm.uploading = true;
 
       $window.onbeforeunload = function() {
-        return PAGE.i18n.leaving;
+        return page.i18n.leaving;
       };
 
       fileUpload = Upload.upload({
@@ -179,7 +179,7 @@
 
   }
 
-  angular.module('irida.sample.files', ['ngAnimate', 'ui.bootstrap',
+  ng.module('irida.sample.files', ['ngAnimate', 'ui.bootstrap',
       'file.utils', 'ngFileUpload'
     ])
     .controller('FileUploadController', ['Upload', '$timeout', '$window',
@@ -189,4 +189,4 @@
     .controller('FileDeletionController', ['$uibModalInstance', 'id', 'label',
       FileDeletionController
     ]);
-})(window.angular, window.TL, window.PAGE);
+})(window.angular, window._, window.TL, window.PAGE);
