@@ -322,15 +322,17 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		long totalBases = 0;
 
-		List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(sample);
-		for (Join<Sample, SequenceFile> sequenceFileJoin : sequenceFiles) {
-			SequenceFile sequenceFile = sequenceFileJoin.getObject();
-			final AnalysisFastQC sequenceFileFastQC = analysisRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
-			if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
-				throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
-						+ sequenceFile.getId() + "]");
+		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
+		for (SampleSequencingObjectJoin join : sequencesForSample) {
+			for (SequenceFile sequenceFile : join.getObject().getFiles()) {
+				final AnalysisFastQC sequenceFileFastQC = analysisRepository
+						.findFastqcAnalysisForSequenceFile(sequenceFile);
+				if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
+					throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
+							+ sequenceFile.getId() + "]");
+				}
+				totalBases += sequenceFileFastQC.getTotalBases();
 			}
-			totalBases += sequenceFileFastQC.getTotalBases();
 		}
 
 		return totalBases;
