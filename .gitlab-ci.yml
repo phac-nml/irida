@@ -2,9 +2,9 @@
 stages:
   - build
   - test
-  - deploy
 
 before-script:
+# remove Galaxy directories and drop/create databases before tests start
   script:
     - "scripts/test-cleanup.sh"
 

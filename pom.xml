@@ -1052,12 +1052,12 @@
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
 					**/AnalysisSubmissionCleanupServiceImplIT.java,
-					**/SVNPhylAnalysisIT.java,
+					**/SNVPhylAnalysisIT.java,
 				</include.tests>
 			</properties>
 		</profile>
 		<profile>
-			<id>all_tests</id>
+			<id>all_testing</id>
 			<properties>
 				<include.tests>**/*IT.java, **/IT*.java</include.tests>
 			</properties>
