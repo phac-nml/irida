@@ -1,20 +1,31 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,15 +39,18 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -45,6 +59,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -56,22 +71,47 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequencingObjectServiceImplIT {
+	private static final Logger logger = LoggerFactory.getLogger(SequencingObjectServiceImplIT.class);
 
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 
 	@Autowired
-	private SampleService sampleService;
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	private SequenceFileService sequenceFileService;
+	private AnalysisService analysisService;
+
+	@Autowired
+	private SampleService sampleService;
 
 	@Autowired
 	private SequencingObjectService objectService;
 
 	@Autowired
 	private SequencingRunService sequencingRunService;
+
+	@Autowired
+	@Qualifier("sequenceFileBaseDirectory")
+	private Path baseDirectory;
+
+	@Before
+	public void setUp() throws IOException {
+		Files.createDirectories(baseDirectory);
+	}
+
+	private SequencingObjectServiceImplIT asRole(Role r, String username) {
+		User u = new User();
+		u.setUsername(username);
+		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setSystemRole(r);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+				ImmutableList.of(r));
+		auth.setDetails(u);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+		return this;
+	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
@@ -168,5 +208,107 @@ public class SequencingObjectServiceImplIT {
 		SampleSequencingObjectJoin join = sequencesForSampleOfType.iterator().next();
 
 		assertEquals(new Long(2), join.getObject().getId());
+	}
+
+	// move
+	@Test
+	@WithMockUser(username = "tom", roles = "SEQUENCER")
+	public void testCreateNotCompressedSequenceFile() throws IOException {
+		SequenceFile sf = new SequenceFile();
+		Path sequenceFile = Files.createTempFile(null, null);
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+		sf.setFile(sequenceFile);
+		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
+
+		logger.trace("About to save the file.");
+		SequencingObject sequencingObject = asRole(Role.ROLE_SEQUENCER, "fbristow").objectService
+				.create(singleEndSequenceFile);
+		logger.trace("Finished saving the file.");
+
+		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+
+		// figure out what the version number of the sequence file is (should be
+		// 2; the file wasn't gzipped, but fastqc will have modified it.)
+		SequencingObject readObject = asRole(Role.ROLE_ADMIN, "tom").objectService.read(sequencingObject.getId());
+		sf = readObject.getFiles().iterator().next();
+		assertEquals("Wrong version number after processing.", Long.valueOf(2), sf.getFileRevisionNumber());
+
+		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
+		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
+
+		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
+		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
+		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
+		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
+		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
+		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
+		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());
+
+		// confirm that the file structure is correct
+		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
+		assertTrue("Revision directory doesn't exist.", Files.exists(idDirectory.resolve(Paths.get(sf
+				.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))));
+		// no other files or directories should be beneath the ID directory
+		int fileCount = 0;
+		Iterator<Path> dir = Files.newDirectoryStream(idDirectory).iterator();
+		while (dir.hasNext()) {
+			dir.next();
+			fileCount++;
+		}
+		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
+	}
+
+	// move
+	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testCreateCompressedSequenceFile() throws IOException {
+		SequenceFile sf = new SequenceFile();
+		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
+		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
+		gzOut.write(FASTQ_FILE_CONTENTS);
+		gzOut.close();
+
+		sf.setFile(sequenceFile);
+		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
+
+		logger.trace("About to save the file.");
+		SequencingObject sequencingObject = objectService.create(singleEndSequenceFile);
+		logger.trace("Finished saving the file.");
+
+		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+
+		// figure out what the version number of the sequence file is (should be
+		// 3; the file was gzipped)
+		// get the MOST RECENT version of the sequence file from the database
+		// (it will have been modified outside of the create method.)
+		SequencingObject readObject = asRole(Role.ROLE_ADMIN, "tom").objectService.read(sequencingObject.getId());
+		sf = readObject.getFiles().iterator().next();
+		assertEquals("Wrong version number after processing.", Long.valueOf(3L), sf.getFileRevisionNumber());
+		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
+
+		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
+
+		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
+		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
+		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
+		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
+		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
+		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
+		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());
+
+		// confirm that the file structure is correct
+		String filename = sequenceFile.getFileName().toString();
+		filename = filename.substring(0, filename.lastIndexOf('.'));
+		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
+		assertTrue("Revision directory doesn't exist.",
+				Files.exists(idDirectory.resolve(Paths.get(sf.getFileRevisionNumber().toString(), filename))));
+		// no other files or directories should be beneath the ID directory
+		int fileCount = 0;
+		Iterator<Path> dir = Files.newDirectoryStream(idDirectory).iterator();
+		while (dir.hasNext()) {
+			dir.next();
+			fileCount++;
+		}
+		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
 	}
 }
