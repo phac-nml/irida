@@ -824,7 +824,7 @@
       vm.filter.sample = {};
       vm.name = "";
       vm.organism = "";
-      var sampleNames = $fileContent.split("\n");
+      var sampleNames = $fileContent.match(/[^\r\n]+/g);
       $scope.$emit('SAMPLES_FILE_FILTER', {sampleNames: sampleNames});
     };
 
