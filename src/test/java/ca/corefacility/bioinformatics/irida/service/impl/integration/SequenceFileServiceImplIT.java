@@ -145,6 +145,7 @@ public class SequenceFileServiceImplIT {
 		assertEquals("111", reread.getOptionalProperty("index"));
 	}
 
+	//move
 	@Test
 	@WithMockUser(username = "tom", roles = "SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException {
@@ -189,6 +190,7 @@ public class SequenceFileServiceImplIT {
 		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
 	}
 
+	//move
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException {
@@ -238,56 +240,5 @@ public class SequenceFileServiceImplIT {
 			fileCount++;
 		}
 		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testCreateSequenceFileInSample() throws IOException {
-		Sample s = sampleService.read(1L);
-		SequenceFile sf = new SequenceFile();
-		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
-		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
-		gzOut.write(FASTQ_FILE_CONTENTS);
-		gzOut.close();
-
-		sf.setFile(sequenceFile);
-		sequenceFileService.createSequenceFileInSample(sf, s);
-
-		SequencingRun mr = sequencingRunService.read(1L);
-		//sequencingRunService.addSequenceFileToSequencingRun(mr, sf);
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testGetSequencefilesForSampleAsSequencer() throws IOException {
-		Sample s = sampleService.read(1L);
-		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService.getSequenceFilesForSample(s);
-		assertEquals(1, sequenceFilesForSample.size());
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetUnpairedFilesForSample() {
-		Sample s = sampleService.read(2L);
-
-		List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
-				.getUnpairedSequenceFilesForSample(s);
-		assertEquals(1, unpairedSequenceFilesForSample.size());
-		Join<Sample, SequenceFile> join = unpairedSequenceFilesForSample.iterator().next();
-
-		assertEquals(new Long(5), join.getObject().getId());
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetUnpairedFilesForSampleWithNoPairs() {
-		Sample s = sampleService.read(1L);
-
-		List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
-				.getUnpairedSequenceFilesForSample(s);
-		assertEquals(1, unpairedSequenceFilesForSample.size());
-		Join<Sample, SequenceFile> join = unpairedSequenceFilesForSample.iterator().next();
-
-		assertEquals(new Long(1), join.getObject().getId());
 	}
 }
