@@ -15,19 +15,23 @@ before_script:
 
 service_job:
 #running service layer tests
-  script: "scripts/integration-tests-service.sh"
+  script:
+  - xvfb-run mvn clean verify -Pservice_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
   stage: test
 ui_job:
 #running ui tests
-  script: "scripts/integration-tests-ui.sh"
+  script:
+  - xvfb-run mvn clean verify -Pui_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
   stage: test
 rest_job:
 #running rest api tests
-  script: "scripts/integration-tests-rest.sh"
+  script:
+  - xvfb-run mvn clean verify -Prest_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
   stage: test
 galaxy_job:
 #lastly, run all tests involving Galaxy
-  script: "scripts/integration-tests-galaxy.sh"
+  script:
+  - xvfb-run mvn clean verify -Pgalaxy_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
   stage: test
 build-docs_job:
   script: "scripts/build-docs.sh"
