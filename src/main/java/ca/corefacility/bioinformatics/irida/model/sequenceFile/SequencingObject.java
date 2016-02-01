@@ -97,4 +97,10 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	 * @return a Set of {@link SequenceFile}
 	 */
 	public abstract Set<SequenceFile> getFiles();
+	
+	/**
+	 * Set the collection of {@link SequenceFile}s associated with this {@link SequencingObject}
+	 * @param files the {@link SequenceFile}s to add to the object
+	 */
+	public abstract void setFiles(Set<SequenceFile> files);
 }
