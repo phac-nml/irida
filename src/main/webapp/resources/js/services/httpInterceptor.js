@@ -1,4 +1,4 @@
-(function (angular) {
+(function (angular, $, tl) {
     angular
         .module('irida.session', ['irida.utilities'])
         .run(['SessionFactory', runSessionFactory])
@@ -25,7 +25,7 @@
 
     function SessionFactory($timeout, $interval, $window, $uibModal) {
         var modalWait = 300000, // 5 minutes
-            initialWait = TL.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
+            initialWait = tl.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
             timeout,
             restartTimeout,
             opened = false;
@@ -48,7 +48,7 @@
                         };
 
                         $scope.logout = function () {
-                            $window.location = TL.BASE_URL + "logout";
+                            $window.location = tl.BASE_URL + "logout";
                         };
 
                         $scope.timeleft = modalWait;
@@ -96,4 +96,4 @@
             }
         };
     }
-})(angular)
+})(window.angular, window.jQuery, window.TL);

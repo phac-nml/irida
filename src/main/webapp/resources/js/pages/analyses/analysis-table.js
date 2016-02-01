@@ -1,5 +1,4 @@
 /*global oTable_analysisTable, filterForm */
-
 var filterFormHandler = (function ($, _) {
 
   var fields = filterForm.elements,
@@ -57,28 +56,28 @@ var filterFormHandler = (function ($, _) {
   };
 })(window.jQuery, window._);
 
-oTable_analysisTable.on('search.dt', function (e, settings) {
-  settings.aoServerParams.push({
-    "sName": "user",
-    "fn"   : function (aoData) {
-      var vals = filterFormHandler.getFieldValues();
-      aoData.columns[0].search.value = vals.analysisState;
-      aoData.columns[1].search.value = vals.name;
-      aoData.columns[2].search.value = vals.workflowId;
-    }
-  });
-  filterFormHandler.updateFilterLabels();
-});
-
-$("#clearFilterBtn").on('click', function () {
-  filterFormHandler.clearFields();
-  oTable_analysisTable.ajax.reload();
-});
-
 (function ($) {
   var $filterBtn = $('#filterAnalysesBtn');
 
   $filterBtn.on('click', function () {
+    oTable_analysisTable.ajax.reload();
+  });
+
+  oTable_analysisTable.on('search.dt', function (e, settings) {
+    settings.aoServerParams.push({
+      "sName": "user",
+      "fn"   : function (aoData) {
+        var vals = filterFormHandler.getFieldValues();
+        aoData.columns[0].search.value = vals.analysisState;
+        aoData.columns[1].search.value = vals.name;
+        aoData.columns[2].search.value = vals.workflowId;
+      }
+    });
+    filterFormHandler.updateFilterLabels();
+  });
+
+  $("#clearFilterBtn").on('click', function () {
+    filterFormHandler.clearFields();
     oTable_analysisTable.ajax.reload();
   });
 

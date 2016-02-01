@@ -53,19 +53,21 @@ var filterFormHandler = (function ($, _) {
   };
 })(window.jQuery, window._);
 
-oTable_projectsTable.on('search.dt', function (e, settings) {
-  settings.aoServerParams.push({
-    "sName": "user",
-    "fn"   : function (aoData) {
-      var vals = filterFormHandler.getFieldValues();
-      aoData.columns[1].search.value = vals.name;
-      aoData.columns[2].search.value = vals.organism;
-    }
+(function ($) {
+  oTable_projectsTable.on('search.dt', function (e, settings) {
+    settings.aoServerParams.push({
+      "sName": "user",
+      "fn"   : function (aoData) {
+        var vals = filterFormHandler.getFieldValues();
+        aoData.columns[1].search.value = vals.name;
+        aoData.columns[2].search.value = vals.organism;
+      }
+    });
+    filterFormHandler.updateFilterLabels();
   });
-  filterFormHandler.updateFilterLabels();
-});
 
-$("#clearFilterBtn").on('click', function () {
-  filterFormHandler.clearFields();
-  oTable_projectsTable.ajax.reload();
-});
+  $("#clearFilterBtn").on('click', function () {
+    filterFormHandler.clearFields();
+    oTable_projectsTable.ajax.reload();
+  });
+})(window.jQuery);

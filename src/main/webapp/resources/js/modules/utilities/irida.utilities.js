@@ -1,4 +1,4 @@
-(function ($) {
+(function (angular, $, moment) {
     "use strict";
     function ngFocus() {
         var FOCUS_CLASS = "ng-focused";
@@ -30,16 +30,9 @@
         };
     }
 
-    function DownloadIFrame () {
-        return {
-            restrict: "E",
-            template: '<iframe style="display:none;" ng-src="' + TL.BASE_URL + '{{relativeUrl}}' + '"></iframe>'
-        }
-    }
-
     angular
         .module('irida.utilities', [])
         .directive('ngFocus', ngFocus)
         .filter('countdown', countdownFilter)
     ;
-})(jQuery);
+})(window.angular, window.jQuery, window.moment);

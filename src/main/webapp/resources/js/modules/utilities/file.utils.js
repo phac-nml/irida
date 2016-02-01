@@ -49,7 +49,7 @@
           file: file
         }).success(function () {
           defer.resolve();
-        }).error(function(data, status, headers, config){
+        }).error(function(data){
           $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
           defer.reject("Error uploading file");
         });
@@ -80,7 +80,7 @@
         file: files
       }).success(function () {
         defer.resolve();
-      }).error(function (data, status, headers, config) {
+      }).error(function (data) {
         $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
         defer.reject("Error uploading file");
       });
@@ -120,8 +120,7 @@
         $scope.files = [];
         $scope.upload = null;
 
-        $scope.$on('NEW_UPLOAD', function (evt, args) {
-          console.log('new Upload');
+        $scope.$on('NEW_UPLOAD', function () {
           $scope.closeProgress();
         });
 

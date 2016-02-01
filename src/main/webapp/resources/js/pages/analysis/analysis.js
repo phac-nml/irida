@@ -1,6 +1,4 @@
-/* global ANALYSIS_PAGE */
-
-(function (angular) {
+(function (angular, page) {
   /**
    * Controller to download the analysis.
    * @constructor
@@ -17,7 +15,7 @@
         hiddenIFrame.style.display = 'none';
         document.body.appendChild(hiddenIFrame);
       }
-      hiddenIFrame.src = PAGE.URLS.download + id + '?dandelionAssetFilterState=false';
+      hiddenIFrame.src = page.URLS.download + id + '?dandelionAssetFilterState=false';
     };
   }
 
@@ -28,17 +26,17 @@
    * @returns {AnalysisService}
    * @constructor
    */
-  function AnalysisService($http, $interval) {
+  function AnalysisService($http) {
     var svc = this;
 
     /**
      * Call the server to get the status for the current analysis.
-     * 'PAGE.URLS.status' is on the `_base.html` page for the analysis.
+     * 'page.URLS.status' is on the `_base.html` page for the analysis.
      * @returns {*}
      * @private
      */
     function _getState() {
-      return $http.get(PAGE.URLS.status).then(function (data) {
+      return $http.get(page.URLS.status).then(function (data) {
         return data.data;
       });
     }
@@ -92,13 +90,11 @@
 
   function PreviewController() {
     var vm = this;
-    vm.newick = PAGE.NEWICK;
+    vm.newick = page.NEWICK;
   }
 
   angular.module('irida.analysis', ['ui.router', 'subnav', 'phylocanvas'])
     .config(['$stateProvider', function ($stateProvider) {
-      var isLinux = navigator.platform.indexOf("Linux") !== -1;
-      
       $stateProvider
         .state("preview", {
           url        : "/preview",
@@ -114,9 +110,9 @@
         })
       ;
     }])
-    .service('AnalysisService', ['$http', '$interval', AnalysisService])
+    .service('AnalysisService', ['$http', AnalysisService])
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
     .controller('PreviewController', [PreviewController])
   ;
-})(window.angular);
+})(window.angular, window.PAGE);

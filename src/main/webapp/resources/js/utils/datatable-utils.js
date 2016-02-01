@@ -1,3 +1,5 @@
+/*eslint no-undef: 2*/
+/*global Option:true*/
 /*exported datatable*/
 var datatable = (function(moment, tl, page) {
   'use strict';
@@ -27,21 +29,6 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
   }
-
-  /**
-   * Create a link button to the IRIDA thing
-   * @param data column data
-   * @param type type of data
-   * @param full full object for the row.
-   * @returns {*}
-   */
-  function createItemButton(data, type, full) {
-    if (tl && full.link && tl.BASE_URL) {
-      return '<a class="item-link btn btn-default table-cell-override btn-xs" title="' + data + '" href="' + tl.BASE_URL + full.link + '">' + data + '</a>';
-    } else {
-      return data;
-    }
-  }
   
   /**
    * Return the size of the list passed in the data param
@@ -52,7 +39,7 @@ var datatable = (function(moment, tl, page) {
     return data.length;
   }
 
-  function forceContentSize(data, type, full) {
+  function forceContentSize(data) {
     if (data && data.length > 0) {
       return '<div class="table-cell-override" title="' + data + '">' + data + '</div>';
     } else {

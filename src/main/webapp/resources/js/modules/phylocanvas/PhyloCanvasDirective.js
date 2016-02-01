@@ -38,8 +38,7 @@
           angular
             .element("#phylocanvas")
             .css({
-              'height': '500px',
-              //'width' : '100%'
+              'height': '500px'
             });
 
           phylo = new PhyloCanvas.Tree("phylocanvas", attrs.config);
