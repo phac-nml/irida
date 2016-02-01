@@ -161,11 +161,4 @@ public class SingleEndSequenceFile extends SequencingObject implements IridaSing
 		return Objects.hash(file);
 	}
 
-	@Override
-	public void setFiles(Set<SequenceFile> files) {
-		if (files.size() != 1) {
-			throw new IllegalArgumentException("SingleEndSequenceFile can only store 1 file, found " + files.size());
-		}
-	}
-
 }

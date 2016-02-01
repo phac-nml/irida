@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -73,21 +71,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingObject create(SequencingObject object) throws ConstraintViolationException, EntityExistsException {
-		SequencingObject so = createWithoutFileProcessor(object);
 
-		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, so.getId(),
-				SecurityContextHolder.getContext()));
-		return so;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
-	public SequencingObject createWithoutFileProcessor(SequencingObject object) throws ConstraintViolationException,
-			EntityExistsException {
 		SequencingRun sequencingRun = object.getSequencingRun();
 		if (sequencingRun != null) {
 			if (object instanceof SingleEndSequenceFile && sequencingRun.getLayoutType() != LayoutType.SINGLE_END) {
@@ -97,20 +81,14 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			}
 		}
 
-		Set<SequenceFile> files = new HashSet<>();
 		for (SequenceFile file : object.getFiles()) {
-			if (file.getId() == null) {
-				file = sequenceFileRepository.save(file);
-			} else {
-				// ensure we're not working with a detached entity
-				file = sequenceFileRepository.findOne(file.getId());
-			}
-
-			files.add(file);
+			file = sequenceFileRepository.save(file);
 		}
-		object.setFiles(files);
 
-		return super.create(object);
+		SequencingObject so = super.create(object);
+		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, so.getId(),
+				SecurityContextHolder.getContext()));
+		return so;
 	}
 
 	/**
@@ -206,21 +184,4 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		return super.readMultiple(idents);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequencingObject')")
-	public SequencingObject read(Long id) throws EntityNotFoundException {
-		return super.read(id);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequencingObject')")
-	public Boolean exists(Long id) {
-		return super.exists(id);
-	}
 }

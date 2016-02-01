@@ -8,9 +8,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 
 /**
  * Service for managing {@link SequencingObject}s and relationships with related
@@ -78,7 +76,7 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 */
 	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequencingObjects(Set<T> sequenceFiles)
 			throws DuplicateSampleException;
-
+	
 	/**
 	 * Get all the {@link SequencingObject}s associated with a given
 	 * {@link SequencingRun}
@@ -88,15 +86,4 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @return a set of {@link SequencingObject}
 	 */
 	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun);
-
-	/**
-	 * Create a {@link SequencingObject} without running a
-	 * {@link FileProcessingChain}. This method should be used when creating
-	 * objects with existing {@link SequenceFile}s
-	 * 
-	 * @param object
-	 *            the {@link SequencingObject} to create
-	 * @return the created {@link SequencingObject}
-	 */
-	public SequencingObject createWithoutFileProcessor(SequencingObject object);
 }
