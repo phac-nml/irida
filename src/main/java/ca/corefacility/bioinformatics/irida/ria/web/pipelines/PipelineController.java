@@ -35,10 +35,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -52,8 +53,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParame
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
@@ -97,8 +96,6 @@ public class PipelineController extends BaseController {
 	 * SERVICES
 	 */
 	private ReferenceFileService referenceFileService;
-	private SequenceFileService sequenceFileService;
-	private SequenceFilePairService sequenceFilePairService;
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private ProjectService projectService;
@@ -119,8 +116,7 @@ public class PipelineController extends BaseController {
 	private CartController cartController;
 
 	@Autowired
-	public PipelineController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
-			SequencingObjectService sequencingObjectService, ReferenceFileService referenceFileService,
+	public PipelineController(SequencingObjectService sequencingObjectService, ReferenceFileService referenceFileService,
 			AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService iridaWorkflowsService,
 			ProjectService projectService, UserService userService,
 			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
@@ -128,8 +124,6 @@ public class PipelineController extends BaseController {
 			SequenceFilePairRemoteService sequenceFilePairRemoteService,
 			SequenceFileSnapshotService remoteSequenceFileService,
 			SequenceFilePairSnapshotService remoteSequenceFilePairService) {
-		this.sequenceFileService = sequenceFileService;
-		this.sequenceFilePairService = sequenceFilePairService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -417,19 +411,37 @@ public class PipelineController extends BaseController {
 			}
 
 			// Get a list of the files to submit
-			List<SequenceFile> sequenceFiles = new ArrayList<>();
+			List<SingleEndSequenceFile> singleEndFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
 
 			if (single != null) {
-				sequenceFiles = (List<SequenceFile>) sequenceFileService.readMultiple(single);
+				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(single);
+				
+				readMultiple.forEach(f -> {
+					if (f instanceof SingleEndSequenceFile) {
+						throw new IllegalArgumentException("file " + f.getId() + " not a single end file");
+					}
+					
+					singleEndFiles.add((SingleEndSequenceFile) f);
+				});
+				
 				// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequenceFileService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFiles));
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(singleEndFiles));
 			}
 
 			if (paired != null) {
-				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
+				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(paired);
+				
+				readMultiple.forEach(f -> {
+					if (f instanceof SingleEndSequenceFile) {
+						throw new IllegalArgumentException("file " + f.getId() + " not a single end file");
+					}
+					
+					sequenceFilePairs.add((SequenceFilePair) f);
+				});
+				
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(Sets.newHashSet(sequenceFilePairs));
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
 			}
 			
 			
@@ -482,10 +494,10 @@ public class PipelineController extends BaseController {
 			}
 
 			if (description.getInputs().requiresSingleSample()) {
-				analysisSubmissionService.createSingleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
+				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
 						params, namedParameters, name);
 			} else {
-				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
+				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
 						params, namedParameters, name);
 			}
 

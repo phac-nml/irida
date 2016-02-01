@@ -21,10 +21,13 @@ import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -49,8 +52,8 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	private final SequencingObjectRepository repository;
 
 	@Autowired
-	public SequencingObjectServiceImpl(SequencingObjectRepository repository, SequenceFileRepository sequenceFileRepository,
-			SampleSequencingObjectJoinRepository ssoRepository,
+	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
+			SequenceFileRepository sequenceFileRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
 			Validator validator) {
 		super(repository, validator, SequencingObject.class);
@@ -68,7 +71,17 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingObject create(SequencingObject object) throws ConstraintViolationException, EntityExistsException {
-		for(SequenceFile file : object.getFiles()){
+
+		SequencingRun sequencingRun = object.getSequencingRun();
+		if (sequencingRun != null) {
+			if (object instanceof SingleEndSequenceFile && sequencingRun.getLayoutType() != LayoutType.SINGLE_END) {
+				throw new IllegalArgumentException("Attempting to add a single end file to a non single end run");
+			} else if (object instanceof SequenceFilePair && sequencingRun.getLayoutType() != LayoutType.PAIRED_END) {
+				throw new IllegalArgumentException("Attempting to add a paired end file to a non paired end run");
+			}
+		}
+
+		for (SequenceFile file : object.getFiles()) {
 			file = sequenceFileRepository.save(file);
 		}
 
@@ -88,11 +101,6 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	public SampleSequencingObjectJoin createSequencingObjectInSample(SequencingObject seqObject, Sample sample) {
 		// create the sequencing object
 		seqObject = create(seqObject);
-
-		/*
-		 * TODO:Verify that the SequencingRun matches the type of
-		 * sequencingobject being created
-		 */
 
 		// save the new join
 		SampleSequencingObjectJoin sampleSequencingObjectJoin = new SampleSequencingObjectJoin(sample, seqObject);
@@ -135,11 +143,11 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequencingObject')")
 	@Override
-	public Map<Sample, SequencingObject> getUniqueSamplesForSequenceFiles(Set<SequencingObject> sequenceFiles)
+	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequencingObjects(Set<T> sequenceFiles)
 			throws DuplicateSampleException {
-		Map<Sample, SequencingObject> sequenceFilePairsSampleMap = new HashMap<>();
+		Map<Sample, T> sequenceFilePairsSampleMap = new HashMap<>();
 
-		for (SequencingObject filePair : sequenceFiles) {
+		for (T filePair : sequenceFiles) {
 			SequenceFile pair1 = filePair.getFiles().iterator().next();
 
 			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(filePair);
@@ -156,12 +164,24 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 
 		return sequenceFilePairsSampleMap;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
 	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun) {
 		return repository.findSequencingObjectsForSequencingRun(sequencingRun);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadSequencingObject')")
+	public Iterable<SequencingObject> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
 	}
 
 }

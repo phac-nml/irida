@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
  * Service for managing {@link SequenceFilePair} entities.
  *
  */
+@Deprecated
 public interface SequenceFilePairService extends CRUDService<Long, SequenceFilePair> {
 
 	/**
@@ -73,6 +74,7 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 * @throws DuplicateSampleException
 	 *             If there is a duplicate sample.
 	 */
+	@Deprecated
 	public Map<Sample, SequenceFilePair> getUniqueSamplesForSequenceFilePairs(Set<SequenceFilePair> pairedInputFiles)
 			throws DuplicateSampleException;
 }

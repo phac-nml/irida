@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,6 +16,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -29,7 +32,7 @@ import com.google.common.collect.ImmutableSet;
 @Table(name = "sequence_file_single_end")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SingleEndSequenceFile extends SequencingObject {
+public class SingleEndSequenceFile extends SequencingObject implements IridaSingleEndSequenceFile {
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@NotNull
@@ -141,6 +144,21 @@ public class SingleEndSequenceFile extends SequencingObject {
 
 	public String getFileName() {
 		return file.getFileName().toString();
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof SingleEndSequenceFile) {
+			SingleEndSequenceFile sampleFile = (SingleEndSequenceFile) other;
+			return Objects.equals(file, sampleFile.file);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(file);
 	}
 
 }

@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -67,6 +68,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @throws ExecutionManagerException
 	 *             If there was an error uploading the files.
 	 */
+	@Deprecated
 	public CollectionResponse uploadSequenceFilesSingle(Map<Sample, IridaSequenceFile> sampleSequenceFiles,
 			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
 
@@ -78,6 +80,58 @@ public class AnalysisCollectionServiceGalaxy {
 		for (Sample sample : sampleSequenceFiles.keySet()) {
 			IridaSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
 			samplesMap.put(sequenceFile.getFile(), sample);
+		}
+
+		// upload files to library and then to a history
+		Set<Path> pathsToUpload = samplesMap.keySet();
+		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
+				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
+
+		for (Path sequenceFilePath : samplesMap.keySet()) {
+			if (!pathHistoryDatasetId.containsKey(sequenceFilePath)) {
+				throw new UploadException("Error, no corresponding history item found for " + sequenceFilePath);
+			}
+
+			Sample sample = samplesMap.get(sequenceFilePath);
+			String datasetHistoryId = pathHistoryDatasetId.get(sequenceFilePath);
+
+			HistoryDatasetElement datasetElement = new HistoryDatasetElement();
+			datasetElement.setId(datasetHistoryId);
+			datasetElement.setName(sample.getSampleName());
+
+			description.addDatasetElement(datasetElement);
+		}
+
+		return galaxyHistoriesService.constructCollection(description, workflowHistory);
+	}
+	
+	/**
+	 * Uploads a list of single sequence files belonging to the given samples to
+	 * Galaxy.
+	 * 
+	 * @param sampleSequenceFiles
+	 *            A map between {@link Sample} and
+	 *            {@link IridaSingleEndSequenceFile}.
+	 * @param workflowHistory
+	 *            The history to upload the sequence files into.
+	 * @param workflowLibrary
+	 *            A temporary library to upload files into.
+	 * @return A CollectionResponse for the dataset collection constructed from
+	 *         the given files.
+	 * @throws ExecutionManagerException
+	 *             If there was an error uploading the files.
+	 */
+	public CollectionResponse uploadSequenceFilesSingleEnd(Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles,
+			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
+
+		CollectionDescription description = new CollectionDescription();
+		description.setCollectionType(DatasetCollectionType.LIST.toString());
+		description.setName(COLLECTION_NAME_SINGLE);
+
+		Map<Path, Sample> samplesMap = new HashMap<>();
+		for (Sample sample : sampleSequenceFiles.keySet()) {
+			IridaSingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
+			samplesMap.put(sequenceFile.getSequenceFile().getFile(), sample);
 		}
 
 		// upload files to library and then to a history

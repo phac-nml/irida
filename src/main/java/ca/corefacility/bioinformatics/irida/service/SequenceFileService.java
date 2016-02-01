@@ -115,6 +115,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *             If there was more than one sequence file with the same
 	 *             sample.
 	 */
+	@Deprecated
 	public Map<Sample, SequenceFile> getUniqueSamplesForSequenceFiles(Set<SequenceFile> sequenceFiles)
 			throws DuplicateSampleException;
 }
