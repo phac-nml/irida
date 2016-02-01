@@ -262,11 +262,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
-			List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(s);
-			for (Join<Sample, SequenceFile> sequenceFile : sequenceFiles) {
-				removeSequenceFileFromSample(s, sequenceFile.getObject());
-				addSequenceFileToSample(mergeInto, sequenceFile.getObject());
+			List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(s);
+			for (SampleSequencingObjectJoin join : sequencesForSample) {
+				SequencingObject sequencingObject = join.getObject();
+				ssoRepository.delete(join);
+				addSequencingObjectToSample(mergeInto, sequencingObject);
 			}
+
 			// have to remove the sample to be deleted from its project:
 			ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, s);
 			psjRepository.delete(readSampleForProject);
@@ -363,18 +365,25 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Add a {@link SequencingObject} to a {@link Sample} after testing if it
+	 * exists in a {@link Sample} already
+	 * 
+	 * @param sample
+	 *            {@link Sample} to add to
+	 * @param seqObject
+	 *            {@link SequencingObject} to add
+	 * @return a {@link SampleSequencingObjectJoin}
 	 */
 	@Transactional
-	private SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
+	private SampleSequencingObjectJoin addSequencingObjectToSample(Sample sample, SequencingObject seqObject) {
 		// call the relationship repository to create the relationship between
 		// the two entities.
-		if (ssfRepository.getSampleForSequenceFile(sampleFile) != null) {
+		if (ssoRepository.getSampleForSequencingObject(seqObject) != null) {
 			throw new EntityExistsException("This sequencefile is already associated with a sample");
 		}
-		logger.trace("adding " + sampleFile.getId() + " to sample " + sample.getId());
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, sampleFile);
-		return ssfRepository.save(join);
+		logger.trace("adding " + seqObject.getId() + " to sample " + sample.getId());
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObject);
+		return ssoRepository.save(join);
 	}
 
 	/**

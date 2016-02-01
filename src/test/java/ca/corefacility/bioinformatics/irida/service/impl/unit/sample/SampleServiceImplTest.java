@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
@@ -179,28 +180,33 @@ public class SampleServiceImplTest {
 
 		Sample[] toMerge = new Sample[SIZE];
 		SequenceFile[] toMerge_sf = new SequenceFile[SIZE];
-		SampleSequenceFileJoin[] s_sf_joins = new SampleSequenceFileJoin[SIZE];
-		SampleSequenceFileJoin[] s_sf_original = new SampleSequenceFileJoin[SIZE];
+		SequencingObject[] toMerge_so = new SequencingObject[SIZE];
+		SampleSequencingObjectJoin[] s_so_joins = new SampleSequencingObjectJoin[SIZE];
+		SampleSequencingObjectJoin[] s_so_original = new SampleSequencingObjectJoin[SIZE];
 		ProjectSampleJoin[] p_s_joins = new ProjectSampleJoin[SIZE];
 
 		for (long i = 0; i < SIZE; i++) {
 			int p = (int) i;
 			toMerge[p] = s(i + 2);
 			toMerge_sf[p] = sf(i + 2);
-			s_sf_joins[p] = new SampleSequenceFileJoin(s, toMerge_sf[p]);
+			toMerge_so[p] = so(i + 2);
+			s_so_joins[p] = new SampleSequencingObjectJoin(s, toMerge_so[p]);
 			p_s_joins[p] = new ProjectSampleJoin(project, toMerge[p]);
 
 			List<Join<Project, Sample>> projectSampleJoins = new ArrayList<>();
 			projectSampleJoins.add(p_s_joins[p]);
-			List<Join<Sample, SequenceFile>> sampleSequenceFileJoins = new ArrayList<>();
+			
+			List<SampleSequencingObjectJoin> sampleSeqObjectJoins = new ArrayList<>();
+			
+			SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(toMerge[p], toMerge_so[p]);
+			sampleSeqObjectJoins.add(join);
+			
+			s_so_original[p] = join;
 
-			SampleSequenceFileJoin join = new SampleSequenceFileJoin(toMerge[p], toMerge_sf[p]);
-			sampleSequenceFileJoins.add(join);
-			s_sf_original[p] = join;
-
-			when(ssfRepository.getFilesForSample(toMerge[p])).thenReturn(sampleSequenceFileJoins);
-			when(ssfRepository.save(s_sf_joins[p])).thenReturn(s_sf_joins[p]);
-			when(ssfRepository.readFileForSample(toMerge[p], toMerge_sf[p])).thenReturn(join);
+			when(ssoRepository.getSequencesForSample(toMerge[p])).thenReturn(null);
+			when(ssoRepository.getSequencesForSample(toMerge[p])).thenReturn(sampleSeqObjectJoins);
+			when(ssoRepository.save(s_so_joins[p])).thenReturn(s_so_joins[p]);
+			when(ssoRepository.readObjectForSample(toMerge[p], toMerge_so[p].getId())).thenReturn(join);
 			when(psjRepository.getProjectForSample(toMerge[p])).thenReturn(projectSampleJoins);
 
 			// for deletion
@@ -214,9 +220,9 @@ public class SampleServiceImplTest {
 
 		verify(psjRepository).getProjectForSample(s);
 		for (int i = 0; i < SIZE; i++) {
-			verify(ssfRepository).getFilesForSample(toMerge[i]);
-			verify(ssfRepository).save(s_sf_joins[i]);
-			verify(ssfRepository).delete(s_sf_original[i]);
+			verify(ssoRepository).getSequencesForSample(toMerge[i]);
+			verify(ssoRepository).save(s_so_joins[i]);
+			verify(ssoRepository).delete(s_so_original[i]);
 			verify(sampleRepository).delete(toMerge[i].getId());
 			verify(psjRepository).getProjectForSample(toMerge[i]);
 			verify(psjRepository).delete(p_s_joins[i]);
@@ -451,6 +457,12 @@ public class SampleServiceImplTest {
 
 		}
 		return sf;
+	}
+
+	private SequencingObject so(Long id) {
+		SequencingObject so = new SingleEndSequenceFile(sf(id));
+		so.setId(id);
+		return so;
 	}
 
 	private Project p(Long id) {
