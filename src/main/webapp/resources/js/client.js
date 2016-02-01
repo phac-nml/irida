@@ -14,4 +14,4 @@
     var text = getTimeFrom($option.text());
     $option.html(text);
   });
-})(jQuery, moment);
+})(window.jQuery, window.moment);

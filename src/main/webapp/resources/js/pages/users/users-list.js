@@ -18,7 +18,7 @@
                     'targets': 1
                 },
                 {
-                    'render': function (data, type, row) {
+                    'render': function (data) {
                         return '<span data-livestamp="' + data + '"></span>';
                     },
                     'targets': 7
