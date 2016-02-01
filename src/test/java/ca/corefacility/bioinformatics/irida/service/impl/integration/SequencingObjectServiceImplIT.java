@@ -3,13 +3,15 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -47,6 +49,11 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequencingObjectServiceImplIT {
+
+	private static final String SEQUENCE = "ACGTACGTN";
+	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
+			+ SEQUENCE + "\n+\n?????????").getBytes();
+
 	@Autowired
 	private SampleService sampleService;
 
@@ -56,25 +63,22 @@ public class SequencingObjectServiceImplIT {
 	@Autowired
 	private SequencingObjectService objectService;
 
-	@Test(expected = DataIntegrityViolationException.class)
-	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testAddSequenceFileWithExistingPair() {
-		SequenceFile file1 = sequenceFileService.read(1L);
-		SequenceFile file3 = sequenceFileService.read(3L);
-
-		SequenceFilePair sequenceFilePair = new SequenceFilePair(file1, file3);
-		objectService.createWithoutFileProcessor(sequenceFilePair);
-	}
-
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testAddSequenceFilePairAsSequencer() {
-		SequenceFile file1 = sequenceFileService.read(1L);
-		SequenceFile file2 = sequenceFileService.read(2L);
+	public void testAddSequenceFilePairAsSequencer() throws IOException {
+
+		Path sequenceFile = Files.createTempFile("file1", ".fastq");
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+
+		Path sequenceFile2 = Files.createTempFile("file2", ".fastq");
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+
+		SequenceFile file1 = new SequenceFile(sequenceFile);
+		SequenceFile file2 = new SequenceFile(sequenceFile2);
 
 		SequenceFilePair sequenceFilePair = new SequenceFilePair(file1, file2);
 
-		SequencingObject createSequenceFilePair = objectService.createWithoutFileProcessor(sequenceFilePair);
+		SequencingObject createSequenceFilePair = objectService.create(sequenceFilePair);
 		assertTrue(createSequenceFilePair.getFiles().contains(file1));
 		assertTrue(createSequenceFilePair.getFiles().contains(file2));
 	}
