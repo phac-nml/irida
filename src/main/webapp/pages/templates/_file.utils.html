@@ -12,7 +12,7 @@
 			<li class="list-group-item" ng-repeat="file in files">
 				<div class="md-list-item-text">
 					<h4><th:block th:text="#{form.lable.uploading}"></th:block> {{ file.filename }} [{{file.progress}}%]</h4>
-					<progressbar max="100" value="file.progress"></progressbar>
+					<uib-progressbar max="100" value="file.progress"></uib-progressbar>
 				</div>
 			</li>
 		</ul>
