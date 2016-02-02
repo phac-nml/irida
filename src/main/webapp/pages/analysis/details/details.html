@@ -67,10 +67,10 @@
 				<table th:if="${fileCount > 0}" class="table">
 					<th:block th:each="pair : ${paired_end}">
 						<tr class="paired_end paired_end__forward">
-							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getForwardSequenceFile()},icon='forward',relative='false')"></td>
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${pair.getForwardSequenceFile()},icon='forward',relative='false')"></td>
 						</tr>
 						<tr class="paired_end paired_end__reverse">
-							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (file=${pair.getReverseSequenceFile()},icon='reverse',relative='false')"></td>
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${pair.getReverseSequenceFile()},icon='reverse',relative='false')"></td>
 						</tr>
 					</th:block>
                     <th:block th:each="pair : ${remote_paired}" th:if="${pair.isMirrored()}">
@@ -88,7 +88,7 @@
 				<div class="alert alert-info" th:unless="${fileCount > 0}" th:text="#{analysis.input-files.no-paired-end}">
 					__NO_PAIRED_END_DATA_
 				</div>
-                      
+
 			</script>
 
 			<script type="text/ng-template" id="provenance.html">
