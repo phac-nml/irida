@@ -14,7 +14,7 @@
 	</td>
 	<td>
 		<a href="#"
-		   th:href="${relative} ? ${'sequenceFiles/' + file.getId() + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.getId()})}"
+		   th:href="${relative} ? ${sequenceFiles/{objectId}/file/{fileId}/summary(objectId=${object.getId()},fileId=${file.getId()})} : @{/sequenceFiles/{objectId}/file/{id}/summary(objectId=${object.getId()},id=${file.getId()})}"
 		   class="btn btn-default btn-sm file-name"
 		   th:text="${file.getLabel()}"></a>
 	</td>
@@ -36,7 +36,7 @@
 		</div>
 	</td>
 </th:block>
-    
+
 <th:block th:fragment="remoteSequenceFileTableLayout" th:with="dateFormat=#{locale.date.short}">
 	<td class="td_icon" th:switch="${icon}">
 		<i th:case="'forward'" class="fa fa-fw fa-arrow-right" data:uib-tooltip="#{sf.tooltip.forward}"></i>
@@ -64,6 +64,6 @@
 			</div>
 		</div>
 	</td>
-</th:block>    
+</th:block>
 </body>
 </html>
