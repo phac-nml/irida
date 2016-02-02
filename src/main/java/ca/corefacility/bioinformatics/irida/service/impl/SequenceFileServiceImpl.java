@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Validator;
@@ -190,22 +189,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
 	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun miseqRun) {
 		return sequenceFileRepository.findSequenceFilesForSequencingRun(miseqRun);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
-	public Join<Sample, SequenceFile> getSequenceFileForSample(Sample sample, Long identifier)
-			throws EntityNotFoundException {
-		Optional<Join<Sample, SequenceFile>> file = getSequenceFilesForSample(sample).stream()
-				.filter(j -> j.getObject().getId().equals(identifier)).findFirst();
-		if (file.isPresent()) {
-			return file.get();
-		}
-
-		throw new EntityNotFoundException("Sequence file " + identifier + " does not exist in sample " + sample);
 	}
 
 	/**

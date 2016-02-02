@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -116,31 +115,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return A {@link Sample} with the given ID
 	 */
 	public Sample getSampleBySampleName(Project project, String sampleName);
-
-	/**
-	 * Move an instance of a {@link SequenceFile} associated with a
-	 * {@link Sample} to its parent {@link Project}.
-	 * 
-	 * @param sample
-	 *            the {@link Sample} from which we're moving the
-	 *            {@link SequenceFile}.
-	 * @param sequenceFile
-	 *            the {@link SequenceFile} that we're moving.
-	 */
-	@Deprecated
-	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
-	
-	/**
-	 * Remove both files in a {@link SequenceFilePair} from a given
-	 * {@link Sample}
-	 * 
-	 * @param sample
-	 *            the {@link Sample} to remove from
-	 * @param pair
-	 *            the {@link SequenceFilePair} containing the files to remove
-	 */
-	@Deprecated
-	public void removeSequenceFilePairFromSample(Sample sample, SequenceFilePair pair);
 	
 	/**
 	 * Remove a {@link SequencingObject} from a given {@link Sample}. This will

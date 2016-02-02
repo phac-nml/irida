@@ -129,15 +129,4 @@ public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceF
 		return sequenceFilePairsSampleMap;
 	}
 
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
-	public SequenceFilePair readSequenceFilePairForSample(Sample sample, Long id) {
-		SequenceFilePair readSequenceFilePairForSample = pairRepository.readSequenceFilePairForSample(sample, id);
-
-		if (readSequenceFilePairForSample != null) {
-			return readSequenceFilePairForSample;
-		}
-		
-		throw new EntityNotFoundException("No file pair with id " + id + " exists in the given sample");
-	}
 }
