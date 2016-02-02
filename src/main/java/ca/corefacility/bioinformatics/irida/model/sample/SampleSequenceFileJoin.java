@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @Table(name = "sequencefile_sample", uniqueConstraints = @UniqueConstraint(columnNames = { "sequencefile_id" }, name = "UK_SEQUENCEFILE_SAMPLE_FILE"))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
+@Deprecated
 public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 
 	@Id
