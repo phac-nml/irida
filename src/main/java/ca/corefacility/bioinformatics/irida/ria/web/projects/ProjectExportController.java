@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +44,15 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -65,22 +70,25 @@ public class ProjectExportController {
 
 	@Value("${ncbi.upload.namespace}")
 	private String namespace = "";
-	
+
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
+	private final SequencingObjectService sequencingObjectService;
 	private final NcbiExportSubmissionService exportSubmissionService;
 	private final UserService userService;
 
 	@Autowired
 	public ProjectExportController(ProjectService projectService, SampleService sampleService,
 			SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
-			NcbiExportSubmissionService exportSubmissionService, UserService userService) {
+			SequencingObjectService sequencingObjectService, NcbiExportSubmissionService exportSubmissionService,
+			UserService userService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
+		this.sequencingObjectService = sequencingObjectService;
 		this.exportSubmissionService = exportSubmissionService;
 		this.userService = userService;
 	}
@@ -117,20 +125,26 @@ public class ProjectExportController {
 			logger.trace("Doing sample " + sample.getId());
 
 			Map<String, List<? extends Object>> files = new HashMap<>();
-			List<SequenceFilePair> sequenceFilePairsForSample = sequenceFilePairService
-					.getSequenceFilePairsForSample(sample);
-			List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
-					.getUnpairedSequenceFilesForSample(sample);
+
+			Collection<SampleSequencingObjectJoin> singleEndFiles = sequencingObjectService
+					.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+			Collection<SampleSequencingObjectJoin> pairedEndFiles = sequencingObjectService
+					.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+
+			List<SingleEndSequenceFile> singleEndFilesForSample = singleEndFiles.stream()
+					.map(j -> (SingleEndSequenceFile) j.getObject()).collect(Collectors.toList());
+			List<SequenceFilePair> sequenceFilePairsForSample = pairedEndFiles.stream()
+					.map(j -> (SequenceFilePair) j.getObject()).collect(Collectors.toList());
 
 			Optional<SequenceFilePair> newestPair = sequenceFilePairsForSample.stream()
 					.sorted((f1, f2) -> f2.getCreatedDate().compareTo(f1.getCreatedDate())).findFirst();
 
-			Optional<Join<Sample, SequenceFile>> newestSingle = unpairedSequenceFilesForSample.stream()
+			Optional<SingleEndSequenceFile> newestSingle = singleEndFilesForSample.stream()
 					.sorted((f1, f2) -> f2.getCreatedDate().compareTo(f1.getCreatedDate())).findFirst();
 
 			if (newestPair.isPresent() && newestSingle.isPresent()) {
 				SequenceFilePair sequenceFilePair = newestPair.get();
-				Join<Sample, SequenceFile> join = newestSingle.get();
+				SingleEndSequenceFile join = newestSingle.get();
 
 				if (sequenceFilePair.getCreatedDate().after(join.getCreatedDate())) {
 					checkedPairs.add(newestPair.get().getId());
@@ -146,13 +160,13 @@ public class ProjectExportController {
 			}
 
 			files.put("paired_end", sequenceFilePairsForSample);
-			files.put("single_end", unpairedSequenceFilesForSample);
+			files.put("single_end", singleEndFilesForSample);
 
 			sampleMap.put("files", files);
 			sampleList.add(sampleMap);
 		}
-		
-		sampleList.sort(new Comparator<Map<String,Object>>() {
+
+		sampleList.sort(new Comparator<Map<String, Object>>() {
 			@Override
 			public int compare(Map<String, Object> o1, Map<String, Object> o2) {
 				String s1Name = (String) o1.get("name");
