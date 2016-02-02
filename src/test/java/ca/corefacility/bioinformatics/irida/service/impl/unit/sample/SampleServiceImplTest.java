@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
@@ -53,7 +52,6 @@ public class SampleServiceImplTest {
 	private SampleService sampleService;
 	private SampleRepository sampleRepository;
 	private ProjectSampleJoinRepository psjRepository;
-	private SampleSequenceFileJoinRepository ssfRepository;
 	private AnalysisRepository analysisRepository;
 	private SequenceFilePairRepository sequenceFilePairRepository;
 	private AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
@@ -80,7 +78,7 @@ public class SampleServiceImplTest {
 		assembledGenome2 = mock(AssembledGenomeAnalysis.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
-		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, analysisRepository,
+		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository,
 				ssoRepository, sequenceFilePairRepository, assembledGenomeAnalysisRepository, validator);
 
 	}
