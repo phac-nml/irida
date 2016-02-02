@@ -527,41 +527,6 @@ public class RESTSampleSequenceFilesController {
 	}
 
 	/**
-	 * Get a specific {@link SequenceFile} associated with a {@link Sample}.
-	 * 
-	 * @param sampleId
-	 *            the identifier of the {@link Sample}.
-	 * @param sequenceFileId
-	 *            the identifier of the {@link SequenceFile}.
-	 * @return a representation of the {@link SequenceFile}.
-	 * @deprecated use
-	 *             {@link RESTSampleSequenceFilesController#readSequencingObject(Long, String, Long)}
-	 *             instead
-	 */
-	@Deprecated
-	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET)
-	public ModelMap getSequenceFileForSample(@PathVariable Long sampleId, @PathVariable Long sequenceFileId) {
-		ModelMap modelMap = new ModelMap();
-		sampleService.read(sampleId);
-
-		// if the relationships exist, load the sequence file from the database
-		SequenceFile sf = sequenceFileService.read(sequenceFileId);
-
-		// add links to the resource
-		sf.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
-				REL_SAMPLE_SEQUENCE_FILES));
-		sf.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId, sequenceFileId))
-				.withSelfRel());
-		sf.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
-
-		// add the resource to the response
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sf);
-
-		return modelMap;
-	}
-
-	/**
 	 * Update a {@link SequenceFile} details.
 	 *
 	 * @param sampleId
@@ -663,29 +628,5 @@ public class RESTSampleSequenceFilesController {
 		}
 
 		return sequencingObject;
-	}
-
-	/**
-	 * Add the {@link Sample} and self rel links to a {@link SequenceFile}
-	 * 
-	 * @param file
-	 *            {@link SequenceFile} to add links to
-	 * @param sampleId
-	 *            id of the {@link Sample} the file exists in
-	 * @return modified {@link SequenceFile}
-	 * @deprecated Use
-	 *             {@link RESTSampleSequenceFilesController#addSequencingObjectLinks(SequencingObject, Long)}
-	 *             instead
-	 */
-	@Deprecated
-	public static SequenceFile addSequenceFileLinks(SequenceFile file, Long sampleId) {
-		file.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(sampleId, file.getId()))
-				.withSelfRel());
-
-		file.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-				REL_SEQUENCEFILE_SAMPLE));
-
-		return file;
 	}
 }
