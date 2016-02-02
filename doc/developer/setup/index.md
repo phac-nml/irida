@@ -61,13 +61,6 @@ IRIDA uses some custom libraries that are either a) not currently available in a
     cd irida/lib/
     bash install-libs.sh
 
-We're also using [Bower](http://bower.io/) and [Node](http://nodejs.org/) to manage our JavaScript dependencies, and [PhantomJS](http://phantomjs.org/) and [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/) for UI testing. We **do not** recommend that you install the versions of Node and Bower that are available for download from the Ubuntu repositories -- they are ancient. You can manually install the current versions available from the project web sites, or you can run our `bash` script that will (at the very least) download more recent versions than what are available from the repositories:
-
-    cd irida/
-    bash ubuntu_install.sh
-
-*Note*: The *only* Ubuntu-specific part of that script is where it installs the packages `ruby-sass` and `ruby-compass`. You can run this script on CentOS by commenting out that line.
-
 ### Custom configuration
 
 Many of IRIDA's properties can be configured by creating a file `/etc/irida/irida.conf`. The file is a basic key/value file (keys and values are separated by an `=` sign). A short example:
@@ -127,50 +120,4 @@ Setting up Galaxy
 
 The complete test suite sets up a temporary instance of Galaxy for verifying interactions between IRIDA and Galaxy, so you must install some prerequisites before you can run the complete test suite. Please see the article on [setting up Galaxy](galaxy).
 
-Front End Development
----------------------
 
-### Brackets
-
-[Brackets](http://www.brackets.io) is an open editor founded by Adobe.  Go to the web page to download the current version.
-
-#### Install Plugins
-
-Click the Extension Manager icon on the top right of the editor window.
-
-![Brackets Screen Shot](images/brackets-extension-manager.png)
-
-Search for and install the following plugins:
-
-- Beautify
-- FixMyJS
-- Interactive Linter
-- JSCS
-
-**Beautify** and **FixMyJS** can be set to run automatically on save in the `Edit` menu.
-
-![Brackets Save Shot](images/brackets-update-save.png)
-
-#### Interactive Linting
-
-Bottom right of the Brackets window will display the results of continual JSHinting.
-
-##### Passing JSHint
-
-![Brackets JSHint Passing](images/brackets-jshint-good.png)
-
-##### Failing JSHint
-
-![Brackets JSHint Passing](images/brackets-jshint-bad.png)
-
-Clicking on the red X will display the errors:
-
-![Brackets JSHint Errors](images/brackets-linter-errors.png)
-
-#### Open the `webapp` directory to edit only front end code
-
-This sets configuration files to the root directory for brackets.
-
-Ensure to set the spacing for JavaScript files to **2 Characters**
-
-![Brackets JS Spacing](images/brackets-js-2-spaces.png)
