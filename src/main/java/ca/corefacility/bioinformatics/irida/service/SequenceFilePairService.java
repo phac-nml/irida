@@ -52,18 +52,6 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
 
 	/**
-	 * read an individual {@link SequenceFilePair} for a given {@link Sample}
-	 * 
-	 * @param sample
-	 *            The {@link Sample} to read from
-	 * @param id
-	 *            ID of the pair to read
-	 * @return {@link SequenceFilePair}
-	 */
-	@Deprecated
-	public SequenceFilePair readSequenceFilePairForSample(Sample sample, Long id);
-
-	/**
 	 * Gets a map of {@link SequenceFilePair}s and corresponding {@link Sample}
 	 * s.
 	 *

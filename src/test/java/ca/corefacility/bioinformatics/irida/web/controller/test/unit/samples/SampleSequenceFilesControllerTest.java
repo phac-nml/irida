@@ -27,10 +27,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -258,11 +256,6 @@ public class SampleSequenceFilesControllerTest {
 
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, pair);
 
-		Join<Sample, SequenceFile> r1 = new SampleSequenceFileJoin(s, sf1);
-		Join<Sample, SequenceFile> r2 = new SampleSequenceFileJoin(s, sf2);
-		List<Join<Sample, SequenceFile>> relationships = Lists.newArrayList();
-		relationships.add(r1);
-		relationships.add(r2);
 		SequenceFileResource resource1 = new SequenceFileResource();
 		SequenceFileResource resource2 = new SequenceFileResource();
 		Path f1 = Files.createTempFile(null, null);
