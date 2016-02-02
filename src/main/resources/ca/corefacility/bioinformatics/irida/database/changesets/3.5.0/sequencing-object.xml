@@ -260,6 +260,7 @@
 		<dropTable tableName="analysis_submission_sequence_file_single" />
 		<dropTable tableName="analysis_submission_sequence_file_single_AUD" />
 
+		<!-- Change the NCBI exporter to use single end files -->
 		<createTable tableName="ncbi_export_biosample_sequence_file_single_end">
 			<column name="ncbi_export_biosample_id" type="varchar(255)">
 				<constraints nullable="false"
@@ -273,7 +274,6 @@
 			</column>
 		</createTable>
 
-		<!-- Change the NCBI exporter to use single end files -->
 		<sql>
 			INSERT INTO ncbi_export_biosample_sequence_file_single_end
 			(ncbi_export_biosample_id, files_id) SELECT
