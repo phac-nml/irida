@@ -372,11 +372,7 @@
 			selectedParameters.currentSettings = ng.copy(selectedParameters.defaultSettings);
 		}
 	};
-	
-	function FileUploadService() {
-		var svc = this;
-	};
-	  
+
 	function FileUploadCtrl($rootScope, fileService) {
 	    var vm = this;
 
