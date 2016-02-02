@@ -51,7 +51,18 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the relationship between the {@link Sample} and
 	 *         {@link SequenceFile}
 	 */
+	@Deprecated
 	public Join<Sample, SequenceFile> getSampleForSequeneFile(SequenceFile file);
+	
+	/**
+	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
+	 * 
+	 * @param seqObject
+	 *            the {@link SequencingObject} to get the {@link Sample} for
+	 * @return the {@link SampleSequencingObjectJoin} describing the
+	 *         relationship
+	 */
+	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject);
 
 	/**
 	 * Get the list of {@link Sample} that belongs to a specific project.

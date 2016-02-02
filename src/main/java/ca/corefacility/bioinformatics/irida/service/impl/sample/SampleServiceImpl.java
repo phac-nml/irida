@@ -184,6 +184,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasPermission(#seqObject, 'canReadSequencingObject')")
+	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject) {
+		return ssoRepository.getSampleForSequencingObject(seqObject);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleBySampleName(Project project, String sampleId) {
