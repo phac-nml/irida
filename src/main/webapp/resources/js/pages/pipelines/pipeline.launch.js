@@ -1,4 +1,4 @@
-(function (ng, $, _, pipeline, location, projectsPage, page) {
+(function (ng, $, _, location, page) {
 	"use strict";
 	/**
 	 * Main controller for the pipeline launch page.
@@ -55,7 +55,7 @@
 			remotePaired = [];
 
 			if (name === null || name.length === 0) {
-				vm.error = pipeline.required;
+				vm.error = page.i18n.required;
 			} else {
 				// Hide the launch buttons and display a message that it has been sent.
 				vm.loading = true;
@@ -113,7 +113,7 @@
 
 
 				$http({
-					url     : pipeline.url,
+					url     : page.urls.startUrl,
 					method  : 'POST',
 					dataType: 'json',
 					params  : params,
@@ -179,7 +179,7 @@
 
 			// after the cart is cleared, redirect the browser
 			clearPromise.then(function () {
-				window.location = projectsPage;
+				window.location = page.urls.projectsPage;
 			})
 		};
 	}
@@ -250,7 +250,7 @@
 		 */
 		vm.saveAndUse = function () {
 			var parametersToSave = {
-				pipelineId      : pipeline.pipelineId,
+				pipelineId      : page.pipeline.pipelineId,
 				parameterSetName: vm.parameterSetName,
 				// vm.selectedParameters.parameters is an array of maps, this will reduce it down
 				// into a single map with key-value pairs from each parameter name to its corresponding
@@ -262,7 +262,7 @@
 			};
 
 			$http({
-				url             : pipeline.saveParametersUrl,
+				url             : page.urls.saveParametersUrl,
 				method          : "POST",
 				headers         : {
 					"Content-Type": "application/json"
@@ -309,7 +309,7 @@
 		 * so that we can quickly roll back to default values for any
 		 * parameter set.
 		 */
-		var originalSettings = pipeline.parameters.map(function (params) {
+		var originalSettings = page.pipeline.parameters.map(function (params) {
 			return {
 				currentSettings: ng.copy(params),
 				defaultSettings: ng.copy(params)
@@ -396,4 +396,4 @@
 		.controller('FileUploadCtrl', ['$rootScope', 'FileService', FileUploadCtrl])
 		.service('ParameterService', [ParameterService])
 	;
-})(window.angular, window.jQuery, window._, window.PIPELINE, window.location, window.projectsPage, window.PAGE);
+})(window.angular, window.jQuery, window._, window.location, window.PAGE);

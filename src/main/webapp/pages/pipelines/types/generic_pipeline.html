@@ -10,19 +10,19 @@
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 	    window.dependencies = ['irida.pipelines'];
-		
-		var PIPELINE = {
-			url       : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/3b22fd4f-d25b-4c24-accb-f9818bf7a1c9',
-			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
-			parameters: /*[[${parameters}]]*/ [],
-			saveParametersUrl : /*[[@{/pipelines/ajax/parameters}]]*/ '/ajax/pipeline/parameters',
-			pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
-		};
-	
-		var projectsPage = /*[[@{/projects}]]*/ '/projects';
 		var PAGE = {
 			urls: {
-				upload: /*[[@{/referenceFiles/new}]]*/ '/referenceFiles/new'
+				upload: /*[[@{/referenceFiles/new}]]*/ '/referenceFiles/new',
+				startUrl: /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/3b22fd4f-d25b-4c24-accb-f9818bf7a1c9',
+				saveParametersUrl: /*[[@{/pipelines/ajax/parameters}]]*/ '/ajax/pipeline/parameters',
+				projectsPage: /*[[@{/projects}]]*/ '/projects'
+			},
+			i18n: {
+				required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
+			},
+			pipeline: {
+				parameters: /*[[${parameters}]]*/ [],
+				pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
 			}
 		};
 		/*]]>*/
