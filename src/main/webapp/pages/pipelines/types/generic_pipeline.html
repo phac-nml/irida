@@ -61,8 +61,8 @@
 									</select>
 									<span th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</span>
 								</div>
-								<div class="col-md-9" ng-show="upload.uploaded">
-									{{ upload.uploaded.name }}
+								<div class="col-md-9 control-label ng-cloak" ng-show="upload.uploaded">
+									<div class="uploaded-file-name" ng-bind="upload.uploaded.name"></div>
 								</div>
 								<div class="col-md-3">
 									<button id="upload-new-reference-file" class="btn btn-default btn-block" ngf-select="upload.onFileSelect($files)">
