@@ -82,29 +82,35 @@
 		</div>
 		<div class="modal-body">
 			<h4 th:text="#{project.samples.associated.modal.local}">Local Associated Projects</h4>
-			<div class="project-checkboxes">
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" ng-model="associatedProjectsCtrl.display.project"/>
-						&nbsp;
-						<b th:text="${project.label}"></b>
-						<span class="label label-info" th:text="#{project.samples.associated.modal.current-project}">Current Project</span>
-					</label>
-				</div>
-				<div ng-repeat="project in associatedProjectsCtrl.projects.local" class="checkbox project">
-				<label>
-					<input type="checkbox" ng-model="project.selected"/>
-					&nbsp;{{project.label}} </label>
-				</div>
-			</div>
+			<table class="associated-projects-table" width="100%">
+				<tr ng-class="associatedProjectsCtrl.display.project ? 'selected' : ''" ng-click="associatedProjectsCtrl.display.project = !associatedProjectsCtrl.display.project">
+					<td width="300px">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" ng-model="associatedProjectsCtrl.display.project"/>&nbsp;<th:block th:text="${project.label}"></th:block>
+							</label>
+						</div>
+					</td>
+					<td th:text="${project.organism}"></td>
+					<td><span class="label label-info">Current Project</span></td>
+				</tr>
+				<tr ng-class="project.selected ? 'selected' : ''" ng-repeat="project in associatedProjectsCtrl.projects.local" ng-click="project.selected = !project.selected">
+					<td>
+						<div class="checkbox"><label>
+							<input type="checkbox" ng-model="project.selected"/>&nbsp;{{project.label}}
+						</label></div>
+					</td>
+					<td ng-bind="project.organism"></td>
+					<td></td>
+				</tr>
+			</table>
 			<strong ng-hide="associatedProjectsCtrl.projects.local">
 				<fa:icon type="loading" fixed="true"/>
 				&nbsp;
 				<th:block th:text="#{project.samples.associated.modal.fetching-local}"></th:block>
 			</strong>
 			<div class="alert alert-info" ng-show="associatedProjectsCtrl.projects.local.length === 0">
-				<strong th:text="#{project.samples.associated.modal.no-local}">No Locally Associated
-					Projects</strong>
+				<strong th:text="#{project.samples.associated.modal.no-local}">No Locally Associated Projects</strong>
 			</div>
 		</div>
 		<div class="modal-footer">

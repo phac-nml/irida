@@ -17,11 +17,32 @@ tbody {
 td input[type="checkbox"] {
   margin-left: 11px;
 }
+
 .project-checkboxes {
-  .checkbox {
+  border: 1px solid red;
+  label {
+    border: 1px solid chartreuse;
     display: inline-block;
     width: 49.5%;
-    white-space: nowrap;
-    overflow: hidden;
+    margin: 0!important;
+  }
+}
+
+.associated-projects-table {
+  tr {
+    cursor: pointer;
+    background-color: white;
+    transition: all 0.3s ease;
+  }
+
+  tr.selected, tr.selected a {
+    background-color: #337ab7 !important;
+    color: white!important;
+  }
+  .checkbox {
+    margin-top: 0!important;
+  }
+  td {
+    vertical-align: top;
   }
 }
