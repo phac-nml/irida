@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
@@ -37,7 +38,7 @@ public class NcbiBioSampleFiles {
 
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
-	private List<SequenceFile> files;
+	private List<SingleEndSequenceFile> files;
 
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -87,7 +88,7 @@ public class NcbiBioSampleFiles {
 
 	}
 
-	public NcbiBioSampleFiles(String bioSample, List<SequenceFile> files, List<SequenceFilePair> pairs,
+	public NcbiBioSampleFiles(String bioSample, List<SingleEndSequenceFile> files, List<SequenceFilePair> pairs,
 			NcbiInstrumentModel instrument_model, String library_name, NcbiLibrarySelection library_selection,
 			NcbiLibrarySource library_source, NcbiLibraryStrategy library_strategy,
 			String library_construction_protocol, String namespace) {
@@ -106,7 +107,7 @@ public class NcbiBioSampleFiles {
 	public static class Builder {
 		private String bioSample;
 
-		private List<SequenceFile> files;
+		private List<SingleEndSequenceFile> files;
 		private List<SequenceFilePair> pairs;
 		private NcbiInstrumentModel instrumentModel;
 		private String libraryName;
@@ -116,7 +117,7 @@ public class NcbiBioSampleFiles {
 		private String libraryConstructionProtocol;
 		private String namespace;
 
-		public Builder files(List<SequenceFile> files) {
+		public Builder files(List<SingleEndSequenceFile> files) {
 			this.files = files;
 			return this;
 		}
@@ -230,7 +231,7 @@ public class NcbiBioSampleFiles {
 		return bioSample;
 	}
 
-	public List<SequenceFile> getFiles() {
+	public List<SingleEndSequenceFile> getFiles() {
 		return files;
 	}
 
@@ -246,7 +247,7 @@ public class NcbiBioSampleFiles {
 		return pairs;
 	}
 
-	public void setFiles(List<SequenceFile> files) {
+	public void setFiles(List<SingleEndSequenceFile> files) {
 		this.files = files;
 	}
 

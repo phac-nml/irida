@@ -26,14 +26,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles.Builder;
@@ -41,21 +33,24 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiInstrumentModel;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySelection;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySource;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller managing requests to export project data to external sources.
@@ -73,21 +68,16 @@ public class ProjectExportController {
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
-	private final SequenceFileService sequenceFileService;
-	private final SequenceFilePairService sequenceFilePairService;
 	private final SequencingObjectService sequencingObjectService;
 	private final NcbiExportSubmissionService exportSubmissionService;
 	private final UserService userService;
 
 	@Autowired
 	public ProjectExportController(ProjectService projectService, SampleService sampleService,
-			SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
 			SequencingObjectService sequencingObjectService, NcbiExportSubmissionService exportSubmissionService,
 			UserService userService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.sequenceFileService = sequenceFileService;
-		this.sequenceFilePairService = sequenceFilePairService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.exportSubmissionService = exportSubmissionService;
 		this.userService = userService;
@@ -214,9 +204,12 @@ public class ProjectExportController {
 		List<NcbiBioSampleFiles> bioSampleFiles = new ArrayList<>();
 
 		for (BioSampleBody sample : submission.getSamples()) {
-			List<SequenceFile> singleFiles = Lists.newArrayList(sequenceFileService.readMultiple(sample.getSingle()));
-			List<SequenceFilePair> paired = Lists
-					.newArrayList(sequenceFilePairService.readMultiple(sample.getPaired()));
+			List<SingleEndSequenceFile> singleFiles = new ArrayList<>();
+			sequencingObjectService.readMultiple(sample.getSingle()).forEach(
+					f -> singleFiles.add((SingleEndSequenceFile) f));
+
+			List<SequenceFilePair> paired = new ArrayList<>();
+			sequencingObjectService.readMultiple(sample.getPaired()).forEach(f -> paired.add((SequenceFilePair) f));
 
 			Builder sampleBuilder = new NcbiBioSampleFiles.Builder();
 			sampleBuilder.bioSample(sample.getBioSample()).files(singleFiles).pairs(paired)
