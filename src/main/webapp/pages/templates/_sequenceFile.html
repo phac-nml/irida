@@ -14,7 +14,7 @@
 	</td>
 	<td>
 		<a href="#"
-		   th:href="${relative} ? ${sequenceFiles/{objectId}/file/{fileId}/summary(objectId=${object.getId()},fileId=${file.getId()})} : @{/sequenceFiles/{objectId}/file/{id}/summary(objectId=${object.getId()},id=${file.getId()})}"
+		   th:href="${relative} ? ${'sequenceFiles/' + object.getId() + '/file/' + file.getId() + '/summary'} : @{/sequenceFiles/{objectId}/file/{id}/summary(objectId=${object.getId()},id=${file.getId()})}"
 		   class="btn btn-default btn-sm file-name"
 		   th:text="${file.getLabel()}"></a>
 	</td>
