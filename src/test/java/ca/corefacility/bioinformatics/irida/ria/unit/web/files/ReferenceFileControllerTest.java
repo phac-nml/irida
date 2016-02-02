@@ -84,7 +84,7 @@ public class ReferenceFileControllerTest {
 				.thenReturn(new ProjectReferenceFileJoin(project, referenceFile));
 
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		controller.createNewReferenceFile(PROJECT_ID, mockMultipartFiles, response);
+		controller.addReferenceFileToProject(PROJECT_ID, mockMultipartFiles, response);
 
 		verify(projectService).read(PROJECT_ID);
 		verify(projectService).addReferenceFileToProject(eq(project), any(ReferenceFile.class));

@@ -1,4 +1,4 @@
-(function (ng, $, _, pipeline, location, projectsPage) {
+(function (ng, $, _, pipeline, location, projectsPage, page) {
 	"use strict";
 	/**
 	 * Main controller for the pipeline launch page.
@@ -16,6 +16,10 @@
 
 		$scope.$on('PARAMETERS_SAVED', function () {
 			vm.selectedParameters = ParameterService.getSelectedParameters();
+		});
+		
+		$scope.$on('REFERENCE_FILE_UPLOADED', function(event, uploaded) {
+			vm.uploadedReferenceFile = uploaded.id;
 		});
 
 		/*
@@ -37,8 +41,8 @@
 		 */
 		vm.launch = function () {
 			var
-			// reference file id
-			ref          = Number(ng.element('option:selected').val()),
+			// reference file id (use the most recently uploaded or the selected one)
+			ref          = typeof vm.uploadedReferenceFile !== "undefined" ? vm.uploadedReferenceFile : Number(ng.element('option:selected').val()),
 			// User defined name for the pipeline
 			name         = ng.element('#pipeline-name').val(),
 			// All the selected sample single or pair-end files
@@ -367,12 +371,33 @@
 		svc.resetCurrentSelection = function () {
 			selectedParameters.currentSettings = ng.copy(selectedParameters.defaultSettings);
 		}
-	}
+	};
+	
+	function FileUploadService() {
+		var svc = this;
+	};
+	  
+	function FileUploadCtrl($rootScope, fileService) {
+	    var vm = this;
 
-	ng.module('irida.pipelines', ['irida.cart'])
+	    vm.onFileSelect = function ($files) {
+	      if ($files && $files.length) {
+	        fileService.upload(page.urls.upload, $files).then(function (response) {
+	        	vm.uploaded = {
+	        			id: response["uploaded-file-id"],
+	        			name: response["uploaded-file-name"]
+	        	};
+	        	$rootScope.$emit('REFERENCE_FILE_UPLOADED', vm.uploaded);
+	        });
+	      }
+	    };
+	  };
+
+	ng.module('irida.pipelines', ['irida.cart', 'file.utils'])
 		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'notifications', 'ParameterService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
+		.controller('FileUploadCtrl', ['$rootScope', 'FileService', FileUploadCtrl])
 		.service('ParameterService', [ParameterService])
 	;
-})(window.angular, window.jQuery, window._, window.PIPELINE, window.location, window.projectsPage);
+})(window.angular, window.jQuery, window._, window.PIPELINE, window.location, window.projectsPage, window.PAGE);

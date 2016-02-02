@@ -7,10 +7,29 @@
 	      th:href="@{/resources/css/pages/sample_files.css}"/>
 	<style>
 	</style>
-	<script>window.dependencies = ['irida.pipelines', 'References'];</script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	    window.dependencies = ['irida.pipelines'];
+		
+		var PIPELINE = {
+			url       : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/3b22fd4f-d25b-4c24-accb-f9818bf7a1c9',
+			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
+			parameters: /*[[${parameters}]]*/ [],
+			saveParametersUrl : /*[[@{/pipelines/ajax/parameters}]]*/ '/ajax/pipeline/parameters',
+			pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
+		};
+	
+		var projectsPage = /*[[@{/projects}]]*/ '/projects';
+		var PAGE = {
+			urls: {
+				upload: /*[[@{/referenceFiles/new}]]*/ '/referenceFiles/new'
+			}
+		};
+		/*]]>*/
+	</script>
 </head>
 <body>
-<div layout:fragment="page" ng-app="irida.pipelines">
+<div layout:fragment="page" ng-app="irida.pipelines" ddl:bundle-includes="launch-pipeline" >
 	<form class="form-horizontal" method="post" ng-controller="PipelineController as pipeline">
 		<div class="row" id="pipeline-creation">
 			<div class="col-md-10">
@@ -32,9 +51,9 @@
 						<label for="referenceFiles" class="col-sm-2 control-label"
 						       th:text="#{workflow.label.reference-file}">Reference File</label>
 
-						<div class="col-sm-10">
+						<div class="col-sm-10" ng-controller="FileUploadCtrl as upload">
 							<div class="row">
-								<div class="col-md-9">
+								<div class="col-md-9" ng-show="!upload.uploaded">
 									<select class="form-control" name="referenceFiles" id="referenceFiles" th:if="${#lists.size(referenceFiles)} != 0">
 										<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
 										        data:project="${ref.project.id}"
@@ -42,13 +61,20 @@
 									</select>
 									<span th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</span>
 								</div>
+								<div class="col-md-9" ng-show="upload.uploaded">
+									{{ upload.uploaded.name }}
+								</div>
 								<div class="col-md-3">
-									<button id="upload-new-reference-file" class="btn btn-default btn-block">
+									<button id="upload-new-reference-file" class="btn btn-default btn-block" ngf-select="upload.onFileSelect($files)">
 										<i class="fa fa-cloud-upload"></i>
 										<span th:text="#{workflow.upload.new.reference.file}">__Upload new reference file__</span>
 									</button>
 								</div>
 							</div>
+						</div>
+						<div class="col-sm-12">
+							<upload-error></upload-error>
+							<file-upload-progress></file-upload-progress>
 						</div>
 					</div>
 					<div class="form-group"
@@ -254,25 +280,10 @@
 	</form>
 </div>
 <th:block layout:fragment="scripts">
+	<div th:replace="templates/_file.utils :: upload-progress"></div>
+	<div th:replace="templates/_file.utils :: upload-error"></div>
 	<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0"
 	          th:replace="pipelines/templates/parameters :: modal (${parameterModalTitle}, ${parameters})"></th:block>
-	<script th:inline="javascript">
-		/*<![CDATA[*/
-		var PIPELINE = {
-			url       : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/3b22fd4f-d25b-4c24-accb-f9818bf7a1c9',
-			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
-			parameters: /*[[${parameters}]]*/ [],
-			saveParametersUrl : /*[[@{/pipelines/ajax/parameters}]]*/ '/ajax/pipeline/parameters',
-			pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
-		};
-
-		var projectsPage = /*[[@{/projects}]]*/ '/projects';
-		/*]]>*/
-	</script>
-	<script src="/resources/bower_components/bootstrap/js/affix.js"
-	        th:src="@{/resources/bower_components/bootstrap/js/affix.js}"></script>
-	<script src="/resources/js/pages/pipelines/pipeline.launch.js"
-	        th:src="@{/resources/js/pages/pipelines/pipeline.launch.js}"></script>
 </th:block>
 </body>
 </html>
