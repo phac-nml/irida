@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
@@ -48,14 +47,12 @@ public class SequencingRunController {
 
 	private final SequencingRunService sequencingRunService;
 	private final SequencingObjectService objectService;
-	private final SequenceFileWebUtilities sequenceFileUtilities;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public SequencingRunController(SequencingRunService sequencingRunService, SequencingObjectService objectService,
-			SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
+			MessageSource messageSource) {
 		this.sequencingRunService = sequencingRunService;
-		this.sequenceFileUtilities = sequenceFileUtilities;
 		this.objectService = objectService;
 		this.messageSource = messageSource;
 	}
@@ -147,14 +144,13 @@ public class SequencingRunController {
 	private Model getPageDetails(Long runId, Model model) {
 		SequencingRun run = sequencingRunService.read(runId);
 
-		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService.getSequencingObjectsForSequencingRun(run);
-		
-		List<Map<String, Object>> runMaps = new ArrayList<>();
+		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService
+				.getSequencingObjectsForSequencingRun(run);
 
-		sequencingObjectsForSequencingRun.forEach(o -> o.getFiles().forEach(
-				f -> runMaps.add(sequenceFileUtilities.getFileDataMap(f))));	
+		int fileCount = sequencingObjectsForSequencingRun.stream().mapToInt(o -> o.getFiles().size()).sum();
 
-		model.addAttribute("files", runMaps);
+		model.addAttribute("sequencingObjects", sequencingObjectsForSequencingRun);
+		model.addAttribute("fileCount", fileCount);
 		model.addAttribute("run", run);
 
 		return model;

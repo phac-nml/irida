@@ -86,7 +86,7 @@
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
                                 <button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+								        data:ng-click="${'fileCtrl.download(' + pair.getId() + ', ' + file.getId() + ')'}">
 									<span class="fa fa-fw fa-download"></span>
 								</button>
 							</div>
@@ -97,7 +97,7 @@
 						<td>
 							<div class="btn-group btn-group-sm pull-right" role="group">
 								<button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+								        data:ng-click="${'fileCtrl.download(' + pair.getId() + ', ' + file.getId() + ')'}">
 									<span class="fa fa-fw fa-download"></span>
 								</button>
 							</div>
@@ -115,7 +115,7 @@
 								<span class="fa fa-fw fa-trash"></span>
 							</button>
 							<button class="btn btn-default"
-							        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+							        data:ng-click="${'fileCtrl.download(' + file.getId() + ', ' + + file.getSequenceFile().getId() + ')'}">
 								<span class="fa fa-fw fa-download"></span>
 							</button>
 

@@ -73,7 +73,6 @@ public class SamplesControllerTest {
 	private SampleService sampleService;
 	private UserService userService;
 	private ProjectService projectService;
-	private SequenceFileWebUtilities sequenceFileWebUtilities;
 	private SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 
@@ -83,10 +82,9 @@ public class SamplesControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
-		sequenceFileWebUtilities = new SequenceFileWebUtilities();
 		messageSource = mock(MessageSource.class);
 		controller = new SamplesController(sampleService, userService, projectService, sequencingObjectService,
-				sequenceFileWebUtilities, messageSource);
+				messageSource);
 	}
 
 	// ************************************************************************************************
@@ -262,29 +260,6 @@ public class SamplesControllerTest {
 	// ************************************************************************************************
 	// AJAX REQUESTS
 	// ************************************************************************************************
-
-	@Test
-	public void testGetFilesForSample() throws IOException {
-		Sample sample = TestDataFactory.constructSample();
-		List<SampleSequencingObjectJoin> joinList = new ArrayList<>();
-		for (int i = 0; i < 5; i++) {
-			Path path = Paths.get("/tmp/sequence-files/fake-file" + i + ".fast");
-			SequenceFile file = new SequenceFile(path);
-			file.setId(1L + i);
-			joinList.add(new SampleSequencingObjectJoin(sample, new SingleEndSequenceFile(file)));
-
-		}
-		when(sampleService.read(1L)).thenReturn(sample);
-		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class)).thenReturn(
-				joinList);
-		List<Map<String, Object>> result = controller.getFilesForSample(1L);
-		assertEquals("Should have the correct number of sequence file records.", joinList.size(), result.size());
-
-		Map<String, Object> file1 = result.get(0);
-		assertTrue("File has an id", file1.containsKey("identifier"));
-		assertTrue("File has an name", file1.containsKey("label"));
-		assertTrue("File has an created", file1.containsKey("createdDate"));
-	}
 
 	@Test
 	public void testUploadSequenceFiles() throws IOException {

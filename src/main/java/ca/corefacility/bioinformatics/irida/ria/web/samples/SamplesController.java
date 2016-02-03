@@ -101,7 +101,6 @@ public class SamplesController extends BaseController {
 
 	private final ProjectService projectService;
 	private final UserService userService;
-	private final SequenceFileWebUtilities sequenceFileUtilities;
 	
 	private final SequencingObjectService sequencingObjectService;
 
@@ -109,12 +108,11 @@ public class SamplesController extends BaseController {
 
 	@Autowired
 	public SamplesController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, SequenceFileWebUtilities sequenceFileUtilities,
+			SequencingObjectService sequencingObjectService, 
 			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectService = projectService;
-		this.sequenceFileUtilities = sequenceFileUtilities;
 		this.sequencingObjectService = sequencingObjectService;
 		this.messageSource = messageSource;
 	}
@@ -253,28 +251,6 @@ public class SamplesController extends BaseController {
 	/************************************************************************************************
 	 * AJAX REQUESTS
 	 ************************************************************************************************/
-
-	/**
-	 * Get a list of details about files associated with a specific sample
-	 *
-	 * @param sampleId
-	 *            The id of the sample to find the files for.
-	 * @return A list file details.
-	 */
-	@RequestMapping(value = "/samples/ajax/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) {
-		Sample sample = sampleService.read(sampleId);
-
-		Collection<SampleSequencingObjectJoin> joinList = sequencingObjectService.getSequencesForSampleOfType(sample,
-				SingleEndSequenceFile.class);
-
-		List<Map<String, Object>> response = new ArrayList<>();
-		for (SampleSequencingObjectJoin join : joinList) {
-			// there will only be one file in this type of object
-			response.add(sequenceFileUtilities.getFileDataMap(((SingleEndSequenceFile) join.getObject()).getSequenceFile()));
-		}
-		return response;
-	}
 
 	/**
 	 * Remove a given {@link SequencingObject} from a sample

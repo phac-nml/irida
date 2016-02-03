@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -25,12 +24,12 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Objects that were obtained from some sequencing platform.
@@ -105,11 +104,8 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	 */
 	public SequenceFile getFileWithId(Long id) {
 		Set<SequenceFile> files = getFiles();
-		Optional<SequenceFile> findAny = files.stream().filter(s -> s.getId().equals(id)).findAny();
-		if (findAny.isPresent()) {
-			return findAny.get();
-		} else {
-			throw new EntityNotFoundException("No file with id " + id + " in this SequencingObject");
-		}
+
+		return files.stream().filter(s -> s.getId().equals(id)).findAny()
+				.orElseThrow(() -> new EntityNotFoundException("No file with id " + id + " in this SequencingObject"));
 	}
 }

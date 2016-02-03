@@ -38,8 +38,8 @@
      *
      * @param {long} id Id for the sequenceFile to download
      */
-    vm.download = function(id) {
-      var url = TL.BASE_URL + 'sequenceFiles/download/' + id;
+    vm.download = function(objectId, id) {
+      var url = TL.BASE_URL + 'sequenceFiles/download/' + objectId + '/file/' + id;
       fileService.download(url);
     };
 
