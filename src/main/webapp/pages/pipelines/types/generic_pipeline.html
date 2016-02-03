@@ -66,15 +66,16 @@
 									<div class="uploaded-file-name" ng-bind="uploadCtrl.uploaded.name"></div>
 								</div>
 								<div class="col-md-3">
-									<div class="fileUpload btn btn-default btn-sm btn-block">
+									<div class="fileUpload btn btn-default btn-sm btn-block" ng-show="!uploadCtrl.referenceUploadStarted">
 										<th:block th:text="#{workflow.upload.new.reference.file}"></th:block>
 										<fa:icon type="upload"/>
 										<input type="file" id="file-upload-button" class="upload " name="files"
 											ngf-change="uploadCtrl.upload($files)" ngf-accept="'*.fasta'"
 											ngf-select="" />
-										<div class="file-upload-progress ng-cloak" ng-show="uploadCtrl.referenceUploadStarted">
-											<uib-progressbar class="progress-striped active" value="uploadCtrl.progress" />
-										</div>
+										
+									</div>
+									<div class="file-upload-progress" ng-class="{fadeIn: uploadCtrl.referenceUploadStarted, fadeOut: !uploadCtrl.referenceUploadStarted}">
+										<uib-progressbar class="progress-striped active" value="uploadCtrl.progress">{{ uploadCtrl.progress }}%</uib-progressbar>
 									</div>
 								</div>
 							</div>
