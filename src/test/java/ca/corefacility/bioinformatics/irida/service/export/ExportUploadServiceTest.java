@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 
 import com.google.common.collect.Lists;
@@ -70,7 +71,8 @@ public class ExportUploadServiceTest {
 
 		assertTrue("submission.xml created", fileSystem.exists(createdDirectory + "/submission.xml"));
 		assertTrue("submit.ready created", fileSystem.exists(createdDirectory + "/submit.ready"));
-		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next();
+		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next()
+				.getSequenceFile();
 		assertTrue("seqfile created", fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq"));
 	}
 
@@ -288,7 +290,9 @@ public class ExportUploadServiceTest {
 		Path tempFile = Files.createTempFile("sequencefile", ".fastq");
 		SequenceFile sequenceFile = new SequenceFile(tempFile);
 		sequenceFile.setId(1L);
-		ncbiBioSampleFiles.setFiles(Lists.newArrayList(sequenceFile));
+		SingleEndSequenceFile singleFile = new SingleEndSequenceFile(sequenceFile);
+		singleFile.setId(1L);
+		ncbiBioSampleFiles.setFiles(Lists.newArrayList(singleFile));
 
 		submission.setBioSampleFiles(Lists.newArrayList(ncbiBioSampleFiles));
 
