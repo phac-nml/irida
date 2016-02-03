@@ -92,7 +92,7 @@
 						</div>
 					</td>
 					<td th:text="${project.organism}"></td>
-					<td><span class="label label-info">Current Project</span></td>
+					<td><span class="label label-info" th:text="#{project.samples.associated.modal.current-project}">Current Project</span></td>
 				</tr>
 				<tr ng-class="project.selected ? 'selected' : ''" ng-repeat="project in associatedProjectsCtrl.projects.local" ng-click="project.selected = !project.selected">
 					<td>
