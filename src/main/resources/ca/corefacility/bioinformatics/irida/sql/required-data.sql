@@ -582,8 +582,6 @@ INSERT INTO `workflow_named_parameters` (id, created_date, name, workflow_id) VA
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-1', 'repeat-minimum-length');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-2', 'repeat-minimum-pid');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-3', 'alternative-allele-fraction');
-INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-4', 'minimum-mapping-quality');
-INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-5', 'minimum-base-quality');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-6', 'minimum-read-coverage');
 
 -- analysis_submission_sequence_file_pair
