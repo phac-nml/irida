@@ -373,27 +373,36 @@
 		}
 	};
 
-	function FileUploadCtrl($rootScope, fileService) {
+	function FileUploadCtrl($rootScope, Upload) {
 	    var vm = this;
+	    
+	    vm.referenceUploadStarted = false;
 
-	    vm.onFileSelect = function ($files) {
-	      if ($files && $files.length) {
-	        fileService.upload(page.urls.upload, $files).then(function (response) {
-	        	vm.uploaded = {
-	        			id: response["uploaded-file-id"],
-	        			name: response["uploaded-file-name"]
-	        	};
-	        	$rootScope.$emit('REFERENCE_FILE_UPLOADED', vm.uploaded);
-	        });
-	      }
+	    vm.upload = function (files) {	    	
+	    	if (files && files.length > 0) {
+	    		vm.referenceUploadStarted = true;
+		    	Upload.upload({
+		    		url: page.urls.upload,
+		    		file: files[0]
+		    	}).progress(function (evt) {
+		    		vm.progress = parseInt(100.0 * evt.loaded / evt.total);
+		    	}).success(function(response) {
+		    		vm.uploaded = {
+		        			id: response["uploaded-file-id"],
+		        			name: response["uploaded-file-name"]
+		        	};
+		        	$rootScope.$emit('REFERENCE_FILE_UPLOADED', vm.uploaded);
+		        	vm.referenceUploadStarted = false;
+		    	});
+	    	}
 	    };
 	  };
 
-	ng.module('irida.pipelines', ['irida.cart', 'file.utils'])
+	ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
 		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'notifications', 'ParameterService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
-		.controller('FileUploadCtrl', ['$rootScope', 'FileService', FileUploadCtrl])
+		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
 		.service('ParameterService', [ParameterService])
 	;
 })(window.angular, window.jQuery, window._, window.location, window.PAGE);

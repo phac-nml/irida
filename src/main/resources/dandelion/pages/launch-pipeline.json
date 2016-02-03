@@ -1,6 +1,6 @@
 {
   "bundle": "launch-pipeline",
-  "dependencies" : ["file-utils", "affix"],
+  "dependencies" : ["ng-file-upload", "affix"],
   "assets": [
     {
       "name": "launch-pipeline",

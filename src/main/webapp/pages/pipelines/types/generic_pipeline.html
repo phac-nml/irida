@@ -51,30 +51,33 @@
 						<label for="referenceFiles" class="col-sm-2 control-label"
 						       th:text="#{workflow.label.reference-file}">Reference File</label>
 
-						<div class="col-sm-10" ng-controller="FileUploadCtrl as upload">
+						<div class="col-sm-10" ng-controller="FileUploadCtrl as uploadCtrl">
 							<div class="row">
-								<div class="col-md-9" ng-show="!upload.uploaded">
-									<select class="form-control" name="referenceFiles" id="referenceFiles" th:if="${#lists.size(referenceFiles)} != 0">
+								<div class="col-md-9 control-label ng-cloak" ng-show="!uploadCtrl.uploaded">
+									<select class="form-control" name="referenceFiles" id="referenceFiles" th:if="${#lists.size(referenceFiles)} != 0"
+											ng-disabled="uploadCtrl.referenceUploadStarted">
 										<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
 										        data:project="${ref.project.id}"
 										        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
 									</select>
-									<span th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</span>
+									<div class="uploaded-file-name" th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</div>
 								</div>
-								<div class="col-md-9 control-label ng-cloak" ng-show="upload.uploaded">
-									<div class="uploaded-file-name" ng-bind="upload.uploaded.name"></div>
+								<div class="col-md-9 control-label ng-cloak" ng-show="uploadCtrl.uploaded">
+									<div class="uploaded-file-name" ng-bind="uploadCtrl.uploaded.name"></div>
 								</div>
 								<div class="col-md-3">
-									<button id="upload-new-reference-file" class="btn btn-default btn-block" ngf-select="upload.onFileSelect($files)">
-										<i class="fa fa-cloud-upload"></i>
-										<span th:text="#{workflow.upload.new.reference.file}">__Upload new reference file__</span>
-									</button>
+									<div class="fileUpload btn btn-default btn-sm btn-block">
+										<th:block th:text="#{workflow.upload.new.reference.file}"></th:block>
+										<fa:icon type="upload"/>
+										<input type="file" id="file-upload-button" class="upload " name="files"
+											ngf-change="uploadCtrl.upload($files)" ngf-accept="'*.fasta'"
+											ngf-select="" />
+										<div class="file-upload-progress ng-cloak" ng-show="uploadCtrl.referenceUploadStarted">
+											<uib-progressbar class="progress-striped active" value="uploadCtrl.progress" />
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="col-sm-12">
-							<upload-error></upload-error>
-							<file-upload-progress></file-upload-progress>
 						</div>
 					</div>
 					<div class="form-group"
