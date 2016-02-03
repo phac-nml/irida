@@ -7,13 +7,16 @@
 	 * @param {Object} $q Angular promises.
 	 * @returns {{fetchSamples: fetchSamples}}.
 	 */
-	function samplesService ($http, $q) {
-		var samples;
-
+	function samplesService ($http, $q, compiledNotification) {
+		var initialized = false; // Show samples loading notification only if not the first load
 		// Private Methods
-
 		function getProjectSamples() {
-			return $http.get(page.urls.project);
+			return $http.get(page.urls.samples.project);
+		}
+
+		function getLocalSamples(id) {
+			var url = page.urls.samples.local.replace(/{id}/, id);
+			return $http.get(url);
 		}
 
 		// Public Methods
@@ -26,7 +29,7 @@
 		function fetchSamples(options) {
 			var promises = [],
 			    // By default only load project samples
-			    config = { project: true, local: false, remote: false };
+			    config   = {project: true, local: [], remote: []};
 
 			lodash.merge(config, options);
 
@@ -34,20 +37,46 @@
 			if(config.project) {
 				promises.push(getProjectSamples());
 			}
+			if (config.local.length > 0) {
+				config.local.forEach(function (id) {
+					promises.push(getLocalSamples(id));
+				});
+			}
 
 			return $q.all(promises).then(function (responses) {
-				samples = samples || [];
+				var samples = [], items = [];
 				responses.forEach(function (response) {
 					if (response.data.hasOwnProperty("samples")) {
 						samples = samples.concat(response.data.samples);
+						// This is adding information to build up the message to display to the users so that
+						// they know how many samples from which project were added to the table.
+						items.push({samples: response.data.samples.length, project: response.data.project.label});
 					}
 				});
+				if (initialized) {
+					// Show a notification of the currently displayed samples only if it is not
+					// on the page load (ie. current project samples only)
+					compiledNotification.show(items, "samplesUpdate.html", {type: "information"});
+				}
+				else {
+					initialized = true;
+				}
 				return samples;
 			});
 		}
 
 		return {
 			fetchSamples: fetchSamples
+		};
+	}
+
+	function associatedProjectsService($http, $q) {
+		function getLocalAssociated() {
+			return $http.get(page.urls.associated.local);
+		}
+
+		return {
+			getLocal: getLocalAssociated
 		};
 	}
 
@@ -103,7 +132,8 @@
 		};
 	}
 
-	ng.module("irida.projects.samples.service", ["datatables"])
-		.factory("samplesService", ["$http", "$q", samplesService])
+	ng.module("irida.projects.samples.service", ["datatables", "irida.notifications"])
+		.factory("samplesService", ["$http", "$q", "compiledNotification", samplesService])
+		.factory("associatedProjectsService", ["$http", "$q", associatedProjectsService])
 		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", tableService]);
 })(window.angular, window.jQuery, window._, window.PAGE);

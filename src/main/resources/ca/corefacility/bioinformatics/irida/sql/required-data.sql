@@ -267,6 +267,9 @@ INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:27:59', 4, 53);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:26:59', 5, 52);
 
+INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:26:59', 3, 1);
+INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:27:59', 3, 2);
+INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES ('2014-07-30 08:26:59', 3, 3);
 -- related projects
 insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (1,2,now());
 insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (1,3,now());

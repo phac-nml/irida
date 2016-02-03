@@ -9,19 +9,29 @@
 	 * @param {Object} tableService Service to handle rendering the datatable.
 	 * @constructor
 	 */
-	function SamplesController($scope, $log, samplesService, tableService) {
-		var vm = this, previousIndex = null;
+	function SamplesController($scope, $log, $uibModal, samplesService, tableService) {
+		var vm = this, previousIndex = null,
+		    // Which projects to display
+		    display = {
+			    project: true,
+			    local: []
+		    };
 		vm.selected = [];
 
 		$scope.$on("DATATABLE_UPDATED", function () {
 			previousIndex = null;
 		});
 
+
+
 		// BUTTON STATE
 		vm.disabled = {
 			lessThanTwo: true,
 			lessThanOne: true
 		};
+
+		// Hide project name unless multiple displayed.
+		vm.showProjectname = false;
 
 		// Create the datatable.
 		vm.dtColumnDefs = tableService.createTableColumnDefs();
@@ -33,7 +43,45 @@
 		});
 
 		vm.displayProjectsModal = function() {
-			$log.warn("TODO: Implement displaying multiple projects");
+			var modal = $uibModal.open({
+				templateUrl: "associated-projects.modal.html",
+				controllerAs: "associatedProjectsCtrl",
+				controller: "AssociatedProjectsCtrl",
+				resolve: {
+					display: function () {
+						return display;
+					}
+				}
+			});
+
+			modal.result.then(function (items) {
+				// Check to make sure their are updates to the table to process.
+				if (!ng.equals(items, display)) {
+					display = items;
+					samplesService.fetchSamples(items).then(function (samples) {
+						// Need to know if the sample should be selected, and remove any that are no longer in the table.;
+						var s = [];
+						samples.forEach(function (sample) {
+							if (vm.selected.find(function (item) {
+									// Check to see if the selected item matches the sample and from the right project.
+									if (item.sample.identifier === sample.sample.identifier &&
+										item.project.identifier === sample.project.identifier) {
+										s.push(item);
+										return true;
+									}
+								})) {
+								sample.selected = true;
+							}
+						});
+						// Update the samples that are selected and currently in the table.
+						vm.selected = s;
+						// Determine if the project name needs to be displayed in the table.
+						vm.showProjectname = display.local.length > 0;
+						// Update the samples;
+						vm.samples = samples;
+					});
+				}
+			})
 		};
 
 		vm.merge = function () {
@@ -69,7 +117,8 @@
 			vm.selected = [];
 			vm.samples.forEach(function (sample) {
 				sample.selected = vm.allSelected;
-				if(vm.allSelected) vm.selected.push(sample);
+				if(vm.allSelected) {
+					vm.selected.push(sample)};
 			});
 			updateButtons();
 		};
@@ -124,7 +173,7 @@
 		 */
 		vm.selectPage = function () {
 			var rows = ng.element("tbody tr");
-			rows.each(function(index, row) {
+			rows.each(function(i, row) {
 				var index = $(row).data("index"),
 					item = vm.samples[index];
 				if(!item.selected) {
@@ -147,6 +196,40 @@
 		}
 	}
 
-	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service"])
-		.controller("SamplesController", ["$scope", "$log",  "samplesService", "tableService", SamplesController]);
+	function AssociatedProjectsCtrl($uibModalInstance, associatedProjectsService, display) {
+		var vm = this;
+		vm.projects = {};
+		vm.display = ng.copy(display);
+		vm.local = {};
+
+		// Get the local project
+		associatedProjectsService.getLocal().then(function (result) {
+			// Check to see if they are already displayed.
+			result.data.forEach(function(project) {
+				project.selected = vm.display.local.indexOf(project.identifier) > -1;
+			});
+			vm.projects.local = result.data;
+		});
+
+		vm.close = function () {
+			$uibModalInstance.dismiss();
+		};
+
+		vm.showProjects = function () {
+			// Just want the ids
+			vm.display.local = [];
+			vm.projects.local.forEach(function (project) {
+				if (project.selected) {
+					vm.display.local.push(project.identifier);
+				}
+			});
+
+			$uibModalInstance.close(vm.display);
+		};
+	}
+
+	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ui.bootstrap"])
+		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
+		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
+	;
 })(window.angular);
