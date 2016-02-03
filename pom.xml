@@ -685,6 +685,23 @@
 							<goal>test</goal>
 						</goals>
 					</execution>
+					<!-- Ignore the front end installs -->
+					<execution>
+						<id>install node and npm</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>bower install</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>gulp default</id>
+						<phase />
+					</execution>
 				</executions>
 			</plugin>
 
@@ -718,6 +735,23 @@
 						<goals>
 							<goal>javadoc</goal>
 						</goals>
+					</execution>
+					<!-- Ignore the front end installs -->
+					<execution>
+						<id>install node and npm</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>bower install</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>gulp default</id>
+						<phase />
 					</execution>
 				</executions>
 				<configuration>
@@ -781,6 +815,23 @@
 							<dataFile>${jacoco.it.execution.data.file}</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 						</configuration>
+					</execution>
+					<!-- Ignore the front end installs -->
+					<execution>
+						<id>install node and npm</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>bower install</id>
+						<phase />
+					</execution>
+					<execution>
+						<id>gulp default</id>
+						<phase />
 					</execution>
 				</executions>
 			</plugin>
@@ -877,6 +928,68 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>${maven.site.plugin.version}</version>
+				<configuration>
+					<!-- straight-up skip maven's site generation. We're taking over the
+						site phase to generate documentation with jekyll outside of maven. -->
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>${frontend-maven-plugin.version}</version>
+
+				<!-- optional -->
+				<configuration>
+					<workingDirectory>src/main/webapp</workingDirectory>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v5.5.0</nodeVersion>
+							<npmVersion>3.3.12</npmVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<!-- Optional configuration which provides for running any npm command -->
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>bower install</id>
+						<goals>
+							<goal>bower</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>gulp default</id>
+						<goals>
+							<goal>gulp</goal>
+						</goals>
+						<configuration>
+							<arguments>start</arguments>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -1000,73 +1113,6 @@
 			<properties>
 				<include.tests>**/ria/integration/**/*IT.java</include.tests>
 			</properties>
-			<build>
-				<plugins>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-site-plugin</artifactId>
-						<version>${maven.site.plugin.version}</version>
-						<configuration>
-							<!-- straight-up skip maven's site generation. We're taking over the
-                                site phase to generate documentation with jekyll outside of maven. -->
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-
-					<plugin>
-						<groupId>com.github.eirslett</groupId>
-						<artifactId>frontend-maven-plugin</artifactId>
-						<version>${frontend-maven-plugin.version}</version>
-
-						<!-- optional -->
-						<configuration>
-							<workingDirectory>src/main/webapp</workingDirectory>
-						</configuration>
-
-						<executions>
-							<execution>
-								<id>install node and npm</id>
-								<goals>
-									<goal>install-node-and-npm</goal>
-								</goals>
-								<configuration>
-									<nodeVersion>v5.5.0</nodeVersion>
-									<npmVersion>3.3.12</npmVersion>
-								</configuration>
-							</execution>
-							<execution>
-								<id>npm install</id>
-								<goals>
-									<goal>npm</goal>
-								</goals>
-								<!-- Optional configuration which provides for running any npm command -->
-								<configuration>
-									<arguments>install</arguments>
-								</configuration>
-							</execution>
-							<execution>
-								<id>bower install</id>
-								<goals>
-									<goal>bower</goal>
-								</goals>
-								<configuration>
-									<arguments>install</arguments>
-								</configuration>
-							</execution>
-							<execution>
-								<id>gulp default</id>
-								<goals>
-									<goal>gulp</goal>
-								</goals>
-								<configuration>
-									<arguments>start</arguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 		<profile>
 			<id>service_testing</id>
