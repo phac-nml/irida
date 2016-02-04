@@ -644,6 +644,12 @@
 							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude> 
 								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude> 
 								</excludes> -->
+							<includes>
+								<include>${include.tests}</include>
+							</includes>
+							<excludes>
+								<exclude>${exclude.tests}</exclude>
+							</excludes>
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
@@ -857,19 +863,6 @@
 				<version>${maven.exec.plugin.version}</version>
 				<executions>
 					<execution>
-						<id>exec-bower-install</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<executable>bower</executable>
-							<arguments>
-								<argument>install</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>exec-jekyll-build</id>
 						<phase>site</phase>
 						<configuration>
@@ -892,10 +885,62 @@
 				<artifactId>maven-site-plugin</artifactId>
 				<version>${maven.site.plugin.version}</version>
 				<configuration>
-					<!-- straight-up skip maven's site generation. We're taking over the 
+					<!-- straight-up skip maven's site generation. We're taking over the
 						site phase to generate documentation with jekyll outside of maven. -->
 					<skip>true</skip>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>${frontend-maven-plugin.version}</version>
+
+				<!-- optional -->
+				<configuration>
+					<workingDirectory>src/main/webapp</workingDirectory>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v5.5.0</nodeVersion>
+							<npmVersion>3.3.12</npmVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<!-- Optional configuration which provides for running any npm command -->
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>bower install</id>
+						<goals>
+							<goal>bower</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>gulp default</id>
+						<goals>
+							<goal>gulp</goal>
+						</goals>
+						<configuration>
+							<arguments>start</arguments>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -976,6 +1021,7 @@
 		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
+		<frontend-maven-plugin.version>0.0.27</frontend-maven-plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -1005,5 +1051,56 @@
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
 	</properties>
+
+	<!-- Failsafe integration test profiles -->
+	<profiles>
+		<profile>
+			<id>ui_testing</id>
+			<properties>
+				<include.tests>**/ria/integration/**/*IT.java</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>service_testing</id>
+			<properties>
+				<include.tests>
+					**/service/impl/integration/**/*IT.java,
+					**/service/workflow/integration/**/*IT.java,
+					**/repositories/**/*IT.java	
+				</include.tests>
+				<exclude.tests>**/*Galaxy*IT.java,
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisSubmissionCleanupServiceImplIT.java
+				</exclude.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>rest_testing</id>
+			<properties>
+				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>galaxy_testing</id>
+			<properties>
+				<include.tests>
+					**/*Galaxy*IT.java,
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisSubmissionCleanupServiceImplIT.java,
+					**/SNVPhylAnalysisIT.java,
+				</include.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>all_testing</id>
+			<properties>
+				<include.tests>**/*IT.java, **/IT*.java</include.tests>
+			</properties>
+		</profile>
+	</profiles>
 </project>
