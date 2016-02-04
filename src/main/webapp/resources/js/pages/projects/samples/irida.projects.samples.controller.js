@@ -101,8 +101,11 @@
 		};
 
 		vm.addToCart = function () {
-				$log.warn("TODO: Implement add to cart functionality");
-			};
+			var selected = vm.samples.filter(function (sample) {
+				return sample.selected;
+			});
+			samplesService.addSamplesToCart(selected);
+		};
 
 		// This properly adds the buttons to the table.
 		vm.dtInstanceCallback = function(instance) {
