@@ -26,9 +26,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
@@ -60,13 +61,13 @@ public class SequenceFileController {
 	/*
 	 * SERVICES
 	 */
-	private SequenceFileService sequenceFileService;
+	private SequencingObjectService sequencingObjectService;
 	private final AnalysisService analysisService;
 
 	@Autowired
-	public SequenceFileController(SequenceFileService sequenceFileService, SequencingRunService sequencingRunService,
+	public SequenceFileController(SequencingObjectService sequencingObjectService, SequencingRunService sequencingRunService,
 			final AnalysisService analysisService) {
-		this.sequenceFileService = sequenceFileService;
+		this.sequencingObjectService = sequencingObjectService;
 		this.dateFormatter = new DateFormatter();
 		this.analysisService = analysisService;
 	}
@@ -81,13 +82,15 @@ public class SequenceFileController {
 	 *            Id for the sequence file
 	 * @return The name of the template.
 	 */
-	@RequestMapping(value = { "/sequenceFiles/{sequenceFileId}/summary",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/summary",
-			"/sequencingRuns/{runId}/sequenceFiles/{sequenceFileId}/summary" })
-	public String getSequenceFilePage(final Model model, @PathVariable Long sequenceFileId) {
+	@RequestMapping(value = {
+			"/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary",
+			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary" })
+	public String getSequenceFilePage(final Model model, @PathVariable Long sequencingObjectId,
+			@PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
-		createDefaultPageInfo(sequenceFileId, model);
+		createDefaultPageInfo(sequencingObjectId, sequenceFileId, model);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
 		return FILE_DETAIL_PAGE;
 	}
@@ -102,12 +105,14 @@ public class SequenceFileController {
 	 *            Id for the sequence file.
 	 * @return The name fo the template
 	 */
-	@RequestMapping(value = { "/sequenceFiles/{sequenceFileId}/overrepresented",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/overrepresented",
-			"/sequencingRuns/{runId}/sequenceFiles/{sequenceFileId}/overrepresented" })
-	public String getSequenceFileOverrepresentedPage(final Model model, @PathVariable Long sequenceFileId) {
+	@RequestMapping(value = {
+			"/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/overrepresented",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/overrepresented",
+			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/overrepresented" })
+	public String getSequenceFileOverrepresentedPage(final Model model, @PathVariable Long sequencingObjectId,
+			@PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
-		createDefaultPageInfo(sequenceFileId, model);
+		createDefaultPageInfo(sequencingObjectId, sequenceFileId, model);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_OVERREPRESENTED);
 		return FILE_OVERREPRESENTED;
 	}
@@ -122,10 +127,11 @@ public class SequenceFileController {
 	 * @throws IOException
 	 *             if we can't write the file to the response.
 	 */
-	@RequestMapping("/sequenceFiles/download/{sequenceFileId}")
-	public void downloadSequenceFile(@PathVariable Long sequenceFileId, HttpServletResponse response)
-			throws IOException {
-		SequenceFile sequenceFile = sequenceFileService.read(sequenceFileId);
+	@RequestMapping("/sequenceFiles/download/{sequencingObjectId}/file/{sequenceFileId}")
+	public void downloadSequenceFile(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId,
+			HttpServletResponse response) throws IOException {
+		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
+		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
 		Path path = sequenceFile.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
 		Files.copy(path, response.getOutputStream());
@@ -144,10 +150,12 @@ public class SequenceFileController {
 	 * @throws IOException
 	 *             if we can't write the image out to the response.
 	 */
-	@RequestMapping(value = "/sequenceFiles/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
-	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type,
-			HttpServletResponse response, @RequestParam(defaultValue = "false") boolean thumb) throws IOException {
-		SequenceFile file = sequenceFileService.read(sequenceFileId);
+	@RequestMapping(value = "/sequenceFiles/img/{sequencingObjectId}/file/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
+	public void downloadSequenceFileImages(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId,
+			@PathVariable String type, HttpServletResponse response, @RequestParam(defaultValue = "false") boolean thumb)
+			throws IOException {
+		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
+		SequenceFile file = sequencingObject.getFileWithId(sequenceFileId);
 		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(file);
 		if (fastQC != null) {
 			byte[] chart = new byte[0];
@@ -162,8 +170,8 @@ public class SequenceFileController {
 			}
 			if (thumb) {
 				BufferedImage image = ImageIO.read(new ByteArrayInputStream(chart));
-				BufferedImage thumbnail = Scalr
-						.resize(image, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, 160, Scalr.OP_ANTIALIAS);
+				BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, 160,
+						Scalr.OP_ANTIALIAS);
 				ImageIO.write(thumbnail, "png", response.getOutputStream());
 			} else {
 				response.getOutputStream().write(chart);
@@ -180,9 +188,11 @@ public class SequenceFileController {
 	 * @param model
 	 *            {@link Model}
 	 */
-	private void createDefaultPageInfo(Long sequenceFileId, Model model) {
-		SequenceFile file = sequenceFileService.read(sequenceFileId);
+	private void createDefaultPageInfo(Long sequencingObjectId, Long sequenceFileId, Model model) {
+		SequencingObject seqObject = sequencingObjectService.read(sequencingObjectId);
+		SequenceFile file = seqObject.getFileWithId(sequenceFileId);
 		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(file);
+		model.addAttribute("sequencingObject", seqObject);
 		model.addAttribute("file", file);
 		model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
 		model.addAttribute("fastQC", fastQC);

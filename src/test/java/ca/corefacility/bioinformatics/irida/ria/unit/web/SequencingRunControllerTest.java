@@ -1,13 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,11 +24,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.SequencingRunController;
-import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -36,17 +35,14 @@ public class SequencingRunControllerTest {
 
 	private SequencingRunService sequencingRunService;
 	private SequencingObjectService objectService;
-	private SequenceFileWebUtilities sequenceFileUtilities;
 	private MessageSource messageSource;
 
 	@Before
 	public void setup() {
 		sequencingRunService = mock(SequencingRunService.class);
-		sequenceFileUtilities = mock(SequenceFileWebUtilities.class);
 		objectService = mock(SequencingObjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new SequencingRunController(sequencingRunService, objectService, sequenceFileUtilities,
-				messageSource);
+		controller = new SequencingRunController(sequencingRunService, objectService, messageSource);
 	}
 
 	@Test
@@ -75,7 +71,8 @@ public class SequencingRunControllerTest {
 		verify(sequencingRunService).read(runId);
 		assertEquals(SequencingRunController.DETAILS_VIEW, detailsPage);
 		assertEquals(sequencingRunEntity, model.get("run"));
-		assertTrue(model.containsKey("files"));
+		assertTrue(model.containsKey("sequencingObjects"));
+		assertTrue(model.containsKey("fileCount"));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -84,23 +81,21 @@ public class SequencingRunControllerTest {
 		Long runId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		SequencingRun sequencingRunEntity = new SequencingRunEntity();
-		Map<String, Object> fileMap = ImmutableMap.of("id", 5L);
 
 		ImmutableSet<SequencingObject> files = ImmutableSet.of(new SingleEndSequenceFile(new SequenceFile()));
 
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
 		when(objectService.getSequencingObjectsForSequencingRun(sequencingRunEntity)).thenReturn(files);
-		when(sequenceFileUtilities.getFileDataMap(any(SequenceFile.class))).thenReturn(fileMap);
 
 		String filesPage = controller.getFilesPage(runId, model);
 
 		assertEquals(SequencingRunController.FILES_VIEW, filesPage);
-		assertEquals(fileMap, ((List) model.get("files")).iterator().next());
+		assertFalse(((Collection) model.get("sequencingObjects")).isEmpty());
 		assertEquals(sequencingRunEntity, model.get("run"));
+		assertTrue(model.containsKey("fileCount"));
 
 		verify(sequencingRunService).read(runId);
 		verify(objectService).getSequencingObjectsForSequencingRun(sequencingRunEntity);
-		verify(sequenceFileUtilities).getFileDataMap(any(SequenceFile.class));
 
 	}
 }

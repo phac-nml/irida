@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -66,12 +65,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link ProjectSampleJoin}.
 	 */
 	private ProjectSampleJoinRepository psjRepository;
-
-	/**
-	 * Reference to {@link SampleSequenceFileJoinRepository} for managing
-	 * {@link SampleSequenceFileJoin}.
-	 */
-	private SampleSequenceFileJoinRepository ssfRepository;
 	
 	private final SequenceFilePairRepository sequenceFilePairRepository;
 	
@@ -104,13 +97,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
-			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			final SequenceFilePairRepository sequenceFilePairRepository, AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository,
-			Validator validator) {
+			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
+			final SequenceFilePairRepository sequenceFilePairRepository,
+			AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
-		this.ssfRepository = ssfRepository;
 		this.analysisRepository = analysisRepository;
 		this.sequenceFilePairRepository = sequenceFilePairRepository;
 		this.assembledGenomeAnalysisRepository = assembledGenomeAnalysisRepository;
@@ -170,14 +162,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#file, 'canReadSequenceFile')")
-	public Join<Sample, SequenceFile>  getSampleForSequeneFile(SequenceFile file) {
-		return ssfRepository.getSampleForSequenceFile(file);
+	@PreAuthorize("hasPermission(#seqObject, 'canReadSequencingObject')")
+	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject) {
+		return ssoRepository.getSampleForSequencingObject(seqObject);
 	}
 
 	/**

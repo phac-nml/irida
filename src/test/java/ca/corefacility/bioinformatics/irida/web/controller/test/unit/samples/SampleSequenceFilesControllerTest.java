@@ -52,7 +52,6 @@ import com.google.common.net.HttpHeaders;
  */
 public class SampleSequenceFilesControllerTest {
 	private RESTSampleSequenceFilesController controller;
-	private SequenceFileService sequenceFileService;
 	private SampleService sampleService;
 	private SequencingRunService miseqRunService;
 	private SequencingObjectService sequencingObjectService;
@@ -60,12 +59,10 @@ public class SampleSequenceFilesControllerTest {
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
-		sequenceFileService = mock(SequenceFileService.class);
 		miseqRunService = mock(SequencingRunService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 
-		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, miseqRunService,
-				sequencingObjectService);
+		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService);
 	}
 
 	@Test
@@ -206,8 +203,8 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s)))
 				.thenReturn(sso);
-
-		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
+		when(sequencingObjectService.read(so.getId())).thenReturn(so);
+		
 		ModelMap modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
 		verify(sampleService).read(s.getId());
 		verify(sampleService, times(1)).read(s.getId());

@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.analysis.submission;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import javax.validation.Validator;
 
@@ -22,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
@@ -44,11 +42,6 @@ public class AnalysisSubmissionServiceImplTest {
 	private UserRepository userRepository;
 	@Mock
 	private ReferenceFileRepository referenceFileRepository;
-	@Mock
-	private SequenceFileService sequenceFileService;
-	@Mock
-	private SequenceFilePairService sequenceFilePairService;
-	
 	@Mock
 	private SequencingObjectService sequencingObjectService;
 	

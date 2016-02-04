@@ -25,6 +25,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -97,4 +98,19 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	 * @return a Set of {@link SequenceFile}
 	 */
 	public abstract Set<SequenceFile> getFiles();
+
+	/**
+	 * Get the {@link SequenceFile} with the given id in this object's files
+	 * collection
+	 * 
+	 * @param id
+	 *            the ID of the {@link SequenceFile} to get
+	 * @return a {@link SequenceFile}
+	 */
+	public SequenceFile getFileWithId(Long id) {
+		Set<SequenceFile> files = getFiles();
+
+		return files.stream().filter(s -> s.getId().equals(id)).findAny()
+				.orElseThrow(() -> new EntityNotFoundException("No file with id " + id + " in this SequencingObject"));
+	}
 }

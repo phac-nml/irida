@@ -260,5 +260,29 @@
 		<dropTable tableName="analysis_submission_sequence_file_single" />
 		<dropTable tableName="analysis_submission_sequence_file_single_AUD" />
 
+		<!-- Change the NCBI exporter to use single end files -->
+		<createTable tableName="ncbi_export_biosample_sequence_file_single_end">
+			<column name="ncbi_export_biosample_id" type="varchar(255)">
+				<constraints nullable="false"
+					foreignKeyName="FK_NCBI_EXPORT_SINGLE_END_FILE_SAMPLE"
+					referencedColumnNames="id" referencedTableName="ncbi_export_biosample" />
+			</column>
+			<column name="files_id" type="bigint(20)">
+				<constraints nullable="false"
+					foreignKeyName="FK_NCBI_EXPORT_SINGLE_END_FILE_FILE"
+					referencedColumnNames="id" referencedTableName="sequence_file_single_end" />
+			</column>
+		</createTable>
+
+		<sql>
+			INSERT INTO ncbi_export_biosample_sequence_file_single_end
+			(ncbi_export_biosample_id, files_id) SELECT
+			s.ncbi_export_biosample_id, o.id FROM
+			ncbi_export_biosample_sequence_file s INNER JOIN
+			sequence_file_single_end o ON s.files_id=o.file_id
+		</sql>
+
+		<dropTable tableName="ncbi_export_biosample_sequence_file" />
+
 	</changeSet>
 </databaseChangeLog>

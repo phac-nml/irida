@@ -45,14 +45,10 @@
 		<!-- Add pairs to sample_sequencingobject -->
 		<sql>
 			INSERT INTO sample_sequencingobject (sample_id,
-			sequencingobject_id,
-			created_date)
-			SELECT DISTINCT ss.sample_id,
-			p.pair_id, MIN(ss.createdDate)
-			FROM
-			sequencefile_sample ss INNER JOIN
-			sequence_file_pair_files p ON
-			p.files_id=ss.sequencefile_id;
+			sequencingobject_id, created_date) SELECT DISTINCT ss.sample_id,
+			p.pair_id, MIN(ss.createdDate) FROM sequencefile_sample ss INNER JOIN
+			sequence_file_pair_files p ON p.files_id=ss.sequencefile_id GROUP BY
+			p.pair_id;
 		</sql>
 
 		<!-- Add single files to sample_sequencingobject -->
