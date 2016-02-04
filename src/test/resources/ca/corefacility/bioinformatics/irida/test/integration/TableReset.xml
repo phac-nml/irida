@@ -74,7 +74,7 @@
 	<ncbi_export_submission/>
 	<ncbi_export_biosample/>
 	<ncbi_export_submission_biosample/>
-	<ncbi_export_biosample_sequence_file/>
+	<ncbi_export_biosample_sequence_file_single_end/>
 	<ncbi_export_biosample_sequence_file_pair/>
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
