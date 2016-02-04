@@ -37,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -68,8 +67,7 @@ public class SequencingRunServiceImplIT {
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 	@Autowired
 	private SequencingRunService miseqRunService;
-	@Autowired
-	private SequenceFileService sequenceFileService;
+
 	@Autowired
 	private SampleService sampleService;
 
@@ -179,22 +177,22 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testDeleteCascade() {
-		assertTrue("Sequence file should exist before", sequenceFileService.exists(2L));
+		assertTrue("Sequence file should exist before", objectService.exists(3L));
 		assertTrue("file pair should exist before", objectService.exists(1L));
 		miseqRunService.delete(2L);
-		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(2L));
+		assertFalse("Sequence file should be deleted on cascade", objectService.exists(3L));
 		assertFalse("file pair should not exist after", objectService.exists(1L));
-		assertTrue("file 7 should not be deleted because it's in an analysis", sequenceFileService.exists(7L));
+		assertTrue("file 7 should not be deleted because it's in an analysis", objectService.exists(6L));
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testDeleteCascadeToSample() {
-		assertTrue("Sequence file should exist before", sequenceFileService.exists(1L));
+		assertTrue("Sequence file should exist before", objectService.exists(2L));
 		miseqRunService.delete(3L);
-		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(1L));
-		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(3L));
-		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(4L));
+		assertFalse("Sequence file should be deleted on cascade", objectService.exists(2L));
+		assertFalse("Sequence file should be deleted on cascade", objectService.exists(4L));
+		assertFalse("Sequence file should be deleted on cascade", objectService.exists(5L));
 		assertFalse("Sample should be deleted on cascade", sampleService.exists(2L));
 		assertTrue("This sample should not be removed", sampleService.exists(1L));
 	}
