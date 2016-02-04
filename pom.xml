@@ -685,23 +685,6 @@
 							<goal>test</goal>
 						</goals>
 					</execution>
-					<!-- Ignore the front end installs -->
-					<execution>
-						<id>install node and npm</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>npm install</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>bower install</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>gulp default</id>
-						<phase />
-					</execution>
 				</executions>
 			</plugin>
 
@@ -735,23 +718,6 @@
 						<goals>
 							<goal>javadoc</goal>
 						</goals>
-					</execution>
-					<!-- Ignore the front end installs -->
-					<execution>
-						<id>install node and npm</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>npm install</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>bower install</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>gulp default</id>
-						<phase />
 					</execution>
 				</executions>
 				<configuration>
@@ -815,23 +781,6 @@
 							<dataFile>${jacoco.it.execution.data.file}</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 						</configuration>
-					</execution>
-					<!-- Ignore the front end installs -->
-					<execution>
-						<id>install node and npm</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>npm install</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>bower install</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>gulp default</id>
-						<phase />
 					</execution>
 				</executions>
 			</plugin>
