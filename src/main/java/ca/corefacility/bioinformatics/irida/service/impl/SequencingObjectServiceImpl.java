@@ -194,4 +194,13 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		return super.readMultiple(idents);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequencingObject')")
+	public Boolean exists(Long id) {
+		return super.exists(id);
+	}
+
 }
