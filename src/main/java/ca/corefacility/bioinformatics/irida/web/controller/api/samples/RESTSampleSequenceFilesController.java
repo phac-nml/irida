@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,14 +20,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -520,49 +517,6 @@ public class RESTSampleSequenceFilesController {
 		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
 		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
 				.withRel(REL_SAMPLE_SEQUENCE_FILES));
-
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
-
-		return modelMap;
-	}
-
-	/**
-	 * Update a {@link SequenceFile} details.
-	 *
-	 * @param sampleId
-	 *            the identifier of the {@link Sample}.
-	 * @param sequenceFileId
-	 *            the identifier of the {@link SequenceFile} to be updated.
-	 * @param updatedFields
-	 *            the updated fields of the {@link Sample}.
-	 * @return a response including links to the {@link Project} and
-	 *         {@link Sample}.
-	 */
-	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ModelMap updateSequenceFile(@PathVariable Long sampleId, @PathVariable String objectType,
-			@PathVariable Long objectId, @PathVariable Long fileId, @RequestBody Map<String, Object> updatedFields) {
-		ModelMap modelMap = new ModelMap();
-
-		// confirm that the project is related to the sample
-		Sample sample = sampleService.read(sampleId);
-
-		SequencingObject readSequenceFilePairForSample = sequencingObjectService.readSequencingObjectForSample(sample,
-				objectId);
-
-		// issue an update request
-		sequenceFileService.update(fileId, updatedFields);
-
-		// respond to the client with a link to self, sequence files collection
-		// and project.
-		RootResource resource = new RootResource();
-		resource.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
-						objectType, readSequenceFilePairForSample.getId(), fileId)).withSelfRel());
-		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(
-				RESTProjectSamplesController.REL_PROJECT_SAMPLES));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
 
