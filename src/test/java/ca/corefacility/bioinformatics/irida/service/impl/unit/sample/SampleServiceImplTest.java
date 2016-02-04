@@ -100,10 +100,10 @@ public class SampleServiceImplTest {
 		s.setId(1L);
 		SequenceFilePair pair = new SequenceFilePair();
 		pair.setAssembledGenome(assembledGenome1);
-		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair))
-				.thenReturn(assembledGenome1);
 
-		when(sequenceFilePairRepository.getSequenceFilePairsForSample(s)).thenReturn(Lists.newArrayList(pair));
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, pair);
+
+		when(ssoRepository.getSequencesForSample(s)).thenReturn(Lists.newArrayList(join));
 
 		assertEquals("Invalid number of assemblies found", 1, sampleService.findAssembliesForSample(s).size());
 	}
@@ -117,11 +117,8 @@ public class SampleServiceImplTest {
 		SequenceFilePair pair2 = new SequenceFilePair();
 		pair2.setAssembledGenome(assembledGenome2);
 
-		when(sequenceFilePairRepository.getSequenceFilePairsForSample(s)).thenReturn(Lists.newArrayList(pair1, pair2));
-		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair1)).thenReturn(
-				assembledGenome1);
-		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair2)).thenReturn(
-				assembledGenome2);
+		when(ssoRepository.getSequencesForSample(s)).thenReturn(
+				Lists.newArrayList(new SampleSequencingObjectJoin(s, pair1), new SampleSequencingObjectJoin(s, pair2)));
 
 		assertEquals("Invalid number of assemblies found", 2, sampleService.findAssembliesForSample(s).size());
 	}

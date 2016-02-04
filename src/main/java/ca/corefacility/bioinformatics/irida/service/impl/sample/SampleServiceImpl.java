@@ -383,9 +383,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Set<AssembledGenomeAnalysis> findAssembliesForSample(Sample sample) {
 		Set<AssembledGenomeAnalysis> assembledGenomesSet = new HashSet<>();
-		List<SequenceFilePair> sequenceFilePairsList = sequenceFilePairRepository.getSequenceFilePairsForSample(sample);
-		for (SequenceFilePair sequenceFilePair : sequenceFilePairsList) {
-			AssembledGenomeAnalysis assembledGenomeAnalysis = assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(sequenceFilePair);
+		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
+		
+		for (SampleSequencingObjectJoin join : sequencesForSample) {
+			AssembledGenomeAnalysis assembledGenomeAnalysis = join.getObject().getAssembledGenome();
 			if (assembledGenomeAnalysis != null) {
 				assembledGenomesSet.add(assembledGenomeAnalysis);
 			}
