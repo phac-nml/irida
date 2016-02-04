@@ -117,6 +117,19 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
 
 	}
+
+	@Test
+	public void testAddSamplesToCart() {
+		logger.info("Testing adding samples to the global cart.");
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		page.selectSample(0);
+		page.selectSampleWithShift(4);
+		assertEquals("Should be 5 selected samples", "5 Samples Selected", page.getSelectedInfoText());
+
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be 5 samples in the cart", 5, page.getCartCount());
+
+	}
 	//	@Test
 	//	public void testDefaultMerge() {
 	//		LoginPage.loginAsManager(driver());
@@ -304,45 +317,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	//
 	//		assertEquals(1, page.getTotalNumberOfSamplesSelected());
 	//	}
-	//
-	//	@Test
-	//	public void testMultiSelection() {
-	//		LoginPage.loginAsManager(driver());
-	//		page.goToPage();
-	//
-	//		// Test selecting a page
-	//		assertEquals(0, page.getTotalNumberOfSamplesSelected());
-	//		page.clickBtn("selectBtn");
-	//		page.clickBtn("selectPageBtn");
-	//		assertEquals(10, page.getTotalNumberOfSamplesSelected());
-	//
-	//		// Test clearing the selections
-	//		page.clickBtn("selectBtn");
-	//		page.clickBtn("selectNoneBtn");
-	//		assertEquals(0, page.getTotalNumberOfSamplesSelected());
-	//
-	//		// Test select all
-	//		page.clickBtn("selectBtn");
-	//		page.clickBtn("selectAllBtn");
-	//		assertEquals(21, page.getTotalNumberOfSamplesSelected());
-	//
-	//		// Test clearing again
-	//		page.clickBtn("selectBtn");
-	//		page.clickBtn("selectNoneBtn");
-	//		assertEquals(0, page.getTotalNumberOfSamplesSelected());
-	//
-	//		// Select random samples on one page and then all on the second
-	//		selectFirstThreeSamples();
-	//		assertEquals(3, page.getTotalNumberOfSamplesSelected());
-	//		page.clickNextPageButton();
-	//		page.clickBtn("selectBtn");
-	//		page.clickBtn("selectPageBtn");
-	//		assertEquals(13, page.getTotalNumberOfSamplesSelected());
-	//		page.clickBtn("selectBtn");
-	//		page.clickBtn("selectAllBtn");
-	//		assertEquals(21, page.getTotalNumberOfSamplesSelected());
-	//	}
-	//
+
 	//	@Test
 	//	public void testExportLinker() {
 	//		LoginPage.loginAsManager(driver());
@@ -373,26 +348,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	//		String command = page.getLinkerScriptText();
 	//		assertEquals(selectedCount, getSampleFlagCount(command));
 	//	}
-	//
-	//	@Test
-	//	public void testTableSorts() {
-	//		LoginPage.loginAsManager(driver());
-	//		page.goToPage();
-	//
-	//		// Page should be sorted by creation date first
-	//		assertTrue("Page should be initially sorted descending by creation date.", page.isTableSortedDescByCreationDate());
-	//		page.sortTableByCreatedDate();
-	//		assertTrue("Page should be sorted ascending by creation date.", page.isTableSortedAscByCreationDate());
-	//		assertFalse("Page should **not** be sorted descending by creation date.", page.isTableSortedDescByCreationDate());
-	//
-	//		// Sort by name
-	//		page.sortTableByName();
-	//		assertTrue("Page should be sorted descending by sample name.", page.isTableSortedDescBySampleName());
-	//		page.sortTableByName();
-	//		assertFalse("Page should **not** be sorted descending by sample name.", page.isTableSortedDescBySampleName());
-	//		assertTrue("Page should be sorted ascending by sample name.", page.isTableSortedAscBySampleName());
-	//	}
-	//
+
 	//	@Test
 	//	public void testSampleFilter() {
 	//		LoginPage.loginAsManager(driver());
@@ -428,25 +384,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	//		assertEquals(10, page.getNumberOfSamplesDisplayed());
 	//	}
 	//
-	//	@Test
-	//	public void testCart() {
-	//		LoginPage.loginAsManager(driver());
-	//		page.goToPage();
-	//
-	//		selectFirstThreeSamples();
-	//		page.addSamplesToGlobalCart();
-	//		assertEquals(3, page.getCartCount());
-	//		assertEquals(1, page.getCartProjectCount());
-	//
-	//		// Ensure that this is persisted across pages.
-	//		page.goToPage("5");
-	//		assertEquals(3, page.getCartCount());
-	//		assertEquals(1, page.getCartProjectCount());
-	//		page.clickBtn("cart-show-btn");
-	//		page.clickBtn("go-to-pipeline-btn");
-	//		assertTrue(driver().getCurrentUrl().contains("/pipelines"));
-	//	}
-	//
+
 	//	@Test
 	//	public void testClearCart() {
 	//		LoginPage.loginAsManager(driver());
