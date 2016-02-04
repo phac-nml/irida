@@ -39,6 +39,10 @@ gulp.task('watch', function () {
 	gulp.watch(scss.files, ['sass']);
 });
 
-gulp.task('default', ['lint', 'sass'],function () {
+gulp.task('start', ['sass'], function () {
+
+});
+
+gulp.task('default', ['lint', 'sass'], function () {
 
 });
