@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -310,5 +311,26 @@ public class SequencingObjectServiceImplIT {
 			fileCount++;
 		}
 		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow1", roles = "USER")
+	public void testReadSequenceFileAsUserWithPermissions() {
+		assertNotNull(objectService.read(2L));
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testReadSequenceFileAsUserNoPermissions() {
+		objectService.read(2L);
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow1", roles = "USER")
+	public void testReadOptionalProperties() {
+		SequencingObject sequencingObject = objectService.read(2L);
+		SequenceFile read = sequencingObject.getFileWithId(1L);
+		assertEquals("5", read.getOptionalProperty("samplePlate"));
+		assertEquals("10", read.getOptionalProperty("sampleWell"));
 	}
 }
