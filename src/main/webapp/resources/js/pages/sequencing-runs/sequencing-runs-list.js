@@ -3,7 +3,7 @@
         $rootScope.cgPromise = null;
     }
 
-    function RunsService($rootScope, $http, filter) {
+    function RunsService($rootScope, $http) {
         var svc = this;
         svc.runs = [];
 
@@ -27,7 +27,7 @@
 
     }
 
-    function PagingFilter($rootScope, filter, RunsService) {
+    function PagingFilter($rootScope, filter) {
         "use strict";
         return function(runs) {
             $rootScope.$broadcast('PAGING_UPDATE', {
@@ -118,7 +118,7 @@
         .run([ '$rootScope', setRootVariable ])
         .factory('FilterFactory', [ FilterFactory ])
         .service('RunsService', [ '$rootScope', '$http', 'FilterFactory', RunsService ])
-        .filter('PagingFilter', [ '$rootScope', 'FilterFactory', 'RunsService', PagingFilter ])
+        .filter('PagingFilter', [ '$rootScope', 'FilterFactory', PagingFilter ])
         .directive('sortBy', [ sortBy ]).controller('PagingCtrl', [ '$scope', 'FilterFactory', PagingCtrl ])
         .controller('SortCtrl', [ '$rootScope', 'FilterFactory', SortCtrl ])
         .controller('RunsTableCtrl',	[ 'FilterFactory', 'RunsService', RunsTableCtrl ]);

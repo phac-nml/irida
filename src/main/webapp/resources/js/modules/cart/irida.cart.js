@@ -17,7 +17,6 @@
     function getCart(collapse) {
       cart.all()
         .then(function (data) {
-          var prev = vm.count;
           vm.count = 0;
           vm.projects = data.projects;
           vm.remote = data.remote;

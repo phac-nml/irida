@@ -1,4 +1,44 @@
-job1:
-  script: "scripts/integration-tests.sh"
-job2:
+
+stages:
+  - build
+  - test
+
+before_script:
+# remove Galaxy directories and drop/create databases before tests start
+  - rm -rf /tmp/gxbootstrap*
+  - rm -rf /tmp/shed_tools/
+  - pkill -u gitlab-runner -f "python ./scripts/paster.py" || true
+  - echo 'drop database if exists irida_test; drop database if exists irida_galaxy_test; create database irida_test;create database irida_galaxy_test;' | mysql -u test -ptest
+  - pushd lib
+  - ./install-libs.sh
+  - popd
+
+service_job:
+#running service layer tests
+  script:
+  - xvfb-run mvn clean verify -Pservice_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
+  stage: test
+ui_job:
+#running ui tests
+  script:
+  - xvfb-run mvn clean verify -Pui_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
+  stage: test
+rest_job:
+#running rest api tests
+  script:
+  - xvfb-run mvn clean verify -Prest_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
+  stage: test
+galaxy_job:
+#lastly, run all tests involving Galaxy
+  script:
+  - xvfb-run mvn clean verify -Pgalaxy_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
+  stage: test
+build-docs_job:
   script: "scripts/build-docs.sh"
+  stage: build
+cache:
+  untracked: true
+  paths:
+    - src/main/webapp/node
+    - src/main/webapp/node_modules
+    - src/main/webapp/resources/bower_components

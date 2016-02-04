@@ -62,6 +62,7 @@
 		</sql>
 		<dropColumn columnName="created_date" tableName="sequence_file_pair_AUD" />
 		<dropColumn columnName="REVTYPE" tableName="sequence_file_pair_AUD" />
+		<dropColumn columnName="assembled_genome" tableName="sequence_file_pair_AUD" />
 		<dropForeignKeyConstraint baseTableName="sequence_file_pair_AUD"
 			constraintName="FK_SEQUENCE_FILE_PAIR_AUD" />
 		<addForeignKeyConstraint baseColumnNames="id, REV"
