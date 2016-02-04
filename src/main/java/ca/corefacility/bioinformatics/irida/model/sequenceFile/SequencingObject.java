@@ -60,6 +60,11 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequencingObject")
 	private SampleSequencingObjectJoin sample;
 
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "assembled_genome", unique = true, nullable = true)
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	private AssembledGenomeAnalysis assembledGenome;
+
 	public SequencingObject() {
 		createdDate = new Date();
 	}
@@ -112,5 +117,54 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 		return files.stream().filter(s -> s.getId().equals(id)).findAny()
 				.orElseThrow(() -> new EntityNotFoundException("No file with id " + id + " in this SequencingObject"));
+	}
+
+	/**
+	 * Gets an {@link AssembledGenomeAnalysis} that was run from this pair of
+	 * sequence files.
+	 * 
+	 * @return An {@link AssembledGenomeAnalysis} that was run from this pair of
+	 *         sequence files.
+	 */
+	public AssembledGenomeAnalysis getAssembledGenome() {
+		return assembledGenome;
+	}
+
+	/**
+	 * Sets an {@link AssembledGenomeAnalysis} that was run from this pair of
+	 * sequence files.
+	 * 
+	 * @param assembledGenome
+	 *            An {@link AssembledGenomeAnalysis} that was run from this pair
+	 *            of sequence files.
+	 */
+	public void setAssembledGenome(AssembledGenomeAnalysis assembledGenome) {
+		this.assembledGenome = assembledGenome;
+	}
+
+	/**
+	 * Whether or not this {@link SequenceFilePair} has an associated
+	 * {@link AssembledGenomeAnalysis}.
+	 * 
+	 * @return True if there as an associated genome, false otherwise.
+	 */
+	public boolean hasAssembledGenome() {
+		return assembledGenome != null;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof SequencingObject) {
+			SequencingObject seqObj = (SequencingObject) obj;
+
+			return Objects.equals(assembledGenome, seqObj.assembledGenome);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(assembledGenome);
 	}
 }
