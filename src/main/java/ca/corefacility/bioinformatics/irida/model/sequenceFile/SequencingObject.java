@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -58,6 +59,9 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sequencing_run_id")
 	private SequencingRun sequencingRun;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequencingObject")
+	private SampleSequencingObjectJoin sample;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "assembled_genome", unique = true, nullable = true)
