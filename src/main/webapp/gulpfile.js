@@ -31,8 +31,7 @@ gulp.task('lint', function () {
 		.pipe(cache('linting'))
 		.pipe(eslint())
 		.pipe(eslint.format())
-		.pipe(eslint.failOnError())
-		.pipe(notify({message: "Linting complete"}));
+		.pipe(eslint.failOnError());
 });
 
 gulp.task('sass', function () {
@@ -58,7 +57,7 @@ gulp.task('serve', function() {
 
 gulp.task('watch', function () {
 	gulp.watch(scss.files, ['sass']);
-	gulp.watch(javascript.files, ['lint']);
+	gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
 });
 
 gulp.task('start', ['sass']);
