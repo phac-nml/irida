@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -64,6 +65,8 @@ public class SampleServiceImplIT {
 	private ProjectService projectService;
 	@Autowired
 	private SequenceFileService sequenceFileService;
+	@Autowired
+	private SequencingObjectService objectService;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -99,7 +102,7 @@ public class SampleServiceImplIT {
 
 		// the merged sample should have 3 sequence files
 		assertEquals("Merged sample should have 3 sequence files", 3,
-				sequenceFileService.getSequenceFilesForSample(merged).size());
+				objectService.getSequencingObjectsForSample(merged).size());
 	}
 
 	/**
