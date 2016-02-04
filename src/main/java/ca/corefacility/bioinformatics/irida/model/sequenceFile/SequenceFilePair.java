@@ -14,16 +14,13 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -49,11 +46,6 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	@Size(min = 2, max = 2)
 	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
 	private Set<SequenceFile> files;
-
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "assembled_genome", unique = true, nullable = true)
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-	private AssembledGenomeAnalysis assembledGenome;
 
 	public SequenceFilePair() {
 		super();
@@ -92,39 +84,6 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		throw new UnsupportedOperationException("Cannot update a sequence file pair");
 	}
 
-	/**
-	 * Gets an {@link AssembledGenomeAnalysis} that was run from this pair of
-	 * sequence files.
-	 * 
-	 * @return An {@link AssembledGenomeAnalysis} that was run from this pair of
-	 *         sequence files.
-	 */
-	public AssembledGenomeAnalysis getAssembledGenome() {
-		return assembledGenome;
-	}
-
-	/**
-	 * Sets an {@link AssembledGenomeAnalysis} that was run from this pair of
-	 * sequence files.
-	 * 
-	 * @param assembledGenome
-	 *            An {@link AssembledGenomeAnalysis} that was run from this pair
-	 *            of sequence files.
-	 */
-	public void setAssembledGenome(AssembledGenomeAnalysis assembledGenome) {
-		this.assembledGenome = assembledGenome;
-	}
-
-	/**
-	 * Whether or not this {@link SequenceFilePair} has an associated
-	 * {@link AssembledGenomeAnalysis}.
-	 * 
-	 * @return True if there as an associated genome, false otherwise.
-	 */
-	public boolean hasAssembledGenome() {
-		return assembledGenome != null;
-	}
-
 	@Override
 	public String getLabel() {
 		return toString();
@@ -159,7 +118,7 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(files, assembledGenome);
+		return Objects.hash(super.hashCode(), files);
 	}
 
 	@Override
@@ -167,7 +126,7 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		if (obj instanceof SequenceFilePair) {
 			SequenceFilePair pair = (SequenceFilePair) obj;
 
-			return Objects.equals(files, pair.files) && Objects.equals(assembledGenome, pair.assembledGenome);
+			return super.equals(obj) && Objects.equals(files, pair.files);
 		}
 
 		return false;
