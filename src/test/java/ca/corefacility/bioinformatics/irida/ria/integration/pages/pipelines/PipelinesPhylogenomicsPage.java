@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -37,10 +39,6 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 
 	public boolean isNoReferenceWarningDisplayed() {
 		return driver.findElements(By.id("no-ref-warning")).size() > 0;
-	}
-
-	public boolean isNoRightsMessageDisplayed() {
-		return driver.findElements(By.id("has-no-rights")).size() > 0;
 	}
 
 	public boolean isAddReferenceFileLinksDisplayed() {
@@ -138,5 +136,20 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	
 	public boolean isRemoteSampleDisplayed(){
 		return driver.findElements(By.className("remote-sample-container")).size() > 0;
+	}
+	
+	public boolean isReferenceFileNameDisplayed() {
+		return driver.findElement(By.id("uploaded-file-name")).getText().equals("test_file.fasta");
+	}
+	
+	public void selectReferenceFile() {
+		uploadFile("src/test/resources/files/test_file.fasta");
+	}
+	
+	private void uploadFile(String filePath) {
+		WebElement uploadBtn = driver.findElement(By.id("file-upload-button"));
+		Path path = Paths.get(filePath);
+		uploadBtn.sendKeys(path.toAbsolutePath().toString());
+		waitForTime(500);
 	}
 }

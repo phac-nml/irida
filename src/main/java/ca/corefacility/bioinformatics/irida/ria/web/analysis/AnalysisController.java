@@ -175,7 +175,7 @@ public class AnalysisController {
 		model.addAttribute("mirroringCount", mirroringCount);
 		
 		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
-			logger.debug("Adding reference file to page.");
+			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");
 			model.addAttribute("referenceFile", submission.getReferenceFile().get());
 		} else {
 			logger.debug("No reference file required for workflow.");

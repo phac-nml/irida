@@ -60,10 +60,10 @@
 										        data:project="${ref.project.id}"
 										        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
 									</select>
-									<div class="uploaded-file-name" th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</div>
+									<div id="no-ref-warning" class="uploaded-file-name" th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</div>
 								</div>
 								<div class="col-md-9 control-label ng-cloak" ng-show="uploadCtrl.uploaded">
-									<div class="uploaded-file-name" ng-bind="uploadCtrl.uploaded.name"></div>
+									<div id="uploaded-file-name" class="uploaded-file-name" ng-bind="uploadCtrl.uploaded.name"></div>
 								</div>
 								<div class="col-md-3">
 									<div class="fileUpload btn btn-default btn-sm btn-block" ng-show="!uploadCtrl.referenceUploadStarted">
