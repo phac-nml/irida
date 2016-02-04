@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -102,11 +101,6 @@ public class RESTSampleSequenceFilesController {
 			SequenceFilePair.class, "pairs", SingleEndSequenceFile.class, "unpaired");
 
 	/**
-	 * Reference to the {@link SequenceFileService}.
-	 */
-	private SequenceFileService sequenceFileService;
-
-	/**
 	 * Reference to the {@link SampleService}.
 	 */
 	private SampleService sampleService;
@@ -122,9 +116,8 @@ public class RESTSampleSequenceFilesController {
 	}
 
 	@Autowired
-	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService, SampleService sampleService,
-			SequencingRunService miseqRunService, SequencingObjectService sequencingObjectService) {
-		this.sequenceFileService = sequenceFileService;
+	public RESTSampleSequenceFilesController(SampleService sampleService, SequencingRunService miseqRunService,
+			SequencingObjectService sequencingObjectService) {
 		this.sampleService = sampleService;
 		this.miseqRunService = miseqRunService;
 		this.sequencingObjectService = sequencingObjectService;
@@ -381,7 +374,8 @@ public class RESTSampleSequenceFilesController {
 		// Changed, because sfr.setResource(sf)
 		// and sfr.setResource(sampleSequenceFileRelationship.getObject())
 		// both will not pass a GET-POST comparison integration test.
-		SequenceFile sequenceFile = sequenceFileService.read(sequenceFileId);
+		singleEndSequenceFile = (SingleEndSequenceFile) sequencingObjectService.read(singleEndSequenceFile.getId());
+		SequenceFile sequenceFile = singleEndSequenceFile.getFileWithId(sequenceFileId);
 
 		// add links to the resource
 		sequenceFile.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
