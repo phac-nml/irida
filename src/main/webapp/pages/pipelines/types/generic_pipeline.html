@@ -52,27 +52,27 @@
 						       th:text="#{workflow.label.reference-file}">Reference File</label>
 
 						<div class="col-sm-10" ng-controller="FileUploadCtrl as uploadCtrl">
-							<div class="row">
-								<div class="col-md-9 control-label ng-cloak" ng-show="!uploadCtrl.uploaded">
+							<div class="row ng-cloak">
+								<div class="col-md-9" ng-show="!uploadCtrl.uploaded">
 									<select class="form-control" name="referenceFiles" id="referenceFiles" th:if="${#lists.size(referenceFiles)} != 0"
 											ng-disabled="uploadCtrl.referenceUploadStarted">
 										<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
 										        data:project="${ref.project.id}"
 										        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
 									</select>
-									<div id="no-ref-warning" class="uploaded-file-name" th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</div>
+									<div id="no-ref-warning" class="uploaded-file-name control-label" th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</div>
 								</div>
-								<div class="col-md-9 control-label ng-cloak" ng-show="uploadCtrl.uploaded">
+								<div class="col-md-9 control-label" ng-show="uploadCtrl.uploaded">
 									<div id="uploaded-file-name" class="uploaded-file-name" ng-bind="uploadCtrl.uploaded.name"></div>
 								</div>
 								<div class="col-md-3">
-									<div class="fileUpload btn btn-default btn-sm btn-block" ng-show="!uploadCtrl.referenceUploadStarted">
+									<div class="fileUpload btn btn-default btn-block" ng-show="!uploadCtrl.referenceUploadStarted">
+										<fa:icon type="upload"/>&nbsp;
 										<th:block th:text="#{workflow.upload.new.reference.file}"></th:block>
-										<fa:icon type="upload"/>
 										<input type="file" id="file-upload-button" class="upload " name="files"
 											ngf-change="uploadCtrl.upload($files)" ngf-accept="'*.fasta'"
 											ngf-select="" />
-										
+
 									</div>
 									<div class="file-upload-progress" ng-class="{fadeIn: uploadCtrl.referenceUploadStarted, fadeOut: !uploadCtrl.referenceUploadStarted}">
 										<uib-progressbar class="progress-striped active" value="uploadCtrl.progress">{{ uploadCtrl.progress }}%</uib-progressbar>
