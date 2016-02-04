@@ -33,13 +33,11 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
@@ -66,12 +64,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private ProjectSampleJoinRepository psjRepository;
 	
-	private final SequenceFilePairRepository sequenceFilePairRepository;
-	
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	
-	private final AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
-
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
@@ -98,14 +92,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			final SequenceFilePairRepository sequenceFilePairRepository,
-			AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository, Validator validator) {
+			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.analysisRepository = analysisRepository;
-		this.sequenceFilePairRepository = sequenceFilePairRepository;
-		this.assembledGenomeAnalysisRepository = assembledGenomeAnalysisRepository;
 		this.ssoRepository = ssoRepository;
 	}
 	
