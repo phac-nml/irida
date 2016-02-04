@@ -36,3 +36,9 @@ galaxy_job:
 build-docs_job:
   script: "scripts/build-docs.sh"
   stage: build
+cache:
+  untracked: true
+  paths:
+    - src/main/webapp/node
+    - src/main/webapp/node_modules
+    - src/main/webapp/resources/bower_components
