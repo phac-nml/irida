@@ -42,16 +42,16 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             {@link Project}.
 	 */
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
-
+	
 	/**
-	 * Read the {@link Sample} associated with a {@link SequenceFile}
+	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
 	 * 
-	 * @param file
-	 *            the {@link SequenceFile} to get a {@link Sample} for
-	 * @return the relationship between the {@link Sample} and
-	 *         {@link SequenceFile}
+	 * @param seqObject
+	 *            the {@link SequencingObject} to get the {@link Sample} for
+	 * @return the {@link SampleSequencingObjectJoin} describing the
+	 *         relationship
 	 */
-	public Join<Sample, SequenceFile> getSampleForSequeneFile(SequenceFile file);
+	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject);
 
 	/**
 	 * Get the list of {@link Sample} that belongs to a specific project.
