@@ -173,6 +173,13 @@ public class AnalysisController {
 		// Get the number of files currently being mirrored
 		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
 		model.addAttribute("mirroringCount", mirroringCount);
+		
+		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
+			logger.debug("Adding reference file to page.");
+			model.addAttribute("referenceFile", submission.getReferenceFile().get());
+		} else {
+			logger.debug("No reference file required for workflow.");
+		}
 
 		/*
 		 * Preview information

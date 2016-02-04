@@ -386,8 +386,6 @@
 		    		file: files[0]
 		    	}).progress(function (evt) {
 		    		vm.progress = parseInt(100.0 * evt.loaded / evt.total);
-		    		console.log(evt);
-		    		console.log(vm.progress);
 		    	}).success(function(response) {
 		    		vm.uploaded = {
 		        			id: response["uploaded-file-id"],
