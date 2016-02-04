@@ -19,6 +19,10 @@
 				<constraints referencedTableName="sequencing_run"
 					referencedColumnNames="id" foreignKeyName="FK_SEQUENCING_OBJECT_RUN" />
 			</column>
+			<column name="assembled_genome" type="bigint(20)">
+				<constraints referencedTableName="assembled_genome_analysis"
+					referencedColumnNames="id" foreignKeyName="FK_SEQUENCING_OBJECT_ASSEMBLED_GENOME" />
+			</column>
 		</createTable>
 
 		<createTable tableName="sequencing_object_AUD">
@@ -26,6 +30,7 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="created_date" type="datetime" />
+			<column name="assembled_genome" type="bigint(20)" />
 			<column name="sequencing_run_id" type="bigint(20)" />
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
@@ -36,17 +41,23 @@
 
 		<!-- Map SequenceFilePair ids and dates up to SequencingObject -->
 		<sql>
-			INSERT INTO sequencing_object (id, created_date) SELECT id,
-			created_date FROM sequence_file_pair
+			INSERT INTO sequencing_object (id, created_date,
+			assembled_genome) SELECT id,
+			created_date, assembled_genome FROM
+			sequence_file_pair
 		</sql>
 
-		<!-- Ditch the date column in SequenceFilePair -->
+		<!-- Ditch the date and genome column in SequenceFilePair -->
+		<dropForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_PAIR_ASSEMBLED_GENOME"
+			baseTableName="sequence_file_pair" />
 		<dropColumn columnName="created_date" tableName="sequence_file_pair" />
+		<dropColumn columnName="assembled_genome" tableName="sequence_file_pair" />
 
 		<!-- Handling the auditing table for existing sequence_file_pairs -->
 		<sql>
 			INSERT INTO sequencing_object_AUD (id, REV, REVTYPE,
-			created_date) SELECT id, REV, REVTYPE, created_date FROM
+			created_date, assembled_genome) SELECT id, REV, REVTYPE,
+			created_date, assembled_genome FROM
 			sequence_file_pair_AUD;
 		</sql>
 		<dropColumn columnName="created_date" tableName="sequence_file_pair_AUD" />
