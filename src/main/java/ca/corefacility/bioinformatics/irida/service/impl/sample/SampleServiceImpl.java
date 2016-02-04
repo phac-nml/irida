@@ -33,16 +33,12 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -66,12 +62,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private ProjectSampleJoinRepository psjRepository;
 	
-	private final SequenceFilePairRepository sequenceFilePairRepository;
-	
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	
-	private final AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
-
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
@@ -88,24 +80,17 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the sample sequence file join repository.
 	 * @param analysisRepository
 	 *            the analysis repository.
-	 * @param sequenceFilePairRepository
-	 *            the {@link SequenceFilePairRepository}.
-	 * @param assembledGenomeAnalysisRepository
-	 *            the {@link AssembledGenomeAnalysisRepository}.
 	 * @param validator
 	 *            validator.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			final SequenceFilePairRepository sequenceFilePairRepository,
-			AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository, Validator validator) {
+			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.analysisRepository = analysisRepository;
-		this.sequenceFilePairRepository = sequenceFilePairRepository;
-		this.assembledGenomeAnalysisRepository = assembledGenomeAnalysisRepository;
 		this.ssoRepository = ssoRepository;
 	}
 	
@@ -383,9 +368,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Set<AssembledGenomeAnalysis> findAssembliesForSample(Sample sample) {
 		Set<AssembledGenomeAnalysis> assembledGenomesSet = new HashSet<>();
-		List<SequenceFilePair> sequenceFilePairsList = sequenceFilePairRepository.getSequenceFilePairsForSample(sample);
-		for (SequenceFilePair sequenceFilePair : sequenceFilePairsList) {
-			AssembledGenomeAnalysis assembledGenomeAnalysis = assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(sequenceFilePair);
+		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
+		
+		for (SampleSequencingObjectJoin join : sequencesForSample) {
+			AssembledGenomeAnalysis assembledGenomeAnalysis = join.getObject().getAssembledGenome();
 			if (assembledGenomeAnalysis != null) {
 				assembledGenomesSet.add(assembledGenomeAnalysis);
 			}
