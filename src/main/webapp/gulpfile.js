@@ -48,4 +48,6 @@ gulp.task('watch', function () {
 	gulp.watch(scss.files, ['sass']);
 });
 
+gulp.task('start', ['sass']);
+
 gulp.task('default', ['serve']);
