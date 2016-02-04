@@ -182,7 +182,6 @@ public class SequencingObjectServiceImplIT {
 		assertEquals(1, sequencingObjectsForSample.size());
 	}
 
-	// move
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetUnpairedFilesForSample() {
@@ -197,7 +196,6 @@ public class SequencingObjectServiceImplIT {
 		assertEquals(new Long(4), join.getObject().getId());
 	}
 
-	// move
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetUnpairedFilesForSampleWithNoPairs() {
@@ -211,7 +209,6 @@ public class SequencingObjectServiceImplIT {
 		assertEquals(new Long(2), join.getObject().getId());
 	}
 
-	// move
 	@Test
 	@WithMockUser(username = "tom", roles = "SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException {
@@ -259,7 +256,6 @@ public class SequencingObjectServiceImplIT {
 		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
 	}
 
-	// move
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException {
