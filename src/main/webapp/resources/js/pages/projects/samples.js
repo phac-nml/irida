@@ -1,4 +1,5 @@
-(function (angular, $, _, page) {
+/*globals FileReader:true, fileFilterForm:true*/
+(function (angular, $, _, tl, page, project) {
   function setRootVariable($rootScope) {
     $rootScope.cgPromise = null;
   }
@@ -250,7 +251,7 @@
         return "ids=" + id
       });
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "projects/" + project.id + "/download/files?" + mapped.join("&") + "&dandelionAssetFilterState=false";
+      iframe.src = tl.BASE_URL + "projects/" + project.id + "/download/files?" + mapped.join("&") + "&dandelionAssetFilterState=false";
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
@@ -448,7 +449,7 @@
       vm.update();
     });
 
-    $scope.$on('PAGE_SIZE_CHANGE', function (e, args) {
+    $scope.$on('PAGE_SIZE_CHANGE', function () {
       vm.count = filter.count;
     });
   }
@@ -574,27 +575,26 @@
         if (vm.localSelected) {
           vm.export.open = false;
           $uibModal.open({
-            templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
+            templateUrl: tl.BASE_URL + 'projects/templates/samples/linker',
             controller : 'LinkerCtrl as lCtrl'
           });
         }
       },
       ncbi : function ncbi() {
-        var url = TL.BASE_URL + 'projects/'+project.id+'/export/ncbi?';
+        var url = tl.BASE_URL + 'projects/'+project.id+'/export/ncbi?';
         var sampleIds = [];
         _.forEach(SamplesService.getSelectedSampleNames(), function(s){
           sampleIds.push('s='+s.identifier);
         });
         
         url = url + sampleIds.join('&');
-        console.log(url);
         window.location = url;
         
       },
       galaxy  : function galaxy() {
         vm.export.open = false;
         $uibModal.open({
-          templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.id,
+          templateUrl: tl.BASE_URL + 'cart/template/galaxy/project/' + project.id,
           controller : 'GalaxyDialogCtrl as gCtrl',
           resolve    : {
             openedByCart: function () {
@@ -611,7 +611,7 @@
     vm.merge = function () {
       if (vm.localSelected && vm.count > 1) {
         $uibModal.open({
-          templateUrl: TL.BASE_URL + 'projects/templates/merge',
+          templateUrl: tl.BASE_URL + 'projects/templates/merge',
           controller : 'MergeCtrl as mergeCtrl',
           resolve    : {
             samples: function () {
@@ -625,7 +625,7 @@
     vm.openModal = function (type) {
       if (vm.count > 0 && ( type === 'copy' || vm.localSelected )) {
         $uibModal.open({
-          templateUrl: TL.BASE_URL + 'projects/templates/' + type,
+          templateUrl: tl.BASE_URL + 'projects/templates/' + type,
           controller : 'CopyMoveCtrl as cmCtrl',
           resolve    : {
             samples: function () {
@@ -642,7 +642,7 @@
     vm.remove = function () {
       if (vm.count > 0 && vm.localSelected) {
         $uibModal.open({
-          templateUrl: TL.BASE_URL + 'projects/templates/remove',
+          templateUrl: tl.BASE_URL + 'projects/templates/remove',
           controller : 'RemoveCtrl as rmCtrl',
           resolve    : {
             samples: function () {
@@ -744,7 +744,7 @@
     Select2Service.init("#projectsSelect", {
       minimumLength: 2,
       ajax         : {
-        url        : TL.BASE_URL + "projects/ajax/samples/available_projects",
+        url        : tl.BASE_URL + "projects/ajax/samples/available_projects",
         dataType   : 'json',
         quietMillis: 250,
         data       : function (search, page) {
@@ -824,7 +824,7 @@
       vm.filter.sample = {};
       vm.name = "";
       vm.organism = "";
-      var sampleNames = $fileContent.split("\n");
+      var sampleNames = $fileContent.match(/[^\r\n]+/g);
       $scope.$emit('SAMPLES_FILE_FILTER', {sampleNames: sampleNames});
     };
 
@@ -942,4 +942,4 @@
     .controller('ConnectionWarningCtrl', ['$rootScope', 'SamplesService', ConnectionWarningCtrl])
   ;
 })
-(window.angular, window.$, window._, window.PAGE);
+(window.angular, window.$, window._, window.TL, window.PAGE, window.project);

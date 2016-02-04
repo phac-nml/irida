@@ -1,4 +1,5 @@
-var exportsTable = (function (tl) {
+/*exported exportsTable*/
+var exportsTable = (function (page) {
   /**
    * Create a link button to the export thing
    *
@@ -9,11 +10,11 @@ var exportsTable = (function (tl) {
    */
   function createLinkButton(data, type, full) {
     if(full.identifier) {
-      return "<a class='btn btn-link' title='"+data+"' href='" + PAGE.URLS.exportBase + full.identifier + "'>" + data + "</a>";
+      return "<a class='btn btn-link' title='"+data+"' href='" + page.URLS.exportBase + full.identifier + "'>" + data + "</a>";
     }
   }
 
   return {
     createLinkButton: createLinkButton
   };
-})(window.TL);
+})(window.PAGE);
