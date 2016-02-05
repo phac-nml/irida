@@ -11,9 +11,13 @@ var browserSync = require('browser-sync').create();
 var scss = {
 	files : "./styles/**/*.scss",
 	output: "./resources/css",
-	options: {
+	dev: {
 		errLogToConsole: true,
 		outputStyle: "expanded"
+	},
+	prod: {
+		errLogToConsole: true,
+		outputStyle: 'compressed'
 	}
 };
 
@@ -38,11 +42,18 @@ gulp.task('sass', function () {
 	return gulp
 		.src(scss.files)
 		.pipe(cache('scss'))
-		.pipe(sass(scss.options).on("error", sass.logError))
-		.pipe(autoprefixer(autoprefixerOptions))
+		.pipe(sass(scss.dev).on("error", sass.logError))
 		.pipe(sourcemaps.write())
 		.pipe(gulp.dest(scss.output))
 		.pipe(notify({message: "SCSS complete"}));
+});
+
+gulp.task('sass:prod', function () {
+	return gulp.src(scss.files)
+		.pipe(sass(scss.prod).on("error", sass.logError))
+		.pipe(autoprefixer(autoprefixerOptions))
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest(scss.output));
 });
 
 gulp.task('serve', function() {
@@ -60,6 +71,6 @@ gulp.task('watch', function () {
 	gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
 });
 
-gulp.task('start', ['sass']);
+gulp.task('start', ['sass:prod']);
 
 gulp.task('default', ['serve', 'watch']);
