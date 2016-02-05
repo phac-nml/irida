@@ -1,4 +1,4 @@
-(function () {
+(function (angular, _, moment, tl, page) {
   "use strict";
 
   /**
@@ -65,9 +65,9 @@
    */
   function AnalysisService($http) {
     function _loadData() {
-      return $http.get(PAGE.URLS.analyses)
+      return $http.get(page.URLS.analyses)
         .error(function(data) {
-          window.location = TL.BASE_URL + data.error.url;
+          window.location = tl.BASE_URL + data.error.url;
         });
     }
 
@@ -170,7 +170,7 @@
 
     vm.download = function (id) {
       var iframe = document.createElement("iframe");
-      iframe.src = PAGE.URLS.download + id;
+      iframe.src = page.URLS.download + id;
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
@@ -197,4 +197,4 @@
     .controller('analysisController', ['analysisService', 'ngTableParams', '$scope', AnalysisController])
     .controller('filterController', ['analysisFilterService', FilterController])
   ;
-})();
+})(window.angular, window._, window.moment, window.TL, window.PAGE);

@@ -1,4 +1,5 @@
-angular.module('irida.datatables', [])
+(function (angular) {
+  angular.module('irida.datatables', [])
   .directive('sortBy', function () {
     'use strict';
     return {
@@ -30,3 +31,4 @@ angular.module('irida.datatables', [])
       }
     };
   });
+})(window.angular);

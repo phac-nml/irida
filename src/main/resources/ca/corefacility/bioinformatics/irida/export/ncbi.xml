@@ -18,7 +18,7 @@
 
 	<Action th:each="sample : ${submission.bioSampleFiles}">
 		<AddFiles target_db="SRA" th:each="file : ${sample.files}">
-			<File th:attr="file_path=${file.getId() + '-' + file.getFileName()}">
+			<File th:attr="file_path=${file.getId() + '.fastq'}">
 				<DataType>generic-data</DataType>
 			</File>
 			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
@@ -44,10 +44,10 @@
 			</Identifier>
 		</AddFiles>
 		<AddFiles target_db="SRA" th:each="pair : ${sample.pairs}" th:with="forward=${pair.getForwardSequenceFile()}, reverse=${pair.getReverseSequenceFile()}">
-			<File th:attr="file_path=${forward.getId() + '-' + forward.getFileName()}">
+			<File th:attr="file_path=${forward.getId() + '.fastq'}">
 				<DataType>generic-data</DataType>
 			</File>
-			<File th:attr="file_path=${reverse.getId() + '-' + reverse.getFileName()}">
+			<File th:attr="file_path=${reverse.getId() + '.fastq'}">
 				<DataType>generic-data</DataType>
 			</File>
 			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>

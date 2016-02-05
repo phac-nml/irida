@@ -71,8 +71,7 @@ public class ExportUploadServiceTest {
 		assertTrue("submission.xml created", fileSystem.exists(createdDirectory + "/submission.xml"));
 		assertTrue("submit.ready created", fileSystem.exists(createdDirectory + "/submit.ready"));
 		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next();
-		assertTrue("seqfile created",
-				fileSystem.exists(createdDirectory + "/" + createdFile.getId() + "-" + createdFile.getFileName()));
+		assertTrue("seqfile created", fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq"));
 	}
 
 	@Test(expected = UploadException.class)

@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
@@ -52,6 +53,12 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	@PreAuthorize("isAuthenticated()")
 	public NcbiExportSubmission create(NcbiExportSubmission object) throws ConstraintViolationException,
 			EntityExistsException {
+		List<NcbiBioSampleFiles> bioSampleFiles = object.getBioSampleFiles();
+		
+		if (bioSampleFiles.stream().anyMatch(s -> s.getFiles().isEmpty() && s.getPairs().isEmpty())) {
+			throw new IllegalArgumentException("NcbiExportSubmission must have files associated");
+		}
+
 		return super.create(object);
 	}
 

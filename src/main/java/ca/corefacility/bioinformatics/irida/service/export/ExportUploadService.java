@@ -273,8 +273,9 @@ public class ExportUploadService {
 
 				// upload single end files
 				for (SequenceFile file : bsFile.getFiles()) {
-					// append file id to beginning of name to avoid collisions
-					String filename = file.getId() + "-" + file.getFileName();
+					// Just using file IDs as the basename for uploaded files to
+					// avoid accidentally sending sensitive sample names to NCBI
+					String filename = file.getId() + ".fastq";
 
 					uploadPath(client, filename, file.getFile());
 				}
@@ -283,13 +284,14 @@ public class ExportUploadService {
 				for (SequenceFilePair pair : bsFile.getPairs()) {
 					// upload forward
 					SequenceFile file = pair.getForwardSequenceFile();
-					// append file id to beginning of name to avoid collisions
-					String filename = file.getId() + "-" + file.getFileName();
+					// Just using file IDs as the basename for uploaded files to
+					// avoid accidentally sending sensitive sample names to NCBI
+					String filename = file.getId() + ".fastq";
 					uploadPath(client, filename, file.getFile());
 
 					// upload reverse
 					file = pair.getReverseSequenceFile();
-					filename = file.getId() + "-" + file.getFileName();
+					filename = file.getId() + ".fastq";
 					uploadPath(client, filename, file.getFile());
 				}
 
