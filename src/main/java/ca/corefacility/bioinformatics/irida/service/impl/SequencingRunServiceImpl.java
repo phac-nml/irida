@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -48,8 +47,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	@Autowired
 	public SequencingRunServiceImpl(SequencingRunRepository repository, SequenceFileRepository sequenceFileRepository,
 			SequencingObjectRepository objectRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			SampleRepository sampleRepository, SequenceFilePairRepository pairRepository,
-			AnalysisSubmissionRepository submissionRepository, Validator validator) {
+			SampleRepository sampleRepository, AnalysisSubmissionRepository submissionRepository, Validator validator) {
 		super(repository, validator, SequencingRun.class);
 		this.sampleRepository = sampleRepository;
 		this.objectRepository = objectRepository;
