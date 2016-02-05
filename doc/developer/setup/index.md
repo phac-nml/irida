@@ -121,3 +121,17 @@ Setting up Galaxy
 The complete test suite sets up a temporary instance of Galaxy for verifying interactions between IRIDA and Galaxy, so you must install some prerequisites before you can run the complete test suite. Please see the article on [setting up Galaxy](galaxy).
 
 
+Front End Development Setup
+---------------------------
+
+To simplify linting and compiling `*.js` and `*.scss` [Gulp](http://gulpjs.com) tasks have been setup.  By default, when maven is run all `*.scss` files will be compiled into compressed `css` files.
+
+From within `src/main/webapp/`:
+
+You will need to run `npm install` to install all dependencies required to run the following from the command line.
+
+Other gulp tasks:
+
+* `gulp lint` - [eslint](http://eslint.org) all JavaScript files in the project.
+* `gulp sass` - compile all `.scss` files into `.css` files, with sourcemaps.
+* `gulp` - Runs [browser-sync](https://www.browsersync.io).  Automatically lints and compiles JavaScript and SCSS files when they change, and injects them into the browser.
