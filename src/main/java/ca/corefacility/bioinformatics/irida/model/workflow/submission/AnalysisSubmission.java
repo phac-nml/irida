@@ -44,24 +44,23 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Defines a submission to an AnalysisService for executing a remote workflow.
@@ -244,13 +243,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 * Gets the set of single-end input sequence files.
 	 * 
 	 * @return The set of single-end input sequence files.
-	 */
-	@JsonIgnore
-	@Deprecated
-	public Set<SequenceFile> getSingleInputFiles() {
-		throw new UnsupportedOperationException();
-	}
-	
+	 */	
 	@JsonIgnore
 	public Set<SingleEndSequenceFile> getInputFilesSingleEnd() {
 		return inputFilesSingleEnd;
@@ -513,7 +506,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 */
 	public static class Builder {
 		private String name;
-		private Set<SequenceFile> inputFilesSingle;
 		private Set<SingleEndSequenceFile> inputFilesSingleEnd;
 		private Set<SequenceFilePair> inputFilesPaired;
 		private Set<SequenceFileSnapshot> remoteFilesSingle;
@@ -547,22 +539,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 			checkNotNull(name, "name is null");
 
 			this.name = name;
-			return this;
-		}
-
-		/**
-		 * Sets the inputFilesSingle for this submission.
-		 * 
-		 * @param inputFilesSingle
-		 *            The inputFilesSingle for this submission.
-		 * @return A {@link Builder}.
-		 */
-		@Deprecated
-		public Builder inputFilesSingle(Set<SequenceFile> inputFilesSingle) {
-			checkNotNull(inputFilesSingle, "inputFilesSingle is null");
-			checkArgument(!inputFilesSingle.isEmpty(), "inputFilesSingle is empty");
-
-			this.inputFilesSingle = inputFilesSingle;
 			return this;
 		}
 
