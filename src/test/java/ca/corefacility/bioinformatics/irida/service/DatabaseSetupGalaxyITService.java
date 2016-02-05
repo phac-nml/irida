@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,22 +17,23 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.Sets;
 
 /**
  * Stores common code for integration tests that require special database setup
@@ -47,8 +47,7 @@ public class DatabaseSetupGalaxyITService {
 	private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
 	private ReferenceFileRepository referenceFileRepository;
-	private SequenceFileService seqeunceFileService;
-	private SequenceFilePairRepository sequenceFilePairRepository;
+	private SequencingObjectService sequencingObjectService;
 	private SampleService sampleService;
 	private AnalysisExecutionService analysisExecutionService;
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -66,20 +65,18 @@ public class DatabaseSetupGalaxyITService {
 	 * @param analysisSubmissionRepsitory
 	 */
 	public DatabaseSetupGalaxyITService(ReferenceFileRepository referenceFileRepository,
-			SequenceFileService seqeunceFileService,
 			SampleService sampleService,
 			AnalysisExecutionService analysisExecutionService,
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository,
-			SequenceFilePairRepository sequenceFilePairRepository) {
+			SequencingObjectService sequencingObjectService) {
 		super();
 		this.referenceFileRepository = referenceFileRepository;
-		this.seqeunceFileService = seqeunceFileService;
 		this.sampleService = sampleService;
 		this.analysisExecutionService = analysisExecutionService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
-		this.sequenceFilePairRepository = sequenceFilePairRepository;
+		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	/**
@@ -125,15 +122,12 @@ public class DatabaseSetupGalaxyITService {
 	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Path sequenceFilePath, Path referenceFilePath,
 			UUID iridaWorkflowId, AnalysisState state) {
 
-		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePath).get(0);
-
-		Set<SequenceFile> sequenceFiles = new HashSet<>();
-		sequenceFiles.add(sequenceFile);
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) setupSequencingObjectInDatabase(sampleId, sequenceFilePath).get(0);
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("my analysis")
-				.inputFilesSingle(sequenceFiles).referenceFile(referenceFile).build();
+				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).referenceFile(referenceFile).build();
 
 		submission.setAnalysisState(state);
 
@@ -394,8 +388,9 @@ public class DatabaseSetupGalaxyITService {
 	public AnalysisSubmission setupSinglePairSubmissionInDatabaseDifferentSample(long sampleIdPaired,
 			long sampleIdSingle, List<Path> sequenceFilePaths1, List<Path> sequenceFilePaths2, Path singleSequenceFile,
 			Path referenceFilePath, UUID iridaWorkflowId) {
-
-		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleIdSingle, singleSequenceFile).get(0);
+		
+		SingleEndSequenceFile singleEndFile = (SingleEndSequenceFile) setupSequencingObjectInDatabase(sampleIdSingle, singleSequenceFile).get(0);
+		
 		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleIdPaired,
 				sequenceFilePaths1, sequenceFilePaths2);
 
@@ -403,7 +398,7 @@ public class DatabaseSetupGalaxyITService {
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
 				.name("paired analysis")
-				.inputFilesSingle(Sets.newHashSet(sequenceFile))
+				.inputFilesSingleEnd(Sets.newHashSet(singleEndFile))
 				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
 				.referenceFile(referenceFile)
 				.build(); 
@@ -427,21 +422,18 @@ public class DatabaseSetupGalaxyITService {
 	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
 	 *         database.
 	 */
-	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Set<SequenceFile> sequenceFileSet,
+	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Set<SingleEndSequenceFile> sequenceFileSet,
 			Path referenceFilePath, UUID iridaWorkflowId) {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
-				.name("my analysis")
-				.inputFilesSingle(sequenceFileSet)
-				.referenceFile(referenceFile)
-				.build(); 
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("my analysis")
+				.inputFilesSingleEnd(sequenceFileSet).referenceFile(referenceFile).build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}
-
+	
 	/**
 	 * Attaches the given sequence file paths to a particular sample id.
 	 * 
@@ -449,19 +441,21 @@ public class DatabaseSetupGalaxyITService {
 	 *            The id of the sample to attach a sequence file to.
 	 * @param sequenceFilePaths
 	 *            A path of the sequence file to attach.
-	 * @return A List of SequenceFile objects with the given sequence file path
+	 * @return A List of {@link SequencingObject}s the given sequence file path
 	 *         attached and saved in the database.
 	 */
-	public List<SequenceFile> setupSampleSequenceFileInDatabase(long sampleId, Path... sequenceFilePaths) {
+	public List<SingleEndSequenceFile> setupSequencingObjectInDatabase(Long sampleId, Path... sequenceFilePaths) {
 		Sample sample = sampleService.read(sampleId);
-		List<SequenceFile> returnedSequenceFiles = new ArrayList<>();
+		List<SingleEndSequenceFile> returnedSequenceFiles = new ArrayList<>();
 
 		for (Path sequenceFilePath : sequenceFilePaths) {
-			Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService.createSequenceFileInSample(new SequenceFile(
-					sequenceFilePath), sample);
-			SequenceFile sequenceFile = sampleSeqFile.getObject();
-			returnedSequenceFiles.add(sequenceFile);
+			SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(new SequenceFile(sequenceFilePath));
+			SampleSequencingObjectJoin join = sequencingObjectService.createSequencingObjectInSample(
+					singleEndSequenceFile, sample);
+
+			returnedSequenceFiles.add((SingleEndSequenceFile) join.getObject());
 		}
+
 		return returnedSequenceFiles;
 	}
 	
@@ -487,11 +481,10 @@ public class DatabaseSetupGalaxyITService {
 		for (int i = 0; i < sequenceFiles1.size(); i++) {
 			SequenceFile sf1 = new SequenceFile(sequenceFiles1.get(i));
 			SequenceFile sf2 = new SequenceFile(sequenceFiles2.get(i));
-			List<Join<Sample, SequenceFile>> sampleSeqFilePair = seqeunceFileService.createSequenceFilePairInSample(
-					sf1, sf2, sample);
-			SequenceFile createdSequenceFile1 = sampleSeqFilePair.get(0).getObject();
-			SequenceFilePair sequenceFilePair = sequenceFilePairRepository.getPairForSequenceFile(createdSequenceFile1);
-			returnedSequenceFilePairs.add(sequenceFilePair);
+			SequenceFilePair pair = new SequenceFilePair(sf1, sf2);
+			SampleSequencingObjectJoin join = sequencingObjectService.createSequencingObjectInSample(pair, sample);
+
+			returnedSequenceFilePairs.add((SequenceFilePair) join.getObject());
 		}
 		return returnedSequenceFilePairs;
 	}
