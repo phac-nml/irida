@@ -595,10 +595,6 @@
 				<filtering>true</filtering>
 			</resource>
 			<resource>
-				<directory>src/main/resources/ca/corefacility/bioinformatics/irida/config</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
 			</resource>
@@ -1056,21 +1052,9 @@
 		<test.galaxy.database>local</test.galaxy.database>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<!-- Database creation/initialization-->
-		<hbm.dev.auto>update</hbm.dev.auto>
-
 	</properties>
 
 	<profiles>
-		<!-- Database recreation -->
-		<profile>
-			<id>recreate_db</id>
-			<properties>
-				<hbm.dev.auto>create</hbm.dev.auto>
-				<hbm.dev.import>/ca/corefacility/bioinformatics/irida/sql/required-data.sql,/ca/corefacility/bioinformatics/irida/sql/oauth-token.sql</hbm.dev.import>
-			</properties>
-		</profile>
-
 		<!-- Failsafe integration test profiles -->
 		<profile>
 			<id>ui_testing</id>
