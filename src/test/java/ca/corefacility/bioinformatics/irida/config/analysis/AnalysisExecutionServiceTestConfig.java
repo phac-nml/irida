@@ -81,9 +81,6 @@ public class AnalysisExecutionServiceTestConfig {
 	private IridaWorkflowsService iridaWorkflowsService;
 	
 	@Autowired
-	private SequenceFilePairRepository sequenceFilePairRepository;
-	
-	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
 	
 	@Autowired
