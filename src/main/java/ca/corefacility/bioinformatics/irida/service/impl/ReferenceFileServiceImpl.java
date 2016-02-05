@@ -73,13 +73,12 @@ public class ReferenceFileServiceImpl extends CRUDServiceImpl<Long, ReferenceFil
 	}
 
 	/**
-	 * @throws UnsupportedOperationException
-	 *             Reference files cannot be created by themselves. They must be
-	 *             created in a project.
+	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public ReferenceFile create(ReferenceFile object) throws ConstraintViolationException, EntityExistsException {
-		throw new UnsupportedOperationException("Reference file must be created in a project");
+		return super.create(object);
 	}
 
 	/**
