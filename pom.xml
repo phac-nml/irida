@@ -908,8 +908,8 @@
 							<goal>install-node-and-npm</goal>
 						</goals>
 						<configuration>
-							<nodeVersion>v5.5.0</nodeVersion>
-							<npmVersion>3.3.12</npmVersion>
+							<nodeVersion>${node.version}</nodeVersion>
+							<npmVersion>${npm.version}</npmVersion>
 						</configuration>
 					</execution>
 					<execution>
@@ -1022,6 +1022,8 @@
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>0.0.27</frontend-maven-plugin.version>
+		<node.version>v5.1.1</node.version>
+		<npm.version>3.3.12</npm.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
