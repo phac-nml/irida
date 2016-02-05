@@ -1055,7 +1055,6 @@
 	</properties>
 
 	<profiles>
-		<!-- Failsafe integration test profiles -->
 		<profile>
 			<id>ui_testing</id>
 			<properties>
