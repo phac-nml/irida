@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -73,9 +72,6 @@ public class SequencingRunServiceImplIT {
 
 	@Autowired
 	private SequencingObjectService objectService;
-
-	@Autowired
-	private AnalysisService analysisService;
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "SEQUENCER")
@@ -243,7 +239,7 @@ public class SequencingRunServiceImplIT {
 
 		miseqRunService.addSequencingObjectToSequencingRun(run, so);
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
+		AnalysisFastQC analysis = sf.getFastQCAnalysis();
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
 	}
 }

@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
@@ -56,13 +54,4 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 		return analysisRepository.save(analysis);
 	}
         
-        
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFile, 'canReadSequenceFile')")
-	public AnalysisFastQC getFastQCAnalysisForSequenceFile(final SequenceFile sequenceFile) {
-		return analysisRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
-	}
 }
