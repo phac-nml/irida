@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
