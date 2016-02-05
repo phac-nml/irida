@@ -90,7 +90,7 @@ public class SampleSequenceFilesIT {
 		// clean up
 		Files.delete(sequenceFile);
 	}
-	
+
 	@Test
 	public void testAddSequenceFilePairToSample() throws IOException {
 		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
@@ -113,10 +113,10 @@ public class SampleSequenceFilesIT {
 				.multiPart("file2", sequenceFile2.toFile())
 				.multiPart("parameters2", fileParams, MediaType.APPLICATION_JSON_VALUE).expect()
 				.statusCode(HttpStatus.CREATED.value()).when().post(sequenceFilePairUri);
-		
+
 		String location = r.body().jsonPath().get("resource.links.find{it.rel == 'self'}.href");
 
-		assertTrue("Response body must contain self rel",location.matches(sequenceFilePairUri + "/[0-9]+"));
+		assertTrue("Response body must contain self rel", location.matches(sequenceFilePairUri + "/[0-9]+"));
 
 		// confirm the resource exist
 		asUser().expect().body("resource.links.rel", hasItem("self")).when().get(location);
@@ -125,7 +125,7 @@ public class SampleSequenceFilesIT {
 		Files.delete(sequenceFile1);
 		Files.delete(sequenceFile2);
 	}
-	
+
 	@Test
 	public void testAddSequenceFileToSampleWithOptionalProperties() throws IOException {
 		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
@@ -135,7 +135,7 @@ public class SampleSequenceFilesIT {
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
 		String unpairedUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles/unpaired'}.href");
-		
+
 		// prepare a file for sending to the server
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -176,12 +176,14 @@ public class SampleSequenceFilesIT {
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
-				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
+		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+				.multiPart("file", sequenceFile.toFile()).expect().statusCode(HttpStatus.CREATED.value()).when()
+				.post(sequenceFileUri);
 
-		String location = r.getHeader(HttpHeaders.LOCATION);
+		String seqObjectLocation = from(r.getBody().asString()).getString(
+				"resource.links.find{it.rel == 'sequenceFile/sequencingObject'}.href");
 
-		r = asAdmin().expect().statusCode(HttpStatus.OK.value()).when().delete(location);
+		r = asAdmin().expect().statusCode(HttpStatus.OK.value()).when().delete(seqObjectLocation);
 		String responseBody = r.getBody().asString();
 		String sampleLocation = from(responseBody).getString("resource.links.find{it.rel == 'sample'}.href");
 
@@ -194,7 +196,7 @@ public class SampleSequenceFilesIT {
 		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/100/samples/1/sequenceFiles";
 		asAdmin().expect().statusCode(HttpStatus.NOT_FOUND.value()).when().get(sampleUri);
 	}
-	
+
 	@Test
 	public void testReadPairedSequenceFiles() {
 		String pairsRel = RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS;
@@ -202,12 +204,12 @@ public class SampleSequenceFilesIT {
 		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
-				
+
 		String sequenceFilePairsUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == '" + pairsRel + "'}.href");
-		
-		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(2)).when()
-				.get(sequenceFilePairsUri);
+
+		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(2))
+				.when().get(sequenceFilePairsUri);
 	}
 
 	@Test
