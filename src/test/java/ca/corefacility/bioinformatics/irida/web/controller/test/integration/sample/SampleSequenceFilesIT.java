@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -62,27 +61,31 @@ public class SampleSequenceFilesIT {
 		String sampleBody = response.getBody().asString();
 		String sequenceFileUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
+		String unpairedUri = from(sampleBody).getString(
+				"resource.links.find{it.rel == 'sample/sequenceFiles/unpaired'}.href");
+
 		// prepare a file for sending to the server
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		Map<String,String> fileParams = new HashMap<>();
+		Map<String, String> fileParams = new HashMap<>();
 		fileParams.put("description", "some file");
-		
-		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
-				.multiPart("parameters",fileParams, MediaType.APPLICATION_JSON_VALUE)
-				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
+
+		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+				.multiPart("file", sequenceFile.toFile())
+				.multiPart("parameters", fileParams, MediaType.APPLICATION_JSON_VALUE).expect()
+				.statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
 
 		// check that the location and link headers were created:
 		String location = r.getHeader(HttpHeaders.LOCATION);
-		assertNotNull("location must exist",location);
-		assertTrue("location must be correct",location.matches(sequenceFileUri + "/[0-9]+"));
-		// confirm that the sequence file was added to the sample sequence files list
-		asUser().expect().body("resource.resources.fileName",hasItem(sequenceFile.getFileName().toString()))
-			.and().body("resource.resources.links[0].rel",hasItems("self"))
-			.when().get(sequenceFileUri);
+		assertNotNull("location must exist", location);
+		assertTrue("location must be correct", location.matches(unpairedUri + "/[0-9]+/files/[0-9]+"));
+		// confirm that the sequence file was added to the sample sequence files
+		// list
+		asUser().expect().body("resource.resources.fileName", hasItem(sequenceFile.getFileName().toString())).and()
+				.body("resource.resources.links[0].rel", hasItems("self")).when().get(sequenceFileUri);
 		String responseBody = asUser().get(location).asString();
-		assertTrue("Result of POST must equal result of GET",r.asString().equals(responseBody));
+		assertTrue("Result of POST must equal result of GET", r.asString().equals(responseBody));
 		// clean up
 		Files.delete(sequenceFile);
 	}
@@ -92,38 +95,34 @@ public class SampleSequenceFilesIT {
 		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
-		String sequenceFileUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
+		String sequenceFilePairUri = from(sampleBody).getString(
+				"resource.links.find{it.rel == 'sample/sequenceFiles/pairs'}.href");
 
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/sequenceFiles/pairs";
-
-		Path sequenceFile = Files.createTempFile(null, null);
-		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+		Path sequenceFile1 = Files.createTempFile("File1_R1_001", ".fastq");
+		Path sequenceFile2 = Files.createTempFile("File1_R2_001", ".fastq");
+		Files.write(sequenceFile1, FASTQ_FILE_CONTENTS);
+		Files.write(sequenceFile2, FASTQ_FILE_CONTENTS);
 
 		Map<String, String> fileParams = new HashMap<>();
 		fileParams.put("description", "some file");
 
 		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-				.multiPart("file1", sequenceFile.toFile())
+				.multiPart("file1", sequenceFile1.toFile())
 				.multiPart("parameters1", fileParams, MediaType.APPLICATION_JSON_VALUE)
-				.multiPart("file2", sequenceFile.toFile())
+				.multiPart("file2", sequenceFile2.toFile())
 				.multiPart("parameters2", fileParams, MediaType.APPLICATION_JSON_VALUE).expect()
 				.statusCode(HttpStatus.CREATED.value()).when().post(sequenceFilePairUri);
 		
-		String location1 = r.body().jsonPath().get("resource.resources[0].links.find{it.rel == 'self'}.href");
-		String location2 = r.body().jsonPath().get("resource.resources[1].links.find{it.rel == 'self'}.href");
+		String location = r.body().jsonPath().get("resource.links.find{it.rel == 'self'}.href");
 
-		assertTrue("Response body must contain 1st sequence reference",location1.matches(sequenceFileUri + "/[0-9]+"));
-		assertTrue("Response body must contain 2nd sequence reference",location2.matches(sequenceFileUri + "/[0-9]+"));
-
-		assertNotEquals(location1, location2);
+		assertTrue("Response body must contain self rel",location.matches(sequenceFilePairUri + "/[0-9]+"));
 
 		// confirm the resource exist
-		asUser().expect().body("resource.links.rel", hasItem("self")).when().get(location1);
-		asUser().expect().body("resource.links.rel", hasItem("self")).when().get(location2);
+		asUser().expect().body("resource.links.rel", hasItem("self")).when().get(location);
 
 		// clean up
-		Files.delete(sequenceFile);
+		Files.delete(sequenceFile1);
+		Files.delete(sequenceFile2);
 	}
 	
 	@Test
@@ -133,6 +132,9 @@ public class SampleSequenceFilesIT {
 		String sampleBody = response.getBody().asString();
 		String sequenceFileUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
+		String unpairedUri = from(sampleBody).getString(
+				"resource.links.find{it.rel == 'sample/sequenceFiles/unpaired'}.href");
+		
 		// prepare a file for sending to the server
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -151,7 +153,7 @@ public class SampleSequenceFilesIT {
 		String location = r.getHeader(HttpHeaders.LOCATION);
 
 		assertNotNull(location);
-		assertTrue(location.matches(sequenceFileUri + "/[0-9]+"));
+		assertTrue("location must be correct", location.matches(unpairedUri + "/[0-9]+/files/[0-9]+"));
 
 		// confirm that the sequence file contains the given optional property
 		asAdmin().expect().body("resource.optionalProperty", equalTo(optionalValue)).when().get(location);
@@ -209,7 +211,7 @@ public class SampleSequenceFilesIT {
 
 	@Test
 	public void testReadForwardReverseFromPair() {
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/sequenceFiles/pairs/1";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/1";
 
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
 		String forwardLink = response.jsonPath().getString(
