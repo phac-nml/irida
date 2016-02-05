@@ -30,8 +30,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
@@ -75,12 +73,6 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
-
-	@Autowired
-	private SequenceFileService sequenceFileService;
-
-	@Autowired
-	private SequenceFilePairService sequenceFilePairService;
 
 	@Autowired
 	private SampleService sampleService;
@@ -190,8 +182,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(referenceFileRepository, sequenceFileService, sampleService,
-				analysisExecutionService(), analysisSubmissionService, analysisSubmissionRepository,
-				sequenceFilePairRepository, sequencingObjectService);
+		return new DatabaseSetupGalaxyITService(referenceFileRepository, sampleService, analysisExecutionService(),
+				analysisSubmissionService, analysisSubmissionRepository, sequencingObjectService);
 	}
 }
