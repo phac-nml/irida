@@ -84,8 +84,9 @@ public class SampleSequenceFilesIT {
 		// list
 		asUser().expect().body("resource.resources.fileName", hasItem(sequenceFile.getFileName().toString())).and()
 				.body("resource.resources.links[0].rel", hasItems("self")).when().get(sequenceFileUri);
-		String responseBody = asUser().get(location).asString();
-		assertTrue("Result of POST must equal result of GET", r.asString().equals(responseBody));
+
+		asUser().expect().statusCode(HttpStatus.OK.value()).when().get(location);
+
 		// clean up
 		Files.delete(sequenceFile);
 	}
