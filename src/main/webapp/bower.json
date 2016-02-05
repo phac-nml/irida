@@ -1,7 +1,7 @@
 {
   "name": "irida-ui",
   "version": "1.0.0",
-  "appPath": "./src/main/webapp",
+  "appPath": "./",
   "ignore": [
     ".jshintrc",
     "**/*.txt"
