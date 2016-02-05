@@ -15,7 +15,7 @@
         replace   : true,
         transclude: true,
         priority  : -1,
-        template  : '<div style="padding-bottom: 10px;"><ul class="nav nav-pills"><li ng-click="select(link)" ng-class="{active: link.selected}" ng-repeat="link in links"><a id="{{link.state}}" ui-sref="{{link.state}}">{{link.text}}</a></li></ul><div ng-transclude></div></div>',
+        template  : '<div style="padding-bottom: 10px;"><ul class="nav nav-tabs"><li ng-click="select(link)" ng-class="{active: link.selected}" ng-repeat="link in links"><a id="{{link.state}}" ui-sref="{{link.state}}">{{link.text}}</a></li></ul><div ng-transclude></div></div>',
         controller: ['$scope', '$location', function ($scope, $location) {
           $scope.links = [];
 

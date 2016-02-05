@@ -65,8 +65,11 @@
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end) + #lists.size(remote_paired)}">
 				<th:block th:if="${referenceFile}">
-				<h2 th:text="#{analysis.details.reference}"></h2>
-				<a th:text="${referenceFile.label}" th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}"></a>
+					<h2 th:text="#{analysis.details.reference}"></h2>
+					<span th:text="${referenceFile.label}"></span>
+					<a class="btn btn-default btn-sm pull-right" th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
+						<fa:icon type="download"/>&nbsp;<th:block th:text="#{form.download}">__Download__</th:block>
+					</a>
 				</th:block>
 			
 				<h2 th:text="#{analysis.details.reads}"></h2>
