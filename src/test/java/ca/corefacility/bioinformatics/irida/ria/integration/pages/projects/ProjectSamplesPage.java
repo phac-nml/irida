@@ -45,6 +45,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "removeBtn")
 	private WebElement removeBtn;
 
+	@FindBy(id = "cart-add-btn")
+	private WebElement addToCartBtn;
+
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
@@ -116,5 +119,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void selectAllOrNone() {
 		selectAll.click();
+	}
+
+	public void addSelectedSamplesToCart() {
+		addToCartBtn.click();
 	}
 }

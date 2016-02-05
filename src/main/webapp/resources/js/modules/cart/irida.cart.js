@@ -132,7 +132,7 @@
         }
       });
 
-      $q.all(promises).then(function () {
+      return $q.all(promises).then(function () {
         scope.$broadcast('cart.update', {});
       });
     };

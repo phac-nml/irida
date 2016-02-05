@@ -7,7 +7,7 @@
 	 * @param {Object} $q Angular promises.
 	 * @returns {{fetchSamples: fetchSamples}}.
 	 */
-	function samplesService ($http, $q, compiledNotification) {
+	function samplesService ($http, $q, compiledNotification, cartService) {
 		var initialized = false; // Show samples loading notification only if not the first load
 		// Private Methods
 		function getProjectSamples() {
@@ -65,8 +65,19 @@
 			});
 		}
 
+		function addSamplesToCart(samples) {
+			cartService.add(samples.map(function(sample) {
+				return ({
+					type: sample.sampleType,
+					project: sample.project.identifier,
+					sample: sample.sample.identifier
+				});
+			}));
+		}
+
 		return {
-			fetchSamples: fetchSamples
+			fetchSamples: fetchSamples,
+			addSamplesToCart: addSamplesToCart
 		};
 	}
 
@@ -132,8 +143,8 @@
 		};
 	}
 
-	ng.module("irida.projects.samples.service", ["datatables", "irida.notifications"])
-		.factory("samplesService", ["$http", "$q", "compiledNotification", samplesService])
+	ng.module("irida.projects.samples.service", ["datatables", "irida.notifications", "irida.cart"])
+		.factory("samplesService", ["$http", "$q", "compiledNotification", "CartService", samplesService])
 		.factory("associatedProjectsService", ["$http", "$q", associatedProjectsService])
 		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", tableService]);
 })(window.angular, window.jQuery, window._, window.PAGE);
