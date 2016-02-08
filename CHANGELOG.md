@@ -13,6 +13,7 @@ Changes
 * [UI]: Session timeouts increased to 5 minutes from 2 minutes.
 * [UI]: Enforce some restrictions on NCBI submissions (at least one set of samples, at least one set of files per sample).
 * [UI]: Allow removal of samples from the NCBI submission page.
+* [UI]: Administrators may now view all NCBI export submissions from the admin panel.
 * [Developer]: Replace grunt with gulp.
 * [UI]: Fixed an issue with filtering by file where the sample name file was generated on a Windows machine.
 * [Developer]: Add a maven plugin for handling downloading node.js and npm.
