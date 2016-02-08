@@ -80,6 +80,11 @@ public class RESTSampleSequenceFilesController {
 
 	public static final String REL_SEQUENCEFILE_SAMPLE = "sequenceFile/sample";
 	public static final String REL_PAIR_SAMPLE = "sequenceFilePair/sample";
+	
+	/**
+	 * Rel to a sequencefile's sequencing object
+	 */
+	public static final String REL_SEQ_OBJECT = "sequenceFile/sequencingObject";
 
 	/**
 	 * rel for forward and reverse files
@@ -286,6 +291,10 @@ public class RESTSampleSequenceFilesController {
 		file.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
 
 		file.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType, objectId))
+				.withRel(REL_SEQ_OBJECT));
+
+		file.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
 						objectType, objectId, fileId)).withSelfRel());
 
@@ -382,6 +391,10 @@ public class RESTSampleSequenceFilesController {
 				.withRel(REL_SAMPLE_SEQUENCE_FILES));
 		sequenceFile.add(selfRel);
 		sequenceFile.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
+		sequenceFile.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
+						singleEndSequenceFile.getId())).withRel(REL_SEQ_OBJECT));
+		
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceFile);
 		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, selfRel.getHref());

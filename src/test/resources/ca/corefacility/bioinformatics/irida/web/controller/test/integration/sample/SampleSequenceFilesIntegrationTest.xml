@@ -21,8 +21,7 @@
 
 	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" />
 
-	<sample id="1"  sampleName="sample"
-		createdDate="2013-07-18 14:20:19.0" />
+	<sample id="1" sampleName="sample" createdDate="2013-07-18 14:20:19.0" />
 
 	<project_sample id="1" project_id="5" sample_id="1"
 		createdDate="2013-07-18 14:20:19.0" />
@@ -49,14 +48,20 @@
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile3_01_L001_R2_001.fastq.gz" />
 
-	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
-		sample_id="1" sequencefile_id="1" />
-	<sequencefile_sample id="2" createdDate="2013-07-18 14:20:19.0"
-		sample_id="1" sequencefile_id="2" />
-	<sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
-		sample_id="1" sequencefile_id="3" />
+	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
 
-	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
+	<sequence_file_single_end id="2" file_id="1" />
+
+	<sample_sequencingobject id="1"
+		created_date="2013-07-18 14:20:19.0" sample_id="1"
+		sequencingobject_id="1" />
+	<sample_sequencingobject id="2"
+		created_date="2013-07-18 14:20:19.0" sample_id="1"
+		sequencingobject_id="2" />
+
+
+	<sequence_file_pair id="1" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="2" />
 	<sequence_file_pair_files pair_id="1"
