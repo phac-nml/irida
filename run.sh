@@ -9,6 +9,4 @@ else
    echo "Updating database schema without dropping"
   fi
 
-echo ${ADD}
-
 mvn clean jetty:run ${ADD}
