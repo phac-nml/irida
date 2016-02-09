@@ -1054,10 +1054,8 @@
 		<test.galaxy.database>local</test.galaxy.database>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-
 	</properties>
 
-	<!-- Failsafe integration test profiles -->
 	<profiles>
 		<profile>
 			<id>ui_testing</id>
