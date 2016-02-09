@@ -1,5 +1,4 @@
-/*exported exportsTable*/
-var exportsTable = (function (page) {
+var exportsTable = (function (tl) {
   /**
    * Create a link button to the export thing
    *
@@ -10,11 +9,20 @@ var exportsTable = (function (page) {
    */
   function createLinkButton(data, type, full) {
     if(full.identifier) {
-      return "<a class='btn btn-link' title='"+data+"' href='" + page.URLS.exportBase + full.identifier + "'>" + data + "</a>";
+      var url = PAGE.URLS.projectBase + full.project.identifier + "/export/" + full.identifier;
+      return "<a class='btn btn-link' title='"+data+"' href='" + url + "'>" + data + "</a>";
+    }
+  }
+
+  function createProjectLink(data, type, full) {
+    if(full.identifier) {
+      var url = PAGE.URLS.projectBase + full.project.identifier;
+      return "<a class='btn btn-link' title='"+data+"' href='" + url + "'>" + full.project.label + "</a>";
     }
   }
 
   return {
-    createLinkButton: createLinkButton
+    createLinkButton: createLinkButton,
+    createProjectLink: createProjectLink
   };
-})(window.PAGE);
+})(window.TL);

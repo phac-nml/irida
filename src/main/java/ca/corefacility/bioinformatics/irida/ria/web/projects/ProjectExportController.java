@@ -15,6 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,14 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
@@ -45,12 +40,21 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 /**
  * Controller managing requests to export project data to external sources.
@@ -62,10 +66,11 @@ public class ProjectExportController {
 	public static final String NCBI_EXPORT_VIEW = "projects/export/ncbi";
 	public static final String EXPORT_DETAILS_VIEW = "projects/export/details";
 	public static final String EXPORT_LIST_VIEW = "projects/export/list";
+	public static final String EXPORT_ADMIN_VIEW = "projects/export/admin";
 
 	@Value("${ncbi.upload.namespace}")
 	private String namespace = "";
-	
+
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final SequenceFileService sequenceFileService;
@@ -151,8 +156,8 @@ public class ProjectExportController {
 			sampleMap.put("files", files);
 			sampleList.add(sampleMap);
 		}
-		
-		sampleList.sort(new Comparator<Map<String,Object>>() {
+
+		sampleList.sort(new Comparator<Map<String, Object>>() {
 			@Override
 			public int compare(Map<String, Object> o1, Map<String, Object> o2) {
 				String s1Name = (String) o1.get("name");
@@ -263,6 +268,21 @@ public class ProjectExportController {
 	}
 
 	/**
+	 * Get the view to see all ncbi exports
+	 * 
+	 * @param projectId
+	 *            which {@link Project} to get exports for
+	 * @param model
+	 *            model for the view
+	 * @return name of the exports list view
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping("/export/ncbi")
+	public String getExportsPage(Model model) {
+		return EXPORT_ADMIN_VIEW;
+	}
+
+	/**
 	 * Ajax method for getting the {@link NcbiExportSubmission}s for a given
 	 * {@link Project}
 	 * 
@@ -281,6 +301,28 @@ public class ProjectExportController {
 
 		DataSet<NcbiExportSubmission> dataSet = new DataSet<NcbiExportSubmission>(submissions,
 				(long) submissions.size(), (long) submissions.size());
+
+		return DatatablesResponse.build(dataSet, criterias);
+	}
+
+	/**
+	 * Ajax method for getting all {@link NcbiExportSubmission}s
+	 * 
+	 * @param criterias
+	 *            Datatables request object
+	 * @return DatatablesResponse of Map of submission params
+	 */
+	@RequestMapping("/ajax/export/list")
+	@ResponseBody
+	public DatatablesResponse<NcbiExportSubmission> getAllExports(@DatatablesParams DatatablesCriterias criterias) {
+
+		int currentPage = DatatablesUtils.getCurrentPage(criterias);
+
+		Page<NcbiExportSubmission> submissions = exportSubmissionService.list(currentPage, criterias.getLength(),
+				Sort.Direction.DESC, "createdDate");
+
+		DataSet<NcbiExportSubmission> dataSet = new DataSet<NcbiExportSubmission>(submissions.getContent(),
+				submissions.getTotalElements(), submissions.getTotalElements());
 
 		return DatatablesResponse.build(dataSet, criterias);
 	}
