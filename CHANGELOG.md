@@ -21,6 +21,7 @@ Changes
 * [UI]: Fixed the admin events monitoring page.
 * [Developer]: Added some docs and features for doing browser sync with gulp on css and javascript changes.
 * [UI]: Reference files may now be uploaded at pipeline submission time in addition to being added to a project.
+* [UI]: Fixed a bug where the password reset page was not styled in the same way as the rest of the application.
 
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
