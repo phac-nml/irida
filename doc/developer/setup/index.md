@@ -117,15 +117,15 @@ IRIDA uses Maven for build and dependency management. You can check to see that 
     
 #### Database first-time setup
 
-When first starting up Jetty, you'll need to have the database created and populated, which can be done by using:
+When first starting up Jetty, you'll need to have the database created and populated, which can be done by running the following script:
 
-    mvn clean jetty:run -Dhbm.dev.auto=create
+    ./run.sh --create-db
     
 This will create the database schema and import some testing data. This can also be used to drop then recreate the database and reimport the starting dataset when a clean database is needed.
 
-For all subsequent runs, simply use:
+For all subsequent runs, simply run the script with no options:
 
-    mvn clean jetty:run
+    ./run.sh
     
 This will update the database if the schema has been changed, but without dropping all of the tables beforehand, which will cause Jetty to start up much faster.
 
