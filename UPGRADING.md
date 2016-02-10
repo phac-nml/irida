@@ -4,13 +4,17 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+1.0.0-alpha8 to 1.0.0-alpha9
+----------------------------
+* No special upgrade steps required, just deploy the new `war` file.
+
 1.0.0-alpha8 to 1.0.0-alpha8.2
 ----------------------------
 * Add `irida.scheduled.threads` key to `/etc/irida/irida.conf` file with the size of your desired thread pool.  Suggested size is `2`.
 
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
-* No special upgrate steps required, just deploy the new `war` file.
+* (Optional) Add new keys for exporting data to NCBI's SRA. Please see https://irida.corefacility.ca/documentation/administrator/web/#core-configuration for a complete list of the keys to add (all use the prefix `ncbi.upload`). You must create an account with NCBI to enable this feature: http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Establishing_a_Center_A_
 
 1.0.0-alpha6 to 1.0.0-alpha7
 ----------------------------

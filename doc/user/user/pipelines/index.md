@@ -10,7 +10,7 @@ Launching Pipelines
 
 IRIDA currently provides two different pipelines for analysing your sequencing data:
 
-1. The SNVPhyl whole-genome phylogeny pipeline ([poster](https://share.corefacility.ca/public.php?service=files&t=b1fef5379e23b663d308db9ebb5b6bb5&download)), and 
+1. The SNVPhyl whole-genome phylogeny pipeline ([poster](https://share.corefacility.ca/public.php?service=files&t=b1fef5379e23b663d308db9ebb5b6bb5&download)), and
 2. An assembly ([SPAdes](http://bioinf.spbau.ru/spades)) and annotation ([Prokka](http://www.vicbioinformatics.com/software.prokka.shtml)) pipeline.
 
 These pipelines take as input a set of sequencing read files from different samples. The samples must first be added to a cart before a pipeline can be run.
@@ -71,7 +71,9 @@ Click on the "Select" button at the bottom, right-hand side of the pipeline that
 
 ![Reference file required.](images/reference-file-required.png)
 
-If you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, you can click on the name of the project to be directed to the project details page where you can [add a reference file to the project](../project/#adding-reference-files-to-a-project).
+If you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, you can [add a reference file to the project](../project/#adding-reference-files-to-a-project). Reference files added to a project can be shared with all other project members.
+
+If you do not have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "{% icon fa-upload %} Upload New" button. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
 
 When you select a pipeline that doesn't require a reference file (or you've already [uploaded one](../project/#adding-reference-files-to-a-project)), you will be presented with a list of the samples that you've selected for analysis in the pipeline:
 
