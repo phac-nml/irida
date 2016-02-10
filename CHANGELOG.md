@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.0.0-alpha9 to 1.0.0-alpha10
+-----------------------------
+* [Developer]: Upgraded to angularjs 1.5.0.
+
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
 * [Developer]: Added maven package to install node, npm, and front end assets, then it will build all front end dependencies.
