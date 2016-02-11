@@ -4,6 +4,7 @@ Changes
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
 * [Developer]: Upgraded to angularjs 1.5.0.
+* [Developer]: When building the VM, don't install a tool more than once (even if multiple workflows depend on the tool).
 
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
