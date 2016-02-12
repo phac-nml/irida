@@ -71,9 +71,9 @@
 	<script type="text/ng-template" id="buttons.html" th:include="projects/partials/samples.tmpl :: toolbar"></script>
 
 	<script th:inline="javascript" type="text/ng-template" id="selectedCounts.html">
-		<ng-pluralize id="selected-count-info" count="samplesCtrl.selected.length"
-		              data:when="#{project.samples.table.selected}"
-		></ng-pluralize>
+		<!--<ng-pluralize id="selected-count-info" count="samplesCtrl.selected.length"-->
+		              <!--data:when="#{project.samples.table.selected}"-->
+		<!--&gt;</ng-pluralize>-->
 	</script>
 
 	<script id="associated-projects.modal.html" type="text/ng-template" th:inline="javascript">
@@ -125,6 +125,23 @@
 			<ul>
 				<li ng-repeat='item in items' th:text="#{project.samples.display.notification.item}"></li>
 			</ul>
+		</div>
+	</script>
+
+	<script type="text/ng-template" id="removeSamples.modal.html" th:inline="javascript">
+		<div class="modal-header">
+			<h3 class="modal-title">
+				<!--<ng-pluralize count="removeCtrl.samples.length" data:when="'{\'1\': \'' + #{project.samples.modal.remove.title-singular} + '\', \'other\':\'' + #{project.samples.modal.remove.title-plural(${project.label})} + '\'}'"></ng-pluralize>-->
+				<ng:pluralize count="5" when="'1':'This is the first one'" />
+			</h3>
+		</div>
+		<div class="modal-body">
+			<div class="alert alert-warning">
+				<strong>Hey, You are removing some files!</strong>
+				<p>The following files will be removed from
+					<span th:text="${project.label}"></span>
+				</p>
+			</div>
 		</div>
 	</script>
 </th:block>

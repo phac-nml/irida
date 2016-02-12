@@ -97,7 +97,19 @@
 		};
 
 		vm.delete = function () {
-			$log.warn("TODO: Implement delete functionality");
+			var modal = $uibModal.open({
+				templateUrl: "removeSamples.modal.html",
+				controllerAs: "removeCtrl",
+				controller: ["samples", function RemoveSamplesController (samples) {
+				}],
+				resolve: {
+					samples: function () {
+						return vm.samples.filter(function (sample) {
+							return sample.selected;
+						});
+					}
+				}
+			});
 		};
 
 		vm.addToCart = function () {
