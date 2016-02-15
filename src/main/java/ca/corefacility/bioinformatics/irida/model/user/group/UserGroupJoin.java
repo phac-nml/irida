@@ -128,4 +128,7 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 		return this.createdDate;
 	}
 
+	public UserGroupRole getRole() {
+		return this.role;
+	}
 }
