@@ -182,7 +182,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER'")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<UserGroupJoin> getUsersForGroup(final UserGroup group) {
 		return userGroupJoinRepository.findUsersInGroup(group);
 	}
