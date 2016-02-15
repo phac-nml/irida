@@ -64,6 +64,18 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 	private UserGroupRole role;
 
 	/**
+	 * For hibernate
+	 */
+	@SuppressWarnings("unused")
+	private UserGroupJoin() {
+		this.createdDate = null;
+		this.id = null;
+		this.user = null;
+		this.group = null;
+		this.role = null;
+	}
+
+	/**
 	 * Create a new {@link UserGroupJoin}.
 	 * 
 	 * @param user

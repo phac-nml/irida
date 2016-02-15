@@ -77,10 +77,20 @@
 								List Users
 							</a>
 						</li>
-						<li role="presentation" class="divider"></li>
 						<li role="menuitem">
 							<a href="#" th:href="@{/users/create}">
 								<span th:text="#{nav.main.add.user}">Create new user</span>
+							</a>
+						</li>
+						<li role="presentation" class="divider"></li>
+						<li role="menuitem">
+							<a href="#" th:href="@{/groups}" th:text="#{nav.main.groups-list}">
+								List Groups
+							</a>
+						</li>
+						<li role="menuitem">
+							<a href="#" th:href="@{/groups/create}">
+								<span th:text="#{nav.main.add.group}">Create new group</span>
 							</a>
 						</li>
 					</ul>

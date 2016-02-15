@@ -12,6 +12,7 @@ import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
@@ -221,6 +222,17 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
+			int size, Direction order, String... sortProperties) {
+		return userGroupJoinRepository.findAll(filterUserGroupJoinByUsername(username, userGroup),
+				new PageRequest(page, size, order, sortProperties));
+	}
+
+	/**
 	 * A convenience specification to get a {@link UserGroupJoin} from a
 	 * {@link User} and {@link UserGroup}.
 	 * 
@@ -228,13 +240,35 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 *            the user
 	 * @param userGroup
 	 *            the group
-	 * @return the relationship for those objects.
+	 * @return a specification for the filter
 	 */
 	private static final Specification<UserGroupJoin> findUserGroupJoin(final User user, final UserGroup userGroup) {
 		return new Specification<UserGroupJoin>() {
 			@Override
 			public Predicate toPredicate(Root<UserGroupJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				return cb.and(cb.equal(root.get("user"), user), cb.equal(root.get("group"), userGroup));
+			}
+		};
+	}
+
+	/**
+	 * A convenience specification to filter {@link UserGroupJoin} in a
+	 * {@link UserGroup} by the username.
+	 * 
+	 * @param username
+	 *            the username to filter on
+	 * @param userGroup
+	 *            the group to filter
+	 * @return a specification for the filter
+	 */
+	private static final Specification<UserGroupJoin> filterUserGroupJoinByUsername(final String username,
+			final UserGroup userGroup) {
+		return new Specification<UserGroupJoin>() {
+			@Override
+			public Predicate toPredicate(final Root<UserGroupJoin> root, final CriteriaQuery<?> query,
+					final CriteriaBuilder cb) {
+				return cb.and(cb.like(root.get("user").get("username"), "%" + username + "%"),
+						cb.equal(root.get("group"), userGroup));
 			}
 		};
 	}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template/page">
+<head>
+<title th:text="${group.label}">_IRIDA Group_</title>
+<link rel="stylesheet"
+	th:href="@{/resources/bower_components/datatables/media/css/jquery.dataTables.min.css}"
+	href="/resources/bower_components/datatables/media/css/jquery.dataTables.min.css" />
+<script th:inline="javascript">
+	var PAGE = {
+		urls : {
+			addMember : /*[[@{/groups/{id}/members(id=${group.getId()})}]]*/'/groups/1/members',
+			table : /*[[@{/groups/{id}/ajax/list(id=${group.id})}]]*/'/groups/1/ajax/list',
+			usersLink : /*[[@{/users/}]]*/'/users'
+		}
+	};
+</script>
+</head>
+<body>
+	<main layout:fragment="page" ddl:bundle-includes="group-members" ddl:asset-css-excludes="jquery.datatables">
+	<div class="col-md-12">
+		<div class="row">
+			<div class="col-md-12">
+				<h1 id="wb-cont" class="group-details-title" property="name"
+					th:text="${group.label}">__IRIDA Group__</h1>
+				<div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
+					<div class="btn-group">
+						<button id="add-members-button" class="btn btn-default"
+							th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
+							th:text="#{project.members.edit.add}"
+							ng-click="membersCtrl.showAddMemberModal()">_Add
+							Members_</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<table id="groupMembersTable" class="table table-striped table-hover">
+					<thead>
+						<tr th:inline="text">
+							<th id="username-header">[[#{group.users.username}]]</th>
+							<th id="role-header">[[#{group.users.role}]]</th>
+							<th id="added-header">[[#{group.users.date.added}]]</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+
+	</div>
+
+	</main>
+</body>
+</html>
