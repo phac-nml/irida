@@ -100,16 +100,34 @@
 			var modal = $uibModal.open({
 				templateUrl: "removeSamples.modal.html",
 				controllerAs: "removeCtrl",
-				controller: ["samples", function RemoveSamplesController (samples) {
+				controller: ["$uibModalInstance", "samples", function RemoveSamplesController ($uibModalInstance, samples) {
+					var vm = this;
+					vm.samples = samples;
+
+					vm.cancel = function () {
+						$uibModalInstance.dismiss();
+					};
+
+					vm.remove = function() {
+						$uibModalInstance.close();
+					};
 				}],
 				resolve: {
 					samples: function () {
-						return vm.samples.filter(function (sample) {
-							return sample.selected;
-						});
+						return vm.selected;
 					}
 				}
 			});
+
+			modal.result.then(function () {
+				samplesService.removeSamples(vm.selected).then(function () {
+					vm.samples = vm.samples.filter(function (sample) {
+						return !sample.selected;
+					});
+					vm.selected = [];
+				});
+			});
+
 		};
 
 		vm.addToCart = function () {

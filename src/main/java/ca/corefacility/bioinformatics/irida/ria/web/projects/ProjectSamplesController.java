@@ -385,8 +385,14 @@ public class ProjectSamplesController {
 			}
 
 		}
-		result.put("message",
-				messageSource.getMessage("project.samples.remove-success", new Object[] { sampleIds.size() }, locale));
+		if (sampleIds.size() == 1) {
+			Sample sample = sampleService.read(sampleIds.get(0));
+			result.put("message",
+                    messageSource.getMessage("project.samples.remove-success-singular", new Object[] { sample.getSampleName(), project.getLabel() }, locale));
+		} else {
+			result.put("message",
+					messageSource.getMessage("project.samples.remove-success-plural", new Object[] { sampleIds.size(), project.getLabel() }, locale));
+		}
 
 		result.put("result", "success");
 		return result;

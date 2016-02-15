@@ -75,13 +75,29 @@
 			}));
 		}
 
+		function removeSamples(items) {
+			var sampleIds = [];
+			items.forEach(function (item) {
+				sampleIds.push(item.sample.identifier);
+			});
+			if (sampleIds.length > 0) {
+				return $http.post(page.urls.remove, {sampleIds: sampleIds})
+					.success(function (data) {
+						if (data.result === 'success') {
+							notifications.show({type: data.result, msg: data.message});
+						}
+					});
+			}
+		}
+
 		return {
 			fetchSamples: fetchSamples,
-			addSamplesToCart: addSamplesToCart
+			addSamplesToCart: addSamplesToCart,
+			removeSamples: removeSamples
 		};
 	}
 
-	function associatedProjectsService($http, $q) {
+	function associatedProjectsService($http) {
 		function getLocalAssociated() {
 			return $http.get(page.urls.associated.local);
 		}

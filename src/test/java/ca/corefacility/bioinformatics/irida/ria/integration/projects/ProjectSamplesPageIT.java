@@ -139,7 +139,16 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	// TODO: (Josh - 2016-02-05) Create testing for copying samples as manager to unmanaged project
 
-	// TODO: (Josh - 2016-02-05) Create test for removing samples
+	@Test
+	public void testRemoveSamplesFromProject() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		assertFalse("Remove button should be disabled since no samples selected", page.isRemoveBtnEnabled());
+
+		// Select some samples
+		page.selectSample(0);
+		page.selectSample(1);
+		assertEquals("Should be 2 selected samples", "2 Samples Selected", page.getSelectedInfoText());
+	}
 
 	// TODO: (Josh - 2016-02-05) Create test for export linker
 
