@@ -12,6 +12,19 @@ INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'disabled-guy@nowhere.ca', 'Disabled', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'disabledguy', 0, 'ROLE_USER', 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'manager@nowhere.ca', 'Mr.', 'Manager', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'manager', 1, 'ROLE_MANAGER', 1);
 
+insert into user_group(created_date, name) values (now(), 'group 1');
+insert into user_group(created_date, name) values (now(), 'group 2');
+insert into user_group(created_date, name) values (now(), 'group 3');
+insert into user_group(created_date, name) values (now(), 'group 4');
+insert into user_group(created_date, name) values (now(), 'group 5');
+insert into user_group(created_date, name) values (now(), 'group 6');
+insert into user_group(created_date, name) values (now(), 'group 7');
+insert into user_group(created_date, name) values (now(), 'group 8');
+
+insert into user_group_member(created_date, role, group_id, user_id) values (now(), 'GROUP_OWNER', 8, 1);
+insert into user_group_member(created_date, role, group_id, user_id) values (now(), 'GROUP_OWNER', 8, 2);
+insert into user_group_member(created_date, role, group_id, user_id) values (now(), 'GROUP_OWNER', 8, 3);
+
 -- projects required for integration tests
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-01 08:24:09' , 'Project 1', 'E. coli O157 I am a very long that is out fo control, this should be even longer');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-02 08:24:09' , 'Project 3', 'E. coli');
