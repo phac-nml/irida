@@ -63,9 +63,14 @@ public class UserGroup implements MutableIridaThing {
 	/**
 	 * Create a new {@link UserGroup}.
 	 */
-	public UserGroup() {
+	private UserGroup() {
 		this.id = null;
 		this.createdDate = new Date();
+	}
+	
+	public UserGroup(final String name) {
+		this();
+		this.name = name;
 	}
 
 	public int hashCode() {
@@ -82,6 +87,14 @@ public class UserGroup implements MutableIridaThing {
 		}
 
 		return false;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
 	}
 
 	/**

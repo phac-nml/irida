@@ -71,11 +71,12 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 	 * @param group
 	 *            the {@link UserGroup} that the {@link User} is a member of.
 	 */
-	public UserGroupJoin(final User user, final UserGroup group) {
+	public UserGroupJoin(final User user, final UserGroup group, final UserGroupRole role) {
 		this.createdDate = new Date();
 		this.id = null;
 		this.user = user;
 		this.group = group;
+		this.role = role;
 	}
 
 	public int hashCode() {
@@ -128,4 +129,11 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 		return this.createdDate;
 	}
 
+	public UserGroupRole getRole() {
+		return this.role;
+	}
+	
+	public void setRole(final UserGroupRole role) {
+		this.role = role;
+	}
 }
