@@ -148,6 +148,15 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.selectSample(1);
 		assertEquals("Should be 2 selected samples", "2 Samples Selected", page.getSelectedInfoText());
+		assertTrue("Remove button should be enabled since 2 samples selected", page.isRemoveBtnEnabled());
+
+		// Remove process
+		page.removeSamples();
+		assertFalse("Remove button should be disabled since no samples selected", page.isRemoveBtnEnabled());
+		assertEquals("Should be only 2 pages of projects now", 2, page.getPaginationCount());
+		page.selectPaginationPage(2);
+		assertEquals("Should only be displaying 9 samples.", 9, page.getNumberProjectsDisplayed());
+		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
 	}
 
 	// TODO: (Josh - 2016-02-05) Create test for export linker

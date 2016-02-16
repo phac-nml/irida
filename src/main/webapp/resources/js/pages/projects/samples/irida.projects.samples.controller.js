@@ -99,6 +99,7 @@
 		vm.delete = function () {
 			var modal = $uibModal.open({
 				templateUrl: "removeSamples.modal.html",
+				openedClass: 'remove-modal',
 				controllerAs: "removeCtrl",
 				controller: ["$uibModalInstance", "samples", function RemoveSamplesController ($uibModalInstance, samples) {
 					var vm = this;
