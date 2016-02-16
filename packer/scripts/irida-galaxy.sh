@@ -42,9 +42,10 @@ EOF
 
 	cd /home/irida/galaxy/
 
-	hg clone https://bitbucket.org/apetkau/galaxy-dist
+	curl -O https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz
+	tar xf b065a7a.tar.gz
+	mv apetkau-galaxy-dist-b065a7a422d7 galaxy-dist
 	cd galaxy-dist
-	hg update b065a7a422d72c5436ba62bfc6d831a9df82a79f
 
 	sh scripts/common_startup.sh 2>&1 | tee common_startup.log
 
