@@ -148,6 +148,10 @@ public class GroupsController {
 		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
 		String sortName = sortProperties.get("sort_string").toString();
 
+		if (sortName.equals("subject.username")) {
+			sortName = "user";
+		}
+
 		final String usernameFilter = criteria.getSearch();
 		final Page<UserGroupJoin> groups = userGroupService.filterUsersByUsername(usernameFilter, group, currentPage,
 				criteria.getLength(), direction, sortName);
