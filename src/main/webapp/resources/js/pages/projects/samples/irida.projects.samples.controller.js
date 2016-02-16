@@ -125,6 +125,7 @@
 						return !sample.selected;
 					});
 					vm.selected = [];
+					updateButtons();
 				});
 			});
 

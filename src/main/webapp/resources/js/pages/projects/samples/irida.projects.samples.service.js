@@ -81,7 +81,7 @@
 				sampleIds.push(item.sample.identifier);
 			});
 			if (sampleIds.length > 0) {
-				return $http.post(page.urls.remove, {sampleIds: sampleIds})
+				return $http.post(page.urls.samples.remove, {sampleIds: sampleIds})
 					.success(function (data) {
 						if (data.result === 'success') {
 							notifications.show({type: data.result, msg: data.message});

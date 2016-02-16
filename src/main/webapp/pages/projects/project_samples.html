@@ -14,11 +14,11 @@
                 },
                 samples: {
                     project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
-                    local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ ''
+                    local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
+                    remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ ''
                 },
                 remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
                 merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
-                remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
                 copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
             },
             i18n: {
