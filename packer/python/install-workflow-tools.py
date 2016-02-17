@@ -15,6 +15,8 @@ def main(master_api_key, api_url, galaxy_admin_user, galaxy_admin_pass, galaxy_w
     print "Signing in as admin user."
     gi = galaxy.GalaxyInstance(url=api_url, key=admin_key)
 
+    installed_tools = set()
+
     for (dir_name, sub_dir, file_names) in os.walk(pipeline_xml_dir):
         for xml_file in filter(lambda f: f.endswith('.xml'), file_names):
             xml_path = os.path.join(dir_name, xml_file)
@@ -28,16 +30,16 @@ def main(master_api_key, api_url, galaxy_admin_user, galaxy_admin_pass, galaxy_w
                 revision = repository.find('revision').text
                 tool_info = ", ".join([name, owner, url, revision])
 
-                print "Going to install %s" % tool_info
-                try:
-                    gi.toolShed.install_repository_revision(url, name, owner, revision, install_tool_dependencies = True, install_repository_dependencies = True)
-                except galaxy.client.ConnectionError as e:
-                    error_body = json.loads(e.body)
-                    if (error_body['err_code'] == 400008):
-                        print "%s is already installed, skipping." % tool_info
-                    else:
-                        print "%s failed to install, check the galaxy logs." % tool_info
+                if (name, revision) not in installed_tools:
+                    print "Going to install %s" % tool_info
+                    try:
+                        gi.toolShed.install_repository_revision(url, name, owner, revision, install_tool_dependencies = True, install_repository_dependencies = True)
+                        installed_tools.add((name, revision))
+                    except galaxy.client.ConnectionError as e:
+		        print "%s failed to install, check the galaxy logs." % tool_info
                         raise
+                else:
+                    print "{name} ({revision}) is already installed, skipping.".format(name = name, revision = revision)
     return
 
 def create_user(gi, username, email, password):
