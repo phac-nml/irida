@@ -65,12 +65,9 @@ GALAXY_ADMIN_USER=admin@localhost.localdomain
 
 # An email address for the user used to run workflows in Galaxy (the address does not need to be a real email address).
 GALAXY_WORKFLOW_USER=workflow@localhost.localdomain
-
-# The mercurial commit number for the IRIDA Galaxy instance.  This should remain fixed as we have only tested against this commit number.
-GALAXY_VERSION=b065a7a422d72c5436ba62bfc6d831a9df82a79f
 ```
 
-Please customize these environment variables to your system and proceed through the rest of the instructions.  Please replace any instance of a variable (such as `$GALAXY_USER`) with the value for your system (such as `galaxy-irida`).  However, **do not** change the `$GALAXY_VERSION` variable; this revision is the version of Galaxy we have tested against.  To see more information about the particular version or other information on Galaxy releases please see [Galaxy News Page][] and [Bitbucket][].
+Please customize these environment variables to your system and proceed through the rest of the instructions.  Please replace any instance of a variable (such as `$GALAXY_USER`) with the value for your system (such as `galaxy-irida`).
 
 For more information about installing Galaxy, please see [Running Galaxy in a production environment][].
 
@@ -111,23 +108,11 @@ Please run the following commands to download and build Galaxy.
 
 ```bash
 cd $GALAXY_BASE_DIR
-hg clone https://bitbucket.org/apetkau/galaxy-dist $GALAXY_ROOT_DIR
+curl -O https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz
+tar xf b065a7a.tar.gz
+mv apetkau-galaxy-dist-b065a7a422d7 $GALAXY_ROOT_DIR
 cd $GALAXY_ROOT_DIR
-hg update -C $GALAXY_VERSION # switch to version of Galaxy used by IRIDA
-```
 
-To verify that you have updated to the correct Galaxy version, please run:
-
-```bash
-hg id # verify Galaxy version
-b065a7a422d7 (release_15.03_database_fix)
-```
-
-If you do not see the result `b065a7a422d7`, then something went wrong with the [Mercurial][] (hg) commands.  An alternative method to install this exact version of Galaxy is to download from <https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz>.  We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version **15.03.1** but includes one performance improvement for larger workflows.  The Galaxy version **15.03.1** should work as well but later versions of Galaxy have made changes to the API which require modifications to IRIDA to be fully supported.  We plan to integrate these changes and update the supported Galaxy instance shortly.
-
-Once Galaxy has been downloaded and the correct version verified, you can continue with the installation procedure by running the following:
-
-```bash
 sh scripts/common_startup.sh 2>&1 | tee common_startup.log # Common startup tasks
 cp $GALAXY_ROOT_DIR/config/galaxy.ini.sample $GALAXY_ROOT_DIR/config/galaxy.ini
 
@@ -136,6 +121,7 @@ mkdir $GALAXY_BASE_DIR/tool_dependencies # directory for installing dependency b
 cp $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml.sample $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml
 ```
 
+We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version **15.03.1** but includes one performance improvement for larger workflows.  The Galaxy version **15.03.1** should work as well but later versions of Galaxy have made changes to the API which require modifications to IRIDA to be fully supported.  We plan to integrate these changes and update the supported Galaxy instance shortly.
 
 ### Step 2: Create Galaxy Environment File
 
@@ -381,6 +367,5 @@ For more information please see the [Purging Histories and Datasets][] document.
 [galaxy-installed-repositories.jpg]: images/galaxy-installed-repositories.jpg
 [history-options-icon]: images/history-options-icon.jpg
 [Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
-[Mercurial]: http://mercurial.selenic.com/
 [PerlBrew]: http://perlbrew.pl/
 [App::cpanminus]: http://search.cpan.org/~miyagawa/App-cpanminus-1.7027/lib/App/cpanminus.pm
