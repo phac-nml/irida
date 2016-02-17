@@ -122,7 +122,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectSample(int row) {
-		sampleCheckboxes.get(row).click();
+		WebElement checkbox = sampleCheckboxes.get(row);
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		checkbox.click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("tbody tr:nth-of-type(" + (row + 1) + ").selected")));
 	}
 
 	public void selectSampleWithShift(int row) {
@@ -136,6 +139,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void addSelectedSamplesToCart() {
 		addToCartBtn.click();
+		// Make sure the item were added to the cart.
+		waitForElementVisible(
+				By.cssSelector("#cart-count-notification .angular-notifications-icon div"));
 	}
 
 	public void removeSamples() {
