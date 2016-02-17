@@ -113,8 +113,21 @@ Please run the following commands to download and build Galaxy.
 cd $GALAXY_BASE_DIR
 hg clone https://bitbucket.org/apetkau/galaxy-dist $GALAXY_ROOT_DIR
 cd $GALAXY_ROOT_DIR
-hg update $GALAXY_VERSION # switch to version of Galaxy used by IRIDA
+hg update -C $GALAXY_VERSION # switch to version of Galaxy used by IRIDA
+```
+
+To verify that you have updated to the correct Galaxy version, please run:
+
+```bash
 hg id # verify Galaxy version
+b065a7a422d7 (release_15.03_database_fix)
+```
+
+If you do not see the result `b065a7a422d7`, then something went wrong with the [Mercurial][] (hg) commands.  An alternative method to install this exact version of Galaxy is to download from <https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz>.  We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version **15.03.1** but includes one performance improvement for larger workflows.  The Galaxy version **15.03.1** should work as well but later versions of Galaxy have made changes to the API which require modifications to IRIDA to be fully supported.  We plan to integrate these changes and update the supported Galaxy instance shortly.
+
+Once Galaxy has been downloaded and the correct version verified, you can continue with the installation procedure by running the following:
+
+```bash
 sh scripts/common_startup.sh 2>&1 | tee common_startup.log # Common startup tasks
 cp $GALAXY_ROOT_DIR/config/galaxy.ini.sample $GALAXY_ROOT_DIR/config/galaxy.ini
 
@@ -123,18 +136,6 @@ mkdir $GALAXY_BASE_DIR/tool_dependencies # directory for installing dependency b
 cp $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml.sample $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml
 ```
 
-*Note: We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version 15.03.1.  This was in order to fix an issue that was not fixed in the stable branch of Galaxy as of writing this document.  The specific issue was reported at <https://trello.com/c/I0n23JEP/2484-database-deadlock-for-large-workflows> with the fix in the main Galaxy code at <https://github.com/galaxyproject/galaxy/pull/52>.*
-
-*Note: Dependening on the version of CentOS you use, you may encounter errors when attempting to clone the Galaxy bitbucket.org repository with Mercurial `hg clone`.  For Mercurial 1.4, this looks like the following:*
-
-```
-hg clone https://bitbucket.org/apetkau/galaxy-dist
-destination directory: galaxy-dist
-requesting all changes
-abort: HTTP Error 400: Bad Request
-```
-
-*If this occurs, you will have to manually install a newer version of [Mercurial][], or manually download the specific revision of Galaxy used at <https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz>* 
 
 ### Step 2: Create Galaxy Environment File
 
