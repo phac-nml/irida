@@ -123,9 +123,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void selectSample(int row) {
 		WebElement checkbox = sampleCheckboxes.get(row);
-		WebDriverWait wait = new WebDriverWait(driver, 10);
 		checkbox.click();
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("tbody tr:nth-of-type(" + (row + 1) + ").selected")));
 	}
 
 	public void selectSampleWithShift(int row) {
