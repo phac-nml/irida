@@ -85,7 +85,16 @@
 		};
 
 		vm.merge = function () {
-			$log.warn("TODO: Implement merge functionality");
+			var modal = $uibModal.open({
+				templateUrl: "mergeSamples.modal.html",
+				controllerAs: "mergeCtrl",
+				controller: "MergeController",
+				resolve: {
+					samples: function() {
+						return vm.selected;
+					}
+				}
+			});
 		};
 
 		vm.copy = function () {
@@ -263,8 +272,18 @@
 		};
 	}
 
+	function MergeController($uibModalInstance, samples) {
+		var vm = this;
+
+		vm.cancel = function() {
+			$uibModalInstance.dismiss();
+		};
+
+	}
+
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ui.bootstrap"])
 		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
+		.controller("MergeController", ["$uibModalInstance", "samples", MergeController])
 	;
 })(window.angular);

@@ -169,5 +169,17 @@
             <button id="removeBtnOk" class="btn btn-warning" th:text="#{form.btn.remove}" ng-click="removeCtrl.remove()"></button>
         </div>
     </script>
+
+    <script type="text/ng-template" id="mergeSamples.modal.html" th:inline="javascript">
+        <div class="modal-header">
+            <h3 class="modal-title">[Merging Samples]</h3>
+        </div>
+        <div class="modal-body">
+            Hello, I am a merge.
+        </div>
+        <div class="modal-footer">
+            <button id="mergeBtnCancel" class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="mergeCtrl.cancel()"></button>
+        </div>
+    </script>
 </th:block>
 </html>
