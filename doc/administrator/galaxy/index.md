@@ -65,12 +65,9 @@ GALAXY_ADMIN_USER=admin@localhost.localdomain
 
 # An email address for the user used to run workflows in Galaxy (the address does not need to be a real email address).
 GALAXY_WORKFLOW_USER=workflow@localhost.localdomain
-
-# The mercurial commit number for the IRIDA Galaxy instance.  This should remain fixed as we have only tested against this commit number.
-GALAXY_VERSION=b065a7a422d72c5436ba62bfc6d831a9df82a79f
 ```
 
-Please customize these environment variables to your system and proceed through the rest of the instructions.  Please replace any instance of a variable (such as `$GALAXY_USER`) with the value for your system (such as `galaxy-irida`).  However, **do not** change the `$GALAXY_VERSION` variable; this revision is the version of Galaxy we have tested against.  To see more information about the particular version or other information on Galaxy releases please see [Galaxy News Page][] and [Bitbucket][].
+Please customize these environment variables to your system and proceed through the rest of the instructions.  Please replace any instance of a variable (such as `$GALAXY_USER`) with the value for your system (such as `galaxy-irida`).
 
 For more information about installing Galaxy, please see [Running Galaxy in a production environment][].
 
@@ -111,10 +108,11 @@ Please run the following commands to download and build Galaxy.
 
 ```bash
 cd $GALAXY_BASE_DIR
-hg clone https://bitbucket.org/apetkau/galaxy-dist $GALAXY_ROOT_DIR
+curl -O https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz
+tar xf b065a7a.tar.gz
+mv apetkau-galaxy-dist-b065a7a422d7 $GALAXY_ROOT_DIR
 cd $GALAXY_ROOT_DIR
-hg update $GALAXY_VERSION # switch to version of Galaxy used by IRIDA
-hg id # verify Galaxy version
+
 sh scripts/common_startup.sh 2>&1 | tee common_startup.log # Common startup tasks
 cp $GALAXY_ROOT_DIR/config/galaxy.ini.sample $GALAXY_ROOT_DIR/config/galaxy.ini
 
@@ -123,18 +121,7 @@ mkdir $GALAXY_BASE_DIR/tool_dependencies # directory for installing dependency b
 cp $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml.sample $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml
 ```
 
-*Note: We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version 15.03.1.  This was in order to fix an issue that was not fixed in the stable branch of Galaxy as of writing this document.  The specific issue was reported at <https://trello.com/c/I0n23JEP/2484-database-deadlock-for-large-workflows> with the fix in the main Galaxy code at <https://github.com/galaxyproject/galaxy/pull/52>.*
-
-*Note: Dependening on the version of CentOS you use, you may encounter errors when attempting to clone the Galaxy bitbucket.org repository with Mercurial `hg clone`.  For Mercurial 1.4, this looks like the following:*
-
-```
-hg clone https://bitbucket.org/apetkau/galaxy-dist
-destination directory: galaxy-dist
-requesting all changes
-abort: HTTP Error 400: Bad Request
-```
-
-*If this occurs, you will have to manually install a newer version of [Mercurial][], or manually download the specific revision of Galaxy used at <https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz>* 
+We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version **15.03.1** but includes one performance improvement for larger workflows.  The Galaxy version **15.03.1** should work as well but later versions of Galaxy have made changes to the API which require modifications to IRIDA to be fully supported.  We plan to integrate these changes and update the supported Galaxy instance shortly.
 
 ### Step 2: Create Galaxy Environment File
 
@@ -380,6 +367,5 @@ For more information please see the [Purging Histories and Datasets][] document.
 [galaxy-installed-repositories.jpg]: images/galaxy-installed-repositories.jpg
 [history-options-icon]: images/history-options-icon.jpg
 [Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
-[Mercurial]: http://mercurial.selenic.com/
 [PerlBrew]: http://perlbrew.pl/
 [App::cpanminus]: http://search.cpan.org/~miyagawa/App-cpanminus-1.7027/lib/App/cpanminus.pm
