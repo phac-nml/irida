@@ -113,7 +113,7 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 
 	@Override
 	public String getLabel() {
-		return null;
+		return group.getLabel() + " -> " + user.getLabel();
 	}
 
 	@Override
