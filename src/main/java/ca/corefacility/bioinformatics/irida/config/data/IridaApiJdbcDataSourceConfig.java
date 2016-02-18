@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
+import java.io.FileReader;
+import java.io.LineNumberReader;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -13,11 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.ExceptionDepthComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.util.StringUtils;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 @Configuration
 @Profile({ "dev", "prod", "it" })
@@ -47,32 +55,74 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	// don't bother for integration tests.
 	@Profile({ "dev", "prod" })
 	public SpringLiquibase springLiquibase(final DataSource dataSource) {
+
+		int result = -1;
+		Statement isExistDBCL = null;
+		LineNumberReader lnr = null;
+		FileReader fr = null;
+
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
 		springLiquibase.setChangeLog("classpath:ca/corefacility/bioinformatics/irida/database/all-changes.xml");
 
-		// confirm that hibernate isn't also scheduled to execute
-		final String importFiles = environment.getProperty(HIBERNATE_IMPORT_FILES);
-		final String hbm2ddlAuto = environment.getProperty(HIBERNATE_HBM2DDL_AUTO);
-		Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
 
-		if (!StringUtils.isEmpty(importFiles) || !StringUtils.isEmpty(hbm2ddlAuto)) {
-			if (liquibaseShouldRun) {
-				// log that we're disabling liquibase regardless of what was
-				// requested in irida.conf
-				logger.warn("**** DISABLING LIQUIBASE ****: You have configured liquibase to execute a schema update, but Hibernate is also configured to create the schema.");
-				logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_HBM2DDL_AUTO
-						+ "should be set to an empty string (or not set), but is currently set to: [" + hbm2ddlAuto
-						+ "]");
-				logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_IMPORT_FILES
-						+ " should be set to an empty string (or not set), but is currently set to: [" + importFiles
-						+ "]");
-			}
-			liquibaseShouldRun = Boolean.FALSE;
+		// query the database for the existence of DATABASECHANGELOG
+		try {
+			Connection conn = dataSource.getConnection();
+			String query = "SELECT count(*)\n" +
+					"FROM information_schema.TABLES\n" +
+					"WHERE (TABLE_NAME = 'DATABASECHANGELOG')";
+			isExistDBCL = conn.createStatement();
+			logger.error("Executing query on the database");
+			ResultSet rs = isExistDBCL.executeQuery(query);
+			result = rs.getInt("count(*)");
+			System.out.println("HERE IS THE RESULT OF THE QUERY: " + result);
+		}
+		catch (SQLException se) {
+			logger.error("<<---- Spring/Liquibase error!! ---->>");
+			logger.error("Could not connect to datasource");
 		}
 
-		springLiquibase.setShouldRun(liquibaseShouldRun);
-		springLiquibase.setIgnoreClasspathPrefix(true);
+		logger.error("Did the query work? -> " + result);
+
+		// if doesn't exist:
+			// import sql file
+			// run the sql script to initialize the database
+
+//		if (result == 0) {
+//			try {
+//				fr = new FileReader("classpath:ca/corefa");
+//				lnr = new LineNumberReader();
+//			}
+//			catch (Exception e) {
+//
+//			}
+//		}
+//		else {
+			// confirm that hibernate isn't also scheduled to execute
+			final String importFiles = environment.getProperty(HIBERNATE_IMPORT_FILES);
+			final String hbm2ddlAuto = environment.getProperty(HIBERNATE_HBM2DDL_AUTO);
+			Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
+
+			if (!StringUtils.isEmpty(importFiles) || !StringUtils.isEmpty(hbm2ddlAuto)) {
+				if (liquibaseShouldRun) {
+					// log that we're disabling liquibase regardless of what was
+					// requested in irida.conf
+					logger.warn("**** DISABLING LIQUIBASE ****: You have configured liquibase to execute a schema update, but Hibernate is also configured to create the schema.");
+					logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_HBM2DDL_AUTO
+							+ "should be set to an empty string (or not set), but is currently set to: [" + hbm2ddlAuto
+							+ "]");
+					logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_IMPORT_FILES
+							+ " should be set to an empty string (or not set), but is currently set to: [" + importFiles
+							+ "]");
+				}
+				liquibaseShouldRun = Boolean.FALSE;
+			}
+
+			springLiquibase.setShouldRun(liquibaseShouldRun);
+			springLiquibase.setIgnoreClasspathPrefix(true);
+//		}
+		// else, continue with this stuff
 
 		return springLiquibase;
 	}
