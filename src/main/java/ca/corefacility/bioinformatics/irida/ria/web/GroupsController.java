@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.dandelion.datatables.core.ajax.DataSet;
@@ -135,6 +137,7 @@ public class GroupsController {
 		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
 		model.addAttribute("isOwner", isOwner);
 		model.addAttribute("users", groupUsers);
+		model.addAttribute("groupRoles", UserGroupRole.values());
 
 		return GROUP_DETAILS;
 	}
@@ -159,5 +162,25 @@ public class GroupsController {
 				groups.getTotalElements());
 
 		return DatatablesResponse.build(groupDataSet, criteria);
+	}
+
+	@RequestMapping("/{userGroupId}/ajax/availablemembers")
+	public @ResponseBody Collection<User> getUsersNotInGroup(final @PathVariable Long userGroupId,
+			final @RequestParam String term) {
+		final UserGroup group = userGroupService.read(userGroupId);
+		logger.debug("Loading users not in group [" + userGroupId + "]");
+		final Collection<User> usersNotInGroup = userGroupService.getUsersNotInGroup(group);
+		return usersNotInGroup.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
+				.collect(Collectors.toList());
+	}
+	
+	@RequestMapping(path = "/{userGroupId}/members", method = RequestMethod.POST)
+	public String addUserToGroup(final @PathVariable Long userGroupId, @RequestParam Long userId,
+			@RequestParam String groupRole, Locale locale) {
+		final User user = userService.read(userId);
+		final UserGroup group = userGroupService.read(userGroupId);
+		final UserGroupRole role = UserGroupRole.valueOf(groupRole);
+		userGroupService.addUserToGroup(user, group, role);
+		return "Added user to group.";
 	}
 }

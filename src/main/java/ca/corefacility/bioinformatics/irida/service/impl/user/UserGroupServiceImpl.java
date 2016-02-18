@@ -231,6 +231,15 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 		return userGroupJoinRepository.findAll(filterUserGroupJoinByUsername(username, userGroup),
 				new PageRequest(page, size, order, sortProperties));
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Collection<User> getUsersNotInGroup(final UserGroup userGroup) {
+		return userGroupJoinRepository.findUsersNotInGroup(userGroup);
+	}
 
 	/**
 	 * A convenience specification to get a {@link UserGroupJoin} from a

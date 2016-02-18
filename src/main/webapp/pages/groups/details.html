@@ -15,10 +15,13 @@
 			usersLink : /*[[@{/users/}]]*/'/users'
 		}
 	};
+	
+	window.dependencies = ["irida.group.members"]
 </script>
 </head>
 <body>
-	<main layout:fragment="page" ddl:bundle-includes="group-members" ddl:asset-css-excludes="jquery.datatables">
+	<main layout:fragment="page" ddl:bundle-includes="group-members"
+		ddl:asset-css-excludes="jquery.datatables" ng-controller="MembersController as membersCtrl">
 	<div class="col-md-12">
 		<div class="row">
 			<div class="col-md-12">
@@ -28,7 +31,7 @@
 					<div class="btn-group">
 						<button id="add-members-button" class="btn btn-default"
 							th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
-							th:text="#{project.members.edit.add}"
+							th:text="#{group.users.add.button}"
 							ng-click="membersCtrl.showAddMemberModal()">_Add
 							Members_</button>
 					</div>
@@ -48,7 +51,31 @@
 		</div>
 
 	</div>
-
-	</main>
+	<script type="text/ng-template" id="newMemberModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Add User</h3>
+        </div>
+        <div class="modal-body">
+            <form id="addUserForm" action="#">
+                <div class="form-group">
+                    <label class="control-label" for="add-user-username" th:text="#{group.users.add.username}">_Username_</label>
+                    <input select2="" data:url="@{/groups/{id}/ajax/availablemembers(id=${group.getId()})}" th:placeholder="#{group.users.add.select-user}" type="text" ng-model="modalCtrl.user.userId" id="add-user-username" name="userId" class="form-control input-full"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="add-user-role" th:text="#{group.users.add.role}">_Group Role_</label>
+                    <select ng-model="modalCtrl.user.groupRole" id="add-user-role" class="form-control input-full" name="groupRole">
+                        <option th:each="role : ${groupRoles}"
+                                th:value="${role}"
+                                th:text="${role}">_Role_
+                        </option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" type="button" ng-click="modalCtrl.cancel()" th:text="#{group.users.add.cancel}">_Cancel_</button>
+            <button id="submitAddMember" class="btn btn-primary" type="button" ng-click="modalCtrl.addMember()" th:text="#{group.users.add.ok}">_OK_</button>
+        </div>
+    </script> </main>
 </body>
 </html>
