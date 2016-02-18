@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,6 +23,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.ExceptionDepthComparator;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.EncodedResource;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -53,13 +60,13 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 */
 	@Bean
 	// don't bother for integration tests.
-	@Profile({ "dev", "prod" })
+	@Profile({ "dev", "prod", "it" })
 	public SpringLiquibase springLiquibase(final DataSource dataSource) {
 
 		int result = -1;
-		Statement isExistDBCL = null;
-		LineNumberReader lnr = null;
-		FileReader fr = null;
+		Statement statement;
+		EncodedResource sqlfile;
+		Connection conn = null;
 
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
@@ -68,37 +75,33 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 		// query the database for the existence of DATABASECHANGELOG
 		try {
-			Connection conn = dataSource.getConnection();
-			String query = "SELECT count(*)\n" +
-					"FROM information_schema.TABLES\n" +
-					"WHERE (TABLE_NAME = 'DATABASECHANGELOG')";
-			isExistDBCL = conn.createStatement();
-			logger.error("Executing query on the database");
-			ResultSet rs = isExistDBCL.executeQuery(query);
+			conn = dataSource.getConnection();
+			String query = "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_NAME = 'DATABASECHANGELOG')";
+			statement = conn.createStatement();
+			logger.debug("Checking if DATABASECHANGELOG exists.");
+			ResultSet rs = statement.executeQuery(query);
+			rs.next();
 			result = rs.getInt("count(*)");
-			System.out.println("HERE IS THE RESULT OF THE QUERY: " + result);
 		}
 		catch (SQLException se) {
-			logger.error("<<---- Spring/Liquibase error!! ---->>");
-			logger.error("Could not connect to datasource");
+			logger.error(se.toString());
 		}
 
-		logger.error("Did the query work? -> " + result);
-
-		// if doesn't exist:
-			// import sql file
-			// run the sql script to initialize the database
-
-//		if (result == 0) {
-//			try {
-//				fr = new FileReader("classpath:ca/corefa");
-//				lnr = new LineNumberReader();
-//			}
-//			catch (Exception e) {
-//
-//			}
-//		}
-//		else {
+		if (result == 0) {
+			// database is empty, import sql file to initialize the database
+			try {
+				logger.debug("Finding sql file to import into database.");
+				sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/changesets/all-changes.sql"));
+				logger.debug("File found, executing SQL statements to restore database initial state...");
+				ScriptUtils.executeSqlScript(conn, sqlfile, true, false, "--", ";", "/*", "*/");
+				logger.debug("Database restoration complete.");
+			}
+			catch (Exception e) {
+				logger.error(e.toString());
+			}
+		}
+		else {
+			// database is not empty, use hibernate or liquibase to validate/verify that the database is ready for use
 			// confirm that hibernate isn't also scheduled to execute
 			final String importFiles = environment.getProperty(HIBERNATE_IMPORT_FILES);
 			final String hbm2ddlAuto = environment.getProperty(HIBERNATE_HBM2DDL_AUTO);
@@ -121,8 +124,14 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 			springLiquibase.setShouldRun(liquibaseShouldRun);
 			springLiquibase.setIgnoreClasspathPrefix(true);
-//		}
-		// else, continue with this stuff
+		}
+
+		try {
+			conn.close();
+		}
+		catch (SQLException se) {
+			logger.error("Failed to close connection to database.");
+		}
 
 		return springLiquibase;
 	}
