@@ -76,12 +76,16 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		// query the database for the existence of DATABASECHANGELOG
 		try {
 			conn = dataSource.getConnection();
-			String query = "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_NAME = 'DATABASECHANGELOG')";
+			String query = "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_NAME = 'DATABASECHANGELOG' AND TABLE_SCHEMA = 'irida_test')";
 			statement = conn.createStatement();
 			logger.debug("Checking if DATABASECHANGELOG exists.");
 			ResultSet rs = statement.executeQuery(query);
 			rs.next();
 			result = rs.getInt("count(*)");
+			if (result == 0)
+				logger.debug("Database is empty -> importing SQL file.");
+			else
+				logger.debug("Database is not empty -> verifying database contents.");
 		}
 		catch (SQLException se) {
 			logger.error(se.toString());
