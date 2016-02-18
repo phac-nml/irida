@@ -274,11 +274,17 @@
 
 	function MergeController($uibModalInstance, samples) {
 		var vm = this;
+		vm.samples = samples;
+		vm.mergeSampleId = vm.samples[0].sample.identifier;
 
 		vm.cancel = function() {
 			$uibModalInstance.dismiss();
 		};
 
+
+		vm.doMerge = function() {
+
+		}
 	}
 
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ui.bootstrap"])
