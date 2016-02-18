@@ -278,12 +278,13 @@
 		vm.mergeSampleId = vm.samples[0].sample.identifier;
 
 		vm.cancel = function() {
+			console.log(vm.newName);
 			$uibModalInstance.dismiss();
 		};
 
 
 		vm.doMerge = function() {
-
+			console.log(vm);
 		}
 	}
 
