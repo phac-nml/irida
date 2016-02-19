@@ -1,0 +1,22 @@
+<div class="modal-header">
+	<h3 class="modal-title">
+		<ng-pluralize count="removeCtrl.samples.length"
+		              data:when="#{project.samples.modal.remove.title}"></ng-pluralize>
+	</h3>
+</div>
+<div class="modal-body">
+	<strong>
+		<ng-pluralize count="removeCtrl.samples.length" data:when="#{project.samples.modal.remove.description}"></ng-pluralize>
+	</strong>
+	<ul>
+		<li ng-repeat="item in removeCtrl.samples" ng-bind="item.sample.label"></li>
+	</ul>
+	<div class="alert alert-warning">
+		<strong><fa:icon type="warning" fixed="true"/></strong>&nbsp;
+		<ng-pluralize count="removeCtrl.samples.length" data:when="#{project.samples.modal.remove.warning}"></ng-pluralize>
+	</div>
+</div>
+<div class="modal-footer">
+	<button id="removeBtnCancel" class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="removeCtrl.cancel()"></button>
+	<button id="removeBtnOk" class="btn btn-warning" th:text="#{form.btn.remove}" ng-click="removeCtrl.remove()"></button>
+</div>

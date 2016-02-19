@@ -1,6 +1,18 @@
 (function (ng) {
 	"use strict";
 
+	function ModalService($uibModal) {
+		function showRemove() {
+			return $uibModal.open({
+				templateUrl: "/projects/templates/"
+			});
+		}
+
+		return {
+			showRemove: showRemove
+		};
+	}
+
 	/**
 	 * Controller for the Project Samples Page.
 	 * @param {Object} $scope Angular scope for this controller.
@@ -264,6 +276,7 @@
 	}
 
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ui.bootstrap"])
+		.service("ModalService", ["$iubModal", ModalService])
 		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
 	;
