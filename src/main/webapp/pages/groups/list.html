@@ -7,7 +7,6 @@
     <script th:inline="javascript">
         var PAGE = {
             urls: {
-                table: /*[[@{/groups/ajax/list}]]*/ '/groups/ajax/list',
                 link: /*[[@{/groups/}]]*/ '/groups'
             }
         };
@@ -22,7 +21,7 @@
         <table id="groupsTable" dt:table="true" dt:url="@{/groups/ajax/list}">
             <thead>
             <tr role="row">
-                <th dt:property="name" dt:searchable="true" dt:filterable="true" th:text="#{group.name}" dt:renderFunction="groups-list#groupsTable.groupLinkRow"></th>
+                <th dt:property="name" dt:searchable="true" th:text="#{group.name}" dt:renderFunction="groups-list#groupsTable.groupLinkRow"></th>
                 <th dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.created}"></th>
                 <th dt:property="modifiedDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.modified}"></th>
             </tr>

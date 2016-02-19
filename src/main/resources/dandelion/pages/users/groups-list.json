@@ -1,5 +1,5 @@
 {
-  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3", "livestampjs", "qtip2"],
+  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3"],
   "assets": [
     {
       "type": "js",
