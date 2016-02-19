@@ -1,17 +1,5 @@
-(function (ng) {
+(function (ng, page) {
 	"use strict";
-
-	function ModalService($uibModal) {
-		function showRemove() {
-			return $uibModal.open({
-				templateUrl: "/projects/templates/"
-			});
-		}
-
-		return {
-			showRemove: showRemove
-		};
-	}
 
 	/**
 	 * Controller for the Project Samples Page.
@@ -109,8 +97,13 @@
 		};
 
 		vm.delete = function () {
-			var modal = $uibModal.open({
-				templateUrl: "removeSamples.modal.html",
+			var names = [], modal;
+			vm.selected.forEach(function (item) {
+				names.push(item.sample.sampleName);
+			}),
+				console.log(names);
+				modal = $uibModal.open({
+					templateUrl: page.urls.modals.remove + "?" + $.param({names:names}),
 				openedClass: 'remove-modal',
 				controllerAs: "removeCtrl",
 				controller: ["$uibModalInstance", "samples", function RemoveSamplesController ($uibModalInstance, samples) {
@@ -276,8 +269,7 @@
 	}
 
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ui.bootstrap"])
-		.service("ModalService", ["$iubModal", ModalService])
 		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
 	;
-})(window.angular);
+})(window.angular, window.PAGE);
