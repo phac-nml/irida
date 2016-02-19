@@ -5,8 +5,13 @@ var groupMembersTable = (function(page) {
 				+ "</span></a>";
 	};
 	
+	function renderGroupRole(data, type, full) {
+		return page.i18n[data];
+	};
+	
 	return {
-		userNameLinkRow : userNameLinkRow
+		userNameLinkRow : userNameLinkRow,
+		renderGroupRole : renderGroupRole
 	};
 })(window.PAGE);
 
@@ -54,7 +59,7 @@ var groupMembersTable = (function(page) {
 				url : page.urls.addMember,
 				data : user
 			}).then(function(data) {
-				datatable.ajax.reload();
+				oTable_projectsTable.ajax.reload();
 				notifications.show({
 					'msg' : data.data.result
 				});
