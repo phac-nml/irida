@@ -1,13 +1,10 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.LineNumberReader;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -21,12 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.ExceptionDepthComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.InputStreamSource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.jdbc.datasource.init.ScriptException;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -60,7 +53,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 * @return an instance of {@link SpringLiquibase}.
 	 */
 	@Bean
-	@Profile({ "prod", "it" })
+	@Profile({ "dev", "prod", "it" })
 	public SpringLiquibase springLiquibase(final DataSource dataSource) {
 
 		boolean isEmpty = false;
@@ -71,8 +64,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
 		springLiquibase.setChangeLog("classpath:ca/corefacility/bioinformatics/irida/database/all-changes.xml");
-
-
 
 		try (Connection conn = dataSource.getConnection()){
 
@@ -91,13 +82,13 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				logger.debug("Database is empty -> importing SQL file.");
 				try {
 					logger.debug("Finding sql file to import into database.");
-					sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/changesets/all-changes.sql"));
+					sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/all-changes.sql"));
 					logger.debug("File found, executing SQL statements to restore database initial state...");
 					ScriptUtils.executeSqlScript(conn, sqlfile, true, false, "--", ";", "/*", "*/");
 					logger.debug("Database restoration complete.");
 				}
 				catch (ScriptException e) {
-					logger.error("Script could not be executed.");
+					logger.error("SQL for initial state of database could not be executed.");
 					logger.error(e.toString());
 				}
 			}
@@ -127,6 +118,21 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 				springLiquibase.setShouldRun(liquibaseShouldRun);
 				springLiquibase.setIgnoreClasspathPrefix(true);
+			}
+
+			// dev profile still needs this, so import the required sql files
+			String[] activeProfiles = environment.getActiveProfiles();
+			if (Arrays.asList(activeProfiles).contains("dev")) {
+				try {
+					logger.error("Detected that you're running in a dev environment: Importing required data..");
+					EncodedResource requiredData = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/required-data.sql"));
+					EncodedResource oauthToken =new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/oauth-token.sql"));
+					logger.error("Import complete");
+				}
+				catch (ScriptException e) {
+					logger.error("Imported SQL files could not be executed.");
+					logger.error(e.toString());
+				}
 			}
 
 		}
