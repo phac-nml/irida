@@ -28,6 +28,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
+import org.springframework.jdbc.datasource.init.ScriptException;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -59,82 +60,78 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 * @return an instance of {@link SpringLiquibase}.
 	 */
 	@Bean
-	// don't bother for integration tests.
-	@Profile({ "dev", "prod", "it" })
+	@Profile({ "prod", "it" })
 	public SpringLiquibase springLiquibase(final DataSource dataSource) {
 
-		int result = -1;
+		boolean isEmpty = false;
 		Statement statement;
 		EncodedResource sqlfile;
-		Connection conn = null;
+		String query = "SELECT * FROM DATABASECHANGELOG WHERE 1";
 
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
 		springLiquibase.setChangeLog("classpath:ca/corefacility/bioinformatics/irida/database/all-changes.xml");
 
 
-		// query the database for the existence of DATABASECHANGELOG
-		try {
-			conn = dataSource.getConnection();
-			String query = "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_NAME = 'DATABASECHANGELOG' AND TABLE_SCHEMA = 'irida_test')";
+
+		try (Connection conn = dataSource.getConnection()){
+
+			// query the database for the existence of DATABASECHANGELOG
 			statement = conn.createStatement();
 			logger.debug("Checking if DATABASECHANGELOG exists.");
-			ResultSet rs = statement.executeQuery(query);
-			rs.next();
-			result = rs.getInt("count(*)");
-			if (result == 0)
+			try {
+				ResultSet rs = statement.executeQuery(query);
+			}
+			catch (SQLException se) {
+				isEmpty = true;
+			}
+
+			if (isEmpty) {
+				// database is empty, import sql file to initialize the database
 				logger.debug("Database is empty -> importing SQL file.");
-			else
+				try {
+					logger.debug("Finding sql file to import into database.");
+					sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/changesets/all-changes.sql"));
+					logger.debug("File found, executing SQL statements to restore database initial state...");
+					ScriptUtils.executeSqlScript(conn, sqlfile, true, false, "--", ";", "/*", "*/");
+					logger.debug("Database restoration complete.");
+				}
+				catch (ScriptException e) {
+					logger.error("Script could not be executed.");
+					logger.error(e.toString());
+				}
+			}
+			else {
+				// database is not empty, use hibernate or liquibase to validate/verify that the database is ready for use
+				// confirm that hibernate isn't also scheduled to execute
 				logger.debug("Database is not empty -> verifying database contents.");
+
+				final String importFiles = environment.getProperty(HIBERNATE_IMPORT_FILES);
+				final String hbm2ddlAuto = environment.getProperty(HIBERNATE_HBM2DDL_AUTO);
+				Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
+
+				if (!StringUtils.isEmpty(importFiles) || !StringUtils.isEmpty(hbm2ddlAuto)) {
+					if (liquibaseShouldRun) {
+						// log that we're disabling liquibase regardless of what was
+						// requested in irida.conf
+						logger.warn("**** DISABLING LIQUIBASE ****: You have configured liquibase to execute a schema update, but Hibernate is also configured to create the schema.");
+						logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_HBM2DDL_AUTO
+								+ "should be set to an empty string (or not set), but is currently set to: [" + hbm2ddlAuto
+								+ "]");
+						logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_IMPORT_FILES
+								+ " should be set to an empty string (or not set), but is currently set to: [" + importFiles
+								+ "]");
+					}
+					liquibaseShouldRun = Boolean.FALSE;
+				}
+
+				springLiquibase.setShouldRun(liquibaseShouldRun);
+				springLiquibase.setIgnoreClasspathPrefix(true);
+			}
+
 		}
 		catch (SQLException se) {
 			logger.error(se.toString());
-		}
-
-		if (result == 0) {
-			// database is empty, import sql file to initialize the database
-			try {
-				logger.debug("Finding sql file to import into database.");
-				sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/changesets/all-changes.sql"));
-				logger.debug("File found, executing SQL statements to restore database initial state...");
-				ScriptUtils.executeSqlScript(conn, sqlfile, true, false, "--", ";", "/*", "*/");
-				logger.debug("Database restoration complete.");
-			}
-			catch (Exception e) {
-				logger.error(e.toString());
-			}
-		}
-		else {
-			// database is not empty, use hibernate or liquibase to validate/verify that the database is ready for use
-			// confirm that hibernate isn't also scheduled to execute
-			final String importFiles = environment.getProperty(HIBERNATE_IMPORT_FILES);
-			final String hbm2ddlAuto = environment.getProperty(HIBERNATE_HBM2DDL_AUTO);
-			Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
-
-			if (!StringUtils.isEmpty(importFiles) || !StringUtils.isEmpty(hbm2ddlAuto)) {
-				if (liquibaseShouldRun) {
-					// log that we're disabling liquibase regardless of what was
-					// requested in irida.conf
-					logger.warn("**** DISABLING LIQUIBASE ****: You have configured liquibase to execute a schema update, but Hibernate is also configured to create the schema.");
-					logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_HBM2DDL_AUTO
-							+ "should be set to an empty string (or not set), but is currently set to: [" + hbm2ddlAuto
-							+ "]");
-					logger.warn("**** DISABLING LIQUIBASE ****: " + HIBERNATE_IMPORT_FILES
-							+ " should be set to an empty string (or not set), but is currently set to: [" + importFiles
-							+ "]");
-				}
-				liquibaseShouldRun = Boolean.FALSE;
-			}
-
-			springLiquibase.setShouldRun(liquibaseShouldRun);
-			springLiquibase.setIgnoreClasspathPrefix(true);
-		}
-
-		try {
-			conn.close();
-		}
-		catch (SQLException se) {
-			logger.error("Failed to close connection to database.");
 		}
 
 		return springLiquibase;
