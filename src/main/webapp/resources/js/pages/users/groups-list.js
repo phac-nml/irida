@@ -14,7 +14,6 @@
             stateDuration: -1,
             order: [[1, "desc"]],
             columns: [
-                {"data": "identifier"},
                 {"data": "name"},
                 {"data": "createdDate"},
                 {"data": "modifiedDate"}
@@ -22,14 +21,16 @@
             columnDefs: [
                 {
                     'render': function (data, type, row) {
+                    	console.log(data);
+                    	console.log(row);
                         return '<a href="' + page.urls.link
-                            + row['identifier'] + '">' + row['identifier'] + '</a>';
+                            + row['identifier'] + '">' + row['name'] + '</a>';
                     },
                     'targets': 0
                 },
                 {
                     'render': timestampRender,
-                    'targets': [ 2, 3 ]
+                    'targets': [ 1, 2 ]
                 }
             ]
         });
