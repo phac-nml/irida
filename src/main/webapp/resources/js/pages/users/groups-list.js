@@ -1,38 +1,11 @@
-(function ($, page) {
-	function timestampRender(data) {
-		return '<span data-livestamp="' + ( data / 1000 ) + '"></span>';
+var groupsTable = (function(page) {
+	function groupLinkRow(data, type, full) {
+		return '<a class="item-link" title="' + data + '" href="' + page.urls.link
+				+ '/' + full.identifier + '"><span>' + data + '</span></a>';		
+	}
+	;
+
+	return {
+		groupLinkRow : groupLinkRow
 	};
-	
-    $(function () {
-        $('#groupsTable').DataTable({
-            dom: "<'top'lf>rt<'bottom'ip><'clear'>",
-            processing: true,
-            serverSide: true,
-            deferRender: true,
-            ajax: page.urls.table,
-            stateSave: true,
-            stateDuration: -1,
-            order: [[1, "desc"]],
-            columns: [
-                {"data": "name"},
-                {"data": "createdDate"},
-                {"data": "modifiedDate"}
-            ],
-            columnDefs: [
-                {
-                    'render': function (data, type, row) {
-                    	console.log(data);
-                    	console.log(row);
-                        return '<a href="' + page.urls.link
-                            + row['identifier'] + '">' + row['name'] + '</a>';
-                    },
-                    'targets': 0
-                },
-                {
-                    'render': timestampRender,
-                    'targets': [ 1, 2 ]
-                }
-            ]
-        });
-    });
-})(window.jQuery, window.PAGE);
+})(window.PAGE);

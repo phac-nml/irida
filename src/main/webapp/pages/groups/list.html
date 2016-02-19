@@ -8,7 +8,7 @@
         var PAGE = {
             urls: {
                 table: /*[[@{/groups/ajax/list}]]*/ '/groups/ajax/list',
-                link: /*[[@{/groups/}]]*/ ''
+                link: /*[[@{/groups/}]]*/ '/groups'
             }
         };
     </script>
@@ -19,15 +19,14 @@
         <h1 th:text="#{nav.main.groups-list}">_Groups_</h1>
         <a href="/groups/create" th:href="@{/groups/create}"
            class="btn btn-default mrgn-bttm-md" th:text="#{nav.main.add.group}">_Add Group_</a>
-        <table id="groupsTable" class="table table-striped table-hover">
+        <table id="groupsTable" dt:table="true" dt:url="@{/groups/ajax/list}">
             <thead>
-            <tr th:inline="text">
-                <th id="groupname-header">[[#{group.name}]]</th>
-                <th id="created-header">[[#{group.created}]]</th>
-                <th id="modified-header">[[#{group.modified}]]</th>
+            <tr role="row">
+                <th dt:property="name" dt:searchable="true" dt:filterable="true" th:text="#{group.name}" dt:renderFunction="groups-list#groupsTable.groupLinkRow"></th>
+                <th dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.created}"></th>
+                <th dt:property="modifiedDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.modified}"></th>
             </tr>
             </thead>
-            <tbody id="groups-table-body"></tbody>
         </table>
     </main>
 </div>
