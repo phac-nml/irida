@@ -70,7 +70,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 			statement = conn.createStatement();
 			logger.debug("Checking if DATABASECHANGELOG exists.");
 			try {
-				ResultSet rs = statement.executeQuery(query);
+				statement.executeQuery(query);
 			}
 			catch (SQLException se) {
 				isEmpty = true;
