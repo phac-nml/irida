@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Script for running a single test class or test profile
+# Outputs the logs in folder
 
 DATE=`date +%Y-%m-%d:%H:%M`
 
@@ -37,4 +38,5 @@ then
     echo "drop database irida_test; create database irida_test;" | mysql -u root
 fi
 
-xvfb-run mvn clean verify ${SKIP} ${TESTCLASS} ${PROFILE} ${DEBUG} | tee ~/Desktop/in-memory\ db\ logs/${DATE}-${FILENAME}.logs
+mkdir ~/Desktop/logs/
+xvfb-run mvn clean verify ${SKIP} ${TESTCLASS} ${PROFILE} ${DEBUG} | tee ~/Desktop/logs/${DATE}-${FILENAME}.logs
