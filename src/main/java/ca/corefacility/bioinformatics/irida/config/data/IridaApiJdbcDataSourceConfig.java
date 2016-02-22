@@ -56,11 +56,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	@Profile({ "dev", "prod", "it" })
 	public SpringLiquibase springLiquibase(final DataSource dataSource) {
 
-		boolean isEmpty = false;
-		Statement statement;
-		EncodedResource sqlfile;
-		String query = "SELECT * FROM DATABASECHANGELOG WHERE 1";
-
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
 		springLiquibase.setChangeLog("classpath:ca/corefacility/bioinformatics/irida/database/all-changes.xml");
@@ -68,10 +63,12 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		try (Connection conn = dataSource.getConnection()){
 
 			// query the database for the existence of DATABASECHANGELOG
-			statement = conn.createStatement();
+			Statement statement = conn.createStatement();
 			logger.debug("Checking if DATABASECHANGELOG exists.");
+			boolean isEmpty = false;
+
 			try {
-				ResultSet rs = statement.executeQuery(query);
+				statement.executeQuery("SELECT * FROM DATABASECHANGELOG WHERE 1");
 			}
 			catch (SQLException se) {
 				isEmpty = true;
@@ -82,7 +79,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				logger.debug("Database is empty -> importing SQL file.");
 				try {
 					logger.debug("Finding sql file to import into database.");
-					sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/all-changes.sql"));
+					EncodedResource sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/all-changes.sql"));
 					logger.debug("File found, executing SQL statements to restore database initial state...");
 					ScriptUtils.executeSqlScript(conn, sqlfile, true, false, "--", ";", "/*", "*/");
 					logger.debug("Database restoration complete.");
@@ -127,6 +124,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 					logger.error("Detected that you're running in a dev environment: Importing required data..");
 					EncodedResource requiredData = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/required-data.sql"));
 					EncodedResource oauthToken =new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/oauth-token.sql"));
+					ScriptUtils.executeSqlScript(conn, requiredData, true, false, "--", ";", "/*", "*/");
+					ScriptUtils.executeSqlScript(conn, oauthToken, true, false, "--", ";", "/*", "*/");
 					logger.error("Import complete");
 				}
 				catch (ScriptException e) {
