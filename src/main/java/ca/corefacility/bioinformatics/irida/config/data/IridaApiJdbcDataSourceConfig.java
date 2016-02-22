@@ -29,7 +29,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 @Configuration
-@Profile({ "dev", "prod", "it" })
+@Profile({ "dev", "prod", "it", "test" })
 public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 	@Autowired
@@ -53,7 +53,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 * @return an instance of {@link SpringLiquibase}.
 	 */
 	@Bean
-	@Profile({ "dev", "prod", "it" })
+	@Profile({ "dev", "prod", "it", "test" })
 	public SpringLiquibase springLiquibase(final DataSource dataSource) {
 
 		final SpringLiquibase springLiquibase = new SpringLiquibase();

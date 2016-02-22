@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.config;
 
 import java.util.concurrent.Executor;
 
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -27,7 +28,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  *
  */
 @Configuration
-@Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
+@Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiJdbcDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
 		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
 		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class, IridaWorkflowsGalaxyIntegrationTestConfig.class })
 @Profile("test")
