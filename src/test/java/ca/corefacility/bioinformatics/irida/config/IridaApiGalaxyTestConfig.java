@@ -28,7 +28,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  *
  */
 @Configuration
-@Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiJdbcDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
+@Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
 		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
 		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class, IridaWorkflowsGalaxyIntegrationTestConfig.class })
 @Profile("test")
