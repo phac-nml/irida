@@ -31,6 +31,7 @@ import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -173,14 +174,15 @@ public class GroupsController {
 		return usersNotInGroup.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
 				.collect(Collectors.toList());
 	}
-	
+
 	@RequestMapping(path = "/{userGroupId}/members", method = RequestMethod.POST)
-	public String addUserToGroup(final @PathVariable Long userGroupId, @RequestParam Long userId,
+	public @ResponseBody Map<String, String> addUserToGroup(final @PathVariable Long userGroupId, @RequestParam Long userId,
 			@RequestParam String groupRole, Locale locale) {
 		final User user = userService.read(userId);
 		final UserGroup group = userGroupService.read(userGroupId);
 		final UserGroupRole role = UserGroupRole.valueOf(groupRole);
 		userGroupService.addUserToGroup(user, group, role);
-		return "Added user to group.";
+		return ImmutableMap.of("result", messageSource.getMessage("group.users.add.notification.success", new Object[] { user.getLabel() },
+				locale));
 	}
 }

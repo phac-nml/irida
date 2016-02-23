@@ -9,105 +9,59 @@ var groupMembersTable = (function(page) {
 		return page.i18n[data];
 	};
 	
+	function removeUserButton(data, type, full) {
+		return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#deleteConfirmModal' class='btn btn-default btn-xs' group-member-id='"
+				+ full.identifier + "'><span class='fa fa-trash'></span></div>";
+	};
+	
+	$("#add-user-username").select2({
+	    minimumInputLength: 2,
+	    ajax: {
+	        url: page.urls.usersSelection,
+	        dataType: 'json',
+	        data: function(term) {
+	            return {
+	                term: term,
+	                page_limit: 10
+	            };
+	        },
+	        results: function(data, params) {
+	            return {results: data.map(function(el) {
+	        		return {"id": el["identifier"], "text": el["label"]};
+	        	})};
+	        }
+	    }
+	});
+	
+	$("#submitAddMember").click(function() {
+		$.ajax({
+			url: page.urls.addMember,
+			method: 'POST',
+			data: {
+				"userId" : $("#add-user-username").val(),
+				"groupRole" : $("#add-user-role").val()
+			},
+			success: function(result) {
+				console.log(result);
+				$("#addUserModal").modal('hide');
+				oTable_groupMembersTable.ajax.reload();
+				notifications.show({
+					'msg': result.result
+				});
+			},
+			error: function() {
+				$("#addUserModal").modal('hide');
+				notifications.show({
+					'msg': page.i18n.unexpectedAddError,
+					'type': 'error'
+				})
+			}
+		})
+	});
+	
 	return {
 		userNameLinkRow : userNameLinkRow,
-		renderGroupRole : renderGroupRole
+		renderGroupRole : renderGroupRole,
+		removeUserButton : removeUserButton
 	};
 })(window.PAGE);
-
-(function(angular, $, page) {
-	var datatable;
-	
-    /**
-     * Custom Select2 directive for searching through users that on not
-     * currently on this project.
-     * JQuery Select2 plugin.
-     * @returns {{restrict: string, require: string, link: Function}}
-     */
-    function select2() {
-        return {
-            restrict: 'A',
-            require: 'ngModel',
-            link: function(scope, elem, attrs) {
-                $(elem).select2({
-                    minimumInputLength: 2,
-                    ajax: {
-                        url: attrs.url,
-                        dataType: 'json',
-                        data: function(term) {
-                            return {
-                                term: term,
-                                page_limit: 10
-                            };
-                        },
-                        results: function(data) {
-                            return {results: data.map(function(el) {
-                        		return {"id": el["identifier"], "text": el["label"]};
-                        	})};
-                        }
-                    }
-                });
-            }
-        };
-    }
-
-	function MembersService($http, notifications) {
-		function addMember(user) {
-			console.log(user);
-			$http({
-				method : 'POST',
-				url : page.urls.addMember,
-				data : user
-			}).then(function(data) {
-				oTable_projectsTable.ajax.reload();
-				notifications.show({
-					'msg' : data.data.result
-				});
-			}, function() {
-				notifications.show({
-					'msg' : page.langs.addMember.error,
-					type : 'error'
-				});
-			});
-		}
-
-		return {
-			addMember : addMember
-		};
-	}
-
-	function MembersController(MembersService, $uibModal) {
-		var vm = this;
-
-		vm.showAddMemberModal = function() {
-			$uibModal.open({
-				templateUrl : 'newMemberModal.html',
-				controller : 'NewMemberModalController',
-				controllerAs : 'modalCtrl'
-			}).result.then(function(user) {
-				MembersService.addMember(user);
-			});
-		};
-	}
-
-	function NewMemberModalController($uibModalInstance) {
-		var vm = this;
-		vm.user = {
-			projectRole : 'PROJECT_USER'
-		};
-
-		vm.cancel = function() {
-			$uibModalInstance.dismiss();
-		};
-
-		vm.addMember = function() {
-			$uibModalInstance.close(vm.user);
-		};
-	}
-
-	angular.module('irida.group.members', ['ui.bootstrap'])
-    .service('MembersService', ['$http', 'notifications', MembersService])
-    .directive('select2', [select2])
-    .controller('MembersController', ['MembersService', '$uibModal', MembersController])
-    .controller('NewMemberModalController', ['$uibModalInstance', NewMemberModalController])
-})(window.angular, window.jQuery, window.PAGE);

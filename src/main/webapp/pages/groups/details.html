@@ -10,20 +10,20 @@
 		urls : {
 			addMember : /*[[@{/groups/{id}/members(id=${group.getId()})}]]*/'/groups/1/members',
 			table : /*[[@{/groups/{id}/ajax/list(id=${group.id})}]]*/'/groups/1/ajax/list',
-			usersLink : /*[[@{/users/}]]*/'/users'
+			usersLink : /*[[@{/users/}]]*/'/users',
+			usersSelection : /*[[@{/groups/{id}/ajax/availablemembers(id=${group.getId()})}]]*/'/groups/1/ajax/availablemembers'
 		},
 		i18n : {
 			'GROUP_OWNER' : /*[[#{group.users.role.GROUP_OWNER}]]*/'_Group owner_',
-			'GROUP_MEMBER' : /*[[#{group.users.role.GROUP_MEMBER}]]*/'_Group member_'
+			'GROUP_MEMBER' : /*[[#{group.users.role.GROUP_MEMBER}]]*/'_Group member_',
+			'unexpectedAddError' : /*[[#{group.users.add.notification.failure}]]*/'_An error happened when adding the user to this group, try again_'
 		}
 	};
-	
-	window.dependencies = ["irida.group.members"]
 </script>
 </head>
 <body>
 	<main layout:fragment="page" ddl:bundle-includes="group-members"
-		ddl:asset-css-excludes="jquery.datatables" ng-controller="MembersController as membersCtrl">
+		ddl:asset-css-excludes="jquery.datatables">
 	<div class="col-md-12">
 		<div class="row">
 			<div class="col-md-12">
@@ -32,9 +32,9 @@
 				<div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
 					<div class="btn-group">
 						<button id="add-members-button" class="btn btn-default"
+							type="button" data-toggle="modal" data-target="#addUserModal"
 							th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
-							th:text="#{group.users.add.button}"
-							ng-click="membersCtrl.showAddMemberModal()">_Add
+							th:text="#{group.users.add.button}">_Add
 							Members_</button>
 					</div>
 				</div>
@@ -46,6 +46,7 @@
 						<th dt:property="subject.label" dt:searchable="true" th:text="#{group.users.username}" dt:renderFunction="group-members#groupMembersTable.userNameLinkRow"></th>
 						<th dt:property="role" dt:searchable="true" dt:renderFunction="group-members#groupMembersTable.renderGroupRole" th:text="#{group.users.role}"></th>
 						<th dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.users.date.added}"></th>
+						<th width="50px" dt:sortable="false" dt:renderFunction="group-members#groupMembersTable.removeUserButton"></th>
 					</tr>
 					</thead>
 				</table>
@@ -53,31 +54,62 @@
 		</div>
 
 	</div>
+	
+	<div class="modal fade" id="addUserModal" role="dialog" aria-labelledby="#addUserTitle">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="addUserTitle" th:text="#{group.users.add.modal.title}">_Add User_</h4>					
+				</div>
+				<div class="modal-body">
+					<form id="addUserForm" action="#">
+		                <div class="form-group">
+		                    <label class="control-label" for="add-user-username" th:text="#{group.users.add.user}">_Username_</label>
+		                    <input type="hidden" id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{group.users.add.select-user}"/>
+		                </div>
+		                <div class="form-group">
+		                    <label class="control-label" for="add-user-role" th:text="#{group.users.add.role}">_Group Role_</label>
+		                    <select id="add-user-role" class="form-control input-full" name="groupRole">
+		                        <option th:each="role : ${groupRoles}"
+		                                th:value="${role}"
+		                                th:text="#{${'group.users.role.'+role}}">_Role_
+		                        </option>
+		                    </select>
+		                </div>
+	            	</form>
+				</div>
+				<div class="modal-footer">
+				    <button class="btn btn-default" type="button" data-dismiss="modal" th:text="#{group.users.add.cancel}">_Cancel_</button>
+            		<button id="submitAddMember" class="btn btn-primary" type="button" th:text="#{group.users.add.ok}">_OK_</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<script type="text/ng-template" id="newMemberModal.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Add User</h3>
-        </div>
-        <div class="modal-body">
-            <form id="addUserForm" action="#">
-                <div class="form-group">
-                    <label class="control-label" for="add-user-username" th:text="#{group.users.add.user}">_Username_</label>
-                    <input select2="" data:url="@{/groups/{id}/ajax/availablemembers(id=${group.getId()})}" th:placeholder="#{group.users.add.select-user}" type="text" ng-model="modalCtrl.user.userId" id="add-user-username" name="userId" class="form-control input-full"/>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="add-user-role" th:text="#{group.users.add.role}">_Group Role_</label>
-                    <select ng-model="modalCtrl.user.groupRole" id="add-user-role" class="form-control input-full" name="groupRole">
-                        <option th:each="role : ${groupRoles}"
-                                th:value="${role}"
-                                th:text="#{${'group.users.role.'+role}}">_Role_
-                        </option>
-                    </select>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-default" type="button" ng-click="modalCtrl.cancel()" th:text="#{group.users.add.cancel}">_Cancel_</button>
-            <button id="submitAddMember" class="btn btn-primary" type="button" ng-click="modalCtrl.addMember()" th:text="#{group.users.add.ok}">_OK_</button>
-        </div>
+        
+<div class="modal fade" id="deleteConfirmModal" role="dialog" aria-labelledby="#deleteConfirmTitle">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="deleteConfirmTitle" th:text="#{analysis.delete.title}">_Confirm delete analysis_</h4>
+				</div>
+				<div class="modal-body">
+        			<p th:text="#{analysis.delete.confirm.message}" />
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">Close</button>
+					<button type="button" class="btn btn-danger" id="delete-analysis-button" th:text="#{analysis.delete.delete.button}">Delete</button>
+				</div>
+			</div>
+		</div>
+	</div>
     </script> </main>
 </body>
 </html>
