@@ -73,7 +73,10 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				isEmpty = true;
 			}
 
-			if (isEmpty) {
+			String[] activeProfiles = environment.getActiveProfiles();
+
+			// Don't use liquibase and don't import SQL dump when in dev profile
+			if (isEmpty && !Arrays.asList(activeProfiles).contains("dev")) {
 				// database is empty, import sql file to initialize the database
 				logger.debug("Database is empty -> importing SQL file.");
 				try {
@@ -117,21 +120,20 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 			}
 
 			// dev profile still needs this, so import the required sql files
-			String[] activeProfiles = environment.getActiveProfiles();
-			if (Arrays.asList(activeProfiles).contains("dev")) {
-				try {
-					logger.error("Detected that you're running in a dev environment: Importing required data..");
-					EncodedResource requiredData = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/required-data.sql"));
-					EncodedResource oauthToken =new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/oauth-token.sql"));
-					ScriptUtils.executeSqlScript(conn, requiredData, false, false, "--", ";", "/*", "*/");
-					ScriptUtils.executeSqlScript(conn, oauthToken, false, false, "--", ";", "/*", "*/");
-					logger.error("Import complete");
-				}
-				catch (ScriptException e) {
-					logger.error("Imported SQL files could not be executed.");
-					logger.error(e.toString());
-				}
-			}
+//			if (Arrays.asList(activeProfiles).contains("dev")) {
+//				try {
+//					logger.error("Detected that you're running in a dev environment: Importing required data..");
+//					EncodedResource requiredData = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/required-data.sql"));
+//					EncodedResource oauthToken =new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/oauth-token.sql"));
+//					ScriptUtils.executeSqlScript(conn, requiredData, false, false, "--", ";", "/*", "*/");
+//					ScriptUtils.executeSqlScript(conn, oauthToken, false, false, "--", ";", "/*", "*/");
+//					logger.error("Import complete");
+//				}
+//				catch (ScriptException e) {
+//					logger.error("Imported SQL files could not be executed.");
+//					logger.error(e.toString());
+//				}
+//			}
 
 		}
 		catch (SQLException se) {
