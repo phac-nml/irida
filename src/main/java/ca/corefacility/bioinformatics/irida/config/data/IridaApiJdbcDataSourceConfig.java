@@ -119,22 +119,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				springLiquibase.setIgnoreClasspathPrefix(true);
 			}
 
-			// dev profile still needs this, so import the required sql files
-//			if (Arrays.asList(activeProfiles).contains("dev")) {
-//				try {
-//					logger.error("Detected that you're running in a dev environment: Importing required data..");
-//					EncodedResource requiredData = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/required-data.sql"));
-//					EncodedResource oauthToken =new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/sql/oauth-token.sql"));
-//					ScriptUtils.executeSqlScript(conn, requiredData, false, false, "--", ";", "/*", "*/");
-//					ScriptUtils.executeSqlScript(conn, oauthToken, false, false, "--", ";", "/*", "*/");
-//					logger.error("Import complete");
-//				}
-//				catch (ScriptException e) {
-//					logger.error("Imported SQL files could not be executed.");
-//					logger.error(e.toString());
-//				}
-//			}
-
 		}
 		catch (SQLException se) {
 			logger.error(se.toString());
