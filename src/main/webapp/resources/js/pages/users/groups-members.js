@@ -1,4 +1,4 @@
-var groupMembersTable = (function(page) {
+var groupMembersTable = (function(page, notifications) {
 	function userNameLinkRow(data, type, full) {
 		return "<a class='item-link' title='" + data + "' href='"
 				+ page.urls.usersLink + full.subject.identifier + "'><span>" + data
@@ -10,8 +10,34 @@ var groupMembersTable = (function(page) {
 	};
 	
 	function removeUserButton(data, type, full) {
-		return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#deleteConfirmModal' class='btn btn-default btn-xs' group-member-id='"
-				+ full.identifier + "'><span class='fa fa-trash'></span></div>";
+		return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-trash'></span></div>";
+	};
+	
+	function deleteLinkCallback(row, data) {
+		$(row).find(".remove-user-btn").click(function () {
+			$("#removeUserModal").on("show.bs.modal", function () {
+				var modal = $(this);
+				modal.find("#remove-user-button").off("click").click(function () {
+					$.ajax({
+						url     : page.urls.removeMember + data.subject.identifier,
+						type    : 'DELETE',
+						success : function (result) {
+							oTable_groupMembersTable.ajax.reload();
+							notifications.show({
+								'msg': result.result
+							});
+							modal.modal('hide');
+						}, error: function () {
+							notifications.show({
+								'msg' : page.i18n.unexpectedRemoveError,
+								'type': 'error'
+							});
+							modal.modal('hide');
+						}
+					});
+				});
+			});
+		});
 	};
 	
 	$("#add-user-username").select2({
@@ -42,7 +68,6 @@ var groupMembersTable = (function(page) {
 				"groupRole" : $("#add-user-role").val()
 			},
 			success: function(result) {
-				console.log(result);
 				$("#addUserModal").modal('hide');
 				oTable_groupMembersTable.ajax.reload();
 				notifications.show({
@@ -59,9 +84,12 @@ var groupMembersTable = (function(page) {
 		})
 	});
 	
+
+	
 	return {
 		userNameLinkRow : userNameLinkRow,
 		renderGroupRole : renderGroupRole,
-		removeUserButton : removeUserButton
+		removeUserButton : removeUserButton,
+		deleteLinkCallback : deleteLinkCallback
 	};
-})(window.PAGE);
+})(window.PAGE, window.notifications);

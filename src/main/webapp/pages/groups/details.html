@@ -9,6 +9,7 @@
 	var PAGE = {
 		urls : {
 			addMember : /*[[@{/groups/{id}/members(id=${group.getId()})}]]*/'/groups/1/members',
+			removeMember : /*[[@{/groups/{id}/members/(id=${group.getId()})}]]*/'/groups/1/members',
 			table : /*[[@{/groups/{id}/ajax/list(id=${group.id})}]]*/'/groups/1/ajax/list',
 			usersLink : /*[[@{/users/}]]*/'/users',
 			usersSelection : /*[[@{/groups/{id}/ajax/availablemembers(id=${group.getId()})}]]*/'/groups/1/ajax/availablemembers'
@@ -16,7 +17,8 @@
 		i18n : {
 			'GROUP_OWNER' : /*[[#{group.users.role.GROUP_OWNER}]]*/'_Group owner_',
 			'GROUP_MEMBER' : /*[[#{group.users.role.GROUP_MEMBER}]]*/'_Group member_',
-			'unexpectedAddError' : /*[[#{group.users.add.notification.failure}]]*/'_An error happened when adding the user to this group, try again_'
+			'unexpectedAddError' : /*[[#{group.users.add.notification.failure}]]*/'_An error happened when adding the user to this group, try again_',
+			'unexpectedRemoveError' : /*[[#{group.users.remove.notification.failure}]]*/'_An error happened when removing the user from this group, try again_'
 		}
 	};
 </script>
@@ -24,6 +26,9 @@
 <body>
 	<main layout:fragment="page" ddl:bundle-includes="group-members"
 		ddl:asset-css-excludes="jquery.datatables">
+	<div dt:conf="groupMembersTable">
+		<div dt:confType="callback" dt:type="createdRow" dt:function="group-members#groupMembersTable.deleteLinkCallback" />
+	</div>
 	<div class="col-md-12">
 		<div class="row">
 			<div class="col-md-12">
@@ -65,21 +70,19 @@
 					<h4 class="modal-title" id="addUserTitle" th:text="#{group.users.add.modal.title}">_Add User_</h4>					
 				</div>
 				<div class="modal-body">
-					<form id="addUserForm" action="#">
-		                <div class="form-group">
-		                    <label class="control-label" for="add-user-username" th:text="#{group.users.add.user}">_Username_</label>
-		                    <input type="hidden" id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{group.users.add.select-user}"/>
-		                </div>
-		                <div class="form-group">
-		                    <label class="control-label" for="add-user-role" th:text="#{group.users.add.role}">_Group Role_</label>
-		                    <select id="add-user-role" class="form-control input-full" name="groupRole">
-		                        <option th:each="role : ${groupRoles}"
-		                                th:value="${role}"
-		                                th:text="#{${'group.users.role.'+role}}">_Role_
-		                        </option>
-		                    </select>
-		                </div>
-	            	</form>
+	                <div class="form-group">
+	                    <label class="control-label" for="add-user-username" th:text="#{group.users.add.user}">_Username_</label>
+	                    <input type="hidden" id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{group.users.add.select-user}"/>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label" for="add-user-role" th:text="#{group.users.add.role}">_Group Role_</label>
+	                    <select id="add-user-role" class="form-control input-full" name="groupRole">
+	                        <option th:each="role : ${groupRoles}"
+	                                th:value="${role}"
+	                                th:text="#{${'group.users.role.'+role}}">_Role_
+	                        </option>
+	                    </select>
+	                </div>
 				</div>
 				<div class="modal-footer">
 				    <button class="btn btn-default" type="button" data-dismiss="modal" th:text="#{group.users.add.cancel}">_Cancel_</button>
@@ -89,27 +92,25 @@
 		</div>
 	</div>
 	
-	<script type="text/ng-template" id="newMemberModal.html">
-        
-<div class="modal fade" id="deleteConfirmModal" role="dialog" aria-labelledby="#deleteConfirmTitle">
+	<div class="modal fade" id="removeUserModal" role="dialog" aria-labelledby="#deleteConfirmTitle">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="deleteConfirmTitle" th:text="#{analysis.delete.title}">_Confirm delete analysis_</h4>
+					<h4 class="modal-title" id="deleteConfirmTitle" th:text="#{group.users.remove.modal.title}">_Remove Group Member_</h4>
 				</div>
 				<div class="modal-body">
-        			<p th:text="#{analysis.delete.confirm.message}" />
+					<p th:text="#{group.users.remove.modal.confirm}" />
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">Close</button>
-					<button type="button" class="btn btn-danger" id="delete-analysis-button" th:text="#{analysis.delete.delete.button}">Delete</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">_Close_</button>
+					<button type="button" class="btn btn-danger" id="remove-user-button" th:text="#{group.users.remove.modal.button.remove}">_Remove User_</button>
 				</div>
 			</div>
 		</div>
 	</div>
-    </script> </main>
+	</main>
 </body>
 </html>

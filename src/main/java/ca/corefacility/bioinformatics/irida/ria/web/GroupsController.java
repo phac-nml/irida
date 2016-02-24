@@ -176,13 +176,23 @@ public class GroupsController {
 	}
 
 	@RequestMapping(path = "/{userGroupId}/members", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> addUserToGroup(final @PathVariable Long userGroupId, @RequestParam Long userId,
-			@RequestParam String groupRole, Locale locale) {
+	public @ResponseBody Map<String, String> addUserToGroup(final @PathVariable Long userGroupId,
+			final @RequestParam Long userId, @RequestParam String groupRole, Locale locale) {
 		final User user = userService.read(userId);
 		final UserGroup group = userGroupService.read(userGroupId);
 		final UserGroupRole role = UserGroupRole.valueOf(groupRole);
 		userGroupService.addUserToGroup(user, group, role);
-		return ImmutableMap.of("result", messageSource.getMessage("group.users.add.notification.success", new Object[] { user.getLabel() },
-				locale));
+		return ImmutableMap.of("result", messageSource.getMessage("group.users.add.notification.success",
+				new Object[] { user.getLabel() }, locale));
+	}
+
+	@RequestMapping(path = "/{userGroupId}/members/{userId}", method = RequestMethod.DELETE)
+	public @ResponseBody Map<String, String> removeUserFromGroup(final @PathVariable Long userGroupId,
+			final @PathVariable Long userId, Locale locale) {
+		final User user = userService.read(userId);
+		final UserGroup group = userGroupService.read(userGroupId);
+		userGroupService.removeUserFromGroup(user, group);
+		return ImmutableMap.of("result", messageSource.getMessage("group.users.remove.notification.success",
+				new Object[] { user.getLabel() }, locale));
 	}
 }
