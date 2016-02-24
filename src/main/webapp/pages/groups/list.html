@@ -7,7 +7,11 @@
     <script th:inline="javascript">
         var PAGE = {
             urls: {
-                link: /*[[@{/groups/}]]*/ '/groups'
+                link: /*[[@{/groups/}]]*/ '/groups',
+                deleteGroup: /*[[@{/groups/}]]*/ '/groups/'
+            },
+            i18n: {
+            	unexpectedRemoveError: /*[[#{group.remove.notification.failure}]]*/ '_An error occured when removing your group. Try again._'
             }
         };
     </script>
@@ -18,15 +22,38 @@
         <h1 th:text="#{nav.main.groups-list}">_Groups_</h1>
         <a href="/groups/create" th:href="@{/groups/create}"
            class="btn btn-default mrgn-bttm-md" th:text="#{nav.main.add.group}">_Add Group_</a>
+        <div dt:conf="groupsTable">
+			<div dt:confType="callback" dt:type="createdRow" dt:function="groups-list#groupsTable.deleteLinkCallback" />
+		</div>
         <table id="groupsTable" dt:table="true" dt:url="@{/groups/ajax/list}">
             <thead>
             <tr role="row">
-                <th dt:property="name" dt:searchable="true" th:text="#{group.name}" dt:renderFunction="groups-list#groupsTable.groupLinkRow"></th>
-                <th dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.created}"></th>
-                <th dt:property="modifiedDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.modified}"></th>
+                <th dt:property="group.name" dt:searchable="true" th:text="#{group.name}" dt:renderFunction="groups-list#groupsTable.groupLinkRow"></th>
+                <th dt:property="group.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.created}"></th>
+                <th dt:property="group.modifiedDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.modified}"></th>
+                <th width="50px" dt:sortable="false" dt:filterable="false" dt:renderFunction="groups-list#groupsTable.removeGroupButton" />
             </tr>
             </thead>
         </table>
+        <div class="modal fade" id="removeGroupModal" role="dialog" aria-labelledby="#deleteConfirmTitle">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="deleteConfirmTitle" th:text="#{group.remove.modal.title}">_Remove Group_</h4>
+					</div>
+					<div class="modal-body">
+						<p th:text="#{group.remove.modal.confirm}" />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}">_Close_</button>
+						<button type="button" class="btn btn-danger" id="remove-group-button" th:text="#{group.remove.modal.button.remove}">_Remove Group_</button>
+					</div>
+				</div>
+			</div>
+		</div>
     </main>
 </div>
 </body>

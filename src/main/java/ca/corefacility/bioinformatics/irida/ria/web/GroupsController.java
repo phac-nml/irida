@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -102,11 +103,13 @@ public class GroupsController {
 	}
 
 	@RequestMapping("/ajax/list")
-	public @ResponseBody DatatablesResponse<UserGroup> getGroups(final @DatatablesParams DatatablesCriterias criteria) {
+	public @ResponseBody DatatablesResponse<GroupsDataTableResponse> getGroups(
+			final @DatatablesParams DatatablesCriterias criteria, final Principal principal) {
 		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
 		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
 		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
 		String sortName = sortProperties.get("sort_string").toString();
+		sortName = sortName.replaceAll("group.", "");
 		if (sortName.equals("identifier")) {
 			sortName = "id";
 		}
@@ -114,9 +117,53 @@ public class GroupsController {
 		final String searchString = criteria.getSearch();
 		final Page<UserGroup> groups = userGroupService.search(UserGroupSpecification.searchUserGroup(searchString),
 				currentPage, criteria.getLength(), direction, sortName);
-		final DataSet<UserGroup> groupsDataSet = new DataSet<>(groups.getContent(), groups.getTotalElements(),
-				groups.getTotalElements());
+		final User currentUser = userService.getUserByUsername(principal.getName());
+		final List<GroupsDataTableResponse> groupsWithOwnership = groups.getContent().stream()
+				.map(ug -> new GroupsDataTableResponse(ug, isGroupOwner(currentUser, ug),
+						currentUser.getSystemRole().equals(Role.ROLE_ADMIN)))
+				.collect(Collectors.toList());
+		final DataSet<GroupsDataTableResponse> groupsDataSet = new DataSet<>(groupsWithOwnership,
+				groups.getTotalElements(), groups.getTotalElements());
 		return DatatablesResponse.build(groupsDataSet, criteria);
+	}
+
+	private static final class GroupsDataTableResponse {
+		private final UserGroup group;
+		private final boolean groupOwner;
+		private final boolean isAdmin;
+
+		public GroupsDataTableResponse(final UserGroup group, final boolean groupOwner, final boolean isAdmin) {
+			this.group = group;
+			this.groupOwner = groupOwner;
+			this.isAdmin = isAdmin;
+		}
+
+		@SuppressWarnings("unused")
+		public UserGroup getGroup() {
+			return this.group;
+		}
+
+		@SuppressWarnings("unused")
+		public boolean isGroupOwner() {
+			return this.groupOwner;
+		}
+
+		@SuppressWarnings("unused")
+		public boolean isAdmin() {
+			return this.isAdmin;
+		}
+	}
+
+	private boolean isGroupOwner(final User user, final UserGroup group) {
+		final Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
+		final Optional<UserGroupJoin> currentUserGroup = groupUsers.stream().filter(j -> j.getSubject().equals(user))
+				.findAny();
+		if (currentUserGroup.isPresent()) {
+			final UserGroupJoin j = currentUserGroup.get();
+			return j.getRole().equals(UserGroupRole.GROUP_OWNER);
+		} else {
+			return false;
+		}
 	}
 
 	@RequestMapping("/{userGroupId}")
@@ -124,15 +171,7 @@ public class GroupsController {
 		final UserGroup group = userGroupService.read(userGroupId);
 		final Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
 		final User currentUser = userService.getUserByUsername(principal.getName());
-		final boolean isOwner;
-		final Optional<UserGroupJoin> currentUserGroup = groupUsers.stream()
-				.filter(j -> j.getSubject().equals(currentUser)).findAny();
-		if (currentUserGroup.isPresent()) {
-			final UserGroupJoin j = currentUserGroup.get();
-			isOwner = j.getRole().equals(UserGroupRole.GROUP_OWNER);
-		} else {
-			isOwner = false;
-		}
+		final boolean isOwner = isGroupOwner(currentUser, group);
 
 		model.addAttribute("group", group);
 		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
@@ -141,6 +180,14 @@ public class GroupsController {
 		model.addAttribute("groupRoles", UserGroupRole.values());
 
 		return GROUP_DETAILS;
+	}
+
+	@RequestMapping(path = "/{userGroupId}", method = RequestMethod.DELETE)
+	public @ResponseBody Map<String, String> deleteGroup(final @PathVariable Long userGroupId, final Locale locale) {
+		final UserGroup userGroup = userGroupService.read(userGroupId);
+		userGroupService.delete(userGroupId);
+		return ImmutableMap.of("result", messageSource.getMessage("group.remove.notification.success",
+				new Object[] { userGroup.getName() }, locale));
 	}
 
 	@RequestMapping("/{userGroupId}/ajax/list")
