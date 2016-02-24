@@ -45,6 +45,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Controller for interacting with {@link UserGroup}.
+ */
 @Controller
 @RequestMapping(value = "/groups")
 public class GroupsController {
@@ -59,6 +62,16 @@ public class GroupsController {
 	private final UserService userService;
 	private final MessageSource messageSource;
 
+	/**
+	 * Create a new groups controller.
+	 * 
+	 * @param userGroupService
+	 *            the {@link UserGroupService}.
+	 * @param userService
+	 *            the {@link UserService}.
+	 * @param messageSource
+	 *            the {@link MessageSource}.
+	 */
 	@Autowired
 	public GroupsController(final UserGroupService userGroupService, final UserService userService,
 			final MessageSource messageSource) {
@@ -67,16 +80,38 @@ public class GroupsController {
 		this.userService = userService;
 	}
 
+	/**
+	 * Get the default index page for listing groups.
+	 * 
+	 * @return the route to the index page.
+	 */
 	@RequestMapping
 	public String getIndex() {
 		return GROUPS_LIST;
 	}
 
+	/**
+	 * Get the page to create a new group.
+	 * 
+	 * @return the route to the creation page.
+	 */
 	@RequestMapping("/create")
 	public String getCreatePage() {
 		return GROUPS_CREATE;
 	}
 
+	/**
+	 * Create a new {@link UserGroup}.
+	 * 
+	 * @param userGroup
+	 *            the {@link UserGroup} from the request.
+	 * @param model
+	 *            the model to add violation constraints to.
+	 * @param locale
+	 *            the locale used by the browser.
+	 * @return the route back to the creation page on validation failure, or the
+	 *         destails page on success.
+	 */
 	@RequestMapping(path = "/create", method = RequestMethod.POST)
 	public String createGroup(final @ModelAttribute UserGroup userGroup, final Model model, final Locale locale) {
 		logger.debug("Creating group: [ " + userGroup + "]");
@@ -104,6 +139,15 @@ public class GroupsController {
 		return forward;
 	}
 
+	/**
+	 * Search/filter/page with datatables for {@link UserGroup}.
+	 * 
+	 * @param criteria
+	 *            the search criteria.
+	 * @param principal
+	 *            the user currently logged in
+	 * @return the datatables-formatted list of matching {@link UserGroup}.
+	 */
 	@RequestMapping("/ajax/list")
 	public @ResponseBody DatatablesResponse<GroupsDataTableResponse> getGroups(
 			final @DatatablesParams DatatablesCriterias criteria, final Principal principal) {
@@ -129,33 +173,16 @@ public class GroupsController {
 		return DatatablesResponse.build(groupsDataSet, criteria);
 	}
 
-	private static final class GroupsDataTableResponse {
-		private final UserGroup group;
-		private final boolean groupOwner;
-		private final boolean isAdmin;
-
-		public GroupsDataTableResponse(final UserGroup group, final boolean groupOwner, final boolean isAdmin) {
-			this.group = group;
-			this.groupOwner = groupOwner;
-			this.isAdmin = isAdmin;
-		}
-
-		@SuppressWarnings("unused")
-		public UserGroup getGroup() {
-			return this.group;
-		}
-
-		@SuppressWarnings("unused")
-		public boolean isGroupOwner() {
-			return this.groupOwner;
-		}
-
-		@SuppressWarnings("unused")
-		public boolean isAdmin() {
-			return this.isAdmin;
-		}
-	}
-
+	/**
+	 * Convenience method for checking whether or not the specified user is an
+	 * owner of the group.
+	 * 
+	 * @param user
+	 *            the {@link User} to check.
+	 * @param group
+	 *            the {@link UserGroup} to check.
+	 * @return true if owner, false otherwise.
+	 */
 	private boolean isGroupOwner(final User user, final UserGroup group) {
 		final Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
 		final Optional<UserGroupJoin> currentUserGroup = groupUsers.stream().filter(j -> j.getSubject().equals(user))
@@ -168,6 +195,17 @@ public class GroupsController {
 		}
 	}
 
+	/**
+	 * Get the details page for a {@link UserGroup}.
+	 * 
+	 * @param userGroupId
+	 *            the {@link UserGroup} to retrieve.
+	 * @param principal
+	 *            the user that's currently logged in.
+	 * @param model
+	 *            the model to write attributes to.
+	 * @return the route to the group details page.
+	 */
 	@RequestMapping("/{userGroupId}")
 	public String getDetailsPage(final @PathVariable Long userGroupId, final Principal principal, final Model model) {
 		final UserGroup group = userGroupService.read(userGroupId);
@@ -184,6 +222,15 @@ public class GroupsController {
 		return GROUP_DETAILS;
 	}
 
+	/**
+	 * Delete the specified {@link UserGroup}.
+	 * 
+	 * @param userGroupId
+	 *            the group to delete.
+	 * @param locale
+	 *            the locale of the browser
+	 * @return a message indicating success.
+	 */
 	@RequestMapping(path = "/{userGroupId}", method = RequestMethod.DELETE)
 	public @ResponseBody Map<String, String> deleteGroup(final @PathVariable Long userGroupId, final Locale locale) {
 		final UserGroup userGroup = userGroupService.read(userGroupId);
@@ -192,6 +239,15 @@ public class GroupsController {
 				new Object[] { userGroup.getName() }, locale));
 	}
 
+	/**
+	 * Get the group editing page.
+	 * 
+	 * @param userGroupId
+	 *            the group id to edit.
+	 * @param model
+	 *            the model to write attributes to.
+	 * @return the route to the editing page.
+	 */
 	@RequestMapping(path = "/{userGroupId}/edit")
 	public String getEditPage(final @PathVariable Long userGroupId, final Model model) {
 		final UserGroup group = userGroupService.read(userGroupId);
@@ -201,6 +257,24 @@ public class GroupsController {
 		return GROUPS_EDIT;
 	}
 
+	/**
+	 * Submit changes to the {@link UserGroup}.
+	 * 
+	 * @param userGroupId
+	 *            the group ID to edit.
+	 * @param name
+	 *            the new name of the group.
+	 * @param description
+	 *            the new description of the group.
+	 * @param principal
+	 *            the currently logged in user.
+	 * @param model
+	 *            the model to add attributes to.
+	 * @param locale
+	 *            the locale of the browser.
+	 * @return the route to the editing page on validation failure, or the
+	 *         details page on success.
+	 */
 	@RequestMapping(path = "/{userGroupId}/edit", method = RequestMethod.POST)
 	public String editGroup(final @PathVariable Long userGroupId, final @RequestParam String name,
 			final @RequestParam String description, final Principal principal, final Model model, final Locale locale) {
@@ -226,6 +300,15 @@ public class GroupsController {
 		return GROUPS_EDIT;
 	}
 
+	/**
+	 * List the members in the group.
+	 * 
+	 * @param criteria
+	 *            the datatables criteria to search for.
+	 * @param userGroupId
+	 *            the group ID to get members for.
+	 * @return the datatables-formatted response with filtered users.
+	 */
 	@RequestMapping("/{userGroupId}/ajax/list")
 	public @ResponseBody DatatablesResponse<UserGroupJoin> getGroupUsers(
 			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long userGroupId) {
@@ -248,6 +331,15 @@ public class GroupsController {
 		return DatatablesResponse.build(groupDataSet, criteria);
 	}
 
+	/**
+	 * Get a list of the users that are not currently members of this group.
+	 * 
+	 * @param userGroupId
+	 *            the group ID to use as a negative filter.
+	 * @param term
+	 *            a filter on username to filter on.
+	 * @return the collection of users that match the query.
+	 */
 	@RequestMapping("/{userGroupId}/ajax/availablemembers")
 	public @ResponseBody Collection<User> getUsersNotInGroup(final @PathVariable Long userGroupId,
 			final @RequestParam String term) {
@@ -258,6 +350,19 @@ public class GroupsController {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Add a new user to the group.
+	 * 
+	 * @param userGroupId
+	 *            the group to add to.
+	 * @param userId
+	 *            the new member.
+	 * @param groupRole
+	 *            the role this user should have.
+	 * @param locale
+	 *            the locale of the browser.
+	 * @return a message indicating success.
+	 */
 	@RequestMapping(path = "/{userGroupId}/members", method = RequestMethod.POST)
 	public @ResponseBody Map<String, String> addUserToGroup(final @PathVariable Long userGroupId,
 			final @RequestParam Long userId, @RequestParam String groupRole, Locale locale) {
@@ -269,6 +374,17 @@ public class GroupsController {
 				new Object[] { user.getLabel() }, locale));
 	}
 
+	/**
+	 * Remove a user from a group.
+	 * 
+	 * @param userGroupId
+	 *            the group to remove from.
+	 * @param userId
+	 *            the user to remove.
+	 * @param locale
+	 *            the locale of the browser.
+	 * @return a message indicating success.
+	 */
 	@RequestMapping(path = "/{userGroupId}/members/{userId}", method = RequestMethod.DELETE)
 	public @ResponseBody Map<String, String> removeUserFromGroup(final @PathVariable Long userGroupId,
 			final @PathVariable Long userId, Locale locale) {
@@ -278,4 +394,46 @@ public class GroupsController {
 		return ImmutableMap.of("result", messageSource.getMessage("group.users.remove.notification.success",
 				new Object[] { user.getLabel() }, locale));
 	}
+
+	/**
+	 * Convenience class for wrapping {@link UserGroup} with ownership
+	 * permissions when listing.
+	 */
+	private static final class GroupsDataTableResponse {
+		private final UserGroup group;
+		private final boolean groupOwner;
+		private final boolean isAdmin;
+
+		/**
+		 * Create a new row in the datatable.
+		 * 
+		 * @param group
+		 *            the group
+		 * @param groupOwner
+		 *            is the current user an owner of the group
+		 * @param isAdmin
+		 *            is the current user an admin
+		 */
+		public GroupsDataTableResponse(final UserGroup group, final boolean groupOwner, final boolean isAdmin) {
+			this.group = group;
+			this.groupOwner = groupOwner;
+			this.isAdmin = isAdmin;
+		}
+
+		@SuppressWarnings("unused")
+		public UserGroup getGroup() {
+			return this.group;
+		}
+
+		@SuppressWarnings("unused")
+		public boolean isGroupOwner() {
+			return this.groupOwner;
+		}
+
+		@SuppressWarnings("unused")
+		public boolean isAdmin() {
+			return this.isAdmin;
+		}
+	}
+
 }
