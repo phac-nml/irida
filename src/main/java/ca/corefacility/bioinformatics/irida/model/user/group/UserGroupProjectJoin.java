@@ -77,11 +77,12 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 	 *            the {@link UserGroup} being permitted to access the
 	 *            {@link Project}.
 	 */
-	public UserGroupProjectJoin(final Project project, final UserGroup userGroup) {
+	public UserGroupProjectJoin(final Project project, final UserGroup userGroup, final ProjectRole role) {
 		this.id = null;
 		this.createdDate = new Date();
 		this.project = project;
 		this.userGroup = userGroup;
+		this.projectRole = role;
 	}
 
 	public int hashCode() {
