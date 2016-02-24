@@ -33,10 +33,20 @@ do
     esac
 done
 
+COMMIT=`git rev-parse HEAD`
+
+for run in {1..1}
+do
+
+DATE=`date +%Y-%m-%d:%H:%M`
+
 if [ "${DROPDB}" == "true" ]
 then
     echo "drop database irida_test; create database irida_test;" | mysql -u root
 fi
 
 mkdir ~/Desktop/logs/
-xvfb-run mvn clean verify ${SKIP} ${TESTCLASS} ${PROFILE} ${DEBUG} | tee ~/Desktop/logs/${DATE}-${FILENAME}.logs
+echo "Current commit: ${COMMIT}"
+xvfb-run mvn clean verify ${SKIP} ${TESTCLASS} ${PROFILE} ${DEBUG} | tee ~/Desktop/logs/${DATE}-${COMMIT}-${FILENAME}.logs
+
+done
