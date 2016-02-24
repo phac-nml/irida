@@ -13,8 +13,6 @@ var groupsTable = (function(page) {
 	};
 	
 	function deleteLinkCallback(row, data) {
-		console.log(row);
-		console.log(data);
 		$(row).find(".remove-group-btn").click(function () {
 			$("#removeGroupModal").on("show.bs.modal", function () {
 				var modal = $(this);

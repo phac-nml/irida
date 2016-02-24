@@ -52,6 +52,7 @@ public class GroupsController {
 	private static final Logger logger = LoggerFactory.getLogger(GroupsController.class);
 	private static final String GROUPS_LIST = "groups/list";
 	private static final String GROUPS_CREATE = "groups/create";
+	private static final String GROUPS_EDIT = "groups/edit";
 	private static final String GROUP_DETAILS = "groups/details";
 
 	private final UserGroupService userGroupService;
@@ -188,6 +189,38 @@ public class GroupsController {
 		userGroupService.delete(userGroupId);
 		return ImmutableMap.of("result", messageSource.getMessage("group.remove.notification.success",
 				new Object[] { userGroup.getName() }, locale));
+	}
+
+	@RequestMapping(path = "/{userGroupId}/edit")
+	public String getEditPage(final @PathVariable Long userGroupId, final Model model) {
+		final UserGroup group = userGroupService.read(userGroupId);
+		model.addAttribute("group", group);
+		model.addAttribute("given_name", group.getName());
+		return GROUPS_EDIT;
+	}
+
+	@RequestMapping(path = "/{userGroupId}/edit", method = RequestMethod.POST)
+	public String editGroup(final @PathVariable Long userGroupId, final @RequestParam String name,
+			final Principal principal, final Model model, final Locale locale) {
+		logger.debug("Editing group: [ " + userGroupId+ "]");
+		final Map<String, String> errors = new HashMap<>();
+
+		try {
+			userGroupService.update(userGroupId, ImmutableMap.of("name", name));
+			return getDetailsPage(userGroupId, principal, model);
+		} catch (final ConstraintViolationException e) {
+			for (final ConstraintViolation<?> v : e.getConstraintViolations()) {
+				errors.put(v.getPropertyPath().toString(), v.getMessage());
+			}
+		} catch (final EntityExistsException | DataIntegrityViolationException e) {
+			errors.put("name", messageSource.getMessage("group.name.exists", null, locale));
+		}
+
+		model.addAttribute("errors", errors);
+		model.addAttribute("group", userGroupService.read(userGroupId));
+		model.addAttribute("given_name", name);
+
+		return GROUPS_EDIT;
 	}
 
 	@RequestMapping("/{userGroupId}/ajax/list")

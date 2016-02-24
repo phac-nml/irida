@@ -41,6 +41,10 @@
 							th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
 							th:text="#{group.users.add.button}">_Add
 							Members_</button>
+						<a id="edit-group-button" class="btn btn-default"
+							th:if="${isAdmin} or ${isOwner}"
+							th:href="@{/groups/{id}/edit(id=${group.id})}"
+							th:text="#{group.edit.button}">_Edit Group Details_</a>
 					</div>
 				</div>
 			</div>
