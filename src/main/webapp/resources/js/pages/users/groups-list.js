@@ -4,6 +4,10 @@ var groupsTable = (function(page) {
 				+ '/' + full.group.identifier + '"><span>' + data + '</span></a>';		
 	};
 	
+	function descriptionRow(data, type, full) {
+		return '<p class="crop">' + full.group.description + '</p>';
+	};
+	
 	function removeGroupButton(data, type, full) {
 		if (full.groupOwner || full.admin) {
 			return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#removeGroupModal' class='btn btn-default btn-xs remove-group-btn'><span class='fa fa-trash'></span></div>";
@@ -42,6 +46,7 @@ var groupsTable = (function(page) {
 	return {
 		groupLinkRow : groupLinkRow,
 		removeGroupButton : removeGroupButton,
-		deleteLinkCallback : deleteLinkCallback
+		deleteLinkCallback : deleteLinkCallback,
+		descriptionRow : descriptionRow
 	};
 })(window.PAGE);

@@ -98,6 +98,7 @@ public class GroupsController {
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
 			model.addAttribute("given_name", userGroup.getName());
+			model.addAttribute("given_description", userGroup.getDescription());
 		}
 
 		return forward;
@@ -196,17 +197,18 @@ public class GroupsController {
 		final UserGroup group = userGroupService.read(userGroupId);
 		model.addAttribute("group", group);
 		model.addAttribute("given_name", group.getName());
+		model.addAttribute("given_description", group.getDescription());
 		return GROUPS_EDIT;
 	}
 
 	@RequestMapping(path = "/{userGroupId}/edit", method = RequestMethod.POST)
 	public String editGroup(final @PathVariable Long userGroupId, final @RequestParam String name,
-			final Principal principal, final Model model, final Locale locale) {
-		logger.debug("Editing group: [ " + userGroupId+ "]");
+			final @RequestParam String description, final Principal principal, final Model model, final Locale locale) {
+		logger.debug("Editing group: [" + userGroupId + "]");
 		final Map<String, String> errors = new HashMap<>();
 
 		try {
-			userGroupService.update(userGroupId, ImmutableMap.of("name", name));
+			userGroupService.update(userGroupId, ImmutableMap.of("name", name, "description", description));
 			return getDetailsPage(userGroupId, principal, model);
 		} catch (final ConstraintViolationException e) {
 			for (final ConstraintViolation<?> v : e.getConstraintViolations()) {
@@ -219,6 +221,7 @@ public class GroupsController {
 		model.addAttribute("errors", errors);
 		model.addAttribute("group", userGroupService.read(userGroupId));
 		model.addAttribute("given_name", name);
+		model.addAttribute("given_description", description);
 
 		return GROUPS_EDIT;
 	}

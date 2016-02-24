@@ -18,6 +18,7 @@
 				<constraints unique="true" nullable="false"
 					uniqueConstraintName="UK_USER_GROUP_NAME" />
 			</column>
+			<column name="description" type="longtext" />
 		</createTable>
 
 		<createTable tableName="user_group_AUD">
@@ -33,6 +34,7 @@
 			<column name="created_date" type="datetime" />
 			<column name="modified_date" type="datetime" />
 			<column name="name" type="varchar(255)" />
+			<column name="description" type="longtext" />
 		</createTable>
 
 		<createTable tableName="user_group_member">

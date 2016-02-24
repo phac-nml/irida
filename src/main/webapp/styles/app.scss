@@ -96,3 +96,11 @@ input[type="search"] {
   background-color: rgba(0, 0, 0, .5);
   border-top: 1px solid rgba(0, 0, 0, .4);
 }
+
+
+.crop {
+  max-width: 250px!important;
+  white-space: nowrap!important;
+  overflow: hidden!important;
+  text-overflow: ellipsis!important;
+}
