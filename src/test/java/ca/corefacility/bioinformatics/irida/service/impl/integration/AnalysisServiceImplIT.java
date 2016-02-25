@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +41,9 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
-@ActiveProfiles("test")
+		IridaApiNoGalaxyTestConfig.class, IridaApiJdbcDataSourceConfig.class, IridaApiPropertyPlaceholderConfig.class,
+		IridaApiTestMultithreadingConfig.class })
+@ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/AnalysisServiceImplIT.xml")

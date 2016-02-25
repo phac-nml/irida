@@ -2876,6 +2876,52 @@ LOCK TABLES `workflow_named_parameters` WRITE;
 /*!40000 ALTER TABLE `workflow_named_parameters` DISABLE KEYS */;
 /*!40000 ALTER TABLE `workflow_named_parameters` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `sequencing_run_entity`
+--
+
+DROP TABLE IF EXISTS `sequencing_run_entity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sequencing_run_entity` (
+  `data` varchar(255) DEFAULT NULL,
+  `id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `FK_2ca183j616ykm0nl1u439wyal` FOREIGN KEY (`id`) REFERENCES `sequencing_run` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sequencing_run_entity`
+--
+
+LOCK TABLES `sequencing_run_entity` WRITE;
+/*!40000 ALTER TABLE `sequencing_run_entity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sequencing_run_entity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `sequencing_run_entity_AUD`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sequencing_run_entity_AUD` (
+  `id` bigint(20) NOT NULL,
+  `REV` int(11) NOT NULL,
+  `data` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`,`REV`),
+  CONSTRAINT `FK_8i1fd9u1uo6ow93oxqr4i3uw6` FOREIGN KEY (`id`, `REV`) REFERENCES `sequencing_run_AUD` (`id`, `REV`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sequencing_run_entity_AUD`
+--
+
+LOCK TABLES `sequencing_run_entity_AUD` WRITE;
+/*!40000 ALTER TABLE `sequencing_run_entity_AUD` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sequencing_run_entity_AUD` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
