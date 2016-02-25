@@ -1075,6 +1075,7 @@
 				<exclude.tests>**/*Galaxy*IT.java,
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisSubmissionCleanupServiceImplIT.java
 				</exclude.tests>
 			</properties>
 		</profile>
@@ -1091,6 +1092,7 @@
 					**/*Galaxy*IT.java,
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisSubmissionCleanupServiceImplIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
 			</properties>
