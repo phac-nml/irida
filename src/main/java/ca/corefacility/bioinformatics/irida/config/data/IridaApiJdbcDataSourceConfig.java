@@ -102,17 +102,12 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
      */
 	private void setupDatabaseFromSql(Connection conn) throws ScriptException {
 		logger.debug("Database is empty -> importing SQL file.");
-		try {
-			logger.debug("Finding sql file to import into database.");
-			EncodedResource sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/all-changes.sql"));
-			logger.debug("File found, executing SQL statements to restore database initial state...");
-			ScriptUtils.executeSqlScript(conn, sqlfile, false, false, "--", ";", "/*", "*/");
-			logger.debug("Database restoration complete.");
-		}
-		catch (ScriptException e) {
-			logger.error("SQL for initial state of database could not be executed.");
-			logger.error(e.toString());
-		}
+		logger.debug("Finding sql file to import into database.");
+		EncodedResource sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/all-changes.sql"));
+		logger.debug("File found, executing SQL statements to restore database initial state...");
+		ScriptUtils.executeSqlScript(conn, sqlfile, false, false, "--", ";", "/*", "*/");
+		logger.debug("Database restoration complete.");
+
 	}
 
 	/**
