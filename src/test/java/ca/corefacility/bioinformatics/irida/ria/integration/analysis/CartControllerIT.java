@@ -21,9 +21,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaWebTestScopeConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.web.IridaUIWebConfig;
@@ -40,12 +39,12 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigWebContextLoader.class, classes = { IridaApiTestDataSourceConfig.class,
-		IridaApiNoGalaxyTestConfig.class, IridaApiPropertyPlaceholderConfig.class, IridaApiServicesConfig.class,
+@ContextConfiguration(loader = AnnotationConfigWebContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
+		IridaApiPropertyPlaceholderConfig.class, IridaApiServicesConfig.class,
 		IridaUIWebConfig.class, IridaWebTestScopeConfig.class })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
-@ActiveProfiles("test")
+@ActiveProfiles("it")
 @WebAppConfiguration
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/CartControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
