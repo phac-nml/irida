@@ -73,18 +73,4 @@ public class SequencingRunSequenceFilesControllerTest {
 		assertEquals("Sequence file location should be correct",seqFileLocation,response.getHeader(HttpHeaders.LOCATION));
 		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
 	}
-	
-	@Test
-	public void addSequenceFileToMiseqRunTestNotMiseqInstance() throws IOException {
-		Long seqId =1L;
-		Long sequencingrunId =2L;
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		SequenceFile file = TestDataFactory.constructSequenceFile();
-		SequencingRun run = new MiseqRun(LayoutType.PAIRED_END, "");
-		Map<String, String> representation = new HashMap<String, String>();
-		representation.put(RESTSequencingRunSequenceFilesController.SEQUENCEFILE_ID_KEY, ""+seqId);
-		when(sequenceFileService.read(seqId)).thenReturn(file);
-		when(miseqRunService.read(sequencingrunId)).thenReturn(run);
-		controller.addSequenceFileToMiseqRun(sequencingrunId,representation, response);
-	}
 }
