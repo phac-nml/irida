@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
 
-import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -75,13 +74,13 @@ public class SequencingRunSequenceFilesControllerTest {
 		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
 	}
 	
-	@Test (expected = IllegalArgumentException.class)
+	@Test
 	public void addSequenceFileToMiseqRunTestNotMiseqInstance() throws IOException {
 		Long seqId =1L;
 		Long sequencingrunId =2L;
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		SequenceFile file = TestDataFactory.constructSequenceFile();
-		SequencingRun run = new SequencingRunEntity();
+		SequencingRun run = new MiseqRun(LayoutType.PAIRED_END, "");
 		Map<String, String> representation = new HashMap<String, String>();
 		representation.put(RESTSequencingRunSequenceFilesController.SEQUENCEFILE_ID_KEY, ""+seqId);
 		when(sequenceFileService.read(seqId)).thenReturn(file);
