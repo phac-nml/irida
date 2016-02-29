@@ -10,7 +10,7 @@ var groupMembersTable = (function(page, notifications) {
 	};
 	
 	function removeUserButton(data, type, full) {
-		return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
+		return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove' uib-tooltip='" + page.i18n.remove +"'></span></div>";
 	};
 	
 	function deleteLinkCallback(row, data) {
