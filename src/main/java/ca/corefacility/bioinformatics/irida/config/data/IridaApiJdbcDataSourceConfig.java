@@ -53,7 +53,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 */
 	@Bean
 	@Profile({ "dev", "prod", "it" })
-	public SpringLiquibase springLiquibase(final DataSource dataSource) {
+	public SpringLiquibase springLiquibase(final DataSource dataSource) throws SQLException {
 
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
@@ -85,9 +85,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				logger.debug("Database is not empty -> verifying database contents.");
 				shouldLiquibaseRun(springLiquibase);
 			}
-		}
-		catch (SQLException se) {
-			logger.error(se.toString());
 		}
 
 		return springLiquibase;
