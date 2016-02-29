@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.listeners;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
@@ -12,6 +13,10 @@ import org.slf4j.LoggerFactory;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,13 +34,47 @@ public class IntegrationTestListener extends RunListener {
 	 */
 	public void testRunStarted(Description description) throws Exception {
 
-		driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1400, 900));
-		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		if (isRunningUITests()) {
+			driver = new ChromeDriver();
+			driver.manage().window().setSize(new Dimension(1400, 900));
+			driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		}
 
 		logger.debug("Setting up RestAssured.");
 		RestAssured.requestContentType(ContentType.JSON);
 		RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
+	}
+
+	/**
+	 * For starting chrome only when running individual tests,
+	 * running the ui_testing profile, or running all_testing
+	 *
+	 * Essentially preventing ChromeDriver from running when it
+	 * isn't required for the tests.
+	 *
+	 * i.e. Black list profiles for when we don't want chrome to run
+	 *	
+	 */
+	public boolean isRunningUITests() throws FileNotFoundException, NullPointerException {
+		File file = new File(getClass().getClassLoader().getResource("active-profile.txt").getFile());
+		final Scanner scanner = new Scanner(file);
+
+		ArrayList<String> blacklist = new ArrayList<>();
+		//if adding any new profiles to black list, add them here!
+		blacklist.add("service_testing");
+		blacklist.add("rest_testing");
+		blacklist.add("galaxy_testing");
+
+		while (scanner.hasNext()) {
+			String[] line = scanner.nextLine().split("\\s+");
+			for (String str: line) {
+				if (blacklist.contains(str)) {
+					logger.debug("Profile blacklisted: not running ChromeDriver.");
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**

@@ -1,0 +1,11 @@
+Created by: org.apache.maven.plugins.help.ActiveProfilesMojo
+Created on: Mon Feb 29 09:45:40 CST 2016
+
+
+Active Profiles for Project 'ca.corefacility.bioinformatics:irida:war:1.0.0-alpha10-SNAPSHOT': 
+
+The following profiles are active:
+
+ - rest_testing (source: ca.corefacility.bioinformatics:irida:1.0.0-alpha10-SNAPSHOT)
+
+
