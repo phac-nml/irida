@@ -598,6 +598,12 @@
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
 			</resource>
+			<resource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>**/active-profiles.txt</include>
+				</includes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>

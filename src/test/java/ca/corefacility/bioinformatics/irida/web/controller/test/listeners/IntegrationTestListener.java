@@ -55,26 +55,35 @@ public class IntegrationTestListener extends RunListener {
 	 * i.e. Black list profiles for when we don't want chrome to run
 	 *	
 	 */
-	public boolean isRunningUITests() throws FileNotFoundException, NullPointerException {
-		File file = new File(getClass().getClassLoader().getResource("active-profile.txt").getFile());
-		final Scanner scanner = new Scanner(file);
+	public boolean isRunningUITests() {
+		boolean shouldRun = true;
+		try {
+			File file = new File("src/test/resources/active-profile.txt");
+			final Scanner scanner = new Scanner(file);
 
-		ArrayList<String> blacklist = new ArrayList<>();
-		//if adding any new profiles to black list, add them here!
-		blacklist.add("service_testing");
-		blacklist.add("rest_testing");
-		blacklist.add("galaxy_testing");
+			ArrayList<String> blacklist = new ArrayList<>();
+			//if adding any new profiles to black list, add them here!
+			blacklist.add("service_testing");
+			blacklist.add("rest_testing");
+			blacklist.add("galaxy_testing");
 
-		while (scanner.hasNext()) {
-			String[] line = scanner.nextLine().split("\\s+");
-			for (String str: line) {
-				if (blacklist.contains(str)) {
-					logger.debug("Profile blacklisted: not running ChromeDriver.");
-					return false;
+			while (scanner.hasNext()) {
+				String[] line = scanner.nextLine().split("\\s+");
+				for (String str : line) {
+					if (blacklist.contains(str)) {
+						logger.debug("Profile blacklisted: not running ChromeDriver.");
+						shouldRun = false;
+					}
 				}
 			}
 		}
-		return true;
+		catch (Exception e) {
+			//If the file doesn't exist or we have problems reading the file, we don't want to stop
+			// execution just for this, since we're just checking whether or not to run ChromeDriver.
+			// So, by default, if there's an error we'll assume that we need to run ChromeDriver
+			logger.debug("ERROR: " + e.toString());
+		}
+		return shouldRun;
 	}
 
 	/**
