@@ -37,7 +37,7 @@
 				<p th:text="${group.description}">_Group description_</p>
 					
 				<div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
-					<div class="btn-group">
+					<div>
 						<button id="add-members-button" class="btn btn-default"
 							type="button" data-toggle="modal" data-target="#addUserModal"
 							th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
