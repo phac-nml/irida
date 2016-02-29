@@ -20,8 +20,6 @@
 <div layout:fragment="page" ddl:bundle-includes="groups-list" ddl:asset-css-excludes="jquery.datatables">
     <main class="col-md-12">
         <h1 th:text="#{nav.main.groups-list}">_Groups_</h1>
-        <a href="/groups/create" th:href="@{/groups/create}"
-           class="btn btn-default mrgn-bttm-md" th:text="#{nav.main.add.group}">_Add Group_</a>
         <div dt:conf="groupsTable">
 			<div dt:confType="callback" dt:type="createdRow" dt:function="groups-list#groupsTable.deleteLinkCallback" />
 		</div>
