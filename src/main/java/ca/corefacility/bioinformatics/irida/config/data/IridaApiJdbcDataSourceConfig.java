@@ -77,12 +77,12 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 			// Check if we're in dev: Don't use liquibase and don't import SQL dump when in dev profile
 			String[] activeProfiles = environment.getActiveProfiles();
 
-			if (isEmpty && !Arrays.asList(activeProfiles).contains("dev")) {
+			if (isEmpty && Arrays.asList(activeProfiles).isEmpty()) {
 				logger.debug("Database is empty -> importing SQL file.");
 				setupDatabaseFromSql(conn);
 			}
 			else {
-				logger.debug("Database is not empty -> verifying database contents.");
+				logger.debug("Database is not empty, or running server -> verifying database contents.");
 				shouldLiquibaseRun(springLiquibase);
 			}
 		}
