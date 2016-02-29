@@ -10,14 +10,15 @@ var groupsTable = (function(page) {
 	
 	function removeGroupButton(data, type, full) {
 		if (full.groupOwner || full.admin) {
-			return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#removeGroupModal' class='btn btn-default btn-xs remove-group-btn'><span class='fa fa-remove' uib-tooltip='" + page.i18n.remove + "'></span></div>";
+			return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button type='button' data-toggle='modal' data-target='#removeGroupModal' class='btn btn-default btn-xs remove-group-btn'><span class='fa fa-remove'></span></div>";
 		} else {
 			return "";
 		}
 	};
 	
 	function deleteLinkCallback(row, data) {
-		$(row).find(".remove-group-btn").click(function () {
+		var row = $(row);
+		row.find(".remove-group-btn").click(function () {
 			$("#removeGroupModal").on("show.bs.modal", function () {
 				var modal = $(this);
 				modal.find("#remove-group-button").off("click").click(function () {
@@ -41,6 +42,7 @@ var groupsTable = (function(page) {
 				});
 			});
 		});
+		row.find('[data-toggle="tooltip"]').tooltip();
 	};
 
 	return {
