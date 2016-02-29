@@ -10,7 +10,7 @@ var groupsTable = (function(page) {
 	
 	function removeGroupButton(data, type, full) {
 		if (full.groupOwner || full.admin) {
-			return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#removeGroupModal' class='btn btn-default btn-xs remove-group-btn'><span class='fa fa-trash'></span></div>";
+			return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#removeGroupModal' class='btn btn-default btn-xs remove-group-btn'><span class='fa fa-remove'></span></div>";
 		} else {
 			return "";
 		}
