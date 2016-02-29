@@ -49,8 +49,6 @@
 	<project_sample />
 	<project_referencefile />
 
-	<project_event />
-
 	<assembled_genome_analysis />
 
 	<sequencing_object />
@@ -76,6 +74,8 @@
 	<ncbi_export_submission_biosample/>
 	<ncbi_export_biosample_sequence_file_single_end/>
 	<ncbi_export_biosample_sequence_file_pair/>
+	
+	<project_event />
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
