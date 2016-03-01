@@ -59,18 +59,17 @@ public class IntegrationTestListener extends RunListener {
 
 			final Scanner scanner = new Scanner(file);
 
-			ArrayList<String> blacklist = new ArrayList<>();
+			ArrayList<String> whitelist = new ArrayList<>();
 			//if adding any new profiles to black list, add them here!
-			blacklist.add("service_testing");
-			blacklist.add("rest_testing");
-			blacklist.add("galaxy_testing");
+			whitelist.add("ui_testing");
+			whitelist.add("all_testing");
 
 			while (scanner.hasNext()) {
 				String[] line = scanner.nextLine().split("\\s+");
 				for (String str : line) {
-					if (blacklist.contains(str)) {
-						logger.debug("Profile blacklisted: not running ChromeDriver.");
-						return false;
+					if (whitelist.contains(str)) {
+						logger.debug("Profile whitelisted: running ChromeDriver.");
+						return true;
 					}
 				}
 			}
@@ -82,7 +81,7 @@ public class IntegrationTestListener extends RunListener {
 			logger.debug("ERROR: " + e.toString());
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
