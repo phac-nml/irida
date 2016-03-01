@@ -35,8 +35,8 @@
             <tr role="row">
                 <th dt:property="group.name" dt:searchable="true" th:text="#{group.name}" dt:renderFunction="groups-list#groupsTable.groupLinkRow"></th>
                 <th dt:property="group.description" dt:searchable="true" th:text="#{group.description}" dt:renderFunction="groups-list#groupsTable.descriptionRow"></th>
-                <th dt:property="group.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.created}"></th>
-                <th dt:property="group.modifiedDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.modified}"></th>
+                <th width="150px" dt:property="group.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.created}"></th>
+                <th width="150px" dt:property="group.modifiedDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.modified}"></th>
                 <th width="50px" dt:sortable="false" dt:filterable="false" dt:renderFunction="groups-list#groupsTable.removeGroupButton" />
             </tr>
             </thead>
