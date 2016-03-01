@@ -116,30 +116,26 @@ public class GroupsController {
 	 *         destails page on success.
 	 */
 	@RequestMapping(path = "/create", method = RequestMethod.POST)
-	public String createGroup(final @ModelAttribute UserGroup userGroup, final Model model, final Locale locale) {
+	public String createGroup(final @ModelAttribute UserGroup userGroup, final Model model, final Locale locale, final Principal principal) {
 		logger.debug("Creating group: [ " + userGroup + "]");
 		final Map<String, String> errors = new HashMap<>();
-		String forward = GROUPS_LIST;
 
 		try {
 			userGroupService.create(userGroup);
+			return getDetailsPage(userGroup.getId(), principal, model);
 		} catch (final ConstraintViolationException e) {
-			forward = GROUPS_CREATE;
 			for (final ConstraintViolation<?> v : e.getConstraintViolations()) {
 				errors.put(v.getPropertyPath().toString(), v.getMessage());
 			}
 		} catch (final EntityExistsException | DataIntegrityViolationException e) {
-			forward = GROUPS_CREATE;
 			errors.put("name", messageSource.getMessage("group.name.exists", null, locale));
 		}
 
-		if (!errors.isEmpty()) {
-			model.addAttribute("errors", errors);
-			model.addAttribute("given_name", userGroup.getName());
-			model.addAttribute("given_description", userGroup.getDescription());
-		}
+		model.addAttribute("errors", errors);
+		model.addAttribute("given_name", userGroup.getName());
+		model.addAttribute("given_description", userGroup.getDescription());
 
-		return forward;
+		return GROUPS_CREATE;
 	}
 
 	/**
