@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {IridaApiJdbcDataSourceConfig.class,
         IridaApiPropertyPlaceholderConfig.class})
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class})
-@DatabaseTearDown(value="classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type=DatabaseOperation.DELETE_ALL)
+@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
 
