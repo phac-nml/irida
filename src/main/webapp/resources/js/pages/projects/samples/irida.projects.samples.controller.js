@@ -101,7 +101,6 @@
 			vm.selected.forEach(function (item) {
 				names.push(item.sample.sampleName);
 			}),
-				console.log(names);
 				modal = $uibModal.open({
 					templateUrl: page.urls.modals.remove + "?" + $.param({names:names}),
 				openedClass: 'remove-modal',
