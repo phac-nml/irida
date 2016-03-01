@@ -13,6 +13,8 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -55,9 +57,8 @@ public class IntegrationTestListener extends RunListener {
 	 */
 	public boolean isRunningUITests() {
 		try {
-			File file = new File("src/test/resources/active-profile.txt");
-
-			final Scanner scanner = new Scanner(file);
+			Path path = Paths.get("src/test/resources/active-profile.txt");
+			final Scanner scanner = new Scanner(path.toFile());
 
 			ArrayList<String> whitelist = new ArrayList<>();
 			//if adding any new profiles to black list, add them here!
@@ -68,7 +69,7 @@ public class IntegrationTestListener extends RunListener {
 				String[] line = scanner.nextLine().split("\\s+");
 				for (String str : line) {
 					if (whitelist.contains(str)) {
-						logger.debug("Profile whitelisted: running ChromeDriver.");
+						logger.debug("Current profile is whitelisted: running ChromeDriver.");
 						return true;
 					}
 				}
@@ -81,6 +82,7 @@ public class IntegrationTestListener extends RunListener {
 			logger.error("ERROR: " + e.toString() + " -> running ChromeDriver by default");
 		}
 
+		logger.debug("Current profile not in whitelist: disabling ChromeDriver");
 		return false;
 	}
 
