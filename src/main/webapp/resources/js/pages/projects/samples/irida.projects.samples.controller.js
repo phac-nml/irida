@@ -97,17 +97,16 @@
 		};
 
 		vm.delete = function () {
-			var names = [], modal;
+			var ids = [], modal;
 			vm.selected.forEach(function (item) {
-				names.push(item.sample.sampleName);
+				ids.push(item.sample.identifier);
 			}),
 				modal = $uibModal.open({
-					templateUrl: page.urls.modals.remove + "?" + $.param({names:names}),
+					templateUrl: page.urls.modals.remove + "?" + $.param({sampleIds:ids}),
 				openedClass: 'remove-modal',
 				controllerAs: "removeCtrl",
-				controller: ["$uibModalInstance", "samples", function RemoveSamplesController ($uibModalInstance, samples) {
+				controller: ["$uibModalInstance", function RemoveSamplesController ($uibModalInstance) {
 					var vm = this;
-					vm.samples = samples;
 
 					vm.cancel = function () {
 						$uibModalInstance.dismiss();
@@ -116,12 +115,7 @@
 					vm.remove = function() {
 						$uibModalInstance.close();
 					};
-				}],
-				resolve: {
-					samples: function () {
-						return vm.selected;
-					}
-				}
+				}]
 			});
 
 			modal.result.then(function () {

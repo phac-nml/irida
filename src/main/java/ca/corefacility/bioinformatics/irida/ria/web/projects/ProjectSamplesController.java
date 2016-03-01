@@ -189,16 +189,18 @@ public class ProjectSamplesController {
 	/**
 	 * Creates the modal to remove samples from a project.
 	 *
-	 * @param names
+	 * @param ids
 	 * 		{@link List} of sample names to remove.
 	 * @param model
 	 * 		{@link Model}
 	 *
 	 * @return
 	 */
-	@RequestMapping("/remove-modal")
-	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "names[]") List<String> names, Model model) {
-		model.addAttribute("names", names);
+	@RequestMapping("/projects/templates/remove-modal")
+	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		List<Sample> samples = new ArrayList<>(ids.size());
+		samples.addAll(ids.stream().map(sampleService::read).collect(Collectors.toList()));
+		model.addAttribute("samples", samples);
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
 	}
 

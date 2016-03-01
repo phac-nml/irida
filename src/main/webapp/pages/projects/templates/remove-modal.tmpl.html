@@ -1,15 +1,15 @@
 <div id="remove-samples-modal">
-	<th:block th:if="${#lists.size(names) > 1}">
+	<th:block th:if="${#lists.size(samples) > 1}">
 		<div class="modal-header">
 			<h3 class="modal-title">
 				<fa:icon type="delete"/>
-				<span th:text="#{project.samples.modal.remove.title-plural(${#lists.size(names)})}">__REMOVE SAMPLES__</span>
+				<span th:text="#{project.samples.modal.remove.title-plural(${#lists.size(samples)})}">__REMOVE SAMPLES__</span>
 			</h3>
 		</div>
 		<div class="modal-body">
 			<p th:text="#{project.samples.modal.remove.description-plural}"/>
 			<ul>
-				<li th:each="name : ${names}" th:text="${name}"></li>
+				<li th:each="sample : ${samples}" th:text="${sample.sampleName}"></li>
 			</ul>
 			<div class="alert alert-warning">
 				<p><strong>
@@ -21,7 +21,7 @@
 
 		</div>
 	</th:block>
-	<th:block th:if="${#lists.size(names) == 1}">
+	<th:block th:if="${#lists.size(samples) == 1}">
 		<div class="modal-header">
 			<h3 class="modal-title">
 				<fa:icon type="delete"/>
@@ -29,7 +29,7 @@
 			</h3>
 		</div>
 		<div class="modal-body">
-			<p th:utext="#{project.samples.modal.remove.description-singular(${names[0]})}" />
+			<p th:utext="#{project.samples.modal.remove.description-singular(${samples[0].sampleName})}" />
 			<div class="alert alert-warning">
 				<p><strong><fa:icon type="warning" fixed="true" /></strong> <th:block th:text="#{project.samples.modal.remove.warning-singular}"></th:block></p>
 			</div>
