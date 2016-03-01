@@ -76,7 +76,14 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				isEmpty = true;
 			}
 
-			if (isEmpty && !forceRunLiquibase.equals("false")) {
+			//if running in a dev environment, explicitly disable SQL file import and liquibase
+			String[] activeProfiles = environment.getActiveProfiles();
+			logger.debug("Current profiles active: ");
+			for (String str : activeProfiles) {
+				logger.debug("-> " + str);
+			}
+
+			if (isEmpty && !Arrays.asList(activeProfiles).contains("dev")) {
 				logger.debug("Database is empty -> importing SQL file.");
 				setupDatabaseFromSql(conn);
 			}
