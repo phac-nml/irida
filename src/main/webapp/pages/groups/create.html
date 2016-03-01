@@ -4,10 +4,11 @@
       layout:decorator="template/page">
 <head>
 <title th:text="#{group.create.details}">_Create Group_</title>
+
 </head>
 <body>
 
-<main layout:fragment="page">
+<main layout:fragment="page" ddl:bundle-includes="groups-create">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
 				<form role="form" action="/groups/create"
@@ -20,7 +21,7 @@
 							<div class="form-group">
 								<label class="control-label" th:text="#{group.name}" for="name">_Group Name_</label> 
 								<div th:if="${#maps.containsKey(#vars, 'errors') and #maps.containsKey(errors, 'name')}" th:text="${errors} ? ${errors.name} :''" class="alert alert-warning">_Group Name Error_</div>
-								<input type="text" id="name" name="name" class="form-control input-full"	required="required" 
+								<input type="text" id="name" name="name" class="form-control input-full" required="required" 
 										th:placeholder="#{group.name.required}" th:value="${given_name}" />
 							</div>
 							<div class="form-group">
@@ -32,12 +33,13 @@
 						</div>
                         <div class="panel-footer text-right">
                             <a type="reset" class="btn btn-default" href="#" th:href="@{/groups}">Cancel</a>
-                            <button type="submit" class="btn btn-primary submit" th:text="#{group.create.details}">Create Group</button>
+                            <button id="createGroupButton" type="submit" class="btn btn-primary submit" th:text="#{group.create.details}" disabled="disabled">Create Group</button>
                         </div>
 					</section>
 				</form>
 			</div>
 		</div>
 	</main>
+
 </body>
 </html>
