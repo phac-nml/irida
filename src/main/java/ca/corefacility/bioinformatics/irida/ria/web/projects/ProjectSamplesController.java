@@ -187,6 +187,22 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Creates the modal to remove samples from a project.
+	 *
+	 * @param names
+	 * 		{@link List} of sample names to remove.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
+	@RequestMapping("/remove-modal")
+	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "names[]") List<String> names, Model model) {
+		model.addAttribute("names", names);
+		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
+	}
+
+	/**
 	 * Get a list of all samples within the project
 	 *
 	 * @param projectId
