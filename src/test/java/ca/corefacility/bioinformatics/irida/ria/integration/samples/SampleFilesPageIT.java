@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -75,10 +76,11 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testGoodFileUploads() {
+	public void testGoodFileUploads() throws InterruptedException {
 		page.gotoPage(SAMPLE_ID);
 		page.selectGoodFastqFiles();
 		assertTrue("Should display progress bar for file uploads", page.isProgressBarDisplayed());
+		Thread.sleep(5000);
 	}
 
 	@Test
