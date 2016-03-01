@@ -88,6 +88,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		page.selectBadFastaFile();
 		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
+		Thread.sleep(5000);
 	}
 	
 	@Test
