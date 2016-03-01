@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener;
+import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
 
-    public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationTestListener.DRIVER_TIMEOUT_IN_SECONDS;
+    public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
@@ -82,7 +82,7 @@ public class AbstractIridaUIITChromeDriver {
      * @return the instance of {@link WebDriver} used in the tests.
      */
     public static WebDriver driver() {
-        return IntegrationTestListener.driver();
+        return IntegrationUITestListener.driver();
     }
     
     /**
