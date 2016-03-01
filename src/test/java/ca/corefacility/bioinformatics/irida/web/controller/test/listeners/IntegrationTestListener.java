@@ -75,7 +75,7 @@ public class IntegrationTestListener extends RunListener {
 			//If the file doesn't exist or we have problems reading the file, we don't want to stop
 			// execution just for this, since we're just checking whether or not to run ChromeDriver.
 			// So, by default, if there's an error we'll just continue with ChromeDriver set to run.
-			logger.error("ERROR: " + e.toString() + " -> running ChromeDriver by default");
+			logger.error("Caught exception checking whitelist, running ChromeDriver by default: ", e);
 		}
 
 		return true;
