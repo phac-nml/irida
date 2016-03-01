@@ -14,6 +14,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/projects/templates")
 public class ProjectTemplatesController {
 
+	/**
+	 * Creates the modal to remove samples from a project.
+	 *
+	 * @param names
+	 * 		{@link List} of sample names to remove.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
 	@RequestMapping("/remove-modal")
 	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "names[]") List<String> names, Model model) {
 		model.addAttribute("names", names);
