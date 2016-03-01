@@ -10,11 +10,12 @@ var groupMembersTable = (function(page, notifications) {
 	};
 	
 	function removeUserButton(data, type, full) {
-		return "<div class='btn-group pull-right'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove' uib-tooltip='" + page.i18n.remove +"'></span></div>";
+		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
 	};
 	
 	function deleteLinkCallback(row, data) {
-		$(row).find(".remove-user-btn").click(function () {
+		var row = $(row);
+		row.find(".remove-user-btn").click(function () {
 			$("#removeUserModal").on("show.bs.modal", function () {
 				var modal = $(this);
 				modal.find("#remove-user-button").off("click").click(function () {
@@ -38,6 +39,7 @@ var groupMembersTable = (function(page, notifications) {
 				});
 			});
 		});
+		row.find('[data-toggle="tooltip"]').tooltip();
 	};
 	
 	$("#add-user-username").select2({
