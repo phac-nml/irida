@@ -1,0 +1,44 @@
+<div id="remove-samples-modal">
+	<th:block th:if="${#lists.size(names) > 1}">
+		<div class="modal-header">
+			<h3 class="modal-title">
+				<fa:icon type="delete"/>
+				<span th:text="#{project.samples.modal.remove.title-plural(${#lists.size(names)})}">__REMOVE SAMPLES__</span>
+			</h3>
+		</div>
+		<div class="modal-body">
+			<p th:text="#{project.samples.modal.remove.description-plural}"/>
+			<ul>
+				<li th:each="name : ${names}" th:text="${name}"></li>
+			</ul>
+			<div class="alert alert-warning">
+				<p><strong>
+					<fa:icon type="warning" fixed="true"/>
+				</strong>
+					<th:block th:text="#{project.samples.modal.remove.warning-plural}"></th:block>
+				</p>
+			</div>
+
+		</div>
+	</th:block>
+	<th:block th:if="${#lists.size(names) == 1}">
+		<div class="modal-header">
+			<h3 class="modal-title">
+				<fa:icon type="delete"/>
+				<span th:text="#{project.samples.modal.remove.title-singular}"></span>
+			</h3>
+		</div>
+		<div class="modal-body">
+			<p th:utext="#{project.samples.modal.remove.description-singular(${names[0]})}" />
+			<div class="alert alert-warning">
+				<p><strong><fa:icon type="warning" fixed="true" /></strong> <th:block th:text="#{project.samples.modal.remove.warning-singular}"></th:block></p>
+			</div>
+		</div>
+	</th:block>
+	<div class="modal-footer">
+		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="removeCtrl.cancel()"></button>
+		<button id="confirmRemoveBtn" class="btn btn-primary" th:text="#{project.samples.modal.remove.button}"
+		        ng-click="removeCtrl.remove()">_Remove_
+		</button>
+	</div>
+</div>
