@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
