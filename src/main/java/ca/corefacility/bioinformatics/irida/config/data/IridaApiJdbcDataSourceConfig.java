@@ -53,7 +53,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 */
 	@Bean
 	@Profile({ "dev", "prod", "it" })
-	public SpringLiquibase springLiquibase(final DataSource dataSource) {
+	public SpringLiquibase springLiquibase(final DataSource dataSource) throws SQLException {
 
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
@@ -74,20 +74,14 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				isEmpty = true;
 			}
 
-			// Check if we're in dev: Don't use liquibase and don't import SQL dump when in dev profile
-			String[] activeProfiles = environment.getActiveProfiles();
-
-			if (isEmpty && !Arrays.asList(activeProfiles).contains("dev")) {
+			if (isEmpty) {
 				logger.debug("Database is empty -> importing SQL file.");
 				setupDatabaseFromSql(conn);
 			}
 			else {
-				logger.debug("Database is not empty -> verifying database contents.");
+				logger.debug("Database is not empty, or running server -> verifying database contents.");
 				shouldLiquibaseRun(springLiquibase);
 			}
-		}
-		catch (SQLException se) {
-			logger.error(se.toString());
 		}
 
 		return springLiquibase;

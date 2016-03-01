@@ -4,6 +4,7 @@ Changes
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
 * [Developer]: Upgraded to angularjs 1.5.0.
+* [Developer]: When building the VM, don't install a tool more than once (even if multiple workflows depend on the tool).
 
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
@@ -113,3 +114,6 @@ Changes
 * [Developer] Add build scripts for building complete, self-contained instances of IRIDA in a virtual appliance.
 * [Developer] Started migration to using Dandelion for asset management on pages.
 * [Developer] Add REST API for interacting with analyses.
+
+* [Developer] Change integration tests to use Liquibase instead of Hibernate hbm2ddl, to more closely resemble production environment.
+* [Developer] Change service-layer integration tests to use MySQL database instead of in-memory database
