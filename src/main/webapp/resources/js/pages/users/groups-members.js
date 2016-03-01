@@ -78,6 +78,7 @@ var groupMembersTable = (function(page, notifications) {
 				notifications.show({
 					'msg': result.result
 				});
+				$("#add-user-username").select2("val", "");
 			},
 			error: function() {
 				$("#addUserModal").modal('hide');
