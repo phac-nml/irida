@@ -80,6 +80,12 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		page.selectGoodFastqFiles();
 		assertTrue("Should display progress bar for file uploads", page.isProgressBarDisplayed());
+		
+		/*
+		 * TODO: Modify this test to check for the file successfully uploading
+		 * Note: This sleep is to allow the upload and file processing to
+		 * complete before dbunit tries to clear the database
+		 */
 		Thread.sleep(5000);
 	}
 
@@ -88,6 +94,12 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		page.selectBadFastaFile();
 		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
+		
+		/*
+		 * TODO: Modify this test to check for the file upload stateNote: This
+		 * sleep is to allow the upload and file processing to complete before
+		 * dbunit tries to clear the database
+		 */
 		Thread.sleep(5000);
 	}
 	
