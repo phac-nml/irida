@@ -601,23 +601,6 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-help-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<id>get-active-profiles</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>active-profiles</goal>
-						</goals>
-						<configuration>
-							<output>src/test/resources/active-profile.txt</output>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>${maven.build.helper.plugin.version}</version>
@@ -645,7 +628,7 @@
 						<property>
 							<name>listener</name>
 							<value>
-								ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener
+								${integration.test.listener}
 							</value>
 						</property>
 					</properties>
@@ -1078,12 +1061,14 @@
 		<profile>
 			<id>ui_testing</id>
 			<properties>
+				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener</integration.test.listener>
 				<include.tests>**/ria/integration/**/*IT.java</include.tests>
 			</properties>
 		</profile>
 		<profile>
 			<id>service_testing</id>
 			<properties>
+				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
@@ -1098,12 +1083,14 @@
 		<profile>
 			<id>rest_testing</id>
 			<properties>
+				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
 			</properties>
 		</profile>
 		<profile>
 			<id>galaxy_testing</id>
 			<properties>
+				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/*Galaxy*IT.java,
 					**/AnalysisExecutionScheduledTaskImplIT.java,
@@ -1115,6 +1102,7 @@
 		<profile>
 			<id>all_testing</id>
 			<properties>
+				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener</integration.test.listener>
 				<include.tests>**/*IT.java, **/IT*.java</include.tests>
 			</properties>
 		</profile>
