@@ -32,6 +32,7 @@ import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -219,7 +220,7 @@ public class GroupsController {
 		model.addAttribute("isAdmin", currentUser.getSystemRole().equals(Role.ROLE_ADMIN));
 		model.addAttribute("isOwner", isOwner);
 		model.addAttribute("users", groupUsers);
-		model.addAttribute("groupRoles", UserGroupRole.values());
+		model.addAttribute("groupRoles", ImmutableList.of(UserGroupRole.GROUP_MEMBER, UserGroupRole.GROUP_OWNER));
 
 		return GROUP_DETAILS;
 	}
