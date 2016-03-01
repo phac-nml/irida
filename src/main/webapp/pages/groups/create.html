@@ -21,7 +21,7 @@
 								<label class="control-label" th:text="#{group.name}" for="name">_Group Name_</label> 
 								<div th:if="${#maps.containsKey(#vars, 'errors') and #maps.containsKey(errors, 'name')}" th:text="${errors} ? ${errors.name} :''" class="alert alert-warning">_Group Name Error_</div>
 								<input type="text" id="name" name="name" class="form-control input-full"	required="required" 
-								th:placeholder="#{group.name}" th:value="${given_name}" />
+										th:placeholder="#{group.name.required}" th:value="${given_name}" />
 							</div>
 							<div class="form-group">
 								<label class="control-label" th:text="#{group.description}" for="description">_Group Description_</label>
