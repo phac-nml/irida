@@ -678,6 +678,7 @@
 						</property>
 					</properties>
 					<argLine>${surefireArgLine}</argLine>
+					<skipTests>${skip.surefire.tests}</skipTests>
 				</configuration>
 				<executions>
 					<execution>
@@ -1074,7 +1075,6 @@
 				<exclude.tests>**/*Galaxy*IT.java,
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
-					**/AnalysisSubmissionCleanupServiceImplIT.java
 				</exclude.tests>
 			</properties>
 		</profile>
@@ -1091,7 +1091,6 @@
 					**/*Galaxy*IT.java,
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
-					**/AnalysisSubmissionCleanupServiceImplIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
 			</properties>
