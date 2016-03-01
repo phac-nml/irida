@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.listeners;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
@@ -14,7 +13,6 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
