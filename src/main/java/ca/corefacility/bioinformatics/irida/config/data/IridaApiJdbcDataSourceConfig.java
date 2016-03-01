@@ -58,6 +58,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
 		springLiquibase.setChangeLog("classpath:ca/corefacility/bioinformatics/irida/database/all-changes.xml");
+		// absolutely stop liquibase from running, should only happen in dev
+		String forceRunLiquibase = System.getProperty("liquibase.should.run");
 
 		try (Connection conn = dataSource.getConnection()){
 
@@ -74,7 +76,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 				isEmpty = true;
 			}
 
-			if (isEmpty) {
+			if (isEmpty && !forceRunLiquibase.equals("false")) {
 				logger.debug("Database is empty -> importing SQL file.");
 				setupDatabaseFromSql(conn);
 			}
