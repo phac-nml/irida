@@ -56,9 +56,9 @@ public class IntegrationTestListener extends RunListener {
 	 *	
 	 */
 	public boolean isRunningUITests() {
-		boolean shouldRun = true;
 		try {
 			File file = new File("src/test/resources/active-profile.txt");
+
 			final Scanner scanner = new Scanner(file);
 
 			ArrayList<String> blacklist = new ArrayList<>();
@@ -72,7 +72,7 @@ public class IntegrationTestListener extends RunListener {
 				for (String str : line) {
 					if (blacklist.contains(str)) {
 						logger.debug("Profile blacklisted: not running ChromeDriver.");
-						shouldRun = false;
+						return false;
 					}
 				}
 			}
@@ -80,17 +80,20 @@ public class IntegrationTestListener extends RunListener {
 		catch (Exception e) {
 			//If the file doesn't exist or we have problems reading the file, we don't want to stop
 			// execution just for this, since we're just checking whether or not to run ChromeDriver.
-			// So, by default, if there's an error we'll assume that we need to run ChromeDriver
+			// So, by default, if there's an error we'll just continue with ChromeDriver set to run.
 			logger.debug("ERROR: " + e.toString());
 		}
-		return shouldRun;
+
+		return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void testRunFinished(Result result) throws Exception {
-		driver.quit();
+		if (driver != null) {
+			driver.quit();
+		}
 	}
 
 	/**
