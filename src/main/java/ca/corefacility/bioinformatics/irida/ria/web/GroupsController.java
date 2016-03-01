@@ -58,6 +58,7 @@ public class GroupsController {
 	private static final String GROUPS_EDIT = "groups/edit";
 	private static final String GROUP_DETAILS = "groups/details";
 	private static final String GROUPS_REMOVE_MODAL = "groups/remove-group-modal";
+	private static final String GROUPS_USER_MODAL = "groups/remove-user-modal";
 
 	private final UserGroupService userGroupService;
 	private final UserService userService;
@@ -410,6 +411,22 @@ public class GroupsController {
 		final UserGroup group = userGroupService.read(userGroupId);
 		model.addAttribute("group", group);
 		return GROUPS_REMOVE_MODAL;
+	}
+	
+	/**
+	 * Get a string to tell the user which group they're going to delete.
+	 * 
+	 * @param userGroupId
+	 *            the user group that's about to be deleted.
+	 * @param locale
+	 *            the locale of the browser.
+	 * @return a message indicating which group is going to be deleted.
+	 */
+	@RequestMapping(path = "/removeUserModal", method = RequestMethod.POST)
+	public String getRemoveUserModal(final @RequestParam Long userId, final Model model) {
+		final User user = userService.read(userId);
+		model.addAttribute("user", user);
+		return GROUPS_USER_MODAL;
 	}
 
 	/**

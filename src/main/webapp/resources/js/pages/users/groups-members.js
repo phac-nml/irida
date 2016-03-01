@@ -16,27 +16,30 @@ var groupMembersTable = (function(page, notifications) {
 	function deleteLinkCallback(row, data) {
 		var row = $(row);
 		row.find(".remove-user-btn").click(function () {
-			$("#removeUserModal").on("show.bs.modal", function () {
+			$("#removeUserModal").load(page.urls.deleteModal+"#removeUserModalGen", { 'userId' : data.subject.identifier}, function() {
 				var modal = $(this);
-				modal.find("#remove-user-button").off("click").click(function () {
-					$.ajax({
-						url     : page.urls.removeMember + data.subject.identifier,
-						type    : 'DELETE',
-						success : function (result) {
-							oTable_groupMembersTable.ajax.reload();
-							notifications.show({
-								'msg': result.result
-							});
-							modal.modal('hide');
-						}, error: function () {
-							notifications.show({
-								'msg' : page.i18n.unexpectedRemoveError,
-								'type': 'error'
-							});
-							modal.modal('hide');
-						}
+				modal.on("show.bs.modal", function () {
+					$(this).find("#remove-user-button").off("click").click(function () {
+						$.ajax({
+							url     : page.urls.removeMember + data.subject.identifier,
+							type    : 'DELETE',
+							success : function (result) {
+								oTable_groupMembersTable.ajax.reload();
+								notifications.show({
+									'msg': result.result
+								});
+								modal.modal('hide');
+							}, error: function () {
+								notifications.show({
+									'msg' : page.i18n.unexpectedRemoveError,
+									'type': 'error'
+								});
+								modal.modal('hide');
+							}
+						});
 					});
 				});
+				modal.modal('show');
 			});
 		});
 		row.find('[data-toggle="tooltip"]').tooltip();
