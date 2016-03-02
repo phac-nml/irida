@@ -71,7 +71,6 @@ public class SequencingRunControllerTest {
 		verify(sequencingRunService).read(runId);
 		assertEquals(SequencingRunController.DETAILS_VIEW, detailsPage);
 		assertEquals(sequencingRunEntity, model.get("run"));
-		assertTrue(model.containsKey("files"));
 	}
 
 	@SuppressWarnings("rawtypes")
