@@ -17,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
@@ -62,6 +66,7 @@ public class ProjectExportController {
 	public static final String NCBI_EXPORT_VIEW = "projects/export/ncbi";
 	public static final String EXPORT_DETAILS_VIEW = "projects/export/details";
 	public static final String EXPORT_LIST_VIEW = "projects/export/list";
+	public static final String EXPORT_ADMIN_VIEW = "projects/export/admin";
 
 	@Value("${ncbi.upload.namespace}")
 	private String namespace = "";
@@ -270,6 +275,21 @@ public class ProjectExportController {
 	}
 
 	/**
+	 * Get the view to see all ncbi exports
+	 * 
+	 * @param projectId
+	 *            which {@link Project} to get exports for
+	 * @param model
+	 *            model for the view
+	 * @return name of the exports list view
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping("/export/ncbi")
+	public String getExportsPage(Model model) {
+		return EXPORT_ADMIN_VIEW;
+	}
+
+	/**
 	 * Ajax method for getting the {@link NcbiExportSubmission}s for a given
 	 * {@link Project}
 	 * 
@@ -288,6 +308,28 @@ public class ProjectExportController {
 
 		DataSet<NcbiExportSubmission> dataSet = new DataSet<NcbiExportSubmission>(submissions,
 				(long) submissions.size(), (long) submissions.size());
+
+		return DatatablesResponse.build(dataSet, criterias);
+	}
+
+	/**
+	 * Ajax method for getting all {@link NcbiExportSubmission}s
+	 * 
+	 * @param criterias
+	 *            Datatables request object
+	 * @return DatatablesResponse of Map of submission params
+	 */
+	@RequestMapping("/ajax/export/list")
+	@ResponseBody
+	public DatatablesResponse<NcbiExportSubmission> getAllExports(@DatatablesParams DatatablesCriterias criterias) {
+
+		int currentPage = DatatablesUtils.getCurrentPage(criterias);
+
+		Page<NcbiExportSubmission> submissions = exportSubmissionService.list(currentPage, criterias.getLength(),
+				Sort.Direction.DESC, "createdDate");
+
+		DataSet<NcbiExportSubmission> dataSet = new DataSet<NcbiExportSubmission>(submissions.getContent(),
+				submissions.getTotalElements(), submissions.getTotalElements());
 
 		return DatatablesResponse.build(dataSet, criterias);
 	}

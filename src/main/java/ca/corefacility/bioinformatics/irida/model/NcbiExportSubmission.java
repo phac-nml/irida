@@ -25,6 +25,8 @@ import javax.validation.constraints.Size;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -182,6 +184,7 @@ public class NcbiExportSubmission implements MutableIridaThing {
 		return releaseDate;
 	}
 
+	@JsonIgnore
 	public User getSubmitter() {
 		return submitter;
 	}

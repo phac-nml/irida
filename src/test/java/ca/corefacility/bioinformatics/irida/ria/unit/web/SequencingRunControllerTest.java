@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
-import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
+import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -52,7 +52,7 @@ public class SequencingRunControllerTest {
 
 	@Test
 	public void testGetSequencingRuns() {
-		List<SequencingRun> runs = Lists.newArrayList(new SequencingRunEntity());
+		List<SequencingRun> runs = Lists.newArrayList(new MiseqRun(SequencingRun.LayoutType.PAIRED_END, ""));
 		when(sequencingRunService.findAll()).thenReturn(runs);
 		List<Map<String, Object>> sequencingRuns = controller.getSequencingRuns(Locale.ENGLISH);
 		verify(sequencingRunService).findAll();
@@ -62,7 +62,7 @@ public class SequencingRunControllerTest {
 	@Test
 	public void testGetDetailsPage() throws IOException {
 		Long runId = 1L;
-		SequencingRun sequencingRunEntity = new SequencingRunEntity();
+		SequencingRun sequencingRunEntity = new MiseqRun(SequencingRun.LayoutType.PAIRED_END, "");
 		ExtendedModelMap model = new ExtendedModelMap();
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
 
@@ -71,8 +71,7 @@ public class SequencingRunControllerTest {
 		verify(sequencingRunService).read(runId);
 		assertEquals(SequencingRunController.DETAILS_VIEW, detailsPage);
 		assertEquals(sequencingRunEntity, model.get("run"));
-		assertTrue(model.containsKey("sequencingObjects"));
-		assertTrue(model.containsKey("fileCount"));
+		assertTrue(model.containsKey("files"));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -80,7 +79,7 @@ public class SequencingRunControllerTest {
 	public void testGetFilesPage() throws IOException {
 		Long runId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
-		SequencingRun sequencingRunEntity = new SequencingRunEntity();
+		SequencingRun sequencingRunEntity = new MiseqRun(SequencingRun.LayoutType.PAIRED_END, "");
 
 		ImmutableSet<SequencingObject> files = ImmutableSet.of(new SingleEndSequenceFile(new SequenceFile()));
 

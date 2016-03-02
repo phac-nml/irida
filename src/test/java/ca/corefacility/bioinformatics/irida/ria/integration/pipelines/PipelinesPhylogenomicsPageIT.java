@@ -46,7 +46,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	}
 
 	@Test
-	public void testNoRefFileNoPermissions() {
+	public void testSubmitWithTransientReferenceFile() {
 		LoginPage.loginAsUser(driver());
 
 		// Add sample from a project that user is a "Project User" and has no
@@ -59,29 +59,8 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
-		assertTrue(
-				"Should display a message saying that the user cannot upload reference files to their selected projects.",
-				page.isNoRightsMessageDisplayed());
-		assertFalse("Should show the user which projects they can upload files to.",
-				page.isAddReferenceFileLinksDisplayed());
-		assertFalse("Should not be able to create a pipeline", page.isCreatePipelineAreaVisible());
-	}
-
-	@Test
-	public void testNoRefFileWithPermissions() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver());
-		samplesPage.goToPage("2");
-		samplesPage.selectSampleByRow(1);
-		samplesPage.selectSampleByRow(2);
-		samplesPage.addSamplesToGlobalCart();
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
-
-		assertTrue("Should display a warning to the user that there are no reference files.",
-				page.isNoReferenceWarningDisplayed());
-		assertTrue("User should be told that they can upload files", page.isAddReferenceFileLinksDisplayed());
-		assertEquals("There should be a link to one project to upload a reference file", 1,
-				page.getAddReferenceFileToProjectLinkCount());
+		page.selectReferenceFile();
+		assertTrue("Page should display reference file name.", page.isReferenceFileNameDisplayed());
 	}
 
 	@Test

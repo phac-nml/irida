@@ -196,9 +196,9 @@ After being given the client credentials, go to the "Remote API" page.
 The Remote APIs page will display all currently available Remote APIs and your connection status with the API.
 
 To add a new API, click the "Add Remote API" button:
- 
+
 ![Add api](images/add-api.png)
- 
+
 Enter a suitable name for the remote installation.  This name will be visible to users connecting and accessing data from that api.  Also enter the "Client ID", "Client Secret", and "Service URL" of the remote API as given by the remote administrator.
 
 ![Create API](images/create-api-details.png)
@@ -266,3 +266,30 @@ Displaying IRIDA Platform Updates
 To display updates on the dashboard page, add an `updates.md` markdown file in the `/etc/irida/` directory.  The location of the updates file can be configured in the `/etc/irida/web.conf` file by uncommenting the `updates.file` key and setting the path to your markdown file.
 
 ![IRIDA Platform Updates](images/updates.png)
+
+Viewing All Project Exports
+===========================
+Administrators have the ability to view the status of all exports to NCBI in the system.  Start by clicking on the "Admin" menu (in the top, right-hand corner of the screen) and selecting "NCBI Export Uploads":
+
+![Sequencing runs menu.](images/admin-exports-menu.png)
+
+You will be displayed all the NCBI exports that have been created sorted by the date they were created.
+
+![Sequencing runs menu.](images/admin-exports-list.png)
+
+The exports will have one of the following states:
+
+ * `NEW`: Newly created submission that has not yet been uploaded
+ * `UPLOADING`: Submission currently being uploaded
+ * `UPLOADED`: Submission has been successfully uploaded
+ * `UPLOAD_ERROR`: An error occurred while uploading
+ * `created`: Submission created and being populated
+ * `failed`: Failed immediately after submission
+ * `queued`: Queued for processing by NCBI's processing pipeline
+ * `processing`: Processing started by NCBI's processing pipeline
+ * `processed-ok`: Processing completed successfully
+ * `processed-error`: Processing completed with error(s)
+ * `waiting`: Waiting for other files to continue
+ * `submitted`: Submitted to NCBI
+ * `Submission deleted`: Submission deleted
+ * `retried`: Retried processing of failed action(s)

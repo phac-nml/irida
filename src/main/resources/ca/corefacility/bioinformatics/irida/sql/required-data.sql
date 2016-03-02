@@ -12,6 +12,19 @@ INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'disabled-guy@nowhere.ca', 'Disabled', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'disabledguy', 0, 'ROLE_USER', 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'manager@nowhere.ca', 'Mr.', 'Manager', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'manager', 1, 'ROLE_MANAGER', 1);
 
+insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 1', 'description 1');
+insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 2', 'description 2');
+insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 3', 'description 3');
+insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 4', 'description 4');
+insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 5', 'description 5');
+insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 6', 'description 6');
+insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 7', 'description 7');
+insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 8', 'description 8');
+
+insert into user_group_member(created_date, role, group_id, user_id) values (now(), 'GROUP_OWNER', 8, 1);
+insert into user_group_member(created_date, role, group_id, user_id) values (now(), 'GROUP_OWNER', 8, 2);
+insert into user_group_member(created_date, role, group_id, user_id) values (now(), 'GROUP_OWNER', 8, 3);
+
 -- projects required for integration tests
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-01 08:24:09' , 'Project 1', 'E. coli O157 I am a very long that is out fo control, this should be even longer');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`) VALUES ('2015-06-01 08:24:09', '2015-06-02 08:24:09' , 'Project 3', 'E. coli');
@@ -609,3 +622,8 @@ INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id,
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
+
+INSERT INTO `ncbi_export_submission` (id, created_date, bio_project_id, namespace, organization, upload_state, project_id, submitter) VALUES (1, now(), 'FakeBioProjet001', 'IRIDA', 'IRIDA', 'NEW', 4, 3);
+INSERT INTO `ncbi_export_biosample` (id, bioSample, instrument_model, library_construction_protocol, library_name, library_selection, library_source, library_strategy, submission_status) VALUES ('SUB001XXX', 'FakeBioSample001', 'ILLUMINAMISEQ', 'Fake Library Prep', 'Library001', 'RANDOM', 'GENOMIC', 'WGS', 'NEW');
+INSERT INTO `ncbi_export_submission_biosample` (ncbi_export_submission_id, bioSampleFiles_id) VALUES (1, 'SUB001XXX');
+INSERT INTO `ncbi_export_biosample_sequence_file_pair` (ncbi_export_biosample_id, pairs_id) VALUES ('SUB001XXX', 1);
