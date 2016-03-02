@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -59,6 +60,10 @@ public class UserGroup implements MutableIridaThing {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "group")
 	private Set<UserGroupJoin> users;
+	
+	@Column(name = "description")
+	@Lob
+	private String description;
 
 	/**
 	 * Create a new {@link UserGroup}.
@@ -145,4 +150,11 @@ public class UserGroup implements MutableIridaThing {
 		this.modifiedDate = modifiedDate;
 	}
 
+	public String getDescription() {
+		return this.description;
+	}
+	
+	public void setDescription(final String description) {
+		this.description = description;
+	}
 }

@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.service.user;
 
 import java.util.Collection;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
+
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
@@ -58,4 +61,34 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the group from which to remove the user.
 	 */
 	public void removeUserFromGroup(final User user, final UserGroup userGroup);
+
+	/**
+	 * Filter the list of users in the {@link UserGroup} by username.
+	 * 
+	 * @param username
+	 *            the username string to filter on
+	 * @param userGroup
+	 *            the user group to filter for
+	 * @param page
+	 *            the current page
+	 * @param size
+	 *            the size of the page
+	 * @param order
+	 *            the order of sorting
+	 * @param sortProperties
+	 *            the properties to sort on
+	 * @return a page of {@link UserGroupJoin}.
+	 */
+	public Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
+			int size, Direction order, String... sortProperties);
+
+	/**
+	 * Get the set of {@link User} that are not currently in the
+	 * {@link UserGroup}.
+	 * 
+	 * @param userGroup
+	 *            the group to get the set of non-members
+	 * @return the set of users not in the group.
+	 */
+	public Collection<User> getUsersNotInGroup(final UserGroup userGroup);
 }
