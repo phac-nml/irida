@@ -1,12 +1,32 @@
 Changes
 =======
 
+1.0.0-alpha9 to 1.0.0-alpha10
+-----------------------------
+* [Developer]: Upgraded to angularjs 1.5.0.
+* [Developer]: When building the VM, don't install a tool more than once (even if multiple workflows depend on the tool).
+
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
 * [Developer]: Added maven package to install node, npm, and front end assets, then it will build all front end dependencies.
 * [Developer]: Replaced Grunt with Gulp for better front-end compilation of assets.
 * [UI]: Fixed a bug where clicking on FastQC quality charts attempted to download the images instead of viewing them in the browser.
 * [Developer]: Added thread pool for scheduled task submission with new configuration key `irida.scheduled.threads`.
+* [UI]: Made navigation tabs on the project samples page instead of buttons below breadcrumbs.
+* [Developer]: Chrome is launched only one time for the entire testing suite instead of once per class.
+* [UI]: Polling for updates is removed from the analysis details page so that browser sessions don't stay open forever.
+* [UI]: Session timeouts increased to 5 minutes from 2 minutes.
+* [UI]: Enforce some restrictions on NCBI submissions (at least one set of samples, at least one set of files per sample).
+* [UI]: Allow removal of samples from the NCBI submission page.
+* [UI]: Administrators may now view all NCBI export submissions from the admin panel.
+* [Developer]: Replace grunt with gulp.
+* [UI]: Fixed an issue with filtering by file where the sample name file was generated on a Windows machine.
+* [Developer]: Add a maven plugin for handling downloading node.js and npm.
+* [Developer]: Test suites are executed in parallel instead of in serial, improving test execution times.
+* [UI]: Fixed the admin events monitoring page.
+* [Developer]: Added some docs and features for doing browser sync with gulp on css and javascript changes.
+* [UI]: Reference files may now be uploaded at pipeline submission time in addition to being added to a project.
+* [UI]: Fixed a bug where the password reset page was not styled in the same way as the rest of the application.
 
 1.0.0-alpha7 to 1.0.0-alpha8
 ----------------------------
@@ -94,3 +114,6 @@ Changes
 * [Developer] Add build scripts for building complete, self-contained instances of IRIDA in a virtual appliance.
 * [Developer] Started migration to using Dandelion for asset management on pages.
 * [Developer] Add REST API for interacting with analyses.
+
+* [Developer] Change integration tests to use Liquibase instead of Hibernate hbm2ddl, to more closely resemble production environment.
+* [Developer] Change service-layer integration tests to use MySQL database instead of in-memory database

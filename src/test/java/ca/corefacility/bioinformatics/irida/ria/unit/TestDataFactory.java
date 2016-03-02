@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.beans.DirectFieldAccessor;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -87,9 +89,12 @@ public class TestDataFactory {
 		Set<SingleEndSequenceFile> files = new HashSet<>();
 		files.add(constructSingleEndSequenceFile());
 		Long id = 5L;
+		final ReferenceFile rf = new ReferenceFile(files.iterator().next().getFile());
+		rf.setId(id);
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID())
 				.name("submission-" + id)
 				.inputFilesSingleEnd(files)
+				.referenceFile(rf)
 				.build();
 		analysisSubmission.setId(id);
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
@@ -134,8 +139,11 @@ public class TestDataFactory {
 	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {
 		ToolExecution toolExecution = new ToolExecution(1L, null, "testTool", "0.0.12", "executionManagersId",
 				ImmutableMap.of());
-		return new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID,
+		final AnalysisOutputFile of = new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID,
 				toolExecution);
+		final DirectFieldAccessor dfa = new DirectFieldAccessor(of);
+		dfa.setPropertyValue("id", 1L);
+		return of;
 	}
 
 	public static Project constructProject() {

@@ -65,22 +65,34 @@
 						</li>
 					</ul>
 				</li>
-				<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" class="uib-dropdown" uib-dropdown="">
+				<li class="uib-dropdown" uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.users}">Users</span>
 						&nbsp;
 						<span class="caret"></span>
 					</a>
 					<ul class="uib-dropdown-menu" role="menu">
+						<th:block sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
 						<li role="menuitem">
 							<a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">
 								List Users
 							</a>
 						</li>
-						<li role="presentation" class="divider"></li>
 						<li role="menuitem">
 							<a href="#" th:href="@{/users/create}">
 								<span th:text="#{nav.main.add.user}">Create new user</span>
+							</a>
+						</li>
+						<li role="presentation" class="divider"></li>
+						</th:block>
+						<li role="menuitem">
+							<a href="#" th:href="@{/groups}" th:text="#{nav.main.groups-list}">
+								List Groups
+							</a>
+						</li>
+						<li role="menuitem">
+							<a href="#" th:href="@{/groups/create}">
+								<span th:text="#{nav.main.add.group}">Create new group</span>
 							</a>
 						</li>
 					</ul>
@@ -101,6 +113,11 @@
 						<li role="menuitem">
 							<a href="#" th:href="@{/sequencingRuns}" th:text="#{nav.main.sequencingruns}">
 								_Sequencing Runs_
+							</a>
+						</li>
+            <li role="menuitem">
+							<a href="#" th:href="@{/export/ncbi}" th:text="#{nav.main.ncbi-uploads}">
+								_NCBI Exports_
 							</a>
 						</li>
 					</ul>
@@ -145,6 +162,14 @@
 							   target="_blank">
 								__IRIDA Hub__
 							</a>
+						</li>
+						<li role="separator" class="divider"></li>
+						<li role="menuitem">
+							<a href="mailto:IRIDA-mail@sfu.ca"><fa:icon type="email" fixed=""/>&nbsp;<span th:text="#{generic.irida.contact}"></span></a>
+						</li>
+						<li role="menuitem">
+							<a href="http://www.irida.ca" target="_blank">
+								<fa:icon type="external-link" fixed="" />&nbsp;<span th:text="#{generic.irida.website}"></span></a>
 						</li>
 					</ul>
 				</li>

@@ -7,7 +7,8 @@
 (function (angular){
   'use strict';
   var UPLOAD_ERROR = 'upload_error',
-    UPLOAD_EVENT = 'FILE_UPLOAD_EVENT';
+    UPLOAD_EVENT = 'FILE_UPLOAD_EVENT',
+    UPLOAD_COMPLETE_EVENT = 'FILE_UPLOAD_COMPLETE_EVENT';
 
   /**
    * Services to call API for SequenceFile
@@ -47,8 +48,9 @@
         var currentUpload = upload.upload({
           url: url,
           file: file
-        }).success(function () {
-          defer.resolve();
+        }).success(function (response) {
+          $rootScope.$broadcast(UPLOAD_COMPLETE_EVENT);
+          defer.resolve(response);
         }).error(function(data){
           $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
           defer.reject("Error uploading file");
@@ -137,6 +139,10 @@
 
         $scope.$on(UPLOAD_ERROR, function() {
           $scope.uploading = false;
+        });
+        
+        $scope.$on(UPLOAD_COMPLETE_EVENT, function() {
+        	$scope.uploading = false;
         });
 
         $scope.closeProgress = function () {

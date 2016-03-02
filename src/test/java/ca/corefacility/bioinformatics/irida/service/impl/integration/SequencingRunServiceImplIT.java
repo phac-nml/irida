@@ -23,11 +23,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -54,12 +51,12 @@ import com.google.common.collect.ImmutableMap;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
-@ActiveProfiles("test")
+		IridaApiJdbcDataSourceConfig.class })
+@ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceImplIT.xml")
-@DatabaseTearDown({ "/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceTableReset.xml" })
+@DatabaseTearDown({ "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml" })
 public class SequencingRunServiceImplIT {
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
@@ -191,26 +188,6 @@ public class SequencingRunServiceImplIT {
 		assertFalse("Sequence file should be deleted on cascade", objectService.exists(5L));
 		assertFalse("Sample should be deleted on cascade", sampleService.exists(2L));
 		assertTrue("This sample should not be removed", sampleService.exists(1L));
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	public void testListAllSequencingRuns() {
-		Iterable<SequencingRun> findAll = miseqRunService.findAll();
-		assertNotNull(findAll);
-		boolean foundMiseq = false;
-		boolean foundTestEntity = false;
-		for (SequencingRun run : findAll) {
-			assertNotNull(run);
-			if (run instanceof MiseqRun) {
-				foundMiseq = true;
-			} else if (run instanceof SequencingRunEntity) {
-				foundTestEntity = true;
-			}
-		}
-
-		assertTrue(foundMiseq);
-		assertTrue(foundTestEntity);
 	}
 
 	/**

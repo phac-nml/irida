@@ -8,6 +8,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -54,7 +56,7 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	public NcbiExportSubmission create(NcbiExportSubmission object) throws ConstraintViolationException,
 			EntityExistsException {
 		List<NcbiBioSampleFiles> bioSampleFiles = object.getBioSampleFiles();
-		
+
 		if (bioSampleFiles.stream().anyMatch(s -> s.getFiles().isEmpty() && s.getPairs().isEmpty())) {
 			throw new IllegalArgumentException("NcbiExportSubmission must have files associated");
 		}
@@ -98,6 +100,16 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	@PostFilter("hasPermission(filterObject, 'canReadExportSubmission')")
 	public List<NcbiExportSubmission> getSubmissionsForProject(Project project) {
 		return repository.getSubmissionsForProject(project);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Page<NcbiExportSubmission> list(int page, int size, Direction order, String... sortProperties)
+			throws IllegalArgumentException {
+		return super.list(page, size, order, sortProperties);
 	}
 
 }

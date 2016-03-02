@@ -114,6 +114,20 @@ Checking to see that Jetty starts will ensure that you're able to start hacking 
 IRIDA uses Maven for build and dependency management. You can check to see that Jetty starts like so:
 
     mvn clean jetty:run
+    
+#### Database first-time setup
+
+When first starting up Jetty, you'll need to have the database created and populated, which can be done by running the following script:
+
+    ./run.sh --create-db
+    
+This will create the database schema and import some testing data. This can also be used to drop then recreate the database and reimport the starting dataset when a clean database is needed.
+
+For all subsequent runs, simply run the script with no options:
+
+    ./run.sh
+    
+This will update the database if the schema has been changed, but without dropping all of the tables beforehand, which will cause Jetty to start up much faster.
 
 Setting up Galaxy
 -----------------
@@ -121,3 +135,17 @@ Setting up Galaxy
 The complete test suite sets up a temporary instance of Galaxy for verifying interactions between IRIDA and Galaxy, so you must install some prerequisites before you can run the complete test suite. Please see the article on [setting up Galaxy](galaxy).
 
 
+Front End Development Setup
+---------------------------
+
+To simplify linting and compiling `*.js` and `*.scss` [Gulp](http://gulpjs.com) tasks have been setup.  By default, when maven is run all `*.scss` files will be compiled into compressed `css` files.
+
+From within `src/main/webapp/`:
+
+You will need to run `npm install` to install all dependencies required to run the following from the command line.
+
+Other gulp tasks:
+
+* `gulp lint` - [eslint](http://eslint.org) all JavaScript files in the project.
+* `gulp sass` - compile all `.scss` files into `.css` files, with sourcemaps.
+* `gulp` - Runs [browser-sync](https://www.browsersync.io).  Automatically lints and compiles JavaScript and SCSS files when they change, and injects them into the browser.
