@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.springframework.data.jpa.repository.Query;
 
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
@@ -22,4 +23,14 @@ public interface UserGroupJoinRepository extends IridaJpaRepository<UserGroupJoi
 	 */
 	@Query("from UserGroupJoin ugh where ugh.group = ?1")
 	public Collection<UserGroupJoin> findUsersInGroup(final UserGroup group);
+
+	/**
+	 * Get a collection of users not in a group.
+	 * 
+	 * @param group
+	 *            the group to exclude
+	 * @return the users not in the group
+	 */
+	@Query("from User u where u not in (select user from UserGroupJoin where group = ?1)")
+	public Collection<User> findUsersNotInGroup(final UserGroup group);
 }
