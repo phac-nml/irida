@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,13 +26,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+
+
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * Common functionality to all UI integration tests.
@@ -45,8 +45,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
 
-    public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationTestListener.DRIVER_TIMEOUT_IN_SECONDS;
-	private static ChromeDriver chromeDriver;
+    public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
@@ -76,9 +75,6 @@ public class AbstractIridaUIITChromeDriver {
      */
     @AfterClass
     public static void destroy() {
-	    if (chromeDriver != null) {
-		    chromeDriver.quit();
-	    }
     }
 
     /**
@@ -86,13 +82,7 @@ public class AbstractIridaUIITChromeDriver {
      * @return the instance of {@link WebDriver} used in the tests.
      */
     public static WebDriver driver() {
-	    if (IntegrationTestListener.driver() == null) {
-		    if (chromeDriver == null) {
-			    chromeDriver = new ChromeDriver();
-		    }
-		    return chromeDriver;
-	    }
-	    else {return IntegrationTestListener.driver();}
+        return IntegrationUITestListener.driver();
     }
     
     /**
