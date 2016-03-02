@@ -17,8 +17,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepositor
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 /**
- * Confirms that the authenticated user is allowed to modify another (or their
- * own) user account.
+ * Confirms that the authenticated user is allowed to modify a user group.
  * 
  * 
  */
