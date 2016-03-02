@@ -1,7 +1,7 @@
 var groupsTable = (function(page) {
 	function groupLinkRow(data, type, full) {
 		return '<a class="item-link" title="' + data + '" href="' + page.urls.link
-				+ '/' + full.group.identifier + '"><span>' + data + '</span></a>';		
+				+ full.group.identifier + '"><span>' + data + '</span></a>';		
 	};
 	
 	function descriptionRow(data, type, full) {
