@@ -62,7 +62,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_MANAGER')")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public UserGroup create(UserGroup object) throws EntityExistsException, ConstraintViolationException {
 		return super.create(object);
 	}
@@ -89,7 +89,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateUserGroup')")
 	public UserGroup update(Long id, Map<String, Object> updatedProperties) throws EntityExistsException,
 			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException {
 		return super.update(id, updatedProperties);
@@ -99,7 +99,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateUserGroup')")
 	public void delete(Long id) throws EntityNotFoundException {
 		super.delete(id);
 	}
@@ -192,7 +192,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin addUserToGroup(final User user, final UserGroup userGroup, final UserGroupRole role) {
 		final UserGroupJoin join = new UserGroupJoin(user, userGroup, role);
 
@@ -203,7 +203,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role) {
 		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
 
@@ -215,7 +215,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public void removeUserFromGroup(final User user, final UserGroup userGroup) {
 		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
 		userGroupJoinRepository.delete(join);
