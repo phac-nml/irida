@@ -1,40 +1,34 @@
-<div id="remove-samples-modal">
-	<th:block th:if="${#lists.size(samples) > 1}">
-		<div class="modal-header">
-			<h3 class="modal-title">
-				<fa:icon type="delete"/>
-				<span th:text="#{project.samples.modal.remove.title-plural(${#lists.size(samples)})}">__REMOVE SAMPLES__</span>
-			</h3>
-		</div>
-		<div class="modal-body">
-			<p th:text="#{project.samples.modal.remove.description-plural}"/>
-			<ul>
-				<li th:each="sample : ${samples}" th:text="${sample.sampleName}"></li>
-			</ul>
-			<div class="alert alert-warning">
-				<p><strong>
-					<fa:icon type="warning" fixed="true"/>
-				</strong>
-					<th:block th:text="#{project.samples.modal.remove.warning-plural}"></th:block>
-				</p>
-			</div>
+<div id="remove-samples-modal" th:with="total=${#lists.size(samplesThatAreInMultiple) + #lists.size(samplesThatAreInOne)}">
+	<div class="modal-header">
+		<h3 class="modal-title">
+			<fa:icon type="delete"/>
+			<span th:if="${total > 1}" th:text="#{project.samples.modal.remove.title-plural(${total})}"/>
+			<span th:if="${total == 1}" th:text="#{project.samples.modal.remove.title-singular}"/>
+		</h3>
+	</div>
 
+	<div class="modal-body">
+		<!-- Samples not associated with other projects -->
+		<div class="alert alert-warning" th:if="${not #lists.isEmpty(samplesThatAreInOne)}">
+			<p>
+				<th:block th:if="${#lists.size(samplesThatAreInOne) == 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.title-singular(${samplesThatAreInOne[0].sampleName})}"/>
+				<strong th:if="${#lists.size(samplesThatAreInOne) > 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.title-multiple}"/>
+			</p>
+			<ol th:if="${#lists.size(samplesThatAreInOne) > 1}">
+				<li th:each="sample : ${samplesThatAreInOne}" th:text="${sample.sampleName}"/>
+			</ol>
+			<p>
+				<strong th:if="${#lists.size(samplesThatAreInOne) == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.warning-singular}"/>
+				<strong th:if="${#lists.size(samplesThatAreInOne) > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.warning-multiple}"/>
+			</p>
 		</div>
-	</th:block>
-	<th:block th:if="${#lists.size(samples) == 1}">
-		<div class="modal-header">
-			<h3 class="modal-title">
-				<fa:icon type="delete"/>
-				<span th:text="#{project.samples.modal.remove.title-singular}"></span>
-			</h3>
-		</div>
-		<div class="modal-body">
-			<p th:utext="#{project.samples.modal.remove.description-singular(${samples[0].sampleName})}" />
-			<div class="alert alert-warning">
-				<p><strong><fa:icon type="warning" fixed="true" /></strong> <th:block th:text="#{project.samples.modal.remove.warning-singular}"></th:block></p>
-			</div>
-		</div>
-	</th:block>
+
+		<!-- Samples associated with other projects -->
+		<th:block th:if="${not #lists.isEmpty(samplesThatAreInMultiple)}" th:with="totalMultiple=${#lists.size(samplesThatAreInMultiple)}">
+			<p th:if="${totalMultiple==1}" th:utext="#{project.samples.modal.remove.samplesThatAreInMultiple.description-singular(${samplesThatAreInMultiple[0].sampleName})}"></p>
+		</th:block>
+	</div>
+
 	<div class="modal-footer">
 		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="removeCtrl.cancel()"></button>
 		<button id="confirmRemoveBtn" class="btn btn-primary" th:text="#{project.samples.modal.remove.button}"

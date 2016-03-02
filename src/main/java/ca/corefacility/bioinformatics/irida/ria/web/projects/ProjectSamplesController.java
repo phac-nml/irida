@@ -51,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -198,9 +199,22 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping("/projects/templates/remove-modal")
 	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
-		List<Sample> samples = new ArrayList<>(ids.size());
-		samples.addAll(ids.stream().map(sampleService::read).collect(Collectors.toList()));
-		model.addAttribute("samples", samples);
+		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
+		List<Sample> samplesThatAreInOne = new ArrayList<>();
+
+		for (Long id : ids) {
+			Sample sample = sampleService.read(id);
+			List<Join<Project, Sample>> join = projectService.getProjectsForSample(sample);
+
+			if (join.size() > 1) {
+				samplesThatAreInMultiple.add(sample);
+			} else {
+				samplesThatAreInOne.add(sample);
+			}
+		}
+
+		model.addAttribute("samplesThatAreInMultiple", samplesThatAreInMultiple);
+		model.addAttribute("samplesThatAreInOne", samplesThatAreInOne);
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
 	}
 
@@ -393,7 +407,19 @@ public class ProjectSamplesController {
 	public @ResponseBody Map<String, Object> deleteProjectSamples(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
+
+		// Creating the message before removing the samples so that if the sample is only in one project it does not get removed
+		// before its name can be used to create the message.
 		Map<String, Object> result = new HashMap<>();
+		if (sampleIds.size() == 1) {
+			Sample sample = sampleService.read(sampleIds.get(0));
+			result.put("message",
+					messageSource.getMessage("project.samples.remove-success-singular", new Object[] { sample.getSampleName(), project.getLabel() }, locale));
+		} else {
+			result.put("message",
+					messageSource.getMessage("project.samples.remove-success-plural", new Object[] { sampleIds.size(), project.getLabel() }, locale));
+		}
+
 		for (Long id : sampleIds) {
 			try {
 				Sample sample = sampleService.read(id);
@@ -402,14 +428,6 @@ public class ProjectSamplesController {
 				result.put("error", "Cannot find sample with id: " + id);
 			}
 
-		}
-		if (sampleIds.size() == 1) {
-			Sample sample = sampleService.read(sampleIds.get(0));
-			result.put("message",
-                    messageSource.getMessage("project.samples.remove-success-singular", new Object[] { sample.getSampleName(), project.getLabel() }, locale));
-		} else {
-			result.put("message",
-					messageSource.getMessage("project.samples.remove-success-plural", new Object[] { sampleIds.size(), project.getLabel() }, locale));
 		}
 
 		result.put("result", "success");
