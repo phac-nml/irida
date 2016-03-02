@@ -65,13 +65,14 @@
 						</li>
 					</ul>
 				</li>
-				<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" class="uib-dropdown" uib-dropdown="">
+				<li class="uib-dropdown" uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.users}">Users</span>
 						&nbsp;
 						<span class="caret"></span>
 					</a>
 					<ul class="uib-dropdown-menu" role="menu">
+						<th:block sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
 						<li role="menuitem">
 							<a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">
 								List Users
@@ -83,6 +84,7 @@
 							</a>
 						</li>
 						<li role="presentation" class="divider"></li>
+						</th:block>
 						<li role="menuitem">
 							<a href="#" th:href="@{/groups}" th:text="#{nav.main.groups-list}">
 								List Groups
