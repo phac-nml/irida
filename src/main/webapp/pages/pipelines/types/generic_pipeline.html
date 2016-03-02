@@ -7,34 +7,31 @@
 	      th:href="@{/resources/css/pages/sample_files.css}"/>
 	<style>
 	</style>
-	<script>window.dependencies = ['irida.pipelines'];</script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	    window.dependencies = ['irida.pipelines'];
+		var PAGE = {
+			urls: {
+				upload: /*[[@{/referenceFiles/new}]]*/ '/referenceFiles/new',
+				startUrl: /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/3b22fd4f-d25b-4c24-accb-f9818bf7a1c9',
+				saveParametersUrl: /*[[@{/pipelines/ajax/parameters}]]*/ '/ajax/pipeline/parameters',
+				projectsPage: /*[[@{/projects}]]*/ '/projects'
+			},
+			i18n: {
+				required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
+			},
+			pipeline: {
+				parameters: /*[[${parameters}]]*/ [],
+				pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
+			}
+		};
+		/*]]>*/
+	</script>
 </head>
 <body>
-<div layout:fragment="page" ng-app="irida.pipelines">
+<div layout:fragment="page" ng-app="irida.pipelines" ddl:bundle-includes="launch-pipeline" >
 	<form class="form-horizontal" method="post" ng-controller="PipelineController as pipeline">
-		<div id="no-ref-warning" class="row" th:if="${referenceRequired} and ${#lists.size(referenceFiles)} == 0">
-			<h1 th:text="${mainTitle}"></h1>
-
-			<div class="alert alert-danger col-md-12">
-				<b th:text="#{pipeline.error.no-reference-heading}">Reference File Required</b><br/><br/>
-				<th:block th:if="${#lists.size(addRefProjects) > 0}">
-					<p id="has-rights" th:text="#{pipeline.error.no-reference.link-heading}">Projects You can Upload a
-						Reference File to:</p>
-					<ul class="nav nav-pills nav-stacked col-md-3">
-						<li th:each="project : ${addRefProjects}">
-							<a class="add-ref-file" th:href="@{/projects/{id}/referenceFiles(id=${project.id})}"
-							   href="#" th:text="${project.name}"></a>
-						</li>
-					</ul>
-				</th:block>
-				<th:block th:if="${#lists.size(addRefProjects)} == 0">
-					<p id="has-no-rights" th:text="#{pipeline.error.no-reference.no-permissions}">You do not have
-						permission to upload a reference file to these projects. Please contact a project manager to add
-						a reference file.</p>
-				</th:block>
-			</div>
-		</div>
-		<div class="row" id="pipeline-creation" th:if="${#lists.size(referenceFiles) != 0} or ${!referenceRequired}">
+		<div class="row" id="pipeline-creation">
 			<div class="col-md-10">
 				<h1 th:text="${mainTitle}"></h1>
 
@@ -54,12 +51,34 @@
 						<label for="referenceFiles" class="col-sm-2 control-label"
 						       th:text="#{workflow.label.reference-file}">Reference File</label>
 
-						<div class="col-sm-10">
-							<select class="form-control" name="referenceFiles" id="referenceFiles">
-								<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
-								        data:project="${ref.project.id}"
-								        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
-							</select>
+						<div class="col-sm-10" ng-controller="FileUploadCtrl as uploadCtrl">
+							<div class="row ng-cloak">
+								<div class="col-md-9" ng-show="!uploadCtrl.uploaded">
+									<select class="form-control" name="referenceFiles" id="referenceFiles" th:if="${#lists.size(referenceFiles)} != 0"
+											ng-disabled="uploadCtrl.referenceUploadStarted">
+										<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
+										        data:project="${ref.project.id}"
+										        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
+									</select>
+									<div id="no-ref-warning" class="uploaded-file-name control-label" th:text="#{workflow.no.reference.file.for.selection}" th:if="${#lists.size(referenceFiles)} == 0">__No reference files in projects__</div>
+								</div>
+								<div class="col-md-9 control-label" ng-show="uploadCtrl.uploaded">
+									<div id="uploaded-file-name" class="uploaded-file-name" ng-bind="uploadCtrl.uploaded.name"></div>
+								</div>
+								<div class="col-md-3">
+									<div class="fileUpload btn btn-default btn-block" ng-show="!uploadCtrl.referenceUploadStarted">
+										<fa:icon type="upload"/>&nbsp;
+										<th:block th:text="#{workflow.upload.new.reference.file}"></th:block>
+										<input type="file" id="file-upload-button" class="upload " name="files"
+											ngf-change="uploadCtrl.upload($files)" ngf-accept="'*.fasta'"
+											ngf-select="" />
+
+									</div>
+									<div class="file-upload-progress" ng-class="{fadeIn: uploadCtrl.referenceUploadStarted, fadeOut: !uploadCtrl.referenceUploadStarted}">
+										<uib-progressbar class="progress-striped active" value="uploadCtrl.progress">{{ uploadCtrl.progress }}%</uib-progressbar>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="form-group"
@@ -265,25 +284,10 @@
 	</form>
 </div>
 <th:block layout:fragment="scripts">
+	<div th:replace="templates/_file.utils :: upload-progress"></div>
+	<div th:replace="templates/_file.utils :: upload-error"></div>
 	<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0"
 	          th:replace="pipelines/templates/parameters :: modal (${parameterModalTitle}, ${parameters})"></th:block>
-	<script th:inline="javascript">
-		/*<![CDATA[*/
-		var PIPELINE = {
-			url       : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/3b22fd4f-d25b-4c24-accb-f9818bf7a1c9',
-			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
-			parameters: /*[[${parameters}]]*/ [],
-			saveParametersUrl : /*[[@{/pipelines/ajax/parameters}]]*/ '/ajax/pipeline/parameters',
-			pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
-		};
-
-		var projectsPage = /*[[@{/projects}]]*/ '/projects';
-		/*]]>*/
-	</script>
-	<script src="/resources/bower_components/bootstrap/js/affix.js"
-	        th:src="@{/resources/bower_components/bootstrap/js/affix.js}"></script>
-	<script src="/resources/js/pages/pipelines/pipeline.launch.js"
-	        th:src="@{/resources/js/pages/pipelines/pipeline.launch.js}"></script>
 </th:block>
 </body>
 </html>

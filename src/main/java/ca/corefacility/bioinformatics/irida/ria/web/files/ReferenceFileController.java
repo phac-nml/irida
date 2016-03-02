@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -87,7 +89,7 @@ public class ReferenceFileController {
 	 *
 	 */
 	@RequestMapping("/project/{projectId}/new")
-	public void createNewReferenceFile(@PathVariable Long projectId,
+	public void addReferenceFileToProject(@PathVariable Long projectId,
 			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) {
 		Project project = projectService.read(projectId);
 		logger.debug("Adding reference file to project " + projectId);
@@ -111,6 +113,31 @@ public class ReferenceFileController {
 			logger.error("Error writing sequence file", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	/**
+	 * Upload a transient reference file, to be used for a single analysis.
+	 * @param file the new reference file
+	 * @param response the response to write errors to.
+	 */
+	@RequestMapping("/new")
+	public Map<String, Object> addIndependentReferenceFile(
+			final @RequestParam(value = "file") MultipartFile file) throws IOException {
+		logger.debug("Adding transient reference file for a single pipeline.");
+		// Prepare a new reference file using the multipart file supplied by the caller
+		final Path temp = Files.createTempDirectory(null);
+
+		final Path target = temp.resolve(file.getOriginalFilename());
+		file.transferTo(target.toFile());
+
+		ReferenceFile referenceFile = new ReferenceFile(target);
+		referenceFile = referenceFileService.create(referenceFile);
+		
+		// Clean up temporary files
+		Files.deleteIfExists(target);
+		Files.deleteIfExists(temp);
+		
+		return ImmutableMap.of("uploaded-file-id", referenceFile.getId(), "uploaded-file-name", referenceFile.getLabel());
 	}
 
 	/**

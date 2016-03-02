@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,19 +15,20 @@ import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.google.common.collect.Lists;
 
 /**
  */
@@ -58,10 +60,10 @@ public class AnalysisControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
 
-
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
-				"V1", AnalysisType.PHYLOGENOMICS, null, Lists.newArrayList(), Lists.newArrayList(),
+				"V1", AnalysisType.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
 				Lists.newArrayList());
 		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
@@ -75,6 +77,8 @@ public class AnalysisControllerTest {
 		assertEquals("Tree preview should be set", "tree", model.get("preview"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+		
+		assertEquals("submission reference file should be in model.", submission.getReferenceFile().get(), model.get("referenceFile"));
 	}
 
 	@Test
@@ -83,9 +87,10 @@ public class AnalysisControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
 
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
-				"V1", AnalysisType.PHYLOGENOMICS, null, Lists.newArrayList(), Lists.newArrayList(),
+				"V1", AnalysisType.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
 				Lists.newArrayList());
 		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
 		submission.setAnalysisState(AnalysisState.RUNNING);
@@ -106,15 +111,19 @@ public class AnalysisControllerTest {
 	// ************************************************************************************************
 
 	@Test
-	public void TestGetAjaxDownloadAnalysisSubmission() throws IOException {
+	public void TestGetAjaxDownloadAnalysisSubmission() {
 		Long analysisSubmissionId = 1L;
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		when(analysisSubmissionServiceMock.read(analysisSubmissionId)).thenReturn(
 				TestDataFactory.constructAnalysisSubmission());
-		analysisController.getAjaxDownloadAnalysisSubmission(analysisSubmissionId, response);
-		assertEquals("Has the correct content type", "application/zip", response.getContentType());
-		assertEquals("Has the correct 'Content-Disposition' headers", "attachment;filename=submission-5.zip",
-				response.getHeader("Content-Disposition"));
+		try {
+			analysisController.getAjaxDownloadAnalysisSubmission(analysisSubmissionId, response);
+			assertEquals("Has the correct content type", "application/zip", response.getContentType());
+			assertEquals("Has the correct 'Content-Disposition' headers", "attachment;filename=submission-5.zip",
+					response.getHeader("Content-Disposition"));
+		} catch (final Exception e) {
+			fail();
+		}
 	}
 }

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="user-group" author="fbristow">
+		<createTable tableName="user_group">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="modified_date" type="datetime" />
+			<column name="name" type="varchar(255)">
+				<constraints unique="true" nullable="false"
+					uniqueConstraintName="UK_USER_GROUP_NAME" />
+			</column>
+			<column name="description" type="longtext" />
+		</createTable>
+
+		<createTable tableName="user_group_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="Revisions" referencedColumnNames="id"
+					foreignKeyName="FK_USER_GROUP_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
+			<column name="name" type="varchar(255)" />
+			<column name="description" type="longtext" />
+		</createTable>
+
+		<createTable tableName="user_group_member">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="role" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="group_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="user_group"
+					referencedColumnNames="id" foreignKeyName="FK_USER_GROUP_MEMBER_GROUP" />
+			</column>
+			<column name="user_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="user"
+					referencedColumnNames="id" foreignKeyName="FK_USER_GROUP_MEMBER_USER" />
+			</column>
+		</createTable>
+
+		<createTable tableName="user_group_member_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="Revisions" referencedColumnNames="id"
+					foreignKeyName="FK_USER_GROUP_MEMBER_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="created_date" type="datetime" />
+			<column name="role" type="varchar(255)" />
+			<column name="group_id" type="bigint(20)" />
+			<column name="user_id" type="bigint(20)" />
+		</createTable>
+
+		<createTable tableName="user_group_project">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="project_role" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="project_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="project"
+					referencedColumnNames="id" foreignKeyName="FK_USER_GROUP_PROJECT_PROJECT" />
+			</column>
+			<column name="user_group_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="user_group"
+					referencedColumnNames="id" foreignKeyName="FK_USER_GROUP_PROJECT_USER_GROUP" />
+			</column>
+		</createTable>
+
+		<createTable tableName="user_group_project_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="Revisions" referencedColumnNames="id"
+					foreignKeyName="FK_USER_GROUP_PROJECT_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="created_date" type="datetime"/>
+			<column name="project_role" type="varchar(255)"/>
+			<column name="project_id" type="bigint(20)"/>
+			<column name="user_group_id" type="bigint(20)"/>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

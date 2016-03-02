@@ -12,9 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
@@ -25,18 +22,11 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @Component
 public class ProjectControllerUtils {
 	// Services
-	private final ProjectService projectService;
-	private final SampleService sampleService;
 	private final UserService userService;
-	private final RemoteRelatedProjectService remoteRelatedProjectService;
 
 	@Autowired
-	public ProjectControllerUtils(ProjectService projectService, SampleService sampleService, UserService userService,
-			RemoteRelatedProjectService remoteRelatedProjectService) {
-		this.projectService = projectService;
-		this.sampleService = sampleService;
+	public ProjectControllerUtils(UserService userService) {
 		this.userService = userService;
-		this.remoteRelatedProjectService = remoteRelatedProjectService;
 	}
 
 	/**
