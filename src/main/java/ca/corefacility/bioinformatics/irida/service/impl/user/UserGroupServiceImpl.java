@@ -7,6 +7,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
@@ -68,6 +69,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
+	@Transactional
 	public UserGroup create(UserGroup object) throws EntityExistsException, ConstraintViolationException {
 		final UserGroup ug = super.create(object);
 		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
