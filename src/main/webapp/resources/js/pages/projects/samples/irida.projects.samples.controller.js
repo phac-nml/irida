@@ -1,4 +1,4 @@
-(function (ng) {
+(function (ng, page) {
 	"use strict";
 
 	/**
@@ -106,27 +106,27 @@
 		};
 
 		vm.delete = function () {
-			var modal = $uibModal.open({
-				templateUrl: "removeSamples.modal.html",
-				openedClass: 'remove-modal',
+			var ids = [], modal;
+			vm.selected.forEach(function (item) {
+				ids.push(item.sample.identifier);
+			});
+
+			modal = $uibModal.open({
+				size        : 'lg',
+				templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
+				openedClass : 'remove-modal',
 				controllerAs: "removeCtrl",
-				controller: ["$uibModalInstance", "samples", function RemoveSamplesController ($uibModalInstance, samples) {
+				controller  : ["$uibModalInstance", function RemoveSamplesController($uibModalInstance) {
 					var vm = this;
-					vm.samples = samples;
 
 					vm.cancel = function () {
 						$uibModalInstance.dismiss();
 					};
 
-					vm.remove = function() {
+					vm.remove = function () {
 						$uibModalInstance.close();
 					};
-				}],
-				resolve: {
-					samples: function () {
-						return vm.selected;
-					}
-				}
+				}]
 			});
 
 			modal.result.then(function () {
@@ -293,4 +293,4 @@
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
 		.controller("MergeController", ["$uibModalInstance", "samples", MergeController])
 	;
-})(window.angular);
+})(window.angular, window.PAGE);

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template/page">
+<head>
+    <title th:text="#{nav.main.groups-list}">_Groups_</title>
+    <script th:inline="javascript">
+        var PAGE = {
+            urls: {
+                link: /*[[@{/groups/}]]*/ '/groups',
+                deleteGroup: /*[[@{/groups/}]]*/ '/groups/',
+                deleteModal: /*[[@{/groups/deleteConfirmModal}]]*/ '/groups/deleteConfirmModal'
+            },
+            i18n: {
+            	unexpectedRemoveError: /*[[#{group.remove.notification.failure}]]*/ '_An error occured when removing your group. Try again._',
+            	remove: /*[[#{group.remove.button.tooltip}]]*/ '_Remove group_'
+            }
+        };
+    </script>
+   	<style>
+		.dataTables_paginate {
+			text-align: center!important;
+		}
+	</style>
+</head>
+<body>
+<div layout:fragment="page" ddl:bundle-includes="groups-list" ddl:asset-css-excludes="jquery.datatables">
+    <main class="col-md-12">
+        <h1 th:text="#{nav.main.groups-list}">_Groups_</h1>
+        <div dt:conf="groupsTable">
+			<div dt:confType="callback" dt:type="createdRow" dt:function="groups-list#groupsTable.deleteLinkCallback" />
+		</div>
+        <table id="groupsTable" dt:table="true" dt:url="@{/groups/ajax/list}">
+            <thead>
+            <tr role="row">
+                <th dt:property="group.name" dt:searchable="true" th:text="#{group.name}" dt:renderFunction="groups-list#groupsTable.groupLinkRow"></th>
+                <th dt:property="group.description" dt:searchable="true" th:text="#{group.description}" dt:renderFunction="groups-list#groupsTable.descriptionRow"></th>
+                <th width="150px" dt:property="group.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.created}"></th>
+                <th width="150px" dt:property="group.modifiedDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.modified}"></th>
+                <th width="50px" dt:sortable="false" dt:filterable="false" dt:renderFunction="groups-list#groupsTable.removeGroupButton" />
+            </tr>
+            </thead>
+        </table>
+        <div class="modal fade" id="removeGroupModal" role="dialog" aria-labelledby="#deleteConfirmTitle">
+			
+		</div>
+    </main>
+</div>
+</body>
+</html>
