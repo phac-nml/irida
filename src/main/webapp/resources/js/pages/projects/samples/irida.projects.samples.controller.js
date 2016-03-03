@@ -100,19 +100,21 @@
 			var ids = [], modal;
 			vm.selected.forEach(function (item) {
 				ids.push(item.sample.identifier);
-			}),
-				modal = $uibModal.open({
-					templateUrl: page.urls.modals.remove + "?" + $.param({sampleIds:ids}),
-				openedClass: 'remove-modal',
+			});
+
+			modal = $uibModal.open({
+				size        : 'lg',
+				templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
+				openedClass : 'remove-modal',
 				controllerAs: "removeCtrl",
-				controller: ["$uibModalInstance", function RemoveSamplesController ($uibModalInstance) {
+				controller  : ["$uibModalInstance", function RemoveSamplesController($uibModalInstance) {
 					var vm = this;
 
 					vm.cancel = function () {
 						$uibModalInstance.dismiss();
 					};
 
-					vm.remove = function() {
+					vm.remove = function () {
 						$uibModalInstance.close();
 					};
 				}]

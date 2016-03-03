@@ -2,31 +2,44 @@
 	<div class="modal-header">
 		<h3 class="modal-title">
 			<fa:icon type="delete"/>
-			<span th:if="${total > 1}" th:text="#{project.samples.modal.remove.title-plural(${total})}"/>
+			<span th:if="${total > 1}" th:text="#{project.samples.modal.remove.title-multiple(${total})}"/>
 			<span th:if="${total == 1}" th:text="#{project.samples.modal.remove.title-singular}"/>
 		</h3>
 	</div>
 
-	<div class="modal-body">
-		<!-- Samples not associated with other projects -->
-		<div class="alert alert-warning" th:if="${not #lists.isEmpty(samplesThatAreInOne)}">
-			<p>
-				<th:block th:if="${#lists.size(samplesThatAreInOne) == 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.title-singular(${samplesThatAreInOne[0].sampleName})}"/>
-				<strong th:if="${#lists.size(samplesThatAreInOne) > 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.title-multiple}"/>
-			</p>
-			<ol th:if="${#lists.size(samplesThatAreInOne) > 1}">
-				<li th:each="sample : ${samplesThatAreInOne}" th:text="${sample.sampleName}"/>
-			</ol>
-			<p>
-				<strong th:if="${#lists.size(samplesThatAreInOne) == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.warning-singular}"/>
-				<strong th:if="${#lists.size(samplesThatAreInOne) > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.warning-multiple}"/>
-			</p>
+	<div class="modal-body" th:with="countSingle=${#lists.size(samplesThatAreInOne)},countMultiple=${#lists.size(samplesThatAreInMultiple)}">
+		<div class="row panel-equal-container">
+			<div class="col-sm-12" th:if="${countMultiple > 0}" th:class="${countSingle > 0} ? 'col-md-6' : 'col-md-12'">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<th:block th:if="${countMultiple == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInMultiple.description-singular}" />
+						<th:block th:if="${countMultiple > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInMultiple.description-multiple(${countMultiple})}" />
+					</div>
+					<div class="panel-body">
+						<ol>
+							<li th:each="sample : ${samplesThatAreInMultiple}" th:text="${sample.sampleName}"></li>
+						</ol>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-12" th:if="${countSingle > 0}" th:class="${countMultiple > 0} ? 'col-md-6' : 'col-md-12'">
+				<div class="panel panel-warning">
+					<div class="panel-heading">
+						<th:block th:if="${countSingle == 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-singular}"/>
+						<th:block th:if="${countSingle > 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-multiple(${countSingle})}"/>
+					</div>
+					<div class="panel-body">
+						<ol>
+							<li th:each="sample : ${samplesThatAreInOne}" th:text="${sample.sampleName}"></li>
+						</ol>
+						<p class="text-warning">
+							<th:block th:if="${countSingle == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.warning-singular}"/>
+							<th:block th:if="${countSingle > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.warning-multiple(${countSingle})}"/>
+						</p>
+					</div>
+				</div>
+			</div>
 		</div>
-
-		<!-- Samples associated with other projects -->
-		<th:block th:if="${not #lists.isEmpty(samplesThatAreInMultiple)}" th:with="totalMultiple=${#lists.size(samplesThatAreInMultiple)}">
-			<p th:if="${totalMultiple==1}" th:utext="#{project.samples.modal.remove.samplesThatAreInMultiple.description-singular(${samplesThatAreInMultiple[0].sampleName})}"></p>
-		</th:block>
 	</div>
 
 	<div class="modal-footer">
