@@ -89,7 +89,6 @@
 	<miseq_run_AUD />
 	<sequence_file_AUD />
 	<sequence_file_properties_AUD />
-	<sequencefile_sample_AUD />
 	<sample_sequencingobject_AUD />
 	<analysis_submission_AUD />
 	<analysis_submission_sequence_file_single_end_AUD />
