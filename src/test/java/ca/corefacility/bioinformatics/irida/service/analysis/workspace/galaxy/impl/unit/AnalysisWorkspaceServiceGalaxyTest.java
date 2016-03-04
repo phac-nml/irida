@@ -50,7 +50,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
@@ -83,8 +82,6 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock
 	private GalaxyLibrariesService galaxyLibrariesService;
-	@Mock
-	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
 	@Mock
 	private List<Dataset> sequenceDatasets;
 	@Mock

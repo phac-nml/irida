@@ -229,7 +229,7 @@ public class SequencingObjectServiceImplIT {
 		sf = readObject.getFiles().iterator().next();
 		assertEquals("Wrong version number after processing.", Long.valueOf(2), sf.getFileRevisionNumber());
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
+		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
@@ -281,7 +281,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals("Wrong version number after processing.", Long.valueOf(3L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
+		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);

@@ -1,10 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.sequencefile;
 
-import java.util.Set;
-
-import org.springframework.data.jpa.repository.Query;
-
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
@@ -16,15 +11,4 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  */
 public interface SequenceFileRepository extends FilesystemSupplementedRepository<SequenceFile>,
 		IridaJpaRepository<SequenceFile, Long> {
-	/**
-	 * Get the collection of {@link SequenceFile} created as part of a
-	 * {@link SequencingRun}.
-	 * 
-	 * @param sequencingRun
-	 *            the run to load the files for.
-	 * @return the files created as part of a run.
-	 */
-	@Query("select f from SequenceFile f")
-	@Deprecated
-	public Set<SequenceFile> findSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 }
