@@ -1,4 +1,4 @@
-(function (ng, page) {
+(function (ng, $, page) {
 	"use strict";
 
 	/**
@@ -267,4 +267,4 @@
 		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
 	;
-})(window.angular, window.PAGE);
+})(window.angular, window.jQuery, window.PAGE);
