@@ -201,20 +201,32 @@ public class ProjectSamplesController {
 	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
 		List<Sample> samplesThatAreInOne = new ArrayList<>();
+		int extraMultiple = 0;
+		int extraSingle = 0;
 
 		for (Long id : ids) {
 			Sample sample = sampleService.read(id);
 			List<Join<Project, Sample>> join = projectService.getProjectsForSample(sample);
 
 			if (join.size() > 1) {
-				samplesThatAreInMultiple.add(sample);
+				if (samplesThatAreInMultiple.size() < 10) {
+					samplesThatAreInMultiple.add(sample);
+				} else {
+					extraMultiple++;
+				}
 			} else {
-				samplesThatAreInOne.add(sample);
+				if (samplesThatAreInOne.size() < 10) {
+					samplesThatAreInOne.add(sample);
+				} else {
+					extraSingle++;
+				}
 			}
 		}
 
 		model.addAttribute("samplesThatAreInMultiple", samplesThatAreInMultiple);
 		model.addAttribute("samplesThatAreInOne", samplesThatAreInOne);
+		model.addAttribute("extraMultiple", extraMultiple);
+		model.addAttribute("extraSingle", extraSingle);
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
 	}
 

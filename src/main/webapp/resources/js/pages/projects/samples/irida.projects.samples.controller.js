@@ -1,4 +1,4 @@
-(function (ng, page) {
+(function (ng, $, page) {
 	"use strict";
 
 	/**
@@ -293,4 +293,4 @@
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
 		.controller("MergeController", ["$uibModalInstance", "samples", MergeController])
 	;
-})(window.angular, window.PAGE);
+})(window.angular, window.jQuery, window.PAGE);
