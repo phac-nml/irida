@@ -13,12 +13,14 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<th:block th:if="${countMultiple == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInMultiple.description-singular}" />
-						<th:block th:if="${countMultiple > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInMultiple.description-multiple(${countMultiple})}" />
+						<th:block th:if="${countMultiple > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInMultiple.description-multiple(${countMultiple + extraMultiple})}" />
 					</div>
 					<div class="panel-body">
 						<ol>
 							<li th:each="sample : ${samplesThatAreInMultiple}" th:text="${sample.sampleName}"></li>
 						</ol>
+						<p th:if="${extraMultiple == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.extra-singular}"/>
+						<p th:if="${extraMultiple > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.extra-multiple(${extraMultiple}}"/>
 					</div>
 				</div>
 			</div>
@@ -26,12 +28,14 @@
 				<div class="panel panel-warning">
 					<div class="panel-heading">
 						<th:block th:if="${countSingle == 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-singular}"/>
-						<th:block th:if="${countSingle > 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-multiple(${countSingle})}"/>
+						<th:block th:if="${countSingle > 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-multiple(${countSingle + extraSingle})}"/>
 					</div>
 					<div class="panel-body">
 						<ol>
 							<li th:each="sample : ${samplesThatAreInOne}" th:text="${sample.sampleName}"></li>
 						</ol>
+						<p th:if="${extraSingle == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.extra-singular}"/>
+						<p th:if="${extraSingle > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.extra-multiple(${extraSingle})}"/>
 						<p class="text-warning">
 							<th:block th:if="${countSingle == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.warning-singular}"/>
 							<th:block th:if="${countSingle > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.warning-multiple(${countSingle})}"/>
