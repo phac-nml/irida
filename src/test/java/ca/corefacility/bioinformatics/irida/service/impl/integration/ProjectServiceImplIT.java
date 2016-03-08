@@ -86,6 +86,19 @@ public class ProjectServiceImplIT {
 	@Autowired
 	@Qualifier("referenceFileBaseDirectory")
 	private Path referenceFileBaseDirectory;
+	
+	@Test
+	@WithMockUser(username="groupuser", roles="USER")
+	public void testGetProjectsForUserWithGroup() {
+		final User u = userService.read(7L);
+		final List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
+		final Project userProject = projectService.read(8L);
+		final Project groupProject = projectService.read(9L);
+		
+		assertEquals("Should be on 2 projects.", 2, projects.size());
+		assertTrue("Should have user project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(userProject)));
+		assertTrue("Should have group project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(groupProject)));
+	}
 
 	@Test
 	@WithMockUser(username = "manager", roles = "MANAGER")
