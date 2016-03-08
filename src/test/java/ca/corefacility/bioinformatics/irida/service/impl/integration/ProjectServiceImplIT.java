@@ -319,7 +319,7 @@ public class ProjectServiceImplIT {
 		List<Project> projects = (List<Project>) projectService.findAll();
 		// this admin should have access to 5 projects
 
-		assertEquals("Wrong number of projects.", 8, projects.size());
+		assertEquals("Wrong number of projects.", 9, projects.size());
 	}
 
 	@Test
