@@ -51,7 +51,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "cart-add-btn")
 	private WebElement addToCartBtn;
 
-	@FindBy(className = "remove-modal")
+	@FindBy(id = "remove-samples-modal")
 	private WebElement removeModal;
 
 	@FindBy(id = "removeBtnOk")
