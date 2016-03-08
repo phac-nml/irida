@@ -1078,6 +1078,7 @@
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
 				</exclude.tests>
+				<jetty.skip>true</jetty.skip>
 			</properties>
 		</profile>
 		<profile>
@@ -1097,6 +1098,7 @@
 					**/AnalysisSubmissionServiceImplIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
+				<jetty.skip>true</jetty.skip>
 			</properties>
 		</profile>
 		<profile>
