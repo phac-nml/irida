@@ -85,8 +85,12 @@
 		};
 
 		vm.merge = function () {
+			var ids = [], modal;
+			vm.selected.forEach(function (item) {
+				ids.push(item.sample.identifier);
+			});
 			var modal = $uibModal.open({
-				templateUrl: "mergeSamples.modal.html",
+				templateUrl: page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
 				controllerAs: "mergeCtrl",
 				controller: "MergeController",
 				resolve: {

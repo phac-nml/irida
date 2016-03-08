@@ -7,11 +7,10 @@
 	</div>
 	<div class="modal-body">
 		<h4>
-
 			<span th:text="#{project.samples.modal.merge.intro}">You are about to merge 4 samples.</span>
 		</h4>
 		<ul>
-			<li ng-repeat="s in mergeCtrl.samples">{{s.sample.sampleName}}</li>
+			<li th:each="sample : ${samples}" th:text="${sample.sampleName}"></li>
 		</ul>
 		<div class="alert alert-warning">
 			<h4>

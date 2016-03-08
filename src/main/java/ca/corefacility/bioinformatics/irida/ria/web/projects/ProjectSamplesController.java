@@ -230,6 +230,13 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
 	}
 
+	@RequestMapping("/projects/templates/merge-modal")
+	public String getMergeSamplesInProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		List<Sample> samples = ids.stream().map(sampleService::read).collect(Collectors.toList());
+		model.addAttribute("samples", samples);
+		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
+	}
+
 	/**
 	 * Get a list of all samples within the project
 	 *
