@@ -24,8 +24,8 @@
 
 		<div class="form-group">
 			<label for="samplesSelect" th:text="#{project.samples.modal.merge.select-label}"></label>
-			<select class="form-control" name="samplesSelect" id="samplesSelect" ng-model="mergeCtrl.selected">
-				<option ng-repeat="s in mergeCtrl.samples" value="{{s.identifier}}">{{s.sample.sampleName}}</option>
+			<select class="form-control" name="samplesSelect" id="samplesSelect" ng-model="mergeCtrl.selected"
+			ng-options="s.sample as s.sample.sampleName for s in mergeCtrl.samples">
 			</select>
 		</div>
 		<div class="form-group">
@@ -36,7 +36,7 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="mergeCtrl.close()"></button>
+		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="mergeCtrl.cancel()"></button>
 		<button id="confirmMergeBtn" class="btn btn-primary" ng-disabled="mergeCtrl.error.format || mergeCtrl.error.length"
 		        th:text="#{project.samples.modal.merge.complete}" ng-click="mergeCtrl.merge()">Complete Merge
 		</button>

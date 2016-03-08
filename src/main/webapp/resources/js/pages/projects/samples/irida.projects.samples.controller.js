@@ -279,10 +279,9 @@
 	function MergeController($uibModalInstance, samples) {
 		var vm = this;
 		vm.samples = samples;
-		vm.mergeSampleId = vm.samples[0].sample.identifier;
+		vm.selected = vm.samples[0].sample;
 
 		vm.cancel = function() {
-			console.log(vm.newName);
 			$uibModalInstance.dismiss();
 		};
 
