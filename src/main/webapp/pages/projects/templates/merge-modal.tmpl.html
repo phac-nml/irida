@@ -1,43 +1,49 @@
 <div id="merge-samples-modal" class="form">
 	<div class="modal-header">
 		<h3 class="modal-title">
-			<fa:icon type="merge" />&nbsp;
+			<fa:icon type="merge"/>
+			&nbsp;
 			<span th:utext="#{project.samples.modal.merge.title}">__COMBINE_SAMPLES__</span>
 		</h3>
 	</div>
 	<div class="modal-body">
-		<h4>
-			<span th:text="#{project.samples.modal.merge.intro}">You are about to merge 4 samples.</span>
-		</h4>
-		<ul>
-			<li th:each="sample : ${samples}" th:text="${sample.sampleName}"></li>
-		</ul>
-		<div class="alert alert-warning">
+		<form name="mergeForm">
 			<h4>
-				<fa:icon type="warning" />&nbsp;
-				<span th:text="#{alert.warning.title}"></span>
+				<span th:text="#{project.samples.modal.merge.intro(${#lists.size(samples)})}"/>
+				<small class="text-warning">
+					<fa:icon type="warning"
+					         data:uib-popover="#{project.samples.modal.merge.warning}"
+					         popover-append-to-body="true"
+					         popover-placement="left"
+					         popover-trigger="mouseenter"/>
+				</small>
 			</h4>
-
-			<p th:text="#{project.samples.modal.merge.warning}">All samples will be merged into a single sample. Currently only the metadata from the sample selected will
-				retain its metadata.</p>
-		</div>
-
-		<div class="form-group">
-			<label for="samplesSelect" th:text="#{project.samples.modal.merge.select-label}"></label>
-			<select class="form-control" name="samplesSelect" id="samplesSelect" ng-model="mergeCtrl.selected"
-			ng-options="s.sample as s.sample.sampleName for s in mergeCtrl.samples">
-			</select>
-		</div>
-		<div class="form-group">
-			<label th:text="#{project.samples.modal.merge.name-label}">_Rename Sample_</label>
-			<input id="newName" class="form-control" type="text" placeholder="{{mergeCtrl.selected.name}}" ng-model="mergeCtrl.name"/>
-			<div id="merge-length-error" ng-hide="mergeCtrl.error.length!==true" class="alert alert-danger" th:text="#{project.samples.modal.error-length}">Name must be at least 5 characters long.</div>
-			<div id="merge-format-error" ng-hide="mergeCtrl.error.format!==true" class="alert alert-danger" th:text="#{project.samples.modal.error-format}">Name must be at least 5 characters long.</div>
-		</div>
+			<div class="radio" th:each="sample : ${samples}">
+				<label>
+					<input name="mergeSample" ng-model="mergeCtrl.selected" th:value="${sample.identifier}"
+					       type="radio"/>
+					&nbsp;
+					<th:block th:text="${sample.sampleName}"></th:block>
+				</label>
+			</div>
+			<div class="form-group">
+				<label th:text="#{project.samples.modal.merge.name-label}">_Rename Sample_</label>
+				<input id="newName" name="newName" class="form-control" type="text"
+				       ng-model="mergeCtrl.name"
+				       ng-model-options="{ debounce: 300 }"
+				       ng-minlength="5"
+				       ng-pattern="mergeCtrl.validNameRE"/>
+				<div ng-messages="mergeForm.newName.$dirty &amp;&amp; mergeForm.newName.$error">
+					<div class="alert alert-warning" ng-message="minlength" th:text="#{project.samples.modal.error-length}">Your field is too short</div>
+					<div class="alert alert-warning" ng-message="pattern" th:text="#{project.samples.modal.error-format}">This is some messed up stuff!</div>
+				</div>
+			</div>
+		</form>
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="mergeCtrl.cancel()"></button>
-		<button id="confirmMergeBtn" class="btn btn-primary" ng-disabled="mergeCtrl.error.format || mergeCtrl.error.length"
+		<button id="confirmMergeBtn" class="btn btn-primary"
+		        ng-disabled="mergeCtrl.error.format || mergeCtrl.error.length"
 		        th:text="#{project.samples.modal.merge.complete}" ng-click="mergeCtrl.merge()">Complete Merge
 		</button>
 	</div>

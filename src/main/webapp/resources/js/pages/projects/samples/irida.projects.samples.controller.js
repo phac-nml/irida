@@ -279,7 +279,8 @@
 	function MergeController($uibModalInstance, samples) {
 		var vm = this;
 		vm.samples = samples;
-		vm.selected = vm.samples[0].sample;
+		vm.selected = vm.samples[0].sample.identifier;
+		vm.validNameRE = /^[a-zA-Z0-9]+$/;
 
 		vm.cancel = function() {
 			$uibModalInstance.dismiss();
@@ -291,7 +292,7 @@
 		}
 	}
 
-	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ui.bootstrap"])
+	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ngMessages", "ui.bootstrap"])
 		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
 		.controller("MergeController", ["$uibModalInstance", "samples", MergeController])

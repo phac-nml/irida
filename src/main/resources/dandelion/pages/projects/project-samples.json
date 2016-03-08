@@ -2,6 +2,7 @@
   "dependencies": [
     "ng-datatables",
     "select2-bootstrap",
+    "angular-messages",
     "bootstrap_dropdowns_enhancement"
   ],
   "assets": [
