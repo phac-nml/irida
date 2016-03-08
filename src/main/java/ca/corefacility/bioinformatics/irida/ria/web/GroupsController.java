@@ -122,7 +122,7 @@ public class GroupsController {
 
 		try {
 			userGroupService.create(userGroup);
-			return getDetailsPage(userGroup.getId(), principal, model);
+			return "redirect:/groups/" + userGroup.getId();
 		} catch (final ConstraintViolationException e) {
 			for (final ConstraintViolation<?> v : e.getConstraintViolations()) {
 				errors.put(v.getPropertyPath().toString(), v.getMessage());
