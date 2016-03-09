@@ -55,10 +55,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SingleEndSequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -106,11 +104,9 @@ public class PipelineController extends BaseController {
 	private MessageSource messageSource;
 	private final WorkflowNamedParametersService namedParameterService;
 	
-	private SequenceFileRemoteService sequenceFileRemoteService;
 	private SingleEndSequenceFileRemoteService sequenceFileSingleRemoteService;
 	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	
-	private SequenceFileSnapshotService remoteSequenceFileService;
 	private SequenceFilePairSnapshotService remoteSequenceFilePairService;
 	private SingleEndSequenceFileSnapshotService singleEndSequenceFileSnapshotService;
 	
@@ -123,11 +119,10 @@ public class PipelineController extends BaseController {
 	public PipelineController(SequencingObjectService sequencingObjectService,
 			ReferenceFileService referenceFileService, AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
-			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
-			MessageSource messageSource, final WorkflowNamedParametersService namedParameterService,
+			CartController cartController, MessageSource messageSource,
+			final WorkflowNamedParametersService namedParameterService,
 			SequenceFilePairRemoteService sequenceFilePairRemoteService,
 			SingleEndSequenceFileRemoteService sequenceFileSingleRemoteService,
-			SequenceFileSnapshotService remoteSequenceFileService,
 			SequenceFilePairSnapshotService remoteSequenceFilePairService,
 			SingleEndSequenceFileSnapshotService singleEndSequenceFileSnapshotService) {
 		this.sequencingObjectService = sequencingObjectService;
@@ -139,9 +134,7 @@ public class PipelineController extends BaseController {
 		this.cartController = cartController;
 		this.messageSource = messageSource;
 		this.namedParameterService = namedParameterService;
-		this.sequenceFileRemoteService = sequenceFileRemoteService;
 		this.sequenceFilePairRemoteService = sequenceFilePairRemoteService;
-		this.remoteSequenceFileService = remoteSequenceFileService;
 		this.remoteSequenceFilePairService = remoteSequenceFilePairService;
 		this.sequenceFileSingleRemoteService = sequenceFileSingleRemoteService;
 		this.singleEndSequenceFileSnapshotService = singleEndSequenceFileSnapshotService;
