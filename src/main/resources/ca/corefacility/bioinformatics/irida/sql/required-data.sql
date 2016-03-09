@@ -127,6 +127,8 @@ INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-09 08:24:09' , 'Project 99');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES ('2015-06-01 08:24:09', '2015-09-10 08:24:09' , 'Project 100');
 
+INSERT INTO user_group_project(`created_date`, `project_role`, `project_id`, `user_group_id`) values (now(), 'PROJECT_USER', 50, 8);
+
 -- relationship between projects and users
 INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `email_subscription`) VALUES (now(), 1, 2, 'PROJECT_OWNER', 0);
 INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `email_subscription`) VALUES (now(), 3, 2, 'PROJECT_USER', 0);
