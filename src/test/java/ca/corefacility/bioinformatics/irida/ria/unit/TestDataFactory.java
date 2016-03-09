@@ -178,11 +178,11 @@ public class TestDataFactory {
 		);
 	}
 
-	public static List<ProjectUserJoin> constructListJoinProjectUser(User user) {
-		List<ProjectUserJoin> list = new ArrayList<>();
+	public static List<Project> constructListJoinProjectUser(User user) {
+		List<Project> list = new ArrayList<>();
 		Project project = constructProject();
 		for (int i = 0; i < 10; i++) {
-			list.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER));
+			list.add(project);
 		}
 		return list;
 	}

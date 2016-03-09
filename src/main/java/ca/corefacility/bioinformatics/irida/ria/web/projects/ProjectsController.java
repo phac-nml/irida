@@ -43,25 +43,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
-import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.util.TreeNode;
-
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
@@ -76,6 +57,23 @@ import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
+import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
+import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
+import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 /**
  * Controller for project related views
@@ -404,33 +402,27 @@ public class ProjectsController {
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias,
 			final Principal principal) {
-		User user = userService.getUserByUsername(principal.getName());
-		Specification<ProjectUserJoin> specification;
+		final String organismName;
+		final String projectName;
 
 		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
-			specification = ProjectUserJoinSpecification.filterProjectsForUserAllFields(user, criterias.getSearch());
+			organismName = criterias.getSearch();
+			projectName = criterias.getSearch();
 		} else {
 			Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-			// NOTE: Special case for sorting on the ProjectUserJoin
-			String searchString = searchMap.get(ProjectsDatatableUtils.SORT_STRING);
-			if (searchString != null) {
-				searchMap.put(ProjectsDatatableUtils.SORT_STRING, searchString);
-			}
-
-			specification = ProjectUserJoinSpecification
-					.filterProjectsForUserByProjectAttributes(user, searchMap);
+			organismName = searchMap.getOrDefault("organism", "");
+			projectName = searchMap.getOrDefault("name", "");
 		}
 
 
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
-		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
+		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
+		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
+		final String sortName = sortProperties.get("sort_string").toString();
 
-		Page<ProjectUserJoin> page = projectService
-					.searchProjectUsers(specification, currentPage, criterias.getLength(),
-							(Sort.Direction) sortProperties.get(ProjectsDatatableUtils.SORT_DIRECTION),
-							"project." +  sortProperties.get(ProjectsDatatableUtils.SORT_STRING));
+		final Page<Project> page = projectService.findProjects(projectName, organismName, currentPage, criterias.getLength(), direction, sortName);
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
-		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join.getSubject()))
+		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join))
 				.collect(Collectors.toList()));
 		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
 				page.getTotalElements());

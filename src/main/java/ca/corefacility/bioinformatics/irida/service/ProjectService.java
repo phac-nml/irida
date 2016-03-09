@@ -263,4 +263,25 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page,
 			final Integer count, final Direction sortDirection, final String... sortedBy);
+
+	/**
+	 * Find a list of projects (for a user or admin) using the specified search
+	 * criteria
+	 * 
+	 * @param searchName
+	 *            the name to filter on
+	 * @param searchOrganism
+	 *            the organism to filter on
+	 * @param page
+	 *            the requested page of results
+	 * @param count
+	 *            the number of results on the page
+	 * @param sortDirection
+	 *            the direction the results should be sorted by
+	 * @param sortedBy
+	 *            the property to be used to sort the results
+	 * @return a page of projects for the user.
+	 */
+	public Page<Project> findProjects(final String searchName, final String searchOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy);
 }

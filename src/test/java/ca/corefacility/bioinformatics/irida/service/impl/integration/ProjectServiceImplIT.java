@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -85,6 +86,14 @@ public class ProjectServiceImplIT {
 	@Autowired
 	@Qualifier("referenceFileBaseDirectory")
 	private Path referenceFileBaseDirectory;
+	
+	@Test
+	@WithMockUser(username = "groupuser", roles = "USER")
+	public void testGetPagedProjectsForUser() {
+		final Page<Project> projects = projectService.findProjects("", "", 0, 10, Sort.Direction.ASC, "id");
+		
+		assertEquals("User should have 3 projects, two user one group.", 3, projects.getNumberOfElements());
+	}
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")

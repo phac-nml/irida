@@ -508,6 +508,23 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			return projectRepository.findProjectsByNameExcludingProjectForUser(searchName, p, loggedIn, pr);
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<Project> findProjects(final String searchName, final String searchOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy) {
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		final PageRequest pr = new PageRequest(page, count, sortDirection, sortedBy);
+		if (loggedIn.getSystemRole().equals(Role.ROLE_ADMIN)) {			
+			return projectRepository.findAllProjectsByNameOrOrganism(searchName, searchOrganism, pr);
+		} else {
+			return projectRepository.findProjectsForUser(searchName, searchOrganism, loggedIn, pr);
+		}
+	}
 	
 	/**
 	 * Get a {@link ProjectUserJoin} where the user has a given role

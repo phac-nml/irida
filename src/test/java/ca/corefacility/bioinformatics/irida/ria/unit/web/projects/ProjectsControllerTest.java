@@ -97,16 +97,16 @@ public class ProjectsControllerTest {
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxProjectList() {
 		Principal principal = () -> USER_NAME;
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 
-		Page<ProjectUserJoin> page = getProjectUserJoinPage(user);
-		when(projectService.searchProjectUsers(any(Specification.class), any(Integer.class), any(Integer.class), any(
-				Sort.Direction.class), anyVararg())).thenReturn(page);
-		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
+		Page<Project> page = getProjectUserJoinPage(user);
+		when(projectService.findProjects(any(String.class), any(String.class), any(Integer.class), any(Integer.class),
+				any(Sort.Direction.class), anyVararg())).thenReturn(page);
+		when(sampleService.getSamplesForProject(any(Project.class)))
+				.thenReturn(TestDataFactory.constructListJoinProjectSample());
 
 		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
 		when(criterias.getColumnDefs()).thenReturn(getColumnDefs());
@@ -336,8 +336,8 @@ public class ProjectsControllerTest {
 		return list;
 	}
 
-	private Page<ProjectUserJoin> getProjectUserJoinPage(User user) {
-		return new Page<ProjectUserJoin>() {
+	private Page<Project> getProjectUserJoinPage(User user) {
+		return new Page<Project>() {
 			@Override public int getTotalPages() {
 				return 10;
 			}
@@ -358,7 +358,7 @@ public class ProjectsControllerTest {
 				return 10;
 			}
 
-			@Override public List<ProjectUserJoin> getContent() {
+			@Override public List<Project> getContent() {
 				return TestDataFactory.constructListJoinProjectUser(user);
 			}
 
@@ -394,7 +394,7 @@ public class ProjectsControllerTest {
 				return null;
 			}
 
-			@Override public Iterator<ProjectUserJoin> iterator() {
+			@Override public Iterator<Project> iterator() {
 				return null;
 			}
 		};

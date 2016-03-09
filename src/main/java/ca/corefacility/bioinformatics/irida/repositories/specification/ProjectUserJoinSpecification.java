@@ -89,33 +89,4 @@ public class ProjectUserJoinSpecification {
 			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};
 	}
-
-	/**
-	 * Filter {@link Project}s for a specific {@link User} based on all project attributes.
-	 *  (currently only id, name, and organism).
-	 *
-	 * @param user
-	 * 		{@link User} currently logged in {@link User}
-	 * @param term
-	 * 		{@link String} Search query
-	 *
-	 * @return {@link Specification}
-	 */
-	public static Specification<ProjectUserJoin> filterProjectsForUserAllFields(User user, String term) {
-		return (root, query, cb) -> {
-			ArrayList<Predicate> predicates = new ArrayList<>();
-			// Since the project id is a long, we first check to ensure that it is a number being searched
-			// If it is, then to get the search to work within a long, we need to cast that id as a string
-			// and then proceed with the search.
-			if (term.matches("\\d*")) {
-				predicates.add(cb.like(root.get("project").get("id").as(String.class), "%" + term + "%"));
-			}
-			predicates.add(cb.like(root.get("project").get("name"), "%" + term + "%"));
-			predicates.add(cb.like(root.get("project").get("organism"), "%" + term + "%"));
-
-			Predicate ors = cb.or(predicates.toArray(new Predicate[predicates.size()]));
-			return cb.and(cb.equal(root.get("user"), user), ors);
-
-		};
-	}
 }
