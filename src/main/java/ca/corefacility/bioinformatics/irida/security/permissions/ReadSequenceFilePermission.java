@@ -1,21 +1,14 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 /**
  * Evaluate whether or not an authenticated user can read a sequence file.
@@ -27,10 +20,8 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile, Lon
 
 	private static final String PERMISSION_PROVIDED = "canReadSequenceFile";
 
-	private UserRepository userRepository;
-	private ProjectUserJoinRepository pujRepository;
-	private ProjectSampleJoinRepository psjRepository;
-	private SampleSequenceFileJoinRepository ssfRepository;
+	private final SampleSequenceFileJoinRepository ssfRepository;
+	private final ReadSamplePermission readSamplePermission;
 
 	/**
 	 * Construct an instance of {@link ReadSequenceFilePermission}.
@@ -47,14 +38,11 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile, Lon
 	 *            the sample sequence file join repository.
 	 */
 	@Autowired
-	public ReadSequenceFilePermission(SequenceFileRepository sequenceFileRepository, UserRepository userRepository,
-			ProjectUserJoinRepository pujRepository, ProjectSampleJoinRepository psjRepository,
-			SampleSequenceFileJoinRepository ssfRepository) {
+	public ReadSequenceFilePermission(final SequenceFileRepository sequenceFileRepository,
+			final SampleSequenceFileJoinRepository ssfRepository, final ReadSamplePermission readSamplePermission) {
 		super(SequenceFile.class, Long.class, sequenceFileRepository);
-		this.userRepository = userRepository;
-		this.pujRepository = pujRepository;
-		this.psjRepository = psjRepository;
 		this.ssfRepository = ssfRepository;
+		this.readSamplePermission = readSamplePermission;
 	}
 
 	/**
@@ -67,22 +55,8 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile, Lon
 		// file if they are participating in the project owning the sample
 		// owning the sequence file.
 
-		Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository.getSampleForSequenceFile(sf);
-		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(sampleSequenceFile
-				.getSubject());
-		for (Join<Project, Sample> projectSample : projectForSample) {
-
-			List<Join<Project, User>> projectUsers = pujRepository.getUsersForProject(projectSample.getSubject());
-			User u = userRepository.loadUserByUsername(authentication.getName());
-
-			for (Join<Project, User> projectUser : projectUsers) {
-				if (u.equals(projectUser.getObject())) {
-					return true;
-				}
-			}
-		}
-
-		return false;
+		final Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository.getSampleForSequenceFile(sf);
+		return readSamplePermission.isAllowed(authentication, sampleSequenceFile.getSubject());
 	}
 
 	/**
