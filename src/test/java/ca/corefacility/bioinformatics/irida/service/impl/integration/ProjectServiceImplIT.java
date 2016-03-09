@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +45,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -53,13 +53,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedExce
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -370,64 +368,52 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "user1", password = "password1", roles = "USER")
 	public void testSearchProjectsForUser() {
-		User user = userService.read(3L);
 		// test searches
-
-		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser("2", user), 0, 10, Direction.ASC);
+		Page<Project> searchPagedProjectsForUser = projectService.findProjectsForUser("2", "", 0, 10, Direction.ASC);
 		assertEquals(1, searchPagedProjectsForUser.getTotalElements());
 
-		searchPagedProjectsForUser = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.ASC);
+		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", 0, 10, Direction.ASC);
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		// test sorting
-		searchPagedProjectsForUser = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.ASC,
-				"project.name");
-		Page<ProjectUserJoin> searchDesc = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.DESC,
-				"project.name");
+		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", 0, 10, Direction.ASC, "name");
+		final Page<Project> searchDesc = projectService.findProjectsForUser("project", "", 0, 10, Direction.DESC, "name");
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
-		List<ProjectUserJoin> reversed = Lists.reverse(searchDesc.getContent());
-		List<ProjectUserJoin> forward = searchPagedProjectsForUser.getContent();
+		List<Project> reversed = Lists.reverse(searchDesc.getContent());
+		List<Project> forward = searchPagedProjectsForUser.getContent();
 		assertEquals(reversed.size(), forward.size());
 		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
 
 		Project excludeProject = projectService.read(2L);
-		Page<ProjectUserJoin> search = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.excludeProject(excludeProject), 0, 10, Direction.DESC);
+		final Page<Project> search = projectService.getUnassociatedProjects(excludeProject, "", 0, 10, Direction.DESC);
 		assertFalse(search.getContent().contains(excludeProject));
 	}
 
-//	@Test
-//	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
-//	public void testSearchProjects() {
-//		// search for a number
-//		Page<Project> searchFor2 = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10,
-//				Direction.ASC, "name");
-//		assertEquals(2, searchFor2.getTotalElements());
-//		Project next = searchFor2.iterator().next();
-//		assertTrue(next.getName().contains("2"));
-//
-//		// search descending
-//		Page<Project> searchDesc = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10,
-//				Direction.DESC, "name");
-//		List<Project> reversed = Lists.reverse(searchDesc.getContent());
-//		List<Project> forward = searchFor2.getContent();
-//		assertEquals(reversed.size(), forward.size());
-//		for (int i = 0; i < reversed.size(); i++) {
-//			assertEquals(forward.get(i), reversed.get(i));
-//		}
-//
-//		Project excludeProject = projectService.read(5L);
-//		Page<Project> search = projectService.search(ProjectSpecification.excludeProject(excludeProject), 0, 10,
-//				Direction.DESC);
-//		assertFalse(search.getContent().contains(excludeProject));
-//	}
+	@Test
+	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
+	public void testSearchProjects() {
+		// search for a number
+		final Page<Project> searchFor2 = projectService.findProjectsForUser("2", "", 0, 10, Direction.ASC, "name");
+		assertEquals(2, searchFor2.getTotalElements());
+		Project next = searchFor2.iterator().next();
+		assertTrue(next.getName().contains("2"));
+
+		// search descending
+		final Page<Project> searchDesc = projectService.findProjectsForUser("2", "", 0, 10, Direction.DESC, "name");
+		List<Project> reversed = Lists.reverse(searchDesc.getContent());
+		List<Project> forward = searchFor2.getContent();
+		assertEquals(reversed.size(), forward.size());
+		for (int i = 0; i < reversed.size(); i++) {
+			assertEquals(forward.get(i), reversed.get(i));
+		}
+
+		Project excludeProject = projectService.read(5L);
+		final Page<Project> search = projectService.getUnassociatedProjects(excludeProject, "", 0, 10, Direction.DESC);
+		assertFalse(search.getContent().contains(excludeProject));
+	}
 
 	@Test
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")

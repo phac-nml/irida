@@ -4,13 +4,11 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -127,25 +125,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the projects associated with the user.
 	 */
 	public List<Join<Project, User>> getProjectsForUser(User user);
-
-	/**
-	 * Search {@link ProjectUserJoin}s with a given specification and paging parameters
-	 *
-	 * @param specification
-	 * 		The specification to search with
-	 * @param page
-	 * 		The search page number
-	 * @param size
-	 * 		The search page size
-	 * @param order
-	 * 		The search order
-	 * @param sortProperties
-	 * 		The page sort properties
-	 *
-	 * @return The matching ProjectUserJoins
-	 */
-	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
-			Direction order, String... sortProperties);
 
 	/**
 	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}

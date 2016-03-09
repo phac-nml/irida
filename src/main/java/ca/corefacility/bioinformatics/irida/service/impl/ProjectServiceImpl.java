@@ -20,6 +20,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -357,28 +358,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
-			Direction order, String... sortProperties) {
-		if (sortProperties.length == 0) {
-			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
-		}
-		return pujRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
-	}
-
-	/**
 	 * {@inheritDoc }
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
-		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
-				getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE,
-				Direction.ASC);
+		Page<ProjectUserJoin> searchProjectUsers = pujRepository.findAll(getProjectJoinsWithRole(user, projectRole), new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.ASC, CREATED_DATE_SORT_PROPERTY));
 		return searchProjectUsers.getContent().contains(new ProjectUserJoin(project, user, projectRole));
 	}
 
