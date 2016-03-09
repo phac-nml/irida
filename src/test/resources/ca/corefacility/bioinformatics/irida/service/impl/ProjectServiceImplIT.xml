@@ -43,15 +43,15 @@
 	<user_group id="1" created_date="2013-07-18 14:20:19.0" name="group 1" />
 	<user_group_member id="1" created_date="2013-07-18 14:20:19.0" role="GROUP_OWNER" group_id="1" user_id="7" />
 		
-	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" />
-	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" />
-	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" />
-	<project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" />
-	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" />
-	<project id="6" createdDate="2013-07-18 14:22:19.0" name="project6" />
-	<project id="7" createdDate="2013-07-18 14:22:19.0" name="project7" />
-	<project id="8" createdDate="2013-07-18 14:22:19.0" name="project8" />
-	<project id="9" createdDate="2013-07-18 14:20:19.0" name="project9" />
+	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" organism="listeria"/>
+	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" organism="listeria"/>
+	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" organism="listeria" />
+	<project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" organism="listeria" />
+	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" organism="listeria" />
+	<project id="6" createdDate="2013-07-18 14:22:19.0" name="project6" organism="listeria" />
+	<project id="7" createdDate="2013-07-18 14:22:19.0" name="project7" organism="listeria" />
+	<project id="8" createdDate="2013-07-18 14:22:19.0" name="project8" organism="listeria" />
+	<project id="9" createdDate="2013-07-18 14:20:19.0" name="project9" organism="e. coli" />
 	
 	<user_group_project id="1" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_OWNER" project_id="9" user_group_id="1" />
 	<user_group_project id="2" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_USER" project_id="8" user_group_id="1" />

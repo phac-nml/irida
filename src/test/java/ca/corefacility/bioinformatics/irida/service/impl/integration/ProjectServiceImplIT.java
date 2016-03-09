@@ -89,6 +89,14 @@ public class ProjectServiceImplIT {
 	
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
+	public void testGetPagedProjectsForUserWithFilters() {
+		final Page<Project> projects = projectService.findProjectsForUser("", "liste", 0, 10, Sort.Direction.ASC, "id");
+		
+		assertEquals("User should have 3 projects, two user one group.", 2, projects.getNumberOfElements());
+	}
+	
+	@Test
+	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUser() {
 		final Page<Project> projects = projectService.findProjectsForUser("", "", 0, 10, Sort.Direction.ASC, "id");
 		

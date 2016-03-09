@@ -30,9 +30,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -48,11 +52,6 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
-
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
@@ -117,11 +116,10 @@ public class ProjectsControllerTest {
 		testGetAnyAjaxProjectListResult(result.getData(), 10);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxAdminProjectsList() {
-		when(projectService.search(any(Specification.class), any(Integer.class), any(Integer.class), any(
-				Sort.Direction.class), anyVararg())).thenReturn(getProjectPage());
+		when(projectService.findAllProjects(any(String.class), any(String.class), any(Integer.class),
+				any(Integer.class), any(Sort.Direction.class), anyVararg())).thenReturn(getProjectPage());
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
 
 		DatatablesCriterias criterias = mock(DatatablesCriterias.class);

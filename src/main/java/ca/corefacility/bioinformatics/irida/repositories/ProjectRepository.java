@@ -32,8 +32,8 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	public Page<Project> findAllProjectsByNameExcludingProject(final @Param("projectName") String name,
 			final @Param("exclude") Project exclude, final Pageable page);
 
-	static final String PROJECT_NAME_LIKE = "p.name like CONCAT(:projectName,'%')";
-	static final String PROJECT_ORGANISM_LIKE = "p.organism like CONCAT(:organismName, '%')";
+	static final String PROJECT_NAME_LIKE = "(:projectName != '' and p.name like CONCAT(:projectName,'%'))";
+	static final String PROJECT_ORGANISM_LIKE = "(:organismName != '' and p.organism like CONCAT(:organismName, '%'))";
 	static final String EXCLUDE_PROJECT = "p != :exclude";
 	static final String USER_ON_PROJECT = "(:forUser in (select puj.user from ProjectUserJoin puj where puj.project = p))";
 	static final String USER_IN_GROUP = "(:forUser in (select ugj.user from UserGroupJoin ugj, UserGroupProjectJoin ugpj where ugj.group = ugpj.userGroup and ugpj.project = p))";
