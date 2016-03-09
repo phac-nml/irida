@@ -201,8 +201,8 @@ public class ProjectSamplesController {
 	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
 		List<Sample> samplesThatAreInOne = new ArrayList<>();
-		int extraMultiple = 0;
-		int extraSingle = 0;
+		List<Sample> extraMultiple = new ArrayList<>();
+		List<Sample> extraSingle = new ArrayList<>();
 
 		for (Long id : ids) {
 			Sample sample = sampleService.read(id);
@@ -212,13 +212,13 @@ public class ProjectSamplesController {
 				if (samplesThatAreInMultiple.size() < 10) {
 					samplesThatAreInMultiple.add(sample);
 				} else {
-					extraMultiple++;
+					extraMultiple.add(sample);
 				}
 			} else {
 				if (samplesThatAreInOne.size() < 10) {
 					samplesThatAreInOne.add(sample);
 				} else {
-					extraSingle++;
+					extraSingle.add(sample);
 				}
 			}
 		}

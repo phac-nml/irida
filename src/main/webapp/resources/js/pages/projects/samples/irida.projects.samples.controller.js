@@ -22,8 +22,6 @@
 			previousIndex = null;
 		});
 
-
-
 		// BUTTON STATE
 		vm.disabled = {
 			lessThanTwo: true,
@@ -228,7 +226,8 @@
 					item.selected = true;
 					vm.selected.push(item);
 				}
-			})
+			});
+			updateButtons();
 		};
 
 		/**
