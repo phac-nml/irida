@@ -98,9 +98,7 @@
 			};
 			return $http.post(page.urls.samples.merge, params)
 				.success(function(result) {
-					if (result.result === 'success') {
-						notifications.show({type: result.result, msg: result.message});
-					}
+          notifications.show({type: result.result, msg: result.message});
 				});
 		}
 
