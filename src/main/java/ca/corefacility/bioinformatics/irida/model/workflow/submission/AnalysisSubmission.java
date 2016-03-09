@@ -54,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
@@ -126,7 +127,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_remote_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "remote_file_id", nullable = false))
-	private Set<SequenceFileSnapshot> remoteFilesSingle;
+	private Set<SingleEndSequenceFileSnapshot> remoteFilesSingle;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_remote_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "remote_file_pair_id", nullable = false))
@@ -274,7 +275,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 * 
 	 * @return set of {@link SequenceFileSnapshot}
 	 */
-	public Set<SequenceFileSnapshot> getRemoteFilesSingle() {
+	public Set<SingleEndSequenceFileSnapshot> getRemoteFilesSingle() {
 		return remoteFilesSingle;
 	}
 
@@ -508,7 +509,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private String name;
 		private Set<SingleEndSequenceFile> inputFilesSingleEnd;
 		private Set<SequenceFilePair> inputFilesPaired;
-		private Set<SequenceFileSnapshot> remoteFilesSingle;
+		private Set<SingleEndSequenceFileSnapshot> remoteFilesSingle;
 		private Set<SequenceFilePairSnapshot> remoteFilesPaired;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
@@ -578,7 +579,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		 *            Single ended {@link SequenceFileSnapshot}s
 		 * @return A {@link Builder}
 		 */
-		public Builder remoteFilesSingle(Set<SequenceFileSnapshot> remoteFilesSingle) {
+		public Builder remoteFilesSingle(Set<SingleEndSequenceFileSnapshot> remoteFilesSingle) {
 			checkNotNull(remoteFilesSingle, "remoteFilesSingle is null");
 			checkArgument(!remoteFilesSingle.isEmpty(), "remoteFilesSingle is empty");
 
