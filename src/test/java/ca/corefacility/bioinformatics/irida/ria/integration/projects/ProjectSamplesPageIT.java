@@ -131,9 +131,16 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	}
 
-	// TODO: (Josh - 2016-02-05) Create testing for merge
+	@Test
+	public void testMergeSamples() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		// Select some samples
+		page.selectSample(0);
+		page.selectSample(1);
+		assertEquals("Should be 2 selected samples", "2 Samples Selected", page.getSelectedInfoText());
+		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 
-	// TODO: (Josh - 2016-02-05) Create testing for renaming merge
+	}
 
 	// TODO: (Josh - 2016-02-05) Create testing for copying and moving (as user and admin)
 
