@@ -90,10 +90,23 @@
 			}
 		}
 
+		function mergeSamples(data) {
+			var params = {
+				sampleIds: data.ids,
+				mergeSampleId: data.mergeSampleId,
+				newName: data.newName
+			};
+			return $http.post(page.urls.samples.merge, params)
+				.success(function(result) {
+					console.log(result);
+				});
+		}
+
 		return {
 			fetchSamples: fetchSamples,
 			addSamplesToCart: addSamplesToCart,
-			removeSamples: removeSamples
+			removeSamples: removeSamples,
+			mergeSamples: mergeSamples
 		};
 	}
 

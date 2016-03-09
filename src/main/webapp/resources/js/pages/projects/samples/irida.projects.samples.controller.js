@@ -97,6 +97,10 @@
 					}
 				}
 			});
+
+			modal.result.then(function (result) {
+				samplesService.mergeSamples(result);
+			});
 		};
 
 		vm.copy = function () {
@@ -289,7 +293,15 @@
 
 
 		vm.doMerge = function() {
-			console.log(vm);
+			// Get the sampleIds to merge
+			var ids = samples.map(function (item) {
+				return item.sample.identifier;
+			});
+			$uibModalInstance.close({
+				ids: ids,
+				mergeSampleId: vm.selected,
+				newName: vm.name
+			});
 		}
 	}
 
