@@ -36,7 +36,7 @@
 		vm.dtOptions = tableService.createTableOptions();
 
 		// Get the samples - automatically added to datatable.
-		samplesService.fetchSamples().then(function (samples) {
+		samplesService.fetchSamples({showNotification: false}).then(function (samples) {
 			vm.samples = samples;
 		});
 
@@ -99,7 +99,12 @@
 			});
 
 			modal.result.then(function (result) {
-				samplesService.mergeSamples(result);
+				samplesService.mergeSamples(result).then(function () {
+					// Need to reload the samples since the data has changed.
+					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
+						vm.samples = samples;
+					});
+				});
 			});
 		};
 

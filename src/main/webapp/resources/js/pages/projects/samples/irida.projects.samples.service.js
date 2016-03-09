@@ -8,7 +8,6 @@
 	 * @returns {{fetchSamples: fetchSamples}}.
 	 */
 	function samplesService ($http, $q, compiledNotification, cartService) {
-		var initialized = false; // Show samples loading notification only if not the first load
 		// Private Methods
 		function getProjectSamples() {
 			return $http.get(page.urls.samples.project);
@@ -29,7 +28,7 @@
 		function fetchSamples(options) {
 			var promises = [],
 			    // By default only load project samples
-			    config   = {project: true, local: [], remote: []};
+			    config   = {project: true, local: [], remote: [], showNotification: true};
 
 			lodash.merge(config, options);
 
@@ -53,13 +52,10 @@
 						items.push({samples: response.data.samples.length, project: response.data.project.label});
 					}
 				});
-				if (initialized) {
+				if (config.showNotificaiton) {
 					// Show a notification of the currently displayed samples only if it is not
 					// on the page load (ie. current project samples only)
 					compiledNotification.show(items, "samplesUpdate.html", {type: "information"});
-				}
-				else {
-					initialized = true;
 				}
 				return samples;
 			});
