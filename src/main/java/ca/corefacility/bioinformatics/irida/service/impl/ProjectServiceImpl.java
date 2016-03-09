@@ -5,6 +5,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -56,7 +60,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedPr
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
@@ -374,7 +377,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
-				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE,
+				getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE,
 				Direction.ASC);
 		return searchProjectUsers.getContent().contains(new ProjectUserJoin(project, user, projectRole));
 	}
@@ -504,5 +507,24 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		} else {
 			return projectRepository.findProjectsByNameExcludingProjectForUser(searchName, p, loggedIn, pr);
 		}
+	}
+	
+	/**
+	 * Get a {@link ProjectUserJoin} where the user has a given role
+	 * 
+	 * @param projectRole
+	 *            The {@link ProjectRole} to search for.
+	 * @param user
+	 *            The user to search
+	 * @return a {@link Specification} to search for {@link Project} where the
+	 *         specified {@link User} has a certain {@link ProjectRole}.
+	 */
+	private static final Specification<ProjectUserJoin> getProjectJoinsWithRole(User user, ProjectRole projectRole) {
+		return new Specification<ProjectUserJoin>() {
+			@Override
+			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return cb.and(cb.equal(root.get("projectRole"), projectRole), cb.equal(root.get("user"), user));
+			}
+		};
 	}
 }
