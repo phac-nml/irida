@@ -12,6 +12,8 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteRelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 /**
@@ -24,17 +26,23 @@ public class ManageRemoteRelatedProjectPermission extends BasePermission<RemoteR
 	private static final Logger logger = LoggerFactory.getLogger(ManageRemoteRelatedProjectPermission.class);
 	private static final String PERMISSION_PROVIDED = "canManageRemoteRelatedProject";
 
-	private UserRepository userRepository;
-	private ProjectUserJoinRepository pujRepository;
-	private ProjectRepository projectRepository;
+	private final UserRepository userRepository;
+	private final ProjectUserJoinRepository pujRepository;
+	private final ProjectRepository projectRepository;
+	private final UserGroupProjectJoinRepository ugpjRepository;
+	private final UserGroupJoinRepository ugRepository;
 
 	@Autowired
-	public ManageRemoteRelatedProjectPermission(RemoteRelatedProjectRepository rrpRepository,
-			ProjectRepository projectRepository, UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
+	public ManageRemoteRelatedProjectPermission(final RemoteRelatedProjectRepository rrpRepository,
+			final ProjectRepository projectRepository, final UserRepository userRepository,
+			final ProjectUserJoinRepository pujRepository, final UserGroupProjectJoinRepository ugpjRepository,
+			final UserGroupJoinRepository ugRepository) {
 		super(RemoteRelatedProject.class, Long.class, rrpRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.projectRepository = projectRepository;
+		this.ugpjRepository = ugpjRepository;
+		this.ugRepository = ugRepository;
 	}
 
 	@Override
@@ -49,7 +57,7 @@ public class ManageRemoteRelatedProjectPermission extends BasePermission<RemoteR
 		logger.trace("Checking project owner permission for project " + localProject);
 
 		ProjectOwnerPermission projectOwnerPermission = new ProjectOwnerPermission(projectRepository, userRepository,
-				pujRepository);
+				pujRepository, ugpjRepository, ugRepository);
 		return projectOwnerPermission.isAllowed(authentication, localProject);
 	}
 
