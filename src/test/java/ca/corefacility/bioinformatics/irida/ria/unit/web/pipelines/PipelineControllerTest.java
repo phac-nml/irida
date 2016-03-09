@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -53,6 +54,7 @@ public class PipelineControllerTest {
 	private MessageSource messageSource;
 	private CartController cartController;
 	private SequenceFileRemoteService sequenceFileRemoteService;
+	private SingleEndSequenceFileRemoteService singleEndSequenceFileRemoteService;
 	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	// Controller to test
 	private PipelineController controller;
@@ -75,7 +77,7 @@ public class PipelineControllerTest {
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, sequenceFileRemoteService, cartController,
-				messageSource, namedParameterService, sequenceFilePairRemoteService, remoteSequenceFileService,
+				messageSource, namedParameterService, sequenceFilePairRemoteService, singleEndSequenceFileRemoteService, remoteSequenceFileService,
 				remoteSequenceFilePairService);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}

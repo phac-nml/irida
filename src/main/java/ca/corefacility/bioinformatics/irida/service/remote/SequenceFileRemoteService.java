@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * 
  *
  */
+@Deprecated
 public interface SequenceFileRemoteService extends RemoteService<SequenceFile> {
 
 	/**

@@ -56,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -105,6 +106,7 @@ public class PipelineController extends BaseController {
 	private final WorkflowNamedParametersService namedParameterService;
 	
 	private SequenceFileRemoteService sequenceFileRemoteService;
+	private SingleEndSequenceFileRemoteService sequenceFileSingleRemoteService;
 	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	
 	private SequenceFileSnapshotService remoteSequenceFileService;
@@ -121,7 +123,7 @@ public class PipelineController extends BaseController {
 			ProjectService projectService, UserService userService,
 			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
 			MessageSource messageSource, final WorkflowNamedParametersService namedParameterService,
-			SequenceFilePairRemoteService sequenceFilePairRemoteService,
+			SequenceFilePairRemoteService sequenceFilePairRemoteService, SingleEndSequenceFileRemoteService sequenceFileSingleRemoteService,
 			SequenceFileSnapshotService remoteSequenceFileService,
 			SequenceFilePairSnapshotService remoteSequenceFilePairService) {
 		this.sequencingObjectService = sequencingObjectService;
@@ -137,6 +139,7 @@ public class PipelineController extends BaseController {
 		this.sequenceFilePairRemoteService = sequenceFilePairRemoteService;
 		this.remoteSequenceFileService = remoteSequenceFileService;
 		this.remoteSequenceFilePairService = remoteSequenceFilePairService;
+		this.sequenceFileSingleRemoteService = sequenceFileSingleRemoteService;
 		
 	}
 
@@ -295,7 +298,7 @@ public class PipelineController extends BaseController {
 				
 				if (description.acceptsSingleSequenceFiles()) {
 					logger.trace("Getting remote single files for sample " + url);
-					files.put("single_end", sequenceFileRemoteService.getUnpairedSequenceFilesForSample(sample));
+					files.put("single_end", sequenceFileSingleRemoteService.getUnpairedFilesForSample(sample));
 				}
 				
 				sampleMap.put("files", files);
