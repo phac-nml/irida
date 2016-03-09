@@ -43,7 +43,7 @@
 	<div class="modal-footer">
 		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="mergeCtrl.cancel()"></button>
 		<button id="confirmMergeBtn" class="btn btn-primary"
-		        ng-disabled="mergeCtrl.error.format || mergeCtrl.error.length"
+		        ng-disabled="mergeForm.newName.$error"
 		        th:text="#{project.samples.modal.merge.complete}" ng-click="mergeCtrl.merge()">Complete Merge
 		</button>
 	</div>

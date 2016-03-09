@@ -280,7 +280,9 @@
 		var vm = this;
 		vm.samples = samples;
 		vm.selected = vm.samples[0].sample.identifier;
-		vm.validNameRE = /^[a-zA-Z0-9]+$/;
+
+		// If user enters a custom name it is not allowed to have spaces
+		vm.validNameRE = /[a-zA-Z0-9-_]+/;
 
 		vm.cancel = function() {
 			$uibModalInstance.dismiss();
