@@ -19,44 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  *
  */
 public class ProjectSpecification {
-	/**
-	 * Search for a project by name
-	 * 
-	 * @param name
-	 *            the name to use in the search.
-	 * @return a {@link Specification} on project name.
-	 */
-	public static Specification<Project> searchProjectName(String name) {
-		return new Specification<Project>() {
-			@Override
-			public Predicate toPredicate(Root<Project> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return cb.like(root.get("name"), "%" + name + "%");
-			}
 
-		};
-	}
-
-	/**
-	 * Exclude the given projects from the results
-	 * 
-	 * @param projects
-	 *            The projects to exclude
-	 * @return A specification instructing to exclude the given projects
-	 */
-	public static Specification<Project> excludeProject(Project... projects) {
-		return new Specification<Project>() {
-			@Override
-			public Predicate toPredicate(Root<Project> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-
-				ArrayList<Predicate> predicates = new ArrayList<>();
-				for (Project p : projects) {
-					predicates.add(cb.notEqual(root, p));
-				}
-
-				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
-			}
-		};
-	}
 
 	/**
 	 * Search through {@link Project}s for a {@link User} based on specific attributes or through a generalized search

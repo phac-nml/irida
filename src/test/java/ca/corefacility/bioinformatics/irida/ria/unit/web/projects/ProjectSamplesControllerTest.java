@@ -5,8 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,8 +33,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -55,10 +55,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesContr
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
@@ -74,7 +70,6 @@ public class ProjectSamplesControllerTest {
 	private ProjectService projectService;
 	private ProjectSamplesController controller;
 	private SampleService sampleService;
-	private UserService userService;
 	private SequenceFileService sequenceFileService;
 	private MessageSource messageSource;
 	private ProjectControllerUtils projectUtils;
@@ -83,12 +78,11 @@ public class ProjectSamplesControllerTest {
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
-		userService = mock(UserService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
 
-		controller = new ProjectSamplesController(projectService, sampleService, userService, sequenceFileService,
+		controller = new ProjectSamplesController(projectService, sampleService, sequenceFileService,
 				projectUtils, messageSource);
 		user.setId(1L);
 
@@ -102,9 +96,7 @@ public class ProjectSamplesControllerTest {
 		Project project = getProject();
 		Collection<Join<Project, User>> ownerList = new ArrayList<>();
 		ownerList.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
-		when(userService.getUsersForProjectByRole(any(Project.class), any(ProjectRole.class))).thenReturn(ownerList);
 		when(projectService.read(PROJECT_ID)).thenReturn(project);
-		when(userService.getUserByUsername(anyString())).thenReturn(user);
 	}
 
 	private Project getProject() {
@@ -259,7 +251,6 @@ public class ProjectSamplesControllerTest {
 		assertEquals("Result is success", result.get("result"), "success");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetProjectsAvailableToCopySamplesAsAdmin() {
 		String term = "";
@@ -273,9 +264,7 @@ public class ProjectSamplesControllerTest {
 		puser.setSystemRole(Role.ROLE_ADMIN);
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
 
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(projectService.search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property)))
-				.thenReturn(projects);
+		when(projectService.getUnassociatedProjects(null, term, page, pagesize, order, property)).thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(
 				term, pagesize, page, principal);
@@ -284,11 +273,9 @@ public class ProjectSamplesControllerTest {
 		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
 		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
 
-		verify(userService).getUserByUsername(USER_NAME);
-		verify(projectService).search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property));
+		verify(projectService).getUnassociatedProjects(null, term, page, pagesize, order, property);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetProjectsAvailableToCopySamplesAsUser() {
 		String term = "";
@@ -299,13 +286,9 @@ public class ProjectSamplesControllerTest {
 		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
-		Page<ProjectUserJoin> projects = new PageImpl<>(Lists.newArrayList(new ProjectUserJoin(TestDataFactory.constructProject(),
-				puser, ProjectRole.PROJECT_OWNER), new ProjectUserJoin(TestDataFactory.constructProject(), puser,
-				ProjectRole.PROJECT_OWNER)));
+		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
 
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(projectService.searchProjectUsers(any(Specification.class), eq(page), eq(pagesize), eq(order)))
-				.thenReturn(projects);
+		when(projectService.getUnassociatedProjects(null, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY)).thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller
 				.getProjectsAvailableToCopySamples(term, pagesize, page, principal);
@@ -314,8 +297,7 @@ public class ProjectSamplesControllerTest {
 		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
 		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
 
-		verify(userService).getUserByUsername(USER_NAME);
-		verify(projectService).searchProjectUsers(any(Specification.class), eq(page), eq(pagesize), eq(order));
+		verify(projectService).getUnassociatedProjects(null, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY);
 	}
 
 	@Test

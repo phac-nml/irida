@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
@@ -78,6 +79,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final SequenceFileUtilities sequenceFileUtilities;
 	private final UserGroupProjectJoinRepository ugpjRepository;
+	private final ProjectRepository projectRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
@@ -87,6 +89,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			SequenceFileUtilities sequenceFileUtilities, final UserGroupProjectJoinRepository ugpjRepository,
 			Validator validator) {
 		super(projectRepository, validator, Project.class);
+		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
@@ -482,6 +485,24 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		} else {
 			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName()
 					+ "] and reference file [" + file.getLabel() + "].");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#p, 'isProjectOwner')")
+	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page, final Integer count,
+			final Direction sortDirection, final String... sortedBy) {
+
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		final PageRequest pr = new PageRequest(page, count, sortDirection, sortedBy);
+		if (loggedIn.getSystemRole().equals(Role.ROLE_ADMIN)) {			
+			return projectRepository.findAllProjectsByNameExcludingProject(searchName, p, pr);
+		} else {
+			return projectRepository.findProjectsByNameExcludingProjectForUser(searchName, p, loggedIn, pr);
 		}
 	}
 }

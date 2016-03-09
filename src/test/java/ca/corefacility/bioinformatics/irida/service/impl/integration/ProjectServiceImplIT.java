@@ -58,7 +58,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -86,6 +85,27 @@ public class ProjectServiceImplIT {
 	@Autowired
 	@Qualifier("referenceFileBaseDirectory")
 	private Path referenceFileBaseDirectory;
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUnassociatedProjectsForAdmin() {
+		final Project p = projectService.read(9L);
+		final Page<Project> unassociated = projectService.getUnassociatedProjects(p, "", 0, 10, Direction.ASC, "name");
+		
+		assertEquals("Admin should have 8 unassociated projects.", 8, unassociated.getNumberOfElements());
+	}
+	
+	@Test
+	@WithMockUser(username = "groupuser", roles = "USER")
+	public void testGetUnassociatedProjects() {
+		final Project p = projectService.read(9L);
+		final Project unassociatedProject = projectService.read(8L);
+		final Page<Project> unassociated = projectService.getUnassociatedProjects(p, "", 0, 10, Direction.ASC, "name");
+		
+		assertEquals("This user should have two unassociated projects (one group, one user).", 2, unassociated.getNumberOfElements());
+		assertTrue("The unassociated project should be the other project.",
+				unassociated.getContent().contains(unassociatedProject));
+	}
 	
 	@Test
 	@WithMockUser(username="groupuser", roles="USER")
@@ -366,31 +386,31 @@ public class ProjectServiceImplIT {
 		assertFalse(search.getContent().contains(excludeProject));
 	}
 
-	@Test
-	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
-	public void testSearchProjects() {
-		// search for a number
-		Page<Project> searchFor2 = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10,
-				Direction.ASC, "name");
-		assertEquals(2, searchFor2.getTotalElements());
-		Project next = searchFor2.iterator().next();
-		assertTrue(next.getName().contains("2"));
-
-		// search descending
-		Page<Project> searchDesc = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10,
-				Direction.DESC, "name");
-		List<Project> reversed = Lists.reverse(searchDesc.getContent());
-		List<Project> forward = searchFor2.getContent();
-		assertEquals(reversed.size(), forward.size());
-		for (int i = 0; i < reversed.size(); i++) {
-			assertEquals(forward.get(i), reversed.get(i));
-		}
-
-		Project excludeProject = projectService.read(5L);
-		Page<Project> search = projectService.search(ProjectSpecification.excludeProject(excludeProject), 0, 10,
-				Direction.DESC);
-		assertFalse(search.getContent().contains(excludeProject));
-	}
+//	@Test
+//	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
+//	public void testSearchProjects() {
+//		// search for a number
+//		Page<Project> searchFor2 = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10,
+//				Direction.ASC, "name");
+//		assertEquals(2, searchFor2.getTotalElements());
+//		Project next = searchFor2.iterator().next();
+//		assertTrue(next.getName().contains("2"));
+//
+//		// search descending
+//		Page<Project> searchDesc = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10,
+//				Direction.DESC, "name");
+//		List<Project> reversed = Lists.reverse(searchDesc.getContent());
+//		List<Project> forward = searchFor2.getContent();
+//		assertEquals(reversed.size(), forward.size());
+//		for (int i = 0; i < reversed.size(); i++) {
+//			assertEquals(forward.get(i), reversed.get(i));
+//		}
+//
+//		Project excludeProject = projectService.read(5L);
+//		Page<Project> search = projectService.search(ProjectSpecification.excludeProject(excludeProject), 0, 10,
+//				Direction.DESC);
+//		assertFalse(search.getContent().contains(excludeProject));
+//	}
 
 	@Test
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")

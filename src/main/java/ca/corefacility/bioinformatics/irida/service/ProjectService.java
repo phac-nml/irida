@@ -242,4 +242,25 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link ReferenceFile} to remove.
 	 */
 	public void removeReferenceFileFromProject(Project project, ReferenceFile referenceFile);
+	
+	/**
+	 * Get a page of projects eligible to be marked as associated projects for
+	 * the specified project.
+	 * 
+	 * @param p
+	 *            the project to get eligible associated projects.
+	 * @param searchName
+	 *            the name of projects to filter on.
+	 * @param page
+	 *            the requested page of results.
+	 * @param count
+	 *            the number of results on the page.
+	 * @param sortDirection
+	 *            the direction the results should be sorted by.
+	 * @param sortedBy
+	 *            the property to be used to sort the results.
+	 * @return a page of projects eligible to be marked as associated projects.
+	 */
+	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy);
 }
