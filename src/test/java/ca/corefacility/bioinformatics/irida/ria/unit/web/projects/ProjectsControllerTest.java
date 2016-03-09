@@ -103,7 +103,7 @@ public class ProjectsControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 
 		Page<Project> page = getProjectUserJoinPage(user);
-		when(projectService.findProjects(any(String.class), any(String.class), any(Integer.class), any(Integer.class),
+		when(projectService.findProjectsForUser(any(String.class), any(String.class), any(Integer.class), any(Integer.class),
 				any(Sort.Direction.class), anyVararg())).thenReturn(page);
 		when(sampleService.getSamplesForProject(any(Project.class)))
 				.thenReturn(TestDataFactory.constructListJoinProjectSample());

@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -65,7 +64,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
@@ -414,13 +412,12 @@ public class ProjectsController {
 			projectName = searchMap.getOrDefault("name", "");
 		}
 
-
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
 		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
 		final String sortName = sortProperties.get("sort_string").toString();
 
-		final Page<Project> page = projectService.findProjects(projectName, organismName, currentPage, criterias.getLength(), direction, sortName);
+		final Page<Project> page = projectService.findProjectsForUser(projectName, organismName, currentPage, criterias.getLength(), direction, sortName);
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
 		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join))
 				.collect(Collectors.toList()));
@@ -440,18 +437,24 @@ public class ProjectsController {
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
 			@DatatablesParams DatatablesCriterias criterias) {
+		final String organismName;
+		final String projectName;
 
-		Specification<Project> specification = ProjectSpecification
-				.filterProjectsByAdvancedFiltersAndSearch(ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs()),
-						criterias.getSearch());
-
+		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
+			organismName = criterias.getSearch();
+			projectName = criterias.getSearch();
+		} else {
+			Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
+			organismName = searchMap.getOrDefault("organism", "");
+			projectName = searchMap.getOrDefault("name", "");
+		}
+		
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
-		int currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
+		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
+		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
+		final String sortName = sortProperties.get("sort_string").toString();
 
-		Page<Project> page = projectService
-				.search(specification, currentPage, criterias.getLength(),
-						(Sort.Direction) sortProperties.get(ProjectsDatatableUtils.SORT_DIRECTION),
-						(String) sortProperties.get(ProjectsDatatableUtils.SORT_STRING));
+		final Page<Project> page = projectService.findAllProjects(projectName, organismName, currentPage, criterias.getLength(), direction, sortName);
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
 		projects.addAll(page.getContent().stream().map(this::createProjectMap).collect(Collectors.toList()));
 		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
