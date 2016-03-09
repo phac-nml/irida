@@ -86,7 +86,6 @@ public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile
 
 	@Override
 	public Date getCreatedDate() {
-		// TODO Auto-generated method stub
 		return createdDate;
 	}
 
