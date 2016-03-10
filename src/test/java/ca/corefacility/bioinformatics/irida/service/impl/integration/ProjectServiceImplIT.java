@@ -90,7 +90,7 @@ public class ProjectServiceImplIT {
 	public void testGetPagedProjectsForUserWithFilters() {
 		final Page<Project> projects = projectService.findProjectsForUser("", "liste", 0, 10, Sort.Direction.ASC, "id");
 		
-		assertEquals("User should have 3 projects, two user one group.", 2, projects.getNumberOfElements());
+		assertEquals("User should have 2 projects for filter", 2, projects.getNumberOfElements());
 	}
 	
 	@Test
@@ -127,12 +127,15 @@ public class ProjectServiceImplIT {
 	public void testGetProjectsForUserWithGroup() {
 		final User u = userService.read(7L);
 		final List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
-		final Project userProject = projectService.read(8L);
-		final Project groupProject = projectService.read(9L);
 		
-		assertEquals("Should be on 2 projects.", 2, projects.size());
+		final Project userProject = projectService.read(7L);
+		final Project groupProject = projectService.read(8L);
+		final Project groupProject2 = projectService.read(9L);
+		
+		assertEquals("Should be on 3 projects.", 3, projects.size());
 		assertTrue("Should have user project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(userProject)));
 		assertTrue("Should have group project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(groupProject)));
+		assertTrue("Should have group project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(groupProject2)));
 	}
 
 	@Test
@@ -396,13 +399,13 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
 	public void testSearchProjects() {
 		// search for a number
-		final Page<Project> searchFor2 = projectService.findProjectsForUser("2", "", 0, 10, Direction.ASC, "name");
+		final Page<Project> searchFor2 = projectService.findAllProjects("2", "", 0, 10, Direction.ASC, "name");
 		assertEquals(2, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
 
 		// search descending
-		final Page<Project> searchDesc = projectService.findProjectsForUser("2", "", 0, 10, Direction.DESC, "name");
+		final Page<Project> searchDesc = projectService.findAllProjects("2", "", 0, 10, Direction.DESC, "name");
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
 		List<Project> forward = searchFor2.getContent();
 		assertEquals(reversed.size(), forward.size());

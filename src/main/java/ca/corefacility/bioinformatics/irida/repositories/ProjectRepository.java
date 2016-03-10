@@ -32,11 +32,12 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	public Page<Project> findAllProjectsByNameExcludingProject(final @Param("projectName") String name,
 			final @Param("exclude") Project exclude, final Pageable page);
 
-	static final String PROJECT_NAME_LIKE = "(:projectName != '' and p.name like CONCAT(:projectName,'%'))";
-	static final String PROJECT_ORGANISM_LIKE = "(:organismName != '' and p.organism like CONCAT(:organismName, '%'))";
+	static final String PROJECT_ID_LIKE = "(p.id like CONCAT('%', :projectName, '%'))";
+	static final String PROJECT_NAME_LIKE = "(p.name like CONCAT('%', :projectName,'%'))";
+	static final String PROJECT_ORGANISM_LIKE = "(p.organism like CONCAT('%', :organismName, '%'))";
 	static final String EXCLUDE_PROJECT = "p != :exclude";
-	static final String USER_ON_PROJECT = "(:forUser in (select puj.user from ProjectUserJoin puj where puj.project = p))";
-	static final String USER_IN_GROUP = "(:forUser in (select ugj.user from UserGroupJoin ugj, UserGroupProjectJoin ugpj where ugj.group = ugpj.userGroup and ugpj.project = p))";
+	static final String USER_ON_PROJECT = "(p in (select puj.project from ProjectUserJoin puj where puj.user = :forUser))";
+	static final String USER_IN_GROUP = "(p in (select ugpj.project from UserGroupJoin ugj, UserGroupProjectJoin ugpj where ugj.group = ugpj.userGroup and ugj.user = :forUser))";
 	static final String PROJECT_PERMISSIONS = "(" + USER_ON_PROJECT + " or " + USER_IN_GROUP + ")";
 
 	/**
@@ -70,8 +71,8 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	 *            the page request
 	 * @return a page of {@link Project}.
 	 */
-	@Query("from Project p where (" + PROJECT_NAME_LIKE + " or " + PROJECT_ORGANISM_LIKE + ") and "
-			+ PROJECT_PERMISSIONS)
+	@Query("from Project p where ((" + PROJECT_NAME_LIKE + " or " + PROJECT_ID_LIKE + ") and " + PROJECT_ORGANISM_LIKE
+			+ ") and " + PROJECT_PERMISSIONS)
 	public Page<Project> findProjectsForUser(final @Param("projectName") String searchName,
 			final @Param("organismName") String searchOrganism, final @Param("forUser") User user, final Pageable page);
 
@@ -87,7 +88,7 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	 * @return a page of {@link Project}.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@Query("from Project p where (" + PROJECT_NAME_LIKE + " or " + PROJECT_ORGANISM_LIKE + ")")
+	@Query("from Project p where (" + PROJECT_NAME_LIKE + " and " + PROJECT_ORGANISM_LIKE + ")")
 	public Page<Project> findAllProjectsByNameOrOrganism(final @Param("projectName") String searchName,
 			final @Param("organismName") String organismName, final Pageable page);
 }

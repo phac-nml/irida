@@ -486,7 +486,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		final PageRequest pr = new PageRequest(page, count, sortDirection, sortedBy);
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
 		if (loggedIn.getSystemRole().equals(Role.ROLE_ADMIN)) {			
 			return projectRepository.findAllProjectsByNameExcludingProject(searchName, p, pr);
 		} else {
@@ -503,7 +503,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			final Integer count, final Direction sortDirection, final String... sortedBy) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		final PageRequest pr = new PageRequest(page, count, sortDirection, sortedBy);
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
 		return projectRepository.findProjectsForUser(searchName, searchOrganism, loggedIn, pr);
 	}
 	
@@ -514,8 +514,25 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<Project> findAllProjects(final String searchName, final String searchOrganism, final Integer page,
 			final Integer count, final Direction sortDirection, final String... sortedBy) {
-		final PageRequest pr = new PageRequest(page, count, sortDirection, sortedBy);
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
 		return projectRepository.findAllProjectsByNameOrOrganism(searchName, searchOrganism, pr);
+	}
+	
+	/**
+	 * If the sort properties are empty, sort by default on the CREATED_DATE
+	 * property.
+	 * 
+	 * @param sortProperties
+	 *            the sort properties to check
+	 * @return the created date property if no sort properties specified,
+	 *         otherwise just return the sort properties.
+	 */
+	private static final String[] getOrDefaultSortProperties(final String... sortProperties) {
+		if (sortProperties == null || sortProperties.length == 0) {
+			return new String[] {CREATED_DATE_SORT_PROPERTY};
+		} else {
+			return sortProperties;
+		}
 	}
 	
 	/**
