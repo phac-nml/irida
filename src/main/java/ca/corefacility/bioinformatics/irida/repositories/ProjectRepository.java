@@ -16,6 +16,22 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 
 	/**
+	 * Sub-expressions for filtering and paging projects on different property
+	 * names.
+	 */
+	static final String PROJECT_ID_LIKE = "(p.id like CONCAT('%', :projectName, '%'))";
+	static final String PROJECT_NAME_LIKE = "(p.name like CONCAT('%', :projectName,'%'))";
+	static final String PROJECT_ORGANISM_LIKE = "(p.organism like CONCAT('%', :organismName, '%'))";
+	static final String EXCLUDE_PROJECT = "p != :exclude";
+	/**
+	 * Sub-expressions for filtering and paging projects on permissions (via
+	 * user groups and project membership).
+	 */
+	static final String USER_ON_PROJECT = "(p in (select puj.project from ProjectUserJoin puj where puj.user = :forUser))";
+	static final String USER_IN_GROUP = "(p in (select ugpj.project from UserGroupJoin ugj, UserGroupProjectJoin ugpj where ugj.group = ugpj.userGroup and ugj.user = :forUser))";
+	static final String PROJECT_PERMISSIONS = "(" + USER_ON_PROJECT + " or " + USER_IN_GROUP + ")";
+
+	/**
 	 * Load up a page of {@link Project}s, excluding the specified
 	 * {@link Project}.
 	 * 
@@ -31,14 +47,6 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	@Query("from Project p where " + PROJECT_NAME_LIKE + " and " + EXCLUDE_PROJECT)
 	public Page<Project> findAllProjectsByNameExcludingProject(final @Param("projectName") String name,
 			final @Param("exclude") Project exclude, final Pageable page);
-
-	static final String PROJECT_ID_LIKE = "(p.id like CONCAT('%', :projectName, '%'))";
-	static final String PROJECT_NAME_LIKE = "(p.name like CONCAT('%', :projectName,'%'))";
-	static final String PROJECT_ORGANISM_LIKE = "(p.organism like CONCAT('%', :organismName, '%'))";
-	static final String EXCLUDE_PROJECT = "p != :exclude";
-	static final String USER_ON_PROJECT = "(p in (select puj.project from ProjectUserJoin puj where puj.user = :forUser))";
-	static final String USER_IN_GROUP = "(p in (select ugpj.project from UserGroupJoin ugj, UserGroupProjectJoin ugpj where ugj.group = ugpj.userGroup and ugj.user = :forUser))";
-	static final String PROJECT_PERMISSIONS = "(" + USER_ON_PROJECT + " or " + USER_IN_GROUP + ")";
 
 	/**
 	 * Load a page of {@link Project}s for a specific {@link User}, excluding a
