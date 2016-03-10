@@ -2,7 +2,9 @@ package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -12,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenc
 import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
+@Service
 public class SingleEndSequenceFileRemoteServiceImpl extends RemoteServiceImpl<SingleEndSequenceFile> implements
 		SingleEndSequenceFileRemoteService {
 
@@ -19,6 +22,7 @@ public class SingleEndSequenceFileRemoteServiceImpl extends RemoteServiceImpl<Si
 
 	private SingleEndSequenceFileRemoteRepository repository;
 	
+	@Autowired
 	public SingleEndSequenceFileRemoteServiceImpl(SingleEndSequenceFileRemoteRepository repository,
 			RemoteAPIRepository remoteAPIRepository) {
 		super(repository, remoteAPIRepository);
