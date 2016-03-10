@@ -149,6 +149,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should still the first samples name", originalNames.get(0), mergeNames.get(0));
 		assertEquals("Should have different sample second since it was merged", originalNames.get(1), mergeNames.get(1));
 
+		// Merge with a new name
+		page.selectSample(0);
+		page.selectSample(1);
+		String newSampleName = "MY_NEW_SAMPLE_NAME";
+		page.mergeSamplesWithNewName(newSampleName);
+		String name = page.getSampleNamesOnPage().get(0);
+		assertEquals("Should have the new sample name", newSampleName, name);
 	}
 
 	// TODO: (Josh - 2016-02-05) Create testing for copying and moving (as user and admin)

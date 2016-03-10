@@ -65,6 +65,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirmMergeBtn")
 	private WebElement mergeBtnOK;
 
+	@FindBy(id = "newName")
+	private WebElement newMergeNameInput;
+
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
@@ -162,6 +165,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		mergeBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
+		mergeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
+	}
+
+	public void mergeSamplesWithNewName(String newName) {
+		mergeBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(mergeModal));
+		newMergeNameInput.sendKeys(newName);
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
