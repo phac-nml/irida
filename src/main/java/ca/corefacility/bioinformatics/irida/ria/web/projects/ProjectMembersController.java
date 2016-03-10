@@ -1,10 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,17 +136,12 @@ public class ProjectMembersController {
 	 */
 	@RequestMapping("/{projectId}/ajax/availablemembers")
 	@ResponseBody
-	public Map<Long, String> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
-		Project project = projectService.read(projectId);
-		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
-		Map<Long, String> users = new HashMap<>();
-		for (User user : usersAvailableForProject) {
-			if (user.getLabel().toLowerCase().contains(term.toLowerCase())) {
-				users.put(user.getId(), user.getLabel());
-			}
-		}
-
-		return users;
+	public Collection<User> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
+		final Project project = projectService.read(projectId);
+		final List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
+		
+		return usersAvailableForProject.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
+				.collect(Collectors.toList());
 	}
 
 	/**

@@ -46,6 +46,52 @@ var projectMembersTable = (function(page, notifications) {
 		row.find('[data-toggle="tooltip"]').tooltip();
 	};
 	
+	
+	$("#add-user-username").select2({
+	    minimumInputLength: 2,
+	    ajax: {
+	        url: page.urls.usersSelection,
+	        dataType: 'json',
+	        data: function(term) {
+	            return {
+	                term: term,
+	                page_limit: 10
+	            };
+	        },
+	        results: function(data, params) {
+	            return {results: data.map(function(el) {
+	        		return {"id": el["identifier"], "text": el["label"]};
+	        	})};
+	        }
+	    }
+	});
+	
+	$("#submitAddMember").click(function() {
+		$.ajax({
+			url: page.urls.addMember,
+			method: 'POST',
+			data: {
+				"userId" : $("#add-user-username").val(),
+				"projectRole" : $("#add-user-role").val()
+			},
+			success: function(result) {
+				$("#addUserModal").modal('hide');
+				oTable_usersTable.ajax.reload();
+				notifications.show({
+					'msg': result.result
+				});
+				$("#add-user-username").select2("val", "");
+			},
+			error: function() {
+				$("#addUserModal").modal('hide');
+				notifications.show({
+					'msg': page.i18n.unexpectedAddError,
+					'type': 'error'
+				})
+			}
+		})
+	});
+	
 	return {
 		renderGroupRole : renderGroupRole,
 		userNameLinkRow : userNameLinkRow,
