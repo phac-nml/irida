@@ -25,7 +25,8 @@
 		// BUTTON STATE
 		vm.disabled = {
 			lessThanTwo: true,
-			lessThanOne: true
+			lessThanOne: true,
+			otherProjects: false
 		};
 
 		// Hide project name unless multiple displayed.
@@ -77,6 +78,7 @@
 						vm.showProjectname = display.local.length > 0;
 						// Update the samples;
 						vm.samples = samples;
+						updateButtons();
 					});
 				}
 			})
@@ -247,7 +249,8 @@
 			vm.allSelected = vm.samples.length === count;
 			vm.disabled = {
 				lessThanTwo: count < 2,
-				lessThanOne: count < 1
+				lessThanOne: count < 1,
+				otherProjects: display.local.length > 0
 			};
 		}
 	}
