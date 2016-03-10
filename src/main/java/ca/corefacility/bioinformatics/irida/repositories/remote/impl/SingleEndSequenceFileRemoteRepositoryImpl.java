@@ -10,6 +10,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
+/**
+ * Implementation of a {@link SingleEndSequenceFileRemoteRepository} extending
+ * {@link RemoteRepositoryImpl}
+ */
 @Repository
 public class SingleEndSequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<SingleEndSequenceFile> implements
 		SingleEndSequenceFileRemoteRepository {

@@ -27,6 +27,9 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSnapshot;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Snapshot of a {@link SingleEndSequenceFile} read from a remote site
+ */
 @Entity
 @Table(name = "remote_sequence_file_single")
 @EntityListeners(AuditingEntityListener.class)
@@ -42,10 +45,10 @@ public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date")
 	private Date createdDate;
-	
+
 	@NotNull
 	@Column(name = "remote_uri")
-	private String remoteURI; 
+	private String remoteURI;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@NotNull
@@ -99,7 +102,7 @@ public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile
 	public Long getId() {
 		return id;
 	}
-	
+
 	public String getRemoteURI() {
 		return remoteURI;
 	}

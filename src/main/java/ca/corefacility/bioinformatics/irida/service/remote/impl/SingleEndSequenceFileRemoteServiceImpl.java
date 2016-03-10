@@ -14,6 +14,10 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenc
 import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
+/**
+ * Implementation of {@link SingleEndSequenceFileRemoteService} using a
+ * {@link SingleEndSequenceFileRemoteRepository}
+ */
 @Service
 public class SingleEndSequenceFileRemoteServiceImpl extends RemoteServiceImpl<SingleEndSequenceFile> implements
 		SingleEndSequenceFileRemoteService {
@@ -21,7 +25,7 @@ public class SingleEndSequenceFileRemoteServiceImpl extends RemoteServiceImpl<Si
 	public static final String SAMPLE_SEQENCE_FILE_UNPAIRED_REL = RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED;
 
 	private SingleEndSequenceFileRemoteRepository repository;
-	
+
 	@Autowired
 	public SingleEndSequenceFileRemoteServiceImpl(SingleEndSequenceFileRemoteRepository repository,
 			RemoteAPIRepository remoteAPIRepository) {

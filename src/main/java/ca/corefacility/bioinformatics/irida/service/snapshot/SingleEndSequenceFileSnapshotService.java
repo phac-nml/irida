@@ -7,12 +7,15 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
+/**
+ * Service for storing and retreving {@link SingleEndSequenceFileSnapshot}s
+ */
 public interface SingleEndSequenceFileSnapshotService extends CRUDService<Long, SingleEndSequenceFileSnapshot> {
 	/**
 	 * Mirror the metadata for a {@link SingleEndSequenceFile} locally and
 	 * return a {@link SingleEndSequenceFileSnapshot}. This method will convert
 	 * the {@link SingleEndSequenceFile} to a
-	 * {@link SingleEndSequenceFileSnapshotService} and the embedded
+	 * {@link SingleEndSequenceFileSnapshot} and the embedded
 	 * {@link SequenceFile}s to {@link SequenceFilePairSnapshot}s. The
 	 * {@link SequenceFileSnapshot}s will also be persisted.
 	 * 

@@ -14,29 +14,35 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SingleEndS
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SingleEndSequenceFileSnapshotService;
 
+/**
+ * Implementation of {@link SingleEndSequenceFileSnapshotService} using a
+ * {@link SequenceFileSnapshotRepository}
+ */
 @Service
 public class SingleEndSequenceFileSnapshotServiceImpl extends CRUDServiceImpl<Long, SingleEndSequenceFileSnapshot>
 		implements SingleEndSequenceFileSnapshotService {
-	
+
 	private SequenceFileSnapshotRepository fileRepository;
-	
+
 	@Autowired
-	public SingleEndSequenceFileSnapshotServiceImpl(SingleEndSequenceFileSnapshotRepository repository, SequenceFileSnapshotRepository fileRepository,
-			Validator validator) {
+	public SingleEndSequenceFileSnapshotServiceImpl(SingleEndSequenceFileSnapshotRepository repository,
+			SequenceFileSnapshotRepository fileRepository, Validator validator) {
 		super(repository, validator, SingleEndSequenceFileSnapshot.class);
 		this.fileRepository = fileRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public SingleEndSequenceFileSnapshot mirrorFile(SingleEndSequenceFile file) {
 		SequenceFile seqFile = file.getSequenceFile();
-
 
 		SequenceFileSnapshot snapshot = new SequenceFileSnapshot(seqFile);
 
 		snapshot = fileRepository.save(snapshot);
 
-		SingleEndSequenceFileSnapshot remoteSequenceFile= new SingleEndSequenceFileSnapshot(file, snapshot);
+		SingleEndSequenceFileSnapshot remoteSequenceFile = new SingleEndSequenceFileSnapshot(file, snapshot);
 
 		return create(remoteSequenceFile);
 	}
