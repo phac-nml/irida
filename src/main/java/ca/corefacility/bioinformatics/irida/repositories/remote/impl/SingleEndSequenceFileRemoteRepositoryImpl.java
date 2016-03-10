@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Repository;
 
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
@@ -8,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
+@Repository
 public class SingleEndSequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<SingleEndSequenceFile> implements
 		SingleEndSequenceFileRemoteRepository {
 
