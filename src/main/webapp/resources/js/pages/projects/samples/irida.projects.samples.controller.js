@@ -9,7 +9,7 @@
 	 * @param {Object} tableService Service to handle rendering the datatable.
 	 * @constructor
 	 */
-	function SamplesController($scope, $log, $uibModal, samplesService, tableService) {
+	function SamplesController($scope, $log, modalService, samplesService, tableService) {
 		var vm = this, previousIndex = null,
 		    // Which projects to display
 		    display = {
@@ -42,17 +42,8 @@
 		});
 
 		vm.displayProjectsModal = function() {
-			var modal = $uibModal.open({
-				templateUrl: "associated-projects.modal.html",
-				controllerAs: "associatedProjectsCtrl",
-				controller: "AssociatedProjectsCtrl",
-				resolve: {
-					display: function () {
-						return display;
-					}
-				}
-			});
-
+			var modal = modalService.openAssociatedProjectsModal(display);
+			
 			modal.result.then(function (items) {
 				// Check to make sure their are updates to the table to process.
 				if (!ng.equals(items, display)) {
@@ -314,7 +305,7 @@
 	}
 
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ngMessages", "ui.bootstrap"])
-		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
+		.controller("SamplesController", ["$scope", "$log", "modalService",  "samplesService", "tableService", SamplesController])
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
 		.controller("MergeController", ["$uibModalInstance", "samples", MergeController])
 	;
