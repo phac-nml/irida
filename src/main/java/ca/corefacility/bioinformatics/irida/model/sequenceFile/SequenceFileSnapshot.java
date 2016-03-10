@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.RemoteFileNotCachedExcept
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSnapshot;
 
 /**
  * Remote representation of an {@link IridaSequenceFile}. This object will point
@@ -45,7 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 @Table(name = "remote_sequence_file")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFileSnapshot implements IridaSequenceFile, MutableIridaThing, VersionedFileFields<Long> {
+public class SequenceFileSnapshot implements IridaSequenceFile, MutableIridaThing, IridaSnapshot, VersionedFileFields<Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileSnapshot.class);
 

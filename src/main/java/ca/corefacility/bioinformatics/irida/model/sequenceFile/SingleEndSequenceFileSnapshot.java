@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSnapshot;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "remote_sequence_file_single")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile, IridaThing {
+public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile, IridaThing, IridaSnapshot {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,6 +42,10 @@ public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date")
 	private Date createdDate;
+	
+	@NotNull
+	@Column(name = "remote_uri")
+	private String remoteURI; 
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@NotNull
@@ -52,8 +57,9 @@ public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile
 		file = null;
 	}
 
-	public SingleEndSequenceFileSnapshot(SequenceFileSnapshot file) {
+	public SingleEndSequenceFileSnapshot(SingleEndSequenceFile base, SequenceFileSnapshot file) {
 		this.file = file;
+		remoteURI = base.getSelfHref();
 	}
 
 	/**
@@ -92,6 +98,10 @@ public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile
 	@Override
 	public Long getId() {
 		return id;
+	}
+	
+	public String getRemoteURI() {
+		return remoteURI;
 	}
 
 }

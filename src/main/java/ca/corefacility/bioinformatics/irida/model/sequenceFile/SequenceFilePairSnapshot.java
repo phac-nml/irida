@@ -29,6 +29,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSnapshot;
 
 /**
  * Remote representation of a {@link IridaSequenceFilePair}. Refers to 2
@@ -38,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 @Table(name = "remote_sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThing {
+public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThing, IridaSnapshot {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,6 +50,10 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date")
 	private Date createdDate;
+	
+	@NotNull
+	@Column(name = "remote_uri")
+	private String remoteURI;
 
 	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER, orphanRemoval = true)
 	@Size(min = 2, max = 2)
@@ -119,6 +124,10 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 			}
 		}
 		return true;
+	}
+	
+	public String getRemoteURI() {
+		return remoteURI;
 	}
 
 }
