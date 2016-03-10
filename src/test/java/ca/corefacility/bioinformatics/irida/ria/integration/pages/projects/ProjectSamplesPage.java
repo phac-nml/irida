@@ -57,6 +57,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "removeBtnOk")
 	private WebElement removeBtnOK;
 
+	@FindBy(id = "merge-samples-modal")
+	private WebElement mergeModal;
+
+	@FindBy(id = "confirmMergeBtn")
+	private WebElement mergeBtnOK;
+
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
@@ -148,5 +154,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(removeModal));
 		removeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-modal")));
+	}
+
+	public void mergeSamplesWithOriginalName() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(mergeModal));
+		mergeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
 }
