@@ -9,12 +9,10 @@
 	<div class="modal-body">
 		<form name="mergeForm">
 			<h4 th:text="#{project.samples.modal.merge.intro(${#lists.size(samples)})}"/>
-			<strong>
-				<th:block th:text="#{project.samples.modal.merge.select}"/>
-				&nbsp;
-				<fa:icon type="warning" data:uib-popover="#{project.samples.modal.merge.warning}"
-				         popover-append-to-body="true" popover-placement="left" popover-trigger="mouseenter"/>
-			</strong>
+			<div class="alert alert-warning">
+				<strong><fa:icon type="warning" fixed="fixed" /></strong>
+				<th:block th:text="#{project.samples.modal.merge.warning}" />
+			</div>
 			<div class="radio" th:each="sample : ${samples}">
 				<label>
 					<input name="mergeSample" ng-model="mergeCtrl.selected" th:value="${sample.identifier}"
