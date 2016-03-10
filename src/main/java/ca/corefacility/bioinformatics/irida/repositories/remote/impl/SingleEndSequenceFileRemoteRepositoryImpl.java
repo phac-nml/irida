@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,7 @@ public class SingleEndSequenceFileRemoteRepositoryImpl extends RemoteRepositoryI
 	private static final ParameterizedTypeReference<ResourceWrapper<SingleEndSequenceFile>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<SingleEndSequenceFile>>() {
 	};
 
+	@Autowired
 	public SingleEndSequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
 		super(tokenService, listTypeReference, objectTypeReference);
 	}
