@@ -3,6 +3,10 @@
   text-align: center;
 }
 
+.dataTable.table td {
+  vertical-align: middle!important;
+}
+
 .td_info {
   &--value {
     line-height: 1.8rem;
