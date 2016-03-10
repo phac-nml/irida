@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -20,9 +19,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
@@ -31,8 +31,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectMembersContr
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.Lists;
 
 public class ProjectMembersControllerTest {
 	// Services
@@ -159,17 +157,5 @@ public class ProjectMembersControllerTest {
 		when(userService.read(userId)).thenReturn(user);
 
 		controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
-	}
-
-	@Test
-	public void testGetAjaxUsersListForProject() {
-		Long projectId = 32L;
-		Project project = new Project("test");
-		project.setId(projectId);
-		Collection<Join<Project, User>> users = projectTestUtils.getUsersForProject(project);
-		when(userService.getUsersForProject(any(Project.class))).thenReturn(users);
-		Map<String, Collection<Join<Project, User>>> usersReturned = controller.getAjaxProjectMemberMap(projectId);
-		assertTrue("Has a data attribute required for data tables", usersReturned.containsKey("data"));
-		assertEquals("Has the correct number of users.", usersReturned.get("data").size(), 2);
 	}
 }

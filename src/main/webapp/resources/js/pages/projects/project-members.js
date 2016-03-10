@@ -1,94 +1,55 @@
-(function (angular, $, page) {
-    /**
-     * Custom Select2 directive for searching through users that on not
-     * currently on this project.
-     * JQuery Select2 plugin.
-     * @returns {{restrict: string, require: string, link: Function}}
-     */
-    function select2() {
-        return {
-            restrict: 'A',
-            require: 'ngModel',
-            link: function(scope, elem, attrs) {
-                $(elem).select2({
-                    minimumInputLength: 2,
-                    ajax: {
-                        url: attrs.url,
-                        dataType: 'json',
-                        data: function(term) {
-                            return {
-                                term: term,
-                                page_limit: 10
-                            };
-                        },
-                        results: function(data) {
-                            var results = [];
-
-                            for (var id in data) {
-                                results.push({
-                                    "id": id,
-                                    "text": data[id]
-                                });
-                            }
-
-                            return {results: results};
-                        }
-                    }
-                });
-            }
-        };
-    }
-
-    function MembersService ($http, notifications) {
-        function addMember(user) {
-            $http({
-                method: 'POST',
-                url   : page.urls.addMember,
-                data  : user
-            }).then(function (data) {
-                page.table.ajax.reload();
-                notifications.show({'msg': data.data.result});
-            }, function () {
-                notifications.show({'msg': page.langs.addMember.error, type: 'error'});
-            });
-        }
-
-        return {
-            addMember: addMember
-        };
-    }
-
-    function MembersController(MembersService, $uibModal) {
-        var vm = this;
-
-        vm.showAddMemberModal = function () {
-            $uibModal.open({
-                templateUrl: 'newMemberModal.html',
-                controller: 'NewMemberModalController',
-                controllerAs: 'modalCtrl'
-            }).result.then(function (user) {
-                MembersService.addMember(user);
-            });
-        };
-    }
-
-    function NewMemberModalController ($uibModalInstance) {
-        var vm = this;
-        vm.user = {projectRole: 'PROJECT_USER'};
-
-        vm.cancel = function () {
-            $uibModalInstance.dismiss();
-        };
-
-        vm.addMember = function () {
-            $uibModalInstance.close(vm.user);
-        };
-    }
-
-    angular.module('irida.project.members', ['ui.bootstrap'])
-        .service('MembersService', ['$http', 'notifications', MembersService])
-        .directive('select2', [select2])
-        .controller('MembersController', ['MembersService', '$uibModal', MembersController])
-        .controller('NewMemberModalController', ['$uibModalInstance', NewMemberModalController])
-    ;
-})(window.angular, window.jQuery, window.PAGE);
+var projectMembersTable = (function(page, notifications) {
+	function renderGroupRole(data, type, full) {
+		return page.i18n[data];
+	};
+	
+	function userNameLinkRow(data, type, full) {
+		return "<a class='item-link' title='" + data + "' href='"
+				+ page.urls.usersLink + full.object.identifier + "'><span>" + data
+				+ "</span></a>";
+	};
+	
+	function removeUserButton(data, type, full) {
+		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
+	};
+	
+	function deleteLinkCallback(row, data) {
+		var row = $(row);
+		row.find(".remove-user-btn").click(function () {
+			$("#removeUserModal").load(page.urls.deleteModal+"#removeUserModalGen", { 'userId' : data.object.identifier}, function() {
+				var modal = $(this);
+				modal.on("show.bs.modal", function () {
+					$(this).find("#remove-user-button").off("click").click(function () {
+						$.ajax({
+							url     : page.urls.removeMember + data.object.identifier,
+							type    : 'DELETE',
+							success : function (result) {
+								if (result.success) {
+									oTable_usersTable.ajax.reload();
+									notifications.show({
+										'msg': result.success
+									});
+								} else if (result.failure) {
+									notifications.show({
+										'msg' : result.failure,
+										'type': 'error'
+									});									
+								}
+								modal.modal('hide');
+							}
+						});
+					});
+				});
+				modal.modal('show');
+			});
+		});
+		row.find('[data-toggle="tooltip"]').tooltip();
+	};
+	
+	return {
+		renderGroupRole : renderGroupRole,
+		userNameLinkRow : userNameLinkRow,
+		removeUserButton : removeUserButton,
+		deleteLinkCallback : deleteLinkCallback
+	};
+})(window.PAGE, window.notifications);

@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -29,6 +31,21 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 */
 	@Query("select j from ProjectUserJoin j where j.project = ?1")
 	public List<Join<Project, User>> getUsersForProject(Project project);
+	
+	/**
+	 * Get a page of {@link User}s associated with a project.
+	 * 
+	 * @param project
+	 *            the {@link Project} to get {@link User}s for.
+	 * @param search
+	 *            the string to filter on username
+	 * @param page
+	 *            the page request
+	 * @return a page of users.
+	 */
+	@Query("from ProjectUserJoin j where j.project = ?1 and j.user.username like %?2%")
+	public Page<Join<Project, User>> getUsersForProject(final Project project, final String search,
+			final Pageable page);
 	
 	/**
 	 * Get the number of {@link User}s in a given {@link Project}
