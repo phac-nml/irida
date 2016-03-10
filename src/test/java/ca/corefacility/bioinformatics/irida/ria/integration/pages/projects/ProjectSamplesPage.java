@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -161,5 +163,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
+	}
+
+	public List<String> getSampleNamesOnPage() {
+		List<WebElement> sampleTDs = driver.findElements(By.className("sample-label"));
+		List<String> names = new ArrayList<>();
+		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
+		return names;
 	}
 }
