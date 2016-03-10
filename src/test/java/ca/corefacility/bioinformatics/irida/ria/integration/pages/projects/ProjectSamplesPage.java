@@ -159,6 +159,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void mergeSamplesWithOriginalName() {
+		mergeBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		mergeBtnOK.click();
