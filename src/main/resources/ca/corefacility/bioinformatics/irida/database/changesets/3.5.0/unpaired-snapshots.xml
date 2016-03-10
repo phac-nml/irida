@@ -48,5 +48,16 @@
 			<column name="REVTYPE" type="tinyint(4)" />
 		</createTable>
 
+		<!-- Drop the FK to remote_sequence_file. This column has never been used 
+			before so it can just be changed -->
+		<dropForeignKeyConstraint baseTableName="analysis_submission_remote_file_single"
+			constraintName="FK_ANALYSIS_SUBMISSION_REMOTE_SINGLE_FILE" />
+
+		<addForeignKeyConstraint baseColumnNames="remote_file_id"
+			baseTableName="analysis_submission_remote_file_single"
+			constraintName="FK_ANALYSIS_SUBMISSION_REMOTE_UNPAIRED_FILE"
+			referencedColumnNames="id" referencedTableName="remote_sequence_file_single" />
+
+
 	</changeSet>
 </databaseChangeLog>
