@@ -1,4 +1,4 @@
-(function (ng) {
+(function (ng, $, page) {
 	"use strict";
 
 	/**
@@ -21,8 +21,6 @@
 		$scope.$on("DATATABLE_UPDATED", function () {
 			previousIndex = null;
 		});
-
-
 
 		// BUTTON STATE
 		vm.disabled = {
@@ -97,7 +95,39 @@
 		};
 
 		vm.delete = function () {
-			$log.warn("TODO: Implement delete functionality");
+			var ids = [], modal;
+			vm.selected.forEach(function (item) {
+				ids.push(item.sample.identifier);
+			});
+
+			modal = $uibModal.open({
+				size        : 'lg',
+				templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
+				openedClass : 'remove-modal',
+				controllerAs: "removeCtrl",
+				controller  : ["$uibModalInstance", function RemoveSamplesController($uibModalInstance) {
+					var vm = this;
+
+					vm.cancel = function () {
+						$uibModalInstance.dismiss();
+					};
+
+					vm.remove = function () {
+						$uibModalInstance.close();
+					};
+				}]
+			});
+
+			modal.result.then(function () {
+				samplesService.removeSamples(vm.selected).then(function () {
+					vm.samples = vm.samples.filter(function (sample) {
+						return !sample.selected;
+					});
+					vm.selected = [];
+					updateButtons();
+				});
+			});
+
 		};
 
 		vm.addToCart = function () {
@@ -183,7 +213,8 @@
 					item.selected = true;
 					vm.selected.push(item);
 				}
-			})
+			});
+			updateButtons();
 		};
 
 		/**
@@ -235,4 +266,4 @@
 		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
 		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
 	;
-})(window.angular);
+})(window.angular, window.jQuery, window.PAGE);

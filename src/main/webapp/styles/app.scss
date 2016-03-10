@@ -101,3 +101,16 @@ input[type="search"] {
   overflow: hidden!important;
   text-overflow: ellipsis!important;
 }
+
+// Use for ordered lists that require continued numbering.
+
+ol.start {
+  counter-reset: mycounter;
+}
+ol.start li, ol.continue li {
+  list-style: none;
+}
+ol.start li:before, ol.continue li:before {
+  content: counter(mycounter) ". ";
+  counter-increment: mycounter;
+}

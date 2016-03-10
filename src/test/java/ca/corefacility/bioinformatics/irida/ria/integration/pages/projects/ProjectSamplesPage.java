@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * <p>
@@ -47,6 +50,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(id = "cart-add-btn")
 	private WebElement addToCartBtn;
+
+	@FindBy(id = "remove-samples-modal")
+	private WebElement removeModal;
+
+	@FindBy(id = "removeBtnOk")
+	private WebElement removeBtnOK;
 
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
@@ -108,8 +117,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	// Actions
+	public void selectPaginationPage(int page) {
+		pagination.get(page).findElement(By.cssSelector("a")).click();
+	}
+
 	public void selectSample(int row) {
-		sampleCheckboxes.get(row).click();
+		WebElement checkbox = sampleCheckboxes.get(row);
+		checkbox.click();
 	}
 
 	public void selectSampleWithShift(int row) {
@@ -123,5 +137,16 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void addSelectedSamplesToCart() {
 		addToCartBtn.click();
+		// Make sure the item were added to the cart.
+		waitForElementVisible(
+				By.cssSelector("#cart-count-notification .angular-notifications-icon div"));
+	}
+
+	public void removeSamples() {
+		removeBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(removeModal));
+		removeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-modal")));
 	}
 }
