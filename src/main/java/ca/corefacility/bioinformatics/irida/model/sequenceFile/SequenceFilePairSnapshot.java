@@ -77,9 +77,11 @@ public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThi
 	 * @param file2
 	 *            another file in the relationship
 	 */
-	public SequenceFilePairSnapshot(SequenceFileSnapshot file1, SequenceFileSnapshot file2) {
+	public SequenceFilePairSnapshot(SequenceFilePair base, SequenceFileSnapshot file1, SequenceFileSnapshot file2) {
 		this();
 
+		remoteURI = base.getSelfHref();
+		
 		files.add(file1);
 		files.add(file2);
 	}

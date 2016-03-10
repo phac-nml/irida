@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.snapshot;
 
 import javax.validation.Validator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -19,6 +20,7 @@ public class SingleEndSequenceFileSnapshotServiceImpl extends CRUDServiceImpl<Lo
 	
 	private SequenceFileSnapshotRepository fileRepository;
 	
+	@Autowired
 	public SingleEndSequenceFileSnapshotServiceImpl(SingleEndSequenceFileSnapshotRepository repository, SequenceFileSnapshotRepository fileRepository,
 			Validator validator) {
 		super(repository, validator, SingleEndSequenceFileSnapshot.class);
@@ -34,7 +36,7 @@ public class SingleEndSequenceFileSnapshotServiceImpl extends CRUDServiceImpl<Lo
 
 		snapshot = fileRepository.save(snapshot);
 
-		SingleEndSequenceFileSnapshot remoteSequenceFile= new SingleEndSequenceFileSnapshot(snapshot);
+		SingleEndSequenceFileSnapshot remoteSequenceFile= new SingleEndSequenceFileSnapshot(file, snapshot);
 
 		return create(remoteSequenceFile);
 	}
