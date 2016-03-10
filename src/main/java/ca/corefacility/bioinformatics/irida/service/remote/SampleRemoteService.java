@@ -6,12 +6,12 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 
 /**
  * Service for reading {@link Sample}s
@@ -42,26 +42,17 @@ public interface SampleRemoteService extends RemoteService<Sample> {
 	 * @return A Page of {@link Sample}s
 	 */
 	public Page<Sample> searchSamplesForProject(Project project, String search, int page, int size);
-
+	
 	/**
-	 * Get the remote {@link Sample} for a given {@link SequenceFileSnapshot}
-	 * 
-	 * @param file
-	 *            The {@link SequenceFileSnapshot} to get the {@link Sample} for
-	 * @return The remote {@link Sample}
-	 */
-	public Sample getSampleForSequenceFileSnapshot(SequenceFileSnapshot file);
-
-	/**
-	 * Get the {@link Sample}s for the given {@link SequenceFileSnapshot}s
+	 * Get the {@link Sample}s for the given {@link SingleEndSequenceFileSnapshot}s
 	 * 
 	 * @param files
-	 *            The {@link SequenceFileSnapshot}s to get samples for
+	 *            The {@link SingleEndSequenceFileSnapshot}s to get samples for
 	 * @return A Map where the key is {@link Sample}, and value is the
-	 *         {@link IridaSequenceFile}
+	 *         {@link IridaSingleEndSequenceFile}
 	 */
-	public Map<Sample, IridaSequenceFile> getUniqueSamplesforSequenceFileSnapshots(
-			Collection<SequenceFileSnapshot> files);
+	public Map<Sample, IridaSingleEndSequenceFile> getUniqueSamplesForSingleEndSequenceFileSnapshots(
+			Collection<SingleEndSequenceFileSnapshot> files);
 
 	/**
 	 * Get the {@link Sample}s for the given {@link SequenceFilePairSnapshot}s
