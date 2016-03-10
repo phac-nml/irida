@@ -143,9 +143,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 
 		// Merge these samples with the original name
-		List<String> originalNames = page.getSampleNamesOnPage().subList(0, 1); // Only need the first two
+		List<String> originalNames = page.getSampleNamesOnPage().subList(0, 2); // Only need the first two
 		page.mergeSamplesWithOriginalName();
-		List<String> mergeNames = page.getSampleNamesOnPage().subList(0, 1);
+		List<String> mergeNames = page.getSampleNamesOnPage().subList(0, 2);
 		assertEquals("Should still the first samples name", originalNames.get(0), mergeNames.get(0));
 		assertEquals("Should have different sample second since it was merged", originalNames.get(1), mergeNames.get(1));
 
