@@ -258,22 +258,24 @@ public class ProjectSamplesControllerTest {
 		int pagesize = 10;
 		Direction order = Direction.ASC;
 		String property = "name";
+		final Project p = new Project();
 
 		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_ADMIN);
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
+		when(projectService.read(1L)).thenReturn(p);
 
-		when(projectService.getUnassociatedProjects(null, term, page, pagesize, order, property)).thenReturn(projects);
+		when(projectService.getUnassociatedProjects(p, term, page, pagesize, order, property)).thenReturn(projects);
 
-		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(
+		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(1L, 
 				term, pagesize, page, principal);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
 		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
 
-		verify(projectService).getUnassociatedProjects(null, term, page, pagesize, order, property);
+		verify(projectService).getUnassociatedProjects(p, term, page, pagesize, order, property);
 	}
 
 	@Test
@@ -282,22 +284,24 @@ public class ProjectSamplesControllerTest {
 		int page = 0;
 		int pagesize = 10;
 		Direction order = Direction.ASC;
+		final Project p = new Project();
 
 		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
 
-		when(projectService.getUnassociatedProjects(null, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY)).thenReturn(projects);
+		when(projectService.read(1L)).thenReturn(p);
+		when(projectService.getUnassociatedProjects(p, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY)).thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller
-				.getProjectsAvailableToCopySamples(term, pagesize, page, principal);
+				.getProjectsAvailableToCopySamples(1L, term, pagesize, page, principal);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
 		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
 
-		verify(projectService).getUnassociatedProjects(null, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY);
+		verify(projectService).getUnassociatedProjects(p, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY);
 	}
 
 	@Test

@@ -217,13 +217,14 @@ public class ProjectSamplesController {
 	 *         elements results: A {@code Map<Long,String>} of project IDs and
 	 *         project names.
 	 */
-	@RequestMapping(value = "/projects/ajax/samples/available_projects")
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples/available_projects")
 	@ResponseBody
-	public Map<String, Object> getProjectsAvailableToCopySamples(@RequestParam String term, @RequestParam int pageSize,
+	public Map<String, Object> getProjectsAvailableToCopySamples(final @PathVariable Long projectId, @RequestParam String term, @RequestParam int pageSize,
 			@RequestParam int page, Principal principal) {
+		final Project projectToExclude = projectService.read(projectId);
 		List<Map<String, String>> projectMap = new ArrayList<>();
 		Map<String, Object> response = new HashMap<>();
-		final Page<Project> projects = projectService.getUnassociatedProjects(null, term, page, pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
+		final Page<Project> projects = projectService.getUnassociatedProjects(projectToExclude, term, page, pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
 		
 		for (Project p : projects) {
 			Map<String, String> map = new HashMap<>();
