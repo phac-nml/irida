@@ -2,16 +2,15 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -95,10 +94,11 @@ public class ProjectMembersControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.getUsersAvailableForProject(project)).thenReturn(users);
 
-		Map<Long, String> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
+		Collection<User> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
 
 		assertFalse(usersAvailableForProject.isEmpty());
-		assertTrue(usersAvailableForProject.containsKey(userId));
+		assertEquals("should only have 1 user.", 1, usersAvailableForProject.size());
+		assertEquals("should have the specified user on project.", userId, usersAvailableForProject.iterator().next().getId());
 
 		verify(projectService).read(projectId);
 		verify(userService).getUsersAvailableForProject(project);
@@ -116,7 +116,7 @@ public class ProjectMembersControllerTest {
 		when(userService.read(userId)).thenReturn(user);
 		when(projectService.read(projectId)).thenReturn(project);
 
-		controller.removeUser(projectId, userId, principal);
+		controller.removeUser(projectId, userId, principal, null);
 
 		verify(userService).read(userId);
 		verify(projectService).read(projectId);
@@ -136,7 +136,7 @@ public class ProjectMembersControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
 
-		controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
+		controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
 
 		verify(projectService).read(projectId);
 		verify(userService).read(userId);
@@ -156,6 +156,6 @@ public class ProjectMembersControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
 
-		controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
+		controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
 	}
 }

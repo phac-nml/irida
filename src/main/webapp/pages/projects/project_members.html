@@ -18,7 +18,8 @@ ddl:bundle-includes="project-members">
                 'usersLink' : /*[[@{/users/}]]*/'/users',
                 'deleteModal' : /*[[@{/projects/removeUserModal}]]*/ '/projects/removeUserModal',
                 'removeMember': /*[[@{/projects/{id}/members/(id=${project.getId()})}]]*/ '/projects/1/members/2',
-                'usersSelection': /*[[@{/projects/{id}/ajax/availablemembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers'
+                'usersSelection': /*[[@{/projects/{id}/ajax/availablemembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers',
+                'updateRole': /*[[@{/projects/{id}/members/editrole/(id=${project.getId()})}]]*/ '/projects/1/members'
             }
         };
     </script>
@@ -31,11 +32,9 @@ ddl:bundle-includes="project-members">
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-members" ddl:asset-css-excludes="jquery.datatables">
 	<div dt:conf="usersTable">
-		<div dt:confType="callback" dt:type="createdRow" dt:function="project-members#projectMembersTable.deleteLinkCallback" />
-	</div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
+		<div dt:confType="callback" dt:type="createdRow" dt:function="project-members#projectMembersTable.rowRenderedCallback" />
+		<div dt:confType="extrahtml" dt:uid="2">
+			<div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
                 <div class="btn-group">
                     <button id="add-members-button" class="btn btn-default"
                        type="button" data-toggle="modal" data-target="#addUserModal"
@@ -43,8 +42,8 @@ ddl:bundle-includes="project-members">
                        th:text="#{project.members.edit.add}">_Add Members_</button>
                 </div>
             </div>
-        </div>
-    </div>
+		</div>
+	</div>
     <div class="row">
         <div class="col-md-12">
             <table id="usersTable" dt:table="true" dt:url="@{/projects/ajax/{id}/members(id=${project.getId()})}">

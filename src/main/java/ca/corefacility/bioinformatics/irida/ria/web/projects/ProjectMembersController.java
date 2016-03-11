@@ -199,21 +199,27 @@ public class ProjectMembersController {
 	 *             if a user tries to change their own role on a project.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
-	@RequestMapping("{projectId}/members/editrole")
+	@RequestMapping(path = "{projectId}/members/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
-	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
-			@RequestParam String projectRole, Principal principal) throws ProjectWithoutOwnerException,
-			ProjectSelfEditException {
-		Project project = projectService.read(projectId);
-		User user = userService.read(userId);
+	public Map<String, String> updateUserRole(final @PathVariable Long projectId, final @PathVariable Long userId,
+			final @RequestParam String projectRole, final Principal principal, final Locale locale) {
+		final Project project = projectService.read(projectId);
+		final User user = userService.read(userId);
+		final ProjectRole role = ProjectRole.fromString(projectRole);
+		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
 
 		if (user.getUsername().equals(principal.getName())) {
-			throw new ProjectSelfEditException("You cannot edit your own role on a project.");
+			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.selfmessage",
+					new Object[] { }, locale));
 		}
 
-		ProjectRole role = ProjectRole.fromString(projectRole);
-
-		projectService.updateUserProjectRole(project, user, role);
+		try {
+			projectService.updateUserProjectRole(project, user, role);
+			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",  new Object[] {user.getLabel(), roleName}, locale));
+		} catch (final ProjectWithoutOwnerException e) {
+			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
+					new Object[] { user.getLabel(), roleName }, locale));
+		}
 	}
 
 	@RequestMapping(value = "/ajax/{projectId}/members")

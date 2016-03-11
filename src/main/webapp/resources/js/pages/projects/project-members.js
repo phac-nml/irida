@@ -1,6 +1,10 @@
 var projectMembersTable = (function(page, notifications) {
 	function renderGroupRole(data, type, full) {
-		return page.i18n[data];
+		var select ='<select class="form-control input-full project-role-select">';
+		select += '<option value="PROJECT_USER" ' + (data == 'PROJECT_USER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_USER +  '</option>';
+		select += '<option value="PROJECT_OWNER" ' + (data == 'PROJECT_OWNER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_OWNER +  '</option>';
+		select += '</select>';
+		return select;
 	};
 	
 	function userNameLinkRow(data, type, full) {
@@ -13,7 +17,7 @@ var projectMembersTable = (function(page, notifications) {
 		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
 	};
 	
-	function deleteLinkCallback(row, data) {
+	function rowRenderedCallback(row, data) {
 		var row = $(row);
 		row.find(".remove-user-btn").click(function () {
 			$("#removeUserModal").load(page.urls.deleteModal+"#removeUserModalGen", { 'userId' : data.object.identifier}, function() {
@@ -44,6 +48,25 @@ var projectMembersTable = (function(page, notifications) {
 			});
 		});
 		row.find('[data-toggle="tooltip"]').tooltip();
+		row.find('.project-role-select').change(function() {
+			$.ajax({
+				url: page.urls.updateRole + data.object.identifier,
+				type: 'POST',
+				data: {
+					'projectRole': $(this).val()
+				},
+				success : function(result) {
+					if (result.success) {
+						notifications.show({'msg': result.success});
+					} else if (result.failure) {
+						notifications.show({
+							'msg' : result.failure,
+							'type': 'error'
+						})
+					}
+				}
+			});
+		});
 	};
 	
 	
@@ -96,6 +119,6 @@ var projectMembersTable = (function(page, notifications) {
 		renderGroupRole : renderGroupRole,
 		userNameLinkRow : userNameLinkRow,
 		removeUserButton : removeUserButton,
-		deleteLinkCallback : deleteLinkCallback
+		rowRenderedCallback : rowRenderedCallback
 	};
 })(window.PAGE, window.notifications);
