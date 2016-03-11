@@ -7,6 +7,12 @@
    * @returns {{openMergeModal: openMergeModal, openAssociatedProjectsModal: openAssociatedProjectsModal}}
    */
   function modalService($uibModal) {
+
+    /**
+     * Open the modal to handle merging samples
+     * @param selectedSamples - samples to merge
+     * @returns {*}
+     */
     function openMergeModal(selectedSamples) {
       var ids = selectedSamples.map(function (item) {
         return item.sample.identifier;
@@ -23,6 +29,11 @@
       }).result;
     }
 
+    /**
+     * Open the modal to display/hide associated projects
+     * @param currentlyDisplayed
+     * @returns {*}
+     */
     function openAssociatedProjectsModal(currentlyDisplayed) {
       return $uibModal.open({
         templateUrl: "associated-projects.modal.html",
