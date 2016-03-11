@@ -78,18 +78,7 @@
 			vm.selected.forEach(function (item) {
 				ids.push(item.sample.identifier);
 			});
-			var modal = $uibModal.open({
-				templateUrl: page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
-				controllerAs: "mergeCtrl",
-				controller: "MergeController",
-				resolve: {
-					samples: function() {
-						return vm.selected;
-					}
-				}
-			});
-
-			modal.result.then(function (result) {
+			modalService.openMergeModal(vm.selected).then(function (result) {
 				samplesService.mergeSamples(result).then(function () {
 					// Need to reload the samples since the data has changed.
 					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
@@ -247,34 +236,7 @@
 		displaySamples();
 	}
 
-	function MergeController($uibModalInstance, samples) {
-		var vm = this;
-		vm.samples = samples;
-		vm.selected = vm.samples[0].sample.identifier;
-
-		// If user enters a custom name it is not allowed to have spaces
-		vm.validNameRE = /^[a-zA-Z0-9-_]+$/;
-
-		vm.cancel = function() {
-			$uibModalInstance.dismiss();
-		};
-
-
-		vm.doMerge = function() {
-			// Get the sampleIds to merge
-			var ids = samples.map(function (item) {
-				return item.sample.identifier;
-			});
-			$uibModalInstance.close({
-				ids: ids,
-				mergeSampleId: vm.selected,
-				newName: vm.name
-			});
-		}
-	}
-
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "irida.projects.samples.modals", "ngMessages", "ui.bootstrap"])
 		.controller("SamplesController", ["$scope", "$log", "modalService",  "samplesService", "tableService", SamplesController])
-		.controller("MergeController", ["$uibModalInstance", "samples", MergeController])
 	;
 })(window.angular, window.jQuery, window.PAGE);

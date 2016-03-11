@@ -1,16 +1,33 @@
-(function (ng) {
+(function (ng, page) {
   "use strict";
 
+  /**
+   * Handles all AngularUI modal opening functionality
+   * @param $uibModal
+   * @returns {{openMergeModal: openMergeModal, openAssociatedProjectsModal: openAssociatedProjectsModal}}
+   */
   function modalService($uibModal) {
-    function openMergeModal() {
-
+    function openMergeModal(selectedSamples) {
+      var ids = selectedSamples.map(function (item) {
+        return item.sample.identifier;
+      });
+      return $uibModal.open({
+        templateUrl : page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
+        controllerAs: "mergeCtrl",
+        controller  : "MergeController",
+        resolve     : {
+          samples: function () {
+            return selectedSamples;
+          }
+        }
+      }).result;
     }
 
     function openAssociatedProjectsModal(currentlyDisplayed) {
       return $uibModal.open({
         templateUrl: "associated-projects.modal.html",
         controllerAs: "associatedProjectsCtrl",
-        controller: "AssociatedProjectsModalCtrl",
+        controller: "AssociatedProjectsModalController",
         resolve: {
           display: function () {
             return currentlyDisplayed;
@@ -20,10 +37,18 @@
     }
 
     return {
+      openMergeModal             : openMergeModal,
       openAssociatedProjectsModal: openAssociatedProjectsModal
     };
   }
 
+  /**
+   * Controller for handling interaction with the associated projects display modal
+   * @param $uibModalInstance - AngularUI modal instance
+   * @param associatedProjectsService
+   * @param display - Projects to display
+   * @constructor
+   */
   function AssociatedProjectsModalCtrl($uibModalInstance, associatedProjectsService, display) {
     var vm = this;
     vm.projects = {};
@@ -56,8 +81,41 @@
     };
   }
 
+  /**
+   * Controller for handling interaction with the merge samples modal.
+   * @param $uibModalInstance
+   * @param samples
+   * @constructor
+   */
+  function MergeModalController($uibModalInstance, samples) {
+    var vm = this;
+    vm.samples = samples;
+    vm.selected = vm.samples[0].sample.identifier;
+
+    // If user enters a custom name it is not allowed to have spaces
+    vm.validNameRE = /^[a-zA-Z0-9-_]+$/;
+
+    vm.cancel = function () {
+      $uibModalInstance.dismiss();
+    };
+
+
+    vm.doMerge = function () {
+      // Get the sampleIds to merge
+      var ids = samples.map(function (item) {
+        return item.sample.identifier;
+      });
+      $uibModalInstance.close({
+        ids          : ids,
+        mergeSampleId: vm.selected,
+        newName      : vm.name
+      });
+    }
+  }
+
   ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "ui.bootstrap"])
     .factory("modalService", ["$uibModal", modalService])
-    .controller("AssociatedProjectsModalCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsModalCtrl])
+    .controller("AssociatedProjectsModalController", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsModalCtrl])
+    .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
   ;
-}(angular));
+}(angular, PAGE));
