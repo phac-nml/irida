@@ -9,7 +9,7 @@ var projectMembersTable = (function(page, notifications) {
 	
 	function userNameLinkRow(data, type, full) {
 		return "<a class='item-link' title='" + data + "' href='"
-				+ page.urls.usersLink + full.object.identifier + "'><span>" + data
+				+ page.urls.usersLink + full.object.identifier + "'><span>" + full.object.label
 				+ "</span></a>";
 	};
 	
