@@ -30,6 +30,6 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 	 *            the user.
 	 * @return the projects that the user is in via a group.
 	 */
-	@Query("from UserGroupProjectJoin ugpj where ?1 in (select user from UserGroupJoin where group = ugpj)")
+	@Query("from UserGroupProjectJoin ugpj where ugpj.userGroup in (select group from UserGroupJoin where user = ?1)")
 	public Collection<UserGroupProjectJoin> findProjectsByUser(final User u);
 }
