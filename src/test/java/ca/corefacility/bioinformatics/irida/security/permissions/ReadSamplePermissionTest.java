@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -26,9 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 /**
  * Tests for {@link ReadSamplePermission}.
@@ -37,18 +37,16 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  */
 public class ReadSamplePermissionTest {
 	private ReadSamplePermission readSamplePermission;
-	private UserRepository userRepository;
 	private SampleRepository sampleRepository;
-	private ProjectUserJoinRepository pujRepository;
 	private ProjectSampleJoinRepository psjRepository;
+	private ReadProjectPermission readProjectPermission;
 
 	@Before
 	public void setUp() {
-		userRepository = mock(UserRepository.class);
 		sampleRepository = mock(SampleRepository.class);
-		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
-		readSamplePermission = new ReadSamplePermission(sampleRepository, userRepository, pujRepository, psjRepository);
+		readProjectPermission = mock(ReadProjectPermission.class);
+		readSamplePermission = new ReadSamplePermission(sampleRepository, psjRepository, readProjectPermission);
 	}
 
 	@Test
@@ -63,19 +61,17 @@ public class ReadSamplePermissionTest {
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
 		projectSampleList.add(new ProjectSampleJoin(p, s));
 
-		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1L)).thenReturn(s);
-		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(readProjectPermission.isAllowed(any(), eq(p))).thenReturn(true);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, 1L));
 
-		verify(userRepository).loadUserByUsername(username);
 		verify(sampleRepository).findOne(1L);
 		verify(psjRepository).getProjectForSample(s);
-		verify(pujRepository).getUsersForProject(p);
+		verify(readProjectPermission).isAllowed(any(), eq(p));
 	}
 
 	@Test
@@ -90,18 +86,15 @@ public class ReadSamplePermissionTest {
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
 		projectSampleList.add(new ProjectSampleJoin(p, s));
 
-		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1L)).thenReturn(s);
-		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(readProjectPermission.isAllowed(any(), eq(p))).thenReturn(true);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, s));
 
-		verify(userRepository).loadUserByUsername(username);
 		verify(psjRepository).getProjectForSample(s);
-		verify(pujRepository).getUsersForProject(p);
 		// we didn't need to load the domain object for this test.
 		verifyZeroInteractions(sampleRepository);
 	}
@@ -118,19 +111,16 @@ public class ReadSamplePermissionTest {
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User(),ProjectRole.PROJECT_USER));
 
-		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1L)).thenReturn(s);
-		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(readProjectPermission.isAllowed(any(), eq(p))).thenReturn(false);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertFalse("permission was granted.", readSamplePermission.isAllowed(auth, 1L));
 
-		verify(userRepository).loadUserByUsername(username);
 		verify(sampleRepository).findOne(1L);
 		verify(psjRepository).getProjectForSample(s);
-		verify(pujRepository).getUsersForProject(p);
 	}
 
 	@Test
@@ -143,9 +133,7 @@ public class ReadSamplePermissionTest {
 		assertTrue("permission was not granted to admin.", readSamplePermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
-		verifyZeroInteractions(userRepository);
 		verifyZeroInteractions(psjRepository);
-		verifyZeroInteractions(userRepository);
 		verifyZeroInteractions(sampleRepository);
 	}
 }
