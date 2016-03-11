@@ -8,6 +8,30 @@
    */
   function modalService($uibModal) {
 
+    function openRemoveModal(selectedSamples) {
+      var ids = [];
+      selectedSamples.forEach(function (item) {
+        ids.push(item.sample.identifier);
+      });
+      return $uibModal.open({
+        size        : 'lg',
+        templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
+        openedClass : 'remove-modal',
+        controllerAs: "removeCtrl",
+        controller  : ["$uibModalInstance", function ($uibModalInstance) {
+          var vm = this;
+
+          vm.cancel = function () {
+            $uibModalInstance.dismiss();
+          };
+
+          vm.remove = function () {
+            $uibModalInstance.close();
+          };
+        }]
+      }).result;
+    }
+
     /**
      * Open the modal to handle merging samples
      * @param selectedSamples - samples to merge
@@ -48,6 +72,7 @@
     }
 
     return {
+      openRemoveModal            : openRemoveModal,
       openMergeModal             : openMergeModal,
       openAssociatedProjectsModal: openAssociatedProjectsModal
     };

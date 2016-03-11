@@ -74,7 +74,7 @@
 		};
 
 		vm.merge = function () {
-			var ids = [], modal;
+			var ids = [];
 			vm.selected.forEach(function (item) {
 				ids.push(item.sample.identifier);
 			});
@@ -97,31 +97,9 @@
 		};
 
 		vm.delete = function () {
-			var ids = [], modal;
-			vm.selected.forEach(function (item) {
-				ids.push(item.sample.identifier);
-			});
-
-			modal = $uibModal.open({
-				size        : 'lg',
-				templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
-				openedClass : 'remove-modal',
-				controllerAs: "removeCtrl",
-				controller  : ["$uibModalInstance", function RemoveSamplesController($uibModalInstance) {
-					var vm = this;
-
-					vm.cancel = function () {
-						$uibModalInstance.dismiss();
-					};
-
-					vm.remove = function () {
-						$uibModalInstance.close();
-					};
-				}]
-			});
-
-			modal.result.then(function () {
+			modalService.openRemoveModal(vm.selected).then(function () {
 				samplesService.removeSamples(vm.selected).then(function () {
+					// Remove the samples from the table.
 					vm.samples = vm.samples.filter(function (sample) {
 						return !sample.selected;
 					});
