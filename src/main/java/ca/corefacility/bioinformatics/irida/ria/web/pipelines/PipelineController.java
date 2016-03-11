@@ -38,9 +38,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -55,9 +55,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SingleEndSequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
@@ -104,11 +104,11 @@ public class PipelineController extends BaseController {
 	private MessageSource messageSource;
 	private final WorkflowNamedParametersService namedParameterService;
 	
-	private SequenceFileRemoteService sequenceFileRemoteService;
+	private SingleEndSequenceFileRemoteService sequenceFileSingleRemoteService;
 	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	
-	private SequenceFileSnapshotService remoteSequenceFileService;
 	private SequenceFilePairSnapshotService remoteSequenceFilePairService;
+	private SingleEndSequenceFileSnapshotService singleEndSequenceFileSnapshotService;
 	
 	/*
 	 * CONTROLLERS
@@ -116,14 +116,15 @@ public class PipelineController extends BaseController {
 	private CartController cartController;
 
 	@Autowired
-	public PipelineController(SequencingObjectService sequencingObjectService, ReferenceFileService referenceFileService,
-			AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService iridaWorkflowsService,
-			ProjectService projectService, UserService userService,
-			SequenceFileRemoteService sequenceFileRemoteService, CartController cartController,
-			MessageSource messageSource, final WorkflowNamedParametersService namedParameterService,
+	public PipelineController(SequencingObjectService sequencingObjectService,
+			ReferenceFileService referenceFileService, AnalysisSubmissionService analysisSubmissionService,
+			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
+			CartController cartController, MessageSource messageSource,
+			final WorkflowNamedParametersService namedParameterService,
 			SequenceFilePairRemoteService sequenceFilePairRemoteService,
-			SequenceFileSnapshotService remoteSequenceFileService,
-			SequenceFilePairSnapshotService remoteSequenceFilePairService) {
+			SingleEndSequenceFileRemoteService sequenceFileSingleRemoteService,
+			SequenceFilePairSnapshotService remoteSequenceFilePairService,
+			SingleEndSequenceFileSnapshotService singleEndSequenceFileSnapshotService) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -133,11 +134,11 @@ public class PipelineController extends BaseController {
 		this.cartController = cartController;
 		this.messageSource = messageSource;
 		this.namedParameterService = namedParameterService;
-		this.sequenceFileRemoteService = sequenceFileRemoteService;
 		this.sequenceFilePairRemoteService = sequenceFilePairRemoteService;
-		this.remoteSequenceFileService = remoteSequenceFileService;
 		this.remoteSequenceFilePairService = remoteSequenceFilePairService;
-		
+		this.sequenceFileSingleRemoteService = sequenceFileSingleRemoteService;
+		this.singleEndSequenceFileSnapshotService = singleEndSequenceFileSnapshotService;
+
 	}
 
 	/**
@@ -295,7 +296,7 @@ public class PipelineController extends BaseController {
 				
 				if (description.acceptsSingleSequenceFiles()) {
 					logger.trace("Getting remote single files for sample " + url);
-					files.put("single_end", sequenceFileRemoteService.getUnpairedSequenceFilesForSample(sample));
+					files.put("single_end", sequenceFileSingleRemoteService.getUnpairedFilesForSample(sample));
 				}
 				
 				sampleMap.put("files", files);
@@ -446,14 +447,14 @@ public class PipelineController extends BaseController {
 			
 			
 			// Get a list of the remote files to submit
-			List<SequenceFileSnapshot> remoteSingleFiles = new ArrayList<>();
+			List<SingleEndSequenceFileSnapshot> remoteSingleFiles = new ArrayList<>();
 			List<SequenceFilePairSnapshot> remotePairFiles = new ArrayList<>();
 			
 			if(remoteSingle != null){
 				logger.debug("Mirroring" + remoteSingle.size() + " single files.");
 				remoteSingleFiles = remoteSingle.stream().map((u) -> {
-					SequenceFile file = sequenceFileRemoteService.read(u);
-					return remoteSequenceFileService.mirrorFile(file);
+					SingleEndSequenceFile read = sequenceFileSingleRemoteService.read(u);
+					return singleEndSequenceFileSnapshotService.mirrorFile(read);
 				}).collect(Collectors.toList());
 			}
 			

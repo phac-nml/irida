@@ -8,7 +8,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -217,20 +216,11 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = sequencingObjectService
 				.getUniqueSamplesForSequencingObjects(analysisSubmission.getPairedInputFiles());
 
-		/*
-		 * TODO: Remotes to be reactivated later
-		 */
-		// Map<Sample, IridaSequenceFile> singleFiles = sampleRemoteService
-		// .getUniqueSamplesforSequenceFileSnapshots(analysisSubmission.getRemoteFilesSingle());
-		//
-		// Map<Sample, IridaSequenceFilePair> pairedFiles = sampleRemoteService
-		// .getUniqueSamplesforSequenceFilePairSnapshots(analysisSubmission.getRemoteFilesPaired());
-		// 
-		
-		
-		Map<Sample, IridaSequenceFilePair> pairedFiles = new HashMap<>();
-		
-		Map<Sample, IridaSingleEndSequenceFile> singleFiles = new HashMap<>();
+		Map<Sample, IridaSingleEndSequenceFile> singleFiles = sampleRemoteService
+				.getUniqueSamplesForSingleEndSequenceFileSnapshots(analysisSubmission.getRemoteFilesSingle());
+
+		Map<Sample, IridaSequenceFilePair> pairedFiles = sampleRemoteService
+				.getUniqueSamplesforSequenceFilePairSnapshots(analysisSubmission.getRemoteFilesPaired());
 		
 		// merge local and remote
 		for(Sample s : uniqueSingleEndFiles.keySet()){

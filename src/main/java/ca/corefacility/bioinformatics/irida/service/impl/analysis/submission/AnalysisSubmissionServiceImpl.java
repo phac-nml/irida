@@ -41,9 +41,9 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
@@ -346,7 +346,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
-			List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
+			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
 			IridaWorkflowNamedParameters namedParameters, String name) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
@@ -387,7 +387,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			}
 
 			if (!remoteFiles.isEmpty()) {
-				for (SequenceFileSnapshot file : remoteFiles) {
+				for (SingleEndSequenceFileSnapshot file : remoteFiles) {
 					AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 					builder.name(name + "_" + file.getId());
 					builder.remoteFilesSingle(ImmutableSet.of(file));
@@ -496,7 +496,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
+			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
 			IridaWorkflowNamedParameters namedParameters, String name) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
