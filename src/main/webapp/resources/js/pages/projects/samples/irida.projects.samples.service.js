@@ -1,26 +1,6 @@
 (function(ng, $, lodash, page){
 	"use strict";
 
-	function modalService($uibModal) {
-
-		function openAssociatedProjectsModal(currentlyDisplayed) {
-			return $uibModal.open({
-				templateUrl: "associated-projects.modal.html",
-				controllerAs: "associatedProjectsCtrl",
-				controller: "AssociatedProjectsCtrl",
-				resolve: {
-					display: function () {
-						return currentlyDisplayed;
-					}
-				}
-			});
-		}
-
-		return {
-			openAssociatedProjectsModal: openAssociatedProjectsModal
-		};
-	}
-
 	/**
 	 * Service to handle server calls for project samples.
 	 * @param {Object} $http Angular http object.
@@ -189,7 +169,6 @@
 	}
 
 	ng.module("irida.projects.samples.service", ["datatables", "irida.notifications", "irida.cart"])
-		.factory("modalService", ["$uibModal", modalService])
 		.factory("samplesService", ["$http", "$q", "compiledNotification", "CartService", samplesService])
 		.factory("associatedProjectsService", ["$http", "$q", associatedProjectsService])
 		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", tableService]);
