@@ -147,7 +147,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.mergeSamplesWithOriginalName();
 		List<String> mergeNames = page.getSampleNamesOnPage().subList(0, 2);
 		assertEquals("Should still the first samples name", originalNames.get(0), mergeNames.get(0));
-		assertEquals("Should have different sample second since it was merged", originalNames.get(1), mergeNames.get(1));
+		assertFalse("Should have different sample second since it was merged", originalNames.get(1).equals(mergeNames.get(1)));
 
 		// Merge with a new name
 		page.selectSample(0);
