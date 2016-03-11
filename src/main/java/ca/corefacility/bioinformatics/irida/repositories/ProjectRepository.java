@@ -21,7 +21,7 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	 */
 	static final String PROJECT_ID_LIKE = "(p.id like CONCAT('%', :projectName, '%'))";
 	static final String PROJECT_NAME_LIKE = "(p.name like CONCAT('%', :projectName,'%'))";
-	static final String PROJECT_ORGANISM_LIKE = "(p.organism like CONCAT('%', :organismName, '%'))";
+	static final String PROJECT_ORGANISM_LIKE = "(:organismName = '' and p.organism = null or p.organism like CONCAT('%', :organismName, '%'))";
 	static final String EXCLUDE_PROJECT = "p != :exclude";
 	/**
 	 * Sub-expressions for filtering and paging projects on permissions (via
