@@ -93,6 +93,7 @@
 				templateUrl: page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
 				controllerAs: "mergeCtrl",
 				controller: "MergeController",
+				openedClass : 'merge-modal',
 				resolve: {
 					samples: function() {
 						return vm.selected;
