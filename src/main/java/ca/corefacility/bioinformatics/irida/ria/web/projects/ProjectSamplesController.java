@@ -32,8 +32,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
+
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -49,22 +48,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.base.Strings;
@@ -80,7 +71,7 @@ public class ProjectSamplesController {
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
 
-	private static final String PROJECT_NAME_PROPERTY = "name";
+	public static final String PROJECT_NAME_PROPERTY = "name";
 
 	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
@@ -99,7 +90,6 @@ public class ProjectSamplesController {
 	// Services
 	private final ProjectService projectService;
 	private final SampleService sampleService;
-	private final UserService userService;
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private MessageSource messageSource;
@@ -112,11 +102,10 @@ public class ProjectSamplesController {
 
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-			UserService userService, SequenceFileService sequenceFileService,
-			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
+			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.userService = userService;
 		this.sequenceFileService = sequenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.dateFormatter = new DateFormatter();
@@ -272,39 +261,23 @@ public class ProjectSamplesController {
 	 *         elements results: A {@code Map<Long,String>} of project IDs and
 	 *         project names.
 	 */
-	@RequestMapping(value = "/projects/ajax/samples/available_projects")
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples/available_projects")
 	@ResponseBody
-	public Map<String, Object> getProjectsAvailableToCopySamples(@RequestParam String term, @RequestParam int pageSize,
+	public Map<String, Object> getProjectsAvailableToCopySamples(final @PathVariable Long projectId, @RequestParam String term, @RequestParam int pageSize,
 			@RequestParam int page, Principal principal) {
-		User user = userService.getUserByUsername(principal.getName());
-
+		final Project projectToExclude = projectService.read(projectId);
 		List<Map<String, String>> projectMap = new ArrayList<>();
 		Map<String, Object> response = new HashMap<>();
-		if (user.getAuthorities().contains(Role.ROLE_ADMIN)) {
-			Page<Project> projects = projectService.search(ProjectSpecification.searchProjectName(term), page,
-					pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
-			for (Project p : projects) {
-				Map<String, String> map = new HashMap<>();
-				map.put("identifier", p.getId().toString());
-				map.put("text", p.getName());
-				projectMap.add(map);
-			}
-			response.put("total", projects.getTotalElements());
-		} else {
-			// search for projects with a given name where the user is an owner
-			Specification<ProjectUserJoin> spec = Specifications.where(
-					ProjectUserJoinSpecification.searchProjectNameWithUser(term, user)).and(
-					ProjectUserJoinSpecification.getProjectJoinsWithRole(user, ProjectRole.PROJECT_OWNER));
-			Page<ProjectUserJoin> projects = projectService.searchProjectUsers(spec, page, pageSize, Direction.ASC);
-			for (ProjectUserJoin projectUserJoin : projects) {
-				Project p = projectUserJoin.getSubject();
-				Map<String, String> map = new HashMap<>();
-				map.put("identifier", p.getId().toString());
-				map.put("text", p.getName());
-				projectMap.add(map);
-			}
-			response.put("total", projects.getTotalElements());
+		final Page<Project> projects = projectService.getUnassociatedProjects(projectToExclude, term, page, pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
+
+		for (Project p : projects) {
+			Map<String, String> map = new HashMap<>();
+			map.put("identifier", p.getId().toString());
+			map.put("text", p.getName());
+			projectMap.add(map);
 		}
+		response.put("total", projects.getTotalElements());
+
 
 		response.put("projects", projectMap);
 
