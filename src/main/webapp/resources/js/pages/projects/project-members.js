@@ -1,6 +1,6 @@
 var projectMembersTable = (function(page, notifications) {
 	function renderGroupRole(data, type, full) {
-		var select ='<select class="form-control input-full project-role-select">';
+		var select ='<select id="' + full.object.identifier + '-role-select" class="form-control input-full project-role-select">';
 		select += '<option value="PROJECT_USER" ' + (data == 'PROJECT_USER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_USER +  '</option>';
 		select += '<option value="PROJECT_OWNER" ' + (data == 'PROJECT_OWNER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_OWNER +  '</option>';
 		select += '</select>';
@@ -9,12 +9,12 @@ var projectMembersTable = (function(page, notifications) {
 	
 	function userNameLinkRow(data, type, full) {
 		return "<a class='item-link' title='" + data + "' href='"
-				+ page.urls.usersLink + full.object.identifier + "'><span>" + full.object.label
+				+ page.urls.usersLink + full.object.identifier + "'><span class='col-names'>" + full.object.label
 				+ "</span></a>";
 	};
 	
 	function removeUserButton(data, type, full) {
-		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
+		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button id='remove-user-" + full.object.identifier + "' type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
 	};
 	
 	function rowRenderedCallback(row, data) {
@@ -71,7 +71,7 @@ var projectMembersTable = (function(page, notifications) {
 	
 	
 	$("#add-user-username").select2({
-	    minimumInputLength: 2,
+	    minimumInputLength: 1,
 	    ajax: {
 	        url: page.urls.usersSelection,
 	        dataType: 'json',

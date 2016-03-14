@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -11,6 +12,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -115,6 +117,7 @@ public class ProjectMembersControllerTest {
 
 		when(userService.read(userId)).thenReturn(user);
 		when(projectService.read(projectId)).thenReturn(project);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
 		controller.removeUser(projectId, userId, principal, null);
 
@@ -135,6 +138,7 @@ public class ProjectMembersControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
 		controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
 
@@ -143,7 +147,6 @@ public class ProjectMembersControllerTest {
 		verify(projectService).updateUserProjectRole(project, user, projectRole);
 	}
 
-	@Test(expected = ProjectSelfEditException.class)
 	public void testUdateUserSelfRole() throws ProjectWithoutOwnerException, ProjectSelfEditException {
 		Long projectId = 1L;
 		Long userId = 2L;
@@ -155,7 +158,9 @@ public class ProjectMembersControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
-		controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
+		final Map<String, String> result = controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
+		assertTrue("should have failure message.", result.containsKey("failure"));
 	}
 }
