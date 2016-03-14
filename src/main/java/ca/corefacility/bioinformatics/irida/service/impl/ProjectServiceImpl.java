@@ -5,6 +5,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -16,6 +20,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -46,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
@@ -55,7 +61,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedPr
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
@@ -78,6 +83,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final SequenceFileUtilities sequenceFileUtilities;
 	private final UserGroupProjectJoinRepository ugpjRepository;
+	private final ProjectRepository projectRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
@@ -87,6 +93,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			SequenceFileUtilities sequenceFileUtilities, final UserGroupProjectJoinRepository ugpjRepository,
 			Validator validator) {
 		super(projectRepository, validator, Project.class);
+		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
@@ -351,28 +358,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
-			Direction order, String... sortProperties) {
-		if (sortProperties.length == 0) {
-			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
-		}
-		return pujRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
-	}
-
-	/**
 	 * {@inheritDoc }
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
-		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
-				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE,
-				Direction.ASC);
+		Page<ProjectUserJoin> searchProjectUsers = pujRepository.findAll(getProjectJoinsWithRole(user, projectRole), new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.ASC, CREATED_DATE_SORT_PROPERTY));
 		return searchProjectUsers.getContent().contains(new ProjectUserJoin(project, user, projectRole));
 	}
 
@@ -483,5 +474,83 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName()
 					+ "] and reference file [" + file.getLabel() + "].");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#p, 'isProjectOwner')")
+	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page, final Integer count,
+			final Direction sortDirection, final String... sortedBy) {
+
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
+		if (loggedIn.getSystemRole().equals(Role.ROLE_ADMIN)) {			
+			return projectRepository.findAllProjectsByNameExcludingProject(searchName, p, pr);
+		} else {
+			return projectRepository.findProjectsByNameExcludingProjectForUser(searchName, p, loggedIn, pr);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<Project> findProjectsForUser(final String searchName, final String searchOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy) {
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
+		return projectRepository.findProjectsForUser(searchName, searchOrganism, loggedIn, pr);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Page<Project> findAllProjects(final String searchName, final String searchOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy) {
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
+		return projectRepository.findAllProjectsByNameOrOrganism(searchName, searchOrganism, pr);
+	}
+	
+	/**
+	 * If the sort properties are empty, sort by default on the CREATED_DATE
+	 * property.
+	 * 
+	 * @param sortProperties
+	 *            the sort properties to check
+	 * @return the created date property if no sort properties specified,
+	 *         otherwise just return the sort properties.
+	 */
+	private static final String[] getOrDefaultSortProperties(final String... sortProperties) {
+		if (sortProperties == null || sortProperties.length == 0) {
+			return new String[] {CREATED_DATE_SORT_PROPERTY};
+		} else {
+			return sortProperties;
+		}
+	}
+	
+	/**
+	 * Get a {@link ProjectUserJoin} where the user has a given role
+	 * 
+	 * @param projectRole
+	 *            The {@link ProjectRole} to search for.
+	 * @param user
+	 *            The user to search
+	 * @return a {@link Specification} to search for {@link Project} where the
+	 *         specified {@link User} has a certain {@link ProjectRole}.
+	 */
+	private static final Specification<ProjectUserJoin> getProjectJoinsWithRole(User user, ProjectRole projectRole) {
+		return new Specification<ProjectUserJoin>() {
+			@Override
+			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return cb.and(cb.equal(root.get("projectRole"), projectRole), cb.equal(root.get("user"), user));
+			}
+		};
 	}
 }

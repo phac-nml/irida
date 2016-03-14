@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -19,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -29,11 +26,12 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
@@ -50,9 +48,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 public class AssociatedProjectControllerTest {
 	private static final String USER_NAME = "testme";
@@ -129,7 +124,7 @@ public class AssociatedProjectControllerTest {
 		int page = 1;
 		int count = 10;
 		String sortedBy = "id";
-		String sortDir = "ASC";
+		String sortDir = "asc";
 		String projectName = "";
 
 		Project p1 = new Project("p1");
@@ -148,8 +143,7 @@ public class AssociatedProjectControllerTest {
 		when(projectService.getRelatedProjects(p1)).thenReturn(relatedJoins);
 
 		Page<Project> projectPage = new PageImpl<>(Lists.newArrayList(p2, p3));
-		when(projectService.search(any(Specification.class), eq(page), eq(count), any(Direction.class), eq(sortedBy)))
-				.thenReturn(projectPage);
+		when(projectService.getUnassociatedProjects(p1, projectName, page, count, Direction.ASC, sortedBy)).thenReturn(projectPage);
 
 		Map<String, Object> potentialAssociatedProjects = controller.getPotentialAssociatedProjects(projectId,
 				principal, page, count, sortedBy, sortDir, projectName);
@@ -166,10 +160,9 @@ public class AssociatedProjectControllerTest {
 		}
 
 		verify(projectService).read(projectId);
-		verify(userService).getUserByUsername(USER_NAME);
 		verify(projectService).getRelatedProjects(p1);
 		verify(projectService)
-				.search(any(Specification.class), eq(page), eq(count), any(Direction.class), eq(sortedBy));
+				.getUnassociatedProjects(p1, projectName, page, count, Direction.ASC, sortedBy);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -180,7 +173,7 @@ public class AssociatedProjectControllerTest {
 		int page = 1;
 		int count = 10;
 		String sortedBy = "id";
-		String sortDir = "ASC";
+		String sortDir = "asc";
 		String projectName = "";
 
 		Project p1 = new Project("p1");
@@ -197,11 +190,8 @@ public class AssociatedProjectControllerTest {
 		List<RelatedProjectJoin> relatedJoins = Lists.newArrayList(new RelatedProjectJoin(p1, p2));
 		when(projectService.getRelatedProjects(p1)).thenReturn(relatedJoins);
 
-		Page<ProjectUserJoin> projectPage = new PageImpl<>(Lists.newArrayList(new ProjectUserJoin(p2, user,
-				ProjectRole.PROJECT_OWNER), new ProjectUserJoin(p3, user, ProjectRole.PROJECT_OWNER)));
-		when(
-				projectService.searchProjectUsers(any(Specification.class), eq(page), eq(count), any(Direction.class),
-						eq("project." + sortedBy))).thenReturn(projectPage);
+		Page<Project> projectPage = new PageImpl<>(Lists.newArrayList(p2, p3));
+		when(projectService.getUnassociatedProjects(p1, projectName, page, count, Direction.ASC, "id")).thenReturn(projectPage);
 
 		Map<String, Object> potentialAssociatedProjects = controller.getPotentialAssociatedProjects(projectId,
 				principal, page, count, sortedBy, sortDir, projectName);
@@ -218,10 +208,8 @@ public class AssociatedProjectControllerTest {
 		}
 
 		verify(projectService).read(projectId);
-		verify(userService).getUserByUsername(USER_NAME);
 		verify(projectService).getRelatedProjects(p1);
-		verify(projectService).searchProjectUsers(any(Specification.class), eq(page), eq(count), any(Direction.class),
-				eq("project." + sortedBy));
+		verify(projectService).getUnassociatedProjects(p1, "", page, count, Direction.ASC, "id");
 	}
 
 	@Test
