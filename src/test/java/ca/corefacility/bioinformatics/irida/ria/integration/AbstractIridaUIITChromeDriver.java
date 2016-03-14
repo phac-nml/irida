@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -46,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 public class AbstractIridaUIITChromeDriver {
 
     public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
+    private static ChromeDriver chromeDriver;
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
@@ -75,6 +77,9 @@ public class AbstractIridaUIITChromeDriver {
      */
     @AfterClass
     public static void destroy() {
+        if (chromeDriver != null) {
+            chromeDriver.quit();
+        }
     }
 
     /**
@@ -82,7 +87,15 @@ public class AbstractIridaUIITChromeDriver {
      * @return the instance of {@link WebDriver} used in the tests.
      */
     public static WebDriver driver() {
-        return IntegrationUITestListener.driver();
+        System.setProperty("webdriver.chrome.driver", "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver");
+        if (IntegrationUITestListener.driver() == null) {
+            if (chromeDriver == null) {
+                chromeDriver = new ChromeDriver();
+            }
+            return chromeDriver;
+        } else {
+            return IntegrationUITestListener.driver();
+        }
     }
     
     /**
