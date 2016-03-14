@@ -36,6 +36,19 @@
 		ddl:asset-css-excludes="jquery.datatables">
 	<div dt:conf="groupMembersTable">
 		<div dt:confType="callback" dt:type="createdRow" dt:function="group-members#groupMembersTable.rowRenderedCallback" />
+		<div dt:confType="extrahtml" dt:uid="2">
+			<div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
+				<button id="add-members-button" class="btn btn-default"
+					type="button" data-toggle="modal" data-target="#addUserModal"
+					th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
+					th:text="#{group.users.add.button}">_Add
+					Members_</button>
+				<a id="edit-group-button" class="btn btn-default"
+					th:if="${isAdmin} or ${isOwner}"
+					th:href="@{/groups/{id}/edit(id=${group.id})}"
+					th:text="#{group.edit.button}">_Edit Group Details_</a>
+			</div>
+		</div>
 	</div>
 	<div class="col-md-12">
 		<div class="row">
@@ -44,17 +57,7 @@
 					th:text="${group.label}">__IRIDA Group__</h1>
 				<p th:text="${group.description}">_Group description_</p>
 					
-				<div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
-					<button id="add-members-button" class="btn btn-default"
-						type="button" data-toggle="modal" data-target="#addUserModal"
-						th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
-						th:text="#{group.users.add.button}">_Add
-						Members_</button>
-					<a id="edit-group-button" class="btn btn-default"
-						th:if="${isAdmin} or ${isOwner}"
-						th:href="@{/groups/{id}/edit(id=${group.id})}"
-						th:text="#{group.edit.button}">_Edit Group Details_</a>
-				</div>
+				
 			</div>
 			<div class="col-md-12">
 				<table id="groupMembersTable" dt:table="true" dt:url="@{/groups/{id}/ajax/list(id=${group.id})}">
