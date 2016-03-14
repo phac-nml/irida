@@ -152,6 +152,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Merge with a new name
 		page.selectSample(0);
 		page.selectSample(1);
+		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 		String newSampleName = "MY_NEW_SAMPLE_NAME";
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);
