@@ -54,7 +54,7 @@ public class ProjectMembersController {
 	private static final String ACTIVE_NAV = "activeNav";
 
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
-	private static final String REMOVE_USER_MODAL = "projects/remove-user-modal";
+	private static final String REMOVE_USER_MODAL = "projects/templates/remove-user-modal";
 
 	private final ProjectControllerUtils projectUtils;
 	private final ProjectService projectService;
