@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -25,6 +26,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.ImmutableList;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -49,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectRe
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
@@ -73,13 +77,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final SequenceFileUtilities sequenceFileUtilities;
+	private final UserGroupProjectJoinRepository ugpjRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
+			SequenceFileUtilities sequenceFileUtilities, final UserGroupProjectJoinRepository ugpjRepository,
+			Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -89,6 +95,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.ugpjRepository = ugpjRepository;
 	}
 
 	/**
@@ -334,8 +341,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public List<Join<Project, User>> getProjectsForUser(User user) {
-		return pujRepository.getProjectsForUser(user);
+	public List<Join<Project, User>> getProjectsForUser(User user) {	
+		final List<Join<Project, User>> userJoinProjects = pujRepository.getProjectsForUser(user);
+		final List<Join<Project, User>> groupJoinProjects = ugpjRepository.findProjectsByUser(user).stream()
+				.map(j -> new ProjectUserJoin(j.getSubject(), user, j.getProjectRole())).collect(Collectors.toList());
+
+		return new ImmutableList.Builder<Join<Project, User>>().addAll(userJoinProjects).addAll(groupJoinProjects)
+				.build();
 	}
 
 	/**

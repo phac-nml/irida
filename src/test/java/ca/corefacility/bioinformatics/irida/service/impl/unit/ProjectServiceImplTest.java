@@ -47,11 +47,14 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJo
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -75,6 +78,7 @@ public class ProjectServiceImplTest {
 	private ReferenceFileRepository referenceFileRepository;
 	private ProjectReferenceFileJoinRepository prfjRepository;
 	private SequenceFileUtilities sequenceFileUtilities;
+	private UserGroupProjectJoinRepository ugpjRepository;
 	private Validator validator;
 
 	@Before
@@ -89,9 +93,10 @@ public class ProjectServiceImplTest {
 		referenceFileRepository = mock(ReferenceFileRepository.class);
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		sequenceFileUtilities = mock(SequenceFileUtilities.class);
+		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
-				sequenceFileUtilities, validator);
+				sequenceFileUtilities, ugpjRepository, validator);
 	}
 
 	@Test
@@ -443,5 +448,25 @@ public class ProjectServiceImplTest {
 
 		verifyZeroInteractions(sampleRepository);
 
+	}
+	
+	@Test
+	public void testGetProjectsForUser() {
+		final User u = new User();
+		final Project p1 = new Project("p1");
+		final Project p2 = new Project("p2");
+		final UserGroup ug = new UserGroup("group");
+
+		final ProjectUserJoin puj = new ProjectUserJoin(p1, u, ProjectRole.PROJECT_OWNER);
+		final UserGroupProjectJoin ugpj = new UserGroupProjectJoin(p2, ug, ProjectRole.PROJECT_OWNER);
+
+		when(pujRepository.getProjectsForUser(u)).thenReturn(ImmutableList.of(puj));
+		when(ugpjRepository.findProjectsByUser(u)).thenReturn(ImmutableList.of(ugpj));
+
+		final List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
+
+		assertEquals("User should be in 2 projects.", 2, projects.size());
+		assertTrue("Should have found user project join.", projects.stream().anyMatch(p -> p.getSubject().equals(p1)));
+		assertTrue("Should have found group project join.", projects.stream().anyMatch(p -> p.getSubject().equals(p2)));
 	}
 }
