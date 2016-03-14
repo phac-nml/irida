@@ -10,6 +10,7 @@
 		urls : {
 			addMember : /*[[@{/groups/{id}/members(id=${group.getId()})}]]*/'/groups/1/members',
 			removeMember : /*[[@{/groups/{id}/members/(id=${group.getId()})}]]*/'/groups/1/members',
+			updateRole : /*[[@{/groups/{id}/members/editrole/(id=${group.getId()})}]]*/ '/groups/1/members',
 			table : /*[[@{/groups/{id}/ajax/list(id=${group.id})}]]*/'/groups/1/ajax/list',
 			usersLink : /*[[@{/users/}]]*/'/users',
 			usersSelection : /*[[@{/groups/{id}/ajax/availablemembers(id=${group.getId()})}]]*/'/groups/1/ajax/availablemembers',
@@ -34,7 +35,7 @@
 	<main layout:fragment="page" ddl:bundle-includes="group-members"
 		ddl:asset-css-excludes="jquery.datatables">
 	<div dt:conf="groupMembersTable">
-		<div dt:confType="callback" dt:type="createdRow" dt:function="group-members#groupMembersTable.deleteLinkCallback" />
+		<div dt:confType="callback" dt:type="createdRow" dt:function="group-members#groupMembersTable.rowRenderedCallback" />
 	</div>
 	<div class="col-md-12">
 		<div class="row">
