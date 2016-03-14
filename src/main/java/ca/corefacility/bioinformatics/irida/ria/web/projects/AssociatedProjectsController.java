@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import static org.springframework.data.jpa.domain.Specifications.where;
-
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +17,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.hateoas.Link;
@@ -36,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -47,8 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
@@ -56,8 +53,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects")
@@ -249,43 +244,15 @@ public class AssociatedProjectsController {
 
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
 
-		// check if the logged in user is an Admin
-		User loggedInUser = userService.getUserByUsername(principal.getName());
-		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
-
 		List<Project> projects;
 		long totalElements;
 		int totalPages;
 
-		// if they're an admin or project manager we have to call different
-		// methods
-		if (isAdmin) {
-			// get projects with the given name except the current project
-			Specification<Project> specification = where(ProjectSpecification.searchProjectName(projectName)).and(
-					ProjectSpecification.excludeProject(project));
-			Page<Project> search = projectService.search(specification, page, count, sortDirection, sortedBy);
+		final Page<Project> search = projectService.getUnassociatedProjects(project, projectName, page, count, sortDirection, sortedBy);
 
-			totalElements = search.getTotalElements();
-			totalPages = search.getTotalPages();
-			projects = search.getContent();
-		} else {
-			// need to append project. to the sort string for ProjectUserJoins
-			String sortString = "project." + sortedBy;
-
-			// get projects with the given name except the current project
-			Specification<ProjectUserJoin> specification = where(
-					ProjectUserJoinSpecification.searchProjectNameWithUser(projectName, loggedInUser)).and(
-					ProjectUserJoinSpecification.excludeProject(project));
-			Page<ProjectUserJoin> searchProjectUsers = projectService.searchProjectUsers(specification, page, count,
-					sortDirection, sortString);
-
-			totalElements = searchProjectUsers.getTotalElements();
-			totalPages = searchProjectUsers.getTotalPages();
-
-			// transform the ProjectUserJoin page to a Project list
-			projects = new ArrayList<>();
-			searchProjectUsers.forEach((puj) -> projects.add(puj.getSubject()));
-		}
+		totalElements = search.getTotalElements();
+		totalPages = search.getTotalPages();
+		projects = search.getContent();
 
 		Map<String, Object> map = getProjectsDataMap(projects, relatedProjectJoins);
 		map.put("totalAssociated", totalElements);

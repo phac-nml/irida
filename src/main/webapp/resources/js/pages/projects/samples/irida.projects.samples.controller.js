@@ -35,7 +35,7 @@
 		// Create the datatable.
 		vm.dtColumnDefs = tableService.createTableColumnDefs();
 		vm.dtOptions = tableService.createTableOptions();
-		
+
 		function displaySamples() {
 			samplesService.fetchSamples(display).then(function (samples) {
 				// Need to know if the sample should be selected, and remove any that are no longer in the table.;

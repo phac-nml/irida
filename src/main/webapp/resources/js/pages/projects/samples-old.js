@@ -744,7 +744,7 @@
     Select2Service.init("#projectsSelect", {
       minimumLength: 2,
       ajax         : {
-        url        : tl.BASE_URL + "projects/ajax/samples/available_projects",
+        url        : page.urls.availableprojects,
         dataType   : 'json',
         quietMillis: 250,
         data       : function (search, page) {
