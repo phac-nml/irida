@@ -51,7 +51,6 @@ ddl:bundle-includes="project-members">
                 <tr role="row">
                     <th dt:property="object.username" dt:searchable="true" th:text="#{project.table.collaborator.name}" dt:renderFunction="project-members#projectMembersTable.userNameLinkRow"></th>
                     <th dt:property="projectRole" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRole"></th>
-                    <th dt:property="object.email" th:text="#{project.table.collaborator.email}"></th>
                     <th width="150px" dt:property="createdDate" th:text="#{project.table.collaborator.since}" dt:renderFunction="datatables-utils#datatable.formatDate"></th>
                     <th width="50px" th:if="${isAdmin} or ${isOwner}" dt:sortable="false" dt:renderFunction="project-members#projectMembersTable.removeUserButton"></th>
                 </tr>
