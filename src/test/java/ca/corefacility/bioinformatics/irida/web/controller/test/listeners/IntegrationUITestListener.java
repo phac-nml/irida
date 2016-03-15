@@ -25,17 +25,16 @@ public class IntegrationUITestListener extends RunListener {
 	 * {@inheritDoc}
 	 */
 	public void testRunStarted(Description description) throws Exception {
+		logger.debug("webdriver.chrome.driver = " + System.getProperty("webdriver.chrome.driver"));
 		logger.debug("Running ChromeDriver.");
-		driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1400, 900));
-		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		startWebDriver();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void testRunFinished(Result result) throws Exception {
-		driver.quit();
+		stopWebDriver();
 	}
 
 	/**
@@ -44,5 +43,15 @@ public class IntegrationUITestListener extends RunListener {
 	 */
 	public static WebDriver driver() {
 		return driver;
+	}
+
+	public static void startWebDriver() {
+		driver = new ChromeDriver();
+		driver.manage().window().setSize(new Dimension(1400, 900));
+		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+	}
+
+	public static void stopWebDriver() {
+		driver.quit();
 	}
 }

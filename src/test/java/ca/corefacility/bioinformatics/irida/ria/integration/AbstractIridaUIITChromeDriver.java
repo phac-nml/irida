@@ -49,7 +49,8 @@ public class AbstractIridaUIITChromeDriver {
     private static final Logger logger = LoggerFactory.getLogger(AbstractIridaUIITChromeDriver.class);
 
     public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
-    private static ChromeDriver chromeDriver;
+
+    private static boolean isSingleTest = false;
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
@@ -79,8 +80,8 @@ public class AbstractIridaUIITChromeDriver {
      */
     @AfterClass
     public static void destroy() {
-        if (chromeDriver != null) {
-            chromeDriver.quit();
+        if (isSingleTest) {
+            IntegrationUITestListener.stopWebDriver();
         }
     }
 
@@ -91,14 +92,12 @@ public class AbstractIridaUIITChromeDriver {
     public static WebDriver driver() {
         if (IntegrationUITestListener.driver() == null) {
             System.setProperty("webdriver.chrome.driver", "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver");
-            if (chromeDriver == null) {
-                logger.debug("Starting ChromeDriver for single test class");
-                chromeDriver = new ChromeDriver();
-            }
-            return chromeDriver;
-        } else {
-            return IntegrationUITestListener.driver();
+            isSingleTest = true;
+            IntegrationUITestListener.startWebDriver();
         }
+
+        return IntegrationUITestListener.driver();
+
     }
     
     /**
@@ -106,7 +105,7 @@ public class AbstractIridaUIITChromeDriver {
      *
      */
     private static class ScreenshotOnFailureWatcher extends TestWatcher {
-    	
+
     	private static final Logger logger = LoggerFactory.getLogger(ScreenshotOnFailureWatcher.class);
     	
     	/**
