@@ -35,10 +35,6 @@ public class LocalGalaxy {
 	private static final Logger logger = LoggerFactory
 			.getLogger(LocalGalaxy.class);
 
-	private BootStrapper bootStrapper;
-	private GalaxyDaemon galaxyDaemon;
-	private GalaxyProperties galaxyProperties;
-
 	private URL galaxyURL;
 	private URL invalidGalaxyURL;
 	private URL testGalaxyURL;
@@ -101,8 +97,6 @@ public class LocalGalaxy {
 	@PreDestroy
 	public void shutdownGalaxy() throws IOException {
 		logger.info("Shutting down Galaxy on url=" + galaxyURL);
-		galaxyDaemon.stop();
-		galaxyDaemon.waitForDown();
 		deleteGalaxy();
 	}
 	
@@ -111,26 +105,7 @@ public class LocalGalaxy {
 	 * @throws IOException 
 	 */
 	public void deleteGalaxy() throws IOException {
-		if (logger.isDebugEnabled()) {
-			Path tempLogFile = Files.createTempFile("galaxy-log", ".log");
-			Path galaxyLog = bootStrapper.getRoot().toPath().resolve("paster.log");
-			Files.copy(galaxyLog, tempLogFile, StandardCopyOption.REPLACE_EXISTING);
-			
-			logger.debug("Copied Galaxy log file " + galaxyLog + " to " + tempLogFile);
-		}
-		
-		logger.debug("Deleting Galaxy directory: " + bootStrapper.getPath());
-		bootStrapper.deleteGalaxyRoot();
-	}
-	
-	/**
-	 * Gets the root directory where the local Galaxy is running.
-	 * @return  The root directory for the local Galaxy.
-	 */
-	public Path getGalaxyPath() {
-		checkNotNull(bootStrapper);
-		
-		return Paths.get(bootStrapper.getPath());
+
 	}
 
 	/**
@@ -277,7 +252,7 @@ public class LocalGalaxy {
 
 	/**
 	 * Sets the api key for the 2nd regular user in Galaxy.
-	 * @param user2apiKey
+	 * @param user2apiKey The API key for the 2nd regular user in Galaxy.
 	 */
 	public void setUser2APIKey(String user2apiKey) {
 		user2APIKey = user2apiKey;
@@ -358,51 +333,6 @@ public class LocalGalaxy {
 	 */
 	public void setGalaxyInstanceUser2(GalaxyInstance galaxyInstanceUser2) {
 		this.galaxyInstanceUser2 = galaxyInstanceUser2;
-	}
-
-	/**
-	 * @return The BootStrapper for Galaxy.
-	 */
-	public BootStrapper getBootStrapper() {
-		return bootStrapper;
-	}
-
-	/**
-	 * Sets the BootStrapper for Galaxy.
-	 * @param bootStrapper The BootStrapper for Galaxy.
-	 */
-	public void setBootStrapper(BootStrapper bootStrapper) {
-		this.bootStrapper = bootStrapper;
-	}
-
-	/**
-	 * @return The daemon object for the Galaxy process.
-	 */
-	public GalaxyDaemon getGalaxyDaemon() {
-		return galaxyDaemon;
-	}
-
-	/**
-	 * Sets the daemon object for the Galaxy process.
-	 * @param galaxyDaemon The daemon object for the Galaxy process.
-	 */
-	public void setGalaxyDaemon(GalaxyDaemon galaxyDaemon) {
-		this.galaxyDaemon = galaxyDaemon;
-	}
-
-	/**
-	 * @return The GalaxyProperties object.
-	 */
-	public GalaxyProperties getGalaxyProperties() {
-		return galaxyProperties;
-	}
-
-	/**
-	 * Sets the GalaxyProperties object.
-	 * @param galaxyProperties  The GalaxyProperties object.
-	 */
-	public void setGalaxyProperties(GalaxyProperties galaxyProperties) {
-		this.galaxyProperties = galaxyProperties;
 	}
 
 	/**
