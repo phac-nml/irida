@@ -226,6 +226,14 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
 	}
 
+	@RequestMapping("/projects/templates/samples/copy-modal")
+	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+
+		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
+	}
+
+
+
 	/**
 	 * Get a list of all samples within the project
 	 *

@@ -8,16 +8,26 @@
    */
   function modalService($uibModal) {
 
+    function getSampleIds(samples) {
+      return samples.map(function(item) {
+        return item.sample.identifier;
+      })
+    }
+
+    function openCopyModal(selectedSamples) {
+      var ids = getSampleIds(selectedSamples);
+      return $uibModal.open({
+        templateUrl: page.urls.modal.copy + "?" + $.param({sampleIds: ids}),
+      });
+    }
+
     /**
      * Open the modal to remove samples from a project.
      * @param selectedSamples
      * @returns {*}
      */
     function openRemoveModal(selectedSamples) {
-      var ids = [];
-      selectedSamples.forEach(function (item) {
-        ids.push(item.sample.identifier);
-      });
+      var ids = getSampleIds(selectedSamples);
       return $uibModal.open({
         size        : 'lg',
         templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),

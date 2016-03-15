@@ -89,7 +89,7 @@
 		};
 
 		vm.copy = function () {
-			$log.warn("TODO: Implement copy functionality");
+			modalService.openCopyModal(vm.selected);
 		};
 
 		vm.move = function () {
