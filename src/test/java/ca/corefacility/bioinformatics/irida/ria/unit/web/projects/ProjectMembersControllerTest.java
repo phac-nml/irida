@@ -20,9 +20,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
@@ -31,8 +32,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectMembersContr
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.Lists;
 
 public class ProjectMembersControllerTest {
 	// Services
@@ -97,10 +96,11 @@ public class ProjectMembersControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.getUsersAvailableForProject(project)).thenReturn(users);
 
-		Map<Long, String> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
+		Collection<User> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
 
 		assertFalse(usersAvailableForProject.isEmpty());
-		assertTrue(usersAvailableForProject.containsKey(userId));
+		assertEquals("should only have 1 user.", 1, usersAvailableForProject.size());
+		assertEquals("should have the specified user on project.", userId, usersAvailableForProject.iterator().next().getId());
 
 		verify(projectService).read(projectId);
 		verify(userService).getUsersAvailableForProject(project);
@@ -117,8 +117,9 @@ public class ProjectMembersControllerTest {
 
 		when(userService.read(userId)).thenReturn(user);
 		when(projectService.read(projectId)).thenReturn(project);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
-		controller.removeUser(projectId, userId, principal);
+		controller.removeUser(projectId, userId, principal, null);
 
 		verify(userService).read(userId);
 		verify(projectService).read(projectId);
@@ -137,15 +138,15 @@ public class ProjectMembersControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
-		controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
+		controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
 
 		verify(projectService).read(projectId);
 		verify(userService).read(userId);
 		verify(projectService).updateUserProjectRole(project, user, projectRole);
 	}
 
-	@Test(expected = ProjectSelfEditException.class)
 	public void testUdateUserSelfRole() throws ProjectWithoutOwnerException, ProjectSelfEditException {
 		Long projectId = 1L;
 		Long userId = 2L;
@@ -157,19 +158,9 @@ public class ProjectMembersControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
-		controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
-	}
-
-	@Test
-	public void testGetAjaxUsersListForProject() {
-		Long projectId = 32L;
-		Project project = new Project("test");
-		project.setId(projectId);
-		Collection<Join<Project, User>> users = projectTestUtils.getUsersForProject(project);
-		when(userService.getUsersForProject(any(Project.class))).thenReturn(users);
-		Map<String, Collection<Join<Project, User>>> usersReturned = controller.getAjaxProjectMemberMap(projectId);
-		assertTrue("Has a data attribute required for data tables", usersReturned.containsKey("data"));
-		assertEquals("Has the correct number of users.", usersReturned.get("data").size(), 2);
+		final Map<String, String> result = controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
+		assertTrue("should have failure message.", result.containsKey("failure"));
 	}
 }

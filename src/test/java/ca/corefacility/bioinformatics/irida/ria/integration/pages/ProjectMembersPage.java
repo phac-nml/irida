@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public List<String> getProjectMembersNames() {
-		List<WebElement> els = driver.findElements(By.cssSelector("a.col-names"));
+		List<WebElement> els = driver.findElements(By.cssSelector("span.col-names"));
 		return els.stream().map(WebElement::getText).collect(Collectors.toList());
 	}
 
@@ -47,45 +48,13 @@ public class ProjectMembersPage extends AbstractPage {
 		removeUserButton.click();
 	}
 
-	public void clickModialPopupButton() {
+	public void clickModalPopupButton() {
 		logger.debug("Confirming user removal");
 		WebElement myDynamicElement = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("modial-remove-user")));
+				.id("remove-user-button")));
 
 		myDynamicElement.click();
 		waitForAjax();
-	}
-
-	public void clickEditButton(Long userid) {
-		logger.debug("clicking edit button for " + userid);
-		WebElement editMembersButton = driver.findElement(By.id("edit-button-" + userid));
-		editMembersButton.click();
-	}
-
-	public boolean roleSelectDisplayed(Long userid) {
-		logger.debug("Checking if role select is displayed");
-		boolean present = false;
-		try {
-			WebElement findElement = driver.findElement(By.id(userid + "-role-select"));
-			present = findElement.isDisplayed();
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
-
-		return present;
-	}
-
-	public boolean roleSpanDisplayed(Long userid) {
-		logger.debug("Checking if role span is displayed");
-		boolean present = false;
-		try {
-			WebElement findElement = driver.findElement(By.id("display-role-" + userid));
-			present = findElement.isDisplayed();
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
-
-		return present;
 	}
 
 	public void setRoleForUser(Long id, String roleValue) {
@@ -116,11 +85,16 @@ public class ProjectMembersPage extends AbstractPage {
 		waitForAjax();
 	}
 
-	public void addUserToProject(Long id, ProjectRole role) {
-		WebElement userElement = driver.findElement(By.id("add-user-username"));
+	public void addUserToProject(final String username, final ProjectRole role) {
+		WebElement userElement = waitForElementVisible(By.className("select2-choice"));
+		userElement.click();
+		WebElement userField = waitForElementVisible(By.className("select2-input"));
 		// we're using select2 on the user element so it ends up being made into
 		// an input box rather than a select.
-		userElement.sendKeys(id.toString());
+		userField.sendKeys(username);
+		Collection<WebElement> selectUserDropdown = waitForElementsVisible(By.className("select2-result-label"));
+		
+		selectUserDropdown.iterator().next().click();
 
 		WebElement roleElement = driver.findElement(By.id("add-user-role"));
 		Select roleSelect = new Select(roleElement);
