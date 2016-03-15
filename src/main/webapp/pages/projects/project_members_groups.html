@@ -16,7 +16,7 @@ ddl:bundle-includes="project-members">
             urls: {
                 'addMember': /*[[@{/projects/{id}/groups(id=${project.getId()})}]]*/ '/projects/1/members',
                 'usersLink' : /*[[@{/groups/}]]*/'/users',
-                'deleteModal' : /*[[@{/projects/removeUserModal}]]*/ '/projects/removeUserModal',
+                'deleteModal' : /*[[@{/projects/removeUserGroupModal}]]*/ '/projects/removeUserModal',
                 'removeMember': /*[[@{/projects/{id}/groups/(id=${project.getId()})}]]*/ '/projects/1/members/2',
                 'usersSelection': /*[[@{/projects/{id}/ajax/availablegroupmembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers',
                 'updateRole': /*[[@{/projects/{id}/members/editrole/(id=${project.getId()})}]]*/ '/projects/1/members'

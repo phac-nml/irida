@@ -381,4 +381,20 @@ public class ProjectMembersController {
 		return REMOVE_USER_MODAL;
 	}
 	
+	
+	/**
+	 * Get a string to tell the user which group they're going to delete.
+	 * 
+	 * @param userGroupId
+	 *            the user group that's about to be deleted.
+	 * @param locale
+	 *            the locale of the browser.
+	 * @return a message indicating which group is going to be deleted.
+	 */
+	@RequestMapping(path = "/removeUserGroupModal", method = RequestMethod.POST)
+	public String getRemoveUserGroupModal(final @RequestParam Long userId, final Model model) {
+		final UserGroup userGroup = userGroupService.read(userId);
+		model.addAttribute("user", userGroup);
+		return REMOVE_USER_MODAL;
+	}
 }
