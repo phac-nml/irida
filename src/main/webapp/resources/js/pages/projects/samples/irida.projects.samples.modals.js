@@ -8,6 +8,11 @@
    */
   function modalService($uibModal) {
 
+    /**
+     * Open the modal to remove samples from a project.
+     * @param selectedSamples
+     * @returns {*}
+     */
     function openRemoveModal(selectedSamples) {
       var ids = [];
       selectedSamples.forEach(function (item) {
