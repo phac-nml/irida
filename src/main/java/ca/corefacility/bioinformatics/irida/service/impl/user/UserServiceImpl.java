@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -346,6 +347,16 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		return pujRepository.save(projectJoinForUser);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Page<Join<Project, User>> searchUsersForProject(final Project project, final String search, final int page,
+			final int size, final Direction order, final String... sortProperties) {
+		return pujRepository.getUsersForProject(project, search, new PageRequest(page, size, order, sortProperties));
+	}
+	
 	/**
 	 * Translate {@link ConstraintViolationException} errors into an appropriate
 	 * {@link EntityExistsException}.
