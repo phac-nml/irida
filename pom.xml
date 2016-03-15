@@ -573,11 +573,6 @@
 			<artifactId>blend4j</artifactId>
 			<version>${com.github.jmchilton.blend4j.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.jmchilton.galaxybootstrap</groupId>
-			<artifactId>galaxybootstrap</artifactId>
-			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
-		</dependency>
 
 		<!-- Image manipulation -->
 		<dependency>
