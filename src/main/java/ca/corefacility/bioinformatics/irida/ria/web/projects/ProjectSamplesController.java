@@ -226,9 +226,20 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
 	}
 
-	@RequestMapping("/projects/templates/samples/copy-modal")
+	@RequestMapping("/projects/templates/copy-modal")
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
-
+		List<Sample> samples = new ArrayList<>();
+		List<Sample> extraSamples = new ArrayList<>();
+		for (Long id : ids) {
+			if (samples.size() < 10) {
+				samples.add(sampleService.read(id));
+			}
+			else {
+				extraSamples.add(sampleService.read(id));
+			}
+		}
+		model.addAttribute("samples", samples);
+		model.addAttribute("extraSamples", extraSamples);
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
 

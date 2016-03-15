@@ -17,7 +17,7 @@
     function openCopyModal(selectedSamples) {
       var ids = getSampleIds(selectedSamples);
       return $uibModal.open({
-        templateUrl: page.urls.modal.copy + "?" + $.param({sampleIds: ids}),
+        templateUrl: page.urls.modals.copy + "?" + $.param({sampleIds: ids}),
       });
     }
 
@@ -87,6 +87,7 @@
     }
 
     return {
+      openCopyModal              : openCopyModal,
       openRemoveModal            : openRemoveModal,
       openMergeModal             : openMergeModal,
       openAssociatedProjectsModal: openAssociatedProjectsModal
@@ -164,9 +165,14 @@
     }
   }
 
+  function CopyModalModalController($uibModalInstance, samples) {
+
+  }
+
   ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "ui.bootstrap"])
     .factory("modalService", ["$uibModal", modalService])
     .controller("AssociatedProjectsModalController", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
+    .controller("CopyController", ["$uibModalInstance", "samples", CopyModalModalController])
   ;
 }(angular, PAGE));
