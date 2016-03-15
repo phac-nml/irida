@@ -14,11 +14,11 @@ ddl:bundle-includes="project-members">
 
             },
             urls: {
-                'addMember': /*[[@{/projects/{id}/members(id=${project.getId()})}]]*/ '/projects/1/members',
-                'usersLink' : /*[[@{/users/}]]*/'/users',
+                'addMember': /*[[@{/projects/{id}/groups(id=${project.getId()})}]]*/ '/projects/1/members',
+                'usersLink' : /*[[@{/groups/}]]*/'/users',
                 'deleteModal' : /*[[@{/projects/removeUserModal}]]*/ '/projects/removeUserModal',
-                'removeMember': /*[[@{/projects/{id}/members/(id=${project.getId()})}]]*/ '/projects/1/members/2',
-                'usersSelection': /*[[@{/projects/{id}/ajax/availablemembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers',
+                'removeMember': /*[[@{/projects/{id}/groups/(id=${project.getId()})}]]*/ '/projects/1/members/2',
+                'usersSelection': /*[[@{/projects/{id}/ajax/availablegroupmembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers',
                 'updateRole': /*[[@{/projects/{id}/members/editrole/(id=${project.getId()})}]]*/ '/projects/1/members'
             }
         };
@@ -47,15 +47,15 @@ ddl:bundle-includes="project-members">
     <div class="row">
     	<div class="col-md-3">
     		<ul class="nav nav-pills nav-stacked">
-    			<li role="presentation" class="active"><a th:href="@{/projects/{id}/members(id=${project.getId()})}" th:text="#{project.members.link.users}">_Individual users_</a></li>
-    			<li role="presentation"><a th:href="@{/projects/{id}/groups(id=${project.getId()})}" th:text="#{project.members.link.groups}">_Groups_</a></li>
+    			<li role="presentation"><a th:href="@{/projects/{id}/members(id=${project.getId()})}" th:text="#{project.members.link.users}">_Individual users_</a></li>
+    			<li role="presentation" class="active"><a th:href="@{/projects/{id}/groups(id=${project.getId()})}" th:text="#{project.members.link.groups}">_Groups_</a></li>
     		</ul>
     	</div>
         <div class="col-md-9">
-            <table id="usersTable" dt:table="true" dt:url="@{/projects/ajax/{id}/members(id=${project.getId()})}">
+            <table id="usersTable" dt:table="true" dt:url="@{/projects/ajax/{id}/groups(id=${project.getId()})}">
                 <thead>
                 <tr role="row">
-                    <th dt:property="object.username" dt:searchable="true" th:text="#{project.table.collaborator.name}" dt:renderFunction="project-members#projectMembersTable.userNameLinkRow"></th>
+                    <th dt:property="object.name" dt:searchable="true" th:text="#{project.table.collaborator.name}" dt:renderFunction="project-members#projectMembersTable.userNameLinkRow"></th>
                     <th dt:property="projectRole" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRole"></th>
                     <th width="150px" dt:property="createdDate" th:text="#{project.table.collaborator.since}" dt:renderFunction="datatables-utils#datatable.formatDate"></th>
                     <th width="50px" th:if="${isAdmin} or ${isOwner}" dt:sortable="false" dt:renderFunction="project-members#projectMembersTable.removeUserButton"></th>

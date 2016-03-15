@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 
 /**
  * A specialized service layer for projects.
@@ -37,6 +38,22 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role);
+	
+	/**
+	 * Add the specified {@link UserGroup} to the {@link Project} with a {@link Role} . If the {@link UserGroup} is a manager for
+	 * the {@link Project}, then the {@link UserGroup} should be added to the {@link Project} with the 'ROLE_MANAGER' {@link
+	 * Role}.
+	 *
+	 * @param project
+	 * 		the {@link Project} to add the user to.
+	 * @param userGroup
+	 * 		the user group to add to the {@link Project}.
+	 * @param role
+	 * 		the role that the user plays on the {@link Project}.
+	 *
+	 * @return a reference to the relationship resource created between the two entities.
+	 */
+	public Join<Project, UserGroup> addUserGroupToProject(Project project, UserGroup userGroup, ProjectRole role);
 
 	/**
 	 * Remove the specified {@link User} from the {@link Project}.
@@ -50,6 +67,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * 		if removing this user would leave the project without an owner
 	 */
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException;
+	
+	/**
+	 * Remove the specified {@link UserGroup} from the {@link Project}.
+	 *
+	 * @param project
+	 * 		the {@link Project} to remove the {@link User} from.
+	 * @param userGroup
+	 * 		the {@link UserGroup} to be removed from the {@link Project}.
+	 */
+	public void removeUserGroupFromProject(Project project, UserGroup user);
 
 	/**
 	 * Update a {@link User}'s {@link ProjectRole} on a {@link Project}

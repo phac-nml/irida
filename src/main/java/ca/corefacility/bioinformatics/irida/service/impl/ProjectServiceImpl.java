@@ -53,6 +53,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -217,6 +219,18 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
 		pujRepository.delete(projectJoinForUser);
+	}
+	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public void removeUserGroupFromProject(Project project, UserGroup userGroup) {
+		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		ugpjRepository.delete(j);
 	}
 
 	/**
@@ -517,6 +531,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
 		return projectRepository.findAllProjectsByNameOrOrganism(searchName, searchOrganism, pr);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup, final ProjectRole role) {
+		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
+	}
 	
 	/**
 	 * If the sort properties are empty, sort by default on the CREATED_DATE
@@ -553,4 +576,5 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 		};
 	}
+
 }
