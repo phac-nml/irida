@@ -9,7 +9,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
@@ -23,9 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
-import com.github.jmchilton.galaxybootstrap.BootStrapper;
-import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
-import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 
 /**
  * A class containing information about the running instance of Galaxy for integration testing.
