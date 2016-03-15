@@ -46,6 +46,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
 
+    private static final Logger logger = LoggerFactory.getLogger(AbstractIridaUIITChromeDriver.class);
+
     public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
     private static ChromeDriver chromeDriver;
     
@@ -87,9 +89,10 @@ public class AbstractIridaUIITChromeDriver {
      * @return the instance of {@link WebDriver} used in the tests.
      */
     public static WebDriver driver() {
-        System.setProperty("webdriver.chrome.driver", "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver");
         if (IntegrationUITestListener.driver() == null) {
+            System.setProperty("webdriver.chrome.driver", "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver");
             if (chromeDriver == null) {
+                logger.debug("Starting ChromeDriver for single test class");
                 chromeDriver = new ChromeDriver();
             }
             return chromeDriver;
