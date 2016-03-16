@@ -30,12 +30,12 @@
 		<div class="form-group">
 			<label th:if="${total==1}" th:text="#{project.samples.modal.copy.select-label-singular}"/>
 			<label th:if="${total>1}" th:text="#{project.samples.modal.copy.select-label-plural}"/>
-			<input projects-select2="" id="projectsSelect" class="form-control" ng-model="copyModalCtrl.selected" />
+			<input projects-select2="" id="projectsSelect" class="form-control" ng-model="copyModalCtrl.project" />
 		</div>
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="copyModalCtrl.close()"></button>
-		<button id="confirm-copy-samples" class="btn btn-primary" ng-disabled="copyModalCtrl.selected===undefined" th:text="#{project.samples.modal.copy.complete}" ng-click="copyModalCtrl.doCopy()">
+		<button id="confirm-copy-samples" class="btn btn-primary" ng-disabled="copyModalCtrl.project===undefined" th:text="#{project.samples.modal.copy.complete}" ng-click="copyModalCtrl.doCopy()">
 			__MOVE_OR_COPY__
 		</button>
 	</div>

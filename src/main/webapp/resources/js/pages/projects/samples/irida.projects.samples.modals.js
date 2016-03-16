@@ -28,11 +28,13 @@
           };
 
           vm.doCopy = function () {
-            console.log(vm);
-            $uibModalInstance.close();
+            $uibModalInstance.close({
+              sampleIds: ids,
+              newProjectId: vm.project
+            });
           };
         }]
-      });
+      }).result;
     }
 
     /**

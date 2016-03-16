@@ -331,7 +331,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long newProjectId,
-			@RequestParam boolean removeFromOriginal, Locale locale) {
+			@RequestParam(required = false) boolean removeFromOriginal, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
 
