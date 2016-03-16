@@ -1,20 +1,23 @@
-<div id="copy-samples-modal">
+<div id="copy-samples-modal" th:with="total=${#lists.size(samples) + #lists.size(extraSamples)}">
 	<div class="modal-header">
 		<h3 class="modal-title">
-			<fa:icon type="copy" />&nbsp;<span th:text="#{project.samples.modal.copy.title}">__COPY_SAMPLES__</span>
+			<fa:icon type="copy"/>
+			&nbsp;
+			<th:block th:if="${total == 1}" th:text="#{project.samples.modal.copy.title-singular}"/>
+			<th:block th:if="${total > 1}" th:text="#{project.samples.modal.copy.title-plural}"/>
 		</h3>
 	</div>
 	<div class="modal-body" th:with="extraCount=${#lists.size(extraSamples)}">
-		<h4>
-			<span th:text="#{project.samples.modal.copy.intro}">The following samples will be copied:</span>
-		</h4>
-		<ol class="start">
+		<h4 th:if="${total>1}" th:text="#{project.samples.modal.copy.intro-plural(${total})}"/>
+		<h4 th:if="${total==1}" th:text="#{project.samples.modal.copy.intro-singular(${samples[0].sampleName})}"></h4>
+		<th:block th:if="${total>1}">
+			<ol class="start">
 			<li th:each="sample : ${samples}" th:text="${sample.sampleName}"></li>
 			<th:block th:if="${extraCount &lt; 5}">
 				<li th:each="sample : ${extraSamples}" th:text="${sample.sampleName}"></li>
 			</th:block>
 		</ol>
-		<button class="btn btn-link" th:if="${extraCount &gt; 4}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.extra-multiple(${extraCount}}"
+		<button class="btn btn-link" th:if="${extraCount &gt; 4}" th:text="#{project.samples.modal.extra-btn(${extraCount})}"
 		        uib-popover-template="'extraSamples.tmpl'" popover-placement="right"/>
 		<script th:if="${extraCount > 4}" type="text/ng-template" id="extraSamples.tmpl">
 			<div>
@@ -23,9 +26,11 @@
 				</ol>
 			</div>
 		</script>
+		</th:block>
 		<div class="form-group">
-			<label th:text="#{project.samples.modal.copy.select-label}"></label>
-			<input id="projectsSelect" class="form-control" ng-model="cmCtrl.selected" />
+			<label th:if="${total==1}" th:text="#{project.samples.modal.copy.select-label-singular}"/>
+			<label th:if="${total>1}" th:text="#{project.samples.modal.copy.select-label-plural}"/>
+			<input projects-select2="" id="projectsSelect" class="form-control" ng-model="cmCtrl.selected" />
 		</div>
 	</div>
 	<div class="modal-footer">

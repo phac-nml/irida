@@ -13,6 +13,13 @@
       }
     },
     {
+      "name": "irida.projects.samples.directives",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.directives.js"
+      }
+    },
+    {
       "name": "irida.projects.samples.service",
       "type": "js",
       "locations": {
