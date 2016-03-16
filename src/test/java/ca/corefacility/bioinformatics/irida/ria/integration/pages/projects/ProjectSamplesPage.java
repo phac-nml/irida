@@ -68,6 +68,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "newName")
 	private WebElement newMergeNameInput;
 
+	@FindBy(id = "copy-samples-modal")
+	private WebElement copySamplesModal;
+
+	@FindBy(id = "projectsSelect")
+	private WebElement projectsSelectInput;
+
+	@FindBy(id = "confirm-copy-samples")
+	private WebElement copyOkBtn;
+
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
@@ -177,6 +186,17 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.elementToBeClickable(mergeBtnOK));
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
+	}
+
+	public void copySamples(String project) {
+		copyBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
+		projectsSelectInput.click();
+		projectsSelectInput.sendKeys(project);
+		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
+		copyOkBtn.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
 	}
 
 	public List<String> getSampleNamesOnPage() {
