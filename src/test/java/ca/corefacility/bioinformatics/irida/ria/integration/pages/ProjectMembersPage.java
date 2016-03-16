@@ -44,7 +44,7 @@ public class ProjectMembersPage extends AbstractPage {
 
 	public void clickRemoveUserButton(Long id) {
 		logger.debug("Clicking remove user button for " + id);
-		WebElement removeUserButton = driver.findElement(By.id("remove-user-" + id));
+		WebElement removeUserButton = driver.findElement(By.id("remove-member-" + id));
 		removeUserButton.click();
 	}
 

@@ -141,11 +141,11 @@ public class ProjectMembersController {
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@ResponseBody
-	public Map<String, String> addProjectMember(@PathVariable Long projectId, @RequestParam Long userId,
+	public Map<String, String> addProjectMember(@PathVariable Long projectId, @RequestParam Long memberId,
 			@RequestParam String projectRole, Locale locale) {
-		logger.trace("Adding user " + userId + " to project " + projectId);
+		logger.trace("Adding user " + memberId + " to project " + projectId);
 		Project project = projectService.read(projectId);
-		User user = userService.read(userId);
+		User user = userService.read(memberId);
 		ProjectRole role = ProjectRole.fromString(projectRole);
 
 		projectService.addUserToProject(project, user, role);
@@ -170,11 +170,11 @@ public class ProjectMembersController {
 	@RequestMapping(value = "/{projectId}/groups", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@ResponseBody
-	public Map<String, String> addProjectGroupMember(@PathVariable Long projectId, @RequestParam Long userId,
+	public Map<String, String> addProjectGroupMember(@PathVariable Long projectId, @RequestParam Long memberId,
 			@RequestParam String projectRole, Locale locale) {
-		logger.trace("Adding user " + userId + " to project " + projectId);
+		logger.trace("Adding user " + memberId + " to project " + projectId);
 		final Project project = projectService.read(projectId);
-		final UserGroup userGroup = userGroupService.read(userId);
+		final UserGroup userGroup = userGroupService.read(memberId);
 		final ProjectRole role = ProjectRole.fromString(projectRole);
 
 		
@@ -405,9 +405,9 @@ public class ProjectMembersController {
 	 * @return a message indicating which group is going to be deleted.
 	 */
 	@RequestMapping(path = "/removeUserModal", method = RequestMethod.POST)
-	public String getRemoveUserModal(final @RequestParam Long userId, final Model model) {
-		final User user = userService.read(userId);
-		model.addAttribute("user", user);
+	public String getRemoveUserModal(final @RequestParam Long memberId, final Model model) {
+		final User user = userService.read(memberId);
+		model.addAttribute("member", user);
 		return REMOVE_USER_MODAL;
 	}
 	
@@ -422,9 +422,9 @@ public class ProjectMembersController {
 	 * @return a message indicating which group is going to be deleted.
 	 */
 	@RequestMapping(path = "/removeUserGroupModal", method = RequestMethod.POST)
-	public String getRemoveUserGroupModal(final @RequestParam Long userId, final Model model) {
-		final UserGroup userGroup = userGroupService.read(userId);
-		model.addAttribute("user", userGroup);
+	public String getRemoveUserGroupModal(final @RequestParam Long memberId, final Model model) {
+		final UserGroup userGroup = userGroupService.read(memberId);
+		model.addAttribute("member", userGroup);
 		return REMOVE_USER_MODAL;
 	}
 }

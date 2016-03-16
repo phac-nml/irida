@@ -7,23 +7,23 @@ var projectMembersTable = (function(page, notifications) {
 		return select;
 	};
 	
-	function userNameLinkRow(data, type, full) {
+	function memberNameLinkRow(data, type, full) {
 		return "<a class='item-link' title='" + data + "' href='"
 				+ page.urls.usersLink + full.object.identifier + "'><span class='col-names'>" + full.object.label
 				+ "</span></a>";
 	};
 	
-	function removeUserButton(data, type, full) {
-		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button id='remove-user-" + full.object.identifier + "' type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
+	function removeMemberButton(data, type, full) {
+		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button id='remove-member-" + full.object.identifier + "' type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-member-btn'><span class='fa fa-remove'></span></div>";
 	};
 	
 	function rowRenderedCallback(row, data) {
 		var row = $(row);
-		row.find(".remove-user-btn").click(function () {
-			$("#removeUserModal").load(page.urls.deleteModal+"#removeUserModalGen", { 'userId' : data.object.identifier}, function() {
+		row.find(".remove-member-btn").click(function () {
+			$("#removeMemberModal").load(page.urls.deleteModal+"#removeMemberModalGen", { 'memberId' : data.object.identifier }, function() {
 				var modal = $(this);
 				modal.on("show.bs.modal", function () {
-					$(this).find("#remove-user-button").off("click").click(function () {
+					$(this).find("#remove-member-button").off("click").click(function () {
 						$.ajax({
 							url     : page.urls.removeMember + data.object.identifier,
 							type    : 'DELETE',
@@ -70,7 +70,7 @@ var projectMembersTable = (function(page, notifications) {
 	};
 	
 	
-	$("#add-user-username").select2({
+	$("#add-member-membername").select2({
 	    minimumInputLength: 1,
 	    ajax: {
 	        url: page.urls.usersSelection,
@@ -94,19 +94,19 @@ var projectMembersTable = (function(page, notifications) {
 			url: page.urls.addMember,
 			method: 'POST',
 			data: {
-				"userId" : $("#add-user-username").val(),
-				"projectRole" : $("#add-user-role").val()
+				"memberId" : $("#add-member-membername").val(),
+				"projectRole" : $("#add-member-role").val()
 			},
 			success: function(result) {
-				$("#addUserModal").modal('hide');
+				$("#addMemberModal").modal('hide');
 				oTable_usersTable.ajax.reload();
 				notifications.show({
 					'msg': result.result
 				});
-				$("#add-user-username").select2("val", "");
+				$("#add-member-membername").select2("val", "");
 			},
 			error: function() {
-				$("#addUserModal").modal('hide');
+				$("#addMemberModal").modal('hide');
 				notifications.show({
 					'msg': page.i18n.unexpectedAddError,
 					'type': 'error'
@@ -117,8 +117,8 @@ var projectMembersTable = (function(page, notifications) {
 	
 	return {
 		renderGroupRole : renderGroupRole,
-		userNameLinkRow : userNameLinkRow,
-		removeUserButton : removeUserButton,
+		memberNameLinkRow : memberNameLinkRow,
+		removeMemberButton : removeMemberButton,
 		rowRenderedCallback : rowRenderedCallback
 	};
 })(window.PAGE, window.notifications);
