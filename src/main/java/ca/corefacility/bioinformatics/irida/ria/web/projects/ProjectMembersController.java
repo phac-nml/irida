@@ -100,7 +100,7 @@ public class ProjectMembersController {
 		model.addAttribute("projectRoles", projectRoles);
 		return PROJECT_MEMBERS_PAGE;
 	}
-	
+
 	/**
 	 * Gets the name of the template for the project members page. Populates the
 	 * template with standard info.
@@ -134,8 +134,8 @@ public class ProjectMembersController {
 	 * @param projectRole
 	 *            The role for the user on the project
 	 * @param locale
-     *  		  the reported locale of the browser
-     * @return map for showing success message.
+	 *            the reported locale of the browser
+	 * @return map for showing success message.
 	 */
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
 	@ResponseBody
@@ -147,11 +147,10 @@ public class ProjectMembersController {
 		ProjectRole role = ProjectRole.fromString(projectRole);
 
 		projectService.addUserToProject(project, user, role);
-		return ImmutableMap.of(
-				"result", messageSource.getMessage("project.members.add.success", new Object[]{user.getLabel(), project.getLabel()}, locale)
-		);
+		return ImmutableMap.of("result", messageSource.getMessage("project.members.add.success",
+				new Object[] { user.getLabel(), project.getLabel() }, locale));
 	}
-	
+
 	/**
 	 * Add a group to a project
 	 * 
@@ -162,8 +161,8 @@ public class ProjectMembersController {
 	 * @param projectRole
 	 *            The role for the user on the project
 	 * @param locale
-     *  		  the reported locale of the browser
-     * @return map for showing success message.
+	 *            the reported locale of the browser
+	 * @return map for showing success message.
 	 */
 	@RequestMapping(value = "/{projectId}/groups", method = RequestMethod.POST)
 	@ResponseBody
@@ -174,11 +173,9 @@ public class ProjectMembersController {
 		final UserGroup userGroup = userGroupService.read(memberId);
 		final ProjectRole role = ProjectRole.fromString(projectRole);
 
-		
 		projectService.addUserGroupToProject(project, userGroup, role);
-		return ImmutableMap.of(
-				"result", messageSource.getMessage("project.members.add.success", new Object[]{userGroup.getLabel(), project.getLabel()}, locale)
-		);
+		return ImmutableMap.of("result", messageSource.getMessage("project.members.add.success",
+				new Object[] { userGroup.getLabel(), project.getLabel() }, locale));
 	}
 
 	/**
@@ -195,11 +192,11 @@ public class ProjectMembersController {
 	public Collection<User> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
 		final Project project = projectService.read(projectId);
 		final List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
-		
+
 		return usersAvailableForProject.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
 				.collect(Collectors.toList());
 	}
-	
+
 	/**
 	 * Search the list of users who could be added to a project
 	 * 
@@ -214,7 +211,7 @@ public class ProjectMembersController {
 	public Collection<UserGroup> getGroupsAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
 		final Project project = projectService.read(projectId);
 		final List<UserGroup> groupsAvailableForProject = userGroupService.getUserGroupsNotOnProject(project);
-		
+
 		return groupsAvailableForProject.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
 				.collect(Collectors.toList());
 	}
@@ -241,8 +238,8 @@ public class ProjectMembersController {
 		User user = userService.read(userId);
 
 		if (user.getUsername().equals(principal.getName())) {
-			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.selfmessage",
-					new Object[] { }, locale));
+			return ImmutableMap.of("failure",
+					messageSource.getMessage("project.members.edit.selfmessage", new Object[] {}, locale));
 		}
 
 		try {
@@ -254,7 +251,7 @@ public class ProjectMembersController {
 					new Object[] { user.getLabel() }, locale));
 		}
 	}
-	
+
 	/**
 	 * Remove a user group from a project
 	 * 
@@ -275,7 +272,6 @@ public class ProjectMembersController {
 			final Principal principal, final Locale locale) {
 		final Project project = projectService.read(projectId);
 		final UserGroup userGroup = userGroupService.read(userId);
-
 
 		projectService.removeUserGroupFromProject(project, userGroup);
 		return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.remove.success",
@@ -309,19 +305,20 @@ public class ProjectMembersController {
 		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
 
 		if (user.getUsername().equals(principal.getName())) {
-			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.selfmessage",
-					new Object[] { }, locale));
+			return ImmutableMap.of("failure",
+					messageSource.getMessage("project.members.edit.selfmessage", new Object[] {}, locale));
 		}
 
 		try {
 			projectService.updateUserProjectRole(project, user, role);
-			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",  new Object[] {user.getLabel(), roleName}, locale));
+			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",
+					new Object[] { user.getLabel(), roleName }, locale));
 		} catch (final ProjectWithoutOwnerException e) {
 			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
 					new Object[] { user.getLabel(), roleName }, locale));
 		}
 	}
-	
+
 	/**
 	 * Update a user group's role on a project
 	 * 
@@ -348,9 +345,19 @@ public class ProjectMembersController {
 		final ProjectRole role = ProjectRole.fromString(projectRole);
 		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
 		projectService.updateUserGroupProjectRole(project, user, role);
-		return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",  new Object[] {user.getLabel(), roleName}, locale));
+		return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",
+				new Object[] { user.getLabel(), roleName }, locale));
 	}
 
+	/**
+	 * Get a page of users on the project for display in a datatable.
+	 * 
+	 * @param criteria
+	 *            the datatables criteria for filtering/sorting members
+	 * @param projectId
+	 *            the id of the project we're looking at
+	 * @return a page of users on the project
+	 */
 	@RequestMapping(value = "/ajax/{projectId}/members")
 	public @ResponseBody DatatablesResponse<Join<Project, User>> getProjectUserMembers(
 			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long projectId) {
@@ -361,15 +368,24 @@ public class ProjectMembersController {
 		final String sortName = sortProperties.get("sort_string").toString().replaceAll("object.", "user.")
 				.replaceAll("label", "username");
 		final String searchString = criteria.getSearch();
-		
+
 		final Page<Join<Project, User>> users = userService.searchUsersForProject(p, searchString, currentPage,
 				criteria.getLength(), direction, sortName);
 		final DataSet<Join<Project, User>> usersDataSet = new DataSet<>(users.getContent(), users.getTotalElements(),
 				users.getTotalElements());
-		
+
 		return DatatablesResponse.build(usersDataSet, criteria);
 	}
-	
+
+	/**
+	 * Get a page of groups on the project for display in a datatable.
+	 * 
+	 * @param criteria
+	 *            the datatables criteria for filtering/sorting groups
+	 * @param projectId
+	 *            the id of the project we're looking at
+	 * @return a page of groups on the project.
+	 */
 	@RequestMapping(value = "/ajax/{projectId}/groups")
 	public @ResponseBody DatatablesResponse<UserGroupProjectJoin> getProjectGroupMembers(
 			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long projectId) {
@@ -387,7 +403,7 @@ public class ProjectMembersController {
 
 		return DatatablesResponse.build(usersDataSet, criteria);
 	}
-	
+
 	/**
 	 * Get a string to tell the user which group they're going to delete.
 	 * 
@@ -403,8 +419,7 @@ public class ProjectMembersController {
 		model.addAttribute("member", user);
 		return REMOVE_USER_MODAL;
 	}
-	
-	
+
 	/**
 	 * Get a string to tell the user which group they're going to delete.
 	 * 
