@@ -14,6 +14,13 @@
       })
     }
 
+    function openMoveModal(selectedSamples) {
+      var ids = getSampleIds(selectedSamples);
+      return $uibModal.open({
+        templateUrl: page.urls.modals.move + "?" + $.param({sampleIds: ids})
+      }).result;
+    }
+
     function openCopyModal(selectedSamples) {
       var ids = getSampleIds(selectedSamples);
       return $uibModal.open({
@@ -103,6 +110,7 @@
     }
 
     return {
+      openMoveModal              : openMoveModal,
       openCopyModal              : openCopyModal,
       openRemoveModal            : openRemoveModal,
       openMergeModal             : openMergeModal,

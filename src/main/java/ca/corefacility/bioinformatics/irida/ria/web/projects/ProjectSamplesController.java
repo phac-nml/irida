@@ -228,6 +228,18 @@ public class ProjectSamplesController {
 
 	@RequestMapping("/projects/templates/copy-modal")
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
+	}
+
+	@RequestMapping("/projects/templates/move-modal")
+	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
+	}
+
+	private Map<String, List<Sample>> generateCopyMoveSamplesContent(List<Long> ids) {
+		Map<String, List<Sample>> model = new HashMap<>();
 		List<Sample> samples = new ArrayList<>();
 		List<Sample> extraSamples = new ArrayList<>();
 		for (Long id : ids) {
@@ -238,12 +250,10 @@ public class ProjectSamplesController {
 				extraSamples.add(sampleService.read(id));
 			}
 		}
-		model.addAttribute("samples", samples);
-		model.addAttribute("extraSamples", extraSamples);
-		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
+		model.put("samples", samples);
+		model.put("extraSamples", extraSamples);
+		return model;
 	}
-
-
 
 	/**
 	 * Get a list of all samples within the project
