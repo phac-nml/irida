@@ -327,6 +327,36 @@ public class ProjectMembersController {
 					new Object[] { user.getLabel(), roleName }, locale));
 		}
 	}
+	
+	/**
+	 * Update a user group's role on a project
+	 * 
+	 * @param projectId
+	 *            The ID of the project
+	 * @param userId
+	 *            The ID of the user
+	 * @param projectRole
+	 *            The role to set
+	 * @param principal
+	 *            a reference to the logged in user.
+	 * @throws ProjectWithoutOwnerException
+	 *             if changing the user role on the project leaves it without an
+	 *             owner
+	 * @throws ProjectSelfEditException
+	 *             if a user tries to change their own role on a project.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
+	@RequestMapping(path = "{projectId}/groups/editrole/{userId}", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> updateUserGroupRole(final @PathVariable Long projectId, final @PathVariable Long userId,
+			final @RequestParam String projectRole, final Principal principal, final Locale locale) {
+		final Project project = projectService.read(projectId);
+		final UserGroup user = userGroupService.read(userId);
+		final ProjectRole role = ProjectRole.fromString(projectRole);
+		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
+		projectService.updateUserGroupProjectRole(project, user, role);
+		return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",  new Object[] {user.getLabel(), roleName}, locale));
+	}
 
 	@RequestMapping(value = "/ajax/{projectId}/members")
 	public @ResponseBody DatatablesResponse<Join<Project, User>> getProjectUserMembers(

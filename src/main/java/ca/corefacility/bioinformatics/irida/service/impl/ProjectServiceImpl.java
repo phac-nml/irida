@@ -255,6 +255,19 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		projectJoinForUser.setProjectRole(projectRole);
 		return pujRepository.save(projectJoinForUser);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
+			ProjectRole projectRole) {
+		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		j.setProjectRole(projectRole);
+		return ugpjRepository.save(j);
+	}
 
 	private boolean allowRoleChange(ProjectUserJoin originalJoin) {
 		// if they're not a project owner, no worries

@@ -19,7 +19,7 @@ ddl:bundle-includes="project-members">
                 'deleteModal' : /*[[@{/projects/removeUserGroupModal}]]*/ '/projects/removeUserModal',
                 'removeMember': /*[[@{/projects/{id}/groups/(id=${project.getId()})}]]*/ '/projects/1/members/2',
                 'usersSelection': /*[[@{/projects/{id}/ajax/availablegroupmembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers',
-                'updateRole': /*[[@{/projects/{id}/members/editrole/(id=${project.getId()})}]]*/ '/projects/1/members'
+                'updateRole': /*[[@{/projects/{id}/groups/editrole/(id=${project.getId()})}]]*/ '/projects/1/members'
             }
         };
     </script>

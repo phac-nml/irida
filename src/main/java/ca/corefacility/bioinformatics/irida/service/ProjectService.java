@@ -94,6 +94,21 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
 			throws ProjectWithoutOwnerException;
+	
+	/**
+	 * Update a {@link UserGroup}'s {@link ProjectRole} on a {@link Project}
+	 *
+	 * @param project
+	 * 		The project to update
+	 * @param userGroup
+	 * 		The user group to update
+	 * @param projectRole
+	 * 		The role to set
+	 *
+	 * @return The newly updated role object
+	 */
+	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup, ProjectRole projectRole);
+
 
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
