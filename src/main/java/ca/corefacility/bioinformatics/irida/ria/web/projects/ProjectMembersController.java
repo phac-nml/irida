@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,10 +190,9 @@ public class ProjectMembersController {
 	@ResponseBody
 	public Collection<User> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
 		final Project project = projectService.read(projectId);
-		final List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
+		final List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project, term);
 
-		return usersAvailableForProject.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
-				.collect(Collectors.toList());
+		return usersAvailableForProject;
 	}
 
 	/**
@@ -210,10 +208,9 @@ public class ProjectMembersController {
 	@ResponseBody
 	public Collection<UserGroup> getGroupsAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
 		final Project project = projectService.read(projectId);
-		final List<UserGroup> groupsAvailableForProject = userGroupService.getUserGroupsNotOnProject(project);
+		final List<UserGroup> groupsAvailableForProject = userGroupService.getUserGroupsNotOnProject(project, term);
 
-		return groupsAvailableForProject.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
-				.collect(Collectors.toList());
+		return groupsAvailableForProject;
 	}
 
 	/**

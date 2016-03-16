@@ -97,7 +97,7 @@ public class ProjectMembersControllerTest {
 		List<User> users = Lists.newArrayList(new User(userId, "tom", null, null, "Tom", "Matthews", null));
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(userService.getUsersAvailableForProject(project)).thenReturn(users);
+		when(userService.getUsersAvailableForProject(project, term)).thenReturn(users);
 
 		Collection<User> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
 
@@ -106,7 +106,7 @@ public class ProjectMembersControllerTest {
 		assertEquals("should have the specified user on project.", userId, usersAvailableForProject.iterator().next().getId());
 
 		verify(projectService).read(projectId);
-		verify(userService).getUsersAvailableForProject(project);
+		verify(userService).getUsersAvailableForProject(project, term);
 	}
 
 	@Test

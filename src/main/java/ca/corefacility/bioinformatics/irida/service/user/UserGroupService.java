@@ -122,7 +122,9 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 * 
 	 * @param project
 	 *            the project
+	 * @param filter
+	 * 			  the name to filter on
 	 * @return the groups not already on the project.
 	 */
-	public List<UserGroup> getUserGroupsNotOnProject(final Project project);
+	public List<UserGroup> getUserGroupsNotOnProject(final Project project, final String filter);
 }

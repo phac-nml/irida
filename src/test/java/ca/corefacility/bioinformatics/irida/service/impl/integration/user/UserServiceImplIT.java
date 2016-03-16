@@ -295,7 +295,7 @@ public class UserServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testGetUsersAvailableForProject() {
 		Project p = projectService.read(1L);
-		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(p);
+		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(p, "");
 		assertEquals("Wrong number of users.", 2, usersAvailableForProject.size());
 		User availableUser = usersAvailableForProject.iterator().next();
 		assertEquals("Wrong user.", "differentUser", availableUser.getUsername());

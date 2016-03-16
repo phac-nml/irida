@@ -22,6 +22,6 @@ public interface UserGroupRepository extends IridaJpaRepository<UserGroup, Long>
 	 *            the project
 	 * @return the user groups not on the project.
 	 */
-	@Query("from UserGroup ug where ug not in (select ugpj.userGroup from UserGroupProjectJoin ugpj where ugpj.project = ?1)")
-	public List<UserGroup> findUserGroupsNotOnProject(final Project p);
+	@Query("from UserGroup ug where ug not in (select ugpj.userGroup from UserGroupProjectJoin ugpj where ugpj.project = ?1) and ug.name like %?2%")
+	public List<UserGroup> findUserGroupsNotOnProject(final Project p, final String search);
 }

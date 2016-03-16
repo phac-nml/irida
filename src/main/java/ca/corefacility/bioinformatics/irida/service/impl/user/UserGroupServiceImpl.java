@@ -277,8 +277,8 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public List<UserGroup> getUserGroupsNotOnProject(final Project project) {
-		return userGroupRepository.findUserGroupsNotOnProject(project);
+	public List<UserGroup> getUserGroupsNotOnProject(final Project project, final String search) {
+		return userGroupRepository.findUserGroupsNotOnProject(project, search);
 	}
 	
 	/**
