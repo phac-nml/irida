@@ -807,7 +807,7 @@
 				<version>${maven.war.plugin.version}</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<packagingExcludes>${test.war.exclusions}</packagingExcludes>
+					<packagingExcludes>node_modules/**/*</packagingExcludes>
 				</configuration>
 			</plugin>
 
@@ -1064,7 +1064,6 @@
 			<properties>
 				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener</integration.test.listener>
 				<include.tests>**/ria/integration/**/*IT.java</include.tests>
-				<test.war.exclusions>node_modules/**/*.jar</test.war.exclusions>
 			</properties>
 		</profile>
 		<profile>
@@ -1080,7 +1079,6 @@
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
 				</exclude.tests>
-				<test.war.exclusions>node_modules/**/*.jar</test.war.exclusions>
 				<jetty.skip>true</jetty.skip>
 			</properties>
 		</profile>
@@ -1089,7 +1087,6 @@
 			<properties>
 				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
-				<exclude.war>node_modules/**/*.jar</exclude.war>
 			</properties>
 		</profile>
 		<profile>
@@ -1102,7 +1099,6 @@
 					**/AnalysisSubmissionServiceImplIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
-				<test.war.exclusions>node_modules/**/*.jar</test.war.exclusions>
 				<jetty.skip>true</jetty.skip>
 			</properties>
 		</profile>
@@ -1111,7 +1107,6 @@
 			<properties>
 				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener</integration.test.listener>
 				<include.tests>**/*IT.java, **/IT*.java</include.tests>
-				<test.war.exclusions>node_modules/**/*.jar</test.war.exclusions>
 			</properties>
 		</profile>
 	</profiles>
