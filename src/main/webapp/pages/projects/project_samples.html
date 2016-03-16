@@ -17,6 +17,9 @@
                     merge: /*[[@{/projects/templates/merge-modal}]]*/ '/projects/templates/merge-modal',
                     copy: /*[[@{/projects/templates/copy-modal}]]*/ '/projects/templates/copy-modal'
                 },
+                projects: {
+                  available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
+                },
                 samples: {
                     project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
                     local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
