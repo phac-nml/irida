@@ -25,8 +25,7 @@ public class IntegrationUITestListener extends RunListener {
 	 * {@inheritDoc}
 	 */
 	public void testRunStarted(Description description) throws Exception {
-		logger.debug("webdriver.chrome.driver = " + System.getProperty("webdriver.chrome.driver"));
-		logger.debug("Running ChromeDriver.");
+		logger.debug("Running ChromeDriver for UI tests.");
 		startWebDriver();
 	}
 
@@ -34,6 +33,7 @@ public class IntegrationUITestListener extends RunListener {
 	 * {@inheritDoc}
 	 */
 	public void testRunFinished(Result result) throws Exception {
+		logger.debug("Closing ChromeDriver for UI tests.");
 		stopWebDriver();
 	}
 

@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -81,6 +80,7 @@ public class AbstractIridaUIITChromeDriver {
     @AfterClass
     public static void destroy() {
         if (isSingleTest) {
+            logger.debug("Closing ChromeDriver for single test class.");
             IntegrationUITestListener.stopWebDriver();
         }
     }
@@ -91,6 +91,7 @@ public class AbstractIridaUIITChromeDriver {
      */
     public static WebDriver driver() {
         if (IntegrationUITestListener.driver() == null) {
+            logger.debug("Starting ChromeDriver for a single test class.");
             System.setProperty("webdriver.chrome.driver", "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver");
             isSingleTest = true;
             IntegrationUITestListener.startWebDriver();
