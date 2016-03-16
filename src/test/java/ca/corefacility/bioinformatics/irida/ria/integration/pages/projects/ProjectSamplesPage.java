@@ -174,6 +174,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		newMergeNameInput.sendKeys(newName);
+		wait.until(ExpectedConditions.elementToBeClickable(mergeBtnOK));
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
