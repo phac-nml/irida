@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -215,7 +216,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
-		if (!allowRoleChange(projectJoinForUser)) {
+		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
 		pujRepository.delete(projectJoinForUser);
@@ -228,8 +229,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
-	public void removeUserGroupFromProject(Project project, UserGroup userGroup) {
+	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		if (!allowRoleChange(project, j.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("Removing this user group would leave the project without an owner.");
+		}
 		ugpjRepository.delete(j);
 	}
 
@@ -248,7 +252,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					+ " Project: " + project);
 		}
 
-		if (!allowRoleChange(projectJoinForUser)) {
+		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
 			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
 		}
 
@@ -263,21 +267,23 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
-			ProjectRole projectRole) {
+			ProjectRole projectRole) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
 		j.setProjectRole(projectRole);
 		return ugpjRepository.save(j);
 	}
 
-	private boolean allowRoleChange(ProjectUserJoin originalJoin) {
+	private boolean allowRoleChange(final Project project, final ProjectRole projectRoleToChange) {
 		// if they're not a project owner, no worries
-		if (!originalJoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
+		if (!projectRoleToChange.equals(ProjectRole.PROJECT_OWNER)) {
 			return true;
 		}
 
-		List<Join<Project, User>> usersForProjectByRole = pujRepository.getUsersForProjectByRole(
-				originalJoin.getSubject(), ProjectRole.PROJECT_OWNER);
-		if (usersForProjectByRole.size() > 1) {
+		final Collection<Join<Project, User>> usersForProjectByRole = pujRepository.getUsersForProjectByRole(
+				project, ProjectRole.PROJECT_OWNER);
+		final Collection<UserGroupProjectJoin> groups = ugpjRepository.findGroupsByProjectAndProjectRole(project,
+				ProjectRole.PROJECT_OWNER);
+		if (usersForProjectByRole.size() + groups.size() > 1) {
 			// if there's more than one owner, no worries
 			return true;
 		} else {
