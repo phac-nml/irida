@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -139,7 +138,6 @@ public class ProjectMembersController {
      * @return map for showing success message.
 	 */
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@ResponseBody
 	public Map<String, String> addProjectMember(@PathVariable Long projectId, @RequestParam Long memberId,
 			@RequestParam String projectRole, Locale locale) {
@@ -168,7 +166,6 @@ public class ProjectMembersController {
      * @return map for showing success message.
 	 */
 	@RequestMapping(value = "/{projectId}/groups", method = RequestMethod.POST)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@ResponseBody
 	public Map<String, String> addProjectGroupMember(@PathVariable Long projectId, @RequestParam Long memberId,
 			@RequestParam String projectRole, Locale locale) {
@@ -236,7 +233,6 @@ public class ProjectMembersController {
 	 * @throws ProjectSelfEditException
 	 *             if a user is trying to remove themself from the project.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping(path = "{projectId}/members/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId,
@@ -273,7 +269,6 @@ public class ProjectMembersController {
 	 * @throws ProjectSelfEditException
 	 *             if a user is trying to remove themself from the project.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping(path = "{projectId}/groups/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, String> removeUserGroup(final @PathVariable Long projectId, final @PathVariable Long userId,
@@ -304,7 +299,6 @@ public class ProjectMembersController {
 	 * @throws ProjectSelfEditException
 	 *             if a user tries to change their own role on a project.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping(path = "{projectId}/members/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateUserRole(final @PathVariable Long projectId, final @PathVariable Long userId,
@@ -345,7 +339,6 @@ public class ProjectMembersController {
 	 * @throws ProjectSelfEditException
 	 *             if a user tries to change their own role on a project.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping(path = "{projectId}/groups/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateUserGroupRole(final @PathVariable Long projectId, final @PathVariable Long userId,
