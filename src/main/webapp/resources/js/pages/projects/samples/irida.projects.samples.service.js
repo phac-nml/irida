@@ -98,11 +98,19 @@
 				});
 		}
 
+		function copySamples(params) {
+			return $http.post(page.urls.samples.copy, params)
+				.success(function (result) {
+					notifications.show({type: result.result, msg: result.message});
+				});
+		}
+
 		return {
-			fetchSamples: fetchSamples,
+			copySamples     : copySamples,
+			fetchSamples    : fetchSamples,
 			addSamplesToCart: addSamplesToCart,
-			removeSamples: removeSamples,
-			mergeSamples: mergeSamples
+			removeSamples   : removeSamples,
+			mergeSamples    : mergeSamples
 		};
 	}
 

@@ -18,6 +18,20 @@
       var ids = getSampleIds(selectedSamples);
       return $uibModal.open({
         templateUrl: page.urls.modals.copy + "?" + $.param({sampleIds: ids}),
+        openedClass: "copy-modal",
+        controllerAs: "copyModalCtrl",
+        controller: ["$uibModalInstance", function ($uibModalInstance) {
+          var vm = this;
+
+          vm.cancel = function () {
+            $uibModalInstance.dismiss();
+          };
+
+          vm.doCopy = function () {
+            console.log(vm);
+            $uibModalInstance.close();
+          };
+        }]
       });
     }
 

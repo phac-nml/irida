@@ -91,7 +91,16 @@
 		};
 
 		vm.copy = function () {
-			modalService.openCopyModal(vm.selected);
+			modalService.openCopyModal(vm.selected).then(function (result) {
+				samplesService.copySamples(result).then(function () {
+					// Need to reload the samples since the data has changed.
+					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
+						vm.samples = samples;
+						vm.selected = [];
+						updateButtons();
+					});
+				});
+			});
 		};
 
 		vm.move = function () {
