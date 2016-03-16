@@ -1,11 +1,22 @@
-(function(ng, $, page) {
+(function (ng, $, page, project) {
   "use strict";
 
-  function projectsSelect2 ($timeout) {
+  function _generateProjectsSelect2Results(projects) {
+    return projects.filter(function (p) {
+      return p.identifier != project.id;
+    }).map(function (p) {
+      return ({
+        id  : p.identifier,
+        text: p.text || p.name
+      });
+    });
+  }
+
+  function projectsSelect2 () {
     return {
       restrict: "A",
       require: "ngModel",
-      link: function(scope, elem, attrs, ctrl) {
+      link: function(scope, elem) {
         $(elem).select2({
           minimumLength: 2,
           ajax         : {
@@ -20,19 +31,8 @@
               };
             },
             results    : function (data, page) {
-              var results = [];
-
-              var more = (page * 10) < data.total;
-
-              _.forEach(data.projects, function (p) {
-                if ($rootScope.projectId !== parseInt(p.identifier)) {
-                  results.push({
-                    id  : p.identifier,
-                    text: p.text || p.name
-                  });
-                }
-              });
-
+              var more    = (page * 10) < data.total,
+                  results = _generateProjectsSelect2Results(data.projects);
               return {results: results, more: more};
             }
           }
@@ -42,5 +42,5 @@
   }
 
   ng.module("irida.projects.samples.directives", ["irida.projects.samples.service"])
-    .directive("projectsSelect2", ["$timeout", projectsSelect2]);
-}(window.angular, window.jQuery, window.PAGE));
+    .directive("projectsSelect2", [projectsSelect2]);
+}(window.angular, window.jQuery, window.PAGE, window.project));
