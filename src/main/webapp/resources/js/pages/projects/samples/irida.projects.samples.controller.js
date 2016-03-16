@@ -106,6 +106,8 @@
 					// Need to reload the samples since the data has changed.
 					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
 						vm.samples = samples;
+						vm.selected = [];
+						updateButtons();
 					});
 				});
 			});
