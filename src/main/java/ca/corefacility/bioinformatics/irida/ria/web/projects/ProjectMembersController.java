@@ -362,6 +362,9 @@ public class ProjectMembersController {
 		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
 		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
 		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
+		// Jackson renders the JSON on the page rendered by datatables as user
+		// -> object and label -> username, so translate it back so JPA
+		// understands what we're sorting and filtering on
 		final String sortName = sortProperties.get("sort_string").toString().replaceAll("object.", "user.")
 				.replaceAll("label", "username");
 		final String searchString = criteria.getSearch();
@@ -390,6 +393,9 @@ public class ProjectMembersController {
 		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
 		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
 		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
+		// Jackson renders the JSON on the page rendered by datatables as
+		// userGroup -> object so translate it back so that JPA understands what
+		// we're filtering on.
 		final String sortName = sortProperties.get("sort_string").toString().replaceAll("object.", "userGroup.");
 		final String searchString = criteria.getSearch();
 
