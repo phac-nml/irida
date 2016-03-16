@@ -39,7 +39,7 @@ ddl:bundle-includes="project-members">
                     <button id="add-members-button" class="btn btn-default"
                        type="button" data-toggle="modal" data-target="#addUserModal"
                        th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
-                       th:text="#{project.members.edit.add}">_Add Members_</button>
+                       th:text="#{project.members.edit.add.group}">_Add Members_</button>
                 </div>
             </div>
 		</div>
@@ -72,12 +72,12 @@ ddl:bundle-includes="project-members">
 					<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="addUserTitle" th:text="#{project.members.edit.add}">_Add User_</h4>					
+					<h4 class="modal-title" id="addUserTitle" th:text="#{project.members.edit.add.group}">_Add User_</h4>					
 				</div>
 				<div class="modal-body">
 	                <div class="form-group">
-	                    <label class="control-label" for="add-user-username" th:text="#{project.members.add.username}">_Username_</label>
-	                    <input type="hidden" id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{project.members.add.select-user}"/>
+	                    <label class="control-label" for="add-user-username" th:text="#{project.members.add.group.name}">_Username_</label>
+	                    <input type="hidden" id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{project.members.add.select-group}"/>
 	                </div>
 	                <div class="form-group">
 	                    <label class="control-label" for="add-user-role" th:text="#{project.members.add.role}">_Group Role_</label>
