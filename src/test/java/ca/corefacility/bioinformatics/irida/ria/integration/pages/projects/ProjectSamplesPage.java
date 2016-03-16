@@ -171,7 +171,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void mergeSamplesWithNewName(String newName) {
 		mergeBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);id
+		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		newMergeNameInput.sendKeys(newName);
 		wait.until(ExpectedConditions.elementToBeClickable(mergeBtnOK));
