@@ -269,6 +269,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
 			ProjectRole projectRole) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		if (j == null) {
+			throw new EntityNotFoundException("Join between this project and group does not exist. Group: " + userGroup
+					+ " Project: " + project);
+		}
+		if (!allowRoleChange(project, j.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+		}
 		j.setProjectRole(projectRole);
 		return ugpjRepository.save(j);
 	}

@@ -91,7 +91,15 @@ public class ProjectServiceImplIT {
 	
 	@Test(expected = ProjectWithoutOwnerException.class)
 	@WithMockUser(username = "groupuser", roles = "USER")
-	public void testRemoveUserGroupRoleOnProject() throws ProjectWithoutOwnerException {
+	public void testUpdateUserGroupRoleOnProject() throws ProjectWithoutOwnerException {
+		final UserGroup userGroup = userGroupService.read(1L);
+		final Project project = projectService.read(9L);
+		projectService.updateUserGroupProjectRole(project, userGroup, ProjectRole.PROJECT_USER);
+	}
+	
+	@Test(expected = ProjectWithoutOwnerException.class)
+	@WithMockUser(username = "groupuser", roles = "USER")
+	public void testRemoveUserGroupOnProject() throws ProjectWithoutOwnerException {
 		final UserGroup userGroup = userGroupService.read(1L);
 		final Project project = projectService.read(9L);
 		projectService.removeUserGroupFromProject(project, userGroup);
