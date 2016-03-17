@@ -807,6 +807,7 @@
 				<version>${maven.war.plugin.version}</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<packagingExcludes>node_modules/**/*</packagingExcludes>
 				</configuration>
 			</plugin>
 
