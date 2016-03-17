@@ -138,7 +138,7 @@
 		function createTableOptions() {
 			return DTOptionsBuilder.newOptions()
 				// Which row to sort by: Modified date, Descending.
-				.withOption("order", [[2, "desc"]])
+				.withOption("aaSorting", [2, "desc"])
 				// Add extra DOM features. See [https://datatables.net/reference/option/dom]
 				// This matches the other tables in the project see datatables.properties to see full layout.
 				.withDOM("<'row filter-row'<'col-sm-9 buttons'><'col-sm-3'0f>><'row' <'col-md-6 col-sm-12 counts'> <'col-md-6 col-sm-12 datatables-active-filters'1>><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");

@@ -219,6 +219,16 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
 	}
 
+	/**
+	 * Create a modal dialog to merge samples in a project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
 	@RequestMapping("/projects/templates/merge-modal")
 	public String getMergeSamplesInProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		List<Sample> samples = ids.stream().map(sampleService::read).collect(Collectors.toList());

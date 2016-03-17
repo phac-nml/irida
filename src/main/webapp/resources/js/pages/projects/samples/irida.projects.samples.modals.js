@@ -81,6 +81,7 @@
       });
       return $uibModal.open({
         templateUrl : page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
+        openedClass : 'merge-modal',
         controllerAs: "mergeCtrl",
         controller  : "MergeController",
         resolve     : {
