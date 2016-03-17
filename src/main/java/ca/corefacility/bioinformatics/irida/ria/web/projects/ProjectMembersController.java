@@ -2,16 +2,17 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,18 +22,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for handling project/members views and functions
@@ -49,6 +54,7 @@ public class ProjectMembersController {
 	private static final String ACTIVE_NAV = "activeNav";
 
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
+	private static final String REMOVE_USER_MODAL = "projects/templates/remove-user-modal";
 
 	private final ProjectControllerUtils projectUtils;
 	private final ProjectService projectService;
@@ -130,17 +136,12 @@ public class ProjectMembersController {
 	 */
 	@RequestMapping("/{projectId}/ajax/availablemembers")
 	@ResponseBody
-	public Map<Long, String> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
-		Project project = projectService.read(projectId);
-		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
-		Map<Long, String> users = new HashMap<>();
-		for (User user : usersAvailableForProject) {
-			if (user.getLabel().toLowerCase().contains(term.toLowerCase())) {
-				users.put(user.getId(), user.getLabel());
-			}
-		}
-
-		return users;
+	public Collection<User> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
+		final Project project = projectService.read(projectId);
+		final List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
+		
+		return usersAvailableForProject.stream().filter(u -> u.getLabel().toLowerCase().contains(term))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -158,18 +159,26 @@ public class ProjectMembersController {
 	 *             if a user is trying to remove themself from the project.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
-	@RequestMapping("{projectId}/members/remove")
+	@RequestMapping(path = "{projectId}/members/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId, Principal principal)
-			throws ProjectWithoutOwnerException, ProjectSelfEditException {
+	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId,
+			final Principal principal, final Locale locale) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 
 		if (user.getUsername().equals(principal.getName())) {
-			throw new ProjectSelfEditException("You cannot remove yourself from a project.");
+			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.selfmessage",
+					new Object[] { }, locale));
 		}
 
-		projectService.removeUserFromProject(project, user);
+		try {
+			projectService.removeUserFromProject(project, user);
+			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.remove.success",
+					new Object[] { user.getLabel() }, locale));
+		} catch (final ProjectWithoutOwnerException e) {
+			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.remove.nomanager",
+					new Object[] { user.getLabel() }, locale));
+		}
 	}
 
 	/**
@@ -190,44 +199,62 @@ public class ProjectMembersController {
 	 *             if a user tries to change their own role on a project.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
-	@RequestMapping("{projectId}/members/editrole")
+	@RequestMapping(path = "{projectId}/members/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
-	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
-			@RequestParam String projectRole, Principal principal) throws ProjectWithoutOwnerException,
-			ProjectSelfEditException {
-		Project project = projectService.read(projectId);
-		User user = userService.read(userId);
+	public Map<String, String> updateUserRole(final @PathVariable Long projectId, final @PathVariable Long userId,
+			final @RequestParam String projectRole, final Principal principal, final Locale locale) {
+		final Project project = projectService.read(projectId);
+		final User user = userService.read(userId);
+		final ProjectRole role = ProjectRole.fromString(projectRole);
+		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
 
 		if (user.getUsername().equals(principal.getName())) {
-			throw new ProjectSelfEditException("You cannot edit your own role on a project.");
+			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.selfmessage",
+					new Object[] { }, locale));
 		}
 
-		ProjectRole role = ProjectRole.fromString(projectRole);
-
-		projectService.updateUserProjectRole(project, user, role);
-	}
-
-	/**
-	 * Get a map of the members on a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @return A {@code Map<String,Collection<ProjectUserJoin>>} of the users on a
-	 *         project. The key will be the response data param, and probably
-	 *         only that. The collection will be a ProjectUserJoin collection of
-	 *         all users on the project.
-	 */
-	@RequestMapping(value = "/ajax/{projectId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Collection<Join<Project, User>>> getAjaxProjectMemberMap(
-			@PathVariable Long projectId) {
-		Map<String, Collection<Join<Project, User>>> data = new HashMap<>();
 		try {
-			Project project = projectService.read(projectId);
-			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
-			data.put(DataTable.RESPONSE_PARAM_DATA, users);
-		} catch (Exception e) {
-			logger.error("Trying to access a project that does not exist.");
+			projectService.updateUserProjectRole(project, user, role);
+			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",  new Object[] {user.getLabel(), roleName}, locale));
+		} catch (final ProjectWithoutOwnerException e) {
+			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
+					new Object[] { user.getLabel(), roleName }, locale));
 		}
-		return data;
 	}
+
+	@RequestMapping(value = "/ajax/{projectId}/members")
+	public @ResponseBody DatatablesResponse<Join<Project, User>> getGroupMembers(
+			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long projectId) {
+		final Project p = projectService.read(projectId);
+		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
+		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
+		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
+		final String sortName = sortProperties.get("sort_string").toString().replaceAll("object.", "user.")
+				.replaceAll("label", "username");
+		final String searchString = criteria.getSearch();
+		
+		final Page<Join<Project, User>> users = userService.searchUsersForProject(p, searchString, currentPage,
+				criteria.getLength(), direction, sortName);
+		final DataSet<Join<Project, User>> usersDataSet = new DataSet<>(users.getContent(), users.getTotalElements(),
+				users.getTotalElements());
+		
+		return DatatablesResponse.build(usersDataSet, criteria);
+	}
+	
+	/**
+	 * Get a string to tell the user which group they're going to delete.
+	 * 
+	 * @param userGroupId
+	 *            the user group that's about to be deleted.
+	 * @param locale
+	 *            the locale of the browser.
+	 * @return a message indicating which group is going to be deleted.
+	 */
+	@RequestMapping(path = "/removeUserModal", method = RequestMethod.POST)
+	public String getRemoveUserModal(final @RequestParam Long userId, final Model model) {
+		final User user = userService.read(userId);
+		model.addAttribute("user", user);
+		return REMOVE_USER_MODAL;
+	}
+	
 }

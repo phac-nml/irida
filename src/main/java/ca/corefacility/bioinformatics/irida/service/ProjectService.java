@@ -4,13 +4,11 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -129,25 +127,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public List<Join<Project, User>> getProjectsForUser(User user);
 
 	/**
-	 * Search {@link ProjectUserJoin}s with a given specification and paging parameters
-	 *
-	 * @param specification
-	 * 		The specification to search with
-	 * @param page
-	 * 		The search page number
-	 * @param size
-	 * 		The search page size
-	 * @param order
-	 * 		The search order
-	 * @param sortProperties
-	 * 		The page sort properties
-	 *
-	 * @return The matching ProjectUserJoins
-	 */
-	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
-			Direction order, String... sortProperties);
-
-	/**
 	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
 	 *
 	 * @param user
@@ -242,4 +221,67 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link ReferenceFile} to remove.
 	 */
 	public void removeReferenceFileFromProject(Project project, ReferenceFile referenceFile);
+	
+	/**
+	 * Get a page of projects eligible to be marked as associated projects for
+	 * the specified project.
+	 * 
+	 * @param p
+	 *            the project to get eligible associated projects.
+	 * @param searchName
+	 *            the name of projects to filter on.
+	 * @param page
+	 *            the requested page of results.
+	 * @param count
+	 *            the number of results on the page.
+	 * @param sortDirection
+	 *            the direction the results should be sorted by.
+	 * @param sortedBy
+	 *            the property to be used to sort the results.
+	 * @return a page of projects eligible to be marked as associated projects.
+	 */
+	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy);
+
+	/**
+	 * Find a list of projects (for a user or admin) using the specified search
+	 * criteria
+	 * 
+	 * @param searchName
+	 *            the name to filter on
+	 * @param searchOrganism
+	 *            the organism to filter on
+	 * @param page
+	 *            the requested page of results
+	 * @param count
+	 *            the number of results on the page
+	 * @param sortDirection
+	 *            the direction the results should be sorted by
+	 * @param sortedBy
+	 *            the property to be used to sort the results
+	 * @return a page of projects for the user.
+	 */
+	public Page<Project> findProjectsForUser(final String searchName, final String searchOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy);
+
+	/**
+	 * Find a paged list of all projects (for admin) using the specified search
+	 * criteria.
+	 * 
+	 * @param searchName
+	 *            the name to filter on
+	 * @param searchOrganism
+	 *            the organism to filter on
+	 * @param page
+	 *            the requested page of results
+	 * @param count
+	 *            the number of results on the page
+	 * @param sortDirection
+	 *            the direction the results should be sorted by
+	 * @param sortedBy
+	 *            the property to be used to sort the results
+	 * @return a page of projects for the user.
+	 */
+	public Page<Project> findAllProjects(final String searchName, final String searchOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy);
 }

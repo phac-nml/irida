@@ -7,6 +7,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
@@ -19,6 +20,8 @@ import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -31,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 
@@ -42,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> implements UserGroupService {
 
 	private final UserGroupJoinRepository userGroupJoinRepository;
+	private final UserRepository userRepository;
 
 	/**
 	 * Create a new {@link UserGroupServiceImpl}.
@@ -53,18 +58,24 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Autowired
 	public UserGroupServiceImpl(final UserGroupRepository userGroupRepository,
-			final UserGroupJoinRepository userGroupJoinRepository, final Validator validator) {
+			final UserGroupJoinRepository userGroupJoinRepository, final UserRepository userRepository, final Validator validator) {
 		super(userGroupRepository, validator, UserGroup.class);
 		this.userGroupJoinRepository = userGroupJoinRepository;
+		this.userRepository = userRepository;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_MANAGER')")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Transactional
 	public UserGroup create(UserGroup object) throws EntityExistsException, ConstraintViolationException {
-		return super.create(object);
+		final UserGroup ug = super.create(object);
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User currentUser = userRepository.loadUserByUsername(auth.getName());
+		addUserToGroup(currentUser, ug, UserGroupRole.GROUP_OWNER);
+		return ug;
 	}
 
 	/**
@@ -89,7 +100,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateUserGroup')")
 	public UserGroup update(Long id, Map<String, Object> updatedProperties) throws EntityExistsException,
 			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException {
 		return super.update(id, updatedProperties);
@@ -99,7 +110,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateUserGroup')")
 	public void delete(Long id) throws EntityNotFoundException {
 		super.delete(id);
 	}
@@ -192,7 +203,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin addUserToGroup(final User user, final UserGroup userGroup, final UserGroupRole role) {
 		final UserGroupJoin join = new UserGroupJoin(user, userGroup, role);
 
@@ -203,7 +214,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role) {
 		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
 
@@ -215,7 +226,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public void removeUserFromGroup(final User user, final UserGroup userGroup) {
 		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
 		userGroupJoinRepository.delete(join);
