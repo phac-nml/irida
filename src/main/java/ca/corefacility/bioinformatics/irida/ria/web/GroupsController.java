@@ -36,6 +36,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -389,9 +390,15 @@ public class GroupsController {
 			final @PathVariable Long userId, Locale locale) {
 		final User user = userService.read(userId);
 		final UserGroup group = userGroupService.read(userGroupId);
-		userGroupService.removeUserFromGroup(user, group);
-		return ImmutableMap.of("result", messageSource.getMessage("group.users.remove.notification.success",
-				new Object[] { user.getLabel() }, locale));
+		
+		try {
+			userGroupService.removeUserFromGroup(user, group);
+			return ImmutableMap.of("success", messageSource.getMessage("group.users.remove.notification.success",
+					new Object[] { user.getLabel() }, locale));
+		} catch (final UserGroupWithoutOwnerException e) {
+			return ImmutableMap.of("failure", messageSource.getMessage("group.users.remove.notification.failure",
+					new Object[] { user.getLabel() }, locale));
+		}
 	}
 
 	/**
@@ -445,8 +452,14 @@ public class GroupsController {
 		final UserGroupRole userGroupRole = UserGroupRole.fromString(groupRole);
 		final String roleName = messageSource.getMessage("group.users.role." + groupRole, new Object[] {}, locale);
 
-		userGroupService.changeUserGroupRole(user, group, userGroupRole);
-		return ImmutableMap.of("success", messageSource.getMessage("group.members.edit.role.success",  new Object[] {user.getLabel(), roleName}, locale));		
+		try {
+			userGroupService.changeUserGroupRole(user, group, userGroupRole);
+			return ImmutableMap.of("success", messageSource.getMessage("group.members.edit.role.success",
+					new Object[] { user.getLabel(), roleName }, locale));
+		} catch (final UserGroupWithoutOwnerException e) {
+			return ImmutableMap.of("failure", messageSource.getMessage("group.members.edit.role.failure",
+					new Object[] { user.getLabel(), roleName }, locale));
+		}
 	}
 
 	/**
