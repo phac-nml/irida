@@ -231,7 +231,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping("/projects/templates/merge-modal")
 	public String getMergeSamplesInProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
-		List<Sample> samples = ids.stream().map(sampleService::read).collect(Collectors.toList());
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
 		model.addAttribute("samples", samples);
 		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
 	}
