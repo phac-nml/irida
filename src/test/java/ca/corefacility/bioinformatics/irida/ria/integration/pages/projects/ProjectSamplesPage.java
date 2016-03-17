@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -221,8 +220,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		select2Opener.click();
 		select2Input.sendKeys(value);
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(select2Results));
+		// Wait needed to allow select2 to populate.
+		waitForTime(500);
 		select2Input.sendKeys(Keys.RETURN);
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("select2-results")));
+
+		wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOf(select2Results)));
 	}
 }
