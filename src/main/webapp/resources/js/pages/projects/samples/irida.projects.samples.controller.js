@@ -16,11 +16,16 @@
 			    project: true,
 			    local: []
 		    };
+		vm.samples = [];
 		vm.selected = [];
 
 		$scope.$on("DATATABLE_UPDATED", function () {
 			previousIndex = null;
 		});
+
+		$scope.$watch("samplesCtrl.samples", function () {
+			updateButtons();
+		}, true);
 
 		// BUTTON STATE
 		vm.disabled = {
@@ -78,7 +83,6 @@
 						vm.showProjectname = display.local.length > 0;
 						// Update the samples;
 						vm.samples = samples;
-						updateButtons();
 					});
 				}
 			})
@@ -107,7 +111,6 @@
 					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
 						vm.samples = samples;
 						vm.selected = [];
-						updateButtons();
 					});
 				});
 			});
@@ -151,7 +154,6 @@
 						return !sample.selected;
 					});
 					vm.selected = [];
-					updateButtons();
 				});
 			});
 
@@ -180,7 +182,6 @@
 				if(vm.allSelected) {
 					vm.selected.push(sample)};
 			});
-			updateButtons();
 		};
 
 		/**
@@ -241,7 +242,6 @@
 					vm.selected.push(item);
 				}
 			});
-			updateButtons();
 		};
 
 		/**
