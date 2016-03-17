@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -174,9 +175,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		newMergeNameInput.sendKeys(newName);
-		wait.until(ExpectedConditions.elementToBeClickable(mergeBtnOK));
+		// This wait is for 350 ms because there is a debounce of 300 ms on the input field in which
+		// time the AngularJS model on the input does not update - prevents flickering of input error warnings.
+		waitForTime(350);
 		mergeBtnOK.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
 
 	public List<String> getSampleNamesOnPage() {
