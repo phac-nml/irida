@@ -16,11 +16,16 @@
 			    project: true,
 			    local: []
 		    };
+		vm.samples = [];
 		vm.selected = [];
 
 		$scope.$on("DATATABLE_UPDATED", function () {
 			previousIndex = null;
 		});
+
+		$scope.$watch("samplesCtrl.samples", function () {
+			updateButtons();
+		}, true);
 
 		// BUTTON STATE
 		vm.disabled = {
@@ -84,7 +89,6 @@
 					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
 						vm.samples = samples;
 						vm.selected = [];
-						updateButtons();
 					});
 				});
 			});
@@ -101,12 +105,10 @@
 		vm.delete = function () {
 			modalService.openRemoveModal(vm.selected).then(function () {
 				samplesService.removeSamples(vm.selected).then(function () {
-					// Remove the samples from the table.
 					vm.samples = vm.samples.filter(function (sample) {
 						return !sample.selected;
 					});
 					vm.selected = [];
-					updateButtons();
 				});
 			});
 
@@ -135,7 +137,6 @@
 				if(vm.allSelected) {
 					vm.selected.push(sample)};
 			});
-			updateButtons();
 		};
 
 		/**
@@ -196,7 +197,6 @@
 					vm.selected.push(item);
 				}
 			});
-			updateButtons();
 		};
 
 		/**
