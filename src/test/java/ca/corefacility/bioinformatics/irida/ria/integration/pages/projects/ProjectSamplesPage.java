@@ -78,6 +78,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirm-copy-samples")
 	private WebElement copyOkBtn;
 
+	@FindBy(className = "select2-chosen")
+	private WebElement select2Opener;
+
+	@FindBy(className = "select2-input")
+	private WebElement select2Input;
+
+	@FindBy(className = "select2-results")
+	private WebElement select2Results;
+
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
@@ -195,8 +204,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		copyBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
-		projectsSelectInput.click();
-		projectsSelectInput.sendKeys(project);
+		enterSelect2Value(project);
 		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
 		copyOkBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
@@ -207,5 +215,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		List<String> names = new ArrayList<>();
 		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
 		return names;
+	}
+
+	private void enterSelect2Value(String value) {
+		select2Opener.click();
+		select2Input.sendKeys(value);
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(select2Results));
+		select2Input.sendKeys(Keys.RETURN);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("select2-results")));
 	}
 }
