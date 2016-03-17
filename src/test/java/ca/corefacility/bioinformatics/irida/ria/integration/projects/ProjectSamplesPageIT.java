@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -131,9 +133,31 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	}
 
-	// TODO: (Josh - 2016-02-05) Create testing for merge
+	@Test
+	public void testMergeSamples() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		// Select some samples
+		page.selectSample(0);
+		page.selectSample(1);
+		assertEquals("Should be 2 selected samples", "2 Samples Selected", page.getSelectedInfoText());
+		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 
-	// TODO: (Josh - 2016-02-05) Create testing for renaming merge
+		// Merge these samples with the original name
+		List<String> originalNames = page.getSampleNamesOnPage().subList(0, 2); // Only need the first two
+		page.mergeSamplesWithOriginalName();
+		List<String> mergeNames = page.getSampleNamesOnPage().subList(0, 2);
+		assertEquals("Should still the first samples name", originalNames.get(0), mergeNames.get(0));
+		assertFalse("Should have different sample second since it was merged", originalNames.get(1).equals(mergeNames.get(1)));
+
+		// Merge with a new name
+		page.selectSample(0);
+		page.selectSample(1);
+		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
+		String newSampleName = "MY_NEW_SAMPLE_NAME";
+		page.mergeSamplesWithNewName(newSampleName);
+		String name = page.getSampleNamesOnPage().get(0);
+		assertEquals("Should have the new sample name", newSampleName, name);
+	}
 
 	// TODO: (Josh - 2016-02-05) Create testing for copying and moving (as user and admin)
 

@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -56,6 +59,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(id = "removeBtnOk")
 	private WebElement removeBtnOK;
+
+	@FindBy(className = "merge-modal")
+	private WebElement mergeModal;
+
+	@FindBy(id = "confirmMergeBtn")
+	private WebElement mergeBtnOK;
+
+	@FindBy(id = "newName")
+	private WebElement newMergeNameInput;
 
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
@@ -148,5 +160,32 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(removeModal));
 		removeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-modal")));
+	}
+
+	public void mergeSamplesWithOriginalName() {
+		mergeBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(mergeModal));
+		mergeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
+	}
+
+	public void mergeSamplesWithNewName(String newName) {
+		mergeBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(mergeModal));
+		newMergeNameInput.sendKeys(newName);
+		// This wait is for 350 ms because there is a debounce of 300 ms on the input field in which
+		// time the AngularJS model on the input does not update - prevents flickering of input error warnings.
+		waitForTime(350);
+		mergeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
+	}
+
+	public List<String> getSampleNamesOnPage() {
+		List<WebElement> sampleTDs = driver.findElements(By.className("sample-label"));
+		List<String> names = new ArrayList<>();
+		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
+		return names;
 	}
 }

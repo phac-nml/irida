@@ -12,7 +12,7 @@
 
 	<!-- SAMPLE ACTIONS -->
 	<div class="btn-group btn-group-sm">
-		<button id="mergeBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanTwo" ng-click="samplesCtrl.merge()">
+		<button id="mergeBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanTwo || samplesCtrl.disabled.otherProjects" ng-click="samplesCtrl.merge()">
 			<fa:icon type="merge" fixed="true"/>
 			<span th:text="#{project.samples.nav.merge}">Merge</span>
 		</button>
@@ -24,7 +24,7 @@
 			<fa:icon type="move" fixed="true"/>
 			<span th:text="#{project.samples.nav.move}"></span>
 		</button>
-		<button id="removeBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne" ng-click="samplesCtrl.delete()">
+		<button id="removeBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne || samplesCtrl.disabled.otherProjects" ng-click="samplesCtrl.delete()">
 			<fa:icon type="delete" fixed="true"/>
 			<span th:text="#{project.samples.nav.remove}"></span>
 		</button>

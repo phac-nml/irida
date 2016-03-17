@@ -8,7 +8,6 @@
 	 * @returns {{fetchSamples: fetchSamples}}.
 	 */
 	function samplesService ($http, $q, compiledNotification, cartService) {
-		var initialized = false; // Show samples loading notification only if not the first load
 		// Private Methods
 		function getProjectSamples() {
 			return $http.get(page.urls.samples.project);
@@ -29,7 +28,7 @@
 		function fetchSamples(options) {
 			var promises = [],
 			    // By default only load project samples
-			    config   = {project: true, local: [], remote: []};
+			    config   = {project: true, local: [], remote: [], showNotification: true};
 
 			lodash.merge(config, options);
 
@@ -53,13 +52,10 @@
 						items.push({samples: response.data.samples.length, project: response.data.project.label});
 					}
 				});
-				if (initialized) {
+				if (config.showNotificaiton) {
 					// Show a notification of the currently displayed samples only if it is not
 					// on the page load (ie. current project samples only)
 					compiledNotification.show(items, "samplesUpdate.html", {type: "information"});
-				}
-				else {
-					initialized = true;
 				}
 				return samples;
 			});
@@ -90,10 +86,23 @@
 			}
 		}
 
+		function mergeSamples(data) {
+			var params = {
+				sampleIds: data.ids,
+				mergeSampleId: data.mergeSampleId,
+				newName: data.newName
+			};
+			return $http.post(page.urls.samples.merge, params)
+				.success(function(result) {
+          notifications.show({type: result.result, msg: result.message});
+				});
+		}
+
 		return {
 			fetchSamples: fetchSamples,
 			addSamplesToCart: addSamplesToCart,
-			removeSamples: removeSamples
+			removeSamples: removeSamples,
+			mergeSamples: mergeSamples
 		};
 	}
 
@@ -121,7 +130,7 @@
 		function createTableOptions() {
 			return DTOptionsBuilder.newOptions()
 				// Which row to sort by: Modified date, Descending.
-				.withOption("order", [[2, "desc"]])
+				.withOption("aaSorting", [2, "desc"])
 				// Add extra DOM features. See [https://datatables.net/reference/option/dom]
 				// This matches the other tables in the project see datatables.properties to see full layout.
 				.withDOM("<'row filter-row'<'col-sm-9 buttons'><'col-sm-3'0f>><'row' <'col-md-6 col-sm-12 counts'> <'col-md-6 col-sm-12 datatables-active-filters'1>><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");

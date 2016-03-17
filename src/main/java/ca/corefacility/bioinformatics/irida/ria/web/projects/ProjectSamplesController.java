@@ -220,6 +220,23 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Create a modal dialog to merge samples in a project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
+	@RequestMapping("/projects/templates/merge-modal")
+	public String getMergeSamplesInProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+		model.addAttribute("samples", samples);
+		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
+	}
+
+	/**
 	 * Get a list of all samples within the project
 	 *
 	 * @param projectId

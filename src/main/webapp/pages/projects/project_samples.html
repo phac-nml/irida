@@ -13,15 +13,16 @@
                     local: /*[[@{/projects/{id}/ajax/associated(id=${project.getId()})}]]*/ ''
                 },
                 modals: {
-                    remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal'
+                    remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal',
+                    merge: /*[[@{/projects/templates/merge-modal}]]*/ '/projects/templates/merge-modal'
                 },
                 samples: {
                     project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
                     local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
-                    remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ ''
+                    remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
+                    merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ ''
                 },
                 remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
-                merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
                 copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
             },
             i18n: {
@@ -68,7 +69,7 @@
                 <input type="checkbox" ng-model="item.selected" ng-click="samplesCtrl.rowClick($event, $index)"/>
             </td>
             <td>
-                <a data:ng-href="@{'/samples/{{item.sample.identifier}}'}" ng-bind="item.sample.label"></a></td>
+                <a class="btn btn-label sample-label" data:ng-href="@{'/samples/{{item.sample.identifier}}'}" ng-bind="item.sample.label"></a></td>
             <td ng-bind="item.project.label" ng-show="samplesCtrl.showProjectname"></td>
             <td ng-bind="item.sample.modifiedDate | date"></td>
             <td ng-bind="item.sample.createdDate | date"></td>
