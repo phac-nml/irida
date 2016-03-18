@@ -31,12 +31,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectMembersController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 public class ProjectMembersControllerTest {
 	// Services
 	private ProjectService projectService;
 	private UserService userService;
+	private UserGroupService userGroupService;
 	private ProjectControllerUtils projectUtils;
 	private ProjectTestUtils projectTestUtils;
 	private MessageSource messageSource;
@@ -50,7 +52,8 @@ public class ProjectMembersControllerTest {
 		userService = mock(UserService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
-		controller = new ProjectMembersController(projectUtils, projectService, userService, messageSource);
+		userGroupService = mock(UserGroupService.class);
+		controller = new ProjectMembersController(projectUtils, projectService, userService, userGroupService, messageSource);
 		projectTestUtils = new ProjectTestUtils(projectService, userService);
 
 		projectTestUtils.mockSidebarInfo();
@@ -94,7 +97,7 @@ public class ProjectMembersControllerTest {
 		List<User> users = Lists.newArrayList(new User(userId, "tom", null, null, "Tom", "Matthews", null));
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(userService.getUsersAvailableForProject(project)).thenReturn(users);
+		when(userService.getUsersAvailableForProject(project, term)).thenReturn(users);
 
 		Collection<User> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
 
@@ -103,7 +106,7 @@ public class ProjectMembersControllerTest {
 		assertEquals("should have the specified user on project.", userId, usersAvailableForProject.iterator().next().getId());
 
 		verify(projectService).read(projectId);
-		verify(userService).getUsersAvailableForProject(project);
+		verify(userService).getUsersAvailableForProject(project, term);
 	}
 
 	@Test

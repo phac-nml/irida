@@ -425,6 +425,29 @@ public class GroupsController {
 		model.addAttribute("user", user);
 		return GROUPS_USER_MODAL;
 	}
+	
+	/**
+	 * Update a user's role on a group
+	 * 
+	 * @param groupId
+	 *            The ID of the group
+	 * @param userId
+	 *            The ID of the user
+	 * @param groupRole
+	 *            The role to set
+	 */
+	@RequestMapping(path = "/{groupId}/members/editrole/{userId}", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> updateUserRole(final @PathVariable Long groupId, final @PathVariable Long userId,
+			final @RequestParam String groupRole, final Locale locale) {
+		final UserGroup group = userGroupService.read(groupId);
+		final User user = userService.read(userId);
+		final UserGroupRole userGroupRole = UserGroupRole.fromString(groupRole);
+		final String roleName = messageSource.getMessage("group.users.role." + groupRole, new Object[] {}, locale);
+
+		userGroupService.changeUserGroupRole(user, group, userGroupRole);
+		return ImmutableMap.of("success", messageSource.getMessage("group.members.edit.role.success",  new Object[] {user.getLabel(), roleName}, locale));		
+	}
 
 	/**
 	 * Convenience class for wrapping {@link UserGroup} with ownership
