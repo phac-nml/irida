@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEv
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -79,6 +81,8 @@ public class ProjectEventHandler {
 				sampleRepository.save(s);
 			}
 			events.addAll(dataAddedEvents);
+		} else if (eventClass.equals(UserGroupRoleSetProjectEvent.class)) {
+			events.add(handleUserGroupRoleSetProjectEvent(methodEvent));
 		} else {
 			logger.warn("No handler found for event class " + eventClass.getName());
 		}
@@ -143,10 +147,28 @@ public class ProjectEventHandler {
 		Object returnValue = event.getReturnValue();
 		if (!(returnValue instanceof ProjectUserJoin)) {
 			throw new IllegalArgumentException(
-					"Method annotated with @LaunchesProjectEvent(SampleAddedProjectEvent.class) method must return ProjectSampleJoin");
+					"Method annotated with @LaunchesProjectEvent(UserRoleSetProjectEvent.class) method must return ProjectUserJoin");
 		}
 		ProjectUserJoin join = (ProjectUserJoin) returnValue;
 		return eventRepository.save(new UserRoleSetProjectEvent(join));
+
+	}
+	
+	/**
+	 * Create a {@link UserGroupRoleSetProjectEvent}. The method must have returned a
+	 * {@link UserGroupProjectJoin}
+	 * 
+	 * @param event
+	 *            The {@link MethodEvent} that this event is being launched from
+	 */
+	private ProjectEvent handleUserGroupRoleSetProjectEvent(MethodEvent event) {
+		Object returnValue = event.getReturnValue();
+		if (!(returnValue instanceof UserGroupProjectJoin)) {
+			throw new IllegalArgumentException(
+					"Method annotated with @LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class) method must return UserGroupProjectJoin");
+		}
+		UserGroupProjectJoin join = (UserGroupProjectJoin) returnValue;
+		return eventRepository.save(new UserGroupRoleSetProjectEvent(join));
 
 	}
 

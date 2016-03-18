@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -46,7 +47,7 @@ public class ProjectEventsController {
 	public static final Map<Class<? extends ProjectEvent>, String> FRAGMENT_NAMES = ImmutableMap.of(
 			UserRoleSetProjectEvent.class, "user-role-event", UserRemovedProjectEvent.class, "user-removed-event",
 			SampleAddedProjectEvent.class, "sample-added-event", DataAddedToSampleProjectEvent.class,
-			"data-added-event");
+			"data-added-event", UserGroupRoleSetProjectEvent.class, "user-group-role-event");
 	private static final String DEFAULT_PAGE_SIZE = "10";
 
 	private final ProjectEventService eventService;
