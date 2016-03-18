@@ -93,9 +93,11 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * 
 	 * @param project
 	 *            The project we want to list the available users for
+	 * @param filter
+	 *            the search string to filter usernames on.
 	 * @return A List of {@link User}s that are not associated with the project.
 	 */
-	public List<User> getUsersAvailableForProject(Project project);
+	public List<User> getUsersAvailableForProject(Project project, String filter);
 
 	/**
 	 * Get {@link User}s for a {@link Project} that have a particular role

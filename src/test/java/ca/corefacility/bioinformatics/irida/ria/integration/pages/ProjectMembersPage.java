@@ -26,11 +26,20 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  */
 public class ProjectMembersPage extends AbstractPage {
 	public static final String RELATIVE_URL = "projects/1/members";
+	public static final String GROUPS_URL = "projects/1/groups";
+			
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersPage.class);
 
 	public ProjectMembersPage(WebDriver driver) {
 		super(driver);
+	}
+	
+	public void goToPage() {
 		get(driver, RELATIVE_URL);
+	}
+	
+	public void goToGroupsPage() {
+		get(driver, GROUPS_URL);
 	}
 
 	public String getTitle() {
@@ -44,14 +53,14 @@ public class ProjectMembersPage extends AbstractPage {
 
 	public void clickRemoveUserButton(Long id) {
 		logger.debug("Clicking remove user button for " + id);
-		WebElement removeUserButton = driver.findElement(By.id("remove-user-" + id));
+		WebElement removeUserButton = driver.findElement(By.id("remove-member-" + id));
 		removeUserButton.click();
 	}
 
 	public void clickModalPopupButton() {
 		logger.debug("Confirming user removal");
 		WebElement myDynamicElement = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.id("remove-user-button")));
+				.id("remove-member-button")));
 
 		myDynamicElement.click();
 		waitForAjax();
@@ -96,13 +105,17 @@ public class ProjectMembersPage extends AbstractPage {
 		
 		selectUserDropdown.iterator().next().click();
 
-		WebElement roleElement = driver.findElement(By.id("add-user-role"));
+		WebElement roleElement = driver.findElement(By.id("add-member-role"));
 		Select roleSelect = new Select(roleElement);
 		roleSelect.selectByValue(role.toString());
 
 		WebElement submit = driver.findElement(By.id("submitAddMember"));
 		submit.click();
 		waitForAjax();
+	}
+	
+	public void clickGroupsLink() {
+		driver.findElement(By.id("project-groups-link")).click();
 	}
 
 	private void waitForAjax() {

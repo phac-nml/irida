@@ -50,6 +50,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		membersPage = new ProjectMembersPage(driver());
+		membersPage.goToPage();
 	}
 
 	@Test
@@ -85,6 +86,21 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<String> projectMembersNames = membersPage.getProjectMembersNames();
 		assertTrue(projectMembersNames.contains(username));
+	}
+	
+	@Test
+	public void testGroupManagement() {
+		final String groupName = "group 1";
+		membersPage.goToGroupsPage();
+		membersPage.clickAddMember();
+		membersPage.addUserToProject(groupName, ProjectRole.PROJECT_USER);
+		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
+		membersPage.setRoleForUser(1L, ProjectRole.PROJECT_OWNER.toString());
+		assertTrue("should display success message after updating role.", membersPage.notySuccessDisplayed());
+		membersPage.clickRemoveUserButton(1L);
+		membersPage.clickModalPopupButton();
+		List<String> groupNames = membersPage.getProjectMembersNames();
+		assertEquals("should be no groups left after clicking delete.", 0, groupNames.size());
 	}
 
 	@Test
