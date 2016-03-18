@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
@@ -229,6 +230,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@LaunchesProjectEvent(UserGroupRemovedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);

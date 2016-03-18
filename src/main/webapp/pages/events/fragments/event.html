@@ -59,3 +59,13 @@ can be internationalized.
         projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt; '}">
         <span th:utext="#{event.group_added(${groupLink},#{'projectRole.'+${event.role}},${projectLink})}"></span></div>
 </th:block>
+
+<th:block class="event-text" th:fragment="user-group-removed-event (event)">
+    <div class="event-icon"><fa:icon type="group" /></div>
+    <div class="event-content user-removed-event"
+        th:with="groupHref=@{/groups/{groupId}(groupId=${event.userGroup.getId()})},
+        groupLink=${'&lt;a href='+ groupHref +'&gt;'+ event.userGroup.label +'&lt;/a&gt; '},
+        projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+        projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt; '}">
+        <span th:utext="#{event.group_removed(${groupLink},${projectLink})}"></span></div>
+</th:block>
