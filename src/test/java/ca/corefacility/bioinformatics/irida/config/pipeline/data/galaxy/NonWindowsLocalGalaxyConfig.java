@@ -29,27 +29,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 @Conditional(NonWindowsPlatformCondition.class)
 public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	
-	/**
-	 * The system property name to set a URL to a pre-populated database SQLite file.
-	 */
-	private final static String GALAXY_DATABASE_PROPERTY = "test.galaxy.database";
-	
-	/**
-	 * The system property value if we want to use a local pre-configured database for Galaxy.
-	 */
-	private final static String GALAXY_USE_LOCAL_DATABASE = "local";
-	
-	/**
-	 * A property which stores information about a Galaxy database to connect to for testing purposes.
-	 */
-	private final static String GALAXY_DATABASE_CONNECTION_PROPERTY = "test.galaxy.database.connection";
-
-	/**
-	 * URL to a local database file.
-	 */
-	private static final URL LOCAL_DATABASE_URL = NonWindowsLocalGalaxyConfig.class
-			.getResource("db_gx_rev_0124.sqlite");
-	
 	private static final Logger logger = LoggerFactory
 			.getLogger(NonWindowsLocalGalaxyConfig.class);
 
@@ -85,6 +64,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		localGalaxy.setInvalidGalaxyUserName(new GalaxyAccountEmail(
 				"<a href='localhost'>invalid user</a>"));
 
+		logger.debug("Creating Admin Blend4j Galaxy Instance using api key: " + localGalaxy.getAdminAPIKey());
 		GalaxyInstance adminInstance = GalaxyInstanceFactory.get(
 				localGalaxy.getGalaxyURL().toString(),
 				localGalaxy.getAdminAPIKey());
@@ -92,6 +72,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 
 		setupUserApiKeys(localGalaxy, adminInstance);
 
+		logger.debug("Getting user api keys.");
 		localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
 				localGalaxy.getGalaxyURL().toString(),
 				localGalaxy.getUser1APIKey()));
@@ -149,6 +130,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
      */
 	private void setupGalaxyConnection(LocalGalaxy localGalaxy) throws MalformedURLException {
 
+		logger.debug("Setting Docker Galaxy ports");
 		int galaxyPort = dockerGalaxyPort;
 		URL galaxyURL = new URL("http://localhost:" + galaxyPort + "/");
 		localGalaxy.setGalaxyURL(galaxyURL);
@@ -178,18 +160,25 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 */
 	private void setupUserApiKeys(LocalGalaxy localGalaxy, GalaxyInstance instance) {
 
+		logger.debug("Getting users client.");
 		UsersClient usersClient = instance.getUsersClient();
 
-		User user1 = usersClient.showUser("user1@irida.corefacility.ca");
-		String user1apiKey = usersClient.createApiKey(user1.getId());
+		logger.debug("Generating new api-key for user1");
+//		User user1 = usersClient.showUser("user1@irida.corefacility.ca");
+//		String user1apiKey = usersClient.createApiKey(user1.getId());
+		String user1apiKey = "24b5081667a181fda20162719085c390";
 		localGalaxy.setUser1APIKey(user1apiKey);
 
-		User user2 = usersClient.showUser("user2@irida.corefacility.ca");
-		String user2apiKey = usersClient.createApiKey(user2.getId());
+		logger.debug("Generating new api-key for user2");
+//		User user2 = usersClient.showUser("user2@irida.corefacility.ca");
+//		String user2apiKey = usersClient.createApiKey(user2.getId());
+		String user2apiKey = "95db6e6d4facbf801b482d686584f54b";
 		localGalaxy.setUser2APIKey(user2apiKey);
 
-		User workflowUser = usersClient.showUser("workflowuser@irida.corefacility.ca");
-		String workflowApiKey = usersClient.createApiKey(workflowUser.getId());
+		logger.debug("Generating new api-key for workflowUser");
+//		User workflowUser = usersClient.showUser("workflowuser@irida.corefacility.ca");
+//		String workflowApiKey = usersClient.createApiKey(workflowUser.getId());
+		String workflowApiKey = "27927e7d96eed0900dc568de4f48f3f0";
 		localGalaxy.setWorkflowUserAPIKey(workflowApiKey);
 	}
 

@@ -70,43 +70,7 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 		iridaWorkflowsService.registerWorkflows(snvPhylWorkflows);
 
 		IridaWorkflow snvPhylWorkflow = iridaWorkflowsService.getIridaWorkflow(snvPhylWorkflowId);
-		importAllTools(localGalaxy.getGalaxyInstanceAdmin(), snvPhylWorkflow);
 
 		return snvPhylWorkflow;
-	}
-
-	/**
-	 * Imports all tools to Galaxy for the passed workflow.
-	 * 
-	 * @param galaxyInstance
-	 *            The instance of Galaxy to import tools into.
-	 * @param iridaWorkflow
-	 *            The workflow to import all tools for.
-	 * @throws IridaWorkflowException
-	 */
-	private void importAllTools(GalaxyInstance galaxyInstance, IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
-		for (IridaWorkflowToolRepository workflowTool : iridaWorkflow.getWorkflowDescription().getToolRepositories()) {
-			ToolShedRepositoriesClient toolRepositoriesClient = galaxyInstance.getRepositoriesClient();
-
-			RepositoryInstall toolInstall = new RepositoryInstall();
-			toolInstall.setName(workflowTool.getName());
-			toolInstall.setOwner(workflowTool.getOwner());
-			toolInstall.setToolShedUrl(workflowTool.getUrl().toString());
-			toolInstall.setChangsetRevision(workflowTool.getRevision());
-			toolInstall.setInstallRepositoryDependencies(true);
-			toolInstall.setInstallToolDependencies(true);
-
-			logger.debug("Installing tool " + workflowTool);
-			List<InstalledRepository> installedRepositories = toolRepositoriesClient.installRepository(toolInstall);
-			for (InstalledRepository installedRepository : installedRepositories) {
-				InstallationStatus status = installedRepository.getInstallationStatus();
-				logger.debug("Installation status=" + status + " for tool " + workflowTool);
-				if (status.equals(InstallationStatus.ERROR)) {
-					// don't even try to proceed with tests if you can't install the required tools.
-					throw new IridaWorkflowException("Failed to install tool [" + workflowTool
-							+ "], possible reason: [" + installedRepository.getErrorMessage() + "]");
-				}
-			}
-		}
 	}
 }
