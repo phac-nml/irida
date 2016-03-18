@@ -20,6 +20,13 @@
       }
     },
     {
+      "name": "irida.projects.samples.modals",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.modals.js"
+      }
+    },
+    {
       "type": "js",
       "locations": {
         "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.controller.js"

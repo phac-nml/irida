@@ -1,4 +1,4 @@
-(function(ng, $, lodash, page){
+(function(ng, $, _, page){
 	"use strict";
 
 	/**
@@ -30,7 +30,7 @@
 			    // By default only load project samples
 			    config   = {project: true, local: [], remote: [], showNotification: true};
 
-			lodash.merge(config, options);
+			_.merge(config, options);
 
 			// Add the project samples (if required).
 			if(config.project) {

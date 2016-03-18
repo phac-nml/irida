@@ -9,7 +9,7 @@
 	 * @param {Object} tableService Service to handle rendering the datatable.
 	 * @constructor
 	 */
-	function SamplesController($scope, $log, $uibModal, samplesService, tableService) {
+	function SamplesController($scope, $log, modalService, samplesService, tableService) {
 		var vm = this, previousIndex = null,
 		    // Which projects to display
 		    display = {
@@ -41,71 +41,49 @@
 		vm.dtColumnDefs = tableService.createTableColumnDefs();
 		vm.dtOptions = tableService.createTableOptions();
 
-		// Get the samples - automatically added to datatable.
-		samplesService.fetchSamples({showNotification: false}).then(function (samples) {
-			vm.samples = samples;
-		});
-
-		vm.displayProjectsModal = function() {
-			var modal = $uibModal.open({
-				templateUrl: "associated-projects.modal.html",
-				controllerAs: "associatedProjectsCtrl",
-				controller: "AssociatedProjectsCtrl",
-				resolve: {
-					display: function () {
-						return display;
-					}
-				}
-			});
-
-			modal.result.then(function (items) {
-				// Check to make sure their are updates to the table to process.
-				if (!ng.equals(items, display)) {
-					display = items;
-					samplesService.fetchSamples(items).then(function (samples) {
-						// Need to know if the sample should be selected, and remove any that are no longer in the table.;
-						var s = [];
-						samples.forEach(function (sample) {
-							if (vm.selected.find(function (item) {
-									// Check to see if the selected item matches the sample and from the right project.
-									if (item.sample.identifier === sample.sample.identifier &&
-										item.project.identifier === sample.project.identifier) {
-										s.push(item);
-										return true;
-									}
-								})) {
-								sample.selected = true;
+		function displaySamples() {
+			samplesService.fetchSamples(display).then(function (samples) {
+				// Need to know if the sample should be selected, and remove any that are no longer in the table.;
+				var s = [];
+				samples.forEach(function (sample) {
+					if (vm.selected.find(function (item) {
+							// Check to see if the selected item matches the sample and from the right project.
+							if (item.sample.identifier === sample.sample.identifier &&
+								item.project.identifier === sample.project.identifier) {
+								s.push(item);
+								return true;
 							}
-						});
-						// Update the samples that are selected and currently in the table.
-						vm.selected = s;
-						// Determine if the project name needs to be displayed in the table.
-						vm.showProjectname = display.local.length > 0;
-						// Update the samples;
-						vm.samples = samples;
-					});
-				}
-			})
+						})) {
+						sample.selected = true;
+					}
+				});
+				// Update the samples that are selected and currently in the table.
+				vm.selected = s;
+				// Determine if the project name needs to be displayed in the table.
+				vm.showProjectname = display.local.length > 0;
+				// Update the samples;
+				vm.samples = samples;
+				updateButtons();
+			});
+		}
+
+		vm.displayProjectsModal = function () {
+			modalService.openAssociatedProjectsModal(display)
+				.then(function (projectsToDisplay) {
+					// Check to make sure their are updates to the table to process.
+					if (!ng.equals(projectsToDisplay, display)) {
+						display = projectsToDisplay;
+						displaySamples();
+					}
+				})
 		};
 
 		vm.merge = function () {
-			var ids = [], modal;
+			var ids = [];
 			vm.selected.forEach(function (item) {
 				ids.push(item.sample.identifier);
 			});
-			var modal = $uibModal.open({
-				templateUrl: page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
-				controllerAs: "mergeCtrl",
-				controller: "MergeController",
-				openedClass : 'merge-modal',
-				resolve: {
-					samples: function() {
-						return vm.selected;
-					}
-				}
-			});
-
-			modal.result.then(function (result) {
+			modalService.openMergeModal(vm.selected).then(function (result) {
 				samplesService.mergeSamples(result).then(function () {
 					// Need to reload the samples since the data has changed.
 					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
@@ -125,30 +103,7 @@
 		};
 
 		vm.delete = function () {
-			var ids = [], modal;
-			vm.selected.forEach(function (item) {
-				ids.push(item.sample.identifier);
-			});
-
-			modal = $uibModal.open({
-				size        : 'lg',
-				templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
-				openedClass : 'remove-modal',
-				controllerAs: "removeCtrl",
-				controller  : ["$uibModalInstance", function RemoveSamplesController($uibModalInstance) {
-					var vm = this;
-
-					vm.cancel = function () {
-						$uibModalInstance.dismiss();
-					};
-
-					vm.remove = function () {
-						$uibModalInstance.close();
-					};
-				}]
-			});
-
-			modal.result.then(function () {
+			modalService.openRemoveModal(vm.selected).then(function () {
 				samplesService.removeSamples(vm.selected).then(function () {
 					vm.samples = vm.samples.filter(function (sample) {
 						return !sample.selected;
@@ -256,69 +211,12 @@
 				otherProjects: display.local.length > 0
 			};
 		}
+
+		// Load data into the table;
+		displaySamples();
 	}
 
-	function AssociatedProjectsCtrl($uibModalInstance, associatedProjectsService, display) {
-		var vm = this;
-		vm.projects = {};
-		vm.display = ng.copy(display);
-		vm.local = {};
-
-		// Get the local project
-		associatedProjectsService.getLocal().then(function (result) {
-			// Check to see if they are already displayed.
-			result.data.forEach(function(project) {
-				project.selected = vm.display.local.indexOf(project.identifier) > -1;
-			});
-			vm.projects.local = result.data;
-		});
-
-		vm.close = function () {
-			$uibModalInstance.dismiss();
-		};
-
-		vm.showProjects = function () {
-			// Just want the ids
-			vm.display.local = [];
-			vm.projects.local.forEach(function (project) {
-				if (project.selected) {
-					vm.display.local.push(project.identifier);
-				}
-			});
-
-			$uibModalInstance.close(vm.display);
-		};
-	}
-
-	function MergeController($uibModalInstance, samples) {
-		var vm = this;
-		vm.samples = samples;
-		vm.selected = vm.samples[0].sample.identifier;
-
-		// If user enters a custom name that meets IRIDA criteria found in ValidSampleName
-		vm.validNameRE = /^[a-zA-Z0-9-_]+$/;
-
-		vm.cancel = function() {
-			$uibModalInstance.dismiss();
-		};
-
-
-		vm.doMerge = function() {
-			// Get the sampleIds to merge
-			var ids = samples.map(function (item) {
-				return item.sample.identifier;
-			});
-			$uibModalInstance.close({
-				ids: ids,
-				mergeSampleId: vm.selected,
-				newName: vm.name
-			});
-		}
-	}
-
-	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "ngMessages", "ui.bootstrap"])
-		.controller("SamplesController", ["$scope", "$log", "$uibModal",  "samplesService", "tableService", SamplesController])
-		.controller("AssociatedProjectsCtrl", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsCtrl])
-		.controller("MergeController", ["$uibModalInstance", "samples", MergeController])
+	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "irida.projects.samples.modals", "ngMessages", "ui.bootstrap"])
+		.controller("SamplesController", ["$scope", "$log", "modalService",  "samplesService", "tableService", SamplesController])
 	;
 })(window.angular, window.jQuery, window.PAGE);
