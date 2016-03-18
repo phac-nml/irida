@@ -236,6 +236,16 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
 	}
 
+	/**
+	 * Create a modal dialog to copy samples to another project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
 	@RequestMapping("/projects/templates/copy-modal")
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		List<Sample> samples = new ArrayList<>();
