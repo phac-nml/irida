@@ -106,6 +106,10 @@
       vm.projects.local = result.data;
     });
 
+    vm.rowClick = function($event) {
+      $event.stopPropagation();
+    };
+
     vm.close = function () {
       $uibModalInstance.dismiss();
     };
