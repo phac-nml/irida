@@ -116,7 +116,7 @@
                 </tr>
                 <tr ng-class="project.selected ? 'selected' : ''"
                     ng-repeat="project in associatedProjectsCtrl.projects.local"
-                    ng-click="project.selected = !project.selected">
+                    ng-click="project.selected = !project.selected; associatedProjectsCtrl.rowClick($event)">
                     <td>
                         <div class="checkbox"><label>
                             <input type="checkbox" ng-model="project.selected"/>&nbsp;{{project.label}}
