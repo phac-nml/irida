@@ -10,6 +10,10 @@ import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 
+/**
+ * Event created when a {@link UserGroup} is removed from a {@link Project}.
+ *
+ */
 @Entity
 public class UserGroupRemovedProjectEvent extends ProjectEvent {
 

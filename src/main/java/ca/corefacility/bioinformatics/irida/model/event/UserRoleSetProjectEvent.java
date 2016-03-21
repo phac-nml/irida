@@ -14,6 +14,10 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+/**
+ * Event created when a {@link User} is added to or has a role changed on a {@link Project}.
+ *
+ */
 @Entity
 public class UserRoleSetProjectEvent extends ProjectEvent {
 	@NotNull
