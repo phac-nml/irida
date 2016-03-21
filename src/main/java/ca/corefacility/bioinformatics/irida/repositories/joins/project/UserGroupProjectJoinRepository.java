@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.springframework.data.jpa.repository.Query;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -23,6 +24,18 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 	 * @return the groups assigned to the project.
 	 */
 	public Collection<UserGroupProjectJoin> findGroupsByProject(final Project p);
+	
+	/**
+	 * Find all groups with access to the project with a specific role.
+	 * 
+	 * @param p
+	 *            the project
+	 * @param projectRole
+	 *            the role
+	 * @return the groups with the specified role on the project.
+	 */
+	public Collection<UserGroupProjectJoin> findGroupsByProjectAndProjectRole(final Project p,
+			final ProjectRole projectRole);
 
 	/**
 	 * Find the projects where the specified user is in a group on the project.

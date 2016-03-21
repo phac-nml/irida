@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -224,8 +225,14 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
-	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role) {
+	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role)
+			throws UserGroupWithoutOwnerException {
 		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
+
+		if (!allowRoleChange(userGroup, join.getRole())) {
+			throw new UserGroupWithoutOwnerException(
+					"Cannot change this user's group role because it would leave the group without an owner.");
+		}
 
 		join.setRole(role);
 		return userGroupJoinRepository.save(join);
@@ -236,9 +243,43 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
-	public void removeUserFromGroup(final User user, final UserGroup userGroup) {
+	public void removeUserFromGroup(final User user, final UserGroup userGroup) throws UserGroupWithoutOwnerException {
 		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
+
+		if (!allowRoleChange(userGroup, join.getRole())) {
+			throw new UserGroupWithoutOwnerException(
+					"Cannot remove this user from the group because it would leave the group without an owner.");
+		}
+
 		userGroupJoinRepository.delete(join);
+	}
+
+	/**
+	 * Check to see if changing the role will change the number of group owners
+	 * to 0.
+	 * 
+	 * @param userGroup
+	 *            the group to check
+	 * @param role
+	 *            the role you're going to be changing from
+	 * @return false if the role change results in no group owners, true
+	 *         otherwise
+	 */
+	public boolean allowRoleChange(final UserGroup userGroup, final UserGroupRole role) {
+		if (!role.equals(UserGroupRole.GROUP_OWNER)) {
+			// the role that we're changing from is not GROUP_OWNER (i.e., we're
+			// probably making this person a GROUP_OWNER) so this transition is
+			// allowed.
+			return true;
+		}
+
+		// get the set of group owners
+		final List<UserGroupJoin> users = userGroupJoinRepository
+				.findAll(filterUserGroupJoinByRole(UserGroupRole.GROUP_OWNER));
+
+		// if there are at least 2 group owners, then it doesn't matter what
+		// we're changing the role to.
+		return users.size() >= 2;
 	}
 
 	/**
@@ -251,7 +292,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 		return userGroupJoinRepository.findAll(filterUserGroupJoinByUsername(username, userGroup),
 				new PageRequest(page, size, order, sortProperties));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -260,18 +301,18 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	public Collection<User> getUsersNotInGroup(final UserGroup userGroup) {
 		return userGroupJoinRepository.findUsersNotInGroup(userGroup);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project, final int page, final int size,
-			final Direction order, final String... sortProperties) {
+	public Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project,
+			final int page, final int size, final Direction order, final String... sortProperties) {
 		return userGroupProjectJoinRepository.findAll(filterUserGroupProjectJoinByProject(searchName, project),
 				new PageRequest(page, size, order, sortProperties));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -280,7 +321,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	public List<UserGroup> getUserGroupsNotOnProject(final Project project, final String search) {
 		return userGroupRepository.findUserGroupsNotOnProject(project, search);
 	}
-	
+
 	/**
 	 * A convenience specification to get a {@link UserGroupJoin} from a
 	 * {@link User} and {@link UserGroup}.
@@ -340,6 +381,23 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 					final CriteriaBuilder cb) {
 				return cb.and(cb.like(root.get("userGroup").get("name"), "%" + searchName + "%"),
 						cb.equal(root.get("project"), p));
+			}
+		};
+	}
+
+	/**
+	 * A convenience specification to filter {@link UserGroupJoin} by role.
+	 * 
+	 * @param role
+	 *            the role type to filter on
+	 * @return a specification for the filter.
+	 */
+	private static final Specification<UserGroupJoin> filterUserGroupJoinByRole(final UserGroupRole role) {
+		return new Specification<UserGroupJoin>() {
+			@Override
+			public Predicate toPredicate(final Root<UserGroupJoin> root, final CriteriaQuery<?> query,
+					final CriteriaBuilder cb) {
+				return cb.equal(root.get("role"), role);
 			}
 		};
 	}

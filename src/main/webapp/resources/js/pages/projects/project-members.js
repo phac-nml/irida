@@ -48,17 +48,23 @@ var projectMembersTable = (function(page, notifications) {
 			});
 		});
 		row.find('[data-toggle="tooltip"]').tooltip();
-		row.find('.project-role-select').change(function() {
+		var originalRole;
+		row.find('.project-role-select').on('focus', function() {
+			originalRole = this.value;
+		}).change(function() {
+			var select = $(this);
 			$.ajax({
 				url: page.urls.updateRole + data.object.identifier,
 				type: 'POST',
 				data: {
-					'projectRole': $(this).val()
+					'projectRole': select.val()
 				},
 				success : function(result) {
 					if (result.success) {
+						originalRole = select.val();
 						notifications.show({'msg': result.success});
 					} else if (result.failure) {
+						select.val(originalRole);
 						notifications.show({
 							'msg' : result.failure,
 							'type': 'error'
