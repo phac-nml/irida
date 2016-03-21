@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -11,11 +11,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 
 @Entity
-@Table(name = "project_event_user_group_removed")
 public class UserGroupRemovedProjectEvent extends ProjectEvent {
 
 	@NotNull
 	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "user_group_id")
 	private final UserGroup userGroup;
 	
 	/**

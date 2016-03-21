@@ -4,8 +4,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -14,10 +14,10 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 
 @Entity
-@Table(name = "project_event_user_group_role_set")
 public class UserGroupRoleSetProjectEvent extends ProjectEvent {
 	@NotNull
 	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "user_group_id")
 	private final UserGroup userGroup;
 
 	@NotNull
