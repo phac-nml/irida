@@ -105,8 +105,17 @@
 				});
 		}
 
+		function moveSamples(params) {
+			params.remove = true;
+			return $http.post(page.urls.samples.copy, params)
+				.success(function (result) {
+					notifications.show({type: result.result, msg: result.message});
+				});
+		}
+
 		return {
 			copySamples     : copySamples,
+			moveSamples     : moveSamples,
 			fetchSamples    : fetchSamples,
 			addSamplesToCart: addSamplesToCart,
 			removeSamples   : removeSamples,

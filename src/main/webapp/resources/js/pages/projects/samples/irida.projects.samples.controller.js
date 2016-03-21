@@ -105,10 +105,9 @@
 
 		vm.move = function () {
 			modalService.openMoveModal(vm.selected).then(function (result) {
-				samplesService.copySamples(result).then(function () {
+				samplesService.moveSamples(result).then(function () {
 					// No need to reload since it was only a copy
 					vm.selected = [];
-					updateButtons();
 				});
 			});
 		};

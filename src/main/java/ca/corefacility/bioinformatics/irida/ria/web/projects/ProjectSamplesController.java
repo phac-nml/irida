@@ -248,6 +248,18 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping("/projects/templates/copy-modal")
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
+	}
+
+	@RequestMapping("/projects/templates/move-modal")
+	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
+	}
+
+	public Map<String, List<Sample>> generateCopyMoveSamplesContent(List<Long> ids) {
+		Map<String, List<Sample>> model = new HashMap<>();
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
 		List<Sample> extraSamples = new ArrayList<>();
 
@@ -258,15 +270,9 @@ public class ProjectSamplesController {
 			extraSamples = samples.subList(end, samples.size());
 		}
 
-		model.addAttribute("samples", samples.subList(0, end));
-		model.addAttribute("extraSamples", extraSamples);
-		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
-	}
-
-	@RequestMapping("/projects/templates/move-modal")
-	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
-		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
+		model.put("samples", samples.subList(0, end));
+		model.put("extraSamples", extraSamples);
+		return model;
 	}
 
 	/**
@@ -355,7 +361,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long newProjectId,
-			@RequestParam(required = false) boolean removeFromOriginal, Locale locale) {
+			@RequestParam(required = false) boolean remove, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
 
@@ -367,7 +373,7 @@ public class ProjectSamplesController {
 			Sample sample = sampleService.read(sampleId);
 			try {
 
-				if (removeFromOriginal) {
+				if (remove) {
 					projectService.moveSampleBetweenProjects(originalProject, newProject, sample);
 				} else {
 					projectService.addSampleToProject(newProject, sample);
@@ -393,7 +399,7 @@ public class ProjectSamplesController {
 		// 1. Only one sample copied
 		// 2. Only one sample moved
 		if (successful.size() == 1) {
-			if (removeFromOriginal) {
+			if (remove) {
 				response.put(
 						"message",
 						messageSource.getMessage("project.samples.move-single-success-message", new Object[] {
@@ -408,7 +414,7 @@ public class ProjectSamplesController {
 		// 3. Multiple samples copied
 		// 4. Multiple samples moved
 		else if (successful.size() > 1) {
-			if (removeFromOriginal) {
+			if (remove) {
 				response.put(
 						"message",
 						messageSource.getMessage("project.samples.move-multiple-success-message", new Object[] {
