@@ -123,7 +123,7 @@ public class FontAwesome {
 	private static final String USER_ICON = "user";
 	
 	/*
-	 * Attribute for a user icon
+	 * Attribute for a group icon
 	 */
 	private static final String GROUP_ATTRIBUTE = "group";
 	private static final String GROUP_ICON = "users";
