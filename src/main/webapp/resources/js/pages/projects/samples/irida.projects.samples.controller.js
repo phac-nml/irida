@@ -99,7 +99,6 @@
 				samplesService.copySamples(result).then(function () {
 					// No need to reload since it was only a copy
 					vm.selected = [];
-					updateButtons();
 				});
 			});
 		};

@@ -236,9 +236,30 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
 	}
 
+	/**
+	 * Create a modal dialog to copy samples to another project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
 	@RequestMapping("/projects/templates/copy-modal")
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+		List<Sample> extraSamples = new ArrayList<>();
+
+		// Only initially need to display the first 10 samples.
+		int end = samples.size();
+		if (end > 9) {
+			end = 9;
+			extraSamples = samples.subList(end, samples.size());
+		}
+
+		model.addAttribute("samples", samples.subList(0, end));
+		model.addAttribute("extraSamples", extraSamples);
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
 
@@ -246,23 +267,6 @@ public class ProjectSamplesController {
 	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
 		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
-	}
-
-	private Map<String, List<Sample>> generateCopyMoveSamplesContent(List<Long> ids) {
-		Map<String, List<Sample>> model = new HashMap<>();
-		List<Sample> samples = new ArrayList<>();
-		List<Sample> extraSamples = new ArrayList<>();
-		for (Long id : ids) {
-			if (samples.size() < 10) {
-				samples.add(sampleService.read(id));
-			}
-			else {
-				extraSamples.add(sampleService.read(id));
-			}
-		}
-		model.put("samples", samples);
-		model.put("extraSamples", extraSamples);
-		return model;
 	}
 
 	/**
