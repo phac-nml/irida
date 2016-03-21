@@ -248,17 +248,17 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping("/projects/templates/copy-modal")
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
-		List<Sample> samples = new ArrayList<>();
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
 		List<Sample> extraSamples = new ArrayList<>();
-		for (Long id : ids) {
-			if (samples.size() < 10) {
-				samples.add(sampleService.read(id));
-			}
-			else {
-				extraSamples.add(sampleService.read(id));
-			}
+
+		// Only initially need to display the first 10 samples.
+		int end = samples.size();
+		if (end > 9) {
+			end = 9;
+			extraSamples = samples.subList(end, samples.size());
 		}
-		model.addAttribute("samples", samples);
+
+		model.addAttribute("samples", samples.subList(0, end));
 		model.addAttribute("extraSamples", extraSamples);
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
