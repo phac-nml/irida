@@ -110,8 +110,11 @@
 		vm.move = function () {
 			modalService.openMoveModal(vm.selected).then(function (result) {
 				samplesService.moveSamples(result).then(function () {
-					// No need to reload since it was only a copy
-					vm.selected = [];
+					// Need to reload the samples since the data has changed.
+					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
+						vm.samples = samples;
+						vm.selected = [];
+					});
 				});
 			});
 		};
