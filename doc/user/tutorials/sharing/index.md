@@ -41,7 +41,13 @@ Once the user account or group is created, go to the project containing the data
 
 ![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
 
+### Adding an Individual Member
+
 {% include tutorials/common/project-add-member.md %}
+
+### Adding a Group Member
+
+{% include tutorials/common/project-add-member-group.md %}
 
 Downloading Sample Data
 -----------------------
