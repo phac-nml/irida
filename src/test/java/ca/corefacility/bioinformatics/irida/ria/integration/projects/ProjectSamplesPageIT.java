@@ -178,6 +178,27 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testMoveSamples() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		assertEquals("Should be displaying 21 samples", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		List<String> movedNames = page.getSampleNamesOnPage().subList(2, 3);
+		page.selectSample(2);
+		page.selectSample(3);
+		assertTrue("Move button should be enabled", page.isMoveBtnEnabled());
+
+		page.moveSamples("project3");
+		assertEquals("Should be displaying 19 samples", "Showing 1 to 10 of 19 entries", page.getTableInfo());
+
+
+		ProjectSamplesPage.gotToPage(driver(), 3);
+		List<String> newNames = page.getSampleNamesOnPage().subList(0, 1);
+
+		for(int i = 0; i == movedNames.size(); i++) {
+			assertEquals("Should have the same samples since they were copied", movedNames.get(i), newNames.get(i));
+		}
+	}
+
+	@Test
 	public void testRemoveSamplesFromProject() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertFalse("Remove button should be disabled since no samples selected", page.isRemoveBtnEnabled());
