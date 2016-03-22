@@ -7,7 +7,7 @@
 	 * @param {Object} $q Angular promises.
 	 * @returns {{fetchSamples: fetchSamples}}.
 	 */
-	function samplesService ($http, $q, compiledNotification, cartService) {
+	function SamplesService ($http, $q, compiledNotification, cartService) {
 		// Private Methods
 		function getProjectSamples() {
 			return $http.get(page.urls.samples.project);
@@ -123,7 +123,7 @@
 		};
 	}
 
-	function associatedProjectsService($http) {
+	function AssociatedProjectsService($http) {
 		function getLocalAssociated() {
 			return $http.get(page.urls.associated.local);
 		}
@@ -142,7 +142,7 @@
 	 * @returns {{createTableOptions: createTableOptions, createTableColumnDefs: createTableColumnDefs, selectAllNone:
 	 *   selectAllNone, initTable: initTable}}
 	 */
-	function tableService($compile, $templateCache, DTOptionsBuilder, DTColumnDefBuilder) {
+	function TableService($compile, $templateCache, DTOptionsBuilder, DTColumnDefBuilder) {
 		var table;
 		function createTableOptions() {
 			return DTOptionsBuilder.newOptions()
@@ -186,7 +186,7 @@
 	}
 
 	ng.module("irida.projects.samples.service", ["datatables", "irida.notifications", "irida.cart"])
-		.factory("samplesService", ["$http", "$q", "compiledNotification", "CartService", samplesService])
-		.factory("associatedProjectsService", ["$http", "$q", associatedProjectsService])
-		.factory("tableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", tableService]);
+		.service("SamplesService", ["$http", "$q", "compiledNotification", "CartService", SamplesService])
+		.service("AssociatedProjectsService", ["$http", "$q", AssociatedProjectsService])
+		.service("TableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", TableService]);
 })(window.angular, window.jQuery, window._, window.PAGE);

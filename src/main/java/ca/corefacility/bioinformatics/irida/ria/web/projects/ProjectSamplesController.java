@@ -247,14 +247,16 @@ public class ProjectSamplesController {
 	 * @return
 	 */
 	@RequestMapping("/projects/templates/copy-modal")
-	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId, Model model) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		model.addAttribute("projectId", projectId);
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
 
 	@RequestMapping("/projects/templates/move-modal")
-	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId, Model model) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		model.addAttribute("projectId", projectId);
 		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
 	}
 

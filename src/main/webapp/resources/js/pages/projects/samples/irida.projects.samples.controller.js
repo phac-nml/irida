@@ -98,6 +98,10 @@
 			modalService.openCopyModal(vm.selected).then(function (result) {
 				samplesService.copySamples(result).then(function () {
 					// No need to reload since it was only a copy
+					// Just clear the selected ones.
+					vm.selected.forEach(function (i) {
+						i.selected = false;
+					});
 					vm.selected = [];
 				});
 			});
@@ -226,7 +230,7 @@
 		displaySamples();
 	}
 
-	ng.module("irida.projects.samples.controller", ["irida.projects.samples.directives", "irida.projects.samples.service", "irida.projects.samples.modals", "ngMessages", "ui.bootstrap"])
-		.controller("SamplesController", ["$scope", "$log", "modalService",  "samplesService", "tableService", SamplesController])
+	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "irida.projects.samples.modals", "ngMessages", "ui.bootstrap"])
+		.controller("SamplesController", ["$scope", "$log", "modalService",  "SamplesService", "TableService", SamplesController])
 	;
 })(window.angular, window.jQuery, window.PAGE);
