@@ -64,7 +64,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -554,7 +553,7 @@ public class ProjectsController {
 		return errors;
 	}
 
-	@ExceptionHandler({ ProjectWithoutOwnerException.class, ProjectSelfEditException.class })
+	@ExceptionHandler(ProjectWithoutOwnerException.class)
 	@ResponseBody
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);

@@ -108,7 +108,18 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 	}
 
 	public enum UserGroupRole {
-		GROUP_OWNER, GROUP_MEMBER
+		GROUP_OWNER, GROUP_MEMBER;
+		
+	    public static UserGroupRole fromString(String code) {
+	        switch (code.toUpperCase()) {
+	            case "GROUP_MEMBER":
+	                return GROUP_MEMBER;
+	            case "GROUP_OWNER":
+	                return GROUP_OWNER;
+	            default:
+	                return GROUP_MEMBER;
+	        }
+	    }
 	}
 
 	@Override

@@ -6,14 +6,18 @@ var groupMembersTable = (function(page, notifications) {
 	};
 	
 	function renderGroupRole(data, type, full) {
-		return page.i18n[data];
+		var select ='<select id="' + full.object.identifier + '-role-select" class="form-control input-full group-role-select">';
+		select += '<option value="GROUP_MEMBER" ' + (data == 'GROUP_MEMBER' ? 'selected="selected"' : '') + '>' + page.i18n.GROUP_MEMBER +  '</option>';
+		select += '<option value="GROUP_OWNER" ' + (data == 'GROUP_OWNER' ? 'selected="selected"' : '') + '>' + page.i18n.GROUP_OWNER +  '</option>';
+		select += '</select>';
+		return select;
 	};
 	
 	function removeUserButton(data, type, full) {
 		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
 	};
 	
-	function deleteLinkCallback(row, data) {
+	function rowRenderedCallback(row, data) {
 		var row = $(row);
 		row.find(".remove-user-btn").click(function () {
 			$("#removeUserModal").load(page.urls.deleteModal+"#removeUserModalGen", { 'userId' : data.subject.identifier}, function() {
@@ -24,16 +28,17 @@ var groupMembersTable = (function(page, notifications) {
 							url     : page.urls.removeMember + data.subject.identifier,
 							type    : 'DELETE',
 							success : function (result) {
-								oTable_groupMembersTable.ajax.reload();
-								notifications.show({
-									'msg': result.result
-								});
-								modal.modal('hide');
-							}, error: function () {
-								notifications.show({
-									'msg' : page.i18n.unexpectedRemoveError,
-									'type': 'error'
-								});
+								if (result.success) {
+									oTable_groupMembersTable.ajax.reload();
+									notifications.show({
+										'msg': result.success
+									});
+								} else if (result.failure) {
+									notifications.show({
+										'msg': result.failure,
+										'type': 'error'
+									});
+								}
 								modal.modal('hide');
 							}
 						});
@@ -43,6 +48,32 @@ var groupMembersTable = (function(page, notifications) {
 			});
 		});
 		row.find('[data-toggle="tooltip"]').tooltip();
+		var originalRole;
+		row.find('.group-role-select').on('focus', function() {
+			originalRole = this.value;
+		}).change(function() {
+			var select = $(this);
+			$.ajax({
+				url: page.urls.updateRole + data.subject.identifier,
+				type: 'POST',
+				data: {
+					'groupRole': select.val()
+				},
+				success : function(result) {
+					if (result.success) {
+						originalRole = select.val();
+						notifications.show({'msg': result.success});
+					} else if (result.failure) {
+						select.val(originalRole);
+						notifications.show({
+							'msg' : result.failure,
+							'type': 'error'
+						});
+						
+					}
+				}
+			});
+		});
 	};
 	
 	$("#add-user-username").select2({
@@ -96,6 +127,6 @@ var groupMembersTable = (function(page, notifications) {
 		userNameLinkRow : userNameLinkRow,
 		renderGroupRole : renderGroupRole,
 		removeUserButton : removeUserButton,
-		deleteLinkCallback : deleteLinkCallback
+		rowRenderedCallback : rowRenderedCallback
 	};
 })(window.PAGE, window.notifications);
