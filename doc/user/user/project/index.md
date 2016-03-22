@@ -78,11 +78,9 @@ To view project details, start from the [projects list](#viewing-existing-projec
 
 The project details page shows a summary of the project details and provides a view of the samples that belong to the project. You can find out more about managing samples in a project by navigating to the [managing samples](../samples) section.
 
-On the left side, the **Project Details** panel shows the IRIDA-generated project identifier, the project organism, the date the project was created, and the date that the project details were last modified:
-
 ![Project details panel.](images/project-details-details.png)
 
-More detailed project information can be found by clicking the tabs above the project details panel.
+More detailed project information can be found by clicking the tabs at the top of the project details page.
 
 Editing project details
 -----------------------
@@ -106,11 +104,11 @@ If you are a project **Manager**, you can add new members to the project. Start 
 
 ![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
 
-A project <img src="images/collaborator-icon.png" class="inline" alt="Collaborator role icon."> **Collaborator** will only be able to *view* the project members:
+A project **Collaborator** will only be able to *view* the project members:
 
 ![Project members (as a collaborator).](images/project-members-collaborator.png)
 
-A project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** will be able to *modify* the project members:
+A project **Manager** will be able to *modify* the project members:
 
 ![Project members (as a manager).](images/project-members-manager.png)
 
