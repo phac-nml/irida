@@ -247,7 +247,7 @@ public class ProjectSamplesController {
 	 * @return
 	 */
 	@RequestMapping("/projects/templates/copy-modal")
-	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId, Model model) {
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
 		List<Sample> extraSamples = new ArrayList<>();
 
@@ -260,6 +260,7 @@ public class ProjectSamplesController {
 
 		model.addAttribute("samples", samples.subList(0, end));
 		model.addAttribute("extraSamples", extraSamples);
+		model.addAttribute("projectId", projectId);
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
 
