@@ -313,8 +313,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public List<User> getUsersAvailableForProject(Project project) {
-		return userRepository.getUsersAvailableForProject(project);
+	public List<User> getUsersAvailableForProject(final Project project, final String term) {
+		return userRepository.getUsersAvailableForProject(project, term);
 	}
 
 	/**

@@ -26,17 +26,18 @@ import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerExcept
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectMembersController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 public class ProjectMembersControllerTest {
 	// Services
 	private ProjectService projectService;
 	private UserService userService;
+	private UserGroupService userGroupService;
 	private ProjectControllerUtils projectUtils;
 	private ProjectTestUtils projectTestUtils;
 	private MessageSource messageSource;
@@ -50,7 +51,8 @@ public class ProjectMembersControllerTest {
 		userService = mock(UserService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
-		controller = new ProjectMembersController(projectUtils, projectService, userService, messageSource);
+		userGroupService = mock(UserGroupService.class);
+		controller = new ProjectMembersController(projectUtils, projectService, userService, userGroupService, messageSource);
 		projectTestUtils = new ProjectTestUtils(projectService, userService);
 
 		projectTestUtils.mockSidebarInfo();
@@ -94,7 +96,7 @@ public class ProjectMembersControllerTest {
 		List<User> users = Lists.newArrayList(new User(userId, "tom", null, null, "Tom", "Matthews", null));
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(userService.getUsersAvailableForProject(project)).thenReturn(users);
+		when(userService.getUsersAvailableForProject(project, term)).thenReturn(users);
 
 		Collection<User> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
 
@@ -103,23 +105,22 @@ public class ProjectMembersControllerTest {
 		assertEquals("should have the specified user on project.", userId, usersAvailableForProject.iterator().next().getId());
 
 		verify(projectService).read(projectId);
-		verify(userService).getUsersAvailableForProject(project);
+		verify(userService).getUsersAvailableForProject(project, term);
 	}
 
 	@Test
-	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException, ProjectSelfEditException {
+	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
 		Long projectId = 1L;
 		Long userId = 2L;
 		User user = new User(userId, "tom", null, null, null, null, null);
 		Project project = new Project("test");
 		project.setId(projectId);
-		Principal principal = () -> USER_NAME;
 
 		when(userService.read(userId)).thenReturn(user);
 		when(projectService.read(projectId)).thenReturn(project);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
-		controller.removeUser(projectId, userId, principal, null);
+		controller.removeUser(projectId, userId, null);
 
 		verify(userService).read(userId);
 		verify(projectService).read(projectId);
@@ -127,40 +128,36 @@ public class ProjectMembersControllerTest {
 	}
 
 	@Test
-	public void testUdateUserRole() throws ProjectWithoutOwnerException, ProjectSelfEditException {
+	public void testUdateUserRole() throws ProjectWithoutOwnerException {
 		Long projectId = 1L;
 		Long userId = 2L;
 		Project project = new Project();
 		User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
 
-		Principal principal = () -> USER_NAME;
-
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
-		controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
+		controller.updateUserRole(projectId, userId, projectRole.toString(), null);
 
 		verify(projectService).read(projectId);
 		verify(userService).read(userId);
 		verify(projectService).updateUserProjectRole(project, user, projectRole);
 	}
 
-	public void testUdateUserSelfRole() throws ProjectWithoutOwnerException, ProjectSelfEditException {
+	public void testUdateUserSelfRole() throws ProjectWithoutOwnerException {
 		Long projectId = 1L;
 		Long userId = 2L;
 		Project project = new Project();
 		User user = new User(userId, USER_NAME, null, null, "Tom", "Matthews", null);
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
 
-		Principal principal = () -> USER_NAME;
-
 		when(projectService.read(projectId)).thenReturn(project);
 		when(userService.read(userId)).thenReturn(user);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
-		final Map<String, String> result = controller.updateUserRole(projectId, userId, projectRole.toString(), principal, null);
+		final Map<String, String> result = controller.updateUserRole(projectId, userId, projectRole.toString(), null);
 		assertTrue("should have failure message.", result.containsKey("failure"));
 	}
 }
