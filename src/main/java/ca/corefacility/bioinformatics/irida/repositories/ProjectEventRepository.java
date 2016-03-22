@@ -22,8 +22,8 @@ public interface ProjectEventRepository extends IridaJpaRepository<ProjectEvent,
 	/**
 	 * Query to get events for the specified user
 	 */
-	static final String GET_EVENTS_FOR_USER = "SELECT e FROM ProjectEvent e INNER JOIN e.project as p WHERE "
-			+ ProjectRepository.USER_ON_PROJECT + " or " + ProjectRepository.USER_IN_GROUP;
+	static final String GET_EVENTS_FOR_USER = "SELECT e FROM ProjectEvent e INNER JOIN e.project as p WHERE ("
+			+ ProjectRepository.USER_ON_PROJECT + " or " + ProjectRepository.USER_IN_GROUP + ")";
 
 	/**
 	 * Get the events for a given project
