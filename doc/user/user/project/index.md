@@ -114,21 +114,23 @@ A project **Manager** will be able to *modify* the project members:
 
 ### Adding a project member
 
+#### Adding an individual project member
+
 {% include tutorials/common/project-add-member.md %}
+
+#### Adding a group project member
+
+{% include tutorials/common/project-add-member-group.md %}
 
 ### Changing a project member role
 
-You may want to change a project member role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member role if you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
+You may want to change a project member role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member role if you have the **Manager** role on the project.
 
 Start by [viewing the project members](#project-members).
 
-To change the role of a project member, click on the "Edit" button on the right-hand side of the table:
+To change the role of a project member, click on the role drop-down menu of the user that you would like to change:
 
 ![Edit project role button.](images/edit-project-role-button.png)
-
-When you click the edit button, you can choose a new project role in the "**Project Role**" column of the table:
-
-![Edit project role dropdown.](images/edit-project-role.png)
 
 The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
 
@@ -138,11 +140,11 @@ You may want to completely remove all permissions for a user to access data in a
 
 Start by [viewing the project members](#project-members).
 
-To remove a project member, click on the "Remove" button on the right-hand side of the table:
+To remove a project member, click on the remove button on the right-hand side of the table:
 
 ![Remove project member button.](images/remove-project-member-button.png)
 
-When you click the "Remove" button, you will be asked to confirm the project member removal:
+When you click the remove button, you will be asked to confirm the project member removal:
 
 ![Remove project member confirmation dialog.](images/remove-project-member-confirm.png)
 
