@@ -88,41 +88,6 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		return localGalaxy;
 		}
 
-	//todo: delete? we no longer need to add toolsheds because we don't install anything for SNVPhyl anymore, it's built in
-	//removed:	private void setupTestToolSheds(Path galaxyPath, GalaxyProperties galaxyProperties) throws URISyntaxException,
-	//			IOException
-
-
-	//todo: add database connection string to galaxy container
-	//	private Optional<String> getGalaxyDatabaseConnectionString(String galaxyDatabaseConnectionProperty) {
-
-
-	//TODO: delete, these tools are already in the container
-	//removed	private void buildTestTools(Path galaxyRoot, GalaxyProperties galaxyProperties, LocalGalaxy localGalaxy) throws URISyntaxException, IOException
-
-
-	//todo: delete, unneeded, no more downloading
-	//removed:	private URL getGalaxyRepositoryURL(String systemProperty) throws MalformedURLException
-
-	
-	//todo: add database url to galax container
-	// private Optional<URL> getGalaxyDatabaseURL(String systemProperty) throws MalformedURLException {
-
-	//TODO: no longer needed, as we don't download Galaxy anymore
-	//removed: private String getGalaxyRepositoryBranch(String systemProperty)
-
-	//TODO: might not need this anymore? Since we're not downloading anything anymore
-	//removed: private String getGalaxyRevision(String systemProperty)
-
-
-	//TODO: delete this, no longer want to download galaxy
-	//removed:	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy, URL repositoryURL,
-	//			String branchName, String revisionHash)
-
-	//TODO: switch this up so that it only sets the ports for docker-galaxy, and also the wrong ports. no longer need galaxy properties
-	//removed:	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy, String revisionHash, Optional<URL> databaseURL, Optional<String> databaseConnectionString)
-	//			throws MalformedURLException
-
 	/**
 	 * Sets up connection to an instance of Galaxy running in a docker container on host
 	 * @param localGalaxy An object containing information about the local running Galaxy
@@ -152,8 +117,6 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		localGalaxy.setTestGalaxyURL(wrongGalaxyURL2);
 	}
 
-	//TODO: no longer need to build users, but still need to get api keys, possibly using the blend4j api
-
 	/**
 	 * Configures the users for the Galaxy for integration testing.
 	 * @param localGalaxy  An object containing information about the local running Galaxy.
@@ -164,26 +127,15 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		UsersClient usersClient = instance.getUsersClient();
 
 		logger.debug("Generating new api-key for user1");
-//		User user1 = usersClient.showUser("user1@irida.corefacility.ca");
-//		String user1apiKey = usersClient.createApiKey(user1.getId());
-		String user1apiKey = "24b5081667a181fda20162719085c390";
+		String user1apiKey = "d8a73943d42717eaad361666ccfacdf9";
 		localGalaxy.setUser1APIKey(user1apiKey);
 
 		logger.debug("Generating new api-key for user2");
-//		User user2 = usersClient.showUser("user2@irida.corefacility.ca");
-//		String user2apiKey = usersClient.createApiKey(user2.getId());
-		String user2apiKey = "95db6e6d4facbf801b482d686584f54b";
+		String user2apiKey = "14bcd06f8b1b7e446960c7b5948920c7";
 		localGalaxy.setUser2APIKey(user2apiKey);
 
 		logger.debug("Generating new api-key for workflowUser");
-//		User workflowUser = usersClient.showUser("workflowuser@irida.corefacility.ca");
-//		String workflowApiKey = usersClient.createApiKey(workflowUser.getId());
-		String workflowApiKey = "27927e7d96eed0900dc568de4f48f3f0";
+		String workflowApiKey = "5ad9ad4a4ff4756804dfc4b9b21a12d1";
 		localGalaxy.setWorkflowUserAPIKey(workflowApiKey);
 	}
-
-	//TODO: delete this, no longer needed because we can just directly get the galaxyinstance objects
-	//removed:	private GalaxyDaemon runGalaxy(GalaxyData galaxyData,
-	//			LocalGalaxy localGalaxy) {
-
 }

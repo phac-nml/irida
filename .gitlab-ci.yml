@@ -31,7 +31,7 @@ rest_job:
 galaxy_job:
 #lastly, run all tests involving Galaxy
   script:
-  - xvfb-run mvn clean verify -Pgalaxy_testing -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
+  - "scripts/galaxy-docker.sh"
   stage: test
 build-docs_job:
   script: "scripts/build-docs.sh"
