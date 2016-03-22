@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -213,10 +216,25 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
-		if (!allowRoleChange(projectJoinForUser)) {
+		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
 		pujRepository.delete(projectJoinForUser);
+	}
+	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
+		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		if (!allowRoleChange(project, j.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("Removing this user group would leave the project without an owner.");
+		}
+		ugpjRepository.delete(j);
 	}
 
 	/**
@@ -234,23 +252,45 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					+ " Project: " + project);
 		}
 
-		if (!allowRoleChange(projectJoinForUser)) {
+		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
 			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
 		}
 
 		projectJoinForUser.setProjectRole(projectRole);
 		return pujRepository.save(projectJoinForUser);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
+			ProjectRole projectRole) throws ProjectWithoutOwnerException {
+		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		if (j == null) {
+			throw new EntityNotFoundException("Join between this project and group does not exist. Group: " + userGroup
+					+ " Project: " + project);
+		}
+		if (!allowRoleChange(project, j.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+		}
+		j.setProjectRole(projectRole);
+		return ugpjRepository.save(j);
+	}
 
-	private boolean allowRoleChange(ProjectUserJoin originalJoin) {
+	private boolean allowRoleChange(final Project project, final ProjectRole projectRoleToChange) {
 		// if they're not a project owner, no worries
-		if (!originalJoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
+		if (!projectRoleToChange.equals(ProjectRole.PROJECT_OWNER)) {
 			return true;
 		}
 
-		List<Join<Project, User>> usersForProjectByRole = pujRepository.getUsersForProjectByRole(
-				originalJoin.getSubject(), ProjectRole.PROJECT_OWNER);
-		if (usersForProjectByRole.size() > 1) {
+		final Collection<Join<Project, User>> usersForProjectByRole = pujRepository.getUsersForProjectByRole(
+				project, ProjectRole.PROJECT_OWNER);
+		final Collection<UserGroupProjectJoin> groups = ugpjRepository.findGroupsByProjectAndProjectRole(project,
+				ProjectRole.PROJECT_OWNER);
+		if (usersForProjectByRole.size() + groups.size() > 1) {
 			// if there's more than one owner, no worries
 			return true;
 		} else {
@@ -517,6 +557,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
 		return projectRepository.findAllProjectsByNameOrOrganism(searchName, searchOrganism, pr);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup, final ProjectRole role) {
+		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
+	}
 	
 	/**
 	 * If the sort properties are empty, sort by default on the CREATED_DATE
@@ -553,4 +602,5 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 		};
 	}
+
 }
