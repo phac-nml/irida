@@ -33,6 +33,7 @@ Creating a User Group
 You may share data with groups of users in IRIDA by creating a user group.
 
 {% include tutorials/common/creating-a-user-group.md %}
+{% include tutorials/common/adding-a-member-to-a-group.md %}
 
 Adding a Project Member
 -----------------------

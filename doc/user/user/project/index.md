@@ -218,3 +218,5 @@ Starting from [viewing project details](#viewing-project-details), you can view 
 Recent activities include adding or modifying project members and adding new samples to a project:
 
 ![Project recent activities.](images/project-recent-activities.png)
+
+<a href="../user-groups/">Previous: Managing user groups</a><a href="../samples/" style="float: right;">Next: Managing samples</a>
