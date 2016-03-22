@@ -17,6 +17,13 @@
       "locations": {
         "webapp": "/resources/bower_components/select2/select2.js"
       }
+    },
+    {
+      "name": "irida.directives.select2",
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/directives/irida.directives.select2.js"
+      }
     }
   ]
 }

@@ -1,4 +1,4 @@
-(function (ng, page) {
+(function (ng, page, project) {
   "use strict";
 
   /**
@@ -17,11 +17,24 @@
     function openCopyModal(selectedSamples) {
       var ids = getSampleIds(selectedSamples);
       return $uibModal.open({
-        templateUrl: page.urls.modals.copy + "?" + $.param({sampleIds: ids}),
-        openedClass: "copy-modal",
+        templateUrl : page.urls.modals.copy + "&" + $.param({sampleIds: ids}),
+        openedClass : "copy-modal",
         controllerAs: "copyModalCtrl",
-        controller: ["$uibModalInstance", function ($uibModalInstance) {
+        controller  : ["$uibModalInstance", function ($uibModalInstance) {
           var vm = this;
+
+          vm.generateSelect2 = function () {
+            return function (data) {
+              return data.projects.filter(function (p) {
+                return p.identifier != project.id;
+              }).map(function (p) {
+                return ({
+                  id  : p.identifier,
+                  text: p.text || p.name
+                });
+              });
+            }
+          };
 
           vm.cancel = function () {
             $uibModalInstance.dismiss();
@@ -186,14 +199,9 @@
     }
   }
 
-  function CopyModalModalController($uibModalInstance, samples) {
-
-  }
-
-  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "ui.bootstrap"])
+  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap"])
     .factory("modalService", ["$uibModal", modalService])
-    .controller("AssociatedProjectsModalController", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsModalCtrl])
+    .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
-    .controller("CopyController", ["$uibModalInstance", "samples", CopyModalModalController])
   ;
-}(angular, PAGE));
+}(angular, PAGE, project));

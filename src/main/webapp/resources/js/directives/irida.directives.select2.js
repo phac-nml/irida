@@ -1,26 +1,19 @@
-(function (ng, $, page, project) {
+(function (ng, $) {
   "use strict";
 
-  function _generateProjectsSelect2Results(projects) {
-    return projects.filter(function (p) {
-      return p.identifier != project.id;
-    }).map(function (p) {
-      return ({
-        id  : p.identifier,
-        text: p.text || p.name
-      });
-    });
-  }
-
-  function projectsSelect2 () {
+  function select2 () {
     return {
       restrict: "A",
       require: "ngModel",
+      scope: {
+        url: "@",
+        select2Fn: '&'
+      },
       link: function(scope, elem) {
         $(elem).select2({
           minimumLength: 2,
           ajax         : {
-            url: page.urls.projects.available,
+            url: scope.url,
             dataType   : 'json',
             quietMillis: 250,
             data       : function (search, page) {
@@ -32,7 +25,7 @@
             },
             results    : function (data, page) {
               var more    = (page * 10) < data.total,
-                  results = _generateProjectsSelect2Results(data.projects);
+                  results = scope.select2Fn()(data);
               return {results: results, more: more};
             }
           }
@@ -41,6 +34,6 @@
     };
   }
 
-  ng.module("irida.projects.samples.directives", ["irida.projects.samples.service"])
-    .directive("projectsSelect2", [projectsSelect2]);
-}(window.angular, window.jQuery, window.PAGE, window.project));
+  ng.module("irida.directives.select2", [])
+    .directive("select2", [select2]);
+}(window.angular, window.jQuery));
