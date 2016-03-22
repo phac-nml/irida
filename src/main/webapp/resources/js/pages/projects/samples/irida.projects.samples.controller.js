@@ -98,6 +98,10 @@
 			modalService.openCopyModal(vm.selected).then(function (result) {
 				samplesService.copySamples(result).then(function () {
 					// No need to reload since it was only a copy
+					// Just clear the selected ones.
+					vm.selected.forEach(function (i) {
+						i.selected = false;
+					});
 					vm.selected = [];
 				});
 			});
