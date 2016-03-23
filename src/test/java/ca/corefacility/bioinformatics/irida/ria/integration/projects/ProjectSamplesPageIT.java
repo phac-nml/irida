@@ -159,9 +159,23 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have the new sample name", newSampleName, name);
 	}
 
-	// TODO: (Josh - 2016-02-05) Create testing for copying and moving (as user and admin)
+	@Test
+	public void testCopySamples() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		page.selectSample(0);
+		page.selectSample(1);
 
-	// TODO: (Josh - 2016-02-05) Create testing for copying samples as manager to unmanaged project
+		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
+		String newProjectName = "project4";
+		page.copySamples(newProjectName);
+
+		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
+		List<String> newNames = page.getSampleNamesOnPage().subList(0, 1);
+
+		for(int i = 0; i == names.size(); i++) {
+			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
+		}
+	}
 
 	@Test
 	public void testRemoveSamplesFromProject() {

@@ -237,6 +237,36 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Create a modal dialog to copy samples to another project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
+	@RequestMapping("/projects/templates/copy-modal")
+	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId, Model model) {
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+		List<Sample> extraSamples = new ArrayList<>();
+
+		// Only initially need to display the first 10 samples.
+		int end = samples.size();
+		if (end > 9) {
+			end = 9;
+			extraSamples = samples.subList(end, samples.size());
+		}
+
+		model.addAttribute("samples", samples.subList(0, end));
+		model.addAttribute("extraSamples", extraSamples);
+		model.addAttribute("projectId", projectId);
+		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
+	}
+
+
+
+	/**
 	 * Get a list of all samples within the project
 	 *
 	 * @param projectId
@@ -322,7 +352,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long newProjectId,
-			@RequestParam boolean removeFromOriginal, Locale locale) {
+			@RequestParam(required = false) boolean removeFromOriginal, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
 
@@ -346,7 +376,7 @@ public class ProjectSamplesController {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
 						+ " where it already exists.");
 
-				warnings.add(messageSource.getMessage("project.samples.copy-error-message",
+				warnings.add(messageSource.getMessage("project.samples.copy.sample-exists",
 						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
 			}
 		}

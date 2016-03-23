@@ -14,16 +14,20 @@
                 },
                 modals: {
                     remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal',
-                    merge: /*[[@{/projects/templates/merge-modal}]]*/ '/projects/templates/merge-modal'
+                    merge: /*[[@{/projects/templates/merge-modal}]]*/ '/projects/templates/merge-modal',
+                    copy: /*[[@{/projects/templates/copy-modal(projectId=${project.getId()})}]]*/ '/projects/templates/copy-modal'
+                },
+                projects: {
+                  available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
                 },
                 samples: {
                     project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
                     local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
                     remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
-                    merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ ''
+                    merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
+                    copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
                 },
-                remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
-                copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
+                remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ ''
             },
             i18n: {
                 associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'

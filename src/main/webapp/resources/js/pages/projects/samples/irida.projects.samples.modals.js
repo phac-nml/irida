@@ -1,4 +1,4 @@
-(function (ng, page) {
+(function (ng, page, project) {
   "use strict";
 
   /**
@@ -8,16 +8,55 @@
    */
   function modalService($uibModal) {
 
+    function getSampleIds(samples) {
+      return samples.map(function(item) {
+        return item.sample.identifier;
+      })
+    }
+
+    function openCopyModal(selectedSamples) {
+      var ids = getSampleIds(selectedSamples);
+      return $uibModal.open({
+        templateUrl : page.urls.modals.copy + "&" + $.param({sampleIds: ids}),
+        openedClass : "copy-modal",
+        controllerAs: "copyModalCtrl",
+        controller  : ["$uibModalInstance", function ($uibModalInstance) {
+          var vm = this;
+
+          vm.generateSelect2 = function () {
+            return function (data) {
+              return data.projects.filter(function (p) {
+                return p.identifier != project.id;
+              }).map(function (p) {
+                return ({
+                  id  : p.identifier,
+                  text: p.text || p.name
+                });
+              });
+            }
+          };
+
+          vm.cancel = function () {
+            $uibModalInstance.dismiss();
+          };
+
+          vm.doCopy = function () {
+            $uibModalInstance.close({
+              sampleIds: ids,
+              newProjectId: vm.project
+            });
+          };
+        }]
+      }).result;
+    }
+
     /**
      * Open the modal to remove samples from a project.
      * @param selectedSamples
      * @returns {*}
      */
     function openRemoveModal(selectedSamples) {
-      var ids = [];
-      selectedSamples.forEach(function (item) {
-        ids.push(item.sample.identifier);
-      });
+      var ids = getSampleIds(selectedSamples);
       return $uibModal.open({
         size        : 'lg',
         templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
@@ -78,6 +117,7 @@
     }
 
     return {
+      openCopyModal              : openCopyModal,
       openRemoveModal            : openRemoveModal,
       openMergeModal             : openMergeModal,
       openAssociatedProjectsModal: openAssociatedProjectsModal
@@ -159,9 +199,9 @@
     }
   }
 
-  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "ui.bootstrap"])
+  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap"])
     .factory("modalService", ["$uibModal", modalService])
-    .controller("AssociatedProjectsModalController", ["$uibModalInstance", "associatedProjectsService", "display", AssociatedProjectsModalCtrl])
+    .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
   ;
-}(angular, PAGE));
+}(angular, PAGE, project));

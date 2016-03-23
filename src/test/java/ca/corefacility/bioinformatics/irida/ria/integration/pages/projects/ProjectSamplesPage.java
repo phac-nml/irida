@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -68,6 +67,24 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(id = "newName")
 	private WebElement newMergeNameInput;
+
+	@FindBy(id = "copy-samples-modal")
+	private WebElement copySamplesModal;
+
+	@FindBy(id = "projectsSelect")
+	private WebElement projectsSelectInput;
+
+	@FindBy(id = "confirm-copy-samples")
+	private WebElement copyOkBtn;
+
+	@FindBy(className = "select2-chosen")
+	private WebElement select2Opener;
+
+	@FindBy(className = "select2-input")
+	private WebElement select2Input;
+
+	@FindBy(className = "select2-results")
+	private WebElement select2Results;
 
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
@@ -182,10 +199,31 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
 
+	public void copySamples(String project) {
+		copyBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
+		enterSelect2Value(project);
+		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
+		copyOkBtn.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+	}
+
 	public List<String> getSampleNamesOnPage() {
 		List<WebElement> sampleTDs = driver.findElements(By.className("sample-label"));
 		List<String> names = new ArrayList<>();
 		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
 		return names;
+	}
+
+	private void enterSelect2Value(String value) {
+		select2Opener.click();
+		select2Input.sendKeys(value);
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		// Wait needed to allow select2 to populate.
+		waitForTime(500);
+		select2Input.sendKeys(Keys.RETURN);
+
+		wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOf(select2Results)));
 	}
 }
