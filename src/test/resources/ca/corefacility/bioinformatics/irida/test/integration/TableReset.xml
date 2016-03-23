@@ -50,6 +50,10 @@
 	<project_sample />
 	<project_referencefile />
 
+	<user_group />
+	<user_group_project/>
+	<user_group_member/>
+
 	<project_event />
 
 	<assembled_genome_analysis />
@@ -72,10 +76,6 @@
 	<ncbi_export_submission_biosample/>
 	<ncbi_export_biosample_sequence_file/>
 	<ncbi_export_biosample_sequence_file_pair/>
-	
-	<user_group />
-	<user_group_project/>
-	<user_group_member/>
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->

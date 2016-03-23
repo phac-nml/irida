@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -43,10 +45,15 @@ public class ProjectEventsController {
 	public static final String EVENTS_VIEW = "events/events";
 	public static final String ADMIN_EVENTS_VIEW = "events/admin";
 
-	public static final Map<Class<? extends ProjectEvent>, String> FRAGMENT_NAMES = ImmutableMap.of(
-			UserRoleSetProjectEvent.class, "user-role-event", UserRemovedProjectEvent.class, "user-removed-event",
-			SampleAddedProjectEvent.class, "sample-added-event", DataAddedToSampleProjectEvent.class,
-			"data-added-event");
+	public static final Map<Class<? extends ProjectEvent>, String> FRAGMENT_NAMES = 
+								new ImmutableMap.Builder<Class<? extends ProjectEvent>, String>()
+									.put(UserRoleSetProjectEvent.class, "user-role-event")
+									.put(UserRemovedProjectEvent.class, "user-removed-event")
+									.put(SampleAddedProjectEvent.class, "sample-added-event")
+									.put(DataAddedToSampleProjectEvent.class, "data-added-event")
+									.put(UserGroupRoleSetProjectEvent.class, "user-group-role-event")
+									.put(UserGroupRemovedProjectEvent.class, "user-group-removed-event")
+								.build();
 	private static final String DEFAULT_PAGE_SIZE = "10";
 
 	private final ProjectEventService eventService;

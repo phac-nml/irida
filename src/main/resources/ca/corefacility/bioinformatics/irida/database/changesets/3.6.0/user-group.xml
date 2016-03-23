@@ -103,10 +103,17 @@
 					foreignKeyName="FK_USER_GROUP_PROJECT_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="created_date" type="datetime"/>
-			<column name="project_role" type="varchar(255)"/>
-			<column name="project_id" type="bigint(20)"/>
-			<column name="user_group_id" type="bigint(20)"/>
+			<column name="created_date" type="datetime" />
+			<column name="project_role" type="varchar(255)" />
+			<column name="project_id" type="bigint(20)" />
+			<column name="user_group_id" type="bigint(20)" />
 		</createTable>
+
+		<addColumn tableName="project_event">
+			<column name="user_group_id" type="bigint(20)">
+				<constraints referencedTableName="user_group"
+					referencedColumnNames="id" foreignKeyName="FK_USER_GROUP_PROJECT_EVENT" />
+			</column>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

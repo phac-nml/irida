@@ -7,6 +7,10 @@ var projectMembersTable = (function(page, notifications) {
 		return select;
 	};
 	
+	function renderGroupRoleAsText(data, type, full) {
+		return page.i18n[data];
+	};
+	
 	function memberNameLinkRow(data, type, full) {
 		return "<a class='item-link' title='" + data + "' href='"
 				+ page.urls.usersLink + full.object.identifier + "'><span class='col-names'>" + full.object.label
@@ -123,6 +127,7 @@ var projectMembersTable = (function(page, notifications) {
 	
 	return {
 		renderGroupRole : renderGroupRole,
+		renderGroupRoleAsText : renderGroupRoleAsText,
 		memberNameLinkRow : memberNameLinkRow,
 		removeMemberButton : removeMemberButton,
 		rowRenderedCallback : rowRenderedCallback

@@ -64,7 +64,8 @@
 					<thead>
 					<tr role="row">
 						<th dt:property="subject.label" dt:searchable="true" th:text="#{group.users.username}" dt:renderFunction="group-members#groupMembersTable.userNameLinkRow"></th>
-						<th dt:property="role" dt:searchable="true" dt:renderFunction="group-members#groupMembersTable.renderGroupRole" th:text="#{group.users.role}"></th>
+						<th dt:property="role" th:if="${isAdmin} or ${isOwner}" dt:renderFunction="group-members#groupMembersTable.renderGroupRole" th:text="#{group.users.role}"></th>
+						<th dt:property="role" th:if="not (${isAdmin} or ${isOwner})" dt:renderFunction="group-members#groupMembersTable.renderGroupRoleAsText" th:text="#{group.users.role}"></th>
 						<th width="150px" dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.users.date.added}"></th>
 						<th width="50px" dt:sortable="false" dt:renderFunction="group-members#groupMembersTable.removeUserButton" th:if="${isAdmin} or ${isOwner}"></th>
 					</tr>
