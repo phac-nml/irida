@@ -481,28 +481,7 @@ public class GalaxyHistoriesServiceIT {
 		
 		galaxyHistory.downloadDatasetTo(invalidHistoryId, dataset.getId(), datasetPath);
 	}
-	
-	/**
-	 * Tests failing to download a dataset (invalid dataset id)
-	 * @throws IOException 
-	 * @throws InterruptedException 
-	 * @throws ExecutionManagerException 
-	 * @throws TimeoutException 
-	 */
-	@Test(expected=ExecutionManagerDownloadException.class)
-	public void testDownloadDatasetFailDatasetId() throws IOException, TimeoutException, ExecutionManagerException, InterruptedException {
-		History history = galaxyHistory.newHistoryForWorkflow();
-		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
-		
-		Util.waitUntilHistoryComplete(history.getId(), galaxyHistory, 60);
-		
-		String invalidDatasetId = dataset.getId() + "a";
-		
-		Path datasetPath = Files.createTempFile("data", "fastq");
-		
-		galaxyHistory.downloadDatasetTo(history.getId(), invalidDatasetId, datasetPath);
-	}
-	
+
 	/**
 	 * Tests getting a dataset for a file in the history.
 	 * @throws UploadException 
