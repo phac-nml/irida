@@ -401,8 +401,8 @@ public class ProjectSamplesController {
 			} catch (EntityExistsException ex) {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
 						+ " where it already exists.");
-
-				warnings.add(messageSource.getMessage("project.samples.copy.sample-exists",
+				String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
+				warnings.add(messageSource.getMessage(msg,
 						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
 			}
 		}
