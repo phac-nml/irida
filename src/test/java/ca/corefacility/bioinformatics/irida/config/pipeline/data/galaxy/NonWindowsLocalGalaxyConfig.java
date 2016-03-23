@@ -127,15 +127,15 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		UsersClient usersClient = instance.getUsersClient();
 
 		logger.debug("Generating new api-key for user1");
-		String user1apiKey = "d8a73943d42717eaad361666ccfacdf9";
+		String user1apiKey = "aa721d88e3a0b321e5ce923f7c1edaf7";
 		localGalaxy.setUser1APIKey(user1apiKey);
 
 		logger.debug("Generating new api-key for user2");
-		String user2apiKey = "14bcd06f8b1b7e446960c7b5948920c7";
+		String user2apiKey = "83b4e09d7f5f0302f720e96643289abf";
 		localGalaxy.setUser2APIKey(user2apiKey);
 
 		logger.debug("Generating new api-key for workflowUser");
-		String workflowApiKey = "5ad9ad4a4ff4756804dfc4b9b21a12d1";
+		String workflowApiKey = "4925bfa0618e9c7e6d1e81ee96faefc8";
 		localGalaxy.setWorkflowUserAPIKey(workflowApiKey);
 	}
 }
