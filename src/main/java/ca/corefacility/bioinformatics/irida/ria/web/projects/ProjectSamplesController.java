@@ -253,6 +253,16 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
 
+	/**
+	 * Create a modal dialog to move samples to another project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
 	@RequestMapping("/projects/templates/move-modal")
 	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId, Model model) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
@@ -260,6 +270,11 @@ public class ProjectSamplesController {
 		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
 	}
 
+	/**
+	 * Generate a {@link Map} of {@link Sample} to move or copy.
+	 * @param ids {@link Long} of ids for {@link Sample}
+	 * @return
+	 */
 	public Map<String, List<Sample>> generateCopyMoveSamplesContent(List<Long> ids) {
 		Map<String, List<Sample>> model = new HashMap<>();
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
