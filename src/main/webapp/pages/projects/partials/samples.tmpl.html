@@ -83,11 +83,11 @@
 	</div>
 </div>
 
-<div th:fragment="filterButtons" class="btn-toolbar pull-right" style="padding-left: 9px;">
+<span th:fragment="filterButtons" class="btn-toolbar pull-right" style="padding-left: 9px;">
 	<button id="openFilterModal" class="btn btn-sm btn-default" ng-click="samplesCtrl.openFilter()" th:text="#{projects.filter.btn}">
 		Advanced Filter
 	</button>
 	<button id="clearFilterBtn" class="btn btn-sm btn-inverse" th:text="#{projects.filter.clear}">Clear</button>
-</div>
+</span>
 </body>
 </html>

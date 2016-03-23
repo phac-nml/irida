@@ -134,12 +134,7 @@
       return $uibModal.open({
         templateUrl: "filter.modal.html",
         controllerAs: "filterCtrl",
-        controller: "FilterModalController",
-        resolve: {
-          display: function () {
-            return currentlyDisplayed;
-          }
-        }
+        controller: "FilterModalController"
       }).result;
     }
 
@@ -228,8 +223,14 @@
     }
   }
 
-  function FilterModalController() {
+  function FilterModalController($uibModalInstance) {
+    var vm = this;
+    vm.filter = {};
 
+    vm.doFilter = function() {
+      console.log(vm.filter);
+      $uibModalInstance.close(vm.filter);
+    };
   }
 
   ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap"])

@@ -161,7 +161,7 @@
 				.withOption("aaSorting", [2, "desc"])
 				// Add extra DOM features. See [https://datatables.net/reference/option/dom]
 				// This matches the other tables in the project see datatables.properties to see full layout.
-				.withDOM("<'row filter-row'<'col-sm-7 buttons'><'col-sm-5'0f>><'row' <'col-md-6 col-sm-12 counts'> <'col-md-6 col-sm-12 datatables-active-filters'1>><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
+				.withDOM("<'row filter-row'<'col-sm-7 buttons'><'col-sm-5'0f<'filter-area'>>><'row' <'col-md-6 col-sm-12 counts'> <'col-md-6 col-sm-12 datatables-active-filters'1>><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
 		}
 
 		// Create any special columns in the table.
@@ -183,7 +183,7 @@
 			table.DataTable.on("draw.dt", function () {
 				ng.element(".buttons").html($compile($templateCache.get("buttons.html"))($scope));
 				ng.element(".counts").html($compile($templateCache.get("selectedCounts.html"))($scope));
-				ng.element(".dataTables_filter").append($compile($templateCache.get("filterButtons.html"))($scope))
+				ng.element(".filter-area").replaceWith($compile($templateCache.get("filterButtons.html"))($scope))
 			}).on("page.dt, order.dt, search.dt", function () {
 				// Let the controller now when data changes in the table
 				$scope.$emit("DATATABLE_UPDATED");

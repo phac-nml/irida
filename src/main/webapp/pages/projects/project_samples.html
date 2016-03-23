@@ -95,6 +95,21 @@
                       data:when="#{project.samples.table.selected}"></ng-pluralize>
     </script>
 
+    <script id="filter.modal.html" type="text/ng-template">
+        <div class="modal-header">
+            <h3 class="modal-title">[Filter Samples]</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" ng-model="filterCtrl.filter.name"/>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="filterCtrl.doFilter()">Filter</button>
+        </div>
+    </script>
+
     <script id="associated-projects.modal.html" type="text/ng-template" th:inline="javascript">
         <div class="modal-header">
             <h3 class="modal-title" th:text="#{project.samples.associated.modal.title}">Projects to include in

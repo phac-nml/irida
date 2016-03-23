@@ -9,7 +9,7 @@
 	 * @param {Object} tableService Service to handle rendering the datatable.
 	 * @constructor
 	 */
-	function SamplesController($scope, $log, modalService, samplesService, tableService) {
+	function SamplesController($scope, $filter, modalService, samplesService, tableService) {
 		var vm = this, previousIndex = null,
 		    // Which projects to display
 		    display = {
@@ -217,8 +217,8 @@
 		};
 
 		vm.openFilter = function () {
-			modalService.openFilterModal().then(function () {
-
+			modalService.openFilterModal().then(function (filter) {
+				vm.samples = $filter("samplesFilter")(vm.samples, filter);
 			});
 		};
 
@@ -239,7 +239,16 @@
 		displaySamples();
 	}
 
+	function samplesFilter () {
+		return function(samples, filter) {
+			return samples.filter(function (s) {
+				return (filter.name === undefined || s.sample.sampleName.contains(filter.name))
+			});
+		};
+	}
+
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "irida.projects.samples.modals", "ngMessages", "ui.bootstrap"])
-		.controller("SamplesController", ["$scope", "$log", "modalService",  "SamplesService", "TableService", SamplesController])
+		.controller("SamplesController", ["$scope", "$filter", "modalService",  "SamplesService", "TableService", SamplesController])
+		.filter("samplesFilter", [samplesFilter])
 	;
 })(window.angular, window.jQuery, window.PAGE);
