@@ -313,6 +313,24 @@ public class GalaxyWorkflowStatusTest {
 	}
 
 	/**
+	 *	Tests building a GalaxyWorkflowStatus object which has a subset of
+	 *	the expected states and passing
+	 */
+	@Test
+	public void testBuildWorkflowStatusFromHistoryDetailsMissingStateSuccess(){
+		Map<String, List<String>> stateIds = Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID));
+		stateIds.remove("running");
+
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("ok");
+		historyDetails.setStateIds(stateIds);
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertFalse("Workflow is in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
 	 * Tests failing to build a GalaxyWorkflowStats object with some state
 	 * ids in an unknown state.
 	 */
