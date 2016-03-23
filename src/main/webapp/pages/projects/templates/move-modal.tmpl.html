@@ -34,7 +34,7 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="copyModalCtrl.close()"></button>
+		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="copyModalCtrl.cancel()"></button>
 		<button id="confirm-copy-samples" class="btn btn-primary" ng-disabled="copyModalCtrl.project===undefined" th:text="#{project.samples.modal.move.complete}" ng-click="copyModalCtrl.doCopy()">
 			__MOVE_OR_COPY__
 		</button>
