@@ -216,6 +216,12 @@
 			});
 		};
 
+		vm.openFilter = function () {
+			modalService.openFilterModal().then(function () {
+
+			});
+		};
+
 		/**
 		 * Determine how many samples are selected and update the buttons.
 		 */

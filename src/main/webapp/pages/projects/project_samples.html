@@ -86,6 +86,9 @@
 
 <th:block layout:fragment="scripts">
     <script type="text/ng-template" id="buttons.html" th:include="projects/partials/samples.tmpl :: toolbar"></script>
+    <script type="text/ng-template" id="filterButtons.html">
+        <div th:replace="projects/partials/samples.tmpl :: filterButtons"></div>
+    </script>
 
     <script th:inline="javascript" type="text/ng-template" id="selectedCounts.html">
         <ng-pluralize id="selected-count-info" count="samplesCtrl.selected.length"

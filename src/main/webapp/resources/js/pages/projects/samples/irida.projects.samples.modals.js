@@ -130,7 +130,21 @@
       }).result;
     }
 
+    function openFilterModal() {
+      return $uibModal.open({
+        templateUrl: "filter.modal.html",
+        controllerAs: "filterCtrl",
+        controller: "FilterModalController",
+        resolve: {
+          display: function () {
+            return currentlyDisplayed;
+          }
+        }
+      }).result;
+    }
+
     return {
+      openFilterModal            : openFilterModal,
       openMoveModal              : openMoveModal,
       openCopyModal              : openCopyModal,
       openRemoveModal            : openRemoveModal,
@@ -214,9 +228,14 @@
     }
   }
 
+  function FilterModalController() {
+
+  }
+
   ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap"])
     .factory("modalService", ["$uibModal", modalService])
     .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
+    .controller("FilterModalController", ["$uibModalInstance", FilterModalController])
   ;
 }(angular, PAGE, project));
