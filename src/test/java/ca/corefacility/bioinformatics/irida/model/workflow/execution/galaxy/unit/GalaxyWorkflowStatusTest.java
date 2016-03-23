@@ -313,22 +313,6 @@ public class GalaxyWorkflowStatusTest {
 	}
 
 	/**
-	 * Tests building a GalaxyWorkflowStatus object which has a missing state
-	 * from Galaxy and failing.
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testBuildWorkflowStatusFromHistoryDetailsErrorMissingState() {
-		Map<String, List<String>> stateIds = Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID));
-		stateIds.remove("running");
-
-		HistoryDetails historyDetails = new HistoryDetails();
-		historyDetails.setState("ok");
-		historyDetails.setStateIds(stateIds);
-
-		GalaxyWorkflowStatus.builder(historyDetails).build();
-	}
-
-	/**
 	 * Tests failing to build a GalaxyWorkflowStats object with some state
 	 * ids in an unknown state.
 	 */
