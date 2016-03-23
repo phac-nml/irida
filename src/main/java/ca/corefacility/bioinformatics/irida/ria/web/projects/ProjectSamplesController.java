@@ -387,7 +387,7 @@ public class ProjectSamplesController {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
 						+ " where it already exists.");
 
-				warnings.add(messageSource.getMessage("project.samples.copy-error-message",
+				warnings.add(messageSource.getMessage("project.samples.copy.sample-exists",
 						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
 			}
 		}

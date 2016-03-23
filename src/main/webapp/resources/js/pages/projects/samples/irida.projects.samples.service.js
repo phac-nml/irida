@@ -101,7 +101,14 @@
 		function copySamples(params) {
 			return $http.post(page.urls.samples.copy, params)
 				.success(function (result) {
-					notifications.show({type: result.result, msg: result.message});
+					if (result.message) {
+						notifications.show({type: "success", msg: result.message});
+					}
+					if (result.warnings) {
+						result.warnings.forEach(function(warning) {
+							notifications.show({type: "warning", msg: warning});
+						})
+					}
 				});
 		}
 
