@@ -35,6 +35,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "selected-count-info")
 	private WebElement selectedCountInfo;
 
+	@FindBy(id = "samplesTable_info")
+	private WebElement samplesTableInfo;
+
 	@FindBy(css = "tbody input[type=checkbox]")
 	private List<WebElement> sampleCheckboxes;
 
@@ -105,6 +108,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public String getTitle() {
 		return pageHeader.getText();
+	}
+
+	public String getTableInfo() {
+		return samplesTableInfo.getText();
 	}
 
 	public int getNumberProjectsDisplayed() {
@@ -204,6 +211,16 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
+		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
+		copyOkBtn.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+	}
+
+	public void moveSamples(String projectNum) {
+		moveBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
+		enterSelect2Value(projectNum);
 		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
 		copyOkBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));

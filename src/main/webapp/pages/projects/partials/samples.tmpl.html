@@ -20,7 +20,7 @@
 			<fa:icon type="copy" fixed="true"/>
 			<span th:text="#{project.samples.nav.copy}">_COPY_</span>
 		</button>
-		<button id="moveBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne">
+		<button id="moveBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne" ng-click="samplesCtrl.move()">
 			<fa:icon type="move" fixed="true"/>
 			<span th:text="#{project.samples.nav.move}"></span>
 		</button>

@@ -108,7 +108,15 @@
 		};
 
 		vm.move = function () {
-			$log.warn("TODO: Implement move functionality");
+			modalService.openMoveModal(vm.selected).then(function (result) {
+				samplesService.moveSamples(result).then(function () {
+					// Need to reload the samples since the data has changed.
+					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
+						vm.samples = samples;
+						vm.selected = [];
+					});
+				});
+			});
 		};
 
 		vm.delete = function () {

@@ -101,19 +101,32 @@
 		function copySamples(params) {
 			return $http.post(page.urls.samples.copy, params)
 				.success(function (result) {
-					if (result.message) {
-						notifications.show({type: "success", msg: result.message});
-					}
-					if (result.warnings) {
-						result.warnings.forEach(function(warning) {
-							notifications.show({type: "warning", msg: warning});
-						})
-					}
+					showCopyRemoveErrors(result);
 				});
+		}
+
+		function moveSamples(params) {
+			params.remove = true;
+			return $http.post(page.urls.samples.copy, params)
+				.success(function (result) {
+					showCopyRemoveErrors(result)
+				});
+		}
+
+		function showCopyRemoveErrors(result) {
+			if (result.message) {
+				notifications.show({type: "success", msg: result.message});
+			}
+			if (result.warnings) {
+				result.warnings.forEach(function(warning) {
+					notifications.show({type: "warning", msg: warning});
+				})
+			}
 		}
 
 		return {
 			copySamples     : copySamples,
+			moveSamples     : moveSamples,
 			fetchSamples    : fetchSamples,
 			addSamplesToCart: addSamplesToCart,
 			removeSamples   : removeSamples,

@@ -8,17 +8,17 @@
    */
   function modalService($uibModal) {
 
-    function getSampleIds(samples) {
+    function _getSampleIds(samples) {
       return samples.map(function(item) {
         return item.sample.identifier;
       })
     }
 
-    function openCopyModal(selectedSamples) {
-      var ids = getSampleIds(selectedSamples);
+    function _copyMoveModal(config) {
+      var ids = _getSampleIds(config.selectedSamples);
       return $uibModal.open({
-        templateUrl : page.urls.modals.copy + "&" + $.param({sampleIds: ids}),
-        openedClass : "copy-modal",
+        templateUrl: config.url + "&" + $.param({sampleIds: ids}),
+        openedClass: "copy-modal",
         controllerAs: "copyModalCtrl",
         controller  : ["$uibModalInstance", function ($uibModalInstance) {
           var vm = this;
@@ -50,13 +50,27 @@
       }).result;
     }
 
+    function openMoveModal(selectedSamples) {
+      return _copyMoveModal({
+        selectedSamples: selectedSamples,
+        url: page.urls.modals.move
+      });
+    }
+
+    function openCopyModal(selectedSamples) {
+      return _copyMoveModal({
+        selectedSamples: selectedSamples,
+        url: page.urls.modals.copy
+      });
+    }
+
     /**
      * Open the modal to remove samples from a project.
      * @param selectedSamples
      * @returns {*}
      */
     function openRemoveModal(selectedSamples) {
-      var ids = getSampleIds(selectedSamples);
+      var ids = _getSampleIds(selectedSamples);
       return $uibModal.open({
         size        : 'lg',
         templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
@@ -117,6 +131,7 @@
     }
 
     return {
+      openMoveModal              : openMoveModal,
       openCopyModal              : openCopyModal,
       openRemoveModal            : openRemoveModal,
       openMergeModal             : openMergeModal,
