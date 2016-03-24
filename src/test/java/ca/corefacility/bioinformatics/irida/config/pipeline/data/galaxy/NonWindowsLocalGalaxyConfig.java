@@ -2,7 +2,11 @@ package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.UserCreate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -51,11 +55,11 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		localGalaxy.setAdminPassword("admin");
 		localGalaxy.setAdminAPIKey("admin");
 		localGalaxy.setUser1Name(new GalaxyAccountEmail("user1@irida.corefacility.ca"));
-		localGalaxy.setUser1Password("galaxy");
+		localGalaxy.setUser1Password("galaxyuser1");
 		localGalaxy.setUser2Name(new GalaxyAccountEmail("user2@irida.corefacility.ca"));
-		localGalaxy.setUser2Password("galaxy");
-		localGalaxy.setWorkflowUserName(new GalaxyAccountEmail("workflow@irida.corefacility.ca"));
-		localGalaxy.setWorkflowUserPassword("galaxy");
+		localGalaxy.setUser2Password("galaxyuser2");
+		localGalaxy.setWorkflowUserName(new GalaxyAccountEmail("workflowUser@irida.corefacility.ca"));
+		localGalaxy.setWorkflowUserPassword("galaxyuserwork");
 		localGalaxy.setNonExistentGalaxyAdminName(new GalaxyAccountEmail(
 				"admin_no_exist@localhost.ca"));
 		localGalaxy.setNonExistentGalaxyUserName(new GalaxyAccountEmail(
@@ -72,7 +76,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 
 		setupUserApiKeys(localGalaxy, adminInstance);
 
-		logger.debug("Getting user api keys.");
+		logger.debug("Creating GalaxyInstances for users.");
 		localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
 				localGalaxy.getGalaxyURL().toString(),
 				localGalaxy.getUser1APIKey()));
@@ -123,19 +127,37 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 */
 	private void setupUserApiKeys(LocalGalaxy localGalaxy, GalaxyInstance instance) {
 
-		logger.debug("Getting users client.");
+		logger.debug("Getting users client from admin instance.");
 		UsersClient usersClient = instance.getUsersClient();
 
+		logger.debug("Creating user1.");
+		UserCreate userCreate1 = new UserCreate();
+		userCreate1.setEmail("user1@irida.corefacility.ca");
+		userCreate1.setPassword("galaxyuser1");
+		userCreate1.setUsername("user1");
 		logger.debug("Generating new api-key for user1");
-		String user1apiKey = "aa721d88e3a0b321e5ce923f7c1edaf7";
+		final User user1 = usersClient.createUser(userCreate1);
+		final String user1apiKey = usersClient.createApiKey(user1.getId());
 		localGalaxy.setUser1APIKey(user1apiKey);
 
+		logger.debug("Creating user2.");
+		UserCreate userCreate2 = new UserCreate();
+		userCreate2.setEmail("user2@irida.corefacility.ca");
+		userCreate2.setPassword("galaxyuser2");
+		userCreate2.setUsername("user2");
 		logger.debug("Generating new api-key for user2");
-		String user2apiKey = "83b4e09d7f5f0302f720e96643289abf";
+		final User user2 = usersClient.createUser(userCreate2);
+		final String user2apiKey = usersClient.createApiKey(user2.getId());
 		localGalaxy.setUser2APIKey(user2apiKey);
 
-		logger.debug("Generating new api-key for workflowUser");
-		String workflowApiKey = "4925bfa0618e9c7e6d1e81ee96faefc8";
-		localGalaxy.setWorkflowUserAPIKey(workflowApiKey);
+		logger.debug("Creating workflowuser.");
+		UserCreate userCreateWorkflow = new UserCreate();
+		userCreateWorkflow.setEmail("workflowUser@irida.corefacility.ca");
+		userCreateWorkflow.setPassword("galaxyuserwork");
+		userCreateWorkflow.setUsername("workflowuser");
+		logger.debug("Generating new api-key for workflow");
+		final User workflowUser = usersClient.createUser(userCreateWorkflow);
+		final String workflowUserApiKey = usersClient.createApiKey(workflowUser.getId());
+		localGalaxy.setUser1APIKey(workflowUserApiKey);
 	}
 }
