@@ -1,5 +1,6 @@
 ---
 layout: default
+title: "Dashboard Overview"
 search_title: "IRIDA Dashboard Overview"
 description: "An overview of the features present on the IRIDA dashboard."
 ---
@@ -21,8 +22,9 @@ The main IRIDA dashboard has several different areas:
 * The [main menu](#main-menu), for accessing and managing data and pipelines,
 * The [cart](#cart), for data selections,
 * The [user settings](#user-settings) menu,
-* The [logout](#logout) button, and
-* The [recent activities](#recent-activities) section.
+* The [logout](#logout) button,
+* The [recent activities](#recent-activities) section, and
+* The [updates](#updates) section.
 
 ![The main IRIDA dashboard.](images/dashboard.png)
 
@@ -50,6 +52,12 @@ For more information about running pipelines, please see the [launching pipeline
 After you've launched a pipeline, you can monitor its progress and view results by clicking on the "Analyses" button.
 
 For more information about viewing pipeline results and working with analysis, please see the [viewing pipeline results](../pipelines/#viewing-pipeline-results) section.
+
+### Users
+
+From the main menu, you can click on the "Users" button to access and manage user groups. You may create a new user group by clicking on "Users", then "Create Group".
+
+For more information about managing user groups, please see the [managing user groups](../user-groups) section.
 
 Cart
 ----
@@ -122,7 +130,7 @@ The recent activities section will show you things like:
 
 All activities in the recent activities section will link to the project or user account that has been modified by the activity.
 
-IRIDA Platform Updates
+Updates
 ----------------------
 
 Updates to the IRIDA Platform will be announced on the right panel the dashboard.
@@ -135,4 +143,4 @@ The platform updates section will show you things like:
 * Recently added features or bug fixes.
 * Other platform announcements.
 
-<a href="../login/">Previous: Logging in</a><a href="../project/" style="float: right;">Next: Managing projects</a>
+<a href="../login/">Previous: Logging in</a><a href="../user-groups/" style="float: right;">Next: Managing user groups</a>
