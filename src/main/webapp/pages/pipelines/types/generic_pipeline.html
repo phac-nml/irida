@@ -53,7 +53,7 @@
 
 						<div class="col-sm-10" ng-controller="FileUploadCtrl as uploadCtrl">
 							<div class="row ng-cloak">
-								<div class="col-md-9" ng-show="!uploadCtrl.uploaded">
+								<div class="col-md-9" ng-show="!uploadCtrl.uploaded &amp;&amp; !uploadCtrl.uploadError">
 									<select class="form-control" name="referenceFiles" id="referenceFiles" th:if="${#lists.size(referenceFiles)} != 0"
 											ng-disabled="uploadCtrl.referenceUploadStarted">
 										<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
@@ -64,6 +64,9 @@
 								</div>
 								<div class="col-md-9 control-label" ng-show="uploadCtrl.uploaded">
 									<div id="uploaded-file-name" class="uploaded-file-name" ng-bind="uploadCtrl.uploaded.name"></div>
+								</div>
+								<div class="col-md-9 control-label" ng-show="uploadCtrl.uploadError">
+									<div id="uploaded-file-error" class="uploaded-file-name alert alert-danger" ng-bind="uploadCtrl.uploadError"></div>
 								</div>
 								<div class="col-md-3">
 									<div class="fileUpload btn btn-default btn-block" ng-show="!uploadCtrl.referenceUploadStarted">

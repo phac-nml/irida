@@ -112,12 +112,12 @@ public class ReferenceFileController {
 			}
 		} catch (final UnsupportedReferenceFileContentError e) {
 			logger.error("User uploaded a reference file that biojava couldn't parse as DNA.", e);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 			return ImmutableMap.of("error_message",
 					messageSource.getMessage("projects.meta.reference-file.invalid-content", new Object[] {}, locale));
 		} catch (IOException e) {
 			logger.error("Error writing sequence file", e);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 			return ImmutableMap.of("error_message",
 					messageSource.getMessage("projects.meta.reference-file.unknown-error", new Object[] {}, locale));
 		}
@@ -134,7 +134,7 @@ public class ReferenceFileController {
 	 */
 	@RequestMapping("/new")
 	public Map<String, Object> addIndependentReferenceFile(
-			final @RequestParam(value = "file") MultipartFile file) throws IOException {
+			final @RequestParam(value = "file") MultipartFile file, final HttpServletResponse response, final Locale locale) throws IOException {
 		logger.debug("Adding transient reference file for a single pipeline.");
 		// Prepare a new reference file using the multipart file supplied by the caller
 		final Path temp = Files.createTempDirectory(null);
@@ -143,7 +143,15 @@ public class ReferenceFileController {
 		file.transferTo(target.toFile());
 
 		ReferenceFile referenceFile = new ReferenceFile(target);
-		referenceFile = referenceFileService.create(referenceFile);
+		
+		try {
+			referenceFile = referenceFileService.create(referenceFile);
+		} catch (final UnsupportedReferenceFileContentError e) {
+			logger.error("User uploaded a reference file that biojava couldn't parse as DNA.", e);
+			response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+			return ImmutableMap.of("error",
+					messageSource.getMessage("projects.meta.reference-file.invalid-content", new Object[] {}, locale));
+		}
 		
 		// Clean up temporary files
 		Files.deleteIfExists(target);
