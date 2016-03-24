@@ -19,8 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
 
+import com.google.common.net.HttpHeaders;
+
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -29,8 +30,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
-
-import com.google.common.net.HttpHeaders;
 /**
  * Tests for {@link RESTSequencingRunSequenceFilesController}.
  */
