@@ -325,9 +325,7 @@ public class GalaxyWorkflowStatusTest {
 		historyDetails.setState("ok");
 		historyDetails.setStateIds(stateIds);
 
-		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
-
-		assertFalse("Workflow is in an error state", workflowStatus.errorOccurred());
+		GalaxyWorkflowStatus.builder(historyDetails).build();
 	}
 
 	/**
