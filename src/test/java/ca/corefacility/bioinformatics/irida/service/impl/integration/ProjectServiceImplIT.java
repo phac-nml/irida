@@ -58,9 +58,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -80,10 +82,28 @@ public class ProjectServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private ReferenceFileService referenceFileService;
+	@Autowired
+	private UserGroupService userGroupService;
 
 	@Autowired
 	@Qualifier("referenceFileBaseDirectory")
 	private Path referenceFileBaseDirectory;
+	
+	@Test(expected = ProjectWithoutOwnerException.class)
+	@WithMockUser(username = "groupuser", roles = "USER")
+	public void testUpdateUserGroupRoleOnProject() throws ProjectWithoutOwnerException {
+		final UserGroup userGroup = userGroupService.read(1L);
+		final Project project = projectService.read(9L);
+		projectService.updateUserGroupProjectRole(project, userGroup, ProjectRole.PROJECT_USER);
+	}
+	
+	@Test(expected = ProjectWithoutOwnerException.class)
+	@WithMockUser(username = "groupuser", roles = "USER")
+	public void testRemoveUserGroupOnProject() throws ProjectWithoutOwnerException {
+		final UserGroup userGroup = userGroupService.read(1L);
+		final Project project = projectService.read(9L);
+		projectService.removeUserGroupFromProject(project, userGroup);
+	}
 	
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")

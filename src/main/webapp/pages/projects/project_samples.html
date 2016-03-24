@@ -257,7 +257,7 @@
 								<span th:text="#{project.samples.export.ncbi}">_Upload to NCBI_</span>
 							</a>
 						</li>
-						<li>
+						<li th:if="${galaxyCallback}">
 							<a id="exportGalaxyButton" href="#" ng-click="subnav.export.galaxy(); cart.show=false">
 								<span class="fa fa-fw fa-cloud"></span>
 								&nbsp;
