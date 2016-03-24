@@ -54,38 +54,12 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		localGalaxy.setAdminName(new GalaxyAccountEmail("admin@galaxy.org"));
 		localGalaxy.setAdminPassword("admin");
 		localGalaxy.setAdminAPIKey("admin");
-		localGalaxy.setUser1Name(new GalaxyAccountEmail("user1@irida.corefacility.ca"));
-		localGalaxy.setUser1Password("galaxyuser1");
-		localGalaxy.setUser2Name(new GalaxyAccountEmail("user2@irida.corefacility.ca"));
-		localGalaxy.setUser2Password("galaxyuser2");
-		localGalaxy.setWorkflowUserName(new GalaxyAccountEmail("workflowUser@irida.corefacility.ca"));
-		localGalaxy.setWorkflowUserPassword("galaxyuserwork");
-		localGalaxy.setNonExistentGalaxyAdminName(new GalaxyAccountEmail(
-				"admin_no_exist@localhost.ca"));
-		localGalaxy.setNonExistentGalaxyUserName(new GalaxyAccountEmail(
-				"no_exist@localhost.ca"));
-
-		localGalaxy.setInvalidGalaxyUserName(new GalaxyAccountEmail(
-				"<a href='localhost'>invalid user</a>"));
 
 		logger.debug("Creating Admin Blend4j Galaxy Instance using api key: " + localGalaxy.getAdminAPIKey());
 		GalaxyInstance adminInstance = GalaxyInstanceFactory.get(
 				localGalaxy.getGalaxyURL().toString(),
 				localGalaxy.getAdminAPIKey());
 		localGalaxy.setGalaxyInstanceAdmin(adminInstance);
-
-		setupUserApiKeys(localGalaxy, adminInstance);
-
-		logger.debug("Creating GalaxyInstances for users.");
-		localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
-				localGalaxy.getGalaxyURL().toString(),
-				localGalaxy.getUser1APIKey()));
-		localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
-				localGalaxy.getGalaxyURL().toString(),
-				localGalaxy.getUser2APIKey()));
-		localGalaxy.setGalaxyInstanceWorkflowUser(GalaxyInstanceFactory.get(
-				localGalaxy.getGalaxyURL().toString(),
-				localGalaxy.getWorkflowUserAPIKey()));
 
 		localGalaxy.setupWorkflows();
 
@@ -119,45 +93,5 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		}
 		URL wrongGalaxyURL2 = new URL("http://localhost:" + wrongPort2 + "/");
 		localGalaxy.setTestGalaxyURL(wrongGalaxyURL2);
-	}
-
-	/**
-	 * Configures the users for the Galaxy for integration testing.
-	 * @param localGalaxy  An object containing information about the local running Galaxy.
-	 */
-	private void setupUserApiKeys(LocalGalaxy localGalaxy, GalaxyInstance instance) {
-
-		logger.debug("Getting users client from admin instance.");
-		UsersClient usersClient = instance.getUsersClient();
-
-		logger.debug("Creating user1.");
-		UserCreate userCreate1 = new UserCreate();
-		userCreate1.setEmail("user1@irida.corefacility.ca");
-		userCreate1.setPassword("galaxyuser1");
-		userCreate1.setUsername("user1");
-		logger.debug("Generating new api-key for user1");
-		final User user1 = usersClient.createUser(userCreate1);
-		final String user1apiKey = usersClient.createApiKey(user1.getId());
-		localGalaxy.setUser1APIKey(user1apiKey);
-
-		logger.debug("Creating user2.");
-		UserCreate userCreate2 = new UserCreate();
-		userCreate2.setEmail("user2@irida.corefacility.ca");
-		userCreate2.setPassword("galaxyuser2");
-		userCreate2.setUsername("user2");
-		logger.debug("Generating new api-key for user2");
-		final User user2 = usersClient.createUser(userCreate2);
-		final String user2apiKey = usersClient.createApiKey(user2.getId());
-		localGalaxy.setUser2APIKey(user2apiKey);
-
-		logger.debug("Creating workflowuser.");
-		UserCreate userCreateWorkflow = new UserCreate();
-		userCreateWorkflow.setEmail("workflowUser@irida.corefacility.ca");
-		userCreateWorkflow.setPassword("galaxyuserwork");
-		userCreateWorkflow.setUsername("workflowuser");
-		logger.debug("Generating new api-key for workflow");
-		final User workflowUser = usersClient.createUser(userCreateWorkflow);
-		final String workflowUserApiKey = usersClient.createApiKey(workflowUser.getId());
-		localGalaxy.setUser1APIKey(workflowUserApiKey);
 	}
 }
