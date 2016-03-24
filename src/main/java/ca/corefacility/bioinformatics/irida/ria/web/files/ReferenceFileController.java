@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -89,8 +90,8 @@ public class ReferenceFileController {
 	 *
 	 */
 	@RequestMapping("/project/{projectId}/new")
-	public void addReferenceFileToProject(@PathVariable Long projectId,
-			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) {
+	public @ResponseBody Map<String, String> addReferenceFileToProject(@PathVariable Long projectId,
+			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response, final Locale locale) {
 		Project project = projectService.read(projectId);
 		logger.debug("Adding reference file to project " + projectId);
 
@@ -109,10 +110,21 @@ public class ReferenceFileController {
 				Files.deleteIfExists(target);
 				Files.deleteIfExists(temp);
 			}
+		} catch (final UnsupportedReferenceFileContentError e) {
+			logger.error("User uploaded a reference file that biojava couldn't parse as DNA.", e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return ImmutableMap.of("error_message",
+					messageSource.getMessage("projects.meta.reference-file.invalid-content", new Object[] {}, locale));
 		} catch (IOException e) {
 			logger.error("Error writing sequence file", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return ImmutableMap.of("error_message",
+					messageSource.getMessage("projects.meta.reference-file.unknown-error", new Object[] {}, locale));
 		}
+		
+		// this isn't ever actually parsed by the page that's calling this
+		// method so doesn't need to be i18n.
+		return ImmutableMap.of("success", "upload complete.");
 	}
 	
 	/**
