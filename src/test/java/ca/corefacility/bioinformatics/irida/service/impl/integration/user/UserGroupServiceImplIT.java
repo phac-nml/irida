@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
@@ -36,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/user/UserServiceImplIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/user/UserGroupServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UserGroupServiceImplIT {
 
@@ -63,5 +64,23 @@ public class UserGroupServiceImplIT {
 		
 		// and add users to the group
 		userGroupService.addUserToGroup(u2, ug, UserGroupRole.GROUP_MEMBER);
+	}
+	
+	@Test(expected = UserGroupWithoutOwnerException.class)
+	@WithMockUser(username = "differentUser", roles = "USER")
+	public void testRemoveUserFromGroupNoOwner() throws UserGroupWithoutOwnerException {
+		final UserGroup ug = userGroupService.read(1L);
+		final User u = userService.read(2L);
+		
+		userGroupService.removeUserFromGroup(u, ug);
+	}
+	
+	@Test(expected = UserGroupWithoutOwnerException.class)
+	@WithMockUser(username = "differentUser", roles = "USER")
+	public void testChangeRoleUserFromGroupNoOwner() throws UserGroupWithoutOwnerException {
+		final UserGroup ug = userGroupService.read(1L);
+		final User u = userService.read(2L);
+		
+		userGroupService.changeUserGroupRole(u, ug, UserGroupRole.GROUP_MEMBER);
 	}
 }

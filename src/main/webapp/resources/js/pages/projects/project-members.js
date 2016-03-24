@@ -7,6 +7,10 @@ var projectMembersTable = (function(page, notifications) {
 		return select;
 	};
 	
+	function renderGroupRoleAsText(data, type, full) {
+		return page.i18n[data];
+	};
+	
 	function memberNameLinkRow(data, type, full) {
 		return "<a class='item-link' title='" + data + "' href='"
 				+ page.urls.usersLink + full.object.identifier + "'><span class='col-names'>" + full.object.label
@@ -48,17 +52,23 @@ var projectMembersTable = (function(page, notifications) {
 			});
 		});
 		row.find('[data-toggle="tooltip"]').tooltip();
-		row.find('.project-role-select').change(function() {
+		var originalRole;
+		row.find('.project-role-select').on('focus', function() {
+			originalRole = this.value;
+		}).change(function() {
+			var select = $(this);
 			$.ajax({
 				url: page.urls.updateRole + data.object.identifier,
 				type: 'POST',
 				data: {
-					'projectRole': $(this).val()
+					'projectRole': select.val()
 				},
 				success : function(result) {
 					if (result.success) {
+						originalRole = select.val();
 						notifications.show({'msg': result.success});
 					} else if (result.failure) {
+						select.val(originalRole);
 						notifications.show({
 							'msg' : result.failure,
 							'type': 'error'
@@ -117,6 +127,7 @@ var projectMembersTable = (function(page, notifications) {
 	
 	return {
 		renderGroupRole : renderGroupRole,
+		renderGroupRoleAsText : renderGroupRoleAsText,
 		memberNameLinkRow : memberNameLinkRow,
 		removeMemberButton : removeMemberButton,
 		rowRenderedCallback : rowRenderedCallback

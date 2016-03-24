@@ -121,6 +121,12 @@ public class FontAwesome {
 	 */
 	private static final String USER_ATTRIBUTE = "user";
 	private static final String USER_ICON = "user";
+	
+	/*
+	 * Attribute for a group icon
+	 */
+	private static final String GROUP_ATTRIBUTE = "group";
+	private static final String GROUP_ICON = "users";
 
 	/*
 	 * Attribute for a banned icon
@@ -192,6 +198,7 @@ public class FontAwesome {
 			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
 			.put(NEXT_ATTRIBUTE, NEXT_ICON)
 			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
+			.put(GROUP_ATTRIBUTE, GROUP_ICON)
 			.build();
 	// @formatter:on
 

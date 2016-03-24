@@ -34,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
-import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
@@ -229,15 +228,9 @@ public class ProjectMembersController {
 	 */
 	@RequestMapping(path = "{projectId}/members/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final Principal principal, final Locale locale) {
+	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId, final Locale locale) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
-
-		if (user.getUsername().equals(principal.getName())) {
-			return ImmutableMap.of("failure",
-					messageSource.getMessage("project.members.edit.selfmessage", new Object[] {}, locale));
-		}
 
 		try {
 			projectService.removeUserFromProject(project, user);
@@ -265,14 +258,18 @@ public class ProjectMembersController {
 	 */
 	@RequestMapping(path = "{projectId}/groups/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> removeUserGroup(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final Principal principal, final Locale locale) {
+	public Map<String, String> removeUserGroup(final @PathVariable Long projectId, final @PathVariable Long userId, final Locale locale) {
 		final Project project = projectService.read(projectId);
 		final UserGroup userGroup = userGroupService.read(userId);
 
-		projectService.removeUserGroupFromProject(project, userGroup);
-		return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.remove.success",
-				new Object[] { userGroup.getLabel() }, locale));
+		try {
+			projectService.removeUserGroupFromProject(project, userGroup);
+			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.remove.success",
+					new Object[] { userGroup.getLabel() }, locale));
+		} catch (final ProjectWithoutOwnerException e) {
+			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.remove.nomanager",
+					new Object[] { userGroup.getLabel() }, locale));
+		}
 	}
 
 	/**
@@ -295,16 +292,11 @@ public class ProjectMembersController {
 	@RequestMapping(path = "{projectId}/members/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateUserRole(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final @RequestParam String projectRole, final Principal principal, final Locale locale) {
+			final @RequestParam String projectRole, final Locale locale) {
 		final Project project = projectService.read(projectId);
 		final User user = userService.read(userId);
 		final ProjectRole role = ProjectRole.fromString(projectRole);
 		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
-
-		if (user.getUsername().equals(principal.getName())) {
-			return ImmutableMap.of("failure",
-					messageSource.getMessage("project.members.edit.selfmessage", new Object[] {}, locale));
-		}
 
 		try {
 			projectService.updateUserProjectRole(project, user, role);
@@ -336,14 +328,20 @@ public class ProjectMembersController {
 	@RequestMapping(path = "{projectId}/groups/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateUserGroupRole(final @PathVariable Long projectId, final @PathVariable Long userId,
-			final @RequestParam String projectRole, final Principal principal, final Locale locale) {
+			final @RequestParam String projectRole, final Locale locale) {
 		final Project project = projectService.read(projectId);
-		final UserGroup user = userGroupService.read(userId);
+		final UserGroup userGroup = userGroupService.read(userId);
 		final ProjectRole role = ProjectRole.fromString(projectRole);
 		final String roleName = messageSource.getMessage("projectRole." + projectRole, new Object[] {}, locale);
-		projectService.updateUserGroupProjectRole(project, user, role);
-		return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",
-				new Object[] { user.getLabel(), roleName }, locale));
+
+		try {
+			projectService.updateUserGroupProjectRole(project, userGroup, role);
+			return ImmutableMap.of("success", messageSource.getMessage("project.members.edit.role.success",
+					new Object[] { userGroup.getLabel(), roleName }, locale));
+		} catch (final ProjectWithoutOwnerException e) {
+			return ImmutableMap.of("failure", messageSource.getMessage("project.members.edit.role.failure.nomanager",
+					new Object[] { userGroup.getLabel(), roleName }, locale));
+		}
 	}
 
 	/**

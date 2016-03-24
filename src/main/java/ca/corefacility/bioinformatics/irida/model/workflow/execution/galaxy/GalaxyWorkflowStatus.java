@@ -172,13 +172,6 @@ public class GalaxyWorkflowStatus {
 			GalaxyWorkflowState workflowState = GalaxyWorkflowState.stringToState(historyDetails.getState());
 			Map<GalaxyWorkflowState, Set<String>> stateIdsMap = createStateIdsMap(historyDetails);
 
-			/* Instead of checking if Galaxy's workflow states match IRIDA's expected states,
-				we check if the actual workflow states is a subset or equal to the expected states.
-				If so, this check passes with no errors.
-			  */
-			checkArgument(Sets.difference(stateIdsMap.keySet(), ALL_STATES).size() == 0,
-				"Galaxy has additional states than IRIDA. " + (Sets.difference(stateIdsMap.keySet(), ALL_STATES)));
-
 			if (Sets.difference(ALL_STATES, stateIdsMap.keySet()).size() > 0) {
 				logger.trace("IRIDA has additional states outside Galaxy:" + (Sets.difference(ALL_STATES, stateIdsMap.keySet())));
 			}

@@ -76,7 +76,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param userGroup
 	 * 		the {@link UserGroup} to be removed from the {@link Project}.
 	 */
-	public void removeUserGroupFromProject(Project project, UserGroup user);
+	public void removeUserGroupFromProject(Project project, UserGroup user) throws ProjectWithoutOwnerException;
 
 	/**
 	 * Update a {@link User}'s {@link ProjectRole} on a {@link Project}
@@ -107,7 +107,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return The newly updated role object
 	 */
-	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup, ProjectRole projectRole);
+	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup, ProjectRole projectRole) throws ProjectWithoutOwnerException;
 
 
 	/**

@@ -13,6 +13,10 @@ var groupMembersTable = (function(page, notifications) {
 		return select;
 	};
 	
+	function renderGroupRoleAsText(data, type, full) {
+		return page.i18n[data];
+	};
+	
 	function removeUserButton(data, type, full) {
 		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
 	};
@@ -28,16 +32,17 @@ var groupMembersTable = (function(page, notifications) {
 							url     : page.urls.removeMember + data.subject.identifier,
 							type    : 'DELETE',
 							success : function (result) {
-								oTable_groupMembersTable.ajax.reload();
-								notifications.show({
-									'msg': result.result
-								});
-								modal.modal('hide');
-							}, error: function () {
-								notifications.show({
-									'msg' : page.i18n.unexpectedRemoveError,
-									'type': 'error'
-								});
+								if (result.success) {
+									oTable_groupMembersTable.ajax.reload();
+									notifications.show({
+										'msg': result.success
+									});
+								} else if (result.failure) {
+									notifications.show({
+										'msg': result.failure,
+										'type': 'error'
+									});
+								}
 								modal.modal('hide');
 							}
 						});
@@ -47,21 +52,28 @@ var groupMembersTable = (function(page, notifications) {
 			});
 		});
 		row.find('[data-toggle="tooltip"]').tooltip();
-		row.find('.group-role-select').change(function() {
+		var originalRole;
+		row.find('.group-role-select').on('focus', function() {
+			originalRole = this.value;
+		}).change(function() {
+			var select = $(this);
 			$.ajax({
 				url: page.urls.updateRole + data.subject.identifier,
 				type: 'POST',
 				data: {
-					'groupRole': $(this).val()
+					'groupRole': select.val()
 				},
 				success : function(result) {
 					if (result.success) {
+						originalRole = select.val();
 						notifications.show({'msg': result.success});
 					} else if (result.failure) {
+						select.val(originalRole);
 						notifications.show({
 							'msg' : result.failure,
 							'type': 'error'
-						})
+						});
+						
 					}
 				}
 			});
@@ -118,6 +130,7 @@ var groupMembersTable = (function(page, notifications) {
 	return {
 		userNameLinkRow : userNameLinkRow,
 		renderGroupRole : renderGroupRole,
+		renderGroupRoleAsText : renderGroupRoleAsText,
 		removeUserButton : removeUserButton,
 		rowRenderedCallback : rowRenderedCallback
 	};
