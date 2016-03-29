@@ -13,6 +13,10 @@ var groupMembersTable = (function(page, notifications) {
 		return select;
 	};
 	
+	function renderGroupRoleAsText(data, type, full) {
+		return page.i18n[data];
+	};
+	
 	function removeUserButton(data, type, full) {
 		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-user-btn'><span class='fa fa-remove'></span></div>";
 	};
@@ -126,6 +130,7 @@ var groupMembersTable = (function(page, notifications) {
 	return {
 		userNameLinkRow : userNameLinkRow,
 		renderGroupRole : renderGroupRole,
+		renderGroupRoleAsText : renderGroupRoleAsText,
 		removeUserButton : removeUserButton,
 		rowRenderedCallback : rowRenderedCallback
 	};

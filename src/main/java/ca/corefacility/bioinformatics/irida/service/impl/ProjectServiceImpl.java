@@ -41,7 +41,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -228,6 +230,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@LaunchesProjectEvent(UserGroupRemovedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
@@ -265,6 +268,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
 			ProjectRole projectRole) throws ProjectWithoutOwnerException {
@@ -562,6 +566,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
+	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup, final ProjectRole role) {
 		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
