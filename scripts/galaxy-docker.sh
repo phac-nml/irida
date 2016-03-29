@@ -6,9 +6,6 @@
 #   starting IRIDA's Galaxy integration tests
 #
 
-#pull build the docker image, or download it if it doesn't yet exist
-docker build jcuratcha/irida-galaxy-integration:0.1.1
-
 #run docker container and save the outputted container ID
 OUTPUT="$(docker run -d -p 48888:80 -v /Warehouse/Temporary/irida-john:/Warehouse/Temporary/irida-john jcuratcha/irida-galaxy-integration:0.1.1)"
 
