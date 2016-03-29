@@ -172,9 +172,11 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws IOException 
 	 */
 	private void setupDataFiles() throws URISyntaxException, IOException {
-		dataFile = Paths.get("/Warehouse/Temporary/irida-john/GalaxyHistoriesService/testData1.fastq");
+		dataFile = Paths.get(GalaxyHistoriesServiceIT.class.getResource(
+				"testData1.fastq").toURI());
 		
-		dataFile2 = Paths.get("/Warehouse/Temporary/irida-john/GalaxyHistoriesService/testData2.fastq");
+		dataFile2 = Paths.get(GalaxyHistoriesServiceIT.class.getResource(
+				"testData2.fastq").toURI());
 		
 		File invalidFile = File.createTempFile("galaxy-test", ".fastq");
 		invalidFile.delete();
@@ -478,6 +480,27 @@ public class GalaxyHistoriesServiceIT {
 		Path datasetPath = Files.createTempFile("data", "fastq");
 		
 		galaxyHistory.downloadDatasetTo(invalidHistoryId, dataset.getId(), datasetPath);
+	}
+
+	/**
+	 * Tests failing to download a dataset (invalid dataset id)
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws TimeoutException
+	 */
+	@Test(expected=ExecutionManagerDownloadException.class)
+	public void testDownloadDatasetFailDatasetId() throws IOException, TimeoutException, ExecutionManagerException, InterruptedException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+
+		Util.waitUntilHistoryComplete(history.getId(), galaxyHistory, 60);
+
+		String invalidDatasetId = dataset.getId() + "a";
+
+		Path datasetPath = Files.createTempFile("data", "fastq");
+
+		galaxyHistory.downloadDatasetTo(history.getId(), invalidDatasetId, datasetPath);
 	}
 
 	/**
