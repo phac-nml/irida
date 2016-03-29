@@ -150,8 +150,7 @@
 	 * @param $templateCache - gets scripts that are angular templates.
 	 * @param DTOptionsBuilder - Angular datatables table options object
 	 * @param DTColumnDefBuilder - Angular datatables column definition builder
-	 * @returns {{createTableOptions: createTableOptions, createTableColumnDefs: createTableColumnDefs, selectAllNone:
-	 *   selectAllNone, initTable: initTable}}
+	 * @returns {{createTableOptions: createTableOptions, createTableColumnDefs: createTableColumnDefs, initTable: initTable}}
 	 */
 	function TableService($compile, $templateCache, DTOptionsBuilder, DTColumnDefBuilder) {
 		var table;
@@ -161,7 +160,7 @@
 				.withOption("aaSorting", [2, "desc"])
 				// Add extra DOM features. See [https://datatables.net/reference/option/dom]
 				// This matches the other tables in the project see datatables.properties to see full layout.
-				.withDOM("<'row filter-row'<'col-sm-7 buttons'><'col-sm-5'0f<'filter-area'>>><'row' <'col-md-6 col-sm-12 counts'> <'col-md-6 col-sm-12 datatables-active-filters'1>><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
+				.withDOM("<'row filter-row'<'col-sm-7 buttons'><'col-sm-5'<'filter-area'>f>><'row' <'col-md-6 col-sm-12 counts'> <'col-md-6 col-sm-12 datatables-active-filters'1>><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-3'l><'col-sm-6'p><'col-sm-3 text-right'i>>");
 		}
 
 		// Create any special columns in the table.
