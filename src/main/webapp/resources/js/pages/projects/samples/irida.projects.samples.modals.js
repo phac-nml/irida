@@ -225,18 +225,22 @@
 
   function FilterModalController($uibModalInstance) {
     var vm = this;
-    vm.filter = {};
+    vm.filter = {
+      date: {
+        startDate: null,
+        endDate: null
+      }
+    };
 
     vm.doFilter = function() {
-      console.log(vm.filter);
       $uibModalInstance.close(vm.filter);
     };
   }
 
-  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap"])
+  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap", "daterangepicker"])
     .factory("modalService", ["$uibModal", modalService])
     .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
     .controller("FilterModalController", ["$uibModalInstance", FilterModalController])
   ;
-}(angular, PAGE, project));
+}(window.angular, window.PAGE, window.project));

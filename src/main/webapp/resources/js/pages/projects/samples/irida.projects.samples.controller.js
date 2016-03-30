@@ -1,4 +1,4 @@
-(function (ng, $, page) {
+(function (ng, $) {
 	"use strict";
 
 	/**
@@ -259,8 +259,19 @@
 			function nameFilter(name) {
 				return (filter.name === undefined || (typeof name === "string" && name.indexOf(filter.name) > -1));
 			}
+
+      function minDateFilter(date) {
+        return (filter.date.startDate === null || filter.date.startDate.isBefore(new Date(date)));
+      }
+
+      function maxDateFilter(date) {
+        return (filter.date.endDate === null || filter.date.endDate.isAfter(new Date(date)));
+      }
 			return samples.filter(function (s) {
-				return (nameFilter(s.sample.sampleName));
+        return (
+        nameFilter(s.sample.sampleName) &&
+        minDateFilter(s.sample.createdDate) &&
+        maxDateFilter(s.sample.createdDate));
 			});
 		};
 	}
@@ -269,4 +280,4 @@
 		.controller("SamplesController", ["$scope", "$filter", "modalService",  "SamplesService", "TableService", SamplesController])
 		.filter("samplesFilter", [samplesFilter])
 	;
-})(window.angular, window.jQuery, window.PAGE);
+})(window.angular, window.jQuery);
