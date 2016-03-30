@@ -2,23 +2,82 @@
 	"use strict";
 
 	/**
-	 * Service to handle server calls for project samples.
-	 * @param {Object} $http Angular http object.
-	 * @param {Object} $q Angular promises.
-	 * @returns {{fetchSamples: fetchSamples}}.
+   * Service to handle server calls for project samples.
+   * @param {Object} $http Angular http object.
+   * @param {Object} $q Angular promises.
+   * @param compiledNotification
+   * @param cartService
+   * @returns {{fetchSamples: fetchSamples}}.
 	 */
 	function SamplesService ($http, $q, compiledNotification, cartService) {
+    /**
+     * Current projects to display.  If this does not change, then there is no reason to complete an ajax request.
+     */
+    var _options = {},
+        /**
+         * List of the current samples based on the _options.
+         */
+        _samples;
+		
 		// Private Methods
+
+    /**
+     * Get the samples that are specific for the current project.
+     * @returns {*}
+     */
 		function getProjectSamples() {
 			return $http.get(page.urls.samples.project);
 		}
 
+    /**
+     * Get the samples that are for a local project.
+     * @param id - identifier for the local project.
+     * @returns {*} Promise
+     */
 		function getLocalSamples(id) {
 			var url = page.urls.samples.local.replace(/{id}/, id);
 			return $http.get(url);
 		}
 
-		// Public Methods
+    function getSamples(options) {
+      var promises = [],
+          // By default only load project samples
+          config   = {project: true, local: [], remote: [], showNotification: true};
+
+      _.merge(config, options);
+
+      // Add the project samples (if required).
+      if(config.project) {
+        promises.push(getProjectSamples());
+      }
+      if (config.local.length > 0) {
+        config.local.forEach(function (id) {
+          promises.push(getLocalSamples(id));
+        });
+      }
+
+      return $q.all(promises).then(function (responses) {
+        var samples = [], items = [];
+        responses.forEach(function (response) {
+          if (response.data.hasOwnProperty("samples")) {
+            samples = samples.concat(response.data.samples);
+            // This is adding information to build up the message to display to the users so that
+            // they know how many samples from which project were added to the table.
+            items.push({samples: response.data.samples.length, project: response.data.project.label});
+          }
+        });
+        if (config.showNotificaiton) {
+          // Show a notification of the currently displayed samples only if it is not
+          // on the page load (ie. current project samples only)
+          compiledNotification.show(items, "samplesUpdate.html", {type: "information"});
+        }
+        _samples = samples;
+        return samples;
+      });
+    }
+
+
+    // Public Methods
 
 		/**
 		 * Get the appropriate samples from the server.
@@ -26,39 +85,14 @@
 		 * @returns {Promise.<T>|*}
 		 */
 		function fetchSamples(options) {
-			var promises = [],
-			    // By default only load project samples
-			    config   = {project: true, local: [], remote: [], showNotification: true};
-
-			_.merge(config, options);
-
-			// Add the project samples (if required).
-			if(config.project) {
-				promises.push(getProjectSamples());
-			}
-			if (config.local.length > 0) {
-				config.local.forEach(function (id) {
-					promises.push(getLocalSamples(id));
-				});
-			}
-
-			return $q.all(promises).then(function (responses) {
-				var samples = [], items = [];
-				responses.forEach(function (response) {
-					if (response.data.hasOwnProperty("samples")) {
-						samples = samples.concat(response.data.samples);
-						// This is adding information to build up the message to display to the users so that
-						// they know how many samples from which project were added to the table.
-						items.push({samples: response.data.samples.length, project: response.data.project.label});
-					}
-				});
-				if (config.showNotificaiton) {
-					// Show a notification of the currently displayed samples only if it is not
-					// on the page load (ie. current project samples only)
-					compiledNotification.show(items, "samplesUpdate.html", {type: "information"});
-				}
-				return samples;
-			});
+      if (ng.equals(_options, options)) {
+        return $q(function (resolve) {
+          resolve(_samples);
+        });
+      } else {
+        _options = options;
+        return getSamples(options);
+      }
 		}
 
 		function addSamplesToCart(samples) {
@@ -150,7 +184,8 @@
 	 * @param $templateCache - gets scripts that are angular templates.
 	 * @param DTOptionsBuilder - Angular datatables table options object
 	 * @param DTColumnDefBuilder - Angular datatables column definition builder
-	 * @returns {{createTableOptions: createTableOptions, createTableColumnDefs: createTableColumnDefs, initTable: initTable}}
+	 * @returns {{createTableOptions: createTableOptions, createTableColumnDefs: createTableColumnDefs, initTable:
+	 *   initTable}}
 	 */
 	function TableService($compile, $templateCache, DTOptionsBuilder, DTColumnDefBuilder) {
 		var table;

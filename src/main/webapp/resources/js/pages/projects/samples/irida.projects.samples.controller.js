@@ -4,35 +4,47 @@
 	/**
 	 * Controller for the Project Samples Page.
 	 * @param {Object} $scope Angular scope for this controller.
-	 * @param {Object} $log Angular logging service.
+	 * @param $filter
+   * @param modalService
 	 * @param {Object} samplesService Service to handle server calls for samples.
 	 * @param {Object} tableService Service to handle rendering the datatable.
 	 * @constructor
 	 */
 	function SamplesController($scope, $filter, modalService, samplesService, tableService) {
-		var vm = this, previousIndex = null,
-		    // Which projects to display
+		var vm = this,
+
+        /**
+         * Index of the currently selected sample.
+         */
+		    currentlySelectedSampleIndex = null,
+
+        /**
+         * Which types of projects are currently loaded into the table.
+         *  project - the current project
+         *  local - projects that are local to this installation
+         */
 		    display = {
 			    project: true,
 			    local: []
 		    };
+
 		vm.samples = [];
 		vm.selected = [];
 
+    // BUTTON STATE
+    vm.disabled = {
+      lessThanTwo: true,
+      lessThanOne: true,
+      otherProjects: false
+    };
+
 		$scope.$on("DATATABLE_UPDATED", function () {
-			previousIndex = null;
+			currentlySelectedSampleIndex = null;
 		});
 
 		$scope.$watch("samplesCtrl.samples", function () {
 			updateButtons();
 		}, true);
-
-		// BUTTON STATE
-		vm.disabled = {
-			lessThanTwo: true,
-			lessThanOne: true,
-			otherProjects: false
-		};
 
 		// Hide project name unless multiple displayed.
 		vm.showProjectname = false;
@@ -159,7 +171,7 @@
 		/**
 		 * Handles user clicking the datatable row.  Updates selected samples
 		 * @param $event
-		 * @param item
+		 * @param $index
 		 */
 		vm.rowClick = function($event, $index) {
 			$event.stopPropagation();
@@ -176,8 +188,8 @@
 			// Check for multiple selection
 			if (!item.selected) {
 				// This would be a deselection, and would result in no further actions.
-				previousIndex = null;
-			} else if (previousIndex !== null && $event.shiftKey) {
+				currentlySelectedSampleIndex = null;
+			} else if (currentlySelectedSampleIndex !== null && $event.shiftKey) {
 				// Multi-select here
 				// Get the table rows
 				var found = false;
@@ -187,7 +199,7 @@
 
 					// Check to see if it was the previous clicked row or the currently clicked row.
 					// This will mark the beginning or end of the selections.
-					if(rowIndex === $index || rowItem === previousIndex) { found = !found; }
+					if(rowIndex === $index || rowItem === currentlySelectedSampleIndex) { found = !found; }
 					if(found && !rowItem.selected) {
 						rowItem.selected = true;
 						vm.selected.push(rowItem);
@@ -195,7 +207,7 @@
 				});
 				updateButtons();
 			} else {
-				previousIndex = item;
+				currentlySelectedSampleIndex = item;
 			}
 
 			updateButtons();
@@ -218,7 +230,10 @@
 
 		vm.openFilter = function () {
 			modalService.openFilterModal().then(function (filter) {
-				vm.samples = $filter("samplesFilter")(vm.samples, filter);
+        // Get a clean list of samples
+        samplesService.fetchSamples(display).then(function(samples) {
+          vm.samples = $filter("samplesFilter")(samples, filter);
+        });
 			});
 		};
 
@@ -241,8 +256,11 @@
 
 	function samplesFilter () {
 		return function(samples, filter) {
+			function nameFilter(name) {
+				return (filter.name === undefined || (typeof name === "string" && name.indexOf(filter.name) > -1));
+			}
 			return samples.filter(function (s) {
-				return (filter.name === undefined || s.sample.sampleName.contains(filter.name))
+				return (nameFilter(s.sample.sampleName));
 			});
 		};
 	}
