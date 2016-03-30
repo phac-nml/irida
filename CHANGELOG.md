@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.0.0-alpha10 to 1.0.0
+----------------------
+* 
+
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
 * [Developer]: Upgraded to angularjs 1.5.0.
