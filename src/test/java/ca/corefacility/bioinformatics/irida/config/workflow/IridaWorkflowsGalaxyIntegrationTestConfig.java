@@ -42,9 +42,6 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsGalaxyIntegrationTestConfig.class);
 
 	@Autowired
-	private LocalGalaxy localGalaxy;
-
-	@Autowired
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
 
 	@Autowired

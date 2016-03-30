@@ -241,8 +241,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesSingleSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		Library library = new Library();
@@ -292,8 +292,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPaired");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		Library library = new Library();
@@ -380,8 +380,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPairedFailForward");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		Library library = new Library();

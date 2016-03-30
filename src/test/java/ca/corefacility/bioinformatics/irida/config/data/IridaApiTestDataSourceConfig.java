@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.config.data;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -63,7 +64,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path baseDirectory() throws IOException {
-		Path b = Files.createTempDirectory("irida-sequence-file-dir");
+		Path b = Files.createTempDirectory(Paths.get("/Warehouse/Temporary/irida-john/"),"irida-sequence-file-dir");
 		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
 		return b;
@@ -71,7 +72,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
-		Path b = Files.createTempDirectory("irida-reference-file-dir");
+		Path b = Files.createTempDirectory(Paths.get("/Warehouse/Temporary/irida-john/"),"irida-reference-file-dir");
 		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
 		return b;

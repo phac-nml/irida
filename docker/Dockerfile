@@ -15,12 +15,10 @@ ENV GALAXY_TEST_TOOL_CONF /galaxy-central/config/tool_conf.xml.sample
 # Add test tool and tool shed configs
 ADD ./galaxy/tool_conf_irida.xml /galaxy-central/config/tool_conf.xml.sample
 ADD ./galaxy/tool_sheds_conf.xml /etc/galaxy/tool_sheds_conf.xml
-#ADD ./galaxy/universe.sqlite /galaxy-central/database/universe.sqlite
-# add prepopulated database to the container
 
 RUN sed -i -e 's/#admin_users = None/admin_users = admin@galaxy.org,workflowUser@irida.corefacility.ca/' /etc/galaxy/galaxy.ini
-#RUN sed -i -e 's$#database_connection = sqlite:///./database/universe.sqlite?isolation_level=IMMEDIATE$database_connection = mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock$' /etc/galaxy/galaxy.ini
-#RUN sed -i -e 's$#database_connection = sqlite:///./database/universe.sqlite?isolation_level=IMMEDIATE$database_connection = sqlite:///./database/universe.sqlite?isolation_level=IMMEDIATE$' /etc/galaxy/galaxy.ini
+RUN sed -i -e 's/#allow_library_path_paste = False/allow_library_path_paste = True/' /etc/galaxy/galaxy.ini
+RUN sed -i -e 's/force_beta_workflow_scheduled_for_collections=True/force_beta_workflow_scheduled_for_collections=False/' /etc/galaxy/galaxy.ini
 
 # Add custom Irida tools to Galaxy
 ADD ./galaxy/assembly_annotation_pipeline_outputs.xml /galaxy-central/tools/irida/assembly_annotation_pipeline_outputs.xml
