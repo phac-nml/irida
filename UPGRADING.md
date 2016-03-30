@@ -4,6 +4,10 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+1.0.0-alpha9 to 1.0.0-alpha10
+-----------------------------
+* No special upgrade steps required, just deploy the new `war` file.
+
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
 * No special upgrade steps required, just deploy the new `war` file.
