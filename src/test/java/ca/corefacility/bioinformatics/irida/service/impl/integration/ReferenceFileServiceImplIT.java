@@ -3,7 +3,9 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
@@ -22,6 +24,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -94,5 +97,15 @@ public class ReferenceFileServiceImplIT {
 	@WithMockUser(username = "user", roles = "USER")
 	public void testDeleteRefereneFilePermissionDenied() {
 		referenceFileService.delete(1L);
+	}
+	
+	@Test(expected = UnsupportedReferenceFileContentError.class)
+	@WithMockUser(username = "user", roles = "USER")
+	public void testAddReferenceFileWithAmbiguousBases() throws URISyntaxException {
+		final ReferenceFile rf = new ReferenceFile();
+		final Path ambiguousBasesRefFile = Paths.get(getClass().getResource(
+				"/ca/corefacility/bioinformatics/irida/service/testReferenceAmbiguous.fasta").toURI());
+		rf.setFile(ambiguousBasesRefFile);
+		referenceFileService.create(rf);
 	}
 }

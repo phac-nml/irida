@@ -48,7 +48,7 @@ public class BioJavaSequenceFileUtilitiesImpl implements SequenceFileUtilities {
 			logger.error("Cannot handle non-DNA files, or files with ambiguous bases.", e);
 			throw new UnsupportedReferenceFileContentError("Cannot handle reference files with non-DNA or ambiguous characters.", e);
 		} catch (Throwable e) {
-			logger.error("Cannot calculate reference file length " + file);
+			logger.error("Cannot calculate reference file length " + file, e);
 			throw new IllegalArgumentException("Cannot parse reference file " + file, e);
 		}
 		return totalLength;
