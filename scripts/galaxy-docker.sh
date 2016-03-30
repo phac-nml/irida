@@ -6,11 +6,9 @@
 #   starting IRIDA's Galaxy integration tests
 #
 
-#kill all running containers
+#kill all running containers then delete those containers.
 docker stop $(docker ps -a -q)
-docker ps -a | awk '{print $1}' | xargs --no-run-if-empty docker rm
-
-MOUNTPATH="$PWD"
+docker rm $(docker ps -a -q)
 
 #run docker container and save the outputted container ID
 OUTPUT="$(docker run -d -p 48888:80 -v ${MOUNTPATH}:${MOUNTPATH} -v /tmp:/tmp jcuratcha/irida-galaxy-integration:0.1.1)"
