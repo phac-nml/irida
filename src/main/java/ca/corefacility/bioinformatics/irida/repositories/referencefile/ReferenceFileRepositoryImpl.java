@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl;
+import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 
 /**
  * Custom implementation of {@link FilesystemSupplementedRepositoryImpl} for
@@ -19,19 +20,25 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  */
 @Repository
 public class ReferenceFileRepositoryImpl extends FilesystemSupplementedRepositoryImpl<ReferenceFile> {
+	
+	private final SequenceFileUtilities sequenceFileUtilities;
 
 	@Autowired
-	public ReferenceFileRepositoryImpl(EntityManager entityManager,
-			@Qualifier("referenceFileBaseDirectory") Path baseDirectory) {
+	public ReferenceFileRepositoryImpl(final EntityManager entityManager, 
+			final SequenceFileUtilities sequenceFileUtilities, 
+			final @Qualifier("referenceFileBaseDirectory") Path baseDirectory) {
 		super(entityManager, baseDirectory);
+		this.sequenceFileUtilities = sequenceFileUtilities;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ReferenceFile save(ReferenceFile entity) {
-		return super.saveInternal(entity);
+	public ReferenceFile save(final ReferenceFile referenceFile) {
+		final Long referenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(referenceFile.getFile());
+		referenceFile.setFileLength(referenceFileLength);
+		return super.saveInternal(referenceFile);
 	}
 
 }

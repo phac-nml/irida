@@ -1,10 +1,21 @@
 Changes
 =======
 
+1.0.0-alpha10 to 1.0.0
+----------------------
+* 
+
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
 * [Developer]: Upgraded to angularjs 1.5.0.
 * [Developer]: When building the VM, don't install a tool more than once (even if multiple workflows depend on the tool).
+* [UI]: Fixed a bug where the Send to Galaxy button was enabled on the samples table even if you didn't come to IRIDA through a Galaxy.
+* [UI]: Fixed a bug where uploading a reference file with IUPAC ambiguous bases was reporting a *very* bad error message, and was inconsistently applied in the different places where you can upload reference files.
+* [Developer]: Database initialization for integration tests is now 1) managed by liquibased to match our production environment, and 2) runs much more quickly by loading up a pre-populated database rather than building the database by changesets from the beginning of time.
+* [UI]: Removed the bottom footer and moved links into the Help menu.
+* [UI]: Fixed a bug where sorting users on the users table didn't actually sort the users correctly.
+* [Developer]: Added support to Galaxy integration to allow different sets of states, (hopefully) allowing the use of newer versions of Galaxy that we prescribe.
+* [UI]: New feature: user group management for creating collections of users to apply permissions to projects.
 
 1.0.0-alpha8 to 1.0.0-alpha9
 ----------------------------
