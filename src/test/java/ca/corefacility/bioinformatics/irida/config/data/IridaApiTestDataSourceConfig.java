@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.config.data;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -30,6 +33,12 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiTestDataSourceConfig.class);
 
 	private Set<Path> baseDirectory = new HashSet<>();
+
+	private Set<PosixFilePermission> permissions =EnumSet.of(
+			PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
+			PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.GROUP_READ,
+			PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.OTHERS_READ,
+			PosixFilePermission.OTHERS_EXECUTE);
 
 	// Franklin: I assume that the scope of a configuration bean is the lifetime
 	// of the application, so the directory should only get deleted *after* the
@@ -63,7 +72,8 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path baseDirectory() throws IOException {
-		Path b = Files.createTempDirectory("irida-sequence-file-dir");
+		Path b = Files.createTempDirectory("irida-sequence-file-dir",
+				PosixFilePermissions.asFileAttribute(permissions));
 		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
 		return b;
@@ -71,7 +81,8 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
-		Path b = Files.createTempDirectory("irida-reference-file-dir");
+		Path b = Files.createTempDirectory("irida-reference-file-dir",
+				PosixFilePermissions.asFileAttribute(permissions));
 		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
 		return b;
