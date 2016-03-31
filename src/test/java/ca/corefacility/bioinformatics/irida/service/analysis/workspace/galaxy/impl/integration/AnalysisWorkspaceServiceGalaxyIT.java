@@ -178,7 +178,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
 				.toURI());
 		
-		Path tempDir = Files.createTempDirectory("workspaceServiceGalaxyTest");
+		Path tempDir = Files.createTempDirectory(Paths.get("/tmp/irida/"), "workspaceServiceGalaxyTest");
 
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathA, StandardCopyOption.REPLACE_EXISTING);

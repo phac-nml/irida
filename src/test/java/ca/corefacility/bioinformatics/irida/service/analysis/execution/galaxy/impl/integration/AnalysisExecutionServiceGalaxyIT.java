@@ -164,7 +164,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedOutputFile2 = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("output2.txt").toURI());
 
-		Path tempDir = Files.createTempDirectory("analysisExecutionTest");
+		Path tempDir = Files.createTempDirectory(Paths.get("/tmp/irida/"), "analysisExecutionTest");
 		
 		sequenceFilePath = tempDir.resolve("testData1_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath, StandardCopyOption.REPLACE_EXISTING);

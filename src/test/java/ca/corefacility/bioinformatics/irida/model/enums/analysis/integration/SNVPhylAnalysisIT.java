@@ -122,7 +122,7 @@ public class SNVPhylAnalysisIT {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP);
 
-		Path tempDir = Files.createTempDirectory("snvphylTest");
+		Path tempDir = Files.createTempDirectory(Paths.get("/tmp/irida/"), "snvphylTest");
 
 		Path sequenceFilePathRealA1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/a_1.fastq").toURI());
