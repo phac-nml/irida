@@ -134,6 +134,7 @@
       return $uibModal.open({
         templateUrl: "filter.modal.html",
         controllerAs: "filterCtrl",
+        openedClass : 'filter-modal',
         controller: "FilterModalController"
       }).result;
     }
@@ -205,6 +206,9 @@
     // If user enters a custom name it is not allowed to have spaces
     vm.validNameRE = /^[a-zA-Z0-9-_]+$/;
 
+    /**
+     * Closes the modal window without making any changes
+     */
     vm.cancel = function () {
       $uibModalInstance.dismiss();
     };
@@ -223,15 +227,49 @@
     }
   }
 
-  function FilterModalController($uibModalInstance) {
-    var vm = this;
-    vm.filter = {
+  /**
+   * Container for the current state of the samples filter.
+   * @constructor
+   */
+  function FilterStateService() {
+    var state = {
       date: {
         startDate: null,
-        endDate: null
+        endDate: null,
+        ranges: {
+          'Last 30 Days': [moment().subtract(30, 'days'), moment()]
+        }
       }
     };
 
+    this.getState = function() {
+      return state;
+    };
+
+    this.setState = function(s) {
+      state = s;
+    };
+  }
+
+  /**
+   * Controller for handling filtering samples by properties
+   * @param $uibModalInstance
+   * @constructor
+   */
+  function FilterModalController($uibModalInstance, stateService) {
+    var vm = this;
+    vm.filter = stateService.getState();
+
+    /**
+     * Closes the modal window without making any changes
+     */
+    vm.cancel = function() {
+      $uibModalInstance.dismiss();
+    };
+
+    /**
+     * Return the filter state to the calling function
+     */
     vm.doFilter = function() {
       $uibModalInstance.close(vm.filter);
     };
@@ -239,8 +277,9 @@
 
   ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap", "daterangepicker"])
     .factory("modalService", ["$uibModal", modalService])
+    .service("FilterStateService", [FilterStateService])
     .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
-    .controller("FilterModalController", ["$uibModalInstance", FilterModalController])
+    .controller("FilterModalController", ["$uibModalInstance", "FilterStateService", FilterModalController])
   ;
 }(window.angular, window.PAGE, window.project));

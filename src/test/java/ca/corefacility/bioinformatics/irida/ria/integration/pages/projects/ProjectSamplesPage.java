@@ -89,6 +89,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "select2-results")
 	private WebElement select2Results;
 
+	@FindBy(id = "filterByPropertyBtn")
+	private WebElement filterByPropertyBtn;
+
+	@FindBy(className = "filter-modal")
+	private WebElement filterModal;
+
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
@@ -224,6 +230,17 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
 		copyOkBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+	}
+
+	public void filterByName(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		filterByPropertyBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(filterModal));
+		WebElement nameInput = filterModal.findElement(By.id("name"));
+		nameInput.clear();
+		nameInput.sendKeys(name);
+		filterModal.findElement(By.id("doFilterBtn")).click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
 	}
 
 	public List<String> getSampleNamesOnPage() {

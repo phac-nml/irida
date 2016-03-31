@@ -1,4 +1,4 @@
-(function (ng, $) {
+(function (ng, $, SamplesFilter) {
 	"use strict";
 
 	/**
@@ -228,13 +228,22 @@
 			});
 		};
 
+		/**
+		 * Open a modal to filter the samples by Sample properties
+		 */
 		vm.openFilter = function () {
 			modalService.openFilterModal().then(function (filter) {
         // Get a clean list of samples
         samplesService.fetchSamples(display).then(function(samples) {
+	        // Apply the filter.
           vm.samples = $filter("samplesFilter")(samples, filter);
         });
 			});
+		};
+
+		// TODO: Implement this function
+		vm.openFilterByFile = function() {
+			console.warn("Filter by file still needs to be implemented")
 		};
 
 		/**
@@ -256,23 +265,7 @@
 
 	function samplesFilter () {
 		return function(samples, filter) {
-			function nameFilter(name) {
-				return (filter.name === undefined || (typeof name === "string" && name.indexOf(filter.name) > -1));
-			}
-
-      function minDateFilter(date) {
-        return (filter.date.startDate === null || filter.date.startDate.isBefore(new Date(date)));
-      }
-
-      function maxDateFilter(date) {
-        return (filter.date.endDate === null || filter.date.endDate.isAfter(new Date(date)));
-      }
-			return samples.filter(function (s) {
-        return (
-        nameFilter(s.sample.sampleName) &&
-        minDateFilter(s.sample.createdDate) &&
-        maxDateFilter(s.sample.createdDate));
-			});
+			return SamplesFilter.filterByProperties(samples, filter);
 		};
 	}
 
@@ -280,4 +273,4 @@
 		.controller("SamplesController", ["$scope", "$filter", "modalService",  "SamplesService", "TableService", SamplesController])
 		.filter("samplesFilter", [samplesFilter])
 	;
-})(window.angular, window.jQuery);
+})(window.angular, window.jQuery, window.SamplesFilter);

@@ -14,6 +14,13 @@
       }
     },
     {
+      "type": "js",
+      "name": "irida.projects.samples.filter",
+      "locations": {
+        "webapp": "/resources/js/filters/samples-filter.js"
+      }
+    },
+    {
       "name": "irida.projects.samples.service",
       "type": "js",
       "locations": {

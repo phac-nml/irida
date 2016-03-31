@@ -13,13 +13,12 @@
     /**
      * Current projects to display.  If this does not change, then there is no reason to complete an ajax request.
      */
-    var _options = {},
-        /**
-         * List of the current samples based on the _options.
-         */
-        _samples;
-		
-		// Private Methods
+    var _options = {};
+
+    /**
+     * List of the current samples based on the _options.
+     */
+    var _samples;
 
     /**
      * Get the samples that are specific for the current project.
@@ -39,17 +38,24 @@
 			return $http.get(url);
 		}
 
+		/**
+		 * Perform the http requests to get the samples from server.
+		 * @param options
+		 * @returns {*}
+     */
     function getSamples(options) {
       var promises = [],
           // By default only load project samples
           config   = {project: true, local: [], remote: [], showNotification: true};
 
+			// Overwrite the default config with the new values.
       _.merge(config, options);
 
       // Add the project samples (if required).
       if(config.project) {
         promises.push(getProjectSamples());
       }
+      // Add local project samples.
       if (config.local.length > 0) {
         config.local.forEach(function (id) {
           promises.push(getLocalSamples(id));
@@ -75,9 +81,6 @@
         return samples;
       });
     }
-
-
-    // Public Methods
 
 		/**
 		 * Get the appropriate samples from the server.
