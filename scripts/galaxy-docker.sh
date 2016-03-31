@@ -6,6 +6,8 @@
 #   starting IRIDA's Galaxy integration tests
 #
 
+set -e
+
 #kill all running containers then delete those containers.
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
