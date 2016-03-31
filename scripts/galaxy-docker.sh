@@ -1,4 +1,4 @@
-#!usr/bin/env bash
+#!/usr/bin/env bash
 
 #
 # Script for building and then starting a Docker-Galaxy instance
