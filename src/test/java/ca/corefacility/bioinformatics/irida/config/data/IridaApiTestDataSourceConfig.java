@@ -46,6 +46,14 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		}
 	}
 
+	/**
+	 	Path to root of temporary directory where tests will copy files for use in Galaxy
+	 */
+	@Bean(name = "rootTempDirectory")
+	public Path rootTempDirectory() {
+		return Paths.get("/tmp/irida");
+	}
+
 	@Bean
 	public JpaVendorAdapter jpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
@@ -68,7 +76,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path baseDirectory() throws IOException {
-		Path b = Files.createTempDirectory(Paths.get("/tmp/irida"), "irida-sequence-file-dir",
+		Path b = Files.createTempDirectory(rootTempDirectory(), "irida-sequence-file-dir",
 				PosixFilePermissions.asFileAttribute(permissions));
 		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
@@ -77,7 +85,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
-		Path b = Files.createTempDirectory(Paths.get("/tmp/irida"), "irida-reference-file-dir",
+		Path b = Files.createTempDirectory(rootTempDirectory(), "irida-reference-file-dir",
 				PosixFilePermissions.asFileAttribute(permissions));
 		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
