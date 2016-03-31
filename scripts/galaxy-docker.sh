@@ -16,10 +16,10 @@ mkdir /tmp/irida
 MOUNTPATH="$PWD"
 
 #run docker container and save the outputted container ID
-OUTPUT="$(docker run -d -p 48888:80 -v ${MOUNTPATH}:${MOUNTPATH} -v /tmp/irida:/tmp/irida jcuratcha/irida-galaxy-integration:0.1.1)"
+OUTPUT="$(docker run -d -p 48888:80 -v /tmp/irida:/tmp/irida jcuratcha/irida-galaxy-integration:0.1.1)"
 
 #run the test suite
-mvn clean verify -Pgalaxy_testing -Dit.test=SNVPhylAnalysisIT -Dskip.surefire.tests=true
+mvn clean verify -Pgalaxy_testing
 
 #kill the container with the long container id
 docker kill ${OUTPUT}
