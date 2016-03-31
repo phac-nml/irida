@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -35,10 +34,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	private Set<Path> baseDirectory = new HashSet<>();
 
-	private Set<PosixFilePermission> permissions = EnumSet.of(
-			PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE,
-			PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE, PosixFilePermission.GROUP_EXECUTE,
-			PosixFilePermission.OTHERS_READ, PosixFilePermission.OTHERS_WRITE, PosixFilePermission.OTHERS_EXECUTE);
+	private final Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxr-xr-x");
 
 	// Franklin: I assume that the scope of a configuration bean is the lifetime
 	// of the application, so the directory should only get deleted *after* the
