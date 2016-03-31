@@ -235,10 +235,7 @@
     var state = {
       date: {
         startDate: null,
-        endDate: null,
-        ranges: {
-          'Last 30 Days': [moment().subtract(30, 'days'), moment()]
-        }
+        endDate: null
       }
     };
 
@@ -259,6 +256,12 @@
   function FilterModalController($uibModalInstance, stateService) {
     var vm = this;
     vm.filter = stateService.getState();
+    vm.options = {
+      format: 'MM/DD/YYYY',
+      ranges: {
+        'Last 30 days': [moment().subtract(30, 'days'), moment()]
+      }
+    };
 
     /**
      * Closes the modal window without making any changes

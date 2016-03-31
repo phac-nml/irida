@@ -112,7 +112,7 @@
             </div>
             <div class="form-group">
                 <label for="date" th:text="#{project.sample.filter-date}">Date</label>
-                <input id="date" type="text" date-range-picker="" class="form-control date-picker" min="{{filterCtrl.dates.min}}" max="{{filterCtrl.dates.max}}" ng-model="filterCtrl.filter.date"/>
+                <input id="date" type="text" date-range-picker="" class="form-control date-picker" options="filterCtrl.options" ng-model="filterCtrl.filter.date"/>
             </div>
         </div>
         <div class="modal-footer">
