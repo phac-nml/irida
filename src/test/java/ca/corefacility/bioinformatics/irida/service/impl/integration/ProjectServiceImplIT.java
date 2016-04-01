@@ -51,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
@@ -530,6 +531,26 @@ public class ProjectServiceImplIT {
 		ReferenceFile rf = pr.getObject();
 		assertTrue("reference file should be beneath the base directory for reference files.",
 				rf.getFile().startsWith(referenceFileBaseDirectory));
+	}
+	
+	@Test(expected = UnsupportedReferenceFileContentError.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testAddReferenceFileAmbiguouusBasesToProject() throws IOException, URISyntaxException {
+		ReferenceFile f = new ReferenceFile();
+
+		Path referenceFilePath = Paths.get(getClass().getResource(
+				"/ca/corefacility/bioinformatics/irida/service/testReferenceAmbiguous.fasta").toURI());
+
+		Path createTempFile = Files.createTempFile("testReference", ".fasta");
+		Files.delete(createTempFile);
+		referenceFilePath = Files.copy(referenceFilePath, createTempFile);
+		referenceFilePath.toFile().deleteOnExit();
+
+		f.setFile(referenceFilePath);
+
+		Project p = projectService.read(1L);
+
+		projectService.addReferenceFileToProject(p, f);
 	}
 
 	@Test

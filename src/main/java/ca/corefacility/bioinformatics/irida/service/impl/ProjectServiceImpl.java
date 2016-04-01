@@ -68,7 +68,6 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 
 /**
  * A specialized service layer for projects.
@@ -86,7 +85,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final RelatedProjectRepository relatedProjectRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
-	private final SequenceFileUtilities sequenceFileUtilities;
 	private final UserGroupProjectJoinRepository ugpjRepository;
 	private final ProjectRepository projectRepository;
 
@@ -95,8 +93,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities, final UserGroupProjectJoinRepository ugpjRepository,
-			Validator validator) {
+			final UserGroupProjectJoinRepository ugpjRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -106,7 +103,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.relatedProjectRepository = relatedProjectRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
-		this.sequenceFileUtilities = sequenceFileUtilities;
 		this.ugpjRepository = ugpjRepository;
 	}
 
@@ -488,10 +484,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
-		// calculate the file length
-		Long referenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(referenceFile.getFile());
-		referenceFile.setFileLength(referenceFileLength);
-
 		referenceFile = referenceFileRepository.save(referenceFile);
 		ProjectReferenceFileJoin j = new ProjectReferenceFileJoin(project, referenceFile);
 		return prfjRepository.save(j);
