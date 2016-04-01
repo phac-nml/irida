@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,11 +26,20 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  */
 public class ProjectMembersPage extends AbstractPage {
 	public static final String RELATIVE_URL = "projects/1/members";
+	public static final String GROUPS_URL = "projects/1/groups";
+			
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersPage.class);
 
 	public ProjectMembersPage(WebDriver driver) {
 		super(driver);
+	}
+	
+	public void goToPage() {
 		get(driver, RELATIVE_URL);
+	}
+	
+	public void goToGroupsPage() {
+		get(driver, GROUPS_URL);
 	}
 
 	public String getTitle() {
@@ -37,55 +47,23 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public List<String> getProjectMembersNames() {
-		List<WebElement> els = driver.findElements(By.cssSelector("a.col-names"));
+		List<WebElement> els = driver.findElements(By.cssSelector("span.col-names"));
 		return els.stream().map(WebElement::getText).collect(Collectors.toList());
 	}
 
 	public void clickRemoveUserButton(Long id) {
 		logger.debug("Clicking remove user button for " + id);
-		WebElement removeUserButton = driver.findElement(By.id("remove-user-" + id));
+		WebElement removeUserButton = driver.findElement(By.id("remove-member-" + id));
 		removeUserButton.click();
 	}
 
-	public void clickModialPopupButton() {
+	public void clickModalPopupButton() {
 		logger.debug("Confirming user removal");
 		WebElement myDynamicElement = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("modial-remove-user")));
+				.id("remove-member-button")));
 
 		myDynamicElement.click();
 		waitForAjax();
-	}
-
-	public void clickEditButton(Long userid) {
-		logger.debug("clicking edit button for " + userid);
-		WebElement editMembersButton = driver.findElement(By.id("edit-button-" + userid));
-		editMembersButton.click();
-	}
-
-	public boolean roleSelectDisplayed(Long userid) {
-		logger.debug("Checking if role select is displayed");
-		boolean present = false;
-		try {
-			WebElement findElement = driver.findElement(By.id(userid + "-role-select"));
-			present = findElement.isDisplayed();
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
-
-		return present;
-	}
-
-	public boolean roleSpanDisplayed(Long userid) {
-		logger.debug("Checking if role span is displayed");
-		boolean present = false;
-		try {
-			WebElement findElement = driver.findElement(By.id("display-role-" + userid));
-			present = findElement.isDisplayed();
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
-
-		return present;
 	}
 
 	public void setRoleForUser(Long id, String roleValue) {
@@ -116,19 +94,28 @@ public class ProjectMembersPage extends AbstractPage {
 		waitForAjax();
 	}
 
-	public void addUserToProject(Long id, ProjectRole role) {
-		WebElement userElement = driver.findElement(By.id("add-user-username"));
+	public void addUserToProject(final String username, final ProjectRole role) {
+		WebElement userElement = waitForElementVisible(By.className("select2-choice"));
+		userElement.click();
+		WebElement userField = waitForElementVisible(By.className("select2-input"));
 		// we're using select2 on the user element so it ends up being made into
 		// an input box rather than a select.
-		userElement.sendKeys(id.toString());
+		userField.sendKeys(username);
+		Collection<WebElement> selectUserDropdown = waitForElementsVisible(By.className("select2-result-label"));
+		
+		selectUserDropdown.iterator().next().click();
 
-		WebElement roleElement = driver.findElement(By.id("add-user-role"));
+		WebElement roleElement = driver.findElement(By.id("add-member-role"));
 		Select roleSelect = new Select(roleElement);
 		roleSelect.selectByValue(role.toString());
 
 		WebElement submit = driver.findElement(By.id("submitAddMember"));
 		submit.click();
 		waitForAjax();
+	}
+	
+	public void clickGroupsLink() {
+		driver.findElement(By.id("project-groups-link")).click();
 	}
 
 	private void waitForAjax() {

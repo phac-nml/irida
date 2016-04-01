@@ -1,0 +1,13 @@
+<tool id="assembly_annotation_pipeline_outputs" name="assembly_annotation_pipeline_outputs" version="0.1.0">
+  <command>
+    echo "contigs" > $contigs; echo "genome" > $genome; echo "log" > $log;
+  </command>
+  <inputs>
+    <param name="sequence_reads_paired" label="sequence_reads_paired" type="data_collection" collection_type="list:paired" />
+  </inputs>
+  <outputs>
+    <data format="fasta" name="contigs" />
+    <data format="txt" name="genome" />
+    <data format="txt" name="log" />
+  </outputs>
+</tool>

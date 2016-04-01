@@ -13,7 +13,9 @@ Once you've got data into IRIDA, either by [web upload][web-upload] or from a se
 
 In order to share data from a project, you **must** have the **Manager** role on the project. The **Manager** role implies ownership of the data contained in the project. You can find out if you have the **Manager** role by looking at the [project members section][project-members].
 
-If the person you want to share with within IRIDA does not have a user account, you must also have permission to create a user account for that user. If you do not, then you'll need to contact someone who has permissions to create user accounts.
+You can share data with collaborators in IRIDA in two ways: to an individual user account, or to a group of user accounts.
+
+If the individual person you want to share with within IRIDA does not have a user account, you must also have permission to create a user account for that user. If you do not, then you'll need to contact someone who has permissions to create user accounts.
 
 * TOC
 {:toc}
@@ -25,14 +27,28 @@ If the person you would like to share data with within IRIDA does not have a use
 
 {% include tutorials/common/creating-a-user-account.md %}
 
+Creating a User Group
+---------------------
+
+You may share data with groups of users in IRIDA by creating a user group.
+
+{% include tutorials/common/creating-a-user-group.md %}
+{% include tutorials/common/adding-a-member-to-a-group.md %}
+
 Adding a Project Member
 -----------------------
 
-Once the user account is created go to the project containing the data you want to share with this user, and select the **Members** tab.
+Once the user account or group is created, go to the project containing the data you want to share with this user, and select the **Members** tab.
 
 ![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
 
+### Adding an Individual Member
+
 {% include tutorials/common/project-add-member.md %}
+
+### Adding a Group Member
+
+{% include tutorials/common/project-add-member-group.md %}
 
 Downloading Sample Data
 -----------------------

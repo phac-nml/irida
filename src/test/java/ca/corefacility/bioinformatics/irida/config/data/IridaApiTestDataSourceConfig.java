@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.config.data;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -31,6 +34,8 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	private Set<Path> baseDirectory = new HashSet<>();
 
+	private final Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxr-xr-x");
+
 	// Franklin: I assume that the scope of a configuration bean is the lifetime
 	// of the application, so the directory should only get deleted *after* the
 	// tests have finished running.
@@ -39,6 +44,14 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		for (Path b : baseDirectory) {
 			Files.walkFileTree(b, new RecursiveDeleteVisitor());
 		}
+	}
+
+	/**
+	 	Path to root of temporary directory where tests will copy files for use in Galaxy
+	 */
+	@Bean(name = "rootTempDirectory")
+	public Path rootTempDirectory() {
+		return Paths.get("/tmp/irida");
 	}
 
 	@Bean
@@ -63,7 +76,8 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path baseDirectory() throws IOException {
-		Path b = Files.createTempDirectory("irida-sequence-file-dir");
+		Path b = Files.createTempDirectory(rootTempDirectory(), "irida-sequence-file-dir",
+				PosixFilePermissions.asFileAttribute(permissions));
 		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
 		return b;
@@ -71,7 +85,8 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
-		Path b = Files.createTempDirectory("irida-reference-file-dir");
+		Path b = Files.createTempDirectory(rootTempDirectory(), "irida-reference-file-dir",
+				PosixFilePermissions.asFileAttribute(permissions));
 		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
 		return b;

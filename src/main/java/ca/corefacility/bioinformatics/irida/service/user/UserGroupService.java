@@ -1,14 +1,18 @@
 package ca.corefacility.bioinformatics.irida.service.user;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -49,8 +53,12 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 * @param role
 	 *            the new role
 	 * @return the modified relationship
+	 * @throws UserGroupWithoutOwnerException
+	 *             when the user group doesn't have an owner as a result of the
+	 *             role change.
 	 */
-	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role);
+	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role)
+			throws UserGroupWithoutOwnerException;
 
 	/**
 	 * Remove the {@link User} from the {@link UserGroup}.
@@ -59,8 +67,11 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the user to remove
 	 * @param userGroup
 	 *            the group from which to remove the user.
+	 * @throws UserGroupWithoutOwnerException
+	 *             when the user group doesn't have an owner as a result of the
+	 *             removal.
 	 */
-	public void removeUserFromGroup(final User user, final UserGroup userGroup);
+	public void removeUserFromGroup(final User user, final UserGroup userGroup) throws UserGroupWithoutOwnerException;
 
 	/**
 	 * Filter the list of users in the {@link UserGroup} by username.
@@ -91,4 +102,37 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 * @return the set of users not in the group.
 	 */
 	public Collection<User> getUsersNotInGroup(final UserGroup userGroup);
+
+	/**
+	 * Get a page of {@link UserGroupProjectJoin} for a specific {@link Project}
+	 * .
+	 * 
+	 * @param searchName
+	 *            the name to search with.
+	 * @param project
+	 *            the project
+	 * @param page
+	 *            the current page
+	 * @param size
+	 *            the size of the page
+	 * @param order
+	 *            the order
+	 * @param sortProperties
+	 *            the properties to sort on
+	 * @return a page of {@link UserGroupProjectJoin}.
+	 */
+	public Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project, int page,
+			int size, Direction order, String... sortProperties);
+
+	/**
+	 * Get a collection of {@link UserGroup} that aren't already on a
+	 * {@link Project}.
+	 * 
+	 * @param project
+	 *            the project
+	 * @param filter
+	 *            the name to filter on
+	 * @return the groups not already on the project.
+	 */
+	public List<UserGroup> getUserGroupsNotOnProject(final Project project, final String filter);
 }

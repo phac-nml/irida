@@ -139,8 +139,8 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy() {
-		final ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
-		final JobsClient jobsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getJobsClient();
+		final ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
+		final JobsClient jobsClient = localGalaxy.getGalaxyInstanceAdmin().getJobsClient();
 		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient, jobsClient);
 	}
 
