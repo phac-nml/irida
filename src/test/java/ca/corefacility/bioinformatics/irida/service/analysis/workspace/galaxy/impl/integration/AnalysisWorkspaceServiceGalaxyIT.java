@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -112,6 +113,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+
+	@Autowired
+	@Qualifier("rootTempDirectory")
+	private Path rootTempDirectory;
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	
@@ -178,7 +183,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
 				.toURI());
 		
-		Path tempDir = Files.createTempDirectory("workspaceServiceGalaxyTest");
+		Path tempDir = Files.createTempDirectory(rootTempDirectory, "workspaceServiceGalaxyTest");
 
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathA, StandardCopyOption.REPLACE_EXISTING);

@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -82,6 +83,10 @@ public class SNVPhylAnalysisIT {
 	@Autowired
 	private IridaWorkflow snvPhylWorkflow;
 
+	@Autowired
+	@Qualifier("rootTempDirectory")
+	private Path rootTempDirectory;
+
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePathA1;
@@ -121,16 +126,23 @@ public class SNVPhylAnalysisIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP);
-		
-		Path tempDir = Files.createTempDirectory(Paths.get("/Warehouse/Temporary/irida-john/"),"snvphylTest");
 
-		Path sequenceFilePathRealA1 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/input/fastq/a_1.fastq");
-		Path sequenceFilePathRealA2 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/input/fastq/a_2.fastq");
-		Path sequenceFilePathRealB1 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/input/fastq/b_1.fastq");
-		Path sequenceFilePathRealB2 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/input/fastq/b_2.fastq");
-		Path sequenceFilePathRealC1 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/input/fastq/c_1.fastq");
-		Path sequenceFilePathRealC2 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/input/fastq/c_2.fastq");
-		Path referenceFilePathReal = Paths.get(	"/Warehouse/Temporary/irida-john/SNVPhyl/test1/input/reference.fasta");
+		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
+
+		Path sequenceFilePathRealA1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/a_1.fastq").toURI());
+		Path sequenceFilePathRealA2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/a_2.fastq").toURI());
+		Path sequenceFilePathRealB1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/b_1.fastq").toURI());
+		Path sequenceFilePathRealB2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/b_2.fastq").toURI());
+		Path sequenceFilePathRealC1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/c_1.fastq").toURI());
+		Path sequenceFilePathRealC2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/c_2.fastq").toURI());
+		Path referenceFilePathReal = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/reference.fasta").toURI());
 
 		sequenceFilePathA1 = tempDir.resolve("a_R1_001.fastq");
 		Files.copy(sequenceFilePathRealA1, sequenceFilePathA1, StandardCopyOption.REPLACE_EXISTING);
@@ -165,15 +177,15 @@ public class SNVPhylAnalysisIT {
 		referenceFilePath = Files.createTempFile("reference", ".fasta");
 		Files.copy(referenceFilePathReal, referenceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
-		outputSnpTable1 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/output1/snpTable.tsv");
-		outputSnpMatrix1 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/output1/snpMatrix.tsv");
-		vcf2core1 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/output1/vcf2core.csv");
-		filterStats1 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/output1/filterStats.txt");
+		outputSnpTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpTable.tsv").toURI());
+		outputSnpMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpMatrix.tsv").toURI());
+		vcf2core1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/vcf2core.csv").toURI());
+		filterStats1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/filterStats.txt").toURI());
 		
-		outputSnpTable2 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/output2/snpTable.tsv");
-		outputSnpMatrix2 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/output2/snpMatrix.tsv");
-		vcf2core2 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/output2/vcf2core.csv");
-		filterStats2 = Paths.get("/Warehouse/Temporary/irida-john/SNVPhyl/test1/output2/filterStats.txt");
+		outputSnpTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpTable.tsv").toURI());
+		outputSnpMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpMatrix.tsv").toURI());
+		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.csv").toURI());
+		filterStats2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/filterStats.txt").toURI());
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
