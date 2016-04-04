@@ -278,10 +278,11 @@
   function FilterModalController($uibModalInstance, stateService) {
     var vm = this;
     vm.filter = stateService.getState();
-    console.log(vm.filter);
+    
     vm.options = {ranges: {}};
-    vm.options.ranges[page['i18n']['dateFilter']['days30']] = [moment().subtract(30, 'days'), moment()];
-    vm.options.ranges[page['i18n']['dateFilter']['months6']] = [moment().subtract(6, 'months'), moment()];
+    vm.options.ranges[page.i18n.dateFilter.days30] = [moment().subtract(30, 'days'), moment()];
+    vm.options.ranges[page.i18n.dateFilter.days60] = [moment().subtract(60, 'days'), moment()];
+    vm.options.ranges[page.i18n.dateFilter.days120] = [moment().subtract(120, 'days'), moment()];
 
     /**
      * Closes the modal window without making any changes
