@@ -97,6 +97,10 @@ public class AnalysisCollectionServiceGalaxyIT {
 	@Qualifier("rootTempDirectory")
 	private Path rootTempDirectory;
 
+	@Autowired
+	@Qualifier("rootTempDirectory")
+	private Path rootTempDirectory;
+
 	private Path sequenceFilePathA;
 	private Path sequenceFilePathAInvalidName;
 	private Path sequenceFilePath2A;
