@@ -2,15 +2,22 @@
 /**
  * Filter an array of Sample
  */
-var SamplesFilter = {
-  filterByProperties: function(samples, filter) {
+var SamplesFilter = (function(moment) {
+  function filterByProperties(samples, filter) {
     /**
-     * Check to ensure that the arguments are valid.
+     * Check to ensure that the arguments are valid.`
      */
     if(filter === undefined) {
       throw new Error("Must have a filter object to filter against");
     } else if(samples === undefined) {
       throw new Error("Must have samples to filter");
+    }
+    
+    if(!filter.date.startDate instanceof moment) {
+      filter.date.startDate = moment(filter.date.startDate);
+    }
+    if(!filter.date.endDate instanceof moment) {
+      filter.date.endDate = moment(filter.date.endDate);
     }
 
     /**
@@ -41,4 +48,8 @@ var SamplesFilter = {
       maxDateFilter(s.sample.createdDate));
     });
   }
-};
+
+  return {
+    filterByProperties: filterByProperties
+  };
+})(moment);

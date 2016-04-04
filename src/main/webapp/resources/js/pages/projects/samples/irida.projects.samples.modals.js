@@ -260,9 +260,11 @@
       $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
     });
 
-    $rootScope.$on('CLEAR_FILTER_PROPERTY', function (property) {
-      if(currState[property] !== undefined) {
-        currState[property]
+    $rootScope.$on('CLEAR_FILTER_PROPERTY', function (event, args) {
+      if(currState[args.property] !== undefined && currState[args.property].length > 0) {
+        delete currState[args.property];
+      } else if(currState.date[args.property]){
+        currState.date[args.property] = null;
       }
       $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
     });

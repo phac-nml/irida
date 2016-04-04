@@ -88,6 +88,7 @@
 		 * @returns {Promise.<T>|*}
 		 */
 		function fetchSamples(options) {
+			// If these are the same the options have not changes therefore the samples have not changed.
       if (ng.equals(_options, options)) {
         return $q(function (resolve) {
           resolve(_samples);
@@ -238,5 +239,6 @@
 	ng.module("irida.projects.samples.service", ["datatables", "irida.notifications", "irida.cart"])
 		.service("SamplesService", ["$http", "$q", "compiledNotification", "CartService", SamplesService])
 		.service("AssociatedProjectsService", ["$http", "$q", AssociatedProjectsService])
-		.service("TableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", TableService]);
+		.service("TableService", ["$compile", "$templateCache", "DTOptionsBuilder", "DTColumnDefBuilder", TableService])
+	;
 })(window.angular, window.jQuery, window._, window.PAGE);

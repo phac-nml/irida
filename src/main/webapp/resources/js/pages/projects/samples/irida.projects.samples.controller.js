@@ -50,7 +50,7 @@
 			samplesService.fetchSamples(display).then(function(samples) {
 				// Apply the filter.
 				vm.samples = $filter("samplesFilter")(samples, filter);
-				vm.filter = _.clone(filter);
+				vm.filter = _.cloneDeep(filter);
 				// Format for display
 				if(vm.filter.date.startDate !== null) {
 					vm.filter.date.startDate = vm.filter.date.startDate.toDate();
@@ -260,7 +260,7 @@
 		};
 
 		vm.clearFilterProperty = function(property) {
-			$scope.$emit("CLEAR_FILTER_PROPERTY", property);
+			$scope.$emit("CLEAR_FILTER_PROPERTY", {property: property});
 		};
 
 		// TODO: Implement this function
