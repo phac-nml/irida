@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -112,6 +113,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+
+	@Autowired
+	@Qualifier("rootTempDirectory")
+	private Path rootTempDirectory;
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	
@@ -178,7 +183,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
 				.toURI());
 		
-		Path tempDir = Files.createTempDirectory("workspaceServiceGalaxyTest");
+		Path tempDir = Files.createTempDirectory(rootTempDirectory, "workspaceServiceGalaxyTest");
 
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathA, StandardCopyOption.REPLACE_EXISTING);
@@ -201,7 +206,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		sequenceFilesSet = Sets.newHashSet(new SequenceFile(sequenceFilePathA));
 
-		GalaxyInstance galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceWorkflowUser();
+		GalaxyInstance galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
@@ -270,9 +275,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
@@ -342,8 +347,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleFail");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
@@ -377,9 +382,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
@@ -453,8 +458,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
@@ -512,8 +517,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccessWithNoParameters");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
@@ -568,8 +573,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
@@ -619,8 +624,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersFailInvalidParameter");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
@@ -655,8 +660,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairFail");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
@@ -689,8 +694,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSinglePaired);
@@ -749,8 +754,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSinglePairFail");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSinglePaired);
@@ -782,7 +787,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesFail");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
 		History createdHistory = historiesClient.create(history);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -818,9 +823,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSingleSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
 
 		History createdHistory = historiesClient.create(history);
 
@@ -878,9 +883,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisPairedSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
 
 		History createdHistory = historiesClient.create(history);
 
@@ -945,9 +950,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSinglePairedSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
 
 		History createdHistory = historiesClient.create(history);
 
@@ -1013,9 +1018,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsPhylogenomicsSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
 
 		History createdHistory = historiesClient.create(history);
 
@@ -1069,9 +1074,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisFail");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
 
 		History createdHistory = historiesClient.create(history);
 

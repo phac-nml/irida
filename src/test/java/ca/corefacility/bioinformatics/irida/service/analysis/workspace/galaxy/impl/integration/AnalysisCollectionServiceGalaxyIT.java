@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -95,6 +96,10 @@ public class AnalysisCollectionServiceGalaxyIT {
 	@Autowired
 	private SequenceFilePairService sequenceFilePairService;
 
+	@Autowired
+	@Qualifier("rootTempDirectory")
+	private Path rootTempDirectory;
+
 	private Path sequenceFilePathA;
 	private Path sequenceFilePathAInvalidName;
 	private Path sequenceFilePath2A;
@@ -128,7 +133,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
 		
-		Path tempDir = Files.createTempDirectory("analysisCollectionTest");
+		Path tempDir = Files.createTempDirectory(rootTempDirectory, "analysisCollectionTest");
 
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathA, StandardCopyOption.REPLACE_EXISTING);
@@ -241,8 +246,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesSingleSuccess");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		Library library = new Library();
@@ -292,8 +297,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPaired");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		Library library = new Library();
@@ -380,8 +385,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		History history = new History();
 		history.setName("testUploadSequenceFilesPairedFailForward");
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		History createdHistory = historiesClient.create(history);
 
 		Library library = new Library();

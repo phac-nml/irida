@@ -9,7 +9,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
@@ -23,9 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
-import com.github.jmchilton.galaxybootstrap.BootStrapper;
-import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
-import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 
 /**
  * A class containing information about the running instance of Galaxy for integration testing.
@@ -35,10 +31,6 @@ public class LocalGalaxy {
 	private static final Logger logger = LoggerFactory
 			.getLogger(LocalGalaxy.class);
 
-	private BootStrapper bootStrapper;
-	private GalaxyDaemon galaxyDaemon;
-	private GalaxyProperties galaxyProperties;
-
 	private URL galaxyURL;
 	private URL invalidGalaxyURL;
 	private URL testGalaxyURL;
@@ -47,27 +39,7 @@ public class LocalGalaxy {
 	private String adminPassword;
 	private String adminAPIKey;
 
-	private GalaxyAccountEmail user1Name;
-	private String user1Password;
-	private String user1APIKey;
-
-	private GalaxyAccountEmail user2Name;
-	private String user2Password;
-	private String user2APIKey;
-	
-	private GalaxyAccountEmail workflowUserName;
-	private String workflowUserPassword;
-	private String workflowUserAPIKey;
-	
-	private GalaxyAccountEmail nonExistentGalaxyAdminName;
-	private GalaxyAccountEmail nonExistentGalaxyUserName;
-
-	private UploaderAccountName invalidGalaxyUserName;
-
 	private GalaxyInstance galaxyInstanceAdmin;
-	private GalaxyInstance galaxyInstanceUser1;
-	private GalaxyInstance galaxyInstanceUser2;
-	private GalaxyInstance galaxyInstanceWorkflowUser;
 	
 	private String singleInputWorkflowId;
 	private String singleInputWorkflowLabel;
@@ -93,45 +65,6 @@ public class LocalGalaxy {
 	
 	private String invalidWorkflowId;
 	private String invalidWorkflowLabel = "invalid";
-
-	/**
-	 * Method to cleanup the running instance of Galaxy when finished with tests.
-	 * @throws IOException 
-	 */
-	@PreDestroy
-	public void shutdownGalaxy() throws IOException {
-		logger.info("Shutting down Galaxy on url=" + galaxyURL);
-		galaxyDaemon.stop();
-		galaxyDaemon.waitForDown();
-		deleteGalaxy();
-	}
-	
-	/**
-	 * Delete Galaxy directory
-	 * @throws IOException 
-	 */
-	public void deleteGalaxy() throws IOException {
-		if (logger.isDebugEnabled()) {
-			Path tempLogFile = Files.createTempFile("galaxy-log", ".log");
-			Path galaxyLog = bootStrapper.getRoot().toPath().resolve("paster.log");
-			Files.copy(galaxyLog, tempLogFile, StandardCopyOption.REPLACE_EXISTING);
-			
-			logger.debug("Copied Galaxy log file " + galaxyLog + " to " + tempLogFile);
-		}
-		
-		logger.debug("Deleting Galaxy directory: " + bootStrapper.getPath());
-		bootStrapper.deleteGalaxyRoot();
-	}
-	
-	/**
-	 * Gets the root directory where the local Galaxy is running.
-	 * @return  The root directory for the local Galaxy.
-	 */
-	public Path getGalaxyPath() {
-		checkNotNull(bootStrapper);
-		
-		return Paths.get(bootStrapper.getPath());
-	}
 
 	/**
 	 * @return The URL to the running Galaxy instance.
@@ -194,128 +127,6 @@ public class LocalGalaxy {
 	}
 
 	/**
-	 * @return The name of the 1st regular user in Galaxy.
-	 */
-	public GalaxyAccountEmail getUser1Name() {
-		return user1Name;
-	}
-
-	/**
-	 * Sets the name of the 1st regular user in Galaxy.
-	 * @param user1Name The name for the 1st regular user.
-	 */
-	public void setUser1Name(GalaxyAccountEmail user1Name) {
-		this.user1Name = user1Name;
-	}
-
-	/**
-	 * @return The password of the 1st regular user in Galaxy.
-	 */
-	public String getUser1Password() {
-		return user1Password;
-	}
-
-	/**
-	 * Sets the password for the 1st regular user in Galaxy.
-	 * @param user1Password  The password for the 1st regular user in Galaxy.
-	 */
-	public void setUser1Password(String user1Password) {
-		this.user1Password = user1Password;
-	}
-
-	/**
-	 * @return The api key for the 1st regular user in Galaxy.
-	 */
-	public String getUser1APIKey() {
-		return user1APIKey;
-	}
-
-	/**
-	 * Sets the api key for the 1st regular user in Galaxy.
-	 * @param user1apiKey  The api key for the 1st regular user in Galaxy.
-	 */
-	public void setUser1APIKey(String user1apiKey) {
-		user1APIKey = user1apiKey;
-	}
-
-	/**
-	 * @return The name of a 2nd regular user in Galaxy.
-	 */
-	public GalaxyAccountEmail getUser2Name() {
-		return user2Name;
-	}
-
-	/**
-	 * Sets the name of a 2nd regular user in Galaxy.
-	 * @param user2Name The name of a 2nd regular user in Galaxy.
-	 */
-	public void setUser2Name(GalaxyAccountEmail user2Name) {
-		this.user2Name = user2Name;
-	}
-
-	/**
-	 * @return The password of a 2nd regular user in Galaxy.
-	 */
-	public String getUser2Password() {
-		return user2Password;
-	}
-
-	/**
-	 * Sets the password of a 2nd regular user in Galaxy.
-	 * @param user2Password  The password of a 2nd regular user in Galaxy.
-	 */
-	public void setUser2Password(String user2Password) {
-		this.user2Password = user2Password;
-	}
-
-	/**
-	 * @return The API key for the 2nd regular user in Galaxy.
-	 */
-	public String getUser2APIKey() {
-		return user2APIKey;
-	}
-
-	/**
-	 * Sets the api key for the 2nd regular user in Galaxy.
-	 * @param user2apiKey
-	 */
-	public void setUser2APIKey(String user2apiKey) {
-		user2APIKey = user2apiKey;
-	}
-
-	/**
-	 * @return The name of a non existent admin user in Galaxy.
-	 */
-	public GalaxyAccountEmail getNonExistentGalaxyAdminName() {
-		return nonExistentGalaxyAdminName;
-	}
-
-	/**
-	 * Sets the name of a non existent admin user in Galaxy.
-	 * @param nonExistentGalaxyAdminName The name of a non existent admin user in Galaxy. 
-	 */
-	public void setNonExistentGalaxyAdminName(
-			GalaxyAccountEmail nonExistentGalaxyAdminName) {
-		this.nonExistentGalaxyAdminName = nonExistentGalaxyAdminName;
-	}
-
-	/**
-	 * @return The name of a non existent regular user in Galaxy.
-	 */
-	public GalaxyAccountEmail getNonExistentGalaxyUserName() {
-		return nonExistentGalaxyUserName;
-	}
-
-	/**
-	 * Sets the name of a non existent regular user in Galaxy.
-	 * @param nonExistentGalaxyUserName The name of a non existent regular user in Galaxy.
-	 */
-	public void setNonExistentGalaxyUserName(
-			GalaxyAccountEmail nonExistentGalaxyUserName) {
-		this.nonExistentGalaxyUserName = nonExistentGalaxyUserName;
-	}
-
-	/**
 	 * @return The GalaxyInstance for the admin user.
 	 */
 	public GalaxyInstance getGalaxyInstanceAdmin() {
@@ -328,81 +139,6 @@ public class LocalGalaxy {
 	 */
 	public void setGalaxyInstanceAdmin(GalaxyInstance galaxyInstanceAdmin) {
 		this.galaxyInstanceAdmin = galaxyInstanceAdmin;
-	}
-
-	/**
-	 * @return The GalaxyInstance for the 1st regular user.
-	 */
-	public GalaxyInstance getGalaxyInstanceUser1() {
-		return galaxyInstanceUser1;
-	}
-
-	/**
-	 * Sets the GalaxyInstance for the 1st regular user.
-	 * @param galaxyInstanceUser1 The GalaxyInstance for the 1st regular user.
-	 */
-	public void setGalaxyInstanceUser1(GalaxyInstance galaxyInstanceUser1) {
-		this.galaxyInstanceUser1 = galaxyInstanceUser1;
-	}
-
-	/**
-	 * @return The GalaxyInstance for the 2nd regular user.
-	 */
-	public GalaxyInstance getGalaxyInstanceUser2() {
-		return galaxyInstanceUser2;
-	}
-
-	/**
-	 * Sets the GalaxyInstance for the 2nd regular user.
-	 * @param galaxyInstanceUser2  The GalaxyInstance for the 2nd regular user.
-	 */
-	public void setGalaxyInstanceUser2(GalaxyInstance galaxyInstanceUser2) {
-		this.galaxyInstanceUser2 = galaxyInstanceUser2;
-	}
-
-	/**
-	 * @return The BootStrapper for Galaxy.
-	 */
-	public BootStrapper getBootStrapper() {
-		return bootStrapper;
-	}
-
-	/**
-	 * Sets the BootStrapper for Galaxy.
-	 * @param bootStrapper The BootStrapper for Galaxy.
-	 */
-	public void setBootStrapper(BootStrapper bootStrapper) {
-		this.bootStrapper = bootStrapper;
-	}
-
-	/**
-	 * @return The daemon object for the Galaxy process.
-	 */
-	public GalaxyDaemon getGalaxyDaemon() {
-		return galaxyDaemon;
-	}
-
-	/**
-	 * Sets the daemon object for the Galaxy process.
-	 * @param galaxyDaemon The daemon object for the Galaxy process.
-	 */
-	public void setGalaxyDaemon(GalaxyDaemon galaxyDaemon) {
-		this.galaxyDaemon = galaxyDaemon;
-	}
-
-	/**
-	 * @return The GalaxyProperties object.
-	 */
-	public GalaxyProperties getGalaxyProperties() {
-		return galaxyProperties;
-	}
-
-	/**
-	 * Sets the GalaxyProperties object.
-	 * @param galaxyProperties  The GalaxyProperties object.
-	 */
-	public void setGalaxyProperties(GalaxyProperties galaxyProperties) {
-		this.galaxyProperties = galaxyProperties;
 	}
 
 	/**
@@ -420,22 +156,6 @@ public class LocalGalaxy {
 		this.invalidGalaxyURL = invalidGalaxyURL;
 	}
 
-	/**
-	 * @return An invalid Galaxy user name.
-	 */
-	public UploaderAccountName getInvalidGalaxyUserName() {
-		return invalidGalaxyUserName;
-	}
-
-	/**
-	 * Sets an invalid Galaxy user name.
-	 * @param invalidGalaxyUserName An invalid Galaxy user name.
-	 */
-	public void setInvalidGalaxyUserName(
-			UploaderAccountName invalidGalaxyUserName) {
-		this.invalidGalaxyUserName = invalidGalaxyUserName;
-	}
-	
 	/**
 	 * Reads the given file into a string.
 	 * @param file  The file to read.
@@ -464,7 +184,7 @@ public class LocalGalaxy {
 				
 		String content = readFile(workflowFile);
 		
-		WorkflowsClient workflowsClient = galaxyInstanceWorkflowUser.getWorkflowsClient();
+		WorkflowsClient workflowsClient = galaxyInstanceAdmin.getWorkflowsClient();
 		Workflow workflow = workflowsClient.importWorkflow(content);
 		
 		if (workflow != null && workflow.getId() != null) {	
@@ -749,70 +469,5 @@ public class LocalGalaxy {
 	 */
 	public Path getWorkflowCorePipelineTestSnpTable() {
 		return workflowCorePipelineTestSnpTable;
-	}
-
-	/**
-	 * Gets a user name for running workflows.
-	 * @return A user name for running workflows.
-	 */
-	public GalaxyAccountEmail getWorkflowUserName() {
-		return workflowUserName;
-	}
-
-	/**
-	 * Sets a user name for running workflows.
-	 * @param workflowUserName  A user name for running workflows.
-	 */
-	public void setWorkflowUserName(GalaxyAccountEmail workflowUserName) {
-		this.workflowUserName = workflowUserName;
-	}
-
-	/**
-	 * Gets a password for a user for running workflows.
-	 * @return  A password for a user for running workflows.
-	 */
-	public String getWorkflowUserPassword() {
-		return workflowUserPassword;
-	}
-
-	/**
-	 * Sets a password for a user running workflows.
-	 * @param workflowUserPassword  A password for a user running workflows.
-	 */
-	public void setWorkflowUserPassword(String workflowUserPassword) {
-		this.workflowUserPassword = workflowUserPassword;
-	}
-
-	/**
-	 * Gets an API key for a user running workflows.
-	 * @return An API key for a user running workflows.
-	 */
-	public String getWorkflowUserAPIKey() {
-		return workflowUserAPIKey;
-	}
-
-	/**
-	 * Sets an API key for a user running workflows.
-	 * @param workflowUserAPIKey  An API key for a user running workflows.
-	 */
-	public void setWorkflowUserAPIKey(String workflowUserAPIKey) {
-		this.workflowUserAPIKey = workflowUserAPIKey;
-	}
-
-	/**
-	 * Gets a GalaxyInstace for a workflow user.
-	 * @return  A GalaxyInstance for a workflow user.
-	 */
-	public GalaxyInstance getGalaxyInstanceWorkflowUser() {
-		return galaxyInstanceWorkflowUser;
-	}
-
-	/**
-	 * Sets a GalaxyInstance for a workflow user.
-	 * @param galaxyInstanceWorkflowUser  A GalaxyInstance for a workflow user.
-	 */
-	public void setGalaxyInstanceWorkflowUser(
-			GalaxyInstance galaxyInstanceWorkflowUser) {
-		this.galaxyInstanceWorkflowUser = galaxyInstanceWorkflowUser;
 	}
 }

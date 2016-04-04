@@ -87,7 +87,7 @@ public class GalaxyLibrariesServiceIT {
 				"testData1.fastq").toURI());
 		
 		dataFile2 = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
-				"testData2.fastq").toURI());			
+				"testData2.fastq").toURI());
 	}
 	
 	/**
