@@ -107,6 +107,26 @@ public class ProjectServiceImplIT {
 	}
 	
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetPagedProjectsForAdminWithFilters() {
+		final Page<Project> projects = projectService.findAllProjects("", "liste", 0, 10, Sort.Direction.ASC, "id");
+		
+		assertEquals("Admin should have 8 projects for filter", 8, projects.getNumberOfElements());
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetPagedProjectsForAdminWithGlobalSearch() {
+		final Page<Project> projects = projectService.findAllProjects("proj", "proj", 0, 10, Sort.Direction.ASC,
+				"id");
+		assertEquals("Admin should have 9 projects for filter", 9, projects.getNumberOfElements());
+		
+		final Page<Project> listeriaProjects = projectService.findAllProjects("lister", "lister", 0, 10,
+				Sort.Direction.ASC, "id");
+		assertEquals("Admin should have 9 projects for filter.", 9, listeriaProjects.getNumberOfElements());
+	}
+	
+	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUserWithFilters() {
 		final Page<Project> projects = projectService.findProjectsForUser("", "liste", 0, 10, Sort.Direction.ASC, "id");
@@ -116,10 +136,22 @@ public class ProjectServiceImplIT {
 	
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
+	public void testGetPagedProjectsForUserWithGlobalSearch() {
+		final Page<Project> projects = projectService.findProjectsForUser("proj", "proj", 0, 10, Sort.Direction.ASC,
+				"id");
+		assertEquals("User should have 3 projects for filter", 3, projects.getNumberOfElements());
+		
+		final Page<Project> listeriaProjects = projectService.findProjectsForUser("lister", "lister", 0, 10,
+				Sort.Direction.ASC, "id");
+		assertEquals("User should have 3 projects for filter.", 3, listeriaProjects.getNumberOfElements());
+	}
+	
+	@Test
+	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUser() {
 		final Page<Project> projects = projectService.findProjectsForUser("", "", 0, 10, Sort.Direction.ASC, "id");
 		
-		assertEquals("User should have 3 projects, two user one group.", 3, projects.getNumberOfElements());
+		assertEquals("User should have 4 projects, two user one group.", 4, projects.getNumberOfElements());
 	}
 	
 	@Test
@@ -128,7 +160,7 @@ public class ProjectServiceImplIT {
 		final Project p = projectService.read(9L);
 		final Page<Project> unassociated = projectService.getUnassociatedProjects(p, "", 0, 10, Direction.ASC, "name");
 		
-		assertEquals("Admin should have 8 unassociated projects.", 8, unassociated.getNumberOfElements());
+		assertEquals("Admin should have 9 unassociated projects.", 9, unassociated.getNumberOfElements());
 	}
 	
 	@Test
@@ -138,7 +170,7 @@ public class ProjectServiceImplIT {
 		final Project unassociatedProject = projectService.read(8L);
 		final Page<Project> unassociated = projectService.getUnassociatedProjects(p, "", 0, 10, Direction.ASC, "name");
 		
-		assertEquals("This user should have two unassociated projects (one group, one user).", 2, unassociated.getNumberOfElements());
+		assertEquals("This user should have three unassociated projects (one group, two user).", 3, unassociated.getNumberOfElements());
 		assertTrue("The unassociated project should be the other project.",
 				unassociated.getContent().contains(unassociatedProject));
 	}
@@ -152,11 +184,13 @@ public class ProjectServiceImplIT {
 		final Project userProject = projectService.read(7L);
 		final Project groupProject = projectService.read(8L);
 		final Project groupProject2 = projectService.read(9L);
+		final Project userProject2 = projectService.read(10L);
 		
-		assertEquals("Should be on 3 projects.", 3, projects.size());
+		assertEquals("Should be on 4 projects.", 4, projects.size());
 		assertTrue("Should have user project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(userProject)));
 		assertTrue("Should have group project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(groupProject)));
 		assertTrue("Should have group project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(groupProject2)));
+		assertTrue("Should have user project reference.", projects.stream().anyMatch(p -> p.getSubject().equals(userProject2)));
 	}
 
 	@Test
@@ -367,7 +401,6 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testFindAllProjectsAsUser() {
 		List<Project> projects = (List<Project>) projectService.findAll();
-		// this user should only have access to one project:
 
 		assertEquals("Wrong number of projects.", 2, projects.size());
 	}
@@ -376,9 +409,8 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testFindAllProjectsAsAdmin() {
 		List<Project> projects = (List<Project>) projectService.findAll();
-		// this admin should have access to 5 projects
 
-		assertEquals("Wrong number of projects.", 9, projects.size());
+		assertEquals("Wrong number of projects.", 10, projects.size());
 	}
 
 	@Test
