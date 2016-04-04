@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -112,6 +113,10 @@ public class AnalysisExecutionServiceGalaxyIT {
 	@Autowired
 	private AnalysisExecutionService analysisExecutionService;
 
+	@Autowired
+	@Qualifier("rootTempDirectory")
+	private Path rootTempDirectory;
+
 	private WorkflowsClient workflowsClient;
 
 	private Path sequenceFilePath;
@@ -164,7 +169,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedOutputFile2 = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("output2.txt").toURI());
 
-		Path tempDir = Files.createTempDirectory("analysisExecutionTest");
+		Path tempDir = Files.createTempDirectory(rootTempDirectory, "analysisExecutionTest");
 		
 		sequenceFilePath = tempDir.resolve("testData1_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath, StandardCopyOption.REPLACE_EXISTING);

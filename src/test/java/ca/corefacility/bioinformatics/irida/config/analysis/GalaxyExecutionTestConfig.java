@@ -45,22 +45,22 @@ public class GalaxyExecutionTestConfig {
 	@Lazy
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
 		return new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService());
 	}
 
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		return new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 	}
 	
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 
 		return new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
 	}

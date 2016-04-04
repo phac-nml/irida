@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -82,6 +83,10 @@ public class SNVPhylAnalysisIT {
 	@Autowired
 	private IridaWorkflow snvPhylWorkflow;
 
+	@Autowired
+	@Qualifier("rootTempDirectory")
+	private Path rootTempDirectory;
+
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePathA1;
@@ -121,8 +126,8 @@ public class SNVPhylAnalysisIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP);
-		
-		Path tempDir = Files.createTempDirectory("snvphylTest");
+
+		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 
 		Path sequenceFilePathRealA1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/a_1.fastq").toURI());
