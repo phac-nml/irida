@@ -214,22 +214,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void copySamples(String project) {
 		copyBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
-		enterSelect2Value(project);
-		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
-		copyOkBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+		copyMoveSamples(project);
 	}
 
 	public void moveSamples(String projectNum) {
 		moveBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
-		enterSelect2Value(projectNum);
-		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
-		copyOkBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+		copyMoveSamples(projectNum);
 	}
 
 	public void filterByName(String name) {
@@ -241,6 +231,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		nameInput.sendKeys(name);
 		filterModal.findElement(By.id("doFilterBtn")).click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
+	}
+
+	public void clearFilter() {
+		clearFilterBtn.click();
+
 	}
 
 	public List<String> getSampleNamesOnPage() {
@@ -259,5 +254,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		select2Input.sendKeys(Keys.RETURN);
 
 		wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOf(select2Results)));
+	}
+
+	private void copyMoveSamples(String project) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
+		enterSelect2Value(project);
+		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
+		copyOkBtn.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
 	}
 }
