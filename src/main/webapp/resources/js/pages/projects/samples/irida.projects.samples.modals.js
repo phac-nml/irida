@@ -241,15 +241,30 @@
       currState = _.clone(defaultState);
 
     this.getState = function() {
+      if(currState.date.startDate !== null) {
+        currState.date.startDate = moment(currState.date.startDate);
+      }
+      if(currState.date.endDate !== null) {
+        currState.date.endDate = moment(currState.date.endDate);
+      }
       return _.clone(currState);
     };
 
     this.setState = function(s) {
-      currState = s;
+      currState = _.clone(s);
+      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
     };
 
     $rootScope.$on('CLEAR_FILTER', function () {
       currState = _.clone(defaultState);
+      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
+    });
+
+    $rootScope.$on('CLEAR_FILTER_PROPERTY', function (property) {
+      if(currState[property] !== undefined) {
+        currState[property]
+      }
+      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
     });
   }
 
@@ -261,6 +276,7 @@
   function FilterModalController($uibModalInstance, stateService) {
     var vm = this;
     vm.filter = stateService.getState();
+    console.log(vm.filter);
     vm.options = {ranges: {}};
     vm.options.ranges[page['i18n']['dateFilter']['days30']] = [moment().subtract(30, 'days'), moment()];
     vm.options.ranges[page['i18n']['dateFilter']['months6']] = [moment().subtract(6, 'months'), moment()];
@@ -277,7 +293,7 @@
      */
     vm.doFilter = function() {
       stateService.setState(vm.filter);
-      $uibModalInstance.close(vm.filter);
+      $uibModalInstance.dismiss();
     };
   }
 

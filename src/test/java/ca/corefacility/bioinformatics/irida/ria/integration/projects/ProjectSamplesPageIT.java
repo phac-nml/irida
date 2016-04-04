@@ -228,6 +228,11 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 17 projects displayed", "Showing 1 to 10 of 17 entries", page.getTableInfo());
 		page.filterByName("52");
 		assertEquals("Should have 17 projects displayed", "Showing 1 to 3 of 3 entries", page.getTableInfo());
+
+		// Test clearing the filters
+		page.clearFilter();
+		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+
 		// Should ignore case
 		page.filterByName("sample");
 		assertEquals("Should ignore case when filtering", "Showing 1 to 10 of 21 entries", page.getTableInfo());

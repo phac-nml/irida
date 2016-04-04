@@ -99,6 +99,16 @@
         <div th:replace="projects/partials/samples.tmpl :: filterButtons"></div>
     </script>
 
+    <script type="text/ng-template" id="activeFilters.html">
+        <div class="text-right">
+            <span ng-repeat="(filter, value) in samplesCtrl.filter">
+                <span class="label label-default" ng-if="filter==='name'" ng-click="samplesCtrl.clearFilterProperty('name')"><th:block th:text="#{project.sample.filter-name}"></th:block> : {{ value }}</span>
+                <span class="label label-default" ng-if="filter==='date' &amp;&amp; value['startDate']!==null" ng-click="samplesCtrl.clearFilterProperty('startDate')"><th:block th:text="#{project.sample.filter-date.startDate}"></th:block> : {{ value.startDate | date }}</span>
+                <span class="label label-default" ng-if="filter==='date' &amp;&amp; value['endDate']!==null" ng-click="samplesCtrl.clearFilterProperty('endDate')"><th:block th:text="#{project.sample.filter-date.endDate}"></th:block> : {{ value.endDate | date }}</span>
+            </span>
+        </div>
+    </script>
+
     <script th:inline="javascript" type="text/ng-template" id="selectedCounts.html">
         <ng-pluralize id="selected-count-info" count="samplesCtrl.selected.length"
                       data:when="#{project.samples.table.selected}"></ng-pluralize>

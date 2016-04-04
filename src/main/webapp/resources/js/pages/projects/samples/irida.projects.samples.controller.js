@@ -38,20 +38,28 @@
       otherProjects: false
     };
 
-		$scope.$on("DATATABLE_UPDATED", function () {
-			currentlySelectedSampleIndex = null;
-		});
-
-		$scope.$watch("samplesCtrl.samples", function () {
-			updateButtons();
-		}, true);
-
 		// Hide project name unless multiple displayed.
 		vm.showProjectname = false;
 
 		// Create the datatable.
 		vm.dtColumnDefs = tableService.createTableColumnDefs();
 		vm.dtOptions = tableService.createTableOptions();
+
+		function getFilteredSamples(filter) {
+			// Get a clean list of samples
+			samplesService.fetchSamples(display).then(function(samples) {
+				// Apply the filter.
+				vm.samples = $filter("samplesFilter")(samples, filter);
+				vm.filter = _.clone(filter);
+				// Format for display
+				if(vm.filter.date.startDate !== null) {
+					vm.filter.date.startDate = vm.filter.date.startDate.toDate();
+				}
+				if(vm.filter.date.endDate !== null) {
+					vm.filter.date.endDate = vm.filter.date.endDate.toDate();
+				}
+			});
+		}
 
 		function displaySamples() {
 			samplesService.fetchSamples(display).then(function (samples) {
@@ -78,6 +86,18 @@
 				updateButtons();
 			});
 		}
+
+		$scope.$on("FILTER_TABLE", function(event, args) {
+			getFilteredSamples(args.filter);
+		});
+
+		$scope.$on("DATATABLE_UPDATED", function () {
+			currentlySelectedSampleIndex = null;
+		});
+
+		$scope.$watch("samplesCtrl.samples", function () {
+			updateButtons();
+		}, true);
 
 		vm.displayProjectsModal = function () {
 			modalService.openAssociatedProjectsModal(display)
@@ -232,20 +252,15 @@
 		 * Open a modal to filter the samples by Sample properties
 		 */
 		vm.openFilter = function () {
-			modalService.openFilterModal().then(function (filter) {
-        // Get a clean list of samples
-        samplesService.fetchSamples(display).then(function(samples) {
-	        // Apply the filter.
-          vm.samples = $filter("samplesFilter")(samples, filter);
-        });
-			});
+			modalService.openFilterModal();
 		};
 
 		vm.clearFilter = function () {
 			$scope.$emit("CLEAR_FILTER");
-			samplesService.fetchSamples(display).then(function(samples) {
-				vm.samples = samples;
-			});
+		};
+
+		vm.clearFilterProperty = function(property) {
+			$scope.$emit("CLEAR_FILTER_PROPERTY", property);
 		};
 
 		// TODO: Implement this function

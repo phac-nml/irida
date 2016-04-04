@@ -95,6 +95,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "filter-modal")
 	private WebElement filterModal;
 
+	@FindBy(id = "clearFilterBtn")
+	private WebElement clearFilterBtn;
+
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
