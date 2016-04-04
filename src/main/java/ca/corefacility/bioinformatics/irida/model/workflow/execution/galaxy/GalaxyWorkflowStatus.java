@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.HashMap;
@@ -172,8 +171,9 @@ public class GalaxyWorkflowStatus {
 			GalaxyWorkflowState workflowState = GalaxyWorkflowState.stringToState(historyDetails.getState());
 			Map<GalaxyWorkflowState, Set<String>> stateIdsMap = createStateIdsMap(historyDetails);
 
-			checkArgument(stateIdsMap.keySet().equals(ALL_STATES),
-					"invalid states: " + stateIdsMap.keySet());
+			if (Sets.difference(ALL_STATES, stateIdsMap.keySet()).size() > 0) {
+				logger.trace("IRIDA has additional states outside Galaxy:" + (Sets.difference(ALL_STATES, stateIdsMap.keySet())));
+			}
 
 			return new GalaxyWorkflowStatus(workflowState, stateIdsMap);
 		}

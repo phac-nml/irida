@@ -1,10 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -16,6 +21,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -35,7 +41,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -46,7 +54,10 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -55,10 +66,8 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedPr
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 
 /**
  * A specialized service layer for projects.
@@ -76,17 +85,17 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final RelatedProjectRepository relatedProjectRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
-	private final SequenceFileUtilities sequenceFileUtilities;
 	private final UserGroupProjectJoinRepository ugpjRepository;
+	private final ProjectRepository projectRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities, final UserGroupProjectJoinRepository ugpjRepository,
-			Validator validator) {
+			final UserGroupProjectJoinRepository ugpjRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
+		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
@@ -94,7 +103,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.relatedProjectRepository = relatedProjectRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
-		this.sequenceFileUtilities = sequenceFileUtilities;
 		this.ugpjRepository = ugpjRepository;
 	}
 
@@ -206,10 +214,26 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
-		if (!allowRoleChange(projectJoinForUser)) {
+		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
 		pujRepository.delete(projectJoinForUser);
+	}
+	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@LaunchesProjectEvent(UserGroupRemovedProjectEvent.class)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
+		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		if (!allowRoleChange(project, j.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("Removing this user group would leave the project without an owner.");
+		}
+		ugpjRepository.delete(j);
 	}
 
 	/**
@@ -227,23 +251,46 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					+ " Project: " + project);
 		}
 
-		if (!allowRoleChange(projectJoinForUser)) {
+		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
 			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
 		}
 
 		projectJoinForUser.setProjectRole(projectRole);
 		return pujRepository.save(projectJoinForUser);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
+			ProjectRole projectRole) throws ProjectWithoutOwnerException {
+		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		if (j == null) {
+			throw new EntityNotFoundException("Join between this project and group does not exist. Group: " + userGroup
+					+ " Project: " + project);
+		}
+		if (!allowRoleChange(project, j.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+		}
+		j.setProjectRole(projectRole);
+		return ugpjRepository.save(j);
+	}
 
-	private boolean allowRoleChange(ProjectUserJoin originalJoin) {
+	private boolean allowRoleChange(final Project project, final ProjectRole projectRoleToChange) {
 		// if they're not a project owner, no worries
-		if (!originalJoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
+		if (!projectRoleToChange.equals(ProjectRole.PROJECT_OWNER)) {
 			return true;
 		}
 
-		List<Join<Project, User>> usersForProjectByRole = pujRepository.getUsersForProjectByRole(
-				originalJoin.getSubject(), ProjectRole.PROJECT_OWNER);
-		if (usersForProjectByRole.size() > 1) {
+		final Collection<Join<Project, User>> usersForProjectByRole = pujRepository.getUsersForProjectByRole(
+				project, ProjectRole.PROJECT_OWNER);
+		final Collection<UserGroupProjectJoin> groups = ugpjRepository.findGroupsByProjectAndProjectRole(project,
+				ProjectRole.PROJECT_OWNER);
+		if (usersForProjectByRole.size() + groups.size() > 1) {
 			// if there's more than one owner, no worries
 			return true;
 		} else {
@@ -351,28 +398,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
-			Direction order, String... sortProperties) {
-		if (sortProperties.length == 0) {
-			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
-		}
-		return pujRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
-	}
-
-	/**
 	 * {@inheritDoc }
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
-		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
-				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, projectRole), 0, Integer.MAX_VALUE,
-				Direction.ASC);
+		Page<ProjectUserJoin> searchProjectUsers = pujRepository.findAll(getProjectJoinsWithRole(user, projectRole), new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.ASC, CREATED_DATE_SORT_PROPERTY));
 		return searchProjectUsers.getContent().contains(new ProjectUserJoin(project, user, projectRole));
 	}
 
@@ -453,10 +484,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
-		// calculate the file length
-		Long referenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(referenceFile.getFile());
-		referenceFile.setFileLength(referenceFileLength);
-
 		referenceFile = referenceFileRepository.save(referenceFile);
 		ProjectReferenceFileJoin j = new ProjectReferenceFileJoin(project, referenceFile);
 		return prfjRepository.save(j);
@@ -484,4 +511,93 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					+ "] and reference file [" + file.getLabel() + "].");
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#p, 'isProjectOwner')")
+	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page, final Integer count,
+			final Direction sortDirection, final String... sortedBy) {
+
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
+		if (loggedIn.getSystemRole().equals(Role.ROLE_ADMIN)) {			
+			return projectRepository.findAllProjectsByNameExcludingProject(searchName, p, pr);
+		} else {
+			return projectRepository.findProjectsByNameExcludingProjectForUser(searchName, p, loggedIn, pr);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<Project> findProjectsForUser(final String searchName, final String searchOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy) {
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
+		return projectRepository.findProjectsForUser(searchName, searchOrganism, loggedIn, pr);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Page<Project> findAllProjects(final String searchName, final String searchOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy) {
+		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
+		return projectRepository.findAllProjectsByNameOrOrganism(searchName, searchOrganism, pr);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup, final ProjectRole role) {
+		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
+	}
+	
+	/**
+	 * If the sort properties are empty, sort by default on the CREATED_DATE
+	 * property.
+	 * 
+	 * @param sortProperties
+	 *            the sort properties to check
+	 * @return the created date property if no sort properties specified,
+	 *         otherwise just return the sort properties.
+	 */
+	private static final String[] getOrDefaultSortProperties(final String... sortProperties) {
+		if (sortProperties == null || sortProperties.length == 0) {
+			return new String[] {CREATED_DATE_SORT_PROPERTY};
+		} else {
+			return sortProperties;
+		}
+	}
+	
+	/**
+	 * Get a {@link ProjectUserJoin} where the user has a given role
+	 * 
+	 * @param projectRole
+	 *            The {@link ProjectRole} to search for.
+	 * @param user
+	 *            The user to search
+	 * @return a {@link Specification} to search for {@link Project} where the
+	 *         specified {@link User} has a certain {@link ProjectRole}.
+	 */
+	private static final Specification<ProjectUserJoin> getProjectJoinsWithRole(User user, ProjectRole projectRole) {
+		return new Specification<ProjectUserJoin>() {
+			@Override
+			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return cb.and(cb.equal(root.get("projectRole"), projectRole), cb.equal(root.get("user"), user));
+			}
+		};
+	}
+
 }

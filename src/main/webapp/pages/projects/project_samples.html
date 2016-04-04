@@ -29,7 +29,8 @@
 				remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ '',
 				merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
 				remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
-				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
+				copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
+				availableprojects: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
 			},
 			i18n: {
 				associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
@@ -256,7 +257,7 @@
 								<span th:text="#{project.samples.export.ncbi}">_Upload to NCBI_</span>
 							</a>
 						</li>
-						<li>
+						<li th:if="${galaxyCallback}">
 							<a id="exportGalaxyButton" href="#" ng-click="subnav.export.galaxy(); cart.show=false">
 								<span class="fa fa-fw fa-cloud"></span>
 								&nbsp;

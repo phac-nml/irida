@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.service.user;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,6 +58,26 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	public Collection<Join<Project, User>> getUsersForProject(Project project);
 	
 	/**
+	 * Get a page of user accounts on a project filtered by username.
+	 * 
+	 * @param project
+	 *            the project to get users for
+	 * @param search
+	 *            the string to filter on
+	 * @param page
+	 *            the current page
+	 * @param size
+	 *            the size of page
+	 * @param order
+	 *            the order of sorting
+	 * @param sortProperties
+	 *            the properties to sort on
+	 * @return a page of users.
+	 */
+	public Page<Join<Project, User>> searchUsersForProject(final Project project, final String search, int page,
+			int size, Direction order, String... sortProperties);
+
+	/**
 	 * Count the number of {@link User}s in a given {@link Project}
 	 * 
 	 * @param project
@@ -71,9 +93,11 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * 
 	 * @param project
 	 *            The project we want to list the available users for
+	 * @param filter
+	 *            the search string to filter usernames on.
 	 * @return A List of {@link User}s that are not associated with the project.
 	 */
-	public List<User> getUsersAvailableForProject(Project project);
+	public List<User> getUsersAvailableForProject(Project project, String filter);
 
 	/**
 	 * Get {@link User}s for a {@link Project} that have a particular role

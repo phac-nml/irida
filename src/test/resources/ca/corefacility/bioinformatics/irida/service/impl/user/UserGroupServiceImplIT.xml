@@ -19,4 +19,6 @@
 		phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
 		credentialsNonExpired="true" />
 
+	<user_group id="1" name="group 1" created_date="2013-07-18 14:20:19.0" />
+	<user_group_member id="1" created_date="2013-07-18 14:20:19.0" group_id="1" user_id="2" role="GROUP_OWNER" />
 </dataset>

@@ -391,8 +391,12 @@
 		        			id: response["uploaded-file-id"],
 		        			name: response["uploaded-file-name"]
 		        	};
+		    		vm.uploadError = false;
 		        	$rootScope.$emit('REFERENCE_FILE_UPLOADED', vm.uploaded);
 		        	vm.referenceUploadStarted = false;
+		    	}).error(function(response) {
+		    		vm.uploadError = response.error;
+		    		vm.referenceUploadStarted = false;
 		    	});
 	    	}
 	    };
