@@ -31,7 +31,10 @@
                 remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ ''
             },
             i18n: {
-                associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
+                dateFilter: {
+                    days30: "Last 30 Days",
+                    months6: "Last 6 Months"
+                }
             }
         };
     </script>

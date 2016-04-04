@@ -231,21 +231,26 @@
    * Container for the current state of the samples filter.
    * @constructor
    */
-  function FilterStateService() {
-    var state = {
+  function FilterStateService($rootScope) {
+    var defaultState = {
       date: {
         startDate: null,
         endDate: null
       }
-    };
+    },
+      currState = _.clone(defaultState);
 
     this.getState = function() {
-      return state;
+      return _.clone(currState);
     };
 
     this.setState = function(s) {
-      state = s;
+      currState = s;
     };
+
+    $rootScope.$on('CLEAR_FILTER', function () {
+      currState = _.clone(defaultState);
+    });
   }
 
   /**
@@ -256,12 +261,9 @@
   function FilterModalController($uibModalInstance, stateService) {
     var vm = this;
     vm.filter = stateService.getState();
-    vm.options = {
-      format: 'MM/DD/YYYY',
-      ranges: {
-        'Last 30 days': [moment().subtract(30, 'days'), moment()]
-      }
-    };
+    vm.options = {ranges: {}};
+    vm.options.ranges[page['i18n']['dateFilter']['days30']] = [moment().subtract(30, 'days'), moment()];
+    vm.options.ranges[page['i18n']['dateFilter']['months6']] = [moment().subtract(6, 'months'), moment()];
 
     /**
      * Closes the modal window without making any changes
@@ -274,13 +276,14 @@
      * Return the filter state to the calling function
      */
     vm.doFilter = function() {
+      stateService.setState(vm.filter);
       $uibModalInstance.close(vm.filter);
     };
   }
 
   ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap", "daterangepicker"])
     .factory("modalService", ["$uibModal", modalService])
-    .service("FilterStateService", [FilterStateService])
+    .service("FilterStateService", ["$rootScope", FilterStateService])
     .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
     .controller("FilterModalController", ["$uibModalInstance", "FilterStateService", FilterModalController])

@@ -241,6 +241,13 @@
 			});
 		};
 
+		vm.clearFilter = function () {
+			$scope.$emit("CLEAR_FILTER");
+			samplesService.fetchSamples(display).then(function(samples) {
+				vm.samples = samples;
+			});
+		};
+
 		// TODO: Implement this function
 		vm.openFilterByFile = function() {
 			console.warn("Filter by file still needs to be implemented")
