@@ -118,7 +118,7 @@
 			modalService.openMergeModal(vm.selected).then(function (result) {
 				samplesService.mergeSamples(result).then(function () {
 					// Need to reload the samples since the data has changed.
-					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
+					samplesService.fetchSamples({showNotification: false, merge: true}).then(function (samples) {
 						vm.samples = samples;
 						vm.selected = [];
 					});

@@ -132,6 +132,7 @@
 			};
 			return $http.post(page.urls.samples.merge, params)
 				.success(function(result) {
+					delete _options.merge;
           notifications.show({type: result.result, msg: result.message});
 				});
 		}
