@@ -87,18 +87,33 @@
 			});
 		}
 
+		/**
+		 * Listen for a new filter to be selected and update the table
+		 * with the filtered samples.
+		 */
 		$scope.$on("FILTER_TABLE", function(event, args) {
 			getFilteredSamples(args.filter);
 		});
 
+		/**
+		 * Listen for when the data in the datatables changes.  There will
+		 * no longer be a selected sample, so clear it.
+		 */
 		$scope.$on("DATATABLE_UPDATED", function () {
 			currentlySelectedSampleIndex = null;
 		});
 
+		/**
+		 * Watch for changes to the samples, table selection event, or reload.
+		 * There might be changes to the number of samples selected.
+		 */
 		$scope.$watch("samplesCtrl.samples", function () {
 			updateButtons();
 		}, true);
 
+		/**
+		 * Ask for a modal window to display associated projects.
+		 */
 		vm.displayProjectsModal = function () {
 			modalService.openAssociatedProjectsModal(display)
 				.then(function (projectsToDisplay) {
@@ -110,6 +125,9 @@
 				})
 		};
 
+		/**
+		 * Ask for a modal window to merge samples.
+		 */
 		vm.merge = function () {
 			var ids = [];
 			vm.selected.forEach(function (item) {
@@ -126,6 +144,9 @@
 			});
 		};
 
+		/**
+		 * Ask for a modal window to copy samples.
+		 */
 		vm.copy = function () {
 			modalService.openCopyModal(vm.selected).then(function (result) {
 				samplesService.copySamples(result).then(function () {
@@ -139,6 +160,9 @@
 			});
 		};
 
+		/**
+		 * Ask for a modal window to move samples.
+		 */
 		vm.move = function () {
 			modalService.openMoveModal(vm.selected).then(function (result) {
 				samplesService.moveSamples(result).then(function () {
@@ -151,6 +175,9 @@
 			});
 		};
 
+		/**
+		 * Ask for a modal window to remove samples.
+		 */
 		vm.delete = function () {
 			modalService.openRemoveModal(vm.selected).then(function () {
 				samplesService.removeSamples(vm.selected).then(function () {
@@ -163,6 +190,9 @@
 
 		};
 
+		/**
+		 * Add the selected samples to the global sample cart.
+		 */
 		vm.addToCart = function () {
 			var selected = vm.samples.filter(function (sample) {
 				return sample.selected;
@@ -285,6 +315,10 @@
 		displaySamples();
 	}
 
+	/**
+	 * Filter for samples, based on what is selected in the SamplesFilterModal
+	 * @returns {Function}
+   */
 	function samplesFilter () {
 		return function(samples, filter) {
 			return SamplesFilter.filterByProperties(samples, filter);
