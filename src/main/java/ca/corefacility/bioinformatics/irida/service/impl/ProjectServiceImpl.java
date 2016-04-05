@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -32,6 +34,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.google.common.collect.ImmutableList;
 
@@ -535,12 +538,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<Project> findProjectsForUser(final String searchName, final String searchOrganism, final Integer page,
+	public Page<Project> findProjectsForUser(final String search, final String filterName, final String filterOrganism, final Integer page,
 			final Integer count, final Direction sortDirection, final String... sortedBy) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
-		return projectRepository.findProjectsForUser(searchName, searchOrganism, loggedIn, pr);
+		//return projectRepository.findProjectsForUser(searchName, searchOrganism, loggedIn, pr);
+		return projectRepository.findAll(searchForProjects(search, filterName, filterOrganism, loggedIn), pr);
 	}
 	
 	/**
@@ -548,10 +552,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<Project> findAllProjects(final String searchName, final String searchOrganism, final Integer page,
+	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
 			final Integer count, final Direction sortDirection, final String... sortedBy) {
 		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
-		return projectRepository.findAllProjectsByNameOrOrganism(searchName, searchOrganism, pr);
+		//return projectRepository.findAllProjectsByNameOrOrganism(searchName, searchOrganism, pr);
+		return projectRepository.findAll(searchForProjects(search, filterName, filterOrganism, null), pr);
 	}
 
 	/**
@@ -600,4 +605,59 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		};
 	}
 
+	/**
+	 * Search for projects using a few different types of search fields.
+	 * 
+	 * @param allFields
+	 *            the search criteria to apply to all fields
+	 * @param projectNameFilter
+	 *            the filter to apply specifically to project name
+	 * @param organismNameFilter
+	 *            the filter to apply specifically to organism name
+	 * @param user
+	 *            the filter to apply for user filtering
+	 * @return the specification
+	 */
+	private static final Specification<Project> searchForProjects(final String allFields,
+			final String projectNameFilter, final String organismNameFilter, final User user) {
+		return new Specification<Project>() {
+			@Override
+			public Predicate toPredicate(final Root<Project> root, final CriteriaQuery<?> query,
+					final CriteriaBuilder cb) {
+				final List<Predicate> allFieldsPredicates = new ArrayList<>();
+				allFieldsPredicates.add(cb.like(root.get("name"), "%" + allFields + "%"));
+				allFieldsPredicates.add(cb.like(root.get("organism"), "%" + allFields + "%"));
+				allFieldsPredicates.add(cb.like(root.get("id").as(String.class), "%" + allFields + "%"));
+				final Predicate allFieldsPredicate = cb.or(allFieldsPredicates.toArray(new Predicate[0]));
+
+				final List<Predicate> filterPredicates = new ArrayList<>();
+				if (!StringUtils.isEmpty(projectNameFilter)) {
+					filterPredicates.add(cb.like(root.get("name"), "%" + projectNameFilter + "%"));
+				}
+				if (!StringUtils.isEmpty(organismNameFilter)) {
+					filterPredicates.add(cb.like(root.get("organism"), "%" + organismNameFilter + "%"));
+				}
+				final Predicate filterPredicate = cb.and(filterPredicates.toArray(new Predicate[0]));
+
+				final Subquery<Long> userMemberSelect = query.subquery(Long.class);
+				final Root<ProjectUserJoin> userMemberJoin = userMemberSelect.from(ProjectUserJoin.class);
+				userMemberSelect.select(userMemberJoin.get("project").get("id"))
+						.where(cb.equal(userMemberJoin.get("user"), user));
+				final Predicate userMember = cb.in(root.get("id")).value(userMemberSelect);
+
+				final Subquery<Long> groupMemberSelect = query.subquery(Long.class);
+				final Root<UserGroupProjectJoin> groupMemberJoin = groupMemberSelect.from(UserGroupProjectJoin.class);
+				groupMemberSelect.select(groupMemberJoin.get("project").get("id"))
+						.where(cb.equal(groupMemberJoin.join("userGroup").join("users").get("user"), user));
+				final Predicate groupMember = cb.in(root.get("id")).value(groupMemberSelect);
+
+				final Predicate projectMember = cb.or(userMember, groupMember);
+				if (user != null) {
+					return cb.and(allFieldsPredicate, filterPredicate, projectMember);
+				} else {
+					return cb.and(allFieldsPredicate, filterPredicate);
+				}
+			}
+		};
+	}
 }

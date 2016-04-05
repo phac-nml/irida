@@ -108,8 +108,16 @@ public class ProjectServiceImplIT {
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetPagedProjectsForAdminWithFiltersAndGlobalSearch() {
+		final Page<Project> projects = projectService.findAllProjects("project", "", "liste", 0, 10, Sort.Direction.ASC, "id");
+		
+		assertEquals("Admin should have 8 projects for filter", 8, projects.getNumberOfElements());
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedProjectsForAdminWithFilters() {
-		final Page<Project> projects = projectService.findAllProjects("", "liste", 0, 10, Sort.Direction.ASC, "id");
+		final Page<Project> projects = projectService.findAllProjects("", "", "liste", 0, 10, Sort.Direction.ASC, "id");
 		
 		assertEquals("Admin should have 8 projects for filter", 8, projects.getNumberOfElements());
 	}
@@ -117,11 +125,11 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedProjectsForAdminWithGlobalSearch() {
-		final Page<Project> projects = projectService.findAllProjects("proj", "proj", 0, 10, Sort.Direction.ASC,
+		final Page<Project> projects = projectService.findAllProjects("proj", "", "", 0, 10, Sort.Direction.ASC,
 				"id");
 		assertEquals("Admin should have 9 projects for filter", 9, projects.getNumberOfElements());
 		
-		final Page<Project> listeriaProjects = projectService.findAllProjects("lister", "lister", 0, 10,
+		final Page<Project> listeriaProjects = projectService.findAllProjects("lister", "", "", 0, 10,
 				Sort.Direction.ASC, "id");
 		assertEquals("Admin should have 9 projects for filter.", 9, listeriaProjects.getNumberOfElements());
 	}
@@ -129,7 +137,7 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUserWithFilters() {
-		final Page<Project> projects = projectService.findProjectsForUser("", "liste", 0, 10, Sort.Direction.ASC, "id");
+		final Page<Project> projects = projectService.findProjectsForUser("", "", "liste", 0, 10, Sort.Direction.ASC, "id");
 		
 		assertEquals("User should have 2 projects for filter", 2, projects.getNumberOfElements());
 	}
@@ -137,11 +145,11 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUserWithGlobalSearch() {
-		final Page<Project> projects = projectService.findProjectsForUser("proj", "proj", 0, 10, Sort.Direction.ASC,
+		final Page<Project> projects = projectService.findProjectsForUser("proj", "", "", 0, 10, Sort.Direction.ASC,
 				"id");
 		assertEquals("User should have 3 projects for filter", 3, projects.getNumberOfElements());
 		
-		final Page<Project> listeriaProjects = projectService.findProjectsForUser("lister", "lister", 0, 10,
+		final Page<Project> listeriaProjects = projectService.findProjectsForUser("lister", "", "", 0, 10,
 				Sort.Direction.ASC, "id");
 		assertEquals("User should have 3 projects for filter.", 3, listeriaProjects.getNumberOfElements());
 	}
@@ -149,9 +157,9 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUser() {
-		final Page<Project> projects = projectService.findProjectsForUser("", "", 0, 10, Sort.Direction.ASC, "id");
+		final Page<Project> projects = projectService.findProjectsForUser("", "", "", 0, 10, Sort.Direction.ASC, "id");
 		
-		assertEquals("User should have 4 projects, two user one group.", 4, projects.getNumberOfElements());
+		assertEquals("User should have 4 projects, two user two group.", 4, projects.getNumberOfElements());
 	}
 	
 	@Test
@@ -425,15 +433,15 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", password = "password1", roles = "USER")
 	public void testSearchProjectsForUser() {
 		// test searches
-		Page<Project> searchPagedProjectsForUser = projectService.findProjectsForUser("2", "", 0, 10, Direction.ASC);
+		Page<Project> searchPagedProjectsForUser = projectService.findProjectsForUser("2", "", "", 0, 10, Direction.ASC);
 		assertEquals(1, searchPagedProjectsForUser.getTotalElements());
 
-		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", 0, 10, Direction.ASC);
+		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.ASC);
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		// test sorting
-		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", 0, 10, Direction.ASC, "name");
-		final Page<Project> searchDesc = projectService.findProjectsForUser("project", "", 0, 10, Direction.DESC, "name");
+		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.ASC, "name");
+		final Page<Project> searchDesc = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.DESC, "name");
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
@@ -452,13 +460,13 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
 	public void testSearchProjects() {
 		// search for a number
-		final Page<Project> searchFor2 = projectService.findAllProjects("2", "", 0, 10, Direction.ASC, "name");
+		final Page<Project> searchFor2 = projectService.findAllProjects("2", "", "", 0, 10, Direction.ASC, "name");
 		assertEquals(2, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
 
 		// search descending
-		final Page<Project> searchDesc = projectService.findAllProjects("2", "", 0, 10, Direction.DESC, "name");
+		final Page<Project> searchDesc = projectService.findAllProjects("2", "", "", 0, 10, Direction.DESC, "name");
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
 		List<Project> forward = searchFor2.getContent();
 		assertEquals(reversed.size(), forward.size());
