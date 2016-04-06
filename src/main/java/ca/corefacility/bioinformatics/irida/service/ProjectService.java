@@ -289,9 +289,11 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Find a list of projects (for a user or admin) using the specified search
 	 * criteria
 	 * 
-	 * @param searchName
+	 * @param search
+	 * 			  the search text to use for *all* fields.
+	 * @param filterName
 	 *            the name to filter on
-	 * @param searchOrganism
+	 * @param filterOrganism
 	 *            the organism to filter on
 	 * @param page
 	 *            the requested page of results
@@ -303,16 +305,18 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the property to be used to sort the results
 	 * @return a page of projects for the user.
 	 */
-	public Page<Project> findProjectsForUser(final String searchName, final String searchOrganism, final Integer page,
+	public Page<Project> findProjectsForUser(final String search, final String filterName, final String filterOrganism, final Integer page,
 			final Integer count, final Direction sortDirection, final String... sortedBy);
 
 	/**
 	 * Find a paged list of all projects (for admin) using the specified search
 	 * criteria.
 	 * 
-	 * @param searchName
+	 * @param search
+	 * 			  the search text to use for *all* fields.
+	 * @param filterName
 	 *            the name to filter on
-	 * @param searchOrganism
+	 * @param filterOrganism
 	 *            the organism to filter on
 	 * @param page
 	 *            the requested page of results
@@ -324,6 +328,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the property to be used to sort the results
 	 * @return a page of projects for the user.
 	 */
-	public Page<Project> findAllProjects(final String searchName, final String searchOrganism, final Integer page,
+	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
 			final Integer count, final Direction sortDirection, final String... sortedBy);
 }

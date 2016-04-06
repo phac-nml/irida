@@ -3,7 +3,7 @@ Changes
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
-* 
+* [UI]: Fixed a bug where project filtering on the projects table excluded projects that did not have an organism
 
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
