@@ -49,6 +49,13 @@
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
+              <fa:icon type="pipelineVersion" />
+            </div>
+            <div th:text="#{analysis.details.version}">_Workflow_</div>
+            <div class="sidebar__value" th:text="${version}"></div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
               <fa:icon type="pipelineState" />
             </div>
             <div th:text="#{analysis.details.state}">_State_</div>

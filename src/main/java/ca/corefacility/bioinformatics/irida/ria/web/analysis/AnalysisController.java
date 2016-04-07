@@ -160,6 +160,7 @@ public class AnalysisController {
 		String viewName = getViewForAnalysisType(analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
+		model.addAttribute("version", iridaWorkflow.getWorkflowDescription().getVersion());
 
 		// Input files
 		// - Paired
@@ -174,7 +175,7 @@ public class AnalysisController {
 		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
 		model.addAttribute("mirroringCount", mirroringCount);
 		
-		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
+		if (iridaWorkflow.getWorkflowDescription().requiresReference() && submission.getReferenceFile().isPresent()) {
 			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");
 			model.addAttribute("referenceFile", submission.getReferenceFile().get());
 		} else {
