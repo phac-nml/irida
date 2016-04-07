@@ -652,6 +652,7 @@
 								<jetty.port>${jetty.port}</jetty.port>
 								<server.base.url>http://localhost:${jetty.port}</server.base.url>
 							</systemPropertyVariables>
+							<rerunFailingTestsCount>5</rerunFailingTestsCount>
 						</configuration>
 					</execution>
 				</executions>
@@ -1000,8 +1001,8 @@
 		<imgscalr.version>4.2</imgscalr.version>
 
 		<!-- plugins -->
-		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
-		<maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
+		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
+		<maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
 		<maven.jacoco.plugin.version>0.7.1.201405082137</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>

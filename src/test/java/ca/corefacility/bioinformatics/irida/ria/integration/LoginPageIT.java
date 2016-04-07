@@ -19,6 +19,9 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 	private static final String EXPIRED_USERNAME = "expiredGuy";
 	private static final String EXPIRED_PASSWORD = "Password1";
 
+	private final int TIMES_UNTIL_PASS = 3;
+	private static int timesRerun = 0;
+
 	@Test
 	public void testBadUsername() throws Exception {
 		LoginPage page = LoginPage.to(driver());
@@ -62,5 +65,13 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		page = LoginPage.to(driver());
 		page.login(EXPIRED_USERNAME, newPassword);
 		assertTrue("The user is logged in and redirected.", driver().getCurrentUrl().contains("dashboard"));
+	}
+
+	@Test
+	public void testFailUntil3rdTime() {
+		timesRerun++;
+		if (timesRerun < TIMES_UNTIL_PASS) {
+			throw new NullPointerException();
+		}
 	}
 }
