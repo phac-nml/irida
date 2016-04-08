@@ -30,7 +30,7 @@ source $PERLBREW_ROOT/etc/bashrc # Load up PerlBrew environment in this session
 Once PerlBrew is installed you can download and build a particular version of Perl by running:
 
 ```bash
-perlbrew install perl-5.16.0
+perlbrew install perl-5.18.1
 ```
 
 Once a particular version of Perl is installed, you can setup a local space for installing modules with.
@@ -44,7 +44,7 @@ This will create space to install modules specific for Galaxy.  Please see [Cust
 Once the particular Perl is installed you can switch to using this version of Perl with.
 
 ```bash
-perlbrew use perl-5.16.0@galaxy
+perlbrew use perl-5.18.1@galaxy
 
 perlbrew list
 perl --version
@@ -54,7 +54,7 @@ To make these changes permanent, please add the following lines to `$GALAXY_ENV`
 
 ```bash
 source $PERLBREW_ROOT/etc/bashrc
-perlbrew use perl-5.16.0@galaxy
+perlbrew use perl-5.18.1@galaxy
 ```
 
 Please also install [App::cpanminus][], which provides an easy way to install Perl modules.  This can be done with.
@@ -63,7 +63,7 @@ Please also install [App::cpanminus][], which provides an easy way to install Pe
 perlbrew install-cpanm
 ```
 
-Now you are ready to install any dependency Perl modules for Galaxy.  All modules will be installed under `$PERLBREW_HOME/libs/perl-5.16.0@galaxy`.
+Now you are ready to install any dependency Perl modules for Galaxy.  All modules will be installed under `$PERLBREW_HOME/libs/perl-5.18.1@galaxy`.
 
 [Customize PerlBrew]: http://perlbrew.pl/Install-a-sitecustomize.pl-file-with-perlbrew.html
 [PerlBrew]: http://perlbrew.pl/
