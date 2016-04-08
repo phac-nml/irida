@@ -44,8 +44,8 @@ var SamplesFilter = (function(moment) {
     return samples.filter(function (s) {
       return (
       nameFilter(s.sample.sampleName) &&
-      minDateFilter(s.sample.createdDate) &&
-      maxDateFilter(s.sample.createdDate));
+      minDateFilter(s.sample.modifiedDate) &&
+      maxDateFilter(s.sample.modifiedDate));
     });
   }
 

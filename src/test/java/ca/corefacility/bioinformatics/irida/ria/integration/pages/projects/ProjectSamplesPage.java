@@ -102,6 +102,22 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
 
+	// Samples filter date range picker
+	@FindBy(id = "daterange")
+	private WebElement dateRangeInput;
+
+	@FindBy(name = "daterangepicker_start")
+	private WebElement daterangepickerStart;
+
+	@FindBy(name = "daterangepicker_end")
+	private WebElement daterangepickerEnd;
+
+	@FindBy(css = "div.ranges li")
+	private List<WebElement> dateRanges;
+
+	@FindBy(css = ".range_inputs .applyBtn")
+	private WebElement applyDateRangeBtn;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -236,9 +252,30 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
 	}
 
+	public void filterByDateRange(String start, String end) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		filterByPropertyBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(filterModal));
+		dateRangeInput.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".daterangepicker.show-calendar")));
+
+		Actions builder = new Actions(driver);
+		builder.moveToElement(daterangepickerStart, 100, 0).click().build().perform();
+
+		daterangepickerStart.clear();
+		daterangepickerStart.sendKeys(start);
+
+		builder.moveToElement(daterangepickerEnd, 100, 10).click().build().perform();
+		daterangepickerEnd.clear();
+		daterangepickerEnd.sendKeys(end);
+		applyDateRangeBtn.click();
+
+		filterModal.findElement(By.id("doFilterBtn")).click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
+	}
+
 	public void clearFilter() {
 		clearFilterBtn.click();
-
 	}
 
 	public List<String> getSampleNamesOnPage() {
