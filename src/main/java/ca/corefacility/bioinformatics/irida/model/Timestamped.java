@@ -3,11 +3,11 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.util.Date;
 
 /**
- * An object with a timestamp
+ * An object with a timestamp and ID
  * 
  *
  */
-public interface Timestamped {
+public interface Timestamped<Identifier> {
 
 	/**
 	 * Get the created date of the object
@@ -15,4 +15,11 @@ public interface Timestamped {
 	 * @return A {@link Date} object of the created date
 	 */
 	public Date getCreatedDate();
+
+	/**
+	 * Get the identifier for this object
+	 * 
+	 * @return the ID for this object
+	 */
+	public Identifier getId();
 }
