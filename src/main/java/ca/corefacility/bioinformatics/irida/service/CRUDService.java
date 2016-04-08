@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.Timestamped;
  *            The object type being stored in this service
  */
 @PreAuthorize("denyAll()")
-public interface CRUDService<IdentifierType extends Serializable, Type extends Timestamped> {
+public interface CRUDService<IdentifierType extends Serializable, Type extends Timestamped<IdentifierType>> {
 
 	/**
 	 * Create a new object in the persistence store.
@@ -94,6 +94,15 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 */
 	public Type update(IdentifierType id, Map<String, Object> updatedProperties) throws EntityExistsException,
 			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException;
+	
+	/**
+	 * Update an object
+	 * 
+	 * @param object
+	 *            The object to update
+	 * @return The updated object
+	 */
+	public Type update(Type object);
 
 	/**
 	 * Delete the object with the specified identifier from the database.

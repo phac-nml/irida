@@ -35,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * this class to get basic CRUD methods for free.
  * 
  */
-public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped> implements
+public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped<KeyType>> implements
 		CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database: ";
 
@@ -60,6 +60,13 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	@Transactional
 	public ValueType create(ValueType object) throws ConstraintViolationException, EntityExistsException {
+		if (object.getId() != null) {
+			// check if the entity exists in the database
+			if (!exists(object.getId())) {
+				throw new EntityExistsException("Entity with this ID is already in the database.");
+			}
+		}
+
 		return repository.save(object);
 	}
 
@@ -177,6 +184,21 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 		// the entity:
 		// return repository.update(id, updatedFields);
 		return repository.save(instance);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ValueType update(ValueType object) {
+		KeyType id = object.getId();
+
+		// check if the entity exists in the database
+		if (!exists(id)) {
+			throw new EntityNotFoundException("Entity not found.");
+		}
+		
+		return repository.save(object);
 	}
 
 	/**
