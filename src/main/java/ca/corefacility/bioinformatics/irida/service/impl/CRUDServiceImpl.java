@@ -62,7 +62,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	public ValueType create(ValueType object) throws ConstraintViolationException, EntityExistsException {
 		if (object.getId() != null) {
 			// check if the entity exists in the database
-			if (!exists(object.getId())) {
+			if (exists(object.getId())) {
 				throw new EntityExistsException("Entity with this ID is already in the database.");
 			}
 		}
