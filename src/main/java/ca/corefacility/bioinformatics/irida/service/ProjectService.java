@@ -4,19 +4,18 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 
 /**
  * A specialized service layer for projects.
@@ -39,6 +38,22 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role);
+	
+	/**
+	 * Add the specified {@link UserGroup} to the {@link Project} with a {@link Role} . If the {@link UserGroup} is a manager for
+	 * the {@link Project}, then the {@link UserGroup} should be added to the {@link Project} with the 'ROLE_MANAGER' {@link
+	 * Role}.
+	 *
+	 * @param project
+	 * 		the {@link Project} to add the user to.
+	 * @param userGroup
+	 * 		the user group to add to the {@link Project}.
+	 * @param role
+	 * 		the role that the user plays on the {@link Project}.
+	 *
+	 * @return a reference to the relationship resource created between the two entities.
+	 */
+	public Join<Project, UserGroup> addUserGroupToProject(Project project, UserGroup userGroup, ProjectRole role);
 
 	/**
 	 * Remove the specified {@link User} from the {@link Project}.
@@ -52,6 +67,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * 		if removing this user would leave the project without an owner
 	 */
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException;
+	
+	/**
+	 * Remove the specified {@link UserGroup} from the {@link Project}.
+	 *
+	 * @param project
+	 * 		the {@link Project} to remove the {@link User} from.
+	 * @param userGroup
+	 * 		the {@link UserGroup} to be removed from the {@link Project}.
+	 */
+	public void removeUserGroupFromProject(Project project, UserGroup user) throws ProjectWithoutOwnerException;
 
 	/**
 	 * Update a {@link User}'s {@link ProjectRole} on a {@link Project}
@@ -69,6 +94,21 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
 			throws ProjectWithoutOwnerException;
+	
+	/**
+	 * Update a {@link UserGroup}'s {@link ProjectRole} on a {@link Project}
+	 *
+	 * @param project
+	 * 		The project to update
+	 * @param userGroup
+	 * 		The user group to update
+	 * @param projectRole
+	 * 		The role to set
+	 *
+	 * @return The newly updated role object
+	 */
+	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup, ProjectRole projectRole) throws ProjectWithoutOwnerException;
+
 
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
@@ -127,25 +167,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the projects associated with the user.
 	 */
 	public List<Join<Project, User>> getProjectsForUser(User user);
-
-	/**
-	 * Search {@link ProjectUserJoin}s with a given specification and paging parameters
-	 *
-	 * @param specification
-	 * 		The specification to search with
-	 * @param page
-	 * 		The search page number
-	 * @param size
-	 * 		The search page size
-	 * @param order
-	 * 		The search order
-	 * @param sortProperties
-	 * 		The page sort properties
-	 *
-	 * @return The matching ProjectUserJoins
-	 */
-	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
-			Direction order, String... sortProperties);
 
 	/**
 	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
@@ -242,4 +263,71 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link ReferenceFile} to remove.
 	 */
 	public void removeReferenceFileFromProject(Project project, ReferenceFile referenceFile);
+	
+	/**
+	 * Get a page of projects eligible to be marked as associated projects for
+	 * the specified project.
+	 * 
+	 * @param p
+	 *            the project to get eligible associated projects.
+	 * @param searchName
+	 *            the name of projects to filter on.
+	 * @param page
+	 *            the requested page of results.
+	 * @param count
+	 *            the number of results on the page.
+	 * @param sortDirection
+	 *            the direction the results should be sorted by.
+	 * @param sortedBy
+	 *            the property to be used to sort the results.
+	 * @return a page of projects eligible to be marked as associated projects.
+	 */
+	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy);
+
+	/**
+	 * Find a list of projects (for a user or admin) using the specified search
+	 * criteria
+	 * 
+	 * @param search
+	 * 			  the search text to use for *all* fields.
+	 * @param filterName
+	 *            the name to filter on
+	 * @param filterOrganism
+	 *            the organism to filter on
+	 * @param page
+	 *            the requested page of results
+	 * @param count
+	 *            the number of results on the page
+	 * @param sortDirection
+	 *            the direction the results should be sorted by
+	 * @param sortedBy
+	 *            the property to be used to sort the results
+	 * @return a page of projects for the user.
+	 */
+	public Page<Project> findProjectsForUser(final String search, final String filterName, final String filterOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy);
+
+	/**
+	 * Find a paged list of all projects (for admin) using the specified search
+	 * criteria.
+	 * 
+	 * @param search
+	 * 			  the search text to use for *all* fields.
+	 * @param filterName
+	 *            the name to filter on
+	 * @param filterOrganism
+	 *            the organism to filter on
+	 * @param page
+	 *            the requested page of results
+	 * @param count
+	 *            the number of results on the page
+	 * @param sortDirection
+	 *            the direction the results should be sorted by
+	 * @param sortedBy
+	 *            the property to be used to sort the results
+	 * @return a page of projects for the user.
+	 */
+	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy);
 }

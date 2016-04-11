@@ -14,13 +14,14 @@ import java.util.UUID;
 
 import org.springframework.beans.DirectFieldAccessor;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -40,9 +41,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Generates test data for unit tests.
@@ -176,11 +174,11 @@ public class TestDataFactory {
 		);
 	}
 
-	public static List<ProjectUserJoin> constructListJoinProjectUser(User user) {
-		List<ProjectUserJoin> list = new ArrayList<>();
+	public static List<Project> constructListJoinProjectUser(User user) {
+		List<Project> list = new ArrayList<>();
 		Project project = constructProject();
 		for (int i = 0; i < 10; i++) {
-			list.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER));
+			list.add(project);
 		}
 		return list;
 	}

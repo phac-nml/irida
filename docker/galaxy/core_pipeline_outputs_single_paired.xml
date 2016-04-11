@@ -1,0 +1,15 @@
+<tool id="core_pipeline_outputs_single_paired" name="core_pipeline_outputs_single_paired" version="0.1.0">
+  <command>
+    echo "csv" > $csv; echo "output_tree" > $output_tree; echo "positions" > $positions;
+  </command>
+  <inputs>
+    <param name="sequence_reads" label="sequence_reads" type="data_collection" collection_type="list" />
+    <param name="sequence_reads_paired" label="sequence_reads" type="data_collection" collection_type="list:paired" />
+    <param name="fasta" type="data" label="reference" format="fasta" />
+  </inputs>
+  <outputs>
+    <data format="csv" name="csv" />
+    <data format="txt" name="output_tree" />
+    <data format="tabular" name="positions" />
+  </outputs>
+</tool>

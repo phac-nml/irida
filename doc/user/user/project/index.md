@@ -78,11 +78,9 @@ To view project details, start from the [projects list](#viewing-existing-projec
 
 The project details page shows a summary of the project details and provides a view of the samples that belong to the project. You can find out more about managing samples in a project by navigating to the [managing samples](../samples) section.
 
-On the left side, the **Project Details** panel shows the IRIDA-generated project identifier, the project organism, the date the project was created, and the date that the project details were last modified:
-
 ![Project details panel.](images/project-details-details.png)
 
-More detailed project information can be found by clicking the tabs above the project details panel.
+More detailed project information can be found by clicking the tabs at the top of the project details page.
 
 Editing project details
 -----------------------
@@ -106,31 +104,33 @@ If you are a project **Manager**, you can add new members to the project. Start 
 
 ![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
 
-A project <img src="images/collaborator-icon.png" class="inline" alt="Collaborator role icon."> **Collaborator** will only be able to *view* the project members:
+A project **Collaborator** will only be able to *view* the project members:
 
 ![Project members (as a collaborator).](images/project-members-collaborator.png)
 
-A project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** will be able to *modify* the project members:
+A project **Manager** will be able to *modify* the project members:
 
 ![Project members (as a manager).](images/project-members-manager.png)
 
 ### Adding a project member
 
+#### Adding an individual project member
+
 {% include tutorials/common/project-add-member.md %}
+
+#### Adding a group project member
+
+{% include tutorials/common/project-add-member-group.md %}
 
 ### Changing a project member role
 
-You may want to change a project member role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member role if you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
+You may want to change a project member role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member role if you have the **Manager** role on the project.
 
 Start by [viewing the project members](#project-members).
 
-To change the role of a project member, click on the "Edit" button on the right-hand side of the table:
+To change the role of a project member, click on the role drop-down menu of the user that you would like to change:
 
 ![Edit project role button.](images/edit-project-role-button.png)
-
-When you click the edit button, you can choose a new project role in the "**Project Role**" column of the table:
-
-![Edit project role dropdown.](images/edit-project-role.png)
 
 The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
 
@@ -140,11 +140,11 @@ You may want to completely remove all permissions for a user to access data in a
 
 Start by [viewing the project members](#project-members).
 
-To remove a project member, click on the "Remove" button on the right-hand side of the table:
+To remove a project member, click on the remove button on the right-hand side of the table:
 
 ![Remove project member button.](images/remove-project-member-button.png)
 
-When you click the "Remove" button, you will be asked to confirm the project member removal:
+When you click the remove button, you will be asked to confirm the project member removal:
 
 ![Remove project member confirmation dialog.](images/remove-project-member-confirm.png)
 
@@ -218,3 +218,5 @@ Starting from [viewing project details](#viewing-project-details), you can view 
 Recent activities include adding or modifying project members and adding new samples to a project:
 
 ![Project recent activities.](images/project-recent-activities.png)
+
+<a href="../user-groups/">Previous: Managing user groups</a><a href="../samples/" style="float: right;">Next: Managing samples</a>

@@ -83,6 +83,13 @@ public class FontAwesome {
 	 */
 	private static final String PIPELINE_TYPE_ATTRIBUTE = "pipelineType";
 	private static final String PIPELINE_TYPE_ICON = "cogs";
+	
+	/*
+	Attribute for pipeline types
+	 */
+	private static final String PIPELINE_VERSION_ATTRIBUTE = "pipelineVersion";
+	private static final String PIPELINE_VERSION_ICON = "code-fork";
+	
 	/*
 	Attribute for pipeline state
 	 */
@@ -121,6 +128,12 @@ public class FontAwesome {
 	 */
 	private static final String USER_ATTRIBUTE = "user";
 	private static final String USER_ICON = "user";
+	
+	/*
+	 * Attribute for a group icon
+	 */
+	private static final String GROUP_ATTRIBUTE = "group";
+	private static final String GROUP_ICON = "users";
 
 	/*
 	 * Attribute for a banned icon
@@ -177,6 +190,7 @@ public class FontAwesome {
 			.put(DOWNLOAD_ATTRIBUTE, DOWNLOAD_ICON)
 			.put(UPLOAD_ATTRIBUTE, UPLOAD_ICON)
 			.put(PIPELINE_TYPE_ATTRIBUTE, PIPELINE_TYPE_ICON)
+			.put(PIPELINE_VERSION_ATTRIBUTE, PIPELINE_VERSION_ICON)
 			.put(PIPELINE_STATE_ATTRIBUTE, PIPELINE_STATE_ICON)
 			.put(FILE_ATTRIBUTE, FILE_ICON)
 			.put(COPY_ATTRIBUTE, COPY_ICON)
@@ -192,6 +206,7 @@ public class FontAwesome {
 			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
 			.put(NEXT_ATTRIBUTE, NEXT_ICON)
 			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
+			.put(GROUP_ATTRIBUTE, GROUP_ICON)
 			.build();
 	// @formatter:on
 

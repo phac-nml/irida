@@ -5,18 +5,19 @@
 
 DATE=`date +%Y-%m-%d:%H:%M`
 
-while getopts "T:P:dsc" opt;
+while getopts "P:C:dsc" opt;
 do
     case ${opt} in
-        T)
-        # specify testing class to be run
-            TESTCLASS="-Dit.test=${2}"
-            FILENAME="$2"
-            ;;
         P)
         # specify testing profile to be run
             PROFILE="-P${2}"
-            FILENAME="$2"
+            PNAME="$2"
+            shift
+            ;;
+        C)
+        # specify testing class to be run
+            TESTCLASS="-Dit.test=${2}"
+            CNAME="~$2"
             ;;
         d)
         # enable remote debugging
@@ -47,6 +48,7 @@ fi
 
 mkdir ~/Desktop/logs/
 echo "Current commit: ${COMMIT}"
-xvfb-run mvn clean verify ${SKIP} ${TESTCLASS} ${PROFILE} ${DEBUG} | tee ~/Desktop/logs/${DATE}-${COMMIT}-${FILENAME}.logs
+echo "xvfb-run mvn clean verify ${SKIP} ${PROFILE} ${TESTCLASS}${TEST} ${DEBUG}"
+xvfb-run mvn clean verify ${SKIP} ${PROFILE} ${TESTCLASS} ${DEBUG} | tee ~/Desktop/logs/${DATE}-${COMMIT:0:7}-${PNAME}${CNAME}.logs
 
 done

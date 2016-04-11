@@ -50,6 +50,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		membersPage = new ProjectMembersPage(driver());
+		membersPage.goToPage();
 	}
 
 	@Test
@@ -65,30 +66,41 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testRemoveUser() {
 		membersPage.clickRemoveUserButton(2L);
-		membersPage.clickModialPopupButton();
+		membersPage.clickModalPopupButton();
 		List<String> userNames = membersPage.getProjectMembersNames();
-		assertEquals(1, userNames.size());
+		assertEquals("should only be one user left after clicking delete.", 1, userNames.size());
 	}
 
 	@Test
 	public void testEditRole() {
-		Long userid = 2L;
-		membersPage.clickEditButton(userid);
-		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed(userid));
 		membersPage.setRoleForUser(2L, ProjectRole.PROJECT_OWNER.toString());
-		assertTrue(membersPage.notySuccessDisplayed());
-		assertTrue("Role span display should be visible", membersPage.roleSpanDisplayed(userid));
+		assertTrue("should display success message after updating role.", membersPage.notySuccessDisplayed());
 	}
 
 	@Test
 	public void testAddUserToProject() {
 		String username = "third guy";
 		membersPage.clickAddMember();
-		membersPage.addUserToProject(3L, ProjectRole.PROJECT_USER);
+		membersPage.addUserToProject(username, ProjectRole.PROJECT_USER);
 		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
 
 		List<String> projectMembersNames = membersPage.getProjectMembersNames();
 		assertTrue(projectMembersNames.contains(username));
+	}
+	
+	@Test
+	public void testGroupManagement() {
+		final String groupName = "group 1";
+		membersPage.goToGroupsPage();
+		membersPage.clickAddMember();
+		membersPage.addUserToProject(groupName, ProjectRole.PROJECT_USER);
+		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
+		membersPage.setRoleForUser(1L, ProjectRole.PROJECT_OWNER.toString());
+		assertTrue("should display success message after updating role.", membersPage.notySuccessDisplayed());
+		membersPage.clickRemoveUserButton(1L);
+		membersPage.clickModalPopupButton();
+		List<String> groupNames = membersPage.getProjectMembersNames();
+		assertEquals("should be no groups left after clicking delete.", 0, groupNames.size());
 	}
 
 	@Test
@@ -97,7 +109,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 		String username = "third guy";
 		membersPage.clickAddMember();
-		membersPage.addUserToProject(3L, ProjectRole.PROJECT_USER);
+		membersPage.addUserToProject(username, ProjectRole.PROJECT_USER);
 		detailsPage.goTo(1L);
 
 		List<WebElement> events = detailsPage.getEvents();

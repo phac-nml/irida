@@ -45,7 +45,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
 
+    private static final Logger logger = LoggerFactory.getLogger(AbstractIridaUIITChromeDriver.class);
+
     public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
+
+    private static boolean isSingleTest = false;
     
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
@@ -75,6 +79,10 @@ public class AbstractIridaUIITChromeDriver {
      */
     @AfterClass
     public static void destroy() {
+        if (isSingleTest) {
+            logger.debug("Closing ChromeDriver for single test class.");
+            IntegrationUITestListener.stopWebDriver();
+        }
     }
 
     /**
@@ -82,7 +90,15 @@ public class AbstractIridaUIITChromeDriver {
      * @return the instance of {@link WebDriver} used in the tests.
      */
     public static WebDriver driver() {
+        if (IntegrationUITestListener.driver() == null) {
+            logger.debug("Starting ChromeDriver for a single test class.");
+            System.setProperty("webdriver.chrome.driver", "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver");
+            isSingleTest = true;
+            IntegrationUITestListener.startWebDriver();
+        }
+
         return IntegrationUITestListener.driver();
+
     }
     
     /**
@@ -90,7 +106,7 @@ public class AbstractIridaUIITChromeDriver {
      *
      */
     private static class ScreenshotOnFailureWatcher extends TestWatcher {
-    	
+
     	private static final Logger logger = LoggerFactory.getLogger(ScreenshotOnFailureWatcher.class);
     	
     	/**

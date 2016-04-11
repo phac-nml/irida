@@ -34,6 +34,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
@@ -60,10 +63,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  */
@@ -77,7 +76,6 @@ public class ProjectServiceImplTest {
 	private RelatedProjectRepository relatedProjectRepository;
 	private ReferenceFileRepository referenceFileRepository;
 	private ProjectReferenceFileJoinRepository prfjRepository;
-	private SequenceFileUtilities sequenceFileUtilities;
 	private UserGroupProjectJoinRepository ugpjRepository;
 	private Validator validator;
 
@@ -92,11 +90,10 @@ public class ProjectServiceImplTest {
 		relatedProjectRepository = mock(RelatedProjectRepository.class);
 		referenceFileRepository = mock(ReferenceFileRepository.class);
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
-		sequenceFileUtilities = mock(SequenceFileUtilities.class);
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
-				sequenceFileUtilities, ugpjRepository, validator);
+				ugpjRepository, validator);
 	}
 
 	@Test
@@ -405,12 +402,10 @@ public class ProjectServiceImplTest {
 		ReferenceFile f = new ReferenceFile(createTempFile);
 
 		when(referenceFileRepository.save(f)).thenReturn(f);
-		when(sequenceFileUtilities.countSequenceFileLengthInBases(createTempFile)).thenReturn(1000L);
 
 		projectService.addReferenceFileToProject(p, f);
 
 		verify(referenceFileRepository).save(f);
-		verify(sequenceFileUtilities).countSequenceFileLengthInBases(createTempFile);
 		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
 	}
 
