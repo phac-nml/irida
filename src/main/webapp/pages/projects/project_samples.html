@@ -162,10 +162,10 @@
                     ng-click="project.selected = !project.selected; associatedProjectsCtrl.rowClick($event)">
                     <td>
                         <div class="checkbox"><label>
-                            <input type="checkbox" ng-model="project.selected"/>&nbsp;{{project.label}}
+                            <input type="checkbox" ng-model="project.selected"/>&nbsp;{{project.getName()}}
                         </label></div>
                     </td>
-                    <td ng-bind="project.organism"></td>
+                    <td ng-bind="project.getOrganism()"></td>
                     <td></td>
                 </tr>
             </table>

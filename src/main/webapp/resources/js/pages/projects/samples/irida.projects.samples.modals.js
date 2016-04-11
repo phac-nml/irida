@@ -163,10 +163,12 @@
     // Get the local project
     associatedProjectsService.getLocal().then(function (result) {
       // Check to see if they are already displayed.
-      result.data.forEach(function(project) {
-        project.selected = vm.display.local.indexOf(project.identifier) > -1;
+      vm.projects.local = [];
+      result.data.forEach(function(item) {
+        var project = new Project(item);
+        project.selected = vm.display.local.indexOf(project.getId()) > -1;
+        vm.projects.local.push(project);
       });
-      vm.projects.local = result.data;
     });
 
     vm.rowClick = function($event) {
@@ -182,7 +184,7 @@
       vm.display.local = [];
       vm.projects.local.forEach(function (project) {
         if (project.selected) {
-          vm.display.local.push(project.identifier);
+          vm.display.local.push(project.getId());
         }
       });
 

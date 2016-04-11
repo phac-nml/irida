@@ -68,8 +68,8 @@
 				samples.forEach(function (sample) {
 					if (vm.selected.find(function (item) {
 							// Check to see if the selected item matches the sample and from the right project.
-							if (item.sample.identifier === sample.sample.identifier &&
-								item.project.identifier === sample.project.identifier) {
+							if (item.getId() === sample.getId() &&
+								item.getProject().getId() === sample.getProject().getId()) {
 								s.push(item);
 								return true;
 							}
