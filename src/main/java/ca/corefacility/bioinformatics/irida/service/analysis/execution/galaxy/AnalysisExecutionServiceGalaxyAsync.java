@@ -14,8 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableMap;
-
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -115,8 +114,8 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		}
 
 		// once complete update the state
-		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.FINISHED_DOWNLOADING));
+		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission);
 
 		return new AsyncResult<>(analysisPrepared);
 	}
@@ -157,9 +156,10 @@ public class AnalysisExecutionServiceGalaxyAsync {
 
 		logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + analysisSubmission);
 
-		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission.getId(), ImmutableMap
-				.of("remoteAnalysisId", analysisId, "remoteWorkflowId", workflowId, "analysisState",
-						AnalysisState.PREPARED));
+		analysisSubmission.setAnalysisState(AnalysisState.PREPARED);
+		analysisSubmission.setRemoteWorkflowId(workflowId);
+		analysisSubmission.setRemoteAnalysisId(analysisId);
+		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission);
 
 		return new AsyncResult<>(analysisPrepared);
 	}
@@ -194,11 +194,12 @@ public class AnalysisExecutionServiceGalaxyAsync {
 
 		logger.trace("Executing " + analysisSubmission);
 		galaxyWorkflowService.runWorkflow(input);
+		
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setRemoteInputDataId(libraryId);
+		analysisSubmission = analysisSubmissionService.update(analysisSubmission);
 
-		AnalysisSubmission submittedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.RUNNING, "remoteInputDataId", libraryId));
-
-		return new AsyncResult<>(submittedAnalysis);
+		return new AsyncResult<>(analysisSubmission);
 	}
 
 	/**
@@ -236,8 +237,15 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		logger.trace("Saving results for " + submittedAnalysis);
 		Analysis savedAnalysis = analysisService.create(analysisResults);
 
-		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis.getId(),
-				ImmutableMap.of("analysis", savedAnalysis, "analysisState", AnalysisState.COMPLETED));
+		submittedAnalysis.setAnalysisState(AnalysisState.COMPLETED);
+		try{
+			submittedAnalysis.setAnalysis(savedAnalysis);
+		}
+		catch(AnalysisAlreadySetException e){
+			throw new ExecutionManagerException("Analysis already set", e);
+		}
+		
+		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis);
 
 		return new AsyncResult<>(completedSubmission);
 	}
