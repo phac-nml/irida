@@ -22,16 +22,21 @@ function Project(project, projectType) {
   var id = project.identifier;
   var name = project.name;
   var type = PROJECTS_TYPES[projectType] !== undefined ? PROJECTS_TYPES[projectType] : PROJECTS_TYPES.LOCAL;
+  var organism = project.organism ? project.organism : '';
 
   this.getId = function () {
     return id;
   };
 
   this.getName = function () {
-    return this.name;
+    return name;
   };
 
   this.getType = function () {
-    return this.type;
+    return type;
+  };
+
+  this.getOrganism = function() {
+    return organism;
   };
 }
