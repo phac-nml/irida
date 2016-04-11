@@ -35,28 +35,35 @@
         <div class="sidebar__body">
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="id" />
+              <fa:icon type="id" fixed="fixed"/>
             </div>
             <div th:text="#{iridaThing.id}">_ID_</div>
             <div class="sidebar__value" th:text="${analysisSubmission.getId()}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="pipelineType" />
+              <fa:icon type="pipelineType" fixed="fixed"/>
             </div>
             <div th:text="#{analysis.details.type}">_Workflow_</div>
             <div class="sidebar__value" th:text="${workflowName}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="pipelineState" />
+              <fa:icon type="pipelineVersion" fixed="fixed"/>
+            </div>
+            <div th:text="#{analysis.details.version}">_Workflow_</div>
+            <div class="sidebar__value" th:text="${version}"></div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <fa:icon type="pipelineState" fixed="fixed"/>
             </div>
             <div th:text="#{analysis.details.state}">_State_</div>
             <div class="sidebar__value" ng-bind="stateController.stateLang"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="date" />
+              <fa:icon type="date" fixed="fixed"/>
             </div>
             <div th:text="#{iridaThing.timestamp}">Created</div>
             <div class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></div>
