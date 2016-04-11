@@ -82,5 +82,22 @@
 		</button>
 	</div>
 </div>
+
+<span th:fragment="filterButtons" class="btn-toolbar pull-right" style="padding-left: 9px;">
+	<div class="btn-group btn-group-sm">
+		<button id="filterByPropertyBtn" class="btn btn-default" ng-click="samplesCtrl.openFilter()"
+		        th:text="#{projects.filter.btn}">
+			Advanced Filter
+		</button>
+		<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<fa:icon type="caret-down"/>
+			 <span class="sr-only" th:text="#{sr.nav.toggle}">Toggle Dropdown</span>
+		</button>
+		<ul class="dropdown-menu">
+            <li><a href="#" th:text="#{project.sample.filterByFile}" ng-click="samplesCtrl.openFilterByFile()">Filter by File</a></li>
+        </ul>
+	</div>
+	<button id="clearFilterBtn" class="btn btn-sm btn-inverse" th:text="#{projects.filter.clear}" ng-click="samplesCtrl.clearFilter()">Clear</button>
+</span>
 </body>
 </html>

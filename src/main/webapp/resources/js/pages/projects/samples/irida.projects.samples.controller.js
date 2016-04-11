@@ -1,38 +1,42 @@
-(function (ng, $, page) {
+(function (ng, $, SamplesFilter) {
 	"use strict";
 
 	/**
 	 * Controller for the Project Samples Page.
 	 * @param {Object} $scope Angular scope for this controller.
-	 * @param {Object} $log Angular logging service.
+	 * @param $filter
+   * @param modalService
 	 * @param {Object} samplesService Service to handle server calls for samples.
 	 * @param {Object} tableService Service to handle rendering the datatable.
 	 * @constructor
 	 */
-	function SamplesController($scope, $log, modalService, samplesService, tableService) {
-		var vm = this, previousIndex = null,
-		    // Which projects to display
+	function SamplesController($scope, $filter, modalService, samplesService, tableService) {
+		var vm = this,
+
+        /**
+         * Index of the currently selected sample.
+         */
+		    currentlySelectedSampleIndex = null,
+
+        /**
+         * Which types of projects are currently loaded into the table.
+         *  project - the current project
+         *  local - projects that are local to this installation
+         */
 		    display = {
 			    project: true,
 			    local: []
 		    };
+
 		vm.samples = [];
 		vm.selected = [];
 
-		$scope.$on("DATATABLE_UPDATED", function () {
-			previousIndex = null;
-		});
-
-		$scope.$watch("samplesCtrl.samples", function () {
-			updateButtons();
-		}, true);
-
-		// BUTTON STATE
-		vm.disabled = {
-			lessThanTwo: true,
-			lessThanOne: true,
-			otherProjects: false
-		};
+    // BUTTON STATE
+    vm.disabled = {
+      lessThanTwo: true,
+      lessThanOne: true,
+      otherProjects: false
+    };
 
 		// Hide project name unless multiple displayed.
 		vm.showProjectname = false;
@@ -40,6 +44,22 @@
 		// Create the datatable.
 		vm.dtColumnDefs = tableService.createTableColumnDefs();
 		vm.dtOptions = tableService.createTableOptions();
+
+		function getFilteredSamples(filter) {
+			// Get a clean list of samples
+			samplesService.fetchSamples(display).then(function(samples) {
+				// Apply the filter.
+				vm.samples = $filter("samplesFilter")(samples, filter);
+				vm.filter = _.cloneDeep(filter);
+				// Format for display
+				if(vm.filter.date.startDate !== null) {
+					vm.filter.date.startDate = vm.filter.date.startDate.toDate();
+				}
+				if(vm.filter.date.endDate !== null) {
+					vm.filter.date.endDate = vm.filter.date.endDate.toDate();
+				}
+			});
+		}
 
 		function displaySamples() {
 			samplesService.fetchSamples(display).then(function (samples) {
@@ -67,6 +87,33 @@
 			});
 		}
 
+		/**
+		 * Listen for a new filter to be selected and update the table
+		 * with the filtered samples.
+		 */
+		$scope.$on("FILTER_TABLE", function(event, args) {
+			getFilteredSamples(args.filter);
+		});
+
+		/**
+		 * Listen for when the data in the datatables changes.  There will
+		 * no longer be a selected sample, so clear it.
+		 */
+		$scope.$on("DATATABLE_UPDATED", function () {
+			currentlySelectedSampleIndex = null;
+		});
+
+		/**
+		 * Watch for changes to the samples, table selection event, or reload.
+		 * There might be changes to the number of samples selected.
+		 */
+		$scope.$watch("samplesCtrl.samples", function () {
+			updateButtons();
+		}, true);
+
+		/**
+		 * Ask for a modal window to display associated projects.
+		 */
 		vm.displayProjectsModal = function () {
 			modalService.openAssociatedProjectsModal(display)
 				.then(function (projectsToDisplay) {
@@ -78,6 +125,9 @@
 				})
 		};
 
+		/**
+		 * Ask for a modal window to merge samples.
+		 */
 		vm.merge = function () {
 			var ids = [];
 			vm.selected.forEach(function (item) {
@@ -86,7 +136,7 @@
 			modalService.openMergeModal(vm.selected).then(function (result) {
 				samplesService.mergeSamples(result).then(function () {
 					// Need to reload the samples since the data has changed.
-					samplesService.fetchSamples({showNotification: false}).then(function (samples) {
+					samplesService.fetchSamples({showNotification: false, merge: true}).then(function (samples) {
 						vm.samples = samples;
 						vm.selected = [];
 					});
@@ -94,6 +144,9 @@
 			});
 		};
 
+		/**
+		 * Ask for a modal window to copy samples.
+		 */
 		vm.copy = function () {
 			modalService.openCopyModal(vm.selected).then(function (result) {
 				samplesService.copySamples(result).then(function () {
@@ -107,6 +160,9 @@
 			});
 		};
 
+		/**
+		 * Ask for a modal window to move samples.
+		 */
 		vm.move = function () {
 			modalService.openMoveModal(vm.selected).then(function (result) {
 				samplesService.moveSamples(result).then(function () {
@@ -119,6 +175,9 @@
 			});
 		};
 
+		/**
+		 * Ask for a modal window to remove samples.
+		 */
 		vm.delete = function () {
 			modalService.openRemoveModal(vm.selected).then(function () {
 				samplesService.removeSamples(vm.selected).then(function () {
@@ -131,6 +190,9 @@
 
 		};
 
+		/**
+		 * Add the selected samples to the global sample cart.
+		 */
 		vm.addToCart = function () {
 			var selected = vm.samples.filter(function (sample) {
 				return sample.selected;
@@ -159,7 +221,7 @@
 		/**
 		 * Handles user clicking the datatable row.  Updates selected samples
 		 * @param $event
-		 * @param item
+		 * @param $index
 		 */
 		vm.rowClick = function($event, $index) {
 			$event.stopPropagation();
@@ -176,8 +238,8 @@
 			// Check for multiple selection
 			if (!item.selected) {
 				// This would be a deselection, and would result in no further actions.
-				previousIndex = null;
-			} else if (previousIndex !== null && $event.shiftKey) {
+				currentlySelectedSampleIndex = null;
+			} else if (currentlySelectedSampleIndex !== null && $event.shiftKey) {
 				// Multi-select here
 				// Get the table rows
 				var found = false;
@@ -187,7 +249,7 @@
 
 					// Check to see if it was the previous clicked row or the currently clicked row.
 					// This will mark the beginning or end of the selections.
-					if(rowIndex === $index || rowItem === previousIndex) { found = !found; }
+					if(rowIndex === $index || rowItem === currentlySelectedSampleIndex) { found = !found; }
 					if(found && !rowItem.selected) {
 						rowItem.selected = true;
 						vm.selected.push(rowItem);
@@ -195,7 +257,7 @@
 				});
 				updateButtons();
 			} else {
-				previousIndex = item;
+				currentlySelectedSampleIndex = item;
 			}
 
 			updateButtons();
@@ -217,6 +279,26 @@
 		};
 
 		/**
+		 * Open a modal to filter the samples by Sample properties
+		 */
+		vm.openFilter = function () {
+			modalService.openFilterModal();
+		};
+
+		vm.clearFilter = function () {
+			$scope.$emit("CLEAR_FILTER");
+		};
+
+		vm.clearFilterProperty = function(property) {
+			$scope.$emit("CLEAR_FILTER_PROPERTY", {property: property});
+		};
+
+		// TODO: Implement this function
+		vm.openFilterByFile = function() {
+			console.warn("Filter by file still needs to be implemented")
+		};
+
+		/**
 		 * Determine how many samples are selected and update the buttons.
 		 */
 		function updateButtons(){
@@ -233,7 +315,18 @@
 		displaySamples();
 	}
 
+	/**
+	 * Filter for samples, based on what is selected in the SamplesFilterModal
+	 * @returns {Function}
+   */
+	function samplesFilter () {
+		return function(samples, filter) {
+			return SamplesFilter.filterByProperties(samples, filter);
+		};
+	}
+
 	ng.module("irida.projects.samples.controller", ["irida.projects.samples.service", "irida.projects.samples.modals", "ngMessages", "ui.bootstrap"])
-		.controller("SamplesController", ["$scope", "$log", "modalService",  "SamplesService", "TableService", SamplesController])
+		.controller("SamplesController", ["$scope", "$filter", "modalService",  "SamplesService", "TableService", SamplesController])
+		.filter("samplesFilter", [samplesFilter])
 	;
-})(window.angular, window.jQuery, window.PAGE);
+})(window.angular, window.jQuery, window.SamplesFilter);

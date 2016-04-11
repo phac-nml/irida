@@ -89,9 +89,34 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "select2-results")
 	private WebElement select2Results;
 
+	@FindBy(id = "filterByPropertyBtn")
+	private WebElement filterByPropertyBtn;
+
+	@FindBy(className = "filter-modal")
+	private WebElement filterModal;
+
+	@FindBy(id = "clearFilterBtn")
+	private WebElement clearFilterBtn;
+
 	// This will be 'Previous', 1, 2, ..., 'Next'
 	@FindBy(css = ".pagination li")
 	private List<WebElement> pagination;
+
+	// Samples filter date range picker
+	@FindBy(id = "daterange")
+	private WebElement dateRangeInput;
+
+	@FindBy(name = "daterangepicker_start")
+	private WebElement daterangepickerStart;
+
+	@FindBy(name = "daterangepicker_end")
+	private WebElement daterangepickerEnd;
+
+	@FindBy(css = "div.ranges li")
+	private List<WebElement> dateRanges;
+
+	@FindBy(css = ".range_inputs .applyBtn")
+	private WebElement applyDateRangeBtn;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -208,22 +233,49 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void copySamples(String project) {
 		copyBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
-		enterSelect2Value(project);
-		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
-		copyOkBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+		copyMoveSamples(project);
 	}
 
 	public void moveSamples(String projectNum) {
 		moveBtn.click();
+		copyMoveSamples(projectNum);
+	}
+
+	public void filterByName(String name) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
-		enterSelect2Value(projectNum);
-		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
-		copyOkBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+		filterByPropertyBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(filterModal));
+		WebElement nameInput = filterModal.findElement(By.id("name"));
+		nameInput.clear();
+		nameInput.sendKeys(name);
+		filterModal.findElement(By.id("doFilterBtn")).click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
+	}
+
+	public void filterByDateRange(String start, String end) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		filterByPropertyBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(filterModal));
+		dateRangeInput.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".daterangepicker.show-calendar")));
+
+		Actions builder = new Actions(driver);
+		builder.moveToElement(daterangepickerStart, 100, 0).click().build().perform();
+
+		daterangepickerStart.clear();
+		daterangepickerStart.sendKeys(start);
+
+		builder.moveToElement(daterangepickerEnd, 100, 10).click().build().perform();
+		daterangepickerEnd.clear();
+		daterangepickerEnd.sendKeys(end);
+		applyDateRangeBtn.click();
+
+		filterModal.findElement(By.id("doFilterBtn")).click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
+	}
+
+	public void clearFilter() {
+		clearFilterBtn.click();
 	}
 
 	public List<String> getSampleNamesOnPage() {
@@ -242,5 +294,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		select2Input.sendKeys(Keys.RETURN);
 
 		wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOf(select2Results)));
+	}
+
+	private void copyMoveSamples(String project) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
+		enterSelect2Value(project);
+		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
+		copyOkBtn.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
 	}
 }

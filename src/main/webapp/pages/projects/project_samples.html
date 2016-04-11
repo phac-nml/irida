@@ -31,10 +31,20 @@
                 remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ ''
             },
             i18n: {
-                associatedSelectedTooltip: /*[[#{project.samples.associated-selected-error}]]*/ '_Unavailable_'
+                dateFilter: {
+                    days30: /*[[#{project.sample.filter.date.days30}]]*/ "Last 30 Days",
+                    days60: /*[[#{project.sample.filter.date.days60}]]*/ "Last 60 Days",
+                    days120: /*[[#{project.sample.filter.date.days120}]]*/ "Last 120 Days"
+                }
             }
         };
     </script>
+    <style>
+        .dataTables_filter, .filter-area {
+            display: inline-block !important;
+            float: right;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables"
@@ -86,10 +96,43 @@
 
 <th:block layout:fragment="scripts">
     <script type="text/ng-template" id="buttons.html" th:include="projects/partials/samples.tmpl :: toolbar"></script>
+    <script type="text/ng-template" id="filterButtons.html">
+        <div th:replace="projects/partials/samples.tmpl :: filterButtons"></div>
+    </script>
+
+    <script type="text/ng-template" id="activeFilters.html">
+        <div class="text-right">
+            <span ng-repeat="(filter, value) in samplesCtrl.filter">
+                <span class="label label-default" ng-if="filter==='name'" ng-click="samplesCtrl.clearFilterProperty('name')"><th:block th:text="#{project.sample.filter-name}"></th:block> : {{ value }}</span>
+                <span class="label label-default" ng-if="filter==='date' &amp;&amp; value['startDate']!==null" ng-click="samplesCtrl.clearFilterProperty('startDate')"><th:block th:text="#{project.sample.filter-date.startDate}"></th:block> : {{ value.startDate | date }}</span>
+                <span class="label label-default" ng-if="filter==='date' &amp;&amp; value['endDate']!==null" ng-click="samplesCtrl.clearFilterProperty('endDate')"><th:block th:text="#{project.sample.filter-date.endDate}"></th:block> : {{ value.endDate | date }}</span>
+            </span>
+        </div>
+    </script>
 
     <script th:inline="javascript" type="text/ng-template" id="selectedCounts.html">
         <ng-pluralize id="selected-count-info" count="samplesCtrl.selected.length"
                       data:when="#{project.samples.table.selected}"></ng-pluralize>
+    </script>
+
+    <script id="filter.modal.html" type="text/ng-template">
+        <div class="modal-header">
+            <h3 class="modal-title" th:text="#{project.sample.filter-title}">[Filter Samples]</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="name" th:text="#{project.sample.filter-name}">Name</label>
+                <input type="text" class="form-control" id="name" ng-model="filterCtrl.filter.name"/>
+            </div>
+            <div class="form-group">
+                <label for="daterange" th:text="#{project.sample.filter-date}">Date</label>
+                <input id="daterange" type="text" date-range-picker="" class="form-control date-picker" options="filterCtrl.options" ng-model="filterCtrl.filter.date"/>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" ng-click="filterCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
+            <button id="doFilterBtn" class="btn btn-primary" ng-click="filterCtrl.doFilter()" th:text="#{table.filter.openBtn}">Filter</button>
+        </div>
     </script>
 
     <script id="associated-projects.modal.html" type="text/ng-template" th:inline="javascript">

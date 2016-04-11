@@ -33,19 +33,21 @@
   justify-content: center;
 }
 
-table th {
-  vertical-align: top !important;
-}
+.dataTable {
+  th {
+    vertical-align: top !important;
+  }
 
-table td {
-  padding: 5px 18px!important;
-}
+  td {
+    padding: 5px 18px !important;
+  }
 
-tr a {
-  background-color: transparent!important;
-}
+  tr a {
+    background-color: transparent !important;
+  }
 
-tr {
-  background-color: white;
-  transition: all 0.3s ease;
+  tr {
+    background-color: white;
+    transition: all 0.3s ease;
+  }
 }

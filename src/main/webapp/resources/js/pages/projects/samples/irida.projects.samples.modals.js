@@ -130,7 +130,17 @@
       }).result;
     }
 
+    function openFilterModal() {
+      return $uibModal.open({
+        templateUrl: "filter.modal.html",
+        controllerAs: "filterCtrl",
+        openedClass : 'filter-modal',
+        controller: "FilterModalController"
+      }).result;
+    }
+
     return {
+      openFilterModal            : openFilterModal,
       openMoveModal              : openMoveModal,
       openCopyModal              : openCopyModal,
       openRemoveModal            : openRemoveModal,
@@ -196,6 +206,9 @@
     // If user enters a custom name it is not allowed to have spaces
     vm.validNameRE = /^[a-zA-Z0-9-_]+$/;
 
+    /**
+     * Closes the modal window without making any changes
+     */
     vm.cancel = function () {
       $uibModalInstance.dismiss();
     };
@@ -214,9 +227,84 @@
     }
   }
 
-  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap"])
+  /**
+   * Container for the current state of the samples filter.
+   * @constructor
+   */
+  function FilterStateService($rootScope) {
+    var defaultState = {
+      date: {
+        startDate: null,
+        endDate: null
+      }
+    },
+      currState = _.clone(defaultState);
+
+    this.getState = function() {
+      if(currState.date.startDate !== null) {
+        currState.date.startDate = moment(currState.date.startDate);
+      }
+      if(currState.date.endDate !== null) {
+        currState.date.endDate = moment(currState.date.endDate);
+      }
+      return _.clone(currState);
+    };
+
+    this.setState = function(s) {
+      currState = _.clone(s);
+      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
+    };
+
+    $rootScope.$on('CLEAR_FILTER', function () {
+      currState = _.clone(defaultState);
+      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
+    });
+
+    $rootScope.$on('CLEAR_FILTER_PROPERTY', function (event, args) {
+      if(currState[args.property] !== undefined && currState[args.property].length > 0) {
+        delete currState[args.property];
+      } else if(currState.date[args.property]){
+        currState.date[args.property] = null;
+      }
+      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
+    });
+  }
+
+  /**
+   * Controller for handling filtering samples by properties
+   * @param $uibModalInstance
+   * @constructor
+   */
+  function FilterModalController($uibModalInstance, stateService) {
+    var vm = this;
+    vm.filter = stateService.getState();
+    
+    vm.options = {ranges: {}};
+    vm.options.ranges[page.i18n.dateFilter.days30] = [moment().subtract(30, 'days'), moment()];
+    vm.options.ranges[page.i18n.dateFilter.days60] = [moment().subtract(60, 'days'), moment()];
+    vm.options.ranges[page.i18n.dateFilter.days120] = [moment().subtract(120, 'days'), moment()];
+
+    /**
+     * Closes the modal window without making any changes
+     */
+    vm.cancel = function() {
+      $uibModalInstance.dismiss();
+    };
+
+    /**
+     * Return the filter state to the calling function
+     */
+    vm.doFilter = function() {
+      stateService.setState(vm.filter);
+      $uibModalInstance.dismiss();
+    };
+  }
+
+  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap", "daterangepicker"])
     .factory("modalService", ["$uibModal", modalService])
+    .service("FilterStateService", ["$rootScope", FilterStateService])
     .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
+    .controller("FilterModalController", ["$uibModalInstance", "FilterStateService", FilterModalController])
   ;
-}(angular, PAGE, project));
+}(window.angular, window.PAGE, window.project));

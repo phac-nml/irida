@@ -3,13 +3,21 @@
     "ng-datatables",
     "select2-bootstrap",
     "angular-messages",
-    "bootstrap_dropdowns_enhancement"
+    "bootstrap-daterangepicker",
+    "angular-daterangepicker-enhanced"
   ],
   "assets": [
     {
       "type": "css",
       "locations": {
         "webapp": "/resources/css/pages/project_samples.css"
+      }
+    },
+    {
+      "type": "js",
+      "name": "irida.projects.samples.filter",
+      "locations": {
+        "webapp": "/resources/js/filters/samples-filter.js"
       }
     },
     {
