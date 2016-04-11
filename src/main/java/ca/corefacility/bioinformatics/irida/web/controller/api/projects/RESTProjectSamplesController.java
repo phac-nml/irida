@@ -5,6 +5,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -155,13 +156,8 @@ public class RESTProjectSamplesController {
 				.withSelfRel().getHref();
 
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
-		sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId))
-				.withSelfRel());
-		sample.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId))
-				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-		sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-		sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId())).withRel(REL_PROJECT_SAMPLE));
-
+		addLinksForSample(Optional.of(p), sample);
+		
 		// add the resource to the model
 		model.addAttribute(RESTGenericController.RESOURCE_NAME, sample);
 
@@ -192,13 +188,7 @@ public class RESTProjectSamplesController {
 		for (Join<Project, Sample> r : relationships) {
 			Sample sample = r.getObject();
 
-			sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sample.getId()))
-					.withSelfRel());
-			sample.add(linkTo(
-					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sample.getId()))
-					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-			sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-			sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId())).withRel(REL_PROJECT_SAMPLE));
+			addLinksForSample(Optional.of(p), sample);
 			sampleResources.add(sample);
 		}
 
@@ -245,10 +235,9 @@ public class RESTProjectSamplesController {
 
 		ModelMap modelMap = new ModelMap();
 
-		s = addLinksForSample(s);
+		addLinksForSample(Optional.of(project), s);
 
 		// add a link to project
-		s.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 				REL_PROJECT_SAMPLE));
 
@@ -269,7 +258,7 @@ public class RESTProjectSamplesController {
 		ModelMap modelMap = new ModelMap();
 		Sample s = sampleService.read(sampleId);
 
-		s = addLinksForSample(s);
+		addLinksForSample(Optional.empty(), s);
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
 		return modelMap;
@@ -283,7 +272,7 @@ public class RESTProjectSamplesController {
 	 *            The sample to add links to
 	 * @return the sample with added links
 	 */
-	private Sample addLinksForSample(Sample s) {
+	private void addLinksForSample(final Optional<Project> p, final Sample s) {
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withSelfRel());
 		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(s.getId())).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
@@ -291,12 +280,16 @@ public class RESTProjectSamplesController {
 				methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
 						RESTSampleSequenceFilesController.objectLabels.get(SequenceFilePair.class))).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
-		s.add(linkTo(
+				s.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(s.getId(),
 						RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class))).withRel(
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
-
-		return s;
+		if (p.isPresent()) {
+			final Project project = p.get();
+			s.add(linkTo(RESTProjectsController.class).slash(project.getId()).withRel(REL_PROJECT));
+			s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(project.getId(), s.getId())).withRel(
+					REL_PROJECT_SAMPLE));
+		}
 	}
 
 	/**
@@ -352,18 +345,10 @@ public class RESTProjectSamplesController {
 		ModelMap modelMap = new ModelMap();
 
 		// issue an update request
-		sampleService.update(sampleId, updatedFields);
+		final Sample s = sampleService.update(sampleId, updatedFields);
+		addLinksForSample(Optional.empty(), s);
 
-		// respond to the client with a link to self, sequence files collection
-		// and project.
-		RootResource resource = new RootResource();
-		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId))
-				.withSelfRel());
-		resource.add(linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
-				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
 
 		return modelMap;
 	}

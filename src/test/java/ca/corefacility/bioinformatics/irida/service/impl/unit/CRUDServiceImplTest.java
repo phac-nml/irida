@@ -31,6 +31,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
@@ -71,6 +72,24 @@ public class CRUDServiceImplTest {
 		} catch (ConstraintViolationException constraintViolations) {
 			fail();
 		}
+	}
+	
+	@Test(expected=EntityExistsException.class)
+	public void testCreateEntityExists(){
+		IdentifiableTestEntity i = new IdentifiableTestEntity();
+		i.setId(1L);
+		
+		when(crudRepository.exists(1L)).thenReturn(true);
+		crudService.create(i);
+	}
+	
+	@Test(expected=EntityNotFoundException.class)
+	public void testUpdateNotExists(){
+		IdentifiableTestEntity i = new IdentifiableTestEntity();
+		i.setId(1L);
+		
+		when(crudRepository.exists(1L)).thenReturn(false);
+		crudService.update(i);
 	}
 
 	@Test

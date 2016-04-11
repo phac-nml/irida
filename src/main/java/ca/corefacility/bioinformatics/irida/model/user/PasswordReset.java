@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.Timestamped;
 @Entity
 @Table(name = "password_reset")
 @EntityListeners(AuditingEntityListener.class)
-public class PasswordReset implements Comparable<PasswordReset>, Timestamped {
+public class PasswordReset implements Comparable<PasswordReset>, Timestamped<String> {
 
 	@CreatedDate
 	@NotNull

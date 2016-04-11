@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "Snvphyl", 
     "format-version": "0.1", 
-    "name": "SNVPhyl v0.2 Paired-End", 
+    "name": "SNVPhyl v0.3 Paired-End", 
     "steps": {
         "0": {
             "annotation": "", 
@@ -139,12 +139,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0", 
             "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"__rerun_remap_job_id__\": null, \"pid\": \"\\\"90\\\"\", \"length\": \"\\\"150\\\"\"}", 
-            "tool_version": "0.0.4", 
+            "tool_version": "1.5.0", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "b46f9d65-9d1d-458b-8780-20d248d4ab84"
+            "uuid": "3c2257f4-d708-47c4-934e-7a027804f7db"
         }, 
         "4": {
             "annotation": "", 
@@ -184,12 +184,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/smalt_map/smalt_map/1.0.0", 
-            "tool_state": "{\"minbasq\": \"\\\"\\\"\", \"__page__\": 0, \"insertmin\": \"\\\"20\\\"\", \"mincover\": \"\\\"\\\"\", \"insfil\": \"null\", \"scordiff\": \"\\\"\\\"\", \"insertmax\": \"\\\"1000\\\"\", \"singlePaired\": \"{\\\"fastq_collection\\\": null, \\\"sPaired\\\": \\\"collections\\\", \\\"pairtype\\\": \\\"pe\\\", \\\"__current_case__\\\": 2}\", \"minid\": \"\\\"0.5\\\"\", \"__rerun_remap_job_id__\": null, \"search_harder\": \"\\\"False\\\"\", \"seed\": \"\\\"-1\\\"\", \"sw_weighted\": \"\\\"False\\\"\", \"smi\": \"null\", \"oformat\": \"{\\\"bamOptions\\\": null, \\\"outformat\\\": \\\"bam\\\", \\\"__current_case__\\\": 1}\", \"minscor\": \"\\\"\\\"\", \"sma\": \"null\"}", 
-            "tool_version": "1.0.0", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/smalt_map/smalt_map/1.0.1", 
+            "tool_state": "{\"minbasq\": \"\\\"\\\"\", \"__page__\": 0, \"insertmin\": \"\\\"20\\\"\", \"mincover\": \"\\\"\\\"\", \"insfil\": \"null\", \"scordiff\": \"\\\"\\\"\", \"insertmax\": \"\\\"1000\\\"\", \"singlePaired\": \"{\\\"fastq_collection\\\": null, \\\"sPaired\\\": \\\"collections\\\", \\\"pairtype\\\": \\\"pe\\\", \\\"__current_case__\\\": 2}\", \"minid\": \"\\\"0.5\\\"\", \"__rerun_remap_job_id__\": null, \"search_harder\": \"\\\"False\\\"\", \"seed\": \"\\\"1\\\"\", \"sw_weighted\": \"\\\"False\\\"\", \"smi\": \"null\", \"oformat\": \"{\\\"bamOptions\\\": null, \\\"outformat\\\": \\\"bam\\\", \\\"__current_case__\\\": 1}\", \"minscor\": \"\\\"\\\"\", \"sma\": \"null\"}", 
+            "tool_version": "1.0.1", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "2c4b8d73-23bc-48ec-a378-8b84f8d75081"
+            "uuid": "7a4b9431-20a8-429d-a26e-433f0827c463"
         }, 
         "5": {
             "annotation": "", 
@@ -223,12 +223,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4", 
-            "tool_state": "{\"minmap\": \"\\\"95\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"mindepth\": \"\\\"${min_coverage}\\\"\", \"bams\": \"null\"}", 
-            "tool_version": "0.0.4", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.5.0", 
+            "tool_state": "{\"minmap\": \"\\\"80\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"mindepth\": \"\\\"${min_coverage}\\\"\", \"bams\": \"null\"}", 
+            "tool_version": "1.5.0", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "9d6b2ea0-a56a-4065-97e2-045dcdf2ea8e"
+            "uuid": "82bed622-a144-43fd-869e-c4468e6131ff"
         }, 
         "6": {
             "annotation": "", 
@@ -282,12 +282,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4", 
-            "tool_state": "{\"reference_source\": \"{\\\"ref_file\\\": null, \\\"reference_source_selector\\\": \\\"history\\\", \\\"input_bams\\\": [{\\\"__index__\\\": 0, \\\"input_bam\\\": null}], \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"options_type\": \"{\\\"section_mappability_priors_expectations_type\\\": {\\\"section_mappability_priors_expectations_type_selector\\\": \\\"do_not_set\\\", \\\"__current_case__\\\": 0}, \\\"haplotype_basis_alleles\\\": null, \\\"output_trace_option\\\": \\\"False\\\", \\\"dont_left_align_indels\\\": \\\"False\\\", \\\"options_type_selector\\\": \\\"advanced\\\", \\\"input_variant_type\\\": {\\\"input_variant_type_selector\\\": \\\"do_not_provide\\\", \\\"__current_case__\\\": 0}, \\\"report_all_haplotype_alleles\\\": \\\"False\\\", \\\"section_algorithmic_features_type\\\": {\\\"exclude_unobserved_genotypes\\\": \\\"False\\\", \\\"genotyping_max_iterations\\\": \\\"1000\\\", \\\"report_genotype_likelihood_max\\\": \\\"False\\\", \\\"genotype_variant_threshold\\\": \\\"\\\", \\\"posterior_integration_limits_m\\\": \\\"3\\\", \\\"posterior_integration_limits_n\\\": \\\"1\\\", \\\"harmonic_indel_quality\\\": \\\"False\\\", \\\"section_algorithmic_features_type_selector\\\": \\\"set\\\", \\\"site_selection_max_iterations\\\": \\\"5\\\", \\\"read_dependence_factor\\\": \\\"0.9\\\", \\\"__current_case__\\\": 1, \\\"use_mapping_quality\\\": \\\"False\\\", \\\"genotyping_max_banddepth\\\": \\\"6\\\", \\\"genotype_qualities\\\": \\\"False\\\"}, \\\"input_populations_file\\\": null, \\\"section_reporting_type\\\": {\\\"show_reference_repeats\\\": \\\"False\\\", \\\"section_reporting_type_selector\\\": \\\"set\\\", \\\"__current_case__\\\": 1, \\\"pvar\\\": \\\"0.0001\\\"}, \\\"section_population_priors_type\\\": {\\\"section_population_priors_type_selector\\\": \\\"do_not_set\\\", \\\"__current_case__\\\": 0}, \\\"section_allele_scope_type\\\": {\\\"section_allele_scope_type_selector\\\": \\\"do_not_set\\\", \\\"__current_case__\\\": 0}, \\\"section_input_filters_type\\\": {\\\"min_alternate_count\\\": \\\"2\\\", \\\"section_input_filters_type_selector\\\": \\\"set\\\", \\\"__current_case__\\\": 1, \\\"min_coverage\\\": \\\"${min_coverage}\\\", \\\"mismatch_base_quality_threshold\\\": \\\"10\\\", \\\"read_snp_limit\\\": \\\"\\\", \\\"quality_filter_type\\\": {\\\"min_supporting_allele_qsum\\\": \\\"0\\\", \\\"min_base_quality\\\": \\\"30\\\", \\\"min_mapping_quality\\\": \\\"30\\\", \\\"quality_filter_type_selector\\\": \\\"apply_filters\\\", \\\"__current_case__\\\": 1, \\\"min_supporting_mapping_qsum\\\": \\\"0\\\"}, \\\"read_max_mismatch_fraction\\\": \\\"1.0\\\", \\\"min_alternate_fraction\\\": \\\"${alternative_allele_proportion}\\\", \\\"read_indel_limit\\\": \\\"\\\", \\\"use_duplicate_reads\\\": \\\"False\\\", \\\"min_alternate_total\\\": \\\"1\\\", \\\"read_mismatch_limit\\\": \\\"\\\", \\\"indel_exclusion_window\\\": \\\"-1\\\", \\\"min_alternate_qsum\\\": \\\"0\\\"}, \\\"__current_case__\\\": 1, \\\"section_population_model_type\\\": {\\\"section_population_model_type_selector\\\": \\\"set\\\", \\\"pooled_continuous\\\": \\\"False\\\", \\\"pooled_discrete\\\": \\\"False\\\", \\\"__current_case__\\\": 1, \\\"theta\\\": \\\"0.001\\\", \\\"ploidy\\\": \\\"1\\\"}, \\\"use_reference_allele_type\\\": {\\\"use_reference_allele_type_selector\\\": \\\"do_not_include_reference_allele\\\", \\\"__current_case__\\\": 0}, \\\"output_failed_alleles_option\\\": \\\"False\\\", \\\"target_limit_type\\\": {\\\"target_limit_type_selector\\\": \\\"do_not_limit\\\", \\\"__current_case__\\\": 0}, \\\"input_cnv_map_bed\\\": null, \\\"input_sample_file\\\": null}\", \"__page__\": 0}", 
-            "tool_version": "0.0.4", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/devteam/freebayes/freebayes/0.4.1", 
+            "tool_state": "{\"__page__\": 0, \"reference_source\": \"{\\\"ref_file\\\": null, \\\"reference_source_selector\\\": \\\"history\\\", \\\"input_bams\\\": [{\\\"__index__\\\": 0, \\\"input_bam\\\": null}], \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"options_type\": \"{\\\"options_type_selector\\\": \\\"full\\\", \\\"allele_scope\\\": {\\\"__current_case__\\\": 1, \\\"allele_scope_selector\\\": \\\"False\\\"}, \\\"reporting\\\": {\\\"reporting_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"genotype_likelihoods\\\": {\\\"genotype_likelihoods_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"O\\\": \\\"False\\\", \\\"population_model\\\": {\\\"K\\\": \\\"False\\\", \\\"J\\\": \\\"False\\\", \\\"P\\\": \\\"1\\\", \\\"T\\\": \\\"0.001\\\", \\\"__current_case__\\\": 0, \\\"population_model_selector\\\": \\\"True\\\"}, \\\"reference_allele\\\": {\\\"reference_allele_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"optional_inputs\\\": {\\\"optional_inputs_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"__current_case__\\\": 0, \\\"population_mappability_priors\\\": {\\\"population_mappability_priors_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"input_filters\\\": {\\\"input_filters_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}, \\\"algorithmic_features\\\": {\\\"algorithmic_features_selector\\\": \\\"False\\\", \\\"__current_case__\\\": 1}}\", \"target_limit_type\": \"{\\\"target_limit_type_selector\\\": \\\"do_not_limit\\\", \\\"__current_case__\\\": 0}\"}", 
+            "tool_version": "0.4.1", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "bdd2f629-be7b-4e97-9f7e-e8c55d979708"
+            "uuid": "880cb192-d299-4736-af89-2b0df9977514"
         }, 
         "7": {
             "annotation": "", 
@@ -317,7 +317,7 @@
             ], 
             "position": {
                 "left": 994, 
-                "top": 701
+                "top": 541
             }, 
             "post_job_actions": {
                 "HideDatasetActionoutput_log": {
@@ -333,7 +333,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/devteam/samtools_mpileup/samtools_mpileup/2.0", 
-            "tool_state": "{\"__page__\": 0, \"advanced_options\": \"{\\\"max_reads_per_bam\\\": \\\"1024\\\", \\\"advanced_options_selector\\\": \\\"advanced\\\", \\\"extended_BAQ_computation\\\": \\\"False\\\", \\\"region_string\\\": \\\"\\\", \\\"limit_by_region\\\": {\\\"limit_by_regions\\\": \\\"no_limit\\\", \\\"__current_case__\\\": 2}, \\\"disable_probabilistic_realignment\\\": \\\"True\\\", \\\"skip_anomalous_read_pairs\\\": \\\"True\\\", \\\"minimum_mapping_quality\\\": \\\"0\\\", \\\"filter_by_flags\\\": {\\\"filter_flags\\\": \\\"nofilter\\\", \\\"__current_case__\\\": 1}, \\\"__current_case__\\\": 0, \\\"coefficient_for_downgrading\\\": \\\"0\\\", \\\"minimum_base_quality\\\": \\\"0\\\", \\\"ignore_overlaps\\\": \\\"False\\\", \\\"exclude_read_group\\\": {\\\"__current_case__\\\": 2, \\\"exclude_read_groups\\\": \\\"no_limit\\\"}}\", \"__rerun_remap_job_id__\": null, \"genotype_likelihood_computation_type\": \"{\\\"__current_case__\\\": 0, \\\"output_format\\\": \\\"--VCF\\\", \\\"perform_indel_calling\\\": {\\\"__current_case__\\\": 0, \\\"perform_indel_calling_selector\\\": \\\"perform_indel_calling_def\\\"}, \\\"compressed\\\": \\\"False\\\", \\\"genotype_likelihood_computation_type_selector\\\": \\\"perform_genotype_likelihood_computation\\\", \\\"output_tags\\\": null}\", \"reference_source\": \"{\\\"ref_file\\\": null, \\\"reference_source_selector\\\": \\\"history\\\", \\\"input_bams\\\": [{\\\"__index__\\\": 0, \\\"input_bam\\\": null}], \\\"__current_case__\\\": 1}\"}", 
+            "tool_state": "{\"__page__\": 0, \"advanced_options\": \"{\\\"max_reads_per_bam\\\": \\\"1024\\\", \\\"advanced_options_selector\\\": \\\"advanced\\\", \\\"extended_BAQ_computation\\\": \\\"False\\\", \\\"region_string\\\": \\\"\\\", \\\"limit_by_region\\\": {\\\"limit_by_regions\\\": \\\"no_limit\\\", \\\"__current_case__\\\": 2}, \\\"disable_probabilistic_realignment\\\": \\\"True\\\", \\\"skip_anomalous_read_pairs\\\": \\\"True\\\", \\\"minimum_mapping_quality\\\": \\\"0\\\", \\\"filter_by_flags\\\": {\\\"filter_flags\\\": \\\"nofilter\\\", \\\"__current_case__\\\": 1}, \\\"__current_case__\\\": 0, \\\"coefficient_for_downgrading\\\": \\\"0\\\", \\\"minimum_base_quality\\\": \\\"0\\\", \\\"ignore_overlaps\\\": \\\"False\\\", \\\"exclude_read_group\\\": {\\\"__current_case__\\\": 2, \\\"exclude_read_groups\\\": \\\"no_limit\\\"}}\", \"__rerun_remap_job_id__\": null, \"genotype_likelihood_computation_type\": \"{\\\"__current_case__\\\": 0, \\\"output_format\\\": \\\"--VCF\\\", \\\"perform_indel_calling\\\": {\\\"__current_case__\\\": 2, \\\"perform_indel_calling_selector\\\": \\\"do_not_perform_indel_calling\\\"}, \\\"compressed\\\": \\\"False\\\", \\\"genotype_likelihood_computation_type_selector\\\": \\\"perform_genotype_likelihood_computation\\\", \\\"output_tags\\\": null}\", \"reference_source\": \"{\\\"ref_file\\\": null, \\\"reference_source_selector\\\": \\\"history\\\", \\\"input_bams\\\": [{\\\"__index__\\\": 0, \\\"input_bam\\\": null}], \\\"__current_case__\\\": 1}\"}", 
             "tool_version": "2.0", 
             "type": "tool", 
             "user_outputs": [], 
@@ -369,12 +369,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_vcf/filtervcf/0.0.3", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_vcf/filtervcf/1.5.0", 
             "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"vcf\": \"null\"}", 
-            "tool_version": "0.0.3", 
+            "tool_version": "1.5.0", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "928a97c7-01de-4fd2-82c6-33d6e73819fe"
+            "uuid": "92790084-218f-4ad5-bdbb-5925d0b63cdc"
         }, 
         "9": {
             "annotation": "", 
@@ -537,12 +537,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0", 
             "tool_state": "{\"__page__\": 0, \"ref_fasta\": \"null\", \"reference\": \"\\\"reference\\\"\", \"__rerun_remap_job_id__\": null, \"ao\": \"\\\"${alternative_allele_proportion}\\\"\", \"invalid\": \"null\", \"coverage\": \"\\\"${min_coverage}\\\"\", \"mean_mapping\": \"\\\"${min_mean_mapping}\\\"\", \"freebayes_collection\": \"null\", \"mpileup_collection\": \"null\"}", 
-            "tool_version": "0.0.16", 
+            "tool_version": "1.5.0", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "3f29ec48-5b58-4048-8ef4-4760b36e9e2d"
+            "uuid": "e5fe678b-e6ff-40d5-b86e-cf00a334cd92"
         }, 
         "12": {
             "annotation": "", 
@@ -615,12 +615,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_stats/filterstat/0.0.4", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_stats/filterstat/1.5.0", 
             "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"tabfile\": \"null\", \"summary\": \"null\"}", 
-            "tool_version": "0.0.4", 
+            "tool_version": "1.5.0", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "d39f69c4-1a16-4464-bdf0-be05d9c8dbda"
+            "uuid": "157fd5be-539c-44f6-b534-d6c7aeef72de"
         }, 
         "14": {
             "annotation": "", 
@@ -645,7 +645,7 @@
                 }
             ], 
             "position": {
-                "left": 2565, 
+                "left": 2569, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -698,7 +698,7 @@
                 }
             ], 
             "position": {
-                "left": 2565, 
+                "left": 2569, 
                 "top": 358
             }, 
             "post_job_actions": {
@@ -711,13 +711,13 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/snp_matrix/snpmatrix/0.0.3", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/snp_matrix/snpmatrix/1.5.0", 
             "tool_state": "{\"__page__\": 0, \"phylip\": \"null\", \"__rerun_remap_job_id__\": null}", 
-            "tool_version": "0.0.3", 
+            "tool_version": "1.5.0", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "e474528e-acd0-4e26-819e-dd1514567d26"
+            "uuid": "732e9590-99d1-44c7-b612-293b92cb6cc4"
         }
     }, 
-    "uuid": "d33b86c5-61c2-4929-ba95-c30e429e4675"
+    "uuid": "242e582b-30b3-4f1a-8fba-576ca27cb618"
 }
