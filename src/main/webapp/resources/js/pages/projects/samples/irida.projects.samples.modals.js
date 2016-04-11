@@ -9,8 +9,8 @@
   function modalService($uibModal) {
 
     function _getSampleIds(samples) {
-      return samples.map(function(item) {
-        return item.sample.identifier;
+      return samples.map(function(sample) {
+        return sample.getId();
       })
     }
 
@@ -96,9 +96,7 @@
      * @returns {*}
      */
     function openMergeModal(selectedSamples) {
-      var ids = selectedSamples.map(function (item) {
-        return item.sample.identifier;
-      });
+      var ids = _getSampleIds(selectedSamples);
       return $uibModal.open({
         templateUrl : page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
         openedClass : 'merge-modal',
@@ -201,7 +199,7 @@
   function MergeModalController($uibModalInstance, samples) {
     var vm = this;
     vm.samples = samples;
-    vm.selected = vm.samples[0].sample.identifier;
+    vm.selected = vm.samples[0].getId();
 
     // If user enters a custom name it is not allowed to have spaces
     vm.validNameRE = /^[a-zA-Z0-9-_]+$/;
@@ -216,8 +214,8 @@
 
     vm.doMerge = function () {
       // Get the sampleIds to merge
-      var ids = samples.map(function (item) {
-        return item.sample.identifier;
+      var ids = samples.map(function (sample) {
+        return sample.getId();
       });
       $uibModalInstance.close({
         ids          : ids,

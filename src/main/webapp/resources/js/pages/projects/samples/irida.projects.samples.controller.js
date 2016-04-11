@@ -130,8 +130,8 @@
 		 */
 		vm.merge = function () {
 			var ids = [];
-			vm.selected.forEach(function (item) {
-				ids.push(item.sample.identifier);
+			vm.selected.forEach(function (sample) {
+				ids.push(sample.getId());
 			});
 			modalService.openMergeModal(vm.selected).then(function (result) {
 				samplesService.mergeSamples(result).then(function () {
@@ -194,10 +194,7 @@
 		 * Add the selected samples to the global sample cart.
 		 */
 		vm.addToCart = function () {
-			var selected = vm.samples.filter(function (sample) {
-				return sample.selected;
-			});
-			samplesService.addSamplesToCart(selected);
+			samplesService.addSamplesToCart(vm.selected);
 		};
 
 		// This properly adds the buttons to the table.

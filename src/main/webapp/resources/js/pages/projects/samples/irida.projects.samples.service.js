@@ -66,7 +66,18 @@
         var samples = [], items = [];
         responses.forEach(function (response) {
           if (response.data.hasOwnProperty("samples")) {
-            samples = samples.concat(response.data.samples);
+	          window.PROJECTS = window.PROJECTS || {};
+	          // Convert the sample to a standard that is used across the UI.
+	          var newSamples = response.data.samples.map(function (item) {
+		          var project = window.PROJECTS[item.project.identifier];
+		          if(project === undefined) {
+								project = new Project(item.project, item.sampleType);
+		          }
+		          var sample = new Sample(item.sample);
+		          sample.setProject(project);
+		          return sample;
+	          });
+            samples = samples.concat(newSamples);
             // This is adding information to build up the message to display to the users so that
             // they know how many samples from which project were added to the table.
             items.push({samples: response.data.samples.length, project: response.data.project.label});
@@ -101,18 +112,18 @@
 
 		function addSamplesToCart(samples) {
 			cartService.add(samples.map(function(sample) {
+				var project = sample.getProject();
 				return ({
-					type: sample.sampleType,
-					project: sample.project.identifier,
-					sample: sample.sample.identifier
+					type: project.getType(),
+					project: project.getId(),
+					sample: sample.getId()
 				});
 			}));
 		}
 
-		function removeSamples(items) {
-			var sampleIds = [];
-			items.forEach(function (item) {
-				sampleIds.push(item.sample.identifier);
+		function removeSamples(samples) {
+			var sampleIds = samples.map(function (sample) {
+				return sample.getId();
 			});
 			if (sampleIds.length > 0) {
 				return $http.post(page.urls.samples.remove, {sampleIds: sampleIds})
