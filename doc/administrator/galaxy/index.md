@@ -71,7 +71,7 @@ Please customize these environment variables to your system and proceed through 
 
 For more information about installing Galaxy, please see [Running Galaxy in a production environment][].
 
-***Note: For any configuration files, please replace any instance of an environment variable, such as `$GALAXY_ADMIN_USER`, with the actual value, such as `galaxy-irida`.  These configuration files include any of the following.***
+***Note: For any configuration files, please replace any instance of an environment variable, such as `$GALAXY_USER`, with the actual value, such as `galaxy-irida`.  These configuration files include any of the following.***
 
 * `galaxy-dist/config/*`
 * `env.sh`
