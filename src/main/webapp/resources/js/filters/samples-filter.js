@@ -45,7 +45,7 @@ var SamplesFilter = (function(moment) {
       return (
       nameFilter(sample.getName()) &&
       minDateFilter(sample.getModifiedDate()) &&
-      maxDateFilter(sample.getCreatedDate()));
+      maxDateFilter(sample.getModifiedDate()));
     });
   }
 
