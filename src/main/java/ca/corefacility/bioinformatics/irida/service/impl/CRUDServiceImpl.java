@@ -133,13 +133,24 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	public long count() {
 		return repository.count();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@Deprecated
+	public ValueType update(KeyType id, Map<String, Object> updatedFields) throws ConstraintViolationException,
+	EntityExistsException, InvalidPropertyException {
+		return updateFields(id, updatedFields);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional
-	public ValueType update(KeyType id, Map<String, Object> updatedFields) throws ConstraintViolationException,
+	public ValueType updateFields(KeyType id, Map<String, Object> updatedFields) throws ConstraintViolationException,
 			EntityExistsException, InvalidPropertyException {
 		// check if you can actually update the properties requested
 		ValueType instance = read(id);
