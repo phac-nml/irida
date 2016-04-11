@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * mutation, please extend {@link MutableIridaThing}.
  * 
  */
-public interface IridaThing extends Timestamped {
+public interface IridaThing extends Timestamped<Long> {
 	/**
 	 * Get a human readable label for this object.
 	 * 
