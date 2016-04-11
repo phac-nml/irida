@@ -399,24 +399,19 @@ public class ProjectsController {
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias,
 			final Principal principal) {
-		final String organismName;
-		final String projectName;
+		final String search = criterias.getSearch();
+		final Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
 
-		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
-			organismName = criterias.getSearch();
-			projectName = criterias.getSearch();
-		} else {
-			Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-			organismName = searchMap.getOrDefault("organism", "");
-			projectName = searchMap.getOrDefault("name", "");
-		}
+		final String organismName = searchMap.getOrDefault("organism", "");
+		final String projectName = searchMap.getOrDefault("name", "");
 
-		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
+		final Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
 		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
 		final String sortName = sortProperties.get("sort_string").toString();
 
-		final Page<Project> page = projectService.findProjectsForUser(projectName, organismName, currentPage, criterias.getLength(), direction, sortName);
+		final Page<Project> page = projectService.findProjectsForUser(search, projectName, organismName, currentPage,
+				criterias.getLength(), direction, sortName);
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
 		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join))
 				.collect(Collectors.toList()));
@@ -436,24 +431,18 @@ public class ProjectsController {
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
 			@DatatablesParams DatatablesCriterias criterias) {
-		final String organismName;
-		final String projectName;
-
-		if (!Strings.isNullOrEmpty(criterias.getSearch())) {
-			organismName = criterias.getSearch();
-			projectName = criterias.getSearch();
-		} else {
-			Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-			organismName = searchMap.getOrDefault("organism", "");
-			projectName = searchMap.getOrDefault("name", "");
-		}
+		final String search = criterias.getSearch();
+		final Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
+		final String organismName = searchMap.getOrDefault("organism", "");
+		final String projectName = searchMap.getOrDefault("name", "");
 		
 		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
 		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
 		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
 		final String sortName = sortProperties.get("sort_string").toString();
 
-		final Page<Project> page = projectService.findAllProjects(projectName, organismName, currentPage, criterias.getLength(), direction, sortName);
+		final Page<Project> page = projectService.findAllProjects(search, projectName, organismName, currentPage,
+				criterias.getLength(), direction, sortName);
 		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
 		projects.addAll(page.getContent().stream().map(this::createProjectMap).collect(Collectors.toList()));
 		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
