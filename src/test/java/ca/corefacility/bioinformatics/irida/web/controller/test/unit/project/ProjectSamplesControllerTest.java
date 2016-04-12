@@ -157,6 +157,8 @@ public class ProjectSamplesControllerTest {
 		//assertEquals(1, resource.getSequenceFileCount());
 		List<Link> links = resource.getLinks();
 		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS,
+				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED,
 				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE);
 		for (Link link : links) {
 			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
@@ -213,9 +215,9 @@ public class ProjectSamplesControllerTest {
 		verify(sampleService).update(s.getId(), updatedFields);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertNotNull(o);
-		assertTrue(o instanceof RootResource);
-		RootResource resource = (RootResource) o;
+		assertNotNull("There should be *something* in the response!", o);
+		assertTrue("Should be a sample in the response.", o instanceof Sample);
+		Sample resource = (Sample) o;
 		Map<String, String> links = linksToMap(resource.getLinks());
 		String self = links.get(Link.REL_SELF);
 		assertEquals("http://localhost/api/samples/" + s.getId(), self);
