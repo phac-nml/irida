@@ -77,17 +77,17 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="item in samplesCtrl.samples"
-            ng-click="item.selected = !item.selected; samplesCtrl.rowClick($event, $index)"
-            ng-class="item.selected ? 'selected' : ''" data-index="{{$index}}">
+        <tr ng-repeat="sample in samplesCtrl.samples"
+            ng-click="sample.selected = !item.selected; samplesCtrl.rowClick($event, $index)"
+            ng-class="sample.selected ? 'selected' : ''" data-index="{{$index}}">
             <td>
-                <input type="checkbox" ng-model="item.selected" ng-click="samplesCtrl.rowClick($event, $index)"/>
+                <input type="checkbox" ng-model="sample.selected" ng-click="samplesCtrl.rowClick($event, $index)"/>
             </td>
             <td>
-                <a class="btn btn-label sample-label" data:ng-href="@{'/samples/{{item.sample.identifier}}'}" ng-bind="item.sample.label"></a></td>
-            <td ng-bind="item.project.label" ng-show="samplesCtrl.showProjectname"></td>
-            <td ng-bind="item.sample.modifiedDate | date"></td>
-            <td ng-bind="item.sample.createdDate | date"></td>
+                <a class="btn btn-label sample-label" data:ng-href="@{'/samples/{{sample.getId()}}'}" ng-bind="sample.getName()"></a></td>
+            <td ng-bind="sample.getProject().getName()" ng-show="samplesCtrl.showProjectname"></td>
+            <td ng-bind="sample.getModifiedDate() | date"></td>
+            <td ng-bind="sample.getCreatedDate() | date"></td>
         </tr>
         </tbody>
     </table>
@@ -162,10 +162,10 @@
                     ng-click="project.selected = !project.selected; associatedProjectsCtrl.rowClick($event)">
                     <td>
                         <div class="checkbox"><label>
-                            <input type="checkbox" ng-model="project.selected"/>&nbsp;{{project.label}}
+                            <input type="checkbox" ng-model="project.selected"/>&nbsp;{{project.getName()}}
                         </label></div>
                     </td>
-                    <td ng-bind="project.organism"></td>
+                    <td ng-bind="project.getOrganism()"></td>
                     <td></td>
                 </tr>
             </table>

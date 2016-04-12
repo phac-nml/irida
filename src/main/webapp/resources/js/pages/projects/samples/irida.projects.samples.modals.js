@@ -9,8 +9,8 @@
   function modalService($uibModal) {
 
     function _getSampleIds(samples) {
-      return samples.map(function(item) {
-        return item.sample.identifier;
+      return samples.map(function(sample) {
+        return sample.getId();
       })
     }
 
@@ -96,9 +96,7 @@
      * @returns {*}
      */
     function openMergeModal(selectedSamples) {
-      var ids = selectedSamples.map(function (item) {
-        return item.sample.identifier;
-      });
+      var ids = _getSampleIds(selectedSamples);
       return $uibModal.open({
         templateUrl : page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
         openedClass : 'merge-modal',
@@ -165,10 +163,12 @@
     // Get the local project
     associatedProjectsService.getLocal().then(function (result) {
       // Check to see if they are already displayed.
-      result.data.forEach(function(project) {
-        project.selected = vm.display.local.indexOf(project.identifier) > -1;
+      vm.projects.local = [];
+      result.data.forEach(function(item) {
+        var project = new Project(item);
+        project.selected = vm.display.local.indexOf(project.getId()) > -1;
+        vm.projects.local.push(project);
       });
-      vm.projects.local = result.data;
     });
 
     vm.rowClick = function($event) {
@@ -184,7 +184,7 @@
       vm.display.local = [];
       vm.projects.local.forEach(function (project) {
         if (project.selected) {
-          vm.display.local.push(project.identifier);
+          vm.display.local.push(project.getId());
         }
       });
 
@@ -201,7 +201,7 @@
   function MergeModalController($uibModalInstance, samples) {
     var vm = this;
     vm.samples = samples;
-    vm.selected = vm.samples[0].sample.identifier;
+    vm.selected = vm.samples[0].getId();
 
     // If user enters a custom name it is not allowed to have spaces
     vm.validNameRE = /^[a-zA-Z0-9-_]+$/;
@@ -216,8 +216,8 @@
 
     vm.doMerge = function () {
       // Get the sampleIds to merge
-      var ids = samples.map(function (item) {
-        return item.sample.identifier;
+      var ids = samples.map(function (sample) {
+        return sample.getId();
       });
       $uibModalInstance.close({
         ids          : ids,

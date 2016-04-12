@@ -41,11 +41,11 @@ var SamplesFilter = (function(moment) {
       return (filter.date.endDate === null || filter.date.endDate.isAfter(new Date(date)));
     }
 
-    return samples.filter(function (s) {
+    return samples.filter(function (sample) {
       return (
-      nameFilter(s.sample.sampleName) &&
-      minDateFilter(s.sample.modifiedDate) &&
-      maxDateFilter(s.sample.modifiedDate));
+      nameFilter(sample.getName()) &&
+      minDateFilter(sample.getModifiedDate()) &&
+      maxDateFilter(sample.getModifiedDate()));
     });
   }
 

@@ -68,8 +68,8 @@
 				samples.forEach(function (sample) {
 					if (vm.selected.find(function (item) {
 							// Check to see if the selected item matches the sample and from the right project.
-							if (item.sample.identifier === sample.sample.identifier &&
-								item.project.identifier === sample.project.identifier) {
+							if (item.getId() === sample.getId() &&
+								item.getProject().getId() === sample.getProject().getId()) {
 								s.push(item);
 								return true;
 							}
@@ -130,8 +130,8 @@
 		 */
 		vm.merge = function () {
 			var ids = [];
-			vm.selected.forEach(function (item) {
-				ids.push(item.sample.identifier);
+			vm.selected.forEach(function (sample) {
+				ids.push(sample.getId());
 			});
 			modalService.openMergeModal(vm.selected).then(function (result) {
 				samplesService.mergeSamples(result).then(function () {
@@ -194,10 +194,7 @@
 		 * Add the selected samples to the global sample cart.
 		 */
 		vm.addToCart = function () {
-			var selected = vm.samples.filter(function (sample) {
-				return sample.selected;
-			});
-			samplesService.addSamplesToCart(selected);
+			samplesService.addSamplesToCart(vm.selected);
 		};
 
 		// This properly adds the buttons to the table.
