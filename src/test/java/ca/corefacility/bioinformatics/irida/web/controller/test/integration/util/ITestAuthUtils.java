@@ -5,7 +5,6 @@ import static com.jayway.restassured.path.json.JsonPath.from;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
@@ -31,8 +30,6 @@ public class ITestAuthUtils {
 	private static final String CLIENT_SECRET = "testClientSecret";
 	private static final String OAUTH_ENDPOINT = "/api/oauth/token";
 	
-	private static final Map<String, RequestSpecification> cachedRequestSpecifications = new ConcurrentHashMap<>();
-
 	static {
 		ROLE_TO_USER = new HashMap<>();
 		ROLE_TO_USER.put(ROLE_ADMIN, new AuthenticationHolder("admin", "password1"));
@@ -45,22 +42,19 @@ public class ITestAuthUtils {
 	}
 
 	public static RequestSpecification asRole(String role) {
-		if (!cachedRequestSpecifications.containsKey(role)) {
-			AuthenticationHolder pair = ROLE_TO_USER.get(role);
-			String oAuthToken = getOAuthToken(pair.username,pair.password);
-			pair.setToken(oAuthToken);
-			String authString = "Bearer " + oAuthToken;
-			cachedRequestSpecifications.put(role, given().header("Authorization", authString));			
-		}
-		
-		return cachedRequestSpecifications.get(role);
+		AuthenticationHolder pair = ROLE_TO_USER.get(role);
+		String oAuthToken = getOAuthToken(pair.username,pair.password);
+		pair.setToken(oAuthToken);
+		String authString = "Bearer " + oAuthToken;
+		return given().header("Authorization", authString);			
 	}
 	
 	public static String getTokenForRole(final String role) {
-		if (!cachedRequestSpecifications.containsKey(role)) {
+		AuthenticationHolder pair = ROLE_TO_USER.get(role);		
+		if (pair.token == null) {
 			asRole(role);
 		}
-		return ROLE_TO_USER.get(role).token;
+		return pair.token;
 	}
 	
 	private static String getOAuthToken(String username, String password){
