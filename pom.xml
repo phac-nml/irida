@@ -661,7 +661,6 @@
 								<jetty.port>${jetty.port}</jetty.port>
 								<server.base.url>http://localhost:${jetty.port}</server.base.url>
 							</systemPropertyVariables>
-							<rerunFailingTestsCount>5</rerunFailingTestsCount>
 						</configuration>
 					</execution>
 				</executions>
