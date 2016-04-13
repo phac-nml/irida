@@ -5,7 +5,9 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 
+import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 
 /**
@@ -16,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEv
  * @see LaunchesProjectEvent
  */
 @Aspect
-public class ProjectEventAspect {
+public class ProjectEventAspect implements Ordered {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectEventAspect.class);
 	private ProjectEventHandler eventHandler;
 
@@ -34,5 +36,10 @@ public class ProjectEventAspect {
 	public void handleProjectEventWithoutReturn(JoinPoint jp, LaunchesProjectEvent eventAnnotation) {
 		logger.trace("Intercepted void method annotated with LaunchesProjectEvent " + jp.toString());
 		eventHandler.delegate(new MethodEvent(eventAnnotation.value(), null, jp.getArgs()));
+	}
+
+	@Override
+	public int getOrder() {
+		return IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER - 1;
 	}
 }
