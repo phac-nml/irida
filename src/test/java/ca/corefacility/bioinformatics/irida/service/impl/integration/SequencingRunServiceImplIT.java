@@ -4,14 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,26 +23,30 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+
 /**
- * Test for SequencingRunServiceImplIT
+ * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
+ * reset file at /ca/corefacility/bioinformatics/irida/service/impl/
+ * SequencingRunServiceTableReset.xml
+ * 
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -61,15 +63,12 @@ public class SequencingRunServiceImplIT {
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 	@Autowired
 	private SequencingRunService miseqRunService;
-	@Autowired
-	private SequenceFileService sequenceFileService;
-	@Autowired
-	private SampleService sampleService;
-	@Autowired
-	private SequenceFilePairService pairService;
 
 	@Autowired
-	private AnalysisService analysisService;
+	private SampleService sampleService;
+
+	@Autowired
+	private SequencingObjectService objectService;
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "SEQUENCER")
@@ -96,7 +95,7 @@ public class SequencingRunServiceImplIT {
 	}
 
 	private void testAddSequenceFileToMiseqRun() throws IOException {
-		SequenceFile sf = sequenceFileService.read(1L);
+
 		SequencingRun miseqRun = miseqRunService.read(1L);
 		// we can't actually know a file name in the XML file that we use to
 		// populate the database for these tests, so the files don't exist
@@ -105,30 +104,22 @@ public class SequencingRunServiceImplIT {
 		// that we can link to.
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-		sf.setFile(sequenceFile);
-		sequenceFileService.update(1L, ImmutableMap.of("file", sequenceFile));
-		miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
+		SequenceFile sf = new SequenceFile(sequenceFile);
+		SequencingObject so = new SingleEndSequenceFile(sf);
+		so = objectService.create(so);
+
+		miseqRunService.addSequencingObjectToSequencingRun(miseqRun, so);
 		SequencingRun saved = miseqRunService.read(1L);
-		SequenceFile savedFile = sequenceFileService.read(1L);
-		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
-		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(savedFile);
+		SequencingObject readObject = objectService.read(so.getId());
+		SequenceFile readFile = readObject.getFiles().iterator().next();
+
+		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService
+				.getSequencingObjectsForSequencingRun(saved);
+		assertTrue("Saved miseq run should have seqence file", sequencingObjectsForSequencingRun.contains(so));
+
+		AnalysisFastQC analysis = readFile.getFastQCAnalysis();
 		assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	public void testGetMiseqRunForSequenceFile() {
-		SequenceFile sf = sequenceFileService.read(2L);
-
-		try {
-			SequencingRun j = miseqRunService.getSequencingRunForSequenceFile(sf);
-			assertEquals("Join had wrong miseq run.", Long.valueOf(2L), j.getId());
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Test failed for unknown reason.");
-		}
 	}
 
 	@Test
@@ -179,22 +170,22 @@ public class SequencingRunServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testDeleteCascade() {
-		assertTrue("Sequence file should exist before", sequenceFileService.exists(2L));
-		assertTrue("file pair should exist before", pairService.exists(1L));
+		assertTrue("Sequence file should exist before", objectService.exists(3L));
+		assertTrue("file pair should exist before", objectService.exists(1L));
 		miseqRunService.delete(2L);
-		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(2L));
-		assertFalse("file pair should not exist after", pairService.exists(1L));
-		assertTrue("file 7 should not be deleted because it's in an analysis", sequenceFileService.exists(7L));
+		assertFalse("Sequence file should be deleted on cascade", objectService.exists(3L));
+		assertFalse("file pair should not exist after", objectService.exists(1L));
+		assertTrue("file 7 should not be deleted because it's in an analysis", objectService.exists(6L));
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testDeleteCascadeToSample() {
-		assertTrue("Sequence file should exist before", sequenceFileService.exists(1L));
+		assertTrue("Sequence file should exist before", objectService.exists(2L));
 		miseqRunService.delete(3L);
-		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(1L));
-		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(3L));
-		assertFalse("Sequence file should be deleted on cascade", sequenceFileService.exists(4L));
+		assertFalse("Sequence file should be deleted on cascade", objectService.exists(2L));
+		assertFalse("Sequence file should be deleted on cascade", objectService.exists(4L));
+		assertFalse("Sequence file should be deleted on cascade", objectService.exists(5L));
 		assertFalse("Sample should be deleted on cascade", sampleService.exists(2L));
 		assertTrue("This sample should not be removed", sampleService.exists(1L));
 	}
@@ -217,14 +208,15 @@ public class SequencingRunServiceImplIT {
 
 		SequenceFile sf = new SequenceFile();
 		sf.setFile(p);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		Sample sample = sampleService.read(1L);
 		SequencingRun run = miseqRunService.read(2L);
 
-		sequenceFileService.createSequenceFileInSample(sf, sample);
+		objectService.createSequencingObjectInSample(so, sample);
 
-		miseqRunService.addSequenceFileToSequencingRun(run, sf);
+		miseqRunService.addSequencingObjectToSequencingRun(run, so);
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
+		AnalysisFastQC analysis = sf.getFastQCAnalysis();
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
 	}
 }

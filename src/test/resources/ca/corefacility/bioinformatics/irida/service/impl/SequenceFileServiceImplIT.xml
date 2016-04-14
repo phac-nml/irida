@@ -45,15 +45,6 @@
     <sequence_file id="5" created_date="2013-07-18 14:20:19.0"
         file_path="/file5" file_revision_number="1" />		
 
-	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
-		sample_id="1" sequencefile_id="1" />
-	<sequencefile_sample id="2" createdDate="2013-07-18 14:20:19.0"
-        sample_id="2" sequencefile_id="3" />
-    <sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
-        sample_id="2" sequencefile_id="4" />    
-    <sequencefile_sample id="4" createdDate="2013-07-18 14:20:19.0"
-        sample_id="2" sequencefile_id="5" /> 
-
 	<sequence_file_properties sequence_file_id="1"
 		property_key="samplePlate" property_value="5" />
 	<sequence_file_properties sequence_file_id="1"
@@ -62,10 +53,31 @@
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE" 
 	   layout_type="PAIRED_END"/>
 	<miseq_run id="1" workflow="notnull" />
+	
+	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
+		sequencing_run_id="1" />
+	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"/>
+	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0"/>
+	<sequencing_object id="4" created_date="2013-07-18 14:20:19.0"/>
 
-	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
+	<sequence_file_pair id="1" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="3" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="4" />
+	
+	<sequence_file_single_end id="2"
+		file_id="1" />
+	<sequence_file_single_end id="3"
+		file_id="2" />
+	<sequence_file_single_end id="4"
+		file_id="5" />
+		
+	<sample_sequencingobject id="1" created_date="2013-07-18 14:20:19.0"
+		sample_id="1" sequencingobject_id="2" />
+	<sample_sequencingobject id="2" created_date="2013-07-18 14:20:19.0"
+        sample_id="2" sequencingobject_id="1" />
+    <sample_sequencingobject id="3" created_date="2013-07-18 14:20:19.0"
+        sample_id="2" sequencingobject_id="4" />    
+
 </dataset>

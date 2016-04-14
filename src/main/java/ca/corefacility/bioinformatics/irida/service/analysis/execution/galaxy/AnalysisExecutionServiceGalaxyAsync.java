@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
@@ -109,8 +110,8 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		}
 
 		// Get all the individual files and save them locally
-		for (SequenceFileSnapshot file : analysisSubmission.getRemoteFilesSingle()) {
-			sequenceFileSnapshotService.mirrorFileContent(file);
+		for (SingleEndSequenceFileSnapshot file : analysisSubmission.getRemoteFilesSingle()) {
+			sequenceFileSnapshotService.mirrorFileContent(file.getSequenceFile());
 		}
 
 		// once complete update the state

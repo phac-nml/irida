@@ -50,7 +50,7 @@ public class SequenceFilePairSnapshotServiceImpl extends CRUDServiceImpl<Long, S
 		f1 = fileRepository.save(f1);
 		f2 = fileRepository.save(f2);
 
-		SequenceFilePairSnapshot remoteSequenceFilePair = new SequenceFilePairSnapshot(f1, f2);
+		SequenceFilePairSnapshot remoteSequenceFilePair = new SequenceFilePairSnapshot(pair, f1, f2);
 
 		return create(remoteSequenceFilePair);
 	}

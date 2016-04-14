@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -77,8 +78,8 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 *            The {@link SequenceFile} to get submissions for
 	 * @return Set of {@link AnalysisSubmission}
 	 */
-	@Query("FROM AnalysisSubmission s WHERE ?1 IN elements(s.inputFilesSingle)")
-	public Set<AnalysisSubmission> findAnalysisSubmissionForSequenceFile(SequenceFile file);
+	@Query("FROM AnalysisSubmission s WHERE ?1 IN elements(s.inputFilesSingleEnd)")
+	public Set<AnalysisSubmission> findAnalysisSubmissionForSequenceFile(SingleEndSequenceFile file);
 
 	/**
 	 * Get the Set of {@link AnalysisSubmission}s which use a given
