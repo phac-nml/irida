@@ -35,9 +35,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -45,16 +42,20 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
@@ -70,7 +71,7 @@ public class ProjectSamplesControllerTest {
 	private ProjectService projectService;
 	private ProjectSamplesController controller;
 	private SampleService sampleService;
-	private SequenceFileService sequenceFileService;
+	private SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 	private ProjectControllerUtils projectUtils;
 
@@ -78,11 +79,11 @@ public class ProjectSamplesControllerTest {
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
-		sequenceFileService = mock(SequenceFileService.class);
+		sequencingObjectService = mock(SequencingObjectService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
 
-		controller = new ProjectSamplesController(projectService, sampleService, sequenceFileService,
+		controller = new ProjectSamplesController(projectService, sampleService, sequencingObjectService,
 				projectUtils, messageSource);
 		user.setId(1L);
 
@@ -251,7 +252,7 @@ public class ProjectSamplesControllerTest {
 		assertEquals("Result is success", result.get("result"), "success");
 	}
 
-	@Test
+@Test
 	public void testGetProjectsAvailableToCopySamplesAsAdmin() {
 		String term = "";
 		int page = 0;
@@ -278,7 +279,7 @@ public class ProjectSamplesControllerTest {
 		verify(projectService).getUnassociatedProjects(p, term, page, pagesize, order, property);
 	}
 
-	@Test
+@Test
 	public void testGetProjectsAvailableToCopySamplesAsUser() {
 		String term = "";
 		int page = 0;
@@ -336,30 +337,32 @@ public class ProjectSamplesControllerTest {
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
-		List<Join<Sample, SequenceFile>> filejoin = ImmutableList.of(new SampleSequenceFileJoin(sample, file));
+
+		ImmutableList<SampleSequencingObjectJoin> filejoin = ImmutableList.of(new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)));
 
 		when(projectService.read(project.getId())).thenReturn(project);
 		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(ImmutableList.of(sample));
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(filejoin);
+		when(sequencingObjectService.getSequencingObjectsForSample(sample)).thenReturn(filejoin);
 
 		controller.downloadSamples(project.getId(), ImmutableList.of(sample.getId()), response);
-		
+
 		verify(projectService).read(project.getId());
 		verify(sampleService).readMultiple(ImmutableList.of(sample.getId()));
-		verify(sequenceFileService).getSequenceFilesForSample(sample);
-		
+		verify(sequencingObjectService).getSequencingObjectsForSample(sample);
+
 		assertTrue("Response should contain a \"Content-Disposition\" header.",
 				response.containsHeader("Content-Disposition"));
 		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_project.zip\"",
 				response.getHeader("Content-Disposition"));
-		
+
 		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(response.getContentAsByteArray()))) {
 			ZipEntry nextEntry = zipStream.getNextEntry();
 			String fileName = nextEntry.getName();
 			assertTrue("incorrect file in zip stream: " + file.getFileName(), fileName.endsWith(file.getFileName()));
 		}
 	}
-	
+
 	@Test
 	public void testDownloadSamplesWithSameName() throws IOException {
 		Project project = TestDataFactory.constructProject();
@@ -368,18 +371,21 @@ public class ProjectSamplesControllerTest {
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
-		List<Join<Sample, SequenceFile>> filejoin = ImmutableList.of(new SampleSequenceFileJoin(sample, file),
-				new SampleSequenceFileJoin(sample, file), new SampleSequenceFileJoin(sample, file));
+
+		ImmutableList<SampleSequencingObjectJoin> filejoin = ImmutableList.of(new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)), new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)), new SampleSequencingObjectJoin(sample,
+				new SingleEndSequenceFile(file)));
 
 		when(projectService.read(project.getId())).thenReturn(project);
 		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(ImmutableList.of(sample));
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(filejoin);
+		when(sequencingObjectService.getSequencingObjectsForSample(sample)).thenReturn(filejoin);
 
 		controller.downloadSamples(project.getId(), ImmutableList.of(sample.getId()), response);
 
 		verify(projectService).read(project.getId());
 		verify(sampleService).readMultiple(ImmutableList.of(sample.getId()));
-		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		verify(sequencingObjectService).getSequencingObjectsForSample(sample);
 
 		assertTrue("Response should contain a \"Content-Disposition\" header.",
 				response.containsHeader("Content-Disposition"));

@@ -31,7 +31,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 @Entity
 @Table(name = "sequencing_run")
@@ -56,7 +56,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	private Date modifiedDate;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, mappedBy = "sequencingRun")
-	private Set<SequenceFile> sequenceFiles;
+	private Set<SequencingObject> sequencingObject;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)

@@ -5,6 +5,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,9 +29,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -54,21 +56,22 @@ public class CartController {
 	private final SampleService sampleService;
 	private final UserService userService;
 	private final ProjectService projectService;
-	private final SequenceFileService sequenceFileService;
+	private final SequencingObjectService sequencingObjectService;
 	
 	private final SampleRemoteService sampleRemoteService;
 
 	@Autowired
-	public CartController(SampleService sampleService, UserService userService, ProjectService projectService, SequenceFileService sequenceFileService, SampleRemoteService sampleRemoteService) {
+	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
+			SequencingObjectService sequencingObjectService, SampleRemoteService sampleRemoteService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.userService = userService;
-		this.sequenceFileService = sequenceFileService;
 		this.sampleRemoteService = sampleRemoteService;
+		this.sequencingObjectService = sequencingObjectService;
 		selected = new HashMap<>();
 		remoteSelected = new HashMap<>();
 	}
-	
+
 	/**
 	 * Get a modal dialog in order to export sample files to Galaxy
 	 * @param model
@@ -359,17 +362,23 @@ public class CartController {
 	 * @return A List<Map<String,Object>> containing the relevant SequenceFile
 	 *         information
 	 */
-	private List<Map<String,Object>> getSequenceFileList(Sample sample) {
-		List<Join<Sample, SequenceFile>> seqJoinList = sequenceFileService.getSequenceFilesForSample(sample);
-		List<Map<String,Object>> sequenceFiles = new ArrayList<>();
-		for(Join<Sample, SequenceFile>seqJoin : seqJoinList) {
-			SequenceFile seq = seqJoin.getObject();
-			
-			String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
-					.getSequenceFileForSample(sample.getId(),seq.getId())).withSelfRel().getHref();
-			Map<String, Object> seqMap = ImmutableMap.of("selfRef",seqFileLoc);
-			sequenceFiles.add(seqMap);
+	private List<Map<String, Object>> getSequenceFileList(Sample sample) {
+		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
+				.getSequencingObjectsForSample(sample);
+
+		List<Map<String, Object>> sequenceFiles = new ArrayList<>();
+		for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
+			for (SequenceFile seq : join.getObject().getFiles()) {
+				String objectType = RESTSampleSequenceFilesController.objectLabels.get(join.getObject().getClass());
+				String seqFileLoc = linkTo(
+						methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(
+								sample.getId(), objectType, join.getObject().getId(), seq.getId())).withSelfRel()
+						.getHref();
+				Map<String, Object> seqMap = ImmutableMap.of("selfRef", seqFileLoc);
+				sequenceFiles.add(seqMap);
+			}
 		}
+
 		return sequenceFiles;
 	}
 	

@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="sequencing-objects" author="tom">
+
+		<!-- Create the sequencing object tables -->
+		<createTable tableName="sequencing_object">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="sequencing_run_id" type="bigint(20)">
+				<constraints referencedTableName="sequencing_run"
+					referencedColumnNames="id" foreignKeyName="FK_SEQUENCING_OBJECT_RUN" />
+			</column>
+			<column name="assembled_genome" type="bigint(20)">
+				<constraints referencedTableName="assembled_genome_analysis"
+					referencedColumnNames="id" foreignKeyName="FK_SEQUENCING_OBJECT_ASSEMBLED_GENOME" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sequencing_object_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="assembled_genome" type="bigint(20)" />
+			<column name="sequencing_run_id" type="bigint(20)" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_SEQUENCING_OBJECT_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<!-- Map SequenceFilePair ids and dates up to SequencingObject -->
+		<sql>
+			INSERT INTO sequencing_object (id, created_date,
+			assembled_genome) SELECT id,
+			created_date, assembled_genome FROM
+			sequence_file_pair
+		</sql>
+
+		<!-- Ditch the date and genome column in SequenceFilePair -->
+		<dropForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_PAIR_ASSEMBLED_GENOME"
+			baseTableName="sequence_file_pair" />
+		<dropColumn columnName="created_date" tableName="sequence_file_pair" />
+		<dropColumn columnName="assembled_genome" tableName="sequence_file_pair" />
+
+		<!-- Handling the auditing table for existing sequence_file_pairs -->
+		<sql>
+			INSERT INTO sequencing_object_AUD (id, REV, REVTYPE,
+			created_date, assembled_genome) SELECT id, REV, REVTYPE,
+			created_date, assembled_genome FROM
+			sequence_file_pair_AUD;
+		</sql>
+		<dropColumn columnName="created_date" tableName="sequence_file_pair_AUD" />
+		<dropColumn columnName="REVTYPE" tableName="sequence_file_pair_AUD" />
+		<dropColumn columnName="assembled_genome" tableName="sequence_file_pair_AUD" />
+		<dropForeignKeyConstraint baseTableName="sequence_file_pair_AUD"
+			constraintName="FK_SEQUENCE_FILE_PAIR_AUD" />
+		<addForeignKeyConstraint baseColumnNames="id, REV"
+			baseTableName="sequence_file_pair_AUD" constraintName="FK_SEQUENCE_FILE_PAIR_AUD"
+			referencedColumnNames="id, REV" referencedTableName="sequencing_object_AUD" />
+
+		<!-- temporarily disable some FKs on SequenceFilePair so we can remove 
+			the auto increment -->
+		<dropForeignKeyConstraint baseTableName="analysis_submission_sequence_file_pair"
+			constraintName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_PAIR_FILE_ID" />
+
+		<dropForeignKeyConstraint baseTableName="sequence_file_pair_files"
+			constraintName="FK_SEQUENCE_FILE_PAIR_FILES_PAIR" />
+
+		<dropForeignKeyConstraint baseTableName="ncbi_export_biosample_sequence_file_pair "
+			constraintName="FK_NCBI_SUBMISSION_PAIR_FILE_PAIR" />
+
+		<!-- Redefine id for SequenceFilePair so that it doesn't auto increment -->
+		<modifyDataType columnName="id" newDataType="bigint(20)"
+			tableName="sequence_file_pair" />
+
+		<dropDefaultValue columnDataType="bigint(20)"
+			columnName="id" tableName="sequence_file_pair" />
+
+		<!-- Add a FK to SequencingObject from SequenceFilePair -->
+		<addForeignKeyConstraint baseColumnNames="id"
+			baseTableName="sequence_file_pair" constraintName="FK_SEQUENCE_FILE_PAIR_OBJECT"
+			referencedColumnNames="id" referencedTableName="sequencing_object" />
+
+		<!-- Re-enable the disabled FKs -->
+		<addForeignKeyConstraint baseColumnNames="sequence_file_pair_id"
+			baseTableName="analysis_submission_sequence_file_pair"
+			constraintName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_PAIR_FILE_ID"
+			referencedColumnNames="id" referencedTableName="sequence_file_pair" />
+
+		<addForeignKeyConstraint baseColumnNames="pair_id"
+			baseTableName="sequence_file_pair_files" constraintName="FK_SEQUENCE_FILE_PAIR_FILES_PAIR"
+			referencedColumnNames="id" referencedTableName="sequence_file_pair" />
+
+		<addForeignKeyConstraint baseColumnNames="pairs_id"
+			baseTableName="ncbi_export_biosample_sequence_file_pair"
+			constraintName="FK_NCBI_SUBMISSION_PAIR_FILE_PAIR"
+			referencedColumnNames="id" referencedTableName="sequence_file_pair" />
+
+		<!-- Create a table for SingleEndSequenceFile -->
+		<createTable tableName="sequence_file_single_end">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="sequencing_object" referencedColumnNames="id"
+					foreignKeyName="FK_SEQUENCE_FILE_SINGLE_OBJECT" />
+			</column>
+			<column name="file_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="sequence_file"
+					referencedColumnNames="id" foreignKeyName="FK_SEQUENCE_FILE_SINGLE_FILE" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sequence_file_single_end_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="file_id" type="bigint(20)" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" />
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="id, REV"
+			baseTableName="sequence_file_single_end_AUD" constraintName="FK_SEQUENCE_FILE_SINGLE_AUD"
+			referencedColumnNames="id, REV" referencedTableName="sequencing_object_AUD" />
+
+		<!-- Adding a temporary column to store a file id for a SingleEndSequenceFile -->
+		<addColumn tableName="sequencing_object">
+			<column name="tmp_file_id" type="bigint(20)" />
+		</addColumn>
+
+		<!-- Adding SequencingObjects for new SingleEndSequenceFiles. Also temporarily 
+			storing the file id here -->
+		<sql>
+			INSERT INTO sequencing_object (created_date, tmp_file_id) SELECT
+			f.created_date, f.id FROM
+			sequence_file f WHERE f.id NOT IN (select
+			files_id from
+			sequence_file_pair_files)
+		</sql>
+
+		<!-- Inserting new SingleEndSequenceFiles into their table -->
+		<sql>
+			INSERT INTO sequence_file_single_end (id, file_id) SELECT id,
+			tmp_file_id FROM sequencing_object WHERE tmp_file_id IS NOT NULL
+		</sql>
+
+		<!-- Ditching the temporary column -->
+		<dropColumn columnName="tmp_file_id" tableName="sequencing_object" />
+
+		<!-- We need to add the existing sequence_file_single_end auditing records 
+			into its _AUD table. We'll steal the creation records from the sequence_file_AUD 
+			table -->
+		<!-- First some temporary columns -->
+		<addColumn tableName="Revisions">
+			<column name="tmp_seqobj_id" type="bigint(20)" />
+			<column name="tmp_created_date" type="datetime" />
+			<column name="tmp_file_id" type="bigint(20)" />
+		</addColumn>
+
+		<!-- Inserting sequence_file_AUD records which pertain to single end files 
+			into Revisions and temp columns -->
+		<sql>
+			INSERT INTO Revisions (timestamp, user_id, client_id,
+			tmp_seqobj_id, tmp_created_date, tmp_file_id)
+			SELECT r.timestamp,
+			r.user_id, r.client_id, s.id, f.created_date, f.id
+			FROM
+			sequence_file_AUD f INNER JOIN sequence_file_single_end s ON
+			f.id=s.file_id INNER JOIN Revisions r ON r.id=f.REV
+			WHERE f.REVTYPE=0
+		</sql>
+
+		<!-- Insert into sequencing_object_AUD -->
+		<sql>
+			INSERT INTO sequencing_object_AUD (id, created_date, REV,
+			REVTYPE) SELECT tmp_seqobj_id, tmp_created_date, id, '0' FROM
+			Revisions WHERE tmp_seqobj_id IS NOT NULL
+		</sql>
+
+		<!-- Insert into sequence_file_single_end_AUD -->
+		<sql>
+			INSERT INTO sequence_file_single_end_AUD (id, file_id, REV)
+			SELECT tmp_seqobj_id, tmp_file_id, id from Revisions WHERE
+			tmp_seqobj_id IS NOT NULL
+		</sql>
+
+		<!-- Ditch the temporary columns -->
+		<dropColumn tableName="Revisions" columnName="tmp_seqobj_id" />
+		<dropColumn tableName="Revisions" columnName="tmp_created_date" />
+		<dropColumn tableName="Revisions" columnName="tmp_file_id" />
+
+		<!-- Insert the sequencing run ids from sequencefile -->
+		<sql>
+			UPDATE sequencing_object o INNER JOIN sequence_file_pair_files p
+			ON o.id=p.pair_id inner join sequence_file f on p.files_id=f.id SET
+			o.sequencing_run_id=f.sequencing_run_id
+		</sql>
+
+		<sql>
+			UPDATE sequencing_object o INNER JOIN sequence_file_single_end s
+			ON s.id=o.id INNER JOIN sequence_file f ON s.file_id=f.id SET
+			o.sequencing_run_id=f.sequencing_run_id
+		</sql>
+
+		<sql>
+			UPDATE sequencing_object_AUD a INNER JOIN sequencing_object o ON
+			a.id=o.id SET a.sequencing_run_id=o.sequencing_run_id
+		</sql>
+
+		<dropForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN"
+			baseTableName="sequence_file" />
+		<dropColumn columnName="sequencing_run_id" tableName="sequence_file" />
+		<dropColumn columnName="sequencing_run_id" tableName="sequence_file_AUD" />
+
+
+		<!-- Add the analyses for single files -->
+		<createTable tableName="analysis_submission_sequence_file_single_end">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SINGLE_FILE_ANALYSIS"
+					referencedColumnNames="id" referencedTableName="analysis_submission" />
+			</column>
+			<column name="sequencing_object_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SINGLE_FILE_FILE"
+					referencedColumnNames="id" referencedTableName="sequence_file_single_end" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_submission_sequence_file_single_end_AUD">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="sequencing_object_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_ANALYSIS_SINGLE_FILE_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<sql>
+			INSERT INTO analysis_submission_sequence_file_single_end
+			(analysis_submission_id, sequencing_object_id) SELECT
+			a.analysis_submission_id, o.id FROM
+			analysis_submission_sequence_file_single a INNER JOIN
+			sequence_file_single_end o ON a.sequence_file_id=o.file_id
+		</sql>
+
+		<sql>
+			INSERT INTO analysis_submission_sequence_file_single_end_AUD
+			(analysis_submission_id, sequencing_object_id, REV, REVTYPE)
+			SELECT
+			a.analysis_submission_id, o.id, a.REV, a.REVTYPE FROM
+			analysis_submission_sequence_file_single_AUD a INNER JOIN
+			sequence_file_single_end o ON a.sequence_file_id=o.file_id
+		</sql>
+
+		<dropTable tableName="analysis_submission_sequence_file_single" />
+		<dropTable tableName="analysis_submission_sequence_file_single_AUD" />
+
+		<!-- Change the NCBI exporter to use single end files -->
+		<createTable tableName="ncbi_export_biosample_sequence_file_single_end">
+			<column name="ncbi_export_biosample_id" type="varchar(255)">
+				<constraints nullable="false"
+					foreignKeyName="FK_NCBI_EXPORT_SINGLE_END_FILE_SAMPLE"
+					referencedColumnNames="id" referencedTableName="ncbi_export_biosample" />
+			</column>
+			<column name="files_id" type="bigint(20)">
+				<constraints nullable="false"
+					foreignKeyName="FK_NCBI_EXPORT_SINGLE_END_FILE_FILE"
+					referencedColumnNames="id" referencedTableName="sequence_file_single_end" />
+			</column>
+		</createTable>
+
+		<sql>
+			INSERT INTO ncbi_export_biosample_sequence_file_single_end
+			(ncbi_export_biosample_id, files_id) SELECT
+			s.ncbi_export_biosample_id, o.id FROM
+			ncbi_export_biosample_sequence_file s INNER JOIN
+			sequence_file_single_end o ON s.files_id=o.file_id
+		</sql>
+
+		<dropTable tableName="ncbi_export_biosample_sequence_file" />
+
+	</changeSet>
+</databaseChangeLog>

@@ -19,8 +19,6 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
@@ -28,18 +26,20 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.Lists;
 
 /**
  * Unit tests for {@link SampleServiceImpl}.
@@ -50,12 +50,10 @@ public class SampleServiceImplTest {
 	private SampleService sampleService;
 	private SampleRepository sampleRepository;
 	private ProjectSampleJoinRepository psjRepository;
-	private SampleSequenceFileJoinRepository ssfRepository;
 	private AnalysisRepository analysisRepository;
-	private SequenceFilePairRepository sequenceFilePairRepository;
-	private AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
+	private SampleSequencingObjectJoinRepository ssoRepository;
 	private Validator validator;
-	
+
 	private AssembledGenomeAnalysis assembledGenome1;
 	private AssembledGenomeAnalysis assembledGenome2;
 
@@ -68,25 +66,25 @@ public class SampleServiceImplTest {
 	public void setUp() {
 		sampleRepository = mock(SampleRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
-		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		analysisRepository = mock(AnalysisRepository.class);
-		sequenceFilePairRepository = mock(SequenceFilePairRepository.class);
-		assembledGenomeAnalysisRepository = mock(AssembledGenomeAnalysisRepository.class);
+		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		assembledGenome1 = mock(AssembledGenomeAnalysis.class);
 		assembledGenome2 = mock(AssembledGenomeAnalysis.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
-		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, analysisRepository,
-				sequenceFilePairRepository, assembledGenomeAnalysisRepository, validator);
+		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository,
+				ssoRepository, validator);
+
 	}
-	
+
 	@Test
 	public void testFindAssembliesForSampleNoAssemblies() {
 		Sample s = new Sample();
 		s.setId(1L);
 		SequenceFilePair pair = new SequenceFilePair();
 
-		when(sequenceFilePairRepository.getSequenceFilePairsForSample(s)).thenReturn(Lists.newArrayList(pair));
+		when(ssoRepository.getSequencesForSample(s)).thenReturn(
+				Lists.newArrayList(new SampleSequencingObjectJoin(s, pair)));
 
 		assertEquals("Invalid number of assemblies found", 0, sampleService.findAssembliesForSample(s).size());
 	}
@@ -97,10 +95,10 @@ public class SampleServiceImplTest {
 		s.setId(1L);
 		SequenceFilePair pair = new SequenceFilePair();
 		pair.setAssembledGenome(assembledGenome1);
-		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair))
-				.thenReturn(assembledGenome1);
 
-		when(sequenceFilePairRepository.getSequenceFilePairsForSample(s)).thenReturn(Lists.newArrayList(pair));
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, pair);
+
+		when(ssoRepository.getSequencesForSample(s)).thenReturn(Lists.newArrayList(join));
 
 		assertEquals("Invalid number of assemblies found", 1, sampleService.findAssembliesForSample(s).size());
 	}
@@ -114,11 +112,8 @@ public class SampleServiceImplTest {
 		SequenceFilePair pair2 = new SequenceFilePair();
 		pair2.setAssembledGenome(assembledGenome2);
 
-		when(sequenceFilePairRepository.getSequenceFilePairsForSample(s)).thenReturn(Lists.newArrayList(pair1, pair2));
-		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair1)).thenReturn(
-				assembledGenome1);
-		when(assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(pair2)).thenReturn(
-				assembledGenome2);
+		when(ssoRepository.getSequencesForSample(s)).thenReturn(
+				Lists.newArrayList(new SampleSequencingObjectJoin(s, pair1), new SampleSequencingObjectJoin(s, pair2)));
 
 		assertEquals("Invalid number of assemblies found", 2, sampleService.findAssembliesForSample(s).size());
 	}
@@ -146,13 +141,15 @@ public class SampleServiceImplTest {
 		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
 		sf.setId(2222L);
-		SampleSequenceFileJoin sampleSequenceFileJoin = new SampleSequenceFileJoin(s, sf);
-		
-		when(ssfRepository.readFileForSample(s, sf)).thenReturn(sampleSequenceFileJoin);
+		SingleEndSequenceFile obj = new SingleEndSequenceFile(sf);
+		obj.setId(2L);
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, obj);
 
-		sampleService.removeSequenceFileFromSample(s, sf);
-		
-		verify(ssfRepository).delete(sampleSequenceFileJoin);
+		when(ssoRepository.readObjectForSample(s, obj.getId())).thenReturn(join);
+
+		sampleService.removeSequencingObjectFromSample(s, obj);
+
+		verify(ssoRepository).delete(join);
 	}
 
 	@Test
@@ -171,28 +168,33 @@ public class SampleServiceImplTest {
 
 		Sample[] toMerge = new Sample[SIZE];
 		SequenceFile[] toMerge_sf = new SequenceFile[SIZE];
-		SampleSequenceFileJoin[] s_sf_joins = new SampleSequenceFileJoin[SIZE];
-		SampleSequenceFileJoin[] s_sf_original = new SampleSequenceFileJoin[SIZE];
+		SequencingObject[] toMerge_so = new SequencingObject[SIZE];
+		SampleSequencingObjectJoin[] s_so_joins = new SampleSequencingObjectJoin[SIZE];
+		SampleSequencingObjectJoin[] s_so_original = new SampleSequencingObjectJoin[SIZE];
 		ProjectSampleJoin[] p_s_joins = new ProjectSampleJoin[SIZE];
 
 		for (long i = 0; i < SIZE; i++) {
 			int p = (int) i;
 			toMerge[p] = s(i + 2);
 			toMerge_sf[p] = sf(i + 2);
-			s_sf_joins[p] = new SampleSequenceFileJoin(s, toMerge_sf[p]);
+			toMerge_so[p] = so(i + 2);
+			s_so_joins[p] = new SampleSequencingObjectJoin(s, toMerge_so[p]);
 			p_s_joins[p] = new ProjectSampleJoin(project, toMerge[p]);
 
 			List<Join<Project, Sample>> projectSampleJoins = new ArrayList<>();
 			projectSampleJoins.add(p_s_joins[p]);
-			List<Join<Sample, SequenceFile>> sampleSequenceFileJoins = new ArrayList<>();
 
-			SampleSequenceFileJoin join = new SampleSequenceFileJoin(toMerge[p], toMerge_sf[p]);
-			sampleSequenceFileJoins.add(join);
-			s_sf_original[p] = join;
+			List<SampleSequencingObjectJoin> sampleSeqObjectJoins = new ArrayList<>();
 
-			when(ssfRepository.getFilesForSample(toMerge[p])).thenReturn(sampleSequenceFileJoins);
-			when(ssfRepository.save(s_sf_joins[p])).thenReturn(s_sf_joins[p]);
-			when(ssfRepository.readFileForSample(toMerge[p], toMerge_sf[p])).thenReturn(join);
+			SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(toMerge[p], toMerge_so[p]);
+			sampleSeqObjectJoins.add(join);
+
+			s_so_original[p] = join;
+
+			when(ssoRepository.getSequencesForSample(toMerge[p])).thenReturn(null);
+			when(ssoRepository.getSequencesForSample(toMerge[p])).thenReturn(sampleSeqObjectJoins);
+			when(ssoRepository.save(s_so_joins[p])).thenReturn(s_so_joins[p]);
+			when(ssoRepository.readObjectForSample(toMerge[p], toMerge_so[p].getId())).thenReturn(join);
 			when(psjRepository.getProjectForSample(toMerge[p])).thenReturn(projectSampleJoins);
 
 			// for deletion
@@ -206,9 +208,9 @@ public class SampleServiceImplTest {
 
 		verify(psjRepository).getProjectForSample(s);
 		for (int i = 0; i < SIZE; i++) {
-			verify(ssfRepository).getFilesForSample(toMerge[i]);
-			verify(ssfRepository).save(s_sf_joins[i]);
-			verify(ssfRepository).delete(s_sf_original[i]);
+			verify(ssoRepository).getSequencesForSample(toMerge[i]);
+			verify(ssoRepository).save(s_so_joins[i]);
+			verify(ssoRepository).delete(s_so_original[i]);
 			verify(sampleRepository).delete(toMerge[i].getId());
 			verify(psjRepository).getProjectForSample(toMerge[i]);
 			verify(psjRepository).delete(p_s_joins[i]);
@@ -261,7 +263,7 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(new ArrayList<Join<Sample, SequenceFile>>());
+		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Lists.newArrayList());
 
 		double coverage = sampleService.estimateCoverageForSample(s1, 10);
 		assertEquals(0, coverage, deltaFloatEquality);
@@ -272,7 +274,7 @@ public class SampleServiceImplTest {
 	 * file.
 	 * 
 	 * @throws SequenceFileAnalysisException
-	 * @throws AnalysisAlreadySetException 
+	 * @throws AnalysisAlreadySetException
 	 */
 	@Test
 	public void testGetCoverageForSampleSuccess() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
@@ -282,13 +284,13 @@ public class SampleServiceImplTest {
 		SequenceFile sf1 = new SequenceFile();
 		sf1.setId(2222L);
 
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
 		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
+		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
 		when(analysisRepository.findFastqcAnalysisForSequenceFile(sf1)).thenReturn(analysisFastQC1);
 
 		double coverage = sampleService.estimateCoverageForSample(s1, 500L);
@@ -316,7 +318,7 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(new ArrayList<Join<Sample, SequenceFile>>());
+		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Lists.newArrayList());
 
 		long actualBases = sampleService.getTotalBasesForSample(s1);
 		assertEquals(0, actualBases);
@@ -327,23 +329,24 @@ public class SampleServiceImplTest {
 	 * sequence file.
 	 * 
 	 * @throws SequenceFileAnalysisException
-	 * @throws AnalysisAlreadySetException 
+	 * @throws AnalysisAlreadySetException
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
+	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException,
+			AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
 		SequenceFile sf1 = new SequenceFile();
 		sf1.setId(2222L);
 
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
 		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
+		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
 		when(analysisRepository.findFastqcAnalysisForSequenceFile(sf1)).thenReturn(analysisFastQC1);
 
 		long actualBases = sampleService.getTotalBasesForSample(s1);
@@ -355,10 +358,11 @@ public class SampleServiceImplTest {
 	 * sequence files.
 	 * 
 	 * @throws SequenceFileAnalysisException
-	 * @throws AnalysisAlreadySetException 
+	 * @throws AnalysisAlreadySetException
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
+	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException,
+			AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
@@ -367,8 +371,8 @@ public class SampleServiceImplTest {
 		SequenceFile sf2 = new SequenceFile();
 		sf1.setId(3333L);
 
-		SampleSequenceFileJoin join1 = new SampleSequenceFileJoin(s1, sf1);
-		SampleSequenceFileJoin join2 = new SampleSequenceFileJoin(s1, sf2);
+		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
+		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf2));
 
 		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
 				.totalBases(1000L).build();
@@ -378,7 +382,7 @@ public class SampleServiceImplTest {
 				.totalBases(1000L).build();
 		sf2.setFastQCAnalysis(analysisFastQC2);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
+		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
 		when(analysisRepository.findFastqcAnalysisForSequenceFile(sf1)).thenReturn(analysisFastQC1);
 		when(analysisRepository.findFastqcAnalysisForSequenceFile(sf2)).thenReturn(analysisFastQC2);
 
@@ -400,9 +404,9 @@ public class SampleServiceImplTest {
 		SequenceFile sf1 = new SequenceFile();
 		sf1.setId(2222L);
 
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
+		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
 
 		sampleService.getTotalBasesForSample(s1);
 	}
@@ -421,13 +425,13 @@ public class SampleServiceImplTest {
 		SequenceFile sf1 = new SequenceFile();
 		sf1.setId(2222L);
 
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
+		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
 
 		sampleService.getTotalBasesForSample(s1);
 	}
-	
+
 	private Sample s(Long id) {
 		Sample s = new Sample();
 		s.setId(id);
@@ -443,6 +447,12 @@ public class SampleServiceImplTest {
 
 		}
 		return sf;
+	}
+
+	private SequencingObject so(Long id) {
+		SequencingObject so = new SingleEndSequenceFile(sf(id));
+		so.setId(id);
+		return so;
 	}
 
 	private Project p(Long id) {

@@ -24,12 +24,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateEx
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -44,8 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -68,9 +67,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	
 	private GalaxyWorkflowService galaxyWorkflowService;
 
-	private SequenceFileService sequenceFileService;
-	private SequenceFilePairService sequenceFilePairService;
-
 	private GalaxyHistoriesService galaxyHistoriesService;
 
 	private IridaWorkflowsService iridaWorkflowsService;
@@ -84,6 +80,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	private SampleRemoteService sampleRemoteService;
 
 	private GalaxyLibrariesService galaxyLibrariesService;
+	
+	private SequencingObjectService sequencingObjectService;
 
 	/**
 	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
@@ -94,10 +92,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            Histories.
 	 * @param galaxyWorkflowService
 	 *            A GalaxyWorkflowService for interacting with Galaxy workflows.
-	 * @param sequenceFileService
-	 *            {@link SequenceFileService}
-	 * @param sequenceFilePairService
-	 *            {@link SequenceFilePairService}
 	 * @param galaxyLibrariesService
 	 *            An object for building libraries in Galaxy.
 	 * @param iridaWorkflowsService
@@ -112,22 +106,20 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            A service for handling {@link Sample}s from remote services
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
-			GalaxyWorkflowService galaxyWorkflowService, SequenceFileService sequenceFileService,
-			SequenceFilePairService sequenceFilePairService, GalaxyLibrariesService galaxyLibrariesService,
+			GalaxyWorkflowService galaxyWorkflowService, GalaxyLibrariesService galaxyLibrariesService,
 			IridaWorkflowsService iridaWorkflowsService,
 			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
 			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy,
-			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService) {
+			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService, SequencingObjectService sequencingObjectService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
-		this.sequenceFileService = sequenceFileService;
-		this.sequenceFilePairService = sequenceFilePairService;
 		this.galaxyLibrariesService = galaxyLibrariesService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.analysisCollectionServiceGalaxy = analysisCollectionServiceGalaxy;
 		this.analysisProvenanceServiceGalaxy = analysisProvenanceServiceGalaxy;
 		this.analysisParameterServiceGalaxy = analysisParameterServiceGalaxy;
 		this.sampleRemoteService = sampleRemoteService;
+		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	/**
@@ -136,7 +128,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	@Override
 	public String prepareAnalysisWorkspace(AnalysisSubmission analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
+		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "inputFiles are null");
 		checkArgument(analysisSubmission.getRemoteAnalysisId() == null, "analysis id should be null");
 
 		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
@@ -185,10 +177,10 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			throws ExecutionManagerException, IridaWorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "analysisId is null");
-		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
+		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
-		checkArgument(!(analysisSubmission.getSingleInputFiles().isEmpty()
+		checkArgument(!(analysisSubmission.getInputFilesSingleEnd().isEmpty()
 				&& analysisSubmission.getPairedInputFiles().isEmpty() && analysisSubmission.getRemoteFilesSingle().isEmpty() && analysisSubmission.getRemoteFilesPaired().isEmpty()),
 				"no single or paired sequence files passed to submission " + analysisSubmission
 						+ " . At least one type of file must be available");
@@ -205,7 +197,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		}
 		
 		if (!iridaWorkflow.getWorkflowDescription().acceptsSingleSequenceFiles()) {
-			checkArgument(analysisSubmission.getSingleInputFiles().isEmpty(), "workflow does not accept single sequence files, but single sequence files are passed as input to " + analysisSubmission);
+			checkArgument(analysisSubmission.getInputFilesSingleEnd().isEmpty(), "workflow does not accept single sequence files, but single sequence files are passed as input to " + analysisSubmission);
 		}
 		
 		if (!iridaWorkflow.getWorkflowDescription().acceptsPairedSequenceFiles()) {
@@ -217,21 +209,21 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		Library workflowLibrary = galaxyLibrariesService.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
-		Map<Sample, SequenceFile> sampleSequenceFilesSingle = sequenceFileService.getUniqueSamplesForSequenceFiles(
-				analysisSubmission
-						.getSingleInputFiles());
-		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(
-				analysisSubmission
-						.getPairedInputFiles());
+		
+		Map<Sample, SingleEndSequenceFile> uniqueSingleEndFiles = sequencingObjectService
+				.getUniqueSamplesForSequencingObjects(analysisSubmission.getInputFilesSingleEnd());
 
-		Map<Sample, IridaSequenceFile> singleFiles = sampleRemoteService
-				.getUniqueSamplesforSequenceFileSnapshots(analysisSubmission.getRemoteFilesSingle());
+		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = sequencingObjectService
+				.getUniqueSamplesForSequencingObjects(analysisSubmission.getPairedInputFiles());
+
+		Map<Sample, IridaSingleEndSequenceFile> singleFiles = sampleRemoteService
+				.getUniqueSamplesForSingleEndSequenceFileSnapshots(analysisSubmission.getRemoteFilesSingle());
 
 		Map<Sample, IridaSequenceFilePair> pairedFiles = sampleRemoteService
 				.getUniqueSamplesforSequenceFilePairSnapshots(analysisSubmission.getRemoteFilesPaired());
 		
 		// merge local and remote
-		for(Sample s : sampleSequenceFilesSingle.keySet()){
+		for(Sample s : uniqueSingleEndFiles.keySet()){
 			/*
 			 * This check is being done to ensure local and remote samples do
 			 * not have the same name. If the sample name is duplicated between
@@ -241,7 +233,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			if(singleFiles.containsKey(s)){
 				throw new DuplicateSampleException("sample is duplicated between local and remote files");
 			}
-			singleFiles.put(s, sampleSequenceFilesSingle.get(s));
+			singleFiles.put(s, uniqueSingleEndFiles.get(s));
 		}
 		
 		for(Sample s : sampleSequenceFilesPaired.keySet()){
@@ -251,7 +243,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			pairedFiles.put(s, sampleSequenceFilesPaired.get(s));
 		}
 
-		if (samplesInCommon(singleFiles, pairedFiles)) {
+		if (samplesInCommon(uniqueSingleEndFiles, sampleSequenceFilesPaired)) {
 			throw new SampleAnalysisDuplicateException("Single and paired input files share a common sample for submission "
 					+ analysisSubmission);
 		}
@@ -269,7 +261,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			String sequenceFilesLabelSingle = workflowInput.getSequenceReadsSingle().get();
 			String workflowSequenceFileSingleInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelSingle);
-			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(singleFiles,
+			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(singleFiles,
 					workflowHistory, workflowLibrary);
 			inputs.setInput(workflowSequenceFileSingleInputId,
 					new WorkflowInputs.WorkflowInput(collectionResponseSingle.getId(),
@@ -309,8 +301,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 * @return True if the two data structures share a common sample, false
 	 *         otherwise.
 	 */
-	private boolean samplesInCommon(Map<Sample, IridaSequenceFile> sampleSequenceFilesSingle,
-			Map<Sample, IridaSequenceFilePair> sampleSequenceFilesPaired) {
+	private boolean samplesInCommon(Map<Sample, ?> sampleSequenceFilesSingle,
+			Map<Sample, ?> sampleSequenceFilesPaired) {
 		for (Sample sampleSingle : sampleSequenceFilesSingle.keySet()) {
 			
 			if (sampleSequenceFilesPaired.containsKey(sampleSingle)) {
@@ -364,7 +356,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
 			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getSingleInputFiles(), "input sequence files is null");
+		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "input sequence files is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 

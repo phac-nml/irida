@@ -12,20 +12,22 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -37,8 +39,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.collect.ImmutableMap;
-
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * REST controller to manage sharing of {@link AnalysisSubmission},
@@ -56,8 +56,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	public static final String FILE_REL = "outputFile";
 
 	public static final String SUBMISSIONS_REL = "analysisSubmissions";
-	
-	//rels for reading input files for a submission
+
+	// rels for reading input files for a submission
 	public static final String INPUT_FILES_UNPAIRED_REL = "input/unpaired";
 	public static final String INPUT_FILES_PAIRED_REL = "input/paired";
 
@@ -66,7 +66,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			AnalysisPhylogenomicsPipeline.class, "assembly", AnalysisAssemblyAnnotation.class);
 
 	@Autowired
-	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService, SampleService sampleService) {
+	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService,
+			SampleService sampleService) {
 		super(analysisSubmissionService, AnalysisSubmission.class);
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.sampleService = sampleService;
@@ -139,13 +140,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		Set<SequenceFilePair> pairs = analysisSubmission.getPairedInputFiles();
 		ResourceCollection<SequenceFilePair> resources = new ResourceCollection<>(pairs.size());
 		for (SequenceFilePair pair : pairs) {
-			SequenceFile forwardSequenceFile = pair.getForwardSequenceFile();
-			Join<Sample, SequenceFile> sampleForSequeneFile = sampleService
-					.getSampleForSequeneFile(forwardSequenceFile);
+			SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(pair);
 
-			Long sampleId = sampleForSequeneFile.getSubject().getId();
+			Long sampleId = join.getSubject().getId();
 
-			pair = RESTSampleSequenceFilesController.addSequenceFilePairLinks(pair, sampleId);
+			pair = RESTSampleSequenceFilesController.addSequencingObjectLinks(pair, sampleId);
 
 			resources.add(pair);
 		}
@@ -170,16 +169,15 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
 
-		Set<SequenceFile> singleInputFiles = analysisSubmission.getSingleInputFiles();
-		ResourceCollection<SequenceFile> resources = new ResourceCollection<>(singleInputFiles.size());
-		for (SequenceFile file : singleInputFiles) {
-			Join<Sample, SequenceFile> sampleForSequeneFile = sampleService.getSampleForSequeneFile(file);
+		Set<SingleEndSequenceFile> inputFilesSingleEnd = analysisSubmission.getInputFilesSingleEnd();
+		ResourceCollection<SequencingObject> resources = new ResourceCollection<>(inputFilesSingleEnd.size());
+		for (SingleEndSequenceFile file : inputFilesSingleEnd) {
+			SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(file);
+			SequencingObject sequencingObject = join.getObject();
 
-			Long sampleId = sampleForSequeneFile.getSubject().getId();
+			RESTSampleSequenceFilesController.addSequencingObjectLinks(sequencingObject, join.getSubject().getId());
 
-			file = RESTSampleSequenceFilesController.addSequenceFileLinks(file, sampleId);
-
-			resources.add(file);
+			resources.add(sequencingObject);
 		}
 
 		resources

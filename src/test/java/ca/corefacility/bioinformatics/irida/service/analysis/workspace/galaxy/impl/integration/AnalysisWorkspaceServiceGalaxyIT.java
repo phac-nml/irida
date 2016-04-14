@@ -69,6 +69,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFo
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -144,7 +145,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private List<Path> pairSequenceFiles1AB;
 	private List<Path> pairSequenceFiles2AB;
 
-	private Set<SequenceFile> sequenceFilesSet;
+	private Set<SingleEndSequenceFile> singleFileSet;
 
 	private static final UUID validWorkflowIdSingle = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	private static final UUID validWorkflowIdPaired = UUID.fromString("ec93b50d-c9dd-4000-98fc-4a70d46ddd36");
@@ -204,7 +205,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Files.delete(referenceFilePath);
 		Files.copy(referenceFilePathReal, referenceFilePath);
 
-		sequenceFilesSet = Sets.newHashSet(new SequenceFile(sequenceFilePathA));
+		singleFileSet = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile(sequenceFilePathA)));
 
 		GalaxyInstance galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
@@ -237,7 +238,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
 				.name("Name")
-				.inputFilesSingle(sequenceFilesSet)
+				.inputFilesSingleEnd(singleFileSet)
 				.build();
 		assertNotNull("preparing an analysis workspace should not return null",
 				analysisWorkspaceService.prepareAnalysisWorkspace(submission));
@@ -253,7 +254,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	public void testPrepareAnalysisWorkspaceFail() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
 				.name("Name")
-				.inputFilesSingle(sequenceFilesSet)
+				.inputFilesSingleEnd(singleFileSet)
 				.build();
 		submission.setRemoteAnalysisId("1");
 		analysisWorkspaceService.prepareAnalysisWorkspace(submission);
@@ -356,8 +357,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
-		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
-				sequenceFilePathA, sequenceFilePath2A);
+		List<SingleEndSequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSequencingObjectInDatabase(
+				1L, sequenceFilePathA, sequenceFilePath2A);
+
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				Sets.newHashSet(sequenceFiles), referenceFilePath, validWorkflowIdSingle);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
@@ -845,7 +847,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
 		assertEquals("the created submission should have no paired input files", 0, analysisSubmission
 				.getPairedInputFiles().size());
-		Set<SequenceFile> submittedSf = analysisSubmission.getSingleInputFiles();
+		Set<SingleEndSequenceFile> submittedSf = analysisSubmission.getInputFilesSingleEnd();
 		assertEquals("the created submission should have 1 single input file", 1, submittedSf.size());
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
@@ -908,7 +910,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdSingle);
 		assertEquals("the created submission should have no single input files", 0, analysisSubmission
-				.getSingleInputFiles().size());
+				.getInputFilesSingleEnd().size());
 		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
 		assertEquals("the created submission has an invalid number of paired input files", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
@@ -977,7 +979,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.setupSinglePairSubmissionInDatabaseSameSample(1L, paths1, paths2, sequenceFilePath3,
 						referenceFilePath, validWorkflowIdSingle);
 
-		Set<SequenceFile> singleFiles = analysisSubmission.getSingleInputFiles();
+		Set<SingleEndSequenceFile> singleFiles = analysisSubmission.getInputFilesSingleEnd();
 		assertEquals("invalid number of single end input files", 1, singleFiles.size());
 		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
 		assertEquals("invalid number of paired end inputs", 1, pairedFiles.size());

@@ -38,12 +38,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.WorkflowNamedParametersRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -77,7 +77,7 @@ public class AnalysisSubmissionServiceImplIT {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private SequenceFileRepository sequenceFileRepository;
+	private SequencingObjectRepository sequencingObjectRepository;
 	
 	@Autowired
 	private WorkflowNamedParametersRepository parametersRepository;
@@ -390,12 +390,10 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCreateRegularUser() {
-		SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
-		
-		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.name("test")
-				.inputFilesSingle(Sets.newHashSet(sequenceFile))
-				.build();
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
+
+		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
+				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(1L), createdSubmission.getSubmitter().getId());
@@ -407,12 +405,10 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCreateRegularUser2() {
-		SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
-		
-		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.name("test")
-				.inputFilesSingle(Sets.newHashSet(sequenceFile))
-				.build();
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
+
+		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
+				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(2L), createdSubmission.getSubmitter().getId());
@@ -507,21 +503,21 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = UnsupportedOperationException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithUnsavedNamedParameters() {
-		final SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
+		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
 		final IridaWorkflowNamedParameters params = new IridaWorkflowNamedParameters("named parameters.", workflowId,
 				ImmutableMap.of("named", "parameter"));
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.inputFilesSingle(Sets.newHashSet(sequenceFile)).withNamedParameters(params).build();
+				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
 		analysisSubmissionService.create(submission);
 	}
-	
+
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithNamedParameters() {
-		final SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
+		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
 		final IridaWorkflowNamedParameters params = parametersRepository.findOne(1L);
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.inputFilesSingle(Sets.newHashSet(sequenceFile)).withNamedParameters(params).build();
+				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
 		analysisSubmissionService.create(submission);
 
 		assertNotNull("Should have saved and created an id for the submission", submission.getId());
