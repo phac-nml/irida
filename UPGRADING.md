@@ -6,7 +6,17 @@ upgrading IRIDA that cannot be automated.
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
-* 
+* You may now configure the link and text that gets rendered on web pages under the 'Help' menu for accessing an external help forum. You can configure the link and text by adding some keys to `/etc/irida/web.conf`:
+        
+        help.page.title=Your Help Page Title
+        help.page.url=http://www.example.org/help
+  These are optional settings. If they are not configured, no link will appear in the 'Help' menu.
+* You may now configure the e-mail address that gets rendered on web pages under the 'Help' menu. You can configure the e-mail address by adding a key to `/etc/irida/web.conf`:
+       
+        help.contact.email=you@example.org
+  This is an optional setting. If it is not configured, no 'Contact Us' e-mail address will appear in the 'Help' menu.
+
+* Deploy the new `war` file.   
 
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------

@@ -7,6 +7,7 @@ Changes
 * [Developer]: Make all of the responses when working with samples have the same set of links.
 * [UI]: Show the version of the pipeline on the pipeline details page.
 * [Developer]: Fixed a bug where updating project modified time on addition of a sample caused the uploader to fail.
+* [UI]: Help links and contact information shown on page are now configurable.
 
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
