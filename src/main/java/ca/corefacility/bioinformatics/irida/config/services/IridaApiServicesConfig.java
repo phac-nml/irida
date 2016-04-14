@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -94,6 +95,13 @@ public class IridaApiServicesConfig {
 	@Value("${file.processing.decompress.remove.compressed.file}")
 	private Boolean removeCompressedFiles;
 	
+	// the key + colon syntax allows default values. we use `false` here so we can conditionally show tags on the page with thymeleaf
+	@Value("${help.page.title:false}")
+	private String helpPageTitle;
+	
+	@Value("${help.page.url:false}")
+	private String helpPageUrl;
+	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
 		return new ForbidJpqlUpdateDeletePostProcessor();
@@ -102,11 +110,16 @@ public class IridaApiServicesConfig {
 	@Bean
 	public MessageSource messageSource() {
 		logger.info("Configuring ReloadableResourceBundleMessageSource.");
-
-		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+		
+		final Properties properties = new Properties();
+		properties.setProperty("help.page.title", helpPageTitle);
+		properties.setProperty("help.page.url", helpPageUrl);
+		
+		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
 		source.setBasenames(RESOURCE_LOCATIONS);
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
+		source.setCommonMessages(properties);
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development

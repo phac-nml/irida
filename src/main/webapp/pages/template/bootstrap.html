@@ -157,8 +157,8 @@
 								__Admin Guide__
 							</a>
 						</li>
-						<li role="menuitem">
-							<a href="http://hub.corefacility.ca/?category=irida" th:text="#{nav.main.iridahub}"
+						<li role="menuitem" th:if="#{help.page.title} and #{help.page.url}">
+							<a href="" th:text="#{help.page.title}" th:attr="href=#{help.page.url}"
 							   target="_blank">
 								__IRIDA Hub__
 							</a>
