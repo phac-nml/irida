@@ -114,7 +114,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sortProperty
 	 * 		{@link String} the property of the {@link Sample} to sort the list by.
 	 *
-	 * @return
+	 * @return {@link Page} of {@link ProjectSampleJoin}
 	 */
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, String name, Date minDate,
 			Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
@@ -135,7 +135,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sortProperty
 	 * 		{@link String} the property of the {@link Sample} to sort the list by.
 	 *
-	 * @return
+	 * @return {@link Page} of {@link ProjectSampleJoin}
 	 */
 	public Page<ProjectSampleJoin> getSearchedSamplesForProjects(List<Project> projects, String searchString,
 			int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
