@@ -52,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesFilterCriteria;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -328,10 +329,14 @@ public class ProjectSamplesController {
 		final Page<ProjectSampleJoin> page;
 		if (Strings.isNullOrEmpty(utils.getSearch())) {
 			// No search term, therefore filter on the attributes
-			page = sampleService.getFilteredSamplesForProjects(projects, utils);
+			ProjectSamplesFilterCriteria filter = utils.getFilter();
+			page = sampleService
+					.getFilteredSamplesForProjects(projects, filter.getName(), null, null, utils.getCurrentPage(),
+							utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
 		} else {
 			// Generic search required.
-			page = sampleService.getSearchedSamplesForProjects(projects, utils);
+			page = sampleService.getSearchedSamplesForProjects(projects, utils.getSearch(), utils.getCurrentPage(),
+					utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
 		}
 
 		// Create a more usable Map of the sample data.

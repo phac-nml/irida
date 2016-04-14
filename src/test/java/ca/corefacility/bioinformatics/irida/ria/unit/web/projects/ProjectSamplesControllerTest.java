@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -46,7 +47,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -317,7 +317,11 @@ public class ProjectSamplesControllerTest {
 		when(params.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
 
 		when(projectService.read(anyLong())).thenReturn(project);
-		when(sampleService.getFilteredSamplesForProjects(any(List.class), any(ProjectSamplesDatatableUtils.class))).thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
+		when(sampleService
+				.getFilteredSamplesForProjects(any(List.class), any(String.class), any(Date.class), any(Date.class),
+						any(Integer.class), any(Integer.class), any(
+								Sort.Direction.class), any(String.class)))
+				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
 
 		List<Long> associatedProjectIds = new ArrayList<>();
 		DatatablesResponse<Map<String, Object>> response = controller.getProjectSamples(1L, params, associatedProjectIds);

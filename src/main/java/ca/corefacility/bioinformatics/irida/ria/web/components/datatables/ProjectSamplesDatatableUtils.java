@@ -41,8 +41,8 @@ public class ProjectSamplesDatatableUtils extends DatatablesUtils {
 		return sortDirection;
 	}
 
-	public String[] getSortProperties() {
-		return new String[]{sortName};
+	public String getSortProperty() {
+		return sortName;
 	}
 
 	public ProjectSamplesFilterCriteria getFilter() {
