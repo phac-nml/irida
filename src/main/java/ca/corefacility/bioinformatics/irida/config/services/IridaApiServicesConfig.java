@@ -105,6 +105,9 @@ public class IridaApiServicesConfig {
 	@Value("${help.contact.email:false}")
 	private String helpEmail;
 	
+	@Value("${irida.version}")
+	private String iridaVersion;
+	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
 		return new ForbidJpqlUpdateDeletePostProcessor();
@@ -118,6 +121,7 @@ public class IridaApiServicesConfig {
 		properties.setProperty("help.page.title", helpPageTitle);
 		properties.setProperty("help.page.url", helpPageUrl);
 		properties.setProperty("help.contact.email", helpEmail);
+		properties.setProperty("irida.version", iridaVersion);
 		
 		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
 		source.setBasenames(RESOURCE_LOCATIONS);
