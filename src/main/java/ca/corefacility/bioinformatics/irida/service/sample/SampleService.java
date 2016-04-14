@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -91,6 +92,22 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
 			Direction order, String... sortProperties);
+
+	/**
+	 * Get the {@link Sample}s for a List of {@link Project}s fitlered on sample attributes.
+	 * @param projects
+	 * @param utils
+	 * @return
+	 */
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, ProjectSamplesDatatableUtils utils);
+
+	/**
+	 * Get the {@link Sample}s for a {@link List} of {@link Project}s filtered by generic search term
+	 * @param projects
+	 * @param utils
+	 * @return
+	 */
+	public Page<ProjectSampleJoin> getSearchedSamplesForProjects(List<Project> projects, ProjectSamplesDatatableUtils utils);
 	
 	/**
 	 * Gets a {@link Set} of {@link AssembledGenomeAnalysis} objects containing

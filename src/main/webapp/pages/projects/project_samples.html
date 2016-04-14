@@ -6,7 +6,7 @@
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
     <script th:inline="javascript">
-        window.dependencies = ['irida.projects.samples.controller'];
+        //        window.dependencies = ['irida.projects.samples.controller'];
         var PAGE = {
             urls: {
                 associated: {
@@ -47,49 +47,24 @@
     </style>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables"
-      ng-controller="SamplesController as samplesCtrl">
+<main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables">
 
-    <table id="samplesTable" datatable="ng" class="table table-hover ng-cloak table-selectable"
-           dt-options="samplesCtrl.dtOptions" dt-column-defs="samplesCtrl.dtColumnDefs"
-           dt-instance="samplesCtrl.dtInstanceCallback" dt-disable-deep-watchers="true">
+
+
+    <div dt:conf="samplesTable">
+        <div dt:confType="extrajs" dt:bundles="project-samples-table" dt:placeholder="before_end_document_ready"/>
+    </div>
+    <table id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
         <thead>
         <tr>
-            <th class="selection-heading">
-                <div class="btn-group btn-group-sm" uib-dropdown="">
-                    <button id="selectDropdownToggle" class="btn btn-default" uib-dropdown-toggle=""
-                            data:uib-tooltip="#{lists.select-title}" tooltip-append-to-body="true">
-                        <input id="selectAllBtn" type="checkbox" ng-model="samplesCtrl.allSelected"
-                               ng-click="samplesCtrl.selectAll($event)"/>
-                        <span class="caret"></span>
-                    </button>
-                    <ul uib-dropdown-menu="">
-                        <li role="menuitem">
-                            <a id="selectPageBtn" href="#" ng-click="samplesCtrl.selectPage($event)"
-                               th:text="#{lists.select-page}">Select Page</a></li>
-                    </ul>
-                </div>
-            </th>
-            <th th:text="#{project.samples.table.name}">[Name]</th>
-            <th th:text="#{project.samples.table.project}" ng-show="samplesCtrl.showProjectname">[Project]</th>
-            <th th:text="#{project.samples.table.modified}" width="130px">[Modified Date]</th>
-            <th th:text="#{project.samples.table.created}" width="130px">[Created Date]</th>
+            <th dt:property="sample.sampleName" th:text="#{project.samples.table.name}"></th>
+            <th dt:property="project.name" th:text="#{project.samples.table.project}"></th>
+            <th width="120px" dt:property="sample.createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
+                dt:renderFunction="datatables-utils#datatable.formatDate"></th>
+            <th width="120px" dt:property="sample.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
+                dt:renderFunction="datatables-utils#datatable.formatDate"></th>
         </tr>
         </thead>
-        <tbody>
-        <tr ng-repeat="sample in samplesCtrl.samples"
-            ng-click="sample.selected = !item.selected; samplesCtrl.rowClick($event, $index)"
-            ng-class="sample.selected ? 'selected' : ''" data-index="{{$index}}">
-            <td>
-                <input type="checkbox" ng-model="sample.selected" ng-click="samplesCtrl.rowClick($event, $index)"/>
-            </td>
-            <td>
-                <a class="btn btn-label sample-label" data:ng-href="@{'/samples/{{sample.getId()}}'}" ng-bind="sample.getName()"></a></td>
-            <td ng-bind="sample.getProject().getName()" ng-show="samplesCtrl.showProjectname"></td>
-            <td ng-bind="sample.getModifiedDate() | date"></td>
-            <td ng-bind="sample.getCreatedDate() | date"></td>
-        </tr>
-        </tbody>
     </table>
 </main>
 </body>

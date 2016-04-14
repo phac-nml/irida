@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import static com.hp.hpl.jena.assembler.JA.False;
+import static com.hp.hpl.jena.sparql.vocabulary.FOAF.page;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -49,16 +51,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
@@ -140,6 +150,12 @@ public class ProjectSamplesController {
 		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME) != null);
 		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
 		model.addAttribute("galaxyCallback", haveGalaxyCallbackURL);
+
+		// Add the associated projects
+		List<RelatedProjectJoin> associatedJoin = projectService.getRelatedProjects(project);
+		List<Project> associated = associatedJoin.stream().map(RelatedProjectJoin::getObject)
+				.collect(Collectors.toList());
+		model.addAttribute("associatedProjects", associated);
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
 		return PROJECT_SAMPLES_PAGE;
@@ -301,20 +317,43 @@ public class ProjectSamplesController {
 	 * @return A list of {@link Sample} in the current project
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId) {
+	@ResponseBody
+	public DatatablesResponse<Map<String, Object>> getProjectSamples(@PathVariable Long projectId, @DatatablesParams DatatablesCriterias criterias, @RequestParam(required = false, defaultValue = "") List<Long> associated) {
 		Map<String, Object> result = new HashMap<>();
-		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
-		List<Map<String, Object>> samples = new ArrayList<>(joinList.size());
+		List<Project> projects = new ArrayList<>();
 
-		for (Join<Project, Sample> join : joinList) {
-			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join
-					.getObject().getId());
-			samples.add(sampleMap);
+		// This project is always in the query.
+		projects.add(projectService.read(projectId));
+
+		// Check to see if any associated projects need to be added to the query.
+		if (!associated.isEmpty()) {
+			projects.addAll(associated.stream().map(projectService::read).collect(Collectors.toList()));
 		}
-		result.put("samples", samples);
-		result.put("project", project);
-		return result;
+
+		// Convert the criterias into a more usable format.
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias);
+
+		final Page<ProjectSampleJoin> page;
+		if (Strings.isNullOrEmpty(utils.getSearch())) {
+			// No search term, therefore filter on the attributes
+			page = sampleService.getFilteredSamplesForProjects(projects, utils);
+		} else {
+			// Generic search required.
+			page = sampleService.getSearchedSamplesForProjects(projects, utils);
+		}
+
+		// Create a more usable Map of the sample data.
+		List<Map<String, Object>> sampleMap = new ArrayList<>();
+		for (ProjectSampleJoin join : page.getContent()) {
+			Project project = join.getSubject();
+			SampleType type = projectId == project.getId() ? SampleType.LOCAL : SampleType.ASSOCIATED;
+			Map<String, Object> map = getSampleMap(join.getObject(), project, type,
+					join.getObject().getId());
+			sampleMap.add(map);
+		}
+
+		DataSet<Map<String, Object>> dataSet = new DataSet<>(sampleMap, page.getTotalElements(), page.getTotalElements());
+		return DatatablesResponse.build(dataSet, criterias);
 	}
 
 	/**
@@ -741,13 +780,6 @@ public class ProjectSamplesController {
 		sampleMap.put("project", project);
 		sampleMap.put("sampleType", type);
 		sampleMap.put("identifier", identifier);
-		String href = linkTo(
-			methodOn(RESTProjectSamplesController.class).getProjectSample(
-					project.getId(), sample.getId()
-				)
-			).withSelfRel().getHref();
-
-		sampleMap.put("href", href);
 		return sampleMap;
 	}
 
@@ -778,9 +810,7 @@ public class ProjectSamplesController {
 		// samples in the local project
 		LOCAL,
 		// samples in associated projects
-		ASSOCIATED,
-		// samples in remote projects
-		REMOTE;
+		ASSOCIATED
 
 	}
 }

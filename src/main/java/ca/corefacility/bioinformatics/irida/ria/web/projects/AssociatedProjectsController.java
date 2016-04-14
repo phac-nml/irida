@@ -4,10 +4,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -31,12 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.HttpClientErrorException;
-
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -53,6 +47,8 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects")
@@ -367,56 +363,6 @@ public class AssociatedProjectsController {
 		return ImmutableMap.of("samples", sampleList);
 	}
 
-	/**
-	 * Get the samples from {@link RemoteRelatedProject}s for a given project
-	 * 
-	 * @param projectId
-	 *            The ID of the current project
-	 * @return A {@code Map<String,Object>} containing a list of remote samples,
-	 *         the number of projects from unauthorized APIs, and the number of
-	 *         projects the user does not have access to.
-	 */
-	@RequestMapping(value = "/{projectId}/associated/remote/samples")
-	public Map<String, Object> getRemoteAssociatedSamplesForProject(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-
-		// Get the list of remote related projects
-		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
-				.getRemoteProjectsForProject(project);
-
-		Set<RemoteAPI> disconnectedApis = new HashSet<>();
-		List<Map<String, Object>> sampleList = new ArrayList<>();
-		for (RemoteRelatedProject rrp : remoteProjectsForProject) {
-			try {
-				// read the projects from their APIs
-				Project read = projectRemoteService.read(rrp);
-
-				// list samples for project
-				List<Sample> samplesForProject = sampleRemoteService.getSamplesForProject(read);
-
-				// compile json response map
-				List<Map<String, Object>> collect = samplesForProject
-						.stream()
-						.map((s) -> ProjectSamplesController.getSampleMap(s, read,
-								ProjectSamplesController.SampleType.REMOTE, s.getLink(Link.REL_SELF).getHref()))
-						.collect(Collectors.toList());
-
-				sampleList.addAll(collect);
-			} catch (IridaOAuthException ex) {
-				logger.debug("User couldn't read samples for project: " + ex.getMessage());
-				disconnectedApis.add(rrp.getRemoteAPI());
-			} catch (HttpClientErrorException ex) {
-				if (ex.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
-					logger.debug("User couldn't read samples as they don't have access to the project: "
-							+ ex.getMessage());
-				} else {
-					throw ex;
-				}
-			}
-		}
-
-		return ImmutableMap.of("samples", sampleList, "notConnected", disconnectedApis);
-	}
 
 	/**
 	 * Get a list of the {@link Project} parameters

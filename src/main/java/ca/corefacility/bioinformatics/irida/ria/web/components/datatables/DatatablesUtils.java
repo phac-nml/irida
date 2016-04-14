@@ -25,11 +25,15 @@ public class DatatablesUtils {
 	public static Map<String, Object> getSortProperties(DatatablesCriterias criterias) {
 		ColumnDef sortedColumn = criterias.getSortedColumnDefs().get(0);
 		return ImmutableMap.of(
-				SORT_DIRECTION, sortedColumn.getSortDirection().equals(ColumnDef.SortDirection.ASC) ?
-						Sort.Direction.ASC :
-						Sort.Direction.DESC,
+				SORT_DIRECTION, generateSortDirection(sortedColumn),
 				SORT_STRING, sortedColumn.getName()
 		);
+	}
+
+	public static Sort.Direction generateSortDirection(ColumnDef def) {
+		return def.getSortDirection().equals(ColumnDef.SortDirection.ASC) ?
+				Sort.Direction.ASC :
+				Sort.Direction.DESC;
 	}
 
 	/**

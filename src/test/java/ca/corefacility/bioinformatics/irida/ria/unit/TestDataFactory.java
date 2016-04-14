@@ -7,15 +7,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.DirectFieldAccessor;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -40,6 +41,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Generates test data for unit tests.
@@ -202,5 +206,76 @@ public class TestDataFactory {
 			projects.add(project);
 		}
 		return projects;
+	}
+
+	public static Page<ProjectSampleJoin> getPageOfProjectSampleJoin() {
+		return new Page<ProjectSampleJoin>() {
+			@Override public int getTotalPages() {
+				return 1;
+			}
+
+			@Override public long getTotalElements() {
+				return 1;
+			}
+
+			@Override public int getNumber() {
+				return 1;
+			}
+
+			@Override public int getSize() {
+				return 1;
+			}
+
+			@Override public int getNumberOfElements() {
+				return 1;
+			}
+
+			@Override public List<ProjectSampleJoin> getContent() {
+				Project project = new Project("Joined Project");
+				project.setId(1L);
+				Sample sample = new Sample("Joined Sample");
+				sample.setId(23L);
+				ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
+				return ImmutableList.of(
+					join
+				);
+			}
+
+			@Override public boolean hasContent() {
+				return false;
+			}
+
+			@Override public Sort getSort() {
+				return null;
+			}
+
+			@Override public boolean isFirst() {
+				return false;
+			}
+
+			@Override public boolean isLast() {
+				return false;
+			}
+
+			@Override public boolean hasNext() {
+				return false;
+			}
+
+			@Override public boolean hasPrevious() {
+				return false;
+			}
+
+			@Override public Pageable nextPageable() {
+				return null;
+			}
+
+			@Override public Pageable previousPageable() {
+				return null;
+			}
+
+			@Override public Iterator<ProjectSampleJoin> iterator() {
+				return null;
+			}
+		};
 	}
 }

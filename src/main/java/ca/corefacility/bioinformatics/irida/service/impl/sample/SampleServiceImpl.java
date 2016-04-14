@@ -41,7 +41,9 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSa
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -290,6 +292,28 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
 				new PageRequest(page, size, order, sortProperties));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, ProjectSamplesDatatableUtils utils) {
+
+		return psjRepository.findAll(ProjectSampleSpecification.filterProjectSamples(projects, utils.getFilter()),
+				new PageRequest(utils.getCurrentPage(), utils.getPageSize(), utils.getSortDirection(), utils.getSortProperties()));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Page<ProjectSampleJoin> getSearchedSamplesForProjects(List<Project> projects, ProjectSamplesDatatableUtils utils) {
+
+		return psjRepository.findAll(ProjectSampleSpecification.searchProjectSamples(projects, utils.getSearch()),
+				new PageRequest(utils.getCurrentPage(), utils.getPageSize(), utils.getSortDirection(), utils.getSortProperties()));
 	}
 
 	/**
