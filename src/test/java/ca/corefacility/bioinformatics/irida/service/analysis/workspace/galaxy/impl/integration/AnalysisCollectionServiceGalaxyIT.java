@@ -36,17 +36,17 @@ import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCon
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -89,12 +89,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	@Autowired
 	private SampleRepository sampleRepository;
-
+	
 	@Autowired
-	private SequenceFileService sequenceFileService;
-
-	@Autowired
-	private SequenceFilePairService sequenceFilePairService;
+	private SequencingObjectService sequencingObjectService;
 
 	@Autowired
 	@Qualifier("rootTempDirectory")
@@ -173,15 +170,16 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFileSingleSamplesSuccess()
-			throws DuplicateSampleException {
-		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA));
-		Sample sample = sampleRepository.findOne(1L);
-		SequenceFile sequenceFile = sequenceFiles.iterator().next();
+	public void testGetSequenceFileSingleSamplesSuccess() throws DuplicateSampleException {
+		Set<SequencingObject> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
+				.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
 
-		Map<Sample, SequenceFile> sampleSequenceFiles = sequenceFileService
-				.getUniqueSamplesForSequenceFiles(sequenceFiles);
+		Sample sample = sampleRepository.findOne(1L);
+
+		SequencingObject sequenceFile = sequenceFiles.iterator().next();
+
+		Map<Sample, SequencingObject> sampleSequenceFiles = sequencingObjectService
+				.getUniqueSamplesForSequencingObjects(sequenceFiles);
 		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFiles.size());
 		assertEquals("sampleSequenceFiles map does not have sequenceFile " + sequenceFile + " corresponding to sample "
 				+ sample, sequenceFile, sampleSequenceFiles.get(sample));
@@ -194,11 +192,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFileSingleSamplesFail() throws DuplicateSampleException {
-		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA, sequenceFilePath2A));
+	public void testGetSequenceFileSingleSamplesFail() throws DuplicateSampleException {		
+		List<SingleEndSequenceFile> seqObjects = databaseSetupGalaxyITService
+				.setupSequencingObjectInDatabase(1L, sequenceFilePathA, sequenceFilePath2A);
 
-		sequenceFileService.getUniqueSamplesForSequenceFiles(sequenceFiles);
+		sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(seqObjects));
 	}
 
 	/**
@@ -214,8 +212,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample = sampleRepository.findOne(1L);
 		SequenceFilePair sequenceFilePair = sequenceFiles.iterator().next();
 
-		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
-				.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
+		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequencingObjectService
+				.getUniqueSamplesForSequencingObjects(sequenceFiles);
+
 		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFilePairs.size());
 		assertEquals("sampleSequenceFiles map does not have sequenceFilePair " + sequenceFilePair
 				+ " corresponding to sample " + sample, sequenceFilePair, sampleSequenceFilePairs.get(sample));
@@ -231,7 +230,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	public void testGetSequenceFilePairSamplesFail() throws DuplicateSampleException {
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AB, pairSequenceFiles2AB));
-		sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
+		sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles);
 	}
 
 	/**
@@ -254,13 +253,14 @@ public class AnalysisCollectionServiceGalaxyIT {
 		library.setName("testUploadSequenceFilesSingleSuccess");
 		Library createdLibrary = librariesClient.createLibrary(library);
 
-		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA));
-		Map<Sample, IridaSequenceFile> sampleSequenceFiles = new HashMap<>(sequenceFileService
-				.getUniqueSamplesForSequenceFiles(sequenceFiles));
+		Set<SingleEndSequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
+		
+
+		Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles = new HashMap<>(sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
+		
 		Sample sample1 = sampleRepository.findOne(1L);
 
-		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(
+		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(
 				sampleSequenceFiles, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
@@ -307,8 +307,10 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1A, pairSequenceFiles2A));
-		Map<Sample, IridaSequenceFilePair> sampleSequenceFilePairs = new HashMap<>(sequenceFilePairService
-				.getUniqueSamplesForSequenceFilePairs(sequenceFiles));
+
+		Map<Sample, IridaSequenceFilePair> sampleSequenceFilePairs = new HashMap<>(
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
+
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(
@@ -395,8 +397,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AInvalidName, pairSequenceFiles2A));
-		Map<Sample, IridaSequenceFilePair> sampleSequenceFilePairs = new HashMap<>(sequenceFilePairService
-				.getUniqueSamplesForSequenceFilePairs(sequenceFiles));
+		Map<Sample, IridaSequenceFilePair> sampleSequenceFilePairs = new HashMap<>(sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
 				createdLibrary);

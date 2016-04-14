@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -23,41 +24,45 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
-/**
- * 
- */
 @Entity
-@Table(name = "sequencefile_sample", uniqueConstraints = @UniqueConstraint(columnNames = { "sequencefile_id" }, name = "UK_SEQUENCEFILE_SAMPLE_FILE"))
+@Table(name = "sample_sequencingobject", uniqueConstraints = @UniqueConstraint(columnNames = { "sequencingobject_id" }, name = "UK_SEQUENCEOBJECT_SAMPLE_FILE"))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
+public class SampleSequencingObjectJoin implements Join<Sample, SequencingObject> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sequencefile_id")
-	private SequenceFile sequenceFile;
+	@JoinColumn(name = "sequencingobject_id")
+	private final SequencingObject sequencingObject;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sample_id")
-	private Sample sample;
+	private final Sample sample;
 
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created_date")
 	private final Date createdDate;
 
-	public SampleSequenceFileJoin() {
+	/**
+	 * Default constructor for hibernate
+	 */
+	@SuppressWarnings("unused")
+	private SampleSequencingObjectJoin() {
 		createdDate = new Date();
+		sequencingObject = null;
+		sample = null;
 	}
 
-	public SampleSequenceFileJoin(Sample subject, SequenceFile object) {
-		this();
-		this.sequenceFile = object;
+	public SampleSequencingObjectJoin(Sample subject, SequencingObject object) {
+		createdDate = new Date();
+		this.sequencingObject = object;
 		this.sample = subject;
 	}
 
@@ -67,16 +72,16 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof SampleSequenceFileJoin) {
-			SampleSequenceFileJoin j = (SampleSequenceFileJoin) o;
-			return Objects.equals(sequenceFile, j.sequenceFile) && Objects.equals(sample, j.sample);
+		if (o instanceof SampleSequencingObjectJoin) {
+			SampleSequencingObjectJoin j = (SampleSequencingObjectJoin) o;
+			return Objects.equals(sequencingObject, j.sequencingObject) && Objects.equals(sample, j.sample);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(sequenceFile, sample);
+		return Objects.hash(sequencingObject, sample);
 	}
 
 	@Override
@@ -85,8 +90,8 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	}
 
 	@Override
-	public SequenceFile getObject() {
-		return sequenceFile;
+	public SequencingObject getObject() {
+		return sequencingObject;
 	}
 
 	@Override
@@ -98,4 +103,5 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	public Date getCreatedDate() {
 		return createdDate;
 	}
+
 }

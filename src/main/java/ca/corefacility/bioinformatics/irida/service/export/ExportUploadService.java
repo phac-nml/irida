@@ -45,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.google.common.collect.ImmutableMap;
@@ -272,12 +273,12 @@ public class ExportUploadService {
 			for (NcbiBioSampleFiles bsFile : submission.getBioSampleFiles()) {
 
 				// upload single end files
-				for (SequenceFile file : bsFile.getFiles()) {
+				for (SingleEndSequenceFile file : bsFile.getFiles()) {
 					// Just using file IDs as the basename for uploaded files to
 					// avoid accidentally sending sensitive sample names to NCBI
-					String filename = file.getId() + ".fastq";
+					String filename = file.getSequenceFile().getId() + ".fastq";
 
-					uploadPath(client, filename, file.getFile());
+					uploadPath(client, filename, file.getSequenceFile().getFile());
 				}
 
 				// upload paired end files

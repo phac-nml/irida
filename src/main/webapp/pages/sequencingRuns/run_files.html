@@ -28,25 +28,27 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="file-row" role="row" th:each="file : ${files}"
-				    th:id="${'file-row-' + file.identifier}">
-					<td class="file-id" th:text="${file.identifier}">ID</td>
-					<td>
-						<a class="file-name btn btn-default btn-xs"
-						   th:href="@{/sequencingRuns/{runId}/sequenceFiles/{id}/summary(runId=${run.getId()}, id=${file.identifier})}"
-						   href="#"
-						   th:text="${file.label}"></a>
-					</td>
-					<td data:order="${file.size}" th:text="${file.size}"></td>
-					<td class="file-buttons">
-						<div class="btn-toolbar pull-right">
-							<button class="btn btn-primary btn-xs download-file"
-							        th:attr="data-file-id=${file.identifier}">
-								<span class="fa fa-fw fa-download"></span>
-							</button>
-						</div>
-					</td>
-				</tr>
+        <th:block th:each="seqObject : ${sequencingObjects}">
+  				<tr class="file-row" role="row" th:each="file : ${seqObject.getFiles()}"
+  				    th:id="${'file-row-' + file.identifier}">
+  					<td class="file-id" th:text="${file.identifier}">ID</td>
+  					<td>
+  						<a class="file-name btn btn-default btn-xs"
+  						   th:href="@{/sequencingRuns/{runId}/sequenceFiles/{objId}/file/{id}/summary(runId=${run.getId()}, objId=${seqObject.getId()}, id=${file.getId()})}"
+  						   href="#"
+  						   th:text="${file.label}"></a>
+  					</td>
+  					<td data:order="${file.getFileSize()}" th:text="${file.getFileSize()}"></td>
+  					<td class="file-buttons">
+  						<div class="btn-toolbar pull-right">
+  							<button class="btn btn-primary btn-xs download-file"
+  							        th:attr="data-file-id=${file.getId()},data-object-id=${seqObject.getId()}">
+  								<span class="fa fa-fw fa-download"></span>
+  							</button>
+  						</div>
+  					</td>
+  				</tr>
+        </th:block>
 				</tbody>
 			</table>
 		</div>
@@ -66,9 +68,10 @@
 			$("button.download-file").on("click", function () {
 				var that = $(this);
 				var fileId = that.data("file-id");
+        var objectId = that.data("object-id");
 				var url = /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/';
 				var iframe = document.createElement("iframe");
-				iframe.src = url + fileId;
+				iframe.src = url + objectId + "/file/" + fileId;
 				iframe.style.display = "none";
 				document.body.appendChild(iframe);
 			});

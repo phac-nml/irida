@@ -10,8 +10,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
@@ -51,13 +51,14 @@ public class AnalysisCollectionServiceGalaxy {
 	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 	}
-
+	
 	/**
 	 * Uploads a list of single sequence files belonging to the given samples to
 	 * Galaxy.
 	 * 
 	 * @param sampleSequenceFiles
-	 *            A map between {@link Sample} and {@link SequenceFile}.
+	 *            A map between {@link Sample} and
+	 *            {@link IridaSingleEndSequenceFile}.
 	 * @param workflowHistory
 	 *            The history to upload the sequence files into.
 	 * @param workflowLibrary
@@ -67,7 +68,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @throws ExecutionManagerException
 	 *             If there was an error uploading the files.
 	 */
-	public CollectionResponse uploadSequenceFilesSingle(Map<Sample, IridaSequenceFile> sampleSequenceFiles,
+	public CollectionResponse uploadSequenceFilesSingleEnd(Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles,
 			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
 
 		CollectionDescription description = new CollectionDescription();
@@ -76,8 +77,8 @@ public class AnalysisCollectionServiceGalaxy {
 
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Sample sample : sampleSequenceFiles.keySet()) {
-			IridaSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
-			samplesMap.put(sequenceFile.getFile(), sample);
+			IridaSingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
+			samplesMap.put(sequenceFile.getSequenceFile().getFile(), sample);
 		}
 
 		// upload files to library and then to a history

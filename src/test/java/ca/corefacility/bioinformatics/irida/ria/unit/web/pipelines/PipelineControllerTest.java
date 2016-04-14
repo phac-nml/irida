@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.pipelines;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
@@ -26,12 +28,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.pipelines.PipelineController
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
+import ca.corefacility.bioinformatics.irida.service.snapshot.SingleEndSequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
@@ -44,40 +46,39 @@ public class PipelineControllerTest {
 	public static final Locale LOCALE = Locale.US;
 	// Dependencies to mock
 	private ReferenceFileService referenceFileService;
-	private SequenceFileService sequenceFileService;
-	private SequenceFilePairService sequenceFilePairService;
+	private SequencingObjectService sequencingObjectService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
 	private ProjectService projectService;
 	private UserService userService;
 	private MessageSource messageSource;
 	private CartController cartController;
-	private SequenceFileRemoteService sequenceFileRemoteService;
+	private SingleEndSequenceFileRemoteService singleEndSequenceFileRemoteService;
 	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	// Controller to test
 	private PipelineController controller;
 	private WorkflowNamedParametersService namedParameterService;
-	
+
 	SequenceFileSnapshotService remoteSequenceFileService;
 	SequenceFilePairSnapshotService remoteSequenceFilePairService;
+	SingleEndSequenceFileSnapshotService remoteSequenceFileSingleService;
 
 	@Before
 	public void setUp() {
 		referenceFileService = mock(ReferenceFileService.class);
-		sequenceFileService = mock(SequenceFileService.class);
-		sequenceFilePairService = mock(SequenceFilePairService.class);
 		analysisSubmissionService = mock(AnalysisSubmissionService.class);
 		workflowsService = mock(IridaWorkflowsService.class);
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
 		messageSource = mock(MessageSource.class);
 		cartController = mock(CartController.class);
+		sequencingObjectService = mock(SequencingObjectService.class);
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 
-		controller = new PipelineController(sequenceFileService, sequenceFilePairService, referenceFileService,
-				analysisSubmissionService, workflowsService, projectService, userService, sequenceFileRemoteService,
-				cartController, messageSource, namedParameterService, sequenceFilePairRemoteService,
-				remoteSequenceFileService, remoteSequenceFilePairService);
+		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
+				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
+				sequenceFilePairRemoteService, singleEndSequenceFileRemoteService, remoteSequenceFilePairService,
+				remoteSequenceFileSingleService);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
@@ -96,7 +97,8 @@ public class PipelineControllerTest {
 		Principal principal = () -> "FRED";
 		UUID id = UUID.randomUUID();
 		String response = controller.getSpecifiedPipelinePage(model, principal, Locale.US, id);
-		assertEquals("If cart is empty user should be redirected.", PipelineController.URL_EMPTY_CART_REDIRECT, response);
+		assertEquals("If cart is empty user should be redirected.", PipelineController.URL_EMPTY_CART_REDIRECT,
+				response);
 	}
 
 	@Test
@@ -107,13 +109,17 @@ public class PipelineControllerTest {
 		User user = TestDataFactory.constructUser();
 		UUID id = UUID.randomUUID();
 		when(userService.getUserByUsername(username)).thenReturn(user);
-		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(true);
+		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class)))
+				.thenReturn(true);
 		when(cartController.getSelected()).thenReturn(TestDataFactory.constructCart());
-		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class)))
-				.thenReturn(TestDataFactory.generateSequenceFilesForSample(TestDataFactory.constructSample()));
+
+		when(sequencingObjectService.getSequencesForSampleOfType(any(Sample.class), eq(SingleEndSequenceFile.class)))
+				.thenReturn(TestDataFactory.generateSequencingObjectsForSample(TestDataFactory.constructSample()));
+
 		when(workflowsService.getIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
 		String response = controller.getSpecifiedPipelinePage(model, principal, Locale.US, id);
-		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_GENERIC_PIPELINE, response);
+		assertEquals("Response should be the path to the phylogenomics template",
+				PipelineController.URL_GENERIC_PIPELINE, response);
 		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
 		assertTrue("Model should contain a list of files.", model.containsKey("projects"));
 	}

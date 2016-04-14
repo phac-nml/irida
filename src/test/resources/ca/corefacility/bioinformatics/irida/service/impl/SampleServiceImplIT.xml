@@ -103,41 +103,55 @@
 	<sequence_file id="9" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile9" />
 
-	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0"
+	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
 		assembled_genome="1" />
+	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"
+		assembled_genome="2" />
+	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0"
+		assembled_genome="3" />
+	<sequencing_object id="4" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="5" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="6" created_date="2013-07-18 14:20:19.0" />
+
+	<sequence_file_pair id="1" />
+	<sequence_file_pair id="2" />
+	<sequence_file_pair id="3" />
+
 	<sequence_file_pair_files pair_id="1"
 		files_id="4" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="5" />
-	<sequence_file_pair id="2" created_date="2013-07-18 14:20:19.0"
-		assembled_genome="2" />
+
 	<sequence_file_pair_files pair_id="2"
 		files_id="6" />
 	<sequence_file_pair_files pair_id="2"
 		files_id="7" />
-	<sequence_file_pair id="3" created_date="2013-07-18 14:20:19.0"
-		assembled_genome="3" />
+
 	<sequence_file_pair_files pair_id="3"
 		files_id="8" />
 	<sequence_file_pair_files pair_id="3"
 		files_id="9" />
 
-	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
-		sample_id="1" sequencefile_id="1" />
-	<sequencefile_sample id="2" createdDate="2013-07-18 14:20:19.0"
-		sample_id="2" sequencefile_id="2" />
-	<sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
-		sample_id="3" sequencefile_id="3" />
-	<sequencefile_sample id="4" createdDate="2013-07-18 14:20:19.0"
-		sample_id="8" sequencefile_id="4" />
-	<sequencefile_sample id="5" createdDate="2013-07-18 14:20:19.0"
-		sample_id="8" sequencefile_id="5" />
-	<sequencefile_sample id="6" createdDate="2013-07-18 14:20:19.0"
-		sample_id="9" sequencefile_id="6" />
-	<sequencefile_sample id="7" createdDate="2013-07-18 14:20:19.0"
-		sample_id="9" sequencefile_id="7" />
-	<sequencefile_sample id="8" createdDate="2013-07-18 14:20:19.0"
-		sample_id="9" sequencefile_id="8" />
-	<sequencefile_sample id="9" createdDate="2013-07-18 14:20:19.0"
-		sample_id="9" sequencefile_id="9" />
+	<sequence_file_single_end id="4" file_id="1" />
+	<sequence_file_single_end id="5" file_id="2" />
+	<sequence_file_single_end id="6" file_id="3" />
+
+	<sample_sequencingobject id="1"
+		created_date="2013-07-18 14:20:19.0" sample_id="1"
+		sequencingobject_id="4" />
+	<sample_sequencingobject id="2"
+		created_date="2013-07-18 14:20:19.0" sample_id="2"
+		sequencingobject_id="5" />
+	<sample_sequencingobject id="3"
+		created_date="2013-07-18 14:20:19.0" sample_id="3"
+		sequencingobject_id="6" />
+	<sample_sequencingobject id="4"
+		created_date="2013-07-18 14:20:19.0" sample_id="8"
+		sequencingobject_id="1" />
+	<sample_sequencingobject id="6"
+		created_date="2013-07-18 14:20:19.0" sample_id="9"
+		sequencingobject_id="2" />
+	<sample_sequencingobject id="8"
+		created_date="2013-07-18 14:20:19.0" sample_id="9"
+		sequencingobject_id="3" />
 </dataset>
