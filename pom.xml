@@ -588,7 +588,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>irida</finalName>
+		<finalName>IRIDA ${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources/dandelion</directory>
@@ -596,7 +596,7 @@
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
 		<plugins>
