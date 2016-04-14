@@ -38,8 +38,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "samplesTable_info")
 	private WebElement samplesTableInfo;
 
-	@FindBy(css = "tbody input[type=checkbox]")
-	private List<WebElement> sampleCheckboxes;
+	@FindBy(css = "tbody tr")
+	private List<WebElement> tableRows;
 
 	@FindBy(id = "mergeBtn")
 	private WebElement mergeBtn;
@@ -140,7 +140,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public int getNumberProjectsDisplayed() {
-		return sampleCheckboxes.size();
+		return tableRows.size();
 	}
 
 	public boolean isMergeBtnEnabled() {
@@ -183,13 +183,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectSample(int row) {
-		WebElement checkbox = sampleCheckboxes.get(row);
+		WebElement checkbox = tableRows.get(row);
 		checkbox.click();
 	}
 
 	public void selectSampleWithShift(int row) {
 		Actions actions = new Actions(driver);
-		actions.keyDown(Keys.SHIFT).click(sampleCheckboxes.get(row)).perform();
+		actions.keyDown(Keys.SHIFT).click(tableRows.get(row)).perform();
 	}
 
 	public void selectAllOrNone() {
