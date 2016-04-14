@@ -157,15 +157,15 @@
 								__Admin Guide__
 							</a>
 						</li>
-						<li role="menuitem">
-							<a href="http://hub.corefacility.ca/?category=irida" th:text="#{nav.main.iridahub}"
+						<li role="menuitem" th:if="#{help.page.title} and #{help.page.url}">
+							<a href="" th:text="#{help.page.title}" th:attr="href=#{help.page.url}"
 							   target="_blank">
 								__IRIDA Hub__
 							</a>
 						</li>
 						<li role="separator" class="divider"></li>
-						<li role="menuitem">
-							<a href="mailto:IRIDA-mail@sfu.ca"><fa:icon type="email" fixed=""/>&nbsp;<span th:text="#{generic.irida.contact}"></span></a>
+						<li role="menuitem" th:if="#{help.contact.email}">
+							<a href="mailto:" th:attr="href='mailto:'+#{help.contact.email}"><fa:icon type="email" fixed=""/>&nbsp;<span th:text="#{generic.irida.contact}"></span></a>
 						</li>
 						<li role="menuitem">
 							<a href="http://www.irida.ca" target="_blank">
