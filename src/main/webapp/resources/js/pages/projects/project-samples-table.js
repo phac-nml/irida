@@ -2,4 +2,3 @@
 /*global oTable_samplesTable */
 
 var table = oTable_samplesTable;
-
