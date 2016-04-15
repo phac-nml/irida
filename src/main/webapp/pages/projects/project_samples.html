@@ -60,9 +60,9 @@
                     <a href="#">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" data:id="${associated.getId()}" ng-click="apCtrl.toggleAssociatedProject($event)"/>
+                                <input class="associated-cb" type="checkbox" data:id="${associated.getId()}" ng-click="apCtrl.toggleAssociatedProject($event)"/>
                                 &nbsp;
-                                <th:block th:text="${associated.label}"></th:block>
+                                <th:block th:text="${associated.getName()}"></th:block>
                             </label>
                         </div>
                     </a>
