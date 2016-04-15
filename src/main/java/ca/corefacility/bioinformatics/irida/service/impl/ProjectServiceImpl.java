@@ -36,8 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.google.common.collect.ImmutableList;
-
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -71,6 +69,8 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * A specialized service layer for projects.
@@ -107,6 +107,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.ugpjRepository = ugpjRepository;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadProject')")
+	public Iterable<Project> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
 	}
 
 	/**
