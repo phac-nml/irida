@@ -51,8 +51,8 @@
 
     <div role="toolbar" aria-label="Sample Table Tools">
         <div uib-dropdown="" auto-close="outsideClick" ng-controller="AssociatedProjectsController as apCtrl">
-            <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">Associated
-                Projects&nbsp;
+            <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
+                <th:block th:text="#{project.nav.associated}"></th:block>&nbsp;
                 <fa:icon type="caret-down" fixed="fixed"/>
             </button>
             <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="associated-btn">
