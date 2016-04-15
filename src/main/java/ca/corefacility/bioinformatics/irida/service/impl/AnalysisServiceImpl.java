@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -33,7 +34,7 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 		this.analysisRepository = analysisRepository;
 		this.analysisOutputFileRepository = analysisOutputFileRepository;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -55,14 +56,16 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 		}
 		return analysisRepository.save(analysis);
 	}
-        
-        
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canReadSequencingObject')")
 	@Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFile, 'canReadSequenceFile')")
-	public AnalysisFastQC getFastQCAnalysisForSequenceFile(final SequenceFile sequenceFile) {
-		return analysisRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
+	public AnalysisFastQC getFastQCAnalysisForSequenceFile(SequencingObject object, Long fileId) {
+		SequenceFile fileWithId = object.getFileWithId(fileId);
+
+		return analysisRepository.findFastqcAnalysisForSequenceFile(fileWithId);
 	}
+
 }

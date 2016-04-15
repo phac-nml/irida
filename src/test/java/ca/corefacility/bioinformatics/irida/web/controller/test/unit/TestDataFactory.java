@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -54,6 +56,38 @@ public final class TestDataFactory {
         sf.setFile(f);
         return sf;
     }
+    
+	/**
+	 * Construct a simple {@link SingleEndSequenceFile}
+	 * 
+	 * @return a {@link SingleEndSequenceFile} with a {@link SequenceFile} and
+	 *         id
+	 * @throws IOException
+	 *             if the temp file couldn't be created
+	 */
+	public static SingleEndSequenceFile constructSingleEndSequenceFile() throws IOException {
+		SequenceFile sf = constructSequenceFile();
+		SingleEndSequenceFile sesf = new SingleEndSequenceFile(sf);
+		sesf.setId(2L);
+		return sesf;
+	}
+	
+	/**
+	 * Construct a simple {@link SequenceFilePair} object
+	 * 
+	 * @return a {@link SequenceFilePair}
+	 * @throws IOException
+	 *             if the temp files couldn't be created
+	 */
+	public static SequenceFilePair constructSequenceFilePair() throws IOException {
+		SequenceFile sf1 = constructSequenceFile();
+		SequenceFile sf2 = constructSequenceFile();
+
+		SequenceFilePair pair = new SequenceFilePair(sf1, sf2);
+		pair.setId(1L);
+
+		return pair;
+	}
 
     /**
      * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.Project}.

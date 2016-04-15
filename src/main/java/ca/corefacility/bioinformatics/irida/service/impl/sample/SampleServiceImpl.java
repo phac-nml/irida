@@ -33,16 +33,14 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.repositories.AssembledGenomeAnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
@@ -66,17 +64,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link ProjectSampleJoin}.
 	 */
 	private ProjectSampleJoinRepository psjRepository;
-
-	/**
-	 * Reference to {@link SampleSequenceFileJoinRepository} for managing
-	 * {@link SampleSequenceFileJoin}.
-	 */
-	private SampleSequenceFileJoinRepository ssfRepository;
 	
-	private final SequenceFilePairRepository sequenceFilePairRepository;
+	private SampleSequencingObjectJoinRepository ssoRepository;
 	
-	private final AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository;
-
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
@@ -93,25 +83,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the sample sequence file join repository.
 	 * @param analysisRepository
 	 *            the analysis repository.
-	 * @param sequenceFilePairRepository
-	 *            the {@link SequenceFilePairRepository}.
-	 * @param assembledGenomeAnalysisRepository
-	 *            the {@link AssembledGenomeAnalysisRepository}.
 	 * @param validator
 	 *            validator.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
-			SampleSequenceFileJoinRepository ssfRepository, final AnalysisRepository analysisRepository,
-			final SequenceFilePairRepository sequenceFilePairRepository, AssembledGenomeAnalysisRepository assembledGenomeAnalysisRepository,
+			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
-		this.ssfRepository = ssfRepository;
 		this.analysisRepository = analysisRepository;
-		this.sequenceFilePairRepository = sequenceFilePairRepository;
-		this.assembledGenomeAnalysisRepository = assembledGenomeAnalysisRepository;
+		this.ssoRepository = ssoRepository;
 	}
 	
 	/**
@@ -167,14 +150,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#file, 'canReadSequenceFile')")
-	public Join<Sample, SequenceFile>  getSampleForSequeneFile(SequenceFile file) {
-		return ssfRepository.getSampleForSequenceFile(file);
+	@PreAuthorize("hasPermission(#seqObject, 'canReadSequencingObject')")
+	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject) {
+		return ssoRepository.getSampleForSequencingObject(seqObject);
 	}
 
 	/**
@@ -192,29 +175,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 					+ project.getId() + "]");
 		}
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canUpdateSample')")
-	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
-		SampleSequenceFileJoin joinForSampleAndFile = ssfRepository.readFileForSample(sample, sequenceFile);
-		logger.trace("Removing " + joinForSampleAndFile.getObject().getId() + " from sample "
-				+ joinForSampleAndFile.getSubject().getId());
-		ssfRepository.delete(joinForSampleAndFile);
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canUpdateSample')")
-	public void removeSequenceFilePairFromSample(Sample sample, SequenceFilePair pair) {
-		pair.getFiles().forEach((f) -> removeSequenceFileFromSample(sample, f));
+	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) {
+		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, object.getId());
+		ssoRepository.delete(readObjectForSample);
 	}
 
 	/**
@@ -248,11 +218,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
-			List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(s);
-			for (Join<Sample, SequenceFile> sequenceFile : sequenceFiles) {
-				removeSequenceFileFromSample(s, sequenceFile.getObject());
-				addSequenceFileToSample(mergeInto, sequenceFile.getObject());
+			List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(s);
+			for (SampleSequencingObjectJoin join : sequencesForSample) {
+				SequencingObject sequencingObject = join.getObject();
+				ssoRepository.delete(join);
+				addSequencingObjectToSample(mergeInto, sequencingObject);
 			}
+
 			// have to remove the sample to be deleted from its project:
 			ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, s);
 			psjRepository.delete(readSampleForProject);
@@ -330,15 +302,17 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		long totalBases = 0;
 
-		List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(sample);
-		for (Join<Sample, SequenceFile> sequenceFileJoin : sequenceFiles) {
-			SequenceFile sequenceFile = sequenceFileJoin.getObject();
-			final AnalysisFastQC sequenceFileFastQC = analysisRepository.findFastqcAnalysisForSequenceFile(sequenceFile);
-			if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
-				throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
-						+ sequenceFile.getId() + "]");
+		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
+		for (SampleSequencingObjectJoin join : sequencesForSample) {
+			for (SequenceFile sequenceFile : join.getObject().getFiles()) {
+				final AnalysisFastQC sequenceFileFastQC = analysisRepository
+						.findFastqcAnalysisForSequenceFile(sequenceFile);
+				if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
+					throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
+							+ sequenceFile.getId() + "]");
+				}
+				totalBases += sequenceFileFastQC.getTotalBases();
 			}
-			totalBases += sequenceFileFastQC.getTotalBases();
 		}
 
 		return totalBases;
@@ -373,18 +347,25 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Add a {@link SequencingObject} to a {@link Sample} after testing if it
+	 * exists in a {@link Sample} already
+	 * 
+	 * @param sample
+	 *            {@link Sample} to add to
+	 * @param seqObject
+	 *            {@link SequencingObject} to add
+	 * @return a {@link SampleSequencingObjectJoin}
 	 */
 	@Transactional
-	private SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
+	private SampleSequencingObjectJoin addSequencingObjectToSample(Sample sample, SequencingObject seqObject) {
 		// call the relationship repository to create the relationship between
 		// the two entities.
-		if (ssfRepository.getSampleForSequenceFile(sampleFile) != null) {
+		if (ssoRepository.getSampleForSequencingObject(seqObject) != null) {
 			throw new EntityExistsException("This sequencefile is already associated with a sample");
 		}
-		logger.trace("adding " + sampleFile.getId() + " to sample " + sample.getId());
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, sampleFile);
-		return ssfRepository.save(join);
+		logger.trace("adding " + seqObject.getId() + " to sample " + sample.getId());
+		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObject);
+		return ssoRepository.save(join);
 	}
 
 	/**
@@ -414,9 +395,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Set<AssembledGenomeAnalysis> findAssembliesForSample(Sample sample) {
 		Set<AssembledGenomeAnalysis> assembledGenomesSet = new HashSet<>();
-		List<SequenceFilePair> sequenceFilePairsList = sequenceFilePairRepository.getSequenceFilePairsForSample(sample);
-		for (SequenceFilePair sequenceFilePair : sequenceFilePairsList) {
-			AssembledGenomeAnalysis assembledGenomeAnalysis = assembledGenomeAnalysisRepository.getAssembledGenomeForSequenceFilePair(sequenceFilePair);
+		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
+		
+		for (SampleSequencingObjectJoin join : sequencesForSample) {
+			AssembledGenomeAnalysis assembledGenomeAnalysis = join.getObject().getAssembledGenome();
 			if (assembledGenomeAnalysis != null) {
 				assembledGenomesSet.add(assembledGenomeAnalysis);
 			}

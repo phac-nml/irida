@@ -19,57 +19,63 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
 
-import com.google.common.net.HttpHeaders;
-
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
+
+import com.google.common.net.HttpHeaders;
+
 /**
  * Tests for {@link RESTSequencingRunSequenceFilesController}.
  */
 public class SequencingRunSequenceFilesControllerTest {
 	private RESTSequencingRunSequenceFilesController controller;
-	private SequenceFileService sequenceFileService;
+	private SequencingObjectService objectService;
 	private SequencingRunService miseqRunService;
 
 	@Before
 	public void setUp() {
-		sequenceFileService = mock(SequenceFileService.class);
-		miseqRunService= mock(SequencingRunService.class);
-		controller = new RESTSequencingRunSequenceFilesController(miseqRunService, sequenceFileService);
+		miseqRunService = mock(SequencingRunService.class);
+		objectService = mock(SequencingObjectService.class);
+		controller = new RESTSequencingRunSequenceFilesController(miseqRunService, objectService);
 	}
-	
+
 	@Test
 	public void addSequenceFileToMiseqRunTest() throws IOException {
-		Long seqId =1L;
-		Long sequencingrunId =2L;
+		Long seqId = 1L;
+		Long sequencingrunId = 2L;
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		SequenceFile file = TestDataFactory.constructSequenceFile();
+
+		SingleEndSequenceFile singleEndSequenceFile = TestDataFactory.constructSingleEndSequenceFile();
+
 		MiseqRun run = new MiseqRun(LayoutType.SINGLE_END, "workflow");
 		Map<String, String> representation = new HashMap<String, String>();
-		representation.put(RESTSequencingRunSequenceFilesController.SEQUENCEFILE_ID_KEY, ""+seqId);
-		
-		when(sequenceFileService.read(seqId)).thenReturn(file);
+		representation.put(RESTSequencingRunSequenceFilesController.SEQUENCEFILE_ID_KEY, "" + seqId);
+
+		when(objectService.read(seqId)).thenReturn(singleEndSequenceFile);
 		when(miseqRunService.read(sequencingrunId)).thenReturn(run);
-		
-		ModelMap modelMap = controller.addSequenceFileToMiseqRun(sequencingrunId,representation, response);
-		
-		verify(sequenceFileService).read(seqId);
+
+		ModelMap modelMap = controller.addSequenceFileToMiseqRun(sequencingrunId, representation, response);
+
+		verify(objectService).read(seqId);
 		verify(miseqRunService).read(sequencingrunId);
-		
+
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertNotNull("Object should not be null",o);
-		assertTrue("Object should be an instance of MiseqRunResource",o instanceof MiseqRun);
-		MiseqRun res = (MiseqRun)o;
-		String seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
-		assertEquals("Sequence file location should be correct",seqFileLocation,res.getLink(Link.REL_SELF).getHref());
-		assertEquals("Sequence file location should be correct",seqFileLocation,response.getHeader(HttpHeaders.LOCATION));
-		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
+		assertNotNull("Object should not be null", o);
+		assertTrue("Object should be an instance of MiseqRunResource", o instanceof MiseqRun);
+		MiseqRun res = (MiseqRun) o;
+		String seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId)
+				.slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
+		assertEquals("Sequence file location should be correct", seqFileLocation, res.getLink(Link.REL_SELF).getHref());
+		assertEquals("Sequence file location should be correct", seqFileLocation,
+				response.getHeader(HttpHeaders.LOCATION));
+		assertEquals("HTTP status must be CREATED", HttpStatus.CREATED.value(), response.getStatus());
 	}
+
 }

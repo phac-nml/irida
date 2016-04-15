@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
 /**
  * Thrown when the {@link FileProcessingChain} waits longer than a specified
- * timeout for the {@link SequenceFileService} to finish executing its
+ * timeout for the {@link SequencingObjectService} to finish executing its
  * transaction.
  * 
  *

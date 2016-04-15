@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -8,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,17 +24,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -58,13 +60,10 @@ public class AnalysisSubmissionRepositoryIT {
 	private ReferenceFileRepository referenceFileRepository;
 
 	@Autowired
-	private SequenceFileRepository sequenceFileRepository;
-
-	@Autowired
-	private SequenceFilePairRepository sequenceFilePairRepository;
-
-	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private SequencingObjectRepository objectRepository;
 
 	private UUID workflowId = UUID.randomUUID();
 
@@ -73,6 +72,7 @@ public class AnalysisSubmissionRepositoryIT {
 	private SequenceFilePair sequenceFilePair;
 	private SequenceFile sequenceFile;
 	private ReferenceFile referenceFile;
+	private SingleEndSequenceFile singleEndFile;
 
 	private static final String analysisId = "10";
 	private static final String analysisId2 = "11";
@@ -89,15 +89,17 @@ public class AnalysisSubmissionRepositoryIT {
 	 */
 	@Before
 	public void setup() throws IOException {
-		sequenceFile = sequenceFileRepository.findOne(1L);
+		singleEndFile = (SingleEndSequenceFile) objectRepository.findOne(2L);
+		sequenceFile = singleEndFile.getFileWithId(1L);
 		assertNotNull(sequenceFile);
-		Set<SequenceFile> sequenceFiles = Sets.newHashSet(sequenceFile);
+		Set<SingleEndSequenceFile> singleFiles = Sets.newHashSet(singleEndFile);
 
-		SequenceFile sequenceFile2 = sequenceFileRepository.findOne(2L);
+		SingleEndSequenceFile singleEndFile2 = (SingleEndSequenceFile) objectRepository.findOne(3L);
+		SequenceFile sequenceFile2 = singleEndFile2.getFileWithId(2L);
 		assertNotNull(sequenceFile2);
-		Set<SequenceFile> sequenceFiles2 = Sets.newHashSet(sequenceFile2);
+		Set<SingleEndSequenceFile> singleFiles2 = Sets.newHashSet(singleEndFile2);
 
-		sequenceFilePair = sequenceFilePairRepository.findOne(1L);
+		sequenceFilePair = (SequenceFilePair) objectRepository.findOne(1L);
 		assertNotNull(sequenceFilePair);
 
 		referenceFile = referenceFileRepository.findOne(1L);
@@ -106,21 +108,15 @@ public class AnalysisSubmissionRepositoryIT {
 		submitter1 = userRepository.findOne(1L);
 		submitter2 = userRepository.findOne(2L);
 
-		analysisSubmission = AnalysisSubmission.builder(workflowId)
-				.name(analysisName)
-				.inputFilesSingle(sequenceFiles)
-				.referenceFile(referenceFile)
-				.build();
+		analysisSubmission = AnalysisSubmission.builder(workflowId).name(analysisName).inputFilesSingleEnd(singleFiles)
+				.referenceFile(referenceFile).build();
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission.setSubmitter(submitter1);
 		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 
-		analysisSubmission2 = AnalysisSubmission.builder(workflowId)
-				.name(analysisName2)
-				.inputFilesSingle(sequenceFiles2)
-				.referenceFile(referenceFile)
-				.build();
+		analysisSubmission2 = AnalysisSubmission.builder(workflowId).name(analysisName2)
+				.inputFilesSingleEnd(singleFiles2).referenceFile(referenceFile).build();
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission2.setSubmitter(submitter2);
@@ -167,7 +163,7 @@ public class AnalysisSubmissionRepositoryIT {
 				.findByAnalysisState(AnalysisState.RUNNING);
 		assertEquals(Collections.EMPTY_LIST, submittedAnalyses);
 	}
-	
+
 	/**
 	 * Tests getting a single analysis by two states and succeeding
 	 */
@@ -216,12 +212,10 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisPaired() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
-				.name("submission paired 1")
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
-				.build(); 
+				.name("submission paired 1").inputFilesPaired(Sets.newHashSet(sequenceFilePair)).build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
-		assertEquals(0, savedSubmission.getSingleInputFiles().size());
+		assertEquals(0, savedSubmission.getInputFilesSingleEnd().size());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertFalse(savedSubmission.getReferenceFile().isPresent());
 	}
@@ -233,14 +227,12 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisPairedReference() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
-				.name("submission paired 1")
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
-				.referenceFile(referenceFile)
-				.build();
+				.name("submission paired 1").inputFilesPaired(Sets.newHashSet(sequenceFilePair))
+				.referenceFile(referenceFile).build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
-		assertEquals(0, savedSubmission.getSingleInputFiles().size());
+		assertEquals(0, savedSubmission.getInputFilesSingleEnd().size());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
 	}
@@ -253,15 +245,12 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisSingleAndPairedAndReference() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
-				.name("submission paired 1")
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
-				.inputFilesSingle(Sets.newHashSet(sequenceFile))
-				.referenceFile(referenceFile)
-				.build();
+				.name("submission paired 1").inputFilesPaired(Sets.newHashSet(sequenceFilePair))
+				.inputFilesSingleEnd(Sets.newHashSet(singleEndFile)).referenceFile(referenceFile).build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
-		assertEquals(Sets.newHashSet(sequenceFile), savedSubmission.getSingleInputFiles());
+		assertEquals(Sets.newHashSet(singleEndFile), savedSubmission.getInputFilesSingleEnd());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
 	}
@@ -274,14 +263,12 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisSingleAndPaired() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
-				.name("submission paired 1")
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
-				.inputFilesSingle(Sets.newHashSet(sequenceFile))
-				.build();
+				.name("submission paired 1").inputFilesPaired(Sets.newHashSet(sequenceFilePair))
+				.inputFilesSingleEnd(Sets.newHashSet(singleEndFile)).build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
-		assertEquals(Sets.newHashSet(sequenceFile), savedSubmission.getSingleInputFiles());
+		assertEquals(Sets.newHashSet(singleEndFile), savedSubmission.getInputFilesSingleEnd());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertFalse(savedSubmission.getReferenceFile().isPresent());
 	}
@@ -293,9 +280,7 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisNoSubmitterFail() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
-				.name("submission paired 1")
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
-				.build(); 
+				.name("submission paired 1").inputFilesPaired(Sets.newHashSet(sequenceFilePair)).build();
 		analysisSubmissionRepository.save(analysisSubmissionPaired);
 	}
 

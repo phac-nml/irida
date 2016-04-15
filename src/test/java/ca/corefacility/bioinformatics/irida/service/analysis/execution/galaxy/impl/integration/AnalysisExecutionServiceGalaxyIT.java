@@ -265,7 +265,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(analysisExecuted.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
 		assertEquals(analysisExecuted.getRemoteWorkflowId(), savedSubmission.getRemoteWorkflowId());
 		assertEquals(analysisExecuted.getWorkflowId(), savedSubmission.getWorkflowId());
-		assertEquals(analysisExecuted.getSingleInputFiles(), savedSubmission.getSingleInputFiles());
+		assertEquals(analysisExecuted.getInputFilesSingleEnd(), savedSubmission.getInputFilesSingleEnd());
 		assertEquals(analysisExecuted.getReferenceFile(), savedSubmission.getReferenceFile());
 		assertEquals(analysisExecuted.getAnalysisState(), savedSubmission.getAnalysisState());
 	}

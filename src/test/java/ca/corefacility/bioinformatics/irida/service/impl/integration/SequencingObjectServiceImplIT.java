@@ -11,10 +11,8 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -40,16 +38,19 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -58,6 +59,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -67,21 +69,25 @@ import com.google.common.collect.ImmutableList;
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
-public class SequenceFileServiceImplIT {
+public class SequencingObjectServiceImplIT {
+	private static final Logger logger = LoggerFactory.getLogger(SequencingObjectServiceImplIT.class);
 
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
-	private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImplIT.class);
 
 	@Autowired
-	private SequenceFileService sequenceFileService;
+	private PasswordEncoder passwordEncoder;
+
 	@Autowired
 	private AnalysisService analysisService;
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+
 	@Autowired
 	private SampleService sampleService;
+
+	@Autowired
+	private SequencingObjectService objectService;
+
 	@Autowired
 	private SequencingRunService sequencingRunService;
 
@@ -94,7 +100,7 @@ public class SequenceFileServiceImplIT {
 		Files.createDirectories(baseDirectory);
 	}
 
-	private SequenceFileServiceImplIT asRole(Role r, String username) {
+	private SequencingObjectServiceImplIT asRole(Role r, String username) {
 		User u = new User();
 		u.setUsername(username);
 		u.setPassword(passwordEncoder.encode("Password1"));
@@ -106,41 +112,99 @@ public class SequenceFileServiceImplIT {
 		return this;
 	}
 
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "fbristow", roles = "USER")
-	public void testReadSequenceFileAsUserNoPermissions() {
-		sequenceFileService.read(1L);
-	}
-
 	@Test
-	@WithMockUser(username = "fbristow1", roles = "USER")
-	public void testReadSequenceFileAsUserWithPermissions() {
-		sequenceFileService.read(1L);
-	}
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testAddSequenceFilePairAsSequencer() throws IOException {
 
-	@Test
-	@WithMockUser(username = "fbristow1", roles = "USER")
-	public void testReadOptionalProperties() {
-		SequenceFile read = sequenceFileService.read(1L);
-		assertEquals("5", read.getOptionalProperty("samplePlate"));
-		assertEquals("10", read.getOptionalProperty("sampleWell"));
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow1", roles = "USER")
-	public void testAddAdditionalProperties() throws IOException {
-		SequenceFile file = sequenceFileService.read(1L);
-		file.addOptionalProperty("index", "111");
-		Path sequenceFile = Files.createTempFile(null, null);
+		Path sequenceFile = Files.createTempFile("file1", ".fastq");
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-		file.setFile(sequenceFile);
-		Map<String, Object> changed = new HashMap<>();
-		changed.put("optionalProperties", file.getOptionalProperties());
-		changed.put("file", file.getFile());
-		sequenceFileService.update(file.getId(), changed);
-		SequenceFile reread = sequenceFileService.read(1L);
-		assertNotNull(reread.getOptionalProperty("index"));
-		assertEquals("111", reread.getOptionalProperty("index"));
+
+		Path sequenceFile2 = Files.createTempFile("file2", ".fastq");
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+
+		SequenceFile file1 = new SequenceFile(sequenceFile);
+		SequenceFile file2 = new SequenceFile(sequenceFile2);
+
+		SequenceFilePair sequenceFilePair = new SequenceFilePair(file1, file2);
+
+		SequencingObject createSequenceFilePair = objectService.create(sequenceFilePair);
+		assertTrue(createSequenceFilePair.getFiles().contains(file1));
+		assertTrue(createSequenceFilePair.getFiles().contains(file2));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetSequenceFilePairForSample() {
+		Sample s = sampleService.read(2L);
+
+		Set<Long> fileIds = Sets.newHashSet(3L, 4L);
+
+		Collection<SampleSequencingObjectJoin> sequenceFilePairsForSample = objectService.getSequencesForSampleOfType(
+				s, SequenceFilePair.class);
+		assertEquals(1, sequenceFilePairsForSample.size());
+		SequencingObject pair = sequenceFilePairsForSample.iterator().next().getObject();
+
+		for (SequenceFile file : pair.getFiles()) {
+			assertTrue("file id should be in set", fileIds.contains(file.getId()));
+			fileIds.remove(file.getId());
+		}
+
+		assertTrue("all file ids should have been found", fileIds.isEmpty());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testCreateSequenceFileInSample() throws IOException {
+		Sample s = sampleService.read(1L);
+		SequenceFile sf = new SequenceFile();
+		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
+		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
+		gzOut.write(FASTQ_FILE_CONTENTS);
+		gzOut.close();
+
+		sf.setFile(sequenceFile);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+
+		objectService.createSequencingObjectInSample(so, s);
+
+		SequencingRun mr = sequencingRunService.read(1L);
+		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testGetSequencefilesForSampleAsSequencer() throws IOException {
+		Sample s = sampleService.read(1L);
+		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = objectService
+				.getSequencingObjectsForSample(s);
+		assertEquals(1, sequencingObjectsForSample.size());
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUnpairedFilesForSample() {
+		Sample s = sampleService.read(2L);
+
+		Collection<SampleSequencingObjectJoin> sequencesForSampleOfType = objectService.getSequencesForSampleOfType(s,
+				SingleEndSequenceFile.class);
+
+		assertEquals(1, sequencesForSampleOfType.size());
+		SampleSequencingObjectJoin join = sequencesForSampleOfType.iterator().next();
+
+		assertEquals(new Long(4), join.getObject().getId());
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUnpairedFilesForSampleWithNoPairs() {
+		Sample s = sampleService.read(1L);
+
+		Collection<SampleSequencingObjectJoin> sequencesForSampleOfType = objectService.getSequencesForSampleOfType(s,
+				SingleEndSequenceFile.class);
+		assertEquals(1, sequencesForSampleOfType.size());
+		SampleSequencingObjectJoin join = sequencesForSampleOfType.iterator().next();
+
+		assertEquals(new Long(2), join.getObject().getId());
 	}
 
 	@Test
@@ -150,19 +214,22 @@ public class SequenceFileServiceImplIT {
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 		sf.setFile(sequenceFile);
+		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
 
 		logger.trace("About to save the file.");
-		sf = asRole(Role.ROLE_SEQUENCER, "fbristow").sequenceFileService.create(sf);
+		SequencingObject sequencingObject = asRole(Role.ROLE_SEQUENCER, "fbristow").objectService
+				.create(singleEndSequenceFile);
 		logger.trace("Finished saving the file.");
 
-		assertNotNull("ID wasn't assigned.", sf.getId());
+		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
 
 		// figure out what the version number of the sequence file is (should be
 		// 2; the file wasn't gzipped, but fastqc will have modified it.)
-		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
+		SequencingObject readObject = asRole(Role.ROLE_ADMIN, "tom").objectService.read(sequencingObject.getId());
+		sf = readObject.getFiles().iterator().next();
 		assertEquals("Wrong version number after processing.", Long.valueOf(2), sf.getFileRevisionNumber());
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
+		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
@@ -197,22 +264,24 @@ public class SequenceFileServiceImplIT {
 		gzOut.close();
 
 		sf.setFile(sequenceFile);
+		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
 
 		logger.trace("About to save the file.");
-		sf = sequenceFileService.create(sf);
+		SequencingObject sequencingObject = objectService.create(singleEndSequenceFile);
 		logger.trace("Finished saving the file.");
 
-		assertNotNull("ID wasn't assigned.", sf.getId());
+		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
 
 		// figure out what the version number of the sequence file is (should be
 		// 3; the file was gzipped)
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
-		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
+		SequencingObject readObject = asRole(Role.ROLE_ADMIN, "tom").objectService.read(sequencingObject.getId());
+		sf = readObject.getFiles().iterator().next();
 		assertEquals("Wrong version number after processing.", Long.valueOf(3L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(sf);
+		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
@@ -239,53 +308,23 @@ public class SequenceFileServiceImplIT {
 	}
 
 	@Test
-	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testCreateSequenceFileInSample() throws IOException {
-		Sample s = sampleService.read(1L);
-		SequenceFile sf = new SequenceFile();
-		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
-		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
-		gzOut.write(FASTQ_FILE_CONTENTS);
-		gzOut.close();
+	@WithMockUser(username = "fbristow1", roles = "USER")
+	public void testReadSequenceFileAsUserWithPermissions() {
+		assertNotNull(objectService.read(2L));
+	}
 
-		sf.setFile(sequenceFile);
-		sequenceFileService.createSequenceFileInSample(sf, s);
-
-		SequencingRun mr = sequencingRunService.read(1L);
-		sequencingRunService.addSequenceFileToSequencingRun(mr, sf);
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testReadSequenceFileAsUserNoPermissions() {
+		objectService.read(2L);
 	}
 
 	@Test
-	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testGetSequencefilesForSampleAsSequencer() throws IOException {
-		Sample s = sampleService.read(1L);
-		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService.getSequenceFilesForSample(s);
-		assertEquals(1, sequenceFilesForSample.size());
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetUnpairedFilesForSample() {
-		Sample s = sampleService.read(2L);
-
-		List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
-				.getUnpairedSequenceFilesForSample(s);
-		assertEquals(1, unpairedSequenceFilesForSample.size());
-		Join<Sample, SequenceFile> join = unpairedSequenceFilesForSample.iterator().next();
-
-		assertEquals(new Long(5), join.getObject().getId());
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetUnpairedFilesForSampleWithNoPairs() {
-		Sample s = sampleService.read(1L);
-
-		List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
-				.getUnpairedSequenceFilesForSample(s);
-		assertEquals(1, unpairedSequenceFilesForSample.size());
-		Join<Sample, SequenceFile> join = unpairedSequenceFilesForSample.iterator().next();
-
-		assertEquals(new Long(1), join.getObject().getId());
+	@WithMockUser(username = "fbristow1", roles = "USER")
+	public void testReadOptionalProperties() {
+		SequencingObject sequencingObject = objectService.read(2L);
+		SequenceFile read = sequencingObject.getFileWithId(1L);
+		assertEquals("5", read.getOptionalProperty("samplePlate"));
+		assertEquals("10", read.getOptionalProperty("sampleWell"));
 	}
 }

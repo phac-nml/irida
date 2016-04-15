@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
@@ -39,8 +34,13 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Integration tests for the sample service.
@@ -61,7 +61,7 @@ public class SampleServiceImplIT {
 	@Autowired
 	private ProjectService projectService;
 	@Autowired
-	private SequenceFileService sequenceFileService;
+	private SequencingObjectService objectService;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -97,7 +97,7 @@ public class SampleServiceImplIT {
 
 		// the merged sample should have 3 sequence files
 		assertEquals("Merged sample should have 3 sequence files", 3,
-				sequenceFileService.getSequenceFilesForSample(merged).size());
+				objectService.getSequencingObjectsForSample(merged).size());
 	}
 
 	/**
