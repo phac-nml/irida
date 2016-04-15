@@ -314,16 +314,14 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getProjectSamples(@PathVariable Long projectId, @DatatablesParams DatatablesCriterias criterias, @RequestParam(required = false, defaultValue = "") List<Long> associated) {
-		Map<String, Object> result = new HashMap<>();
 		List<Project> projects = new ArrayList<>();
-
+		// Check to see if any associated projects need to be added to the query.
+		if (!associated.isEmpty()) {
+			projects = (List<Project>) projectService.readMultiple(associated);
+		}
 		// This project is always in the query.
 		projects.add(projectService.read(projectId));
 
-		// Check to see if any associated projects need to be added to the query.
-		if (!associated.isEmpty()) {
-			projects.addAll(associated.stream().map(projectService::read).collect(Collectors.toList()));
-		}
 
 		// Convert the criterias into a more usable format.
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias);
