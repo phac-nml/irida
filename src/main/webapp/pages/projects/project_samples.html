@@ -52,7 +52,7 @@
     <div role="toolbar" aria-label="Sample Table Tools">
         <div th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown="" auto-close="outsideClick" ng-controller="AssociatedProjectsController as apCtrl">
             <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
-                <th:block th:text="#{project.nav.associated}"></th:block>&nbsp;
+                <th:block th:text="#{project.samples.nav.associated}"></th:block>&nbsp;
                 <fa:icon type="caret-down" fixed="fixed"/>
             </button>
             <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="associated-btn">
@@ -69,6 +69,7 @@
                 </li>
             </ul>
         </div>
+        <a th:if="${#lists.isEmpty(associatedProjects)}" th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default"><fa:icon type="create" />&nbsp;<th:block th:text="#{project.samples.nav.associated-create}"></th:block></a>
     </div>
 
     <div dt:conf="samplesTable">
