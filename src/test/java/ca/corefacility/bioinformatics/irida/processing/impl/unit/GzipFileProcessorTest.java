@@ -15,13 +15,16 @@ import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Tests for {@link GzipFileProcessor}.
@@ -30,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
  */
 public class GzipFileProcessorTest {
 
+	private SequencingObjectRepository objectRepository;
 	private GzipFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
@@ -37,7 +41,8 @@ public class GzipFileProcessorTest {
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
+		objectRepository = mock(SequencingObjectRepository.class);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, objectRepository, Boolean.FALSE);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -52,14 +57,14 @@ public class GzipFileProcessorTest {
 		out.close();
 		sf.setFile(compressed);
 
-		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 		when(sequenceFileRepository.save(any(SequenceFile.class))).thenThrow(new RuntimeException());
 		fileProcessor.process(1L);
 	}
 
 	@Test
 	public void testDeleteOriginalFile() throws IOException {
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, objectRepository, Boolean.TRUE);
 		final SequenceFile sf = constructSequenceFile();
 
 		// compress the file, update the sequence file reference
@@ -70,7 +75,7 @@ public class GzipFileProcessorTest {
 		out.close();
 		sf.setFile(compressed);
 
-		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 
 		fileProcessor.process(1L);
 
@@ -85,7 +90,7 @@ public class GzipFileProcessorTest {
 		SequenceFile sf = constructSequenceFile();
 		Path original = sf.getFile();
 
-		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 
 		fileProcessor.process(1L);
 
@@ -113,7 +118,7 @@ public class GzipFileProcessorTest {
 		out.close();
 
 		when(sequenceFileRepository.save(sf)).thenReturn(sfUpdated);
-		when(sequenceFileRepository.findOne(id)).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 
 		sf.setFile(compressed);
 
@@ -151,7 +156,7 @@ public class GzipFileProcessorTest {
 
 		sf.setFile(compressed);
 
-		when(sequenceFileRepository.findOne(id)).thenReturn(sf);
+		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
 
 		fileProcessor.process(id);
 

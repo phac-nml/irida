@@ -14,9 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Handle gzip-ed files (if necessary). This class partially assumes that gzip
@@ -33,11 +35,14 @@ public class GzipFileProcessor implements FileProcessor {
 	private static final String GZIP_EXTENSION = ".gz";
 
 	private final SequenceFileRepository sequenceFileRepository;
+	private final SequencingObjectRepository objectRepository;
 	private final Boolean removeCompressedFile;
 
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileService, final Boolean removeCompressedFile) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
+			final SequencingObjectRepository objectRepository, final Boolean removeCompressedFile) {
 		this.sequenceFileRepository = sequenceFileService;
 		this.removeCompressedFile = removeCompressedFile;
+		this.objectRepository = objectRepository;
 	}
 
 	/**
@@ -45,8 +50,23 @@ public class GzipFileProcessor implements FileProcessor {
 	 */
 	@Override
 	@Transactional
-	public void process(Long sequenceFileId) throws FileProcessorException {
-		SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
+	public void process(final Long sequencingObjectId) throws FileProcessorException {
+		SequencingObject seqObj = objectRepository.findOne(sequencingObjectId);
+
+		for (SequenceFile file : seqObj.getFiles()) {
+			processSingleFile(file);
+		}
+	}
+
+	/**
+	 * Process a single {@link SequenceFile}
+	 * 
+	 * @param sequenceFile
+	 *            file to process
+	 * @throws FileProcessorException
+	 *             if an error occurs while processing
+	 */
+	public void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path file = sequenceFile.getFile();
 		String nameWithoutExtension = file.getFileName().toString();
 
@@ -79,7 +99,8 @@ public class GzipFileProcessor implements FileProcessor {
 							Files.delete(file);
 						} catch (final Exception e) {
 							logger.error("Failed to remove the original compressed file.", e);
-							// throw the exception again to be caught by the outer try/catch block:
+							// throw the exception again to be caught by the
+							// outer try/catch block:
 							throw e;
 						}
 					}

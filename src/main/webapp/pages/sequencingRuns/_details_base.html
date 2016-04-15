@@ -16,7 +16,7 @@
                 <li th:class="${activeNav} == 'files' ? 'active'">
                     <a th:href="${baseLink + '/sequenceFiles'}" href="#" >
                         <span th:text="#{samples.nav.files}">_Files_</span>
-                        <span id="file-count" class="badge badge-default" th:text="${#lists.size(files)}">0</span>
+                        <span id="file-count" class="badge badge-default" th:text="${fileCount}">0</span>
                     </a>
                 </li>
             </ul>

@@ -26,12 +26,10 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
@@ -76,19 +74,10 @@ public class AnalysisExecutionServiceTestConfig {
 	private ReferenceFileRepository referenceFileRepository;
 
 	@Autowired
-	private SequenceFileService sequenceFileService;
-
-	@Autowired
-	private SequenceFilePairService sequenceFilePairService;
-
-	@Autowired
 	private SampleService sampleService;
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-	
-	@Autowired
-	private SequenceFilePairRepository sequenceFilePairRepository;
 	
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
@@ -104,6 +93,9 @@ public class AnalysisExecutionServiceTestConfig {
 	
 	@Autowired
 	SampleRemoteService sampleRemoteService;
+	
+	@Autowired
+	SequencingObjectService sequencingObjectService;
 	
 	@Autowired
 	private SequenceFileSnapshotService sequenceFileSnapshotService;
@@ -133,11 +125,11 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				sequenceFileService, sequenceFilePairService, galaxyLibrariesService,
-				iridaWorkflowsService,
-				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy,sampleRemoteService);
+				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy(),
+				analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy, sampleRemoteService,
+				sequencingObjectService);
 	}
-	
+
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
@@ -186,8 +178,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(referenceFileRepository, sequenceFileService,
-				sampleService, analysisExecutionService(),
-				analysisSubmissionService, analysisSubmissionRepository, sequenceFilePairRepository);
+		return new DatabaseSetupGalaxyITService(referenceFileRepository, sampleService, analysisExecutionService(),
+				analysisSubmissionService, analysisSubmissionRepository, sequencingObjectService);
 	}
 }

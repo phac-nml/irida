@@ -3,29 +3,29 @@ package ca.corefacility.bioinformatics.irida.processing;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 /**
  * A collection of {@link FileProcessor} that are executed, in order, on a
- * specific {@link SequenceFile}.
+ * specific {@link SequencingObject}.
  * 
  * 
  */
 public interface FileProcessingChain {
 	/**
 	 * Launch the chain of {@link FileProcessor} on the specific
-	 * {@link SequenceFile}.
+	 * {@link SequencingObject}.
 	 * 
-	 * @param sequenceFileId
-	 *            the if of the file to process.
+	 * @param sequencingObjectId
+	 *            the id of the {@link SequencingObject} to process.
 	 * @return any {@link Exception} thrown during chain processing (in the same
 	 *         order as {@link FileProcessor} returned by
 	 *         {@link #getFileProcessors()}).
 	 * @throws FileProcessorTimeoutException
 	 *             when the processor chain waits too long for the specified
-	 *             {@link SequenceFile} to appear in the database.
+	 *             {@link SequencingObject} to appear in the database.
 	 */
-	public List<Exception> launchChain(Long sequenceFileId) throws FileProcessorTimeoutException;
+	public List<Exception> launchChain(Long sequencingObjectId) throws FileProcessorTimeoutException;
 
 	/**
 	 * Get the collection of {@link FileProcessor} that this
@@ -47,7 +47,7 @@ public interface FileProcessingChain {
 
 	/**
 	 * Set the total amount of time (in seconds) that the processor chain should
-	 * wait for the {@link SequenceFile} to appear before failing.
+	 * wait for the {@link SequencingObject} to appear before failing.
 	 * 
 	 * @param timeout
 	 *            the total amount of time in seconds that the processor chain

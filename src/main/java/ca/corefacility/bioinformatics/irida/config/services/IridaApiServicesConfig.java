@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
@@ -94,6 +96,19 @@ public class IridaApiServicesConfig {
 	@Value("${file.processing.decompress.remove.compressed.file}")
 	private Boolean removeCompressedFiles;
 	
+	// the key + colon syntax allows default values. we use `false` here so we can conditionally show tags on the page with thymeleaf
+	@Value("${help.page.title:false}")
+	private String helpPageTitle;
+	
+	@Value("${help.page.url:false}")
+	private String helpPageUrl;
+	
+	@Value("${help.contact.email:false}")
+	private String helpEmail;
+	
+	@Value("${irida.version}")
+	private String iridaVersion;
+	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
 		return new ForbidJpqlUpdateDeletePostProcessor();
@@ -102,11 +117,18 @@ public class IridaApiServicesConfig {
 	@Bean
 	public MessageSource messageSource() {
 		logger.info("Configuring ReloadableResourceBundleMessageSource.");
-
-		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+		
+		final Properties properties = new Properties();
+		properties.setProperty("help.page.title", helpPageTitle);
+		properties.setProperty("help.page.url", helpPageUrl);
+		properties.setProperty("help.contact.email", helpEmail);
+		properties.setProperty("irida.version", iridaVersion);
+		
+		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
 		source.setBasenames(RESOURCE_LOCATIONS);
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
+		source.setCommonMessages(properties);
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
@@ -118,9 +140,12 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public FileProcessingChain fileProcessorChain(SequenceFileRepository sequenceFileRepository) {
-		final FileProcessor gzipFileProcessor = new GzipFileProcessor(sequenceFileRepository, removeCompressedFiles);
-		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(messageSource(), sequenceFileRepository);
+	public FileProcessingChain fileProcessorChain(SequenceFileRepository fileRepository,
+			SequencingObjectRepository sequencingObjectRepository) {
+		final FileProcessor gzipFileProcessor = new GzipFileProcessor(fileRepository, sequencingObjectRepository,
+				removeCompressedFiles);
+		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(messageSource(), fileRepository,
+				sequencingObjectRepository);
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor);
 
 		if (!decompressFiles) {
@@ -128,7 +153,7 @@ public class IridaApiServicesConfig {
 			fileProcessors.remove(gzipFileProcessor);
 		}
 
-		return new DefaultFileProcessingChain(sequenceFileRepository, fileProcessors);
+		return new DefaultFileProcessingChain(sequencingObjectRepository, fileProcessors);
 	}
 
 	@Bean(name = "fileProcessingChainExecutor")

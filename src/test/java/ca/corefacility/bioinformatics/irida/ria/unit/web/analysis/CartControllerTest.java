@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -34,7 +34,7 @@ public class CartControllerTest {
 	SampleService sampleService;
 	ProjectService projectService;
 	UserService userService;
-	SequenceFileService sequenceFileService;	
+	SequencingObjectService sequencingObjectService;
 	SampleRemoteService sampleRemoteService;
 	
 	CartController controller;
@@ -49,10 +49,10 @@ public class CartControllerTest {
 		sampleService = mock(SampleService.class);
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
-		sequenceFileService = mock(SequenceFileService.class);
+		sequencingObjectService = mock(SequencingObjectService.class);
 		sampleRemoteService = mock(SampleRemoteService.class);
 		
-		controller = new CartController(sampleService, userService, projectService, sequenceFileService, sampleRemoteService);
+		controller = new CartController(sampleService, userService, projectService, sequencingObjectService, sampleRemoteService);
 
 		testData();
 	}

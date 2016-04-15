@@ -10,20 +10,28 @@
 		credentialsNonExpired="true" />
 
 	<sequencing_run id="1" createdDate="2014-07-30 08:24:33"
-		description="A cool run" upload_status="COMPLETE" layout_type="PAIRED_END"/>
+		description="A cool run" upload_status="COMPLETE" layout_type="PAIRED_END" />
 	<miseq_run id="1" workflow="test workflow" />
 
 	<sequencing_run id="2" createdDate="2014-08-30 08:24:33"
 		description="Another cool run" upload_status="COMPLETE" layout_type="PAIRED_END" />
 	<miseq_run id="2" workflow="test workflow" />
 
-	<sequence_file id="1" sequencing_run_id="1"
-		file_path="/FileThatMayNotExist" created_date="2013-07-18 14:20:19.0"
-		file_revision_number="1" />
-	<sequence_file id="2" sequencing_run_id="1"
-		file_path="/FileThatMayNotExist1" created_date="2013-07-18 14:20:19.0"
-		file_revision_number="1" />
-	<sequence_file id="3" sequencing_run_id="1"
-		file_path="/FileThatMayNotExist2" created_date="2013-07-18 14:20:19.0"
-		file_revision_number="1" />
+	<sequence_file id="1" file_path="/FileThatMayNotExist"
+		created_date="2013-07-18 14:20:19.0" file_revision_number="1" />
+	<sequence_file id="2" file_path="/FileThatMayNotExist1"
+		created_date="2013-07-18 14:20:19.0" file_revision_number="1" />
+	<sequence_file id="3" file_path="/FileThatMayNotExist2"
+		created_date="2013-07-18 14:20:19.0" file_revision_number="1" />
+
+	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
+		sequencing_run_id="1" />
+	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"
+		sequencing_run_id="1" />
+	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0"
+		sequencing_run_id="1" />
+
+	<sequence_file_single_end id="1" file_id="1" />
+	<sequence_file_single_end id="2" file_id="2" />
+	<sequence_file_single_end id="3" file_id="3" />
 </dataset>

@@ -1,31 +1,32 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.SequencingRunController;
-import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -33,18 +34,15 @@ public class SequencingRunControllerTest {
 	private SequencingRunController controller;
 
 	private SequencingRunService sequencingRunService;
-	private SequenceFileService sequenceFileService;
-	private SequenceFileWebUtilities sequenceFileUtilities;
+	private SequencingObjectService objectService;
 	private MessageSource messageSource;
 
 	@Before
 	public void setup() {
 		sequencingRunService = mock(SequencingRunService.class);
-		sequenceFileService = mock(SequenceFileService.class);
-		sequenceFileUtilities = mock(SequenceFileWebUtilities.class);
+		objectService = mock(SequencingObjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new SequencingRunController(sequencingRunService, sequenceFileService, sequenceFileUtilities,
-				messageSource);
+		controller = new SequencingRunController(sequencingRunService, objectService, messageSource);
 	}
 
 	@Test
@@ -73,7 +71,6 @@ public class SequencingRunControllerTest {
 		verify(sequencingRunService).read(runId);
 		assertEquals(SequencingRunController.DETAILS_VIEW, detailsPage);
 		assertEquals(sequencingRunEntity, model.get("run"));
-		assertTrue(model.containsKey("files"));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -82,22 +79,21 @@ public class SequencingRunControllerTest {
 		Long runId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		SequencingRun sequencingRunEntity = new MiseqRun(SequencingRun.LayoutType.PAIRED_END, "");
-		Map<String, Object> fileMap = ImmutableMap.of("id", 5L);
-		Set<SequenceFile> files = ImmutableSet.of(new SequenceFile());
+
+		ImmutableSet<SequencingObject> files = ImmutableSet.of(new SingleEndSequenceFile(new SequenceFile()));
 
 		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
-		when(sequenceFileService.getSequenceFilesForSequencingRun(sequencingRunEntity)).thenReturn(files);
-		when(sequenceFileUtilities.getFileDataMap(files.iterator().next())).thenReturn(fileMap);
+		when(objectService.getSequencingObjectsForSequencingRun(sequencingRunEntity)).thenReturn(files);
 
 		String filesPage = controller.getFilesPage(runId, model);
 
 		assertEquals(SequencingRunController.FILES_VIEW, filesPage);
-		assertEquals(fileMap, ((List) model.get("files")).iterator().next());
+		assertFalse(((Collection) model.get("sequencingObjects")).isEmpty());
 		assertEquals(sequencingRunEntity, model.get("run"));
+		assertTrue(model.containsKey("fileCount"));
 
 		verify(sequencingRunService).read(runId);
-		verify(sequenceFileService).getSequenceFilesForSequencingRun(sequencingRunEntity);
-		verify(sequenceFileUtilities).getFileDataMap(files.iterator().next());
+		verify(objectService).getSequencingObjectsForSequencingRun(sequencingRunEntity);
 
 	}
 }

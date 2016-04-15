@@ -14,22 +14,23 @@ import org.springframework.hateoas.Link;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
-import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
+import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 
 import com.google.common.collect.Lists;
 
-public class SequenceFileRemoteServiceImplTest {
-	SequenceFileRemoteService service;
-	SequenceFileRemoteRepository repository;
+public class SingleEndSequenceFileRemoteServiceImplTest {
+	SingleEndSequenceFileRemoteService service;
+	SingleEndSequenceFileRemoteRepository repository;
 	RemoteAPIRepository apiRepo;
 
 	@Before
 	public void setUp() {
-		repository = mock(SequenceFileRemoteRepository.class);
+		repository = mock(SingleEndSequenceFileRemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);
-		service = new SequenceFileRemoteServiceImpl(repository, apiRepo);
+		service = new SingleEndSequenceFileRemoteServiceImpl(repository, apiRepo);
 	}
 
 	@Test
@@ -37,14 +38,16 @@ public class SequenceFileRemoteServiceImplTest {
 		String seqFilesHref = "http://somewhere/projects/1/samples/2/sequencefiles";
 		RemoteAPI api = new RemoteAPI();
 		Sample sample = new Sample();
-		sample.add(new Link(seqFilesHref, SequenceFileRemoteServiceImpl.SAMPLE_SEQUENCE_FILES_REL));
+		sample.add(new Link(seqFilesHref, SingleEndSequenceFileRemoteServiceImpl.SAMPLE_SEQENCE_FILE_UNPAIRED_REL));
 
 		sample.setRemoteAPI(api);
 
-		List<SequenceFile> filesList = Lists.newArrayList(new SequenceFile());
+		List<SingleEndSequenceFile> filesList = Lists.newArrayList(new SingleEndSequenceFile(new SequenceFile()));
+
+		when(apiRepo.getRemoteAPIForUrl(seqFilesHref)).thenReturn(api);
 		when(repository.list(seqFilesHref, api)).thenReturn(filesList);
 
-		List<SequenceFile> sequenceFilesForSample = service.getSequenceFilesForSample(sample);
+		List<SingleEndSequenceFile> sequenceFilesForSample = service.getUnpairedFilesForSample(sample);
 
 		assertEquals(filesList, sequenceFilesForSample);
 		verify(repository).list(seqFilesHref, api);
