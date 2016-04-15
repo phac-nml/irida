@@ -50,7 +50,7 @@
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables">
 
     <div role="toolbar" aria-label="Sample Table Tools">
-        <div uib-dropdown="" auto-close="outsideClick" ng-controller="AssociatedProjectsController as apCtrl">
+        <div th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown="" auto-close="outsideClick" ng-controller="AssociatedProjectsController as apCtrl">
             <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
                 <th:block th:text="#{project.nav.associated}"></th:block>&nbsp;
                 <fa:icon type="caret-down" fixed="fixed"/>
