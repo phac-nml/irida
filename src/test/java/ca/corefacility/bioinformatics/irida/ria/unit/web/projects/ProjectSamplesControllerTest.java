@@ -39,6 +39,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -54,6 +55,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.google.common.collect.ImmutableList;
@@ -309,17 +311,31 @@ public class ProjectSamplesControllerTest {
 
 	@Test
 	public void testGetAjaxProjectSamplesMap() {
+		Sample sample = TestDataFactory.constructSample();
 		when(projectService.read(anyLong())).thenReturn(project);
-		when(sampleService.getFilteredSamplesForProjects(any(List.class), any(String.class), any(Date.class), any(Date.class), any(Integer.class), any(Integer.class), any(
-				Sort.Direction.class), any(String.class))).thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
-		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
-		DatatablesResponse<Map<String, Object>> response = controller.getProjectSamples(1L, criterias, ImmutableList.of(1L));
+		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(ImmutableList.of(
+				new ProjectSampleJoin(project, sample)
+		));
 
-		// Make sure it has the expected keys:
+		when(sampleService
+				.getFilteredSamplesForProjects(any(List.class), any(String.class), any(Date.class), any(Date.class),
+						any(Integer.class), any(Integer.class), any(
+								Sort.Direction.class), any(String.class)))
+				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
+		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
+
+		ColumnDef columnDef = new ColumnDef();
+		columnDef.setSortDirection(ColumnDef.SortDirection.ASC);
+		columnDef.setName("sample.sampleName");
+		when(criterias.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
+
+		DatatablesResponse<Map<String, Object>> response = controller
+				.getProjectSamples(1L, criterias, ImmutableList.of(1L));
 		List<Map<String, Object>> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
 		Sample sampleData = (Sample) data.get(0).get("sample");
 		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
+
 	}
 
 	@Test
