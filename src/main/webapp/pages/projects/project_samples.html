@@ -55,14 +55,16 @@
                 Projects&nbsp;
                 <fa:icon type="caret-down" fixed="fixed"/>
             </button>
-            <ul class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="associated-btn">
+            <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="associated-btn">
                 <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">
                     <a href="#">
-                        <div class="checkbox"><label>
-                            <input type="checkbox" data:id="${associated.getId()}" ng-click="apCtrl.toggleAssociatedProject($event)"/>
-                            &nbsp;
-                            <th:block th:text="${associated.label}"></th:block>
-                        </label></div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" data:id="${associated.getId()}" ng-click="apCtrl.toggleAssociatedProject($event)"/>
+                                &nbsp;
+                                <th:block th:text="${associated.label}"></th:block>
+                            </label>
+                        </div>
                     </a>
                 </li>
             </ul>
