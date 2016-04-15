@@ -44,27 +44,37 @@
 		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
 
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq"
-		file_revision_number="1" sequencing_run_id="1" fastqc_analysis_id="1" />
+	modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq"
+	file_revision_number="1" fastqc_analysis_id="1" />
 
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
 		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq2"
-		file_revision_number="1" sequencing_run_id="1" fastqc_analysis_id="2"/>
+		file_revision_number="1" fastqc_analysis_id="2" />
 
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
 		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq3"
-		file_revision_number="1" sequencing_run_id="1" />
+		file_revision_number="1" />
 
 	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
 		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq4"
-		file_revision_number="1" sequencing_run_id="1" />
+		file_revision_number="1" />
 
-	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
+		sequencing_run_id="1" />
+	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"
+		sequencing_run_id="1" />
+	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0"
+		sequencing_run_id="1" />
+
+	<sequence_file_pair id="1" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="3" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="4" />
 
+	<sequence_file_single_end id="2" file_id="1" />
+	<sequence_file_single_end id="3" file_id="2" />
+	
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="aaron@nowhere.com" firstName="Aaron" lastName="Petkau"
 		password="$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW"

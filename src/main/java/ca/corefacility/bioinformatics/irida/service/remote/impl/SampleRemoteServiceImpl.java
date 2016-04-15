@@ -15,16 +15,18 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFilePairRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 
 import com.google.common.base.Strings;
@@ -42,13 +44,16 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 
 	public static final String FILE_SAMPLE_REL = "sample";
 
-	private final SequenceFileRemoteRepository fileRepository;
+	private final SequenceFilePairRemoteRepository pairRemoteRepository;
+	private final SingleEndSequenceFileRemoteRepository unpairedRemoteRepository;
 
 	@Autowired
 	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository,
-			SequenceFileRemoteRepository fileRepository, RemoteAPIRepository apiRepository) {
+			SequenceFilePairRemoteRepository pairRemoteRepository,
+			SingleEndSequenceFileRemoteRepository unpairedRemoteRepository, RemoteAPIRepository apiRepository) {
 		super(sampleRemoteRepository, apiRepository);
-		this.fileRepository = fileRepository;
+		this.pairRemoteRepository = pairRemoteRepository;
+		this.unpairedRemoteRepository = unpairedRemoteRepository;
 	}
 
 	/**
@@ -84,28 +89,20 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Sample getSampleForSequenceFileSnapshot(SequenceFileSnapshot file) {
-		String fileURI = file.getRemoteURI();
-		RemoteAPI remoteApiForURI = getRemoteApiForURI(fileURI);
-		SequenceFile read = fileRepository.read(fileURI, remoteApiForURI);
+	public Map<Sample, IridaSequenceFilePair> getUniqueSamplesforSequenceFilePairSnapshots(
+			Collection<SequenceFilePairSnapshot> files) {
+		Map<Sample, IridaSequenceFilePair> map = new HashMap<>();
 
-		Link sampleLink = read.getLink(FILE_SAMPLE_REL);
+		for (SequenceFilePairSnapshot file : files) {
+			String remoteURI = file.getRemoteURI();
+			RemoteAPI remoteApiForURI = getRemoteApiForURI(remoteURI);
+			SequenceFilePair read = pairRemoteRepository.read(remoteURI, remoteApiForURI);
+			Link sampleLink = read.getLink(FILE_SAMPLE_REL);
 
-		return read(sampleLink.getHref());
-	}
+			Sample sample = read(sampleLink.getHref());
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Map<Sample, IridaSequenceFile> getUniqueSamplesforSequenceFileSnapshots(
-			Collection<SequenceFileSnapshot> files) {
-		Map<Sample, IridaSequenceFile> map = new HashMap<>();
-
-		for (SequenceFileSnapshot file : files) {
-			Sample sample = getSampleForSequenceFileSnapshot(file);
 			if (map.containsKey(sample)) {
-				IridaSequenceFile original = map.get(sample);
+				IridaSequenceFilePair original = map.get(sample);
 				throw new DuplicateSampleException("Files " + file + ", " + original + " have the same sample "
 						+ sample);
 			} else {
@@ -116,18 +113,21 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		return map;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public Map<Sample, IridaSequenceFilePair> getUniqueSamplesforSequenceFilePairSnapshots(
-			Collection<SequenceFilePairSnapshot> files) {
-		Map<Sample, IridaSequenceFilePair> map = new HashMap<>();
+	public Map<Sample, IridaSingleEndSequenceFile> getUniqueSamplesForSingleEndSequenceFileSnapshots(
+			Collection<SingleEndSequenceFileSnapshot> files) {
+		Map<Sample, IridaSingleEndSequenceFile> map = new HashMap<>();
 
-		for (SequenceFilePairSnapshot file : files) {
-			Sample sample = getSampleForSequenceFileSnapshot(file.getFiles().iterator().next());
+		for (SingleEndSequenceFileSnapshot file : files) {
+			String remoteURI = file.getRemoteURI();
+			RemoteAPI remoteApiForURI = getRemoteApiForURI(remoteURI);
+			SingleEndSequenceFile read = unpairedRemoteRepository.read(remoteURI, remoteApiForURI);
+			Link sampleLink = read.getLink(FILE_SAMPLE_REL);
+
+			Sample sample = read(sampleLink.getHref());
+
 			if (map.containsKey(sample)) {
-				IridaSequenceFilePair original = map.get(sample);
+				IridaSingleEndSequenceFile original = map.get(sample);
 				throw new DuplicateSampleException("Files " + file + ", " + original + " have the same sample "
 						+ sample);
 			} else {

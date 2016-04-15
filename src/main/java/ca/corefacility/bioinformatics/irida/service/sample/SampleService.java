@@ -14,8 +14,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -41,16 +42,16 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             {@link Project}.
 	 */
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
-
+	
 	/**
-	 * Read the {@link Sample} associated with a {@link SequenceFile}
+	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
 	 * 
-	 * @param file
-	 *            the {@link SequenceFile} to get a {@link Sample} for
-	 * @return the relationship between the {@link Sample} and
-	 *         {@link SequenceFile}
+	 * @param seqObject
+	 *            the {@link SequencingObject} to get the {@link Sample} for
+	 * @return the {@link SampleSequencingObjectJoin} describing the
+	 *         relationship
 	 */
-	public Join<Sample, SequenceFile> getSampleForSequeneFile(SequenceFile file);
+	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject);
 
 	/**
 	 * Get the list of {@link Sample} that belongs to a specific project.
@@ -114,29 +115,17 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return A {@link Sample} with the given ID
 	 */
 	public Sample getSampleBySampleName(Project project, String sampleName);
-
-	/**
-	 * Move an instance of a {@link SequenceFile} associated with a
-	 * {@link Sample} to its parent {@link Project}.
-	 * 
-	 * @param sample
-	 *            the {@link Sample} from which we're moving the
-	 *            {@link SequenceFile}.
-	 * @param sequenceFile
-	 *            the {@link SequenceFile} that we're moving.
-	 */
-	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
 	
 	/**
-	 * Remove both files in a {@link SequenceFilePair} from a given
-	 * {@link Sample}
+	 * Remove a {@link SequencingObject} from a given {@link Sample}. This will
+	 * delete the {@link SampleSequencingObjectJoin} object
 	 * 
 	 * @param sample
-	 *            the {@link Sample} to remove from
-	 * @param pair
-	 *            the {@link SequenceFilePair} containing the files to remove
+	 *            {@link Sample} to remove sequences from
+	 * @param object
+	 *            {@link SequencingObject} to remove
 	 */
-	public void removeSequenceFilePairFromSample(Sample sample, SequenceFilePair pair);
+	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object);
 
 	/**
 	 * Merge multiple samples into one. Merging samples copies the

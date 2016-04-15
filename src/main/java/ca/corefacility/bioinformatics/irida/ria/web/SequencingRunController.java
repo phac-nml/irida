@@ -19,9 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 import com.google.common.collect.ImmutableMap;
@@ -47,16 +46,14 @@ public class SequencingRunController {
 	public static final String UPLOAD_STATUS_MESSAGE_BASE = "sequencingruns.status.";
 
 	private final SequencingRunService sequencingRunService;
-	private final SequenceFileService sequenceFileService;
-	private final SequenceFileWebUtilities sequenceFileUtilities;
+	private final SequencingObjectService objectService;
 	private final MessageSource messageSource;
 
 	@Autowired
-	public SequencingRunController(SequencingRunService sequencingRunService, SequenceFileService sequenceFileService,
-			SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
+	public SequencingRunController(SequencingRunService sequencingRunService, SequencingObjectService objectService,
+			MessageSource messageSource) {
 		this.sequencingRunService = sequencingRunService;
-		this.sequenceFileService = sequenceFileService;
-		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.objectService = objectService;
 		this.messageSource = messageSource;
 	}
 
@@ -147,15 +144,13 @@ public class SequencingRunController {
 	private Model getPageDetails(Long runId, Model model) {
 		SequencingRun run = sequencingRunService.read(runId);
 
-		Set<SequenceFile> sequenceFilesForSequencingRun = sequenceFileService.getSequenceFilesForSequencingRun(run);
-		List<Map<String, Object>> runMaps = new ArrayList<>();
+		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService
+				.getSequencingObjectsForSequencingRun(run);
 
-		for (SequenceFile f : sequenceFilesForSequencingRun) {
-			Map<String, Object> fileDataMap = sequenceFileUtilities.getFileDataMap(f);
-			runMaps.add(fileDataMap);
-		}
+		int fileCount = sequencingObjectsForSequencingRun.stream().mapToInt(o -> o.getFiles().size()).sum();
 
-		model.addAttribute("files", runMaps);
+		model.addAttribute("sequencingObjects", sequencingObjectsForSequencingRun);
+		model.addAttribute("fileCount", fileCount);
 		model.addAttribute("run", run);
 
 		return model;

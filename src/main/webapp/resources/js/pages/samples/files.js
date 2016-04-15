@@ -38,8 +38,8 @@
      *
      * @param {long} id Id for the sequenceFile to download
      */
-    vm.download = function(id) {
-      var url = tl.BASE_URL + 'sequenceFiles/download/' + id;
+    vm.download = function(objectId, id) {
+      var url = TL.BASE_URL + 'sequenceFiles/download/' + objectId + '/file/' + id;
       fileService.download(url);
     };
 
@@ -60,21 +60,6 @@
           },
           label: function() {
             return label;
-          }
-        }
-      });
-    };
-
-    vm.deletePair = function(id, label1, label2) {
-      $uibModal.open({
-        templateUrl: '/confirm_pair.html',
-        controller: 'FileDeletionController as deleteCtrl',
-        resolve: {
-          id: function() {
-            return id;
-          },
-          label: function() {
-            return label1 + ', ' + label2;
           }
         }
       });

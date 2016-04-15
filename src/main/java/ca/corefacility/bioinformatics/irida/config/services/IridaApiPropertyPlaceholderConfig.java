@@ -19,6 +19,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  */
 @Configuration
 @PropertySource(value = {
+		"classpath:/version.properties",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/jdbc.${spring.profiles.active:dev}.properties",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/filesystem.properties",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/caching.properties",

@@ -9,15 +9,15 @@
         window.PAGE = {
             images: [
                 {
-                    "url": /*[[@{/sequenceFiles/img/{id}/perbase(id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
+                    "url": /*[[@{/sequenceFiles/img/{objectId}/file/{id}/perbase(objectId=${sequencingObject.getId()},id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
                     "caption": /*[[#{sf.img.perbase}]]*/ "Quality Score Distribution Over all Sequence Files"
                 },
                 {
-                    "url": /*[[@{/sequenceFiles/img/{id}/persequence(id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
+                    "url": /*[[@{/sequenceFiles/img/{objectId}/file/{id}/persequence(objectId=${sequencingObject.getId()},id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
                     "caption": /*[[#{sf.img.persequence}]]*/ "Quality score distribution over all sequences"
                 },
                 {
-                    "url": /*[[@{/sequenceFiles/img/{id}/duplicationlevel(id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
+                    "url": /*[[@{/sequenceFiles/img/{objectId}/file/{id}/duplicationlevel(objectId=${sequencingObject.getId()},id=${file.getId()})}]]*/ "/sequenceFiles/img/1/perbase",
                     "caption": /*[[#{sf.img.dublicationlevel}]]*/ "Sequence Duplication Level"
                 }
             ]

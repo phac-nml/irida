@@ -9,41 +9,28 @@ import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
-
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
-import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 @Entity
 @Table(name = "sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SequenceFilePair extends IridaResourceSupport implements MutableIridaThing, IridaSequenceFilePair {
+public class SequenceFilePair extends SequencingObject implements IridaSequenceFilePair {
 
 	/**
 	 * Pattern for matching forward {@link SequenceFile}s from a file name.
@@ -55,28 +42,13 @@ public class SequenceFilePair extends IridaResourceSupport implements MutableIri
 	 */
 	private static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_.*");
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-
-	@NotNull
-	@CreatedDate
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
-	private Date createdDate;
-
-	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Size(min = 2, max = 2)
 	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
 	private Set<SequenceFile> files;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "assembled_genome", unique = true, nullable = true)
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-	private AssembledGenomeAnalysis assembledGenome;
-
 	public SequenceFilePair() {
-		createdDate = new Date();
+		super();
 		files = new HashSet<>();
 	}
 
@@ -106,60 +78,10 @@ public class SequenceFilePair extends IridaResourceSupport implements MutableIri
 				.findFirst().get();
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	@Override
-	public Date getModifiedDate() {
-		return createdDate;
-	}
-
 	@JsonIgnore
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		throw new UnsupportedOperationException("Cannot update a sequence file pair");
-	}
-
-	/**
-	 * Gets an {@link AssembledGenomeAnalysis} that was run from this pair of
-	 * sequence files.
-	 * 
-	 * @return An {@link AssembledGenomeAnalysis} that was run from this pair of
-	 *         sequence files.
-	 */
-	public AssembledGenomeAnalysis getAssembledGenome() {
-		return assembledGenome;
-	}
-
-	/**
-	 * Sets an {@link AssembledGenomeAnalysis} that was run from this pair of
-	 * sequence files.
-	 * 
-	 * @param assembledGenome
-	 *            An {@link AssembledGenomeAnalysis} that was run from this pair
-	 *            of sequence files.
-	 */
-	public void setAssembledGenome(AssembledGenomeAnalysis assembledGenome) {
-		this.assembledGenome = assembledGenome;
-	}
-
-	/**
-	 * Whether or not this {@link SequenceFilePair} has an associated
-	 * {@link AssembledGenomeAnalysis}.
-	 * 
-	 * @return True if there as an associated genome, false otherwise.
-	 */
-	public boolean hasAssembledGenome() {
-		return assembledGenome != null;
 	}
 
 	@Override
@@ -196,7 +118,7 @@ public class SequenceFilePair extends IridaResourceSupport implements MutableIri
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(files, assembledGenome);
+		return Objects.hash(super.hashCode(), files);
 	}
 
 	@Override
@@ -204,7 +126,7 @@ public class SequenceFilePair extends IridaResourceSupport implements MutableIri
 		if (obj instanceof SequenceFilePair) {
 			SequenceFilePair pair = (SequenceFilePair) obj;
 
-			return Objects.equals(files, pair.files) && Objects.equals(assembledGenome, pair.assembledGenome);
+			return super.equals(obj) && Objects.equals(files, pair.files);
 		}
 
 		return false;

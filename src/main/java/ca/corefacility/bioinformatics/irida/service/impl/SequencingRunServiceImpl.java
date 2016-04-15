@@ -17,19 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
@@ -39,23 +39,20 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRun> implements SequencingRunService {
 	private static final Logger logger = LoggerFactory.getLogger(SequencingRunServiceImpl.class);
 
-	private SampleSequenceFileJoinRepository ssfRepository;
 	private SampleRepository sampleRepository;
-	private SequenceFileRepository sequenceFileRepository;
-	private SequenceFilePairRepository pairRepository;
+	private SequencingObjectRepository objectRepository;
+	private SampleSequencingObjectJoinRepository ssoRepository;
 	private AnalysisSubmissionRepository submissionRepository;
 
 	@Autowired
 	public SequencingRunServiceImpl(SequencingRunRepository repository, SequenceFileRepository sequenceFileRepository,
-			SampleSequenceFileJoinRepository ssfRepository, SampleRepository sampleRepository,
-			SequenceFilePairRepository pairRepository, AnalysisSubmissionRepository submissionRepository,
-			Validator validator) {
+			SequencingObjectRepository objectRepository, SampleSequencingObjectJoinRepository ssoRepository,
+			SampleRepository sampleRepository, AnalysisSubmissionRepository submissionRepository, Validator validator) {
 		super(repository, validator, SequencingRun.class);
-		this.ssfRepository = ssfRepository;
 		this.sampleRepository = sampleRepository;
-		this.sequenceFileRepository = sequenceFileRepository;
-		this.pairRepository = pairRepository;
+		this.objectRepository = objectRepository;
 		this.submissionRepository = submissionRepository;
+		this.ssoRepository = ssoRepository;
 	}
 
 	/**
@@ -83,22 +80,11 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
-	public void addSequenceFileToSequencingRun(SequencingRun run, SequenceFile file) {
+	public void addSequencingObjectToSequencingRun(SequencingRun run, SequencingObject seqobject) {
 		// attach a copy of the file to the current transaction.
-		file = sequenceFileRepository.findOne(file.getId());
-		file.setSequencingRun(run);
-		sequenceFileRepository.save(file);
-	}
-
-	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
-	public SequencingRun getSequencingRunForSequenceFile(SequenceFile file) {
-		SequenceFile loaded = sequenceFileRepository.findOne(file.getId());
-		return loaded.getSequencingRun();
+		seqobject = objectRepository.findOne(seqobject.getId());
+		seqobject.setSequencingRun(run);
+		objectRepository.save(seqobject);
 	}
 
 	@Override
@@ -119,43 +105,45 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 		logger.trace("Getting samples for SequencingRun " + id);
 		// Get the Files from the SequencingRun to delete
 		SequencingRun read = read(id);
-		Set<SequenceFile> filesForSequencingRun = sequenceFileRepository.findSequenceFilesForSequencingRun(read);
+
+		Set<SequencingObject> findSequencingObjectsForSequencingRun = objectRepository
+				.findSequencingObjectsForSequencingRun(read);
 
 		// For each file in the run
-		for (SequenceFile file : filesForSequencingRun) {
+		for (SequencingObject sequencingObject : findSequencingObjectsForSequencingRun) {
 
 			// get the sample the file is in. If the sample is empty when this
 			// is complete it will be removed
-			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(file);
-			if (sampleForSequenceFile != null) {
-				logger.trace("Sample " + sampleForSequenceFile.getSubject().getId() + " is used in this run");
-				referencedSamples.add(sampleForSequenceFile.getSubject());
+			SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository
+					.getSampleForSequencingObject(sequencingObject);
+			if (sampleForSequencingObject != null) {
+				logger.trace("Sample " + sampleForSequencingObject.getSubject().getId() + " is used in this run");
+				referencedSamples.add(sampleForSequencingObject.getSubject());
 			}
 
-			// Get the SequenceFilePair for this object
-			SequenceFilePair pair = pairRepository.getPairForSequenceFile(file);
-
+			Set<AnalysisSubmission> submissions = new HashSet<>();
 			// Get the analysis submissions this file is included in
-			Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionForSequenceFile(file);
-			Set<AnalysisSubmission> pairSubmissions = submissionRepository
-					.findAnalysisSubmissionForSequenceFilePair(pair);
+			if (sequencingObject instanceof SequenceFilePair) {
+				submissions = submissionRepository
+						.findAnalysisSubmissionForSequenceFilePair((SequenceFilePair) sequencingObject);
+			} else if (sequencingObject instanceof SingleEndSequenceFile) {
+				submissions = submissionRepository.findAnalysisSubmissionForSequenceFile((SingleEndSequenceFile) sequencingObject);
+			}
 
 			// If there are no submissions, we can delete the pair and file
-			if (submissions.isEmpty() && pairSubmissions.isEmpty()) {
-				logger.trace("Deleting file " + file.getId());
-				if (pair != null) {
-					pairRepository.delete(pair);
-				}
-				sequenceFileRepository.delete(file);
+			if (submissions.isEmpty()) {
+				logger.trace("Deleting file " + sequencingObject.getId());
+
+				objectRepository.delete(sequencingObject);
 			} else {
-				logger.trace("Keeping file " + file.getId() + " because it's used in an analysis");
-				if (sampleForSequenceFile != null) {
+				logger.trace("Keeping file " + sequencingObject.getId() + " because it's used in an analysis");
+				if (sampleForSequencingObject != null) {
 					// otherwise we'll just remove it from the sample
-					ssfRepository.delete((SampleSequenceFileJoin) sampleForSequenceFile);
+					ssoRepository.delete(sampleForSequencingObject);
 				}
-				
-				file.setSequencingRun(null);
-				sequenceFileRepository.updateWithoutFileRevision(file);
+
+				sequencingObject.setSequencingRun(null);
+				objectRepository.save(sequencingObject);
 			}
 		}
 
@@ -165,8 +153,8 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 
 		// Search if samples are empty. If they are, delete the sample.
 		for (Sample sample : referencedSamples) {
-			List<Join<Sample, SequenceFile>> filesForSample = ssfRepository.getFilesForSample(sample);
-			if (filesForSample.isEmpty()) {
+			List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
+			if (sequencesForSample.isEmpty()) {
 				logger.trace("Sample " + sample.getId() + " is empty.  Deleting sample");
 				sampleRepository.delete(sample.getId());
 			}

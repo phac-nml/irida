@@ -117,7 +117,7 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 	private List<ProjectSampleJoin> projects;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
-	private List<SampleSequenceFileJoin> sequenceFiles;
+	private List<SampleSequencingObjectJoin> sequenceFiles;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE, mappedBy="sample")
 	@NotAudited
