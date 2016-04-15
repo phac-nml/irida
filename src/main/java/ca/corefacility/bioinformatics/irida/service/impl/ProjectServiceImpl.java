@@ -114,7 +114,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadProject')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadProject')")
 	public Iterable<Project> readMultiple(Iterable<Long> idents) {
 		return super.readMultiple(idents);
 	}
