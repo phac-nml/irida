@@ -1,27 +1,30 @@
 (function (ng, page) {
-  function updateSamplesTable(projects) {
-    var params = "";
-    projects.forEach(function (p) {
-      params += "&associated=" + p;
-    });
-    oTable_samplesTable.ajax.url(page.urls.samples.project + '/?' + params).load();
-  }
+  "use strict";
 
-  function AssociatedProjectsController() {
-    var vm = this, visible = [];
-
-    vm.toggleAssociatedProject = function($event) {
-      var target = $event.currentTarget,
-          id = parseInt(target.dataset.id);
-      if(target.checked) {
-        visible.push(id);
-      } else {
-        visible.splice(visible.indexOf(id), 1);
-      }
-      updateSamplesTable(visible);
+  var AssociatedProjectsController = (function () {
+    function AssociatedProjectsController() {
+      this.visible = [];
+    }
+    AssociatedProjectsController.prototype.updateSamplesTable = function () {
+      var params = "";
+      this.visible.forEach(function (p) {
+        params += "&associated=" + p;
+      });
+      oTable_samplesTable.ajax.url(page.urls.samples.project + '/?' + params).load();
     };
-  }
-
+    AssociatedProjectsController.prototype.toggleAssociatedProject = function ($event) {
+      var target = $event.currentTarget, id = parseInt(target.dataset.id);
+      if (target.checked) {
+        this.visible.push(id);
+      }
+      else {
+        this.visible.splice(this.visible.indexOf(id), 1);
+      }
+      this.updateSamplesTable();
+    };
+    return AssociatedProjectsController;
+  }());
+  
   ng.module("irida.projects.samples.controller", [])
     .controller('AssociatedProjectsController', [AssociatedProjectsController]);
   ;
