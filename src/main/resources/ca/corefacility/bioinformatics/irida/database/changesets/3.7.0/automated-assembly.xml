@@ -23,5 +23,22 @@
 			<column name="automated_assembly" type="bigint(20)" />
 		</addColumn>
 
+		<addColumn tableName="project">
+			<column name="assemble_genome" type="bit(1)"/>
+		</addColumn>
+		
+		<sql>
+			UPDATE project SET assemble_genome=0;
+		</sql>
+		
+		<addNotNullConstraint 
+            columnDataType="bit(1)"
+            columnName="assemble_genome"
+            tableName="project"/>
+		
+		<addColumn tableName="project_AUD">
+			<column name="assemble_genome" type="bit(1)" />
+		</addColumn>
+
 	</changeSet>
 </databaseChangeLog>

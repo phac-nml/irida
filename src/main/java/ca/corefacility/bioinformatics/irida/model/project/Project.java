@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -63,6 +64,10 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 	private String projectDescription;
 
 	private String remoteURL;
+	
+	@NotNull
+	@Column(name="assemble_uploads")
+	private boolean assembleUploads;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectUserJoin> users;
@@ -88,6 +93,7 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 	private String organism;
 
 	public Project() {
+		assembleUploads = false;
 		createdDate = new Date();
 	}
 
@@ -183,4 +189,14 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 	public void setOrganism(String organism) {
 		this.organism = organism;
 	}
+	
+	public void setAssembleUploads(boolean assembleUploads) {
+		this.assembleUploads = assembleUploads;
+	}
+	
+	public boolean getAssembleUploads(){
+		return assembleUploads;
+	}
+	
+	
 }
