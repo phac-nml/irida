@@ -47,6 +47,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project"));
 		assertEquals("Should display 10 projects initially.", 10, page.getNumberProjectsDisplayed());
 
+		// TODO (JOSH - 2016-04-18): Test all buttons
 //		// Test the status of all buttons.
 //		assertFalse("Merge Button should be disabled", page.isMergeBtnEnabled());
 //		assertFalse("Copy Button should be disabled", page.isCopyBtnEnabled());
@@ -111,6 +112,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be displaying 22 samples", "Showing 1 to 10 of 22 entries", page.getTableInfo());
 	}
 
+	// TODO (JOSH - 2016-04-18): Re-implement testing sample selection
 	@Ignore
 	@Test
 	public void testSampleSelection() {
@@ -130,6 +132,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	}
 
+	// TODO (JOSH - 2016-04-18): Re-implement testing add to cart.
 	@Ignore
 	@Test
 	public void testAddSamplesToCart() {
@@ -144,6 +147,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	}
 
+	// TODO (JOSH - 2016-04-18): Re-implement testing merging samples
 	@Ignore
 	@Test
 	public void testMergeSamples() {
@@ -171,6 +175,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have the new sample name", newSampleName, name);
 	}
 
+	// TODO (JOSH - 2016-04-18): Re-implement testing copying samples
 	@Ignore
 	@Test
 	public void testCopySamples() {
@@ -190,6 +195,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		}
 	}
 
+	// TODO (JOSH - 2016-04-18): Re-implement testing moving samples
 	@Ignore
 	@Test
 	public void testMoveSamples() {
@@ -212,6 +218,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		}
 	}
 
+	// TODO (JOSH - 2016-04-18): Re-implement testing for removing samples
 	@Ignore
 	@Test
 	public void testRemoveSamplesFromProject() {
@@ -235,6 +242,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	// TODO: (Josh - 2016-02-05) Create test for export linker
 
+	// TODO (JOSH - 2016-04-18): Re-implement testing for filtering samples by properties.
 	@Ignore
 	@Test
 	public void testFilteringSamplesByProperties() {
@@ -258,6 +266,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
 
+	// TODO (JOSH - 2016-04-18): Re-implement filtering samples based on dates.
 	@Ignore
 	@Test
 	public void testFilteringWithDates() {
