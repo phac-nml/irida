@@ -24,20 +24,13 @@
 		</addColumn>
 
 		<addColumn tableName="project">
-			<column name="assemble_genome" type="bit(1)"/>
+			<column name="assemble_uploads" type="tinyint(1)" value="0">
+				<constraints nullable="false" />
+			</column>
 		</addColumn>
-		
-		<sql>
-			UPDATE project SET assemble_genome=0;
-		</sql>
-		
-		<addNotNullConstraint 
-            columnDataType="bit(1)"
-            columnName="assemble_genome"
-            tableName="project"/>
-		
+
 		<addColumn tableName="project_AUD">
-			<column name="assemble_genome" type="bit(1)" />
+			<column name="assemble_uploads" type="tinyint(1)" />
 		</addColumn>
 
 	</changeSet>
