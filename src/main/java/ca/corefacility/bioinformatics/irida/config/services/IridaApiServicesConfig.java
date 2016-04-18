@@ -57,6 +57,8 @@ import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessin
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -124,14 +126,16 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public FileProcessingChain fileProcessorChain(SequenceFileRepository fileRepository,
-			SequencingObjectRepository sequencingObjectRepository, AnalysisSubmissionRepository submissionRepository, IridaWorkflowsService workflowsService, UserRepository userRepository) {
+			SequencingObjectRepository sequencingObjectRepository, AnalysisSubmissionRepository submissionRepository,
+			IridaWorkflowsService workflowsService, UserRepository userRepository,
+			SampleSequencingObjectJoinRepository ssoRepository, ProjectSampleJoinRepository psjRepository) {
 		final FileProcessor gzipFileProcessor = new GzipFileProcessor(fileRepository, sequencingObjectRepository,
 				removeCompressedFiles);
 		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(messageSource(), fileRepository,
 				sequencingObjectRepository);
 
 		final FileProcessor assemblyFileProcessor = new AssemblyFileProcessor(sequencingObjectRepository,
-				submissionRepository, workflowsService, userRepository);
+				submissionRepository, workflowsService, userRepository, ssoRepository, psjRepository);
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor,
 				assemblyFileProcessor);
 
