@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -92,6 +94,52 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
 			Direction order, String... sortProperties);
+
+	/**
+	 * Search a {@link List} of {@link Project}s for samples that meet a filter criteria.
+	 *
+	 * @param projects
+	 * 		{@link List} of {@link Project}s
+	 * @param name
+	 * 		{@link String} to search for {@link Sample} that have the term in their name.
+	 * @param minDate
+	 * 		Minimum {@link Date} the project was modified.
+	 * @param maxDate
+	 * 		Maximum {@link Date} the project was modified.
+	 * @param currentPage
+	 * 		{@link Integer} the current page of the datatable.
+	 * @param pageSize
+	 * 		{@link Integer} the number of {@link Sample}s to display in datatable.
+	 * @param direction
+	 * 		{@link Sort.Direction} to sort the list.
+	 * @param sortProperty
+	 * 		{@link String} the property of the {@link Sample} to sort the list by.
+	 *
+	 * @return {@link Page} of {@link ProjectSampleJoin}
+	 */
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, String name, Date minDate,
+			Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
+
+	/**
+	 * Get the {@link Sample}s for a {@link List} of {@link Project}s filtered by generic search term
+	 *
+	 * @param projects
+	 * 		{@link List} of {@link Project}s
+	 * @param searchString
+	 * 		{@link String} to search the attribute of the {@link Sample}
+	 * @param currentPage
+	 * 		{@link Integer} the current page of the datatable.
+	 * @param pageSize
+	 * 		{@link Integer} the number of {@link Sample}s to display in datatable.
+	 * @param direction
+	 * 		{@link Sort.Direction} to sort the list.
+	 * @param sortProperty
+	 * 		{@link String} the property of the {@link Sample} to sort the list by.
+	 *
+	 * @return {@link Page} of {@link ProjectSampleJoin}
+	 */
+	public Page<ProjectSampleJoin> getSearchedSamplesForProjects(List<Project> projects, String searchString,
+			int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
 	
 	/**
 	 * Gets a {@link Set} of {@link AssembledGenomeAnalysis} objects containing

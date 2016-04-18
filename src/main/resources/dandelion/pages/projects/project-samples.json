@@ -1,6 +1,5 @@
 {
   "dependencies": [
-    "ng-datatables",
     "select2-bootstrap",
     "angular-messages",
     "bootstrap-daterangepicker",
@@ -11,47 +10,6 @@
       "type": "css",
       "locations": {
         "webapp": "/resources/css/pages/project_samples.css"
-      }
-    },
-    {
-      "name": "irida.model.project",
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/models/project.js"
-      }
-    },
-    {
-      "name": "irida.model.sample",
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/models/sample.js"
-      }
-    },
-    {
-      "type": "js",
-      "name": "irida.projects.samples.filter",
-      "locations": {
-        "webapp": "/resources/js/filters/samples-filter.js"
-      }
-    },
-    {
-      "name": "irida.projects.samples.service",
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.service.js"
-      }
-    },
-    {
-      "name": "irida.projects.samples.modals",
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.modals.js"
-      }
-    },
-    {
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/pages/projects/samples/irida.projects.samples.controller.js"
       }
     }
   ]

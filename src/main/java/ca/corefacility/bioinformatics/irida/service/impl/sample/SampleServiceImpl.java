@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.sample;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSa
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -262,6 +265,30 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
 				new PageRequest(page, size, order, sortProperties));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, String name, Date minDate,
+			Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty) {
+
+		return psjRepository.findAll(ProjectSampleSpecification.filterProjectSamples(projects, name, minDate, maxDate),
+				new PageRequest(currentPage, pageSize, direction, sortProperty));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
+	public Page<ProjectSampleJoin> getSearchedSamplesForProjects(List<Project> projects, String searchString,
+			int currentPage, int pageSize, Sort.Direction direction, String sortProperty) {
+
+		return psjRepository.findAll(ProjectSampleSpecification.searchProjectSamples(projects, searchString),
+				new PageRequest(currentPage, pageSize, direction, sortProperty));
 	}
 
 	/**
