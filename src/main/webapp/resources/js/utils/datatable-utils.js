@@ -17,6 +17,15 @@ var datatable = (function(moment, tl, page) {
     }
   }
 
+  function formatSampleLink(data, type, full) {
+    if(typeof full.sample === 'undefined'){
+      return data;
+    }
+    else {
+      return "<a href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
+    }
+  }
+
   /**
    * Translate text from the server
    * @param data text to be translated
@@ -85,6 +94,7 @@ var datatable = (function(moment, tl, page) {
     i18n: i18n,
     forceContentSize: forceContentSize,
     tableDrawn: tableDrawn,
-    displayListSize: displayListSize
+    displayListSize: displayListSize,
+    formatSampleLink: formatSampleLink
   };
 })(window.moment, window.TL, window.PAGE);

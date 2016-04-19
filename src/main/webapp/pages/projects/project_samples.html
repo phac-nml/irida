@@ -58,7 +58,7 @@
     <table id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
         <thead>
         <tr>
-            <th dt:property="sample.sampleName" th:text="#{project.samples.table.name}"></th>
+            <th dt:property="sample.sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
             <th dt:property="project.name" th:text="#{project.samples.table.project}"></th>
             <th width="120px" dt:property="sample.createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
                 dt:renderFunction="datatables-utils#datatable.formatDate"></th>
