@@ -10,30 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -183,6 +160,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.analysisState = AnalysisState.NEW;
 		this.analysisCleanedState = AnalysisCleanedState.NOT_CLEANED;
 	}
+
+	@Column(name = "analysis_description")
+	@Lob
+	private String analysisDescription;
 
 	/**
 	 * Builds a new {@link AnalysisSubmission} with the given {@link Builder}.
@@ -499,6 +480,24 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@JsonIgnore
 	public final IridaWorkflowNamedParameters getNamedParameters() {
 		return namedParameters;
+	}
+
+
+	/**
+	 * Get the description of the analysis
+	 * @return The description of the analysis
+     */
+	public String getAnalysisDescription() {
+		return this.analysisDescription;
+	}
+
+	/**
+	 * Set the description of the analysis for this submission
+	 * @param description
+	 * 				The description of the analysis
+     */
+	public void setAnalysisDescription(String description) {
+		this.analysisDescription = description;
 	}
 
 	/**
