@@ -49,28 +49,7 @@
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables">
 
-    <div role="toolbar" aria-label="Sample Table Tools">
-        <div th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown="" auto-close="outsideClick" ng-controller="AssociatedProjectsController as apCtrl">
-            <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
-                <th:block th:text="#{project.samples.nav.associated}"></th:block>&nbsp;
-                <fa:icon type="caret-down" fixed="fixed"/>
-            </button>
-            <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="associated-btn">
-                <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">
-                    <a href="#">
-                        <div class="checkbox">
-                            <label>
-                                <input class="associated-cb" type="checkbox" data:id="${associated.getId()}" ng-click="apCtrl.toggleAssociatedProject($event)"/>
-                                &nbsp;
-                                <th:block th:text="${associated.getName()}"></th:block>
-                            </label>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <a th:if="${#lists.isEmpty(associatedProjects)}" th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default"><fa:icon type="create" />&nbsp;<th:block th:text="#{project.samples.nav.associated-create}"></th:block></a>
-    </div>
+
 
     <div dt:conf="samplesTable">
         <div dt:confType="extrajs" dt:bundles="project-samples-table" dt:placeholder="before_end_document_ready"/>
@@ -88,6 +67,39 @@
         </tr>
         </thead>
     </table>
+    <div class="hidden">
+        <div id="toolbar" role="toolbar" aria-label="Sample Table Tools">
+            <div th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown="" auto-close="outsideClick"
+                 ng-controller="AssociatedProjectsController as apCtrl">
+                <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
+                    <th:block th:text="#{project.samples.nav.associated}"></th:block>
+                    &nbsp;
+                    <fa:icon type="caret-down" fixed="fixed"/>
+                </button>
+                <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"
+                    aria-labelledby="associated-btn">
+                    <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">
+                        <a href="#">
+                            <div class="checkbox">
+                                <label>
+                                    <input class="associated-cb" type="checkbox" data:id="${associated.getId()}"
+                                           ng-click="apCtrl.toggleAssociatedProject($event)"/>
+                                    &nbsp;
+                                    <th:block th:text="${associated.getName()}"></th:block>
+                                </label>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <a th:if="${#lists.isEmpty(associatedProjects)}"
+               th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default">
+                <fa:icon type="create"/>
+                &nbsp;
+                <th:block th:text="#{project.samples.nav.associated-create}"></th:block>
+            </a>
+        </div>
+    </div>
 </main>
 </body>
 
