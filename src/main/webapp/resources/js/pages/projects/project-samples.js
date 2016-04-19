@@ -13,12 +13,22 @@
       oTable_samplesTable.ajax.url(page.urls.samples.project + '/?' + params).load();
     };
     AssociatedProjectsController.prototype.toggleAssociatedProject = function ($event) {
-      var target = $event.currentTarget, id = parseInt(target.dataset.id);
-      if (target.checked) {
-        this.visible.push(id);
+      if(!$($event.target).is('input')) {
+        $event.preventDefault();
+      }
+      $event.stopPropagation();
+      $event.stopImmediatePropagation();
+      var target = $($event.currentTarget),
+          id = target.data("id"),
+          index = this.visible.indexOf(id),
+          checkbox = $(target.find("input:checkbox"));
+      if (index > -1) {
+        this.visible.splice(index, 1);
+        checkbox.prop('checked', false);
       }
       else {
-        this.visible.splice(this.visible.indexOf(id), 1);
+        this.visible.push(id);
+        checkbox.prop('checked', true);
       }
       this.updateSamplesTable();
     };

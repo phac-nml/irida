@@ -79,11 +79,11 @@
                 <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"
                     aria-labelledby="associated-btn">
                     <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">
-                        <a href="#">
-                            <div class="checkbox">
+                        <a href="#" style="display: block;" data:id="${associated.getId()}"
+                           ng-click="apCtrl.toggleAssociatedProject($event)">
+                            <div class="checkbox" style="display: block;">
                                 <label>
-                                    <input class="associated-cb" type="checkbox" data:id="${associated.getId()}"
-                                           ng-click="apCtrl.toggleAssociatedProject($event)"/>
+                                    <input class="associated-cb" type="checkbox"/>
                                     &nbsp;
                                     <th:block th:text="${associated.getName()}"></th:block>
                                 </label>
