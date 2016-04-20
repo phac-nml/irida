@@ -394,7 +394,7 @@ public class PipelineController extends BaseController {
 			@RequestParam(required = false) List<String> remoteSingle,
 			@RequestParam(required = false) List<String> remotePaired,
 			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
-			@RequestParam String name, @RequestParam(required = false) String analysisDescription) {
+			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription) {
 		Map<String, Object> result = ImmutableMap.of("success", true);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
