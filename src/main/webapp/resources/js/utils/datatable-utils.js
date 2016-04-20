@@ -22,7 +22,7 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
     else {
-      return "<a href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
+      return "<a class='btn btn-link' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
     }
   }
 
