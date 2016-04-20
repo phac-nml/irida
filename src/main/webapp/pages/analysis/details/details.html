@@ -26,6 +26,13 @@
 			<uib-progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></uib-progressbar>
 	</div>
 	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<p th:text="${analysisSubmission.analysisDescription}">__Analysis Description__</p>
+		</div>
+	</div>
+
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
 
