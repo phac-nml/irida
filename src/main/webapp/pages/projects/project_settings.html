@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="projects/_base" ddl:bundle-includes="project-settings">
+
+<head>
+  <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
+  <script th:inline="javascript">
+        var PAGE = {
+            i18n: {
+                'assemble' : /*[[#{project.settings.notifications.assemble}]]*/ '_Assembly setting updated_',
+                'error' : /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
+            },
+            urls: {
+                'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/members',
+
+            }
+        };
+    </script>
+</head>
+
+<body>
+  <main layout:fragment="main" ddl:bundle-includes="project-settings" >
+    <div class="row">
+      <div class="col-md-12">
+      <div class="checkbox">
+        <label>
+          <input id="assemble" type="checkbox" value="assemble"/>
+          <span th:text="#{project.settings.assemble}">_Automatically assemble uploads_</span>
+        </label>
+      </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+
+</html>

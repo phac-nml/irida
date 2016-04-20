@@ -82,6 +82,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
+	private static final String ACTIVE_NAV_SETTINGS = "settings";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -94,6 +95,7 @@ public class ProjectsController {
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
+	public static final String PROJECT_SETTINGS_PAGE = PROJECTS_DIR + "project_settings";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -206,6 +208,50 @@ public class ProjectsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return SPECIFIC_PROJECT_PAGE;
+	}
+	
+	/**
+	 * Request for a {@link Project} settings page
+	 * 
+	 * @param projectId
+	 *            the ID of the {@link Project} to read
+	 * @param model
+	 *            Model for the view
+	 * @param principal
+	 *            Logged in user
+	 * @return name of the project settings page
+	 */
+	@RequestMapping(value = "/projects/{projectId}/settings")
+	@PreAuthorize("hasPermission(#projectId, 'isProjectOwner')")
+	public String getProjectSettingsPage(@PathVariable Long projectId, final Model model, final Principal principal) {
+		logger.debug("Getting project settings for [Project " + projectId + "]");
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
+		return PROJECT_SETTINGS_PAGE;
+	}
+
+	/**
+	 * Update the project assembly setting for the {@link Project}
+	 * 
+	 * @param projectId
+	 *            the ID of a {@link Project}
+	 * @param assemble
+	 *            Whether or not to do automated assemblies
+	 * @param model
+	 *            Model for the view
+	 * @return "Success" if the request proceeded
+	 */
+	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
+	@PreAuthorize("hasPermission(#projectId, 'isProjectOwner')")
+	@ResponseBody
+	public String updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble, final Model model) {
+		Project read = projectService.read(projectId);
+		read.setAssembleUploads(assemble);
+		projectService.update(read);
+
+		return "success";
 	}
 
 	/**
