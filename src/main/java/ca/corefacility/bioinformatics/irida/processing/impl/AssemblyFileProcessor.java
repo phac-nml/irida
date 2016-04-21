@@ -41,7 +41,8 @@ public class AssemblyFileProcessor implements FileProcessor {
 
 	public AssemblyFileProcessor(SequencingObjectRepository objectRepository,
 			AnalysisSubmissionRepository submissionRepository, IridaWorkflowsService workflowsService,
-			UserRepository userRepository, SampleSequencingObjectJoinRepository ssoRepository, ProjectSampleJoinRepository psjRepository) {
+			UserRepository userRepository, SampleSequencingObjectJoinRepository ssoRepository,
+			ProjectSampleJoinRepository psjRepository) {
 		this.objectRepository = objectRepository;
 		this.submissionRepository = submissionRepository;
 		this.workflowsService = workflowsService;
@@ -58,28 +59,33 @@ public class AssemblyFileProcessor implements FileProcessor {
 			logger.debug("Setting up automated assembly for sequence " + sequencingObject.getId());
 			User admin = userRepository.loadUserByUsername("admin");
 
-			IridaWorkflow defaultWorkflowByType;
-			try {
-				defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisType.ASSEMBLY_ANNOTATION);
-			} catch (IridaWorkflowNotFoundException e) {
-				throw new FileProcessorException("Cannot find assembly workflow", e);
+			if (sequencingObject instanceof SequenceFilePair) {
+				IridaWorkflow defaultWorkflowByType;
+				try {
+					defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisType.ASSEMBLY_ANNOTATION);
+				} catch (IridaWorkflowNotFoundException e) {
+					throw new FileProcessorException("Cannot find assembly workflow", e);
+				}
+
+				UUID pipelineUUID = defaultWorkflowByType.getWorkflowIdentifier();
+
+				Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
+				AnalysisSubmission submission = builder
+						.inputFilesPaired(Sets.newHashSet((SequenceFilePair) sequencingObject))
+						.name("Automated Assembly " + sequencingObject.toString()).build();
+				submission.setSubmitter(admin);
+
+				submission = submissionRepository.save(submission);
+
+				sequencingObject.setAutomatedAssembly(submission);
+
+				objectRepository.save(sequencingObject);
+
+				logger.debug("Automated assembly submission created: " + submission.getId());
+			} else {
+				logger.warn("Could not assemble sequencing object " + sequencingObject.getId()
+						+ " because it's not paired end");
 			}
-
-			UUID pipelineUUID = defaultWorkflowByType.getWorkflowIdentifier();
-
-			Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
-			AnalysisSubmission submission = builder
-					.inputFilesPaired(Sets.newHashSet((SequenceFilePair) sequencingObject)).name("Automated Assembly")
-					.build();
-			submission.setSubmitter(admin);
-
-			submission = submissionRepository.save(submission);
-
-			sequencingObject.setAutomatedAssembly(submission);
-
-			objectRepository.save(sequencingObject);
-
-			logger.debug("Automated assembly submission created: " + submission.getId());
 		}
 	}
 
