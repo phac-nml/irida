@@ -103,6 +103,19 @@
 							</div>
 						</td>
 					</tr>
+					<tr class="paired_end paired_end__assembly" th:if="${pair.getAutomatedAssembly()}">
+						<td class="td_icon">
+							<fa:icon type="align"/>
+						</td>
+						<td>
+							<a href="#" th:href="@{/analysis/{id}(id=${pair.getAutomatedAssembly().getId()})}" class="btn btn-default btn-sm file-name" th:text="#{samples.files.assembly}">_Assembly_</a>
+						</td>
+						<td colspan="3">
+							<span th:text="#{samples.files.assembly.status}">_Status_</span>
+							<span th:text="#{'analysis.state.' + ${pair.getAutomatedAssembly().getAnalysisState()}}"></span>
+						</td>
+					</tr>
+					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
 				<tr class="single_end" th:each="join : ${single_end}" th:with="file=${join.getObject()}">
 					<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
