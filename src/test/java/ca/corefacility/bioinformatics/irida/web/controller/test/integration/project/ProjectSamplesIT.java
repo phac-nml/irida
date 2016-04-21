@@ -11,13 +11,29 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,10 +42,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
-
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -37,6 +49,11 @@ import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
+
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 /**
  * Integration tests for project samples.
@@ -50,6 +67,7 @@ import com.jayway.restassured.response.Response;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectSamplesIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectSamplesIT {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesIT.class);
 
 	@Test
 	public void testCopySampleToProject() {
@@ -80,6 +98,56 @@ public class ProjectSamplesIT {
 
 		asUser().contentType(ContentType.JSON).body(samples).header("Content-Type", "application/idcollection+json")
 				.expect().response().statusCode(HttpStatus.CONFLICT.value()).when().post(samplesUri);
+	}
+	
+	@Test
+	public void testAddMultithreadedSamplesToProject() throws InterruptedException {
+		final int numberOfThreads = 40;
+		final int numberOfSamples = 40;
+		final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+		// load a project
+		final String projectUri = "/api/projects/1";
+		// get the uri for creating samples associated with the project.
+		final String projectJson = asUser().get(projectUri).asString();
+		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
+		
+		final Callable<List<Integer>> task = () -> {
+			final List<Integer> responses = new CopyOnWriteArrayList<>();
+			final Random rand = new Random(Thread.currentThread().getId());
+			
+			for (int i = 0; i < numberOfSamples; i++) {
+				final String sampleName = Thread.currentThread().getName() + "-" + rand.nextInt();
+				final HttpClient client = HttpClientBuilder.create().build();
+				final HttpPost request = new HttpPost(samplesUri);
+				request.addHeader("Authorization", "Bearer " + ITestAuthUtils.getTokenForRole("user"));
+				request.addHeader("Content-Type", "application/json");
+				final StringEntity content = new StringEntity("{\"sampleName\": \"" + sampleName + "\", \"sequencerSampleId\": \"" + sampleName + "\"}");
+				request.setEntity(content);
+				final HttpResponse response = client.execute(request);
+
+				// post that uri
+				responses.add(response.getStatusLine().getStatusCode());
+			}
+			return responses;
+		};
+		
+		final List<Future<List<Integer>>> futures = new CopyOnWriteArrayList<>();
+		for (int i = 0 ; i < numberOfThreads; i++) {
+			futures.add(executorService.submit(task));
+		}
+		
+		for (final Future<List<Integer>> f : futures) {
+			try {
+				final List<Integer> responses = f.get();
+				assertTrue("All responses should be created.", responses.stream().allMatch(r -> r == HttpStatus.CREATED.value()));
+			} catch (InterruptedException | ExecutionException e) {
+				logger.error("Failed to submit multiple samples simultaneously:", e);
+				fail("Failed to submit multiple samples simultaneously.");
+			}
+		}
+		
+		executorService.shutdown();
+		executorService.awaitTermination(10, TimeUnit.SECONDS);
 	}
 
 	@Test

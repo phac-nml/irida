@@ -6,6 +6,9 @@ Changes
 * [UI]: Fixed a bug where project filtering on the projects table excluded projects that did not have an organism
 * [Developer]: Make all of the responses when working with samples have the same set of links.
 * [UI]: Show the version of the pipeline on the pipeline details page.
+* [Developer]: Fixed a bug where updating project modified time on addition of a sample caused the uploader to fail.
+* [UI]: Help links and contact information shown on page are now configurable.
+* [UI]: Show the current version of IRIDA in the UI under the 'Help' menu.
 
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
