@@ -10,5 +10,8 @@
 		<addColumn tableName="analysis_submission">
 			<column name="analysis_description" type="clob"/>
 		</addColumn>
+		<addColumn tableName="analysis_submission_AUD">
+			<column name="analysis_description" type="clob"/>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>
