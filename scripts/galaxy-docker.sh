@@ -9,8 +9,10 @@
 set -e
 
 #kill all running containers then delete those containers.
-docker stop $(docker ps -a -q)
-docker rm $(docker ps -a -q)
+if [ "$(docker ps -a -q)" != "" ];
+then
+	docker rm -f -v $(docker ps -a -q)
+fi
 
 rm -rf /tmp/irida
 mkdir /tmp/irida
