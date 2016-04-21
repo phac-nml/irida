@@ -449,9 +449,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 					}
 				}
 
-				if (analysisDescription != null) {
-					builder.analysisDescription(analysisDescription);
-				}
+				// Add description to submission, can be null
+				builder.analysisDescription(analysisDescription);
 
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
@@ -484,9 +483,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 						}
 					}
 
-					if (analysisDescription != null) {
-						builder.analysisDescription(analysisDescription);
-					}
+					// Add description to submission, can be null
+					builder.analysisDescription(analysisDescription);
 
 
 					// Create the submission
@@ -555,9 +553,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			}
 		}
 
-		if (newAnalysisDescription != null) {
-			builder.analysisDescription(newAnalysisDescription);
-		}
+		// Add description to submission, can be null
+		builder.analysisDescription(newAnalysisDescription);
 
 		// Create the submission
 		return create(builder.build());
