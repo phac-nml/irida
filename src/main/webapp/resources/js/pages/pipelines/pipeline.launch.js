@@ -111,8 +111,8 @@
 				if (_.keys(selectedParameters).length > 0) {
 					params['selectedParameters'] = selectedParameters;
 				}
-				params['name'] = ng.element("#pipeline-name").val();
-				params['description'] = ng.element("#analysis-description").val();
+				params['name'] = name;
+				params['description'] = description;
 
 
 				$http({
