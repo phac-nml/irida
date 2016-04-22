@@ -332,41 +332,6 @@ public class SampleServiceImplIT {
 		sampleService.findAssembliesForSample(s);
 	}
 
-	/**
-	 * Tests finding no assemblies for a sample.
-	 */
-	@Test
-	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void testFindAssembliesForSampleNoSample() {
-		Sample s = sampleService.read(5L);
-		Set<AssembledGenomeAnalysis> assembledGenomes = sampleService.findAssembliesForSample(s);
-		assertEquals("Invalid size for assembledGenomes set", 0, assembledGenomes.size());
-	}
-
-	/**
-	 * Tests finding 1 assembly for a sample with a single associated assembly
-	 * with the paired-end sequence files.
-	 */
-	@Test
-	@WithMockUser(username = "fbristow", roles = "USER")
-	public void testFindAssembliesForSampleWithOneAssembly() {
-		Sample s = sampleService.read(8L);
-		Set<AssembledGenomeAnalysis> assembledGenomes = sampleService.findAssembliesForSample(s);
-		assertEquals("Invalid size for assembledGenomes set", 1, assembledGenomes.size());
-	}
-
-	/**
-	 * Tests finding 2 assemblies for a sample with two associated assemblies
-	 * with the paired-end sequence files.
-	 */
-	@Test
-	@WithMockUser(username = "fbristow", roles = "USER")
-	public void testFindAssembliesForSampleWithTwoAssemblies() {
-		Sample s = sampleService.read(9L);
-		Set<AssembledGenomeAnalysis> assembledGenomes = sampleService.findAssembliesForSample(s);
-		assertEquals("Invalid size for assembledGenomes set", 2, assembledGenomes.size());
-	}
-
 	private void assertSampleNotFound(Long id) {
 		try {
 			sampleService.read(id);
