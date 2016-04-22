@@ -384,6 +384,7 @@ public class PipelineController extends BaseController {
 	 *            the id for a {@link ReferenceFile}
 	 * @param name
 	 *            a user provided name for the {@link IridaWorkflow}
+	 * @param analysisDescription
 	 *
 	 * @return a JSON response with the status and any messages.
 	 */
@@ -393,7 +394,7 @@ public class PipelineController extends BaseController {
 			@RequestParam(required = false) List<String> remoteSingle,
 			@RequestParam(required = false) List<String> remotePaired,
 			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
-			@RequestParam String name) {
+			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription) {
 		Map<String, Object> result = ImmutableMap.of("success", true);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
@@ -496,10 +497,10 @@ public class PipelineController extends BaseController {
 
 			if (description.getInputs().requiresSingleSample()) {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
-						params, namedParameters, name);
+						params, namedParameters, name, analysisDescription);
 			} else {
 				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
-						params, namedParameters, name);
+						params, namedParameters, name, analysisDescription);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
