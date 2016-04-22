@@ -133,3 +133,4 @@ Changes
 
 * [Developer] Change integration tests to use Liquibase instead of Hibernate hbm2ddl, to more closely resemble production environment.
 * [Developer] Change service-layer integration tests to use MySQL database instead of in-memory database
+* [Developer] Added description box for describing a new analysis before submission to a pipeline.

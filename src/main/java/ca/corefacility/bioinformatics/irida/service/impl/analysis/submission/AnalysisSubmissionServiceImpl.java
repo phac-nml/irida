@@ -118,7 +118,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 *            the {@link SequencingObject} service.
 
 	 * @param galaxyHistoriesService
-	 *            The {@link galaxyHistoriesService}.
+	 *            The {@link GalaxyHistoriesService}.
 	 * @param validator
 	 *            A validator.
 	 */
@@ -356,7 +356,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
-			IridaWorkflowNamedParameters namedParameters, String name) {
+			IridaWorkflowNamedParameters namedParameters, String name, String analysisDescription) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -458,6 +458,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 					}
 				}
 
+				// Add description to submission, can be null
+				builder.analysisDescription(analysisDescription);
+
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
 			}
@@ -489,13 +492,17 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 						}
 					}
 
+					// Add description to submission, can be null
+					builder.analysisDescription(analysisDescription);
+
+
 					// Create the submission
 					createdSubmissions.add(create(builder.build()));
 				}
 
 			}
 		}
-		
+
 		return createdSubmissions;
 	}
 	
@@ -506,7 +513,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
-			IridaWorkflowNamedParameters namedParameters, String name) {
+			IridaWorkflowNamedParameters namedParameters, String name, String newAnalysisDescription) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -554,6 +561,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				}
 			}
 		}
+
+		// Add description to submission, can be null
+		builder.analysisDescription(newAnalysisDescription);
 
 		// Create the submission
 		return create(builder.build());

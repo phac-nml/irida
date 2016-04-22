@@ -52,7 +52,9 @@
 			// Holds all the ids for the selected paired-end
 			paired       = [],
 			remoteSingle = [],
-			remotePaired = [];
+			remotePaired = [],
+			// User-written description of the analysis
+			description = ng.element('#analysis-description').val();
 
 			if (name === null || name.length === 0) {
 				vm.error = page.i18n.required;
@@ -109,7 +111,8 @@
 				if (_.keys(selectedParameters).length > 0) {
 					params['selectedParameters'] = selectedParameters;
 				}
-				params['name'] = ng.element("#pipeline-name").val();
+				params['name'] = name;
+				params['description'] = description;
 
 
 				$http({
