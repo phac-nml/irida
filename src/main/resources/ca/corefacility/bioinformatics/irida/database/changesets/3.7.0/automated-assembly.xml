@@ -15,7 +15,7 @@
 		<addColumn tableName="sequencing_object">
 			<column name="automated_assembly" type="bigint(20)">
 				<constraints referencedTableName="analysis_submission"
-					referencedColumnNames="id" nullable="true" foreignKeyName="FK_SEQUENCING_OBJECT_ASSEMBLY"></constraints>
+					referencedColumnNames="id" nullable="true" foreignKeyName="FK_SEQUENCING_OBJECT_ASSEMBLY" />
 			</column>
 		</addColumn>
 
@@ -24,7 +24,7 @@
 		</addColumn>
 
 		<addColumn tableName="project">
-			<column name="assemble_uploads" type="tinyint(1)" value="0">
+			<column name="assemble_uploads" type="tinyint(1)" value="0" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
