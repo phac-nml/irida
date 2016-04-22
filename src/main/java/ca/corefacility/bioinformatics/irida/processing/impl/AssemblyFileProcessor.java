@@ -95,12 +95,24 @@ public class AssemblyFileProcessor implements FileProcessor {
 	}
 
 	private boolean shouldAssemble(SequencingObject object) {
+		boolean assemble = false;
+
 		SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository.getSampleForSequencingObject(object);
-		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(sampleForSequencingObject
-				.getSubject());
 
-		return projectForSample.stream().anyMatch(j -> j.getSubject().getAssembleUploads());
+		/*
+		 * This is something that should only ever happen in tests, but added
+		 * check with a warning
+		 */
+		if (sampleForSequencingObject != null) {
+			List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(sampleForSequencingObject
+					.getSubject());
 
+			assemble = projectForSample.stream().anyMatch(j -> j.getSubject().getAssembleUploads());
+		} else {
+			logger.warn("Cannot find sample for sequencing object.  Not assembling");
+		}
+
+		return assemble;
 	}
 
 }
