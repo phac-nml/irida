@@ -98,9 +98,10 @@ public class AnalysisExecutionServiceGalaxyCleanupAsync {
 			logger.trace("remoteWorkflowId=" + analysisSubmission.getRemoteWorkflowId() + " exists, cleaning");
 			galaxyWorkflowService.deleteWorkflow(analysisSubmission.getRemoteWorkflowId());
 		}
+		
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
 
-		AnalysisSubmission cleanedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANED));
+		AnalysisSubmission cleanedAnalysis = analysisSubmissionService.update(analysisSubmission);
 
 		return new AsyncResult<>(cleanedAnalysis);
 	}
