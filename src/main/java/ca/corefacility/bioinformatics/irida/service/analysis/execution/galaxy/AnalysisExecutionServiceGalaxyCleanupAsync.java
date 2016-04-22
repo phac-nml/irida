@@ -21,8 +21,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Service for cleaning up an {@link AnalysisSubmission} within a Galaxy
  * execution manager asynchronously.
