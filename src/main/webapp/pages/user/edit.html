@@ -4,11 +4,10 @@
       layout:decorator="template/page">
 <head>
     <title th:text="${user.label}">_USER PAGE_</title>
-    <script type="text/javascript" src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="/resources/js/pages/users/users-password.js"></script>
 </head>
+
 <body>
-<main layout:fragment="page">
+<main layout:fragment="page" ddl:bundle-includes="users-password">
     <div class="row">
         <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
             <form role="form" action="/users/1/edit"
