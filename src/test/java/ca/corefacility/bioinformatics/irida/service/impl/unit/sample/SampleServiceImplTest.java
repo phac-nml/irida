@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
-import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -54,9 +53,6 @@ public class SampleServiceImplTest {
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private Validator validator;
 
-	private AssembledGenomeAnalysis assembledGenome1;
-	private AssembledGenomeAnalysis assembledGenome2;
-
 	/**
 	 * Variation in a floating point number to be considered equal.
 	 */
@@ -68,8 +64,7 @@ public class SampleServiceImplTest {
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 		analysisRepository = mock(AnalysisRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
-		assembledGenome1 = mock(AssembledGenomeAnalysis.class);
-		assembledGenome2 = mock(AssembledGenomeAnalysis.class);
+		
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository,
@@ -87,36 +82,7 @@ public class SampleServiceImplTest {
 				Lists.newArrayList(new SampleSequencingObjectJoin(s, pair)));
 
 		assertEquals("Invalid number of assemblies found", 0, sampleService.findAssembliesForSample(s).size());
-	}
-
-	@Test
-	public void testFindAssembliesForSampleOneAssemblies() {
-		Sample s = new Sample();
-		s.setId(1L);
-		SequenceFilePair pair = new SequenceFilePair();
-		pair.setAssembledGenome(assembledGenome1);
-
-		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, pair);
-
-		when(ssoRepository.getSequencesForSample(s)).thenReturn(Lists.newArrayList(join));
-
-		assertEquals("Invalid number of assemblies found", 1, sampleService.findAssembliesForSample(s).size());
-	}
-
-	@Test
-	public void testFindAssembliesForSampleTwoAssemblies() {
-		Sample s = new Sample();
-		s.setId(1L);
-		SequenceFilePair pair1 = new SequenceFilePair();
-		pair1.setAssembledGenome(assembledGenome1);
-		SequenceFilePair pair2 = new SequenceFilePair();
-		pair2.setAssembledGenome(assembledGenome2);
-
-		when(ssoRepository.getSequencesForSample(s)).thenReturn(
-				Lists.newArrayList(new SampleSequencingObjectJoin(s, pair1), new SampleSequencingObjectJoin(s, pair2)));
-
-		assertEquals("Invalid number of assemblies found", 2, sampleService.findAssembliesForSample(s).size());
-	}
+	}	
 
 	@Test
 	public void testGetSampleForProject() {
