@@ -15,45 +15,45 @@ $(document).ready(function() {
 
         // Password must be 6 characters or longer
         if(passwordField.val().length >= MIN_LENGTH) {
-            $('#password-minlength').hide();
+            $('#password-minlength').hide(100);
             visible++;
         }else{
-            $('#password-minlength').show();
+            $('#password-minlength').show(100);
             visible--;
         }
 
         // Password must contain an uppercase letter
         if(ucase.test(passwordField.val())) {
-            $('#password-uppercase').hide();
+            $('#password-uppercase').hide(100);
             visible++;
         }else{
-            $('#password-uppercase').show();
+            $('#password-uppercase').show(100);
             visible--;
         }
 
         // Password must contain a lowercase letter
         if(lcase.test(passwordField.val())) {
-            $('#password-lowercase').hide();
+            $('#password-lowercase').hide(100);
             visible++;
         }else{
-            $('#password-lowercase').show();
+            $('#password-lowercase').show(100);
             visible--;
         }
 
         //Password must contain a number
         if(num.test(passwordField.val())) {
-            $('#password-number').hide();
+            $('#password-number').hide(100);
             visible++;
         }else{
-            $('#password-number').show();
+            $('#password-number').show(100);
             visible--;
         }
 
         // Once all are met, hide the alert
         if (visible === NUM_RULES) {
-            $('#passwordRequirements').hide();
+            $('#passwordRequirements').hide(100);
         }else{
-            $('#passwordRequirements').show();
+            $('#passwordRequirements').show(100);
         }
     });
 });
