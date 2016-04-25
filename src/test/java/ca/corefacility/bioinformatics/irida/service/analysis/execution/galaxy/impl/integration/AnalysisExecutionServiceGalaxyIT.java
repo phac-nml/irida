@@ -1446,7 +1446,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
-		analysisSubmissionService.update(analysisExecuted.getId(), ImmutableMap.of("remoteAnalysisId", "invalid"));
+		analysisExecuted.setRemoteAnalysisId("invalid");
+		analysisExecuted = analysisSubmissionService.update(analysisExecuted);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
