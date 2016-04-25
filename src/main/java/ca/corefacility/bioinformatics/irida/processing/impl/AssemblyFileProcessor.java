@@ -37,12 +37,12 @@ import com.google.common.collect.Sets;
 public class AssemblyFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(AssemblyFileProcessor.class);
 
-	SequencingObjectRepository objectRepository;
-	SampleSequencingObjectJoinRepository ssoRepository;
-	ProjectSampleJoinRepository psjRepository;
-	AnalysisSubmissionRepository submissionRepository;
-	UserRepository userRepository;
-	IridaWorkflowsService workflowsService;
+	private final SequencingObjectRepository objectRepository;
+	private final SampleSequencingObjectJoinRepository ssoRepository;
+	private final ProjectSampleJoinRepository psjRepository;
+	private final AnalysisSubmissionRepository submissionRepository;
+	private final UserRepository userRepository;
+	private final IridaWorkflowsService workflowsService;
 
 	public AssemblyFileProcessor(SequencingObjectRepository objectRepository,
 			AnalysisSubmissionRepository submissionRepository, IridaWorkflowsService workflowsService,
