@@ -117,11 +117,6 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), files);
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SequenceFilePair) {
 			SequenceFilePair pair = (SequenceFilePair) obj;
