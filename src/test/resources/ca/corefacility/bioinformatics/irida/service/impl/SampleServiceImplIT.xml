@@ -67,22 +67,14 @@
 		executionManagerAnalysisId="test1" />
 	<analysis_assemblyannotation id="2" />
 
-	<assembled_genome_analysis id="1" analysis="2"
-		created_date="2013-07-18 14:20:19.0" />
-
 	<analysis id="3" createdDate="2013-07-18 14:20:19.0"
 		executionManagerAnalysisId="test2" />
 	<analysis_assemblyannotation id="3" />
 
-	<assembled_genome_analysis id="2" analysis="3"
-		created_date="2013-07-18 14:20:19.0" />
 
 	<analysis id="4" createdDate="2013-07-18 14:20:19.0"
 		executionManagerAnalysisId="test3" />
 	<analysis_assemblyannotation id="4" />
-
-	<assembled_genome_analysis id="3" analysis="4"
-		created_date="2013-07-18 14:20:19.0" />
 
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile1" fastqc_analysis_id="1" />

@@ -52,8 +52,6 @@
 	<user_group_project/>
 	<user_group_member/>
 
-	<assembled_genome_analysis />
-
 	<sequencing_object />
 	<sequence_file_single_end />
 	<sequence_file_pair />
