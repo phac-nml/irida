@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
@@ -28,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
-import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -319,17 +317,6 @@ public class SampleServiceImplIT {
 		Sample s = sampleService.read(sampleID);
 
 		sampleService.estimateCoverageForSample(s, 500);
-	}
-	
-	/**
-	 * Tests being denied access to find assemblies for a sample.
-	 */
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "dr-evil", roles = "USER")
-	public void testFindAssembliesForSampleDenied() {
-		Sample s = new Sample();
-		s.setId(8L);
-		sampleService.findAssembliesForSample(s);
 	}
 
 	private void assertSampleNotFound(Long id) {

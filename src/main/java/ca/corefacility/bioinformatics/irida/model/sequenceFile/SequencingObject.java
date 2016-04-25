@@ -30,7 +30,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
-import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -121,38 +120,6 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 		return files.stream().filter(s -> s.getId().equals(id)).findAny()
 				.orElseThrow(() -> new EntityNotFoundException("No file with id " + id + " in this SequencingObject"));
-	}
-
-	/**
-	 * Gets an {@link AssembledGenomeAnalysis} that was run from this pair of
-	 * sequence files.
-	 * 
-	 * @return An {@link AssembledGenomeAnalysis} that was run from this pair of
-	 *         sequence files.
-	 */
-	public AssembledGenomeAnalysis getAssembledGenome() {
-		return null;
-	}
-
-	/**
-	 * Sets an {@link AssembledGenomeAnalysis} that was run from this pair of
-	 * sequence files.
-	 * 
-	 * @param assembledGenome
-	 *            An {@link AssembledGenomeAnalysis} that was run from this pair
-	 *            of sequence files.
-	 */
-	public void setAssembledGenome(AssembledGenomeAnalysis assembledGenome) {
-	}
-
-	/**
-	 * Whether or not this {@link SequenceFilePair} has an associated
-	 * {@link AssembledGenomeAnalysis}.
-	 * 
-	 * @return True if there as an associated genome, false otherwise.
-	 */
-	public boolean hasAssembledGenome() {
-		return false;
 	}
 
 	@Override

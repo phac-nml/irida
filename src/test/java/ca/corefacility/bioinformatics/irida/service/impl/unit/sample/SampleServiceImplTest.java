@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
@@ -71,18 +70,6 @@ public class SampleServiceImplTest {
 				ssoRepository, validator);
 
 	}
-
-	@Test
-	public void testFindAssembliesForSampleNoAssemblies() {
-		Sample s = new Sample();
-		s.setId(1L);
-		SequenceFilePair pair = new SequenceFilePair();
-
-		when(ssoRepository.getSequencesForSample(s)).thenReturn(
-				Lists.newArrayList(new SampleSequencingObjectJoin(s, pair)));
-
-		assertEquals("Invalid number of assemblies found", 0, sampleService.findAssembliesForSample(s).size());
-	}	
 
 	@Test
 	public void testGetSampleForProject() {

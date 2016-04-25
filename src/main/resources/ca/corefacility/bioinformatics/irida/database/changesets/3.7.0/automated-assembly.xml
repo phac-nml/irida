@@ -24,7 +24,8 @@
 		</addColumn>
 
 		<addColumn tableName="project">
-			<column name="assemble_uploads" type="tinyint(1)" value="0" defaultValue="0">
+			<column name="assemble_uploads" type="tinyint(1)" value="0"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -32,6 +33,8 @@
 		<addColumn tableName="project_AUD">
 			<column name="assemble_uploads" type="tinyint(1)" />
 		</addColumn>
+
+		<dropTable tableName="assembled_genome_analysis" />
 
 	</changeSet>
 </databaseChangeLog>
