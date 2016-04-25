@@ -186,7 +186,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#id, 'isProjectOwner')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#object, 'isProjectOwner')")
 	public Project update(Project object) {
 		return super.update(object);
 	}
