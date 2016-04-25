@@ -29,6 +29,11 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.collect.Sets;
 
+/**
+ * File processor which launches an automated assembly and annotation pipeline
+ * on uploaded sequences. It will check with a sequence's associated project for
+ * whether or not it should assemble.
+ */
 public class AssemblyFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(AssemblyFileProcessor.class);
 
@@ -51,16 +56,26 @@ public class AssemblyFileProcessor implements FileProcessor {
 		this.psjRepository = psjRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void process(Long sequenceFileId) throws FileProcessorException {
 		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
 
+		// Check if the object should be assembled
 		if (shouldAssemble(sequencingObject)) {
 			logger.debug("Setting up automated assembly for sequence " + sequencingObject.getId());
+
+			// assembly run by admin
 			User admin = userRepository.loadUserByUsername("admin");
 
+			// Ensure it's a paired upload. Single end can't currently be
+			// assembled
 			if (sequencingObject instanceof SequenceFilePair) {
 				IridaWorkflow defaultWorkflowByType;
+
+				// get the workflow
 				try {
 					defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisType.ASSEMBLY_ANNOTATION);
 				} catch (IridaWorkflowNotFoundException e) {
@@ -69,6 +84,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 
 				UUID pipelineUUID = defaultWorkflowByType.getWorkflowIdentifier();
 
+				// build an AnalysisSubmission
 				Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
 				AnalysisSubmission submission = builder
 						.inputFilesPaired(Sets.newHashSet((SequenceFilePair) sequencingObject))
@@ -77,6 +93,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 
 				submission = submissionRepository.save(submission);
 
+				// Associate the submission with the seqobject
 				sequencingObject.setAutomatedAssembly(submission);
 
 				objectRepository.save(sequencingObject);
@@ -89,11 +106,22 @@ public class AssemblyFileProcessor implements FileProcessor {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Boolean modifiesFile() {
 		return false;
 	}
 
+	/**
+	 * Check whether any {@link Project} associated with the
+	 * {@link SequencingObject} is set to assemble
+	 * 
+	 * @param object
+	 *            {@link SequencingObject} to check ot assemble
+	 * @return true if it should assemble, false otherwise
+	 */
 	private boolean shouldAssemble(SequencingObject object) {
 		boolean assemble = false;
 
