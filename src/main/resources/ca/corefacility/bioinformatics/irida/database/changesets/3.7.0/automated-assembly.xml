@@ -24,8 +24,8 @@
 		</addColumn>
 
 		<addColumn tableName="project">
-			<column name="assemble_uploads" type="bit(1)" value="0"
-				defaultValue="0">
+			<column name="assemble_uploads" type="bit(1)" valueBoolean="false"
+				defaultValueBoolean="false">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
