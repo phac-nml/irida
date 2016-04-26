@@ -9,6 +9,10 @@ Changes
 * [Developer]: Fixed a bug where updating project modified time on addition of a sample caused the uploader to fail.
 * [UI]: Help links and contact information shown on page are now configurable.
 * [UI]: Show the current version of IRIDA in the UI under the 'Help' menu.
+* [Developer] Change integration tests to use Liquibase instead of Hibernate hbm2ddl, to more closely resemble production environment.
+* [Developer] Change service-layer integration tests to use MySQL database instead of in-memory database
+* [UI] Added description box for describing a new analysis before submission to a pipeline.
+* [UI] Added password restriction list when creating or editing user info, and when resetting a password.
 
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
@@ -130,7 +134,3 @@ Changes
 * [Developer] Add build scripts for building complete, self-contained instances of IRIDA in a virtual appliance.
 * [Developer] Started migration to using Dandelion for asset management on pages.
 * [Developer] Add REST API for interacting with analyses.
-
-* [Developer] Change integration tests to use Liquibase instead of Hibernate hbm2ddl, to more closely resemble production environment.
-* [Developer] Change service-layer integration tests to use MySQL database instead of in-memory database
-* [Developer] Added description box for describing a new analysis before submission to a pipeline.
