@@ -281,18 +281,21 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Creates a new project and displays a list of users for the user to add to the project
+	 * Creates a new project and displays a list of users for the user to add to
+	 * the project
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 * @param name
-	 * 		String name of the project
+	 *            String name of the project
 	 * @param organism
-	 * 		Organism name
+	 *            Organism name
 	 * @param projectDescription
-	 * 		Brief description of the project
+	 *            Brief description of the project
 	 * @param remoteURL
-	 * 		URL for the project wiki
+	 *            URL for the project wiki
+	 * @param assemble
+	 *            Enable or disable automated assemblies
 	 *
 	 * @return The name of the add users to project page
 	 */
@@ -300,12 +303,15 @@ public class ProjectsController {
 	public String createNewProject(final Model model, @RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
-			@RequestParam(required = false, defaultValue = "") String remoteURL) {
+			@RequestParam(required = false, defaultValue = "") String remoteURL,
+			@RequestParam(required = false, defaultValue = "false") boolean assemble) {
 
 		Project p = new Project(name);
 		p.setOrganism(organism);
 		p.setProjectDescription(projectDescription);
 		p.setRemoteURL(remoteURL);
+		p.setAssembleUploads(assemble);
+
 		Project project;
 		try {
 			project = projectService.create(p);

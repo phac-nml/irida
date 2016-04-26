@@ -65,7 +65,8 @@ You can see which filters are currently applied to the table under the filter bu
 
 Clicking on the filters will clear that specific filter.
 
-### Creating a new project
+Creating a new project
+----------------------
 
 {% include tutorials/common/creating-a-project.md %}
 
