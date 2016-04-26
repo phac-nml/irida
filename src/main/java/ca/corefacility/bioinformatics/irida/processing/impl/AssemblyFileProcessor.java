@@ -98,7 +98,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 
 				objectRepository.save(sequencingObject);
 
-				logger.debug("Automated assembly submission created: " + submission.getId());
+				logger.debug("Automated assembly submission created for sequencing object " + sequencingObject.getId());
 			} else {
 				logger.warn("Could not assemble sequencing object " + sequencingObject.getId()
 						+ " because it's not paired end");
