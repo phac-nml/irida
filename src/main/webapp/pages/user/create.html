@@ -77,12 +77,7 @@
 									<label class="control-label" th:text="#{user.password}"	for="password">_Password_</label>
 									<div th:if="${#maps.containsKey(errors, 'password')}" th:text="${errors.password}" class="alert alert-warning">_Password Error_</div>
 									<input type="password" id="password" name="password" class="form-control input-full password" th:placeholder="#{user.password}" />
-									<div id="passwordRequirements" class="alert alert-warning">
-										<p id="password-minlength" th:text="#{user.password.required.minlength}" style="display: block">__Minimum Length__</p>
-										<p id="password-uppercase" th:text="#{user.password.required.uppercase}" style="display: block">__Uppercase__</p>
-										<p id="password-lowercase" th:text="#{user.password.required.lowercase}" style="display: block">__Lowercase__</p>
-										<p id="password-number" th:text="#{user.password.required.number}" style="display: block">__Number__</p>
-									</div>
+									<div th:replace="templates/requirements :: pw-requirements"></div>
 								</div>
 
 
