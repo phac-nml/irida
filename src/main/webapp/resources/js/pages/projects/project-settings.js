@@ -10,8 +10,8 @@ var projectSettings = (function(page, notifications) {
                 'assemble': assemble
             }, 
             statusCode : {
-                200 : function(){
-                    notifications.show({'msg': page.i18n.assemble});
+                200 : function(response){
+                    notifications.show({'msg': response.result});
                 }
             },
             fail : function(){

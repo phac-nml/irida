@@ -6,11 +6,10 @@
   <script th:inline="javascript">
         var PAGE = {
             i18n: {
-                'assemble' : /*[[#{project.settings.notifications.assemble}]]*/ '_Assembly setting updated_',
                 'error' : /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
             },
             urls: {
-                'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/members',
+                'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
 
             }
         };

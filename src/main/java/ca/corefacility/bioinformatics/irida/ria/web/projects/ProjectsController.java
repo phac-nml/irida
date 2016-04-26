@@ -241,17 +241,27 @@ public class ProjectsController {
 	 *            Whether or not to do automated assemblies
 	 * @param model
 	 *            Model for the view
-	 * @return "Success" if the request proceeded
+	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
 	@PreAuthorize("hasPermission(#projectId, 'isProjectOwner')")
 	@ResponseBody
-	public String updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble, final Model model) {
+	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
+			final Model model, Locale locale) {
 		Project read = projectService.read(projectId);
 		read.setAssembleUploads(assemble);
 		projectService.update(read);
 
-		return "success";
+		String message = null;
+		if (assemble) {
+			message = messageSource.getMessage("project.settings.notifications.assemble.enabled",
+					new Object[] { read.getLabel() }, locale);
+		} else {
+			message = messageSource.getMessage("project.settings.notifications.assemble.disabled",
+					new Object[] { read.getLabel() }, locale);
+		}
+
+		return ImmutableMap.of("result", message);
 	}
 
 	/**
