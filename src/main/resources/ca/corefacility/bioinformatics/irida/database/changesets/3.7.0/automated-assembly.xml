@@ -31,7 +31,7 @@
 		</addColumn>
 
 		<addColumn tableName="project_AUD">
-			<column name="assemble_uploads" type="bit(1)" />
+			<column name="assemble_uploads" type="bit(1)" valueBoolean="false"/>
 		</addColumn>
 
 		<dropTable tableName="assembled_genome_analysis" />
