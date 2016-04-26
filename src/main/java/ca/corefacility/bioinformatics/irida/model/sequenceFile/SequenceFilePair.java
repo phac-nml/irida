@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -114,21 +113,5 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		}
 
 		this.files = files;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), files);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof SequenceFilePair) {
-			SequenceFilePair pair = (SequenceFilePair) obj;
-
-			return super.equals(obj) && Objects.equals(files, pair.files);
-		}
-
-		return false;
 	}
 }

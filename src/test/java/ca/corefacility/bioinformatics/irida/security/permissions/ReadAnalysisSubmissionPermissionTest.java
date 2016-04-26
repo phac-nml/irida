@@ -19,6 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -26,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -51,6 +53,9 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 	private Set<SingleEndSequenceFile> inputSingleFiles;
 
+	@Mock
+	private ReadSequencingObjectPermission seqObjectPermission;
+
 	/**
 	 * Setup for tests
 	 */
@@ -59,7 +64,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		MockitoAnnotations.initMocks(this);
 
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
-				userRepository);
+				userRepository, seqObjectPermission);
 
 		inputSingleFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
 	}
@@ -151,6 +156,31 @@ public class ReadAnalysisSubmissionPermissionTest {
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);
 		verifyZeroInteractions(analysisSubmissionRepository);
+	}
+
+	@Test
+	public void testPermitAutoAssembly() {
+		String username = "aaron";
+		User u = new User();
+		u.setUsername(username);
+		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
+
+		SequenceFilePair pair = new SequenceFilePair();
+
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
+				.inputFilesPaired(ImmutableSet.of(pair)).referenceFile(referenceFile).build();
+		analysisSubmission.setSubmitter(new User());
+		pair.setAutomatedAssembly(analysisSubmission);
+
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
+		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+		when(seqObjectPermission.customPermissionAllowed(auth, pair)).thenReturn(true);
+
+		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+
+		verify(userRepository).loadUserByUsername(username);
+		verify(analysisSubmissionRepository).findOne(1L);
+		verify(seqObjectPermission).customPermissionAllowed(auth, pair);
 	}
 
 }

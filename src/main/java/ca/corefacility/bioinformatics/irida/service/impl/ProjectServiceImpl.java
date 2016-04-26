@@ -180,6 +180,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Project update(final Long id, final Map<String, Object> updateProperties) {
 		return super.update(id, updateProperties);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#object, 'isProjectOwner')")
+	public Project update(Project object) {
+		return super.update(object);
+	}
 
 	/**
 	 * {@inheritDoc}

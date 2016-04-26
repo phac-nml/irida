@@ -158,6 +158,9 @@ public class FontAwesome {
 	 */
 	public static final String EXTERNAL_LINK_ATTRIBUTE = "external-link";
 	public static final String EXTERNAL_LINK_ICON = "external-link";
+	
+	public static final String ALIGN_ATTRIBUTE = "align";
+	public static final String ALIGN_ICON = "align-right";
 
 	/*
 	 * Attribute for next and previous buttons.
@@ -207,6 +210,7 @@ public class FontAwesome {
 			.put(NEXT_ATTRIBUTE, NEXT_ICON)
 			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
 			.put(GROUP_ATTRIBUTE, GROUP_ICON)
+			.put(ALIGN_ATTRIBUTE, ALIGN_ICON)
 			.build();
 	// @formatter:on
 

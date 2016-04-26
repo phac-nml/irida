@@ -272,6 +272,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canReadAnalysisSubmission')")
+	public AnalysisSubmission update(AnalysisSubmission object) {
+		return super.update(object);
+	}
 
 	/**
 	 * {@inheritDoc}

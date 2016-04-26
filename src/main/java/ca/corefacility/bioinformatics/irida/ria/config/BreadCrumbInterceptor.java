@@ -28,7 +28,8 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	private List<String> BASE_CRUMBS = ImmutableList.of(
 			"/projects",
 			"/samples",
-			"/export"
+			"/export",
+			"/settings"
 	);
 
 	/**

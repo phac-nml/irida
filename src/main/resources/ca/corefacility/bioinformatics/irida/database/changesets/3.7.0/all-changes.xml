@@ -8,4 +8,5 @@
 	<include file="sample-sequencingobject.xml" relativeToChangelogFile="true" />
 	<include file="unpaired-snapshots.xml" relativeToChangelogFile="true" />
 	<include file="analysis-description.xml" relativeToChangelogFile="true"/>
+	<include file="automated-assembly.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

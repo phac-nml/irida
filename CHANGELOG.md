@@ -13,6 +13,8 @@ Changes
 * [Developer] Change service-layer integration tests to use MySQL database instead of in-memory database
 * [UI] Added description box for describing a new analysis before submission to a pipeline.
 * [UI] Added password restriction list when creating or editing user info, and when resetting a password.
+* [Developer] Changed organization of sequencing data to make it easier to add other types of sequencing objects and automate tasks on data upload.
+* [UI/Workflow] Added per-project option to automatically assemble uploaded sequence data.
 
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------

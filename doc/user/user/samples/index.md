@@ -64,6 +64,16 @@ If you need to delete a sequence file from IRIDA, you can do so by clicking on t
 
 You can only delete a sequence file from a sample if you have the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
 
+#### Viewing automated assemblies
+
+If the project manager has enabled automated assemblies for uploaded data an assembly may be shown for a sequence file.
+
+![Automated assembly](images/automated-assembly.png)
+
+The assembly status will be displayed along with a link to view the assembly results page.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
+
+See the [project documentation](../project#managing-automated-assemblies) for information on enabling automated assembly.
+
 Adding a new sample
 -------------------
 

@@ -168,7 +168,7 @@ public class ProjectsControllerTest {
 		// Test creating project
 		when(projectService.create(any(Project.class))).thenReturn(project);
 		when(projectService.update(eq(project.getId()), anyMap())).thenReturn(project);
-		String page = controller.createNewProject(model, projectName, "", "", "");
+		String page = controller.createNewProject(model, projectName, "", "", "", false);
 		assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/" + projectId
 				+ "/metadata", page);
 	}

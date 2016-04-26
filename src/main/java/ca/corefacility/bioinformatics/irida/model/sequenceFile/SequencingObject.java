@@ -30,9 +30,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
-import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -62,11 +62,11 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequencingObject")
 	private SampleSequencingObjectJoin sample;
-
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "assembled_genome", unique = true, nullable = true)
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "automated_assembly", unique = true, nullable = true)
 	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-	private AssembledGenomeAnalysis assembledGenome;
+	private AnalysisSubmission automatedAssembly;
 
 	public SequencingObject() {
 		createdDate = new Date();
@@ -122,45 +122,12 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 				.orElseThrow(() -> new EntityNotFoundException("No file with id " + id + " in this SequencingObject"));
 	}
 
-	/**
-	 * Gets an {@link AssembledGenomeAnalysis} that was run from this pair of
-	 * sequence files.
-	 * 
-	 * @return An {@link AssembledGenomeAnalysis} that was run from this pair of
-	 *         sequence files.
-	 */
-	public AssembledGenomeAnalysis getAssembledGenome() {
-		return assembledGenome;
-	}
-
-	/**
-	 * Sets an {@link AssembledGenomeAnalysis} that was run from this pair of
-	 * sequence files.
-	 * 
-	 * @param assembledGenome
-	 *            An {@link AssembledGenomeAnalysis} that was run from this pair
-	 *            of sequence files.
-	 */
-	public void setAssembledGenome(AssembledGenomeAnalysis assembledGenome) {
-		this.assembledGenome = assembledGenome;
-	}
-
-	/**
-	 * Whether or not this {@link SequenceFilePair} has an associated
-	 * {@link AssembledGenomeAnalysis}.
-	 * 
-	 * @return True if there as an associated genome, false otherwise.
-	 */
-	public boolean hasAssembledGenome() {
-		return assembledGenome != null;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SequencingObject) {
 			SequencingObject seqObj = (SequencingObject) obj;
 
-			return Objects.equals(assembledGenome, seqObj.assembledGenome);
+			return Objects.equals(createdDate, seqObj.createdDate);
 		}
 
 		return false;
@@ -168,6 +135,15 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(assembledGenome);
+		return Objects.hash(createdDate);
+	}
+	
+	@JsonIgnore
+	public AnalysisSubmission getAutomatedAssembly() {
+		return automatedAssembly;
+	}
+	
+	public void setAutomatedAssembly(AnalysisSubmission automatedAssembly) {
+		this.automatedAssembly = automatedAssembly;
 	}
 }

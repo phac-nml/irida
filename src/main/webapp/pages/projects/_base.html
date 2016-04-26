@@ -21,6 +21,7 @@
 		<li th:classappend="${activeNav} == 'reference' ? 'active'"><a href="" th:href="@{${baseLink} + '/referenceFiles'}" th:text="#{project.nav.referenceFiles}">[References]</a></li>
 		<li th:classappend="${activeNav} == 'export' ? 'active'"><a href="" th:href="@{${baseLink} + '/export'}" th:text="#{project.nav.exports}">[Exports]</a></li>
 		<li th:classappend="${activeNav} == 'activity' ? 'active'"><a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">[Recent]</a></li>
+		<li th:classappend="${activeNav} == 'settings' ? 'active'" th:if="${isOwner} or ${isAdmin}"><a href="" th:href="@{${baseLink} + '/settings'}" th:text="#{project.nav.settings}">[Settings]</a></li>
 	</ul>
 
 	<main layout:fragment="main">

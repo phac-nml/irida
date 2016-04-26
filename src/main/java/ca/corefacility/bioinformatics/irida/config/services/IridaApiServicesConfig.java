@@ -53,17 +53,23 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -141,12 +147,18 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public FileProcessingChain fileProcessorChain(SequenceFileRepository fileRepository,
-			SequencingObjectRepository sequencingObjectRepository) {
+			SequencingObjectRepository sequencingObjectRepository, AnalysisSubmissionRepository submissionRepository,
+			IridaWorkflowsService workflowsService, UserRepository userRepository,
+			SampleSequencingObjectJoinRepository ssoRepository, ProjectSampleJoinRepository psjRepository) {
 		final FileProcessor gzipFileProcessor = new GzipFileProcessor(fileRepository, sequencingObjectRepository,
 				removeCompressedFiles);
 		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(messageSource(), fileRepository,
 				sequencingObjectRepository);
-		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor);
+
+		final FileProcessor assemblyFileProcessor = new AssemblyFileProcessor(sequencingObjectRepository,
+				submissionRepository, workflowsService, userRepository, ssoRepository, psjRepository);
+		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor,
+				assemblyFileProcessor);
 
 		if (!decompressFiles) {
 			logger.info("File decompression is disabled [file.processing.decompress=false]");
