@@ -17,7 +17,7 @@ service_job:
 ui_job:
 #running ui tests
   script:
-  - xvfb-run mvn clean verify -Pui_testing
+  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing
   stage: test
 rest_job:
 #running rest api tests
