@@ -120,6 +120,14 @@
 						<div class="alert alert-info sidebar-content"
 						     th:text="${noParameters}"></div>
 					</th:block>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="analysis-description"
+							th:text="#{workflow.description.name}">___Description___</label>
+						<div class="col-sm-10">
+							<textarea name="analysis-description" id="analysis-description" class="form-control"
+									  th:placeholder="#{workflow.description.placeholder}"></textarea>
+						</div>
+					</div>
 				</div>
 
 				<div class="form-group">

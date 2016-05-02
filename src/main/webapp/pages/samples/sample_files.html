@@ -75,7 +75,7 @@
 			<table class="table" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
 			       ng-controller="FileController as fileCtrl">
 				<th:block th:each="pair : ${paired_end}">
-					<tr class="paired_end paired_end__forward" th:with="file=${pair.getForwardSequenceFile()}">
+					<tr class="paired_end paired_end__forward sequence-file-row" th:with="file=${pair.getForwardSequenceFile()}">
 						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='forward',relative='true')"></td>
 						<td>
 							<div class="btn-group-sm pull-right" role="group">
@@ -92,7 +92,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="paired_end paired_end__reverse" th:with="file=${pair.getReverseSequenceFile()}">
+					<tr class="paired_end paired_end__reverse sequence-file-row" th:with="file=${pair.getReverseSequenceFile()}">
 						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='reverse',relative='true')"></td>
 						<td>
 							<div class="btn-group btn-group-sm pull-right" role="group">
@@ -103,8 +103,21 @@
 							</div>
 						</td>
 					</tr>
+					<tr class="paired_end paired_end__assembly" th:if="${pair.getAutomatedAssembly()}">
+						<td class="td_icon">
+							<fa:icon type="align"/>
+						</td>
+						<td>
+							<a href="#" th:href="@{/analysis/{id}(id=${pair.getAutomatedAssembly().getId()})}" class="btn btn-default btn-sm file-name" th:text="#{samples.files.assembly}">_Assembly_</a>
+						</td>
+						<td colspan="3">
+							<span th:text="#{samples.files.assembly.status}">_Status_</span>
+							<span th:text="#{'analysis.state.' + ${pair.getAutomatedAssembly().getAnalysisState()}}"></span>
+						</td>
+					</tr>
+					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
-				<tr class="single_end" th:each="join : ${single_end}" th:with="file=${join.getObject()}">
+				<tr class="single_end sequence-file-row" th:each="join : ${single_end}" th:with="file=${join.getObject()}">
 					<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
 					<td>
 						<div class="btn-group-sm pull-right" role="group">

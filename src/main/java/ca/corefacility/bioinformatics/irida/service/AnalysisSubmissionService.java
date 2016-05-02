@@ -81,12 +81,15 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            the named parameters to use for the workflow.
 	 * @param name
 	 *            {@link String} the name for the analysis
+	 * @param analysisDescription
+	 * 			  {@link String} the description of the analysis being submitted
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
-			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
+			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
+		 	String analysisDescription);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
@@ -112,13 +115,16 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            the named parameters to use for the workflow.
 	 * @param name
 	 *            {@link String} the name for the analysis
+	 * @param analysisDescription
+	 * 			  {@link String} the description of the analysis being submitted
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
 	 *         the supplied files.
 	 */
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
-			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
+			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
+		    String analysisDescription);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage

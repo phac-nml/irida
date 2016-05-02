@@ -166,8 +166,11 @@ public class FontAwesome {
 	/*
 	 * Attribute for an external link
 	 */
-	private static final String EXTERNAL_LINK_ATTRIBUTE = "external-link";
-	private static final String EXTERNAL_LINK_ICON = "external-link";
+	public static final String EXTERNAL_LINK_ATTRIBUTE = "external-link";
+	public static final String EXTERNAL_LINK_ICON = "external-link";
+
+	public static final String ALIGN_ATTRIBUTE = "align";
+	public static final String ALIGN_ICON = "align-right";
 
 	/*
 	 * Attribute for cloud upload
@@ -239,6 +242,7 @@ public class FontAwesome {
 			.put(NEXT_ATTRIBUTE, NEXT_ICON)
 			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
 			.put(GROUP_ATTRIBUTE, GROUP_ICON)
+			.put(ALIGN_ATTRIBUTE, ALIGN_ICON)
 			.put(CREATE_ATTRIBUTE, CREATE_ICON)
 			.build();
 	// @formatter:on

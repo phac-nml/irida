@@ -32,6 +32,14 @@
   border-top: none;
 }
 
+.paired_end__assembly {
+  border: 1px solid #133B54;
+}
+
+.sequence_spacer{
+  border-top: 1px solid #133B54 !important;
+}
+
 .single_end {
   border: 1px solid $colour-single-end;
   .td_icon {

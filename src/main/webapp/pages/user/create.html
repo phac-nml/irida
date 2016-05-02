@@ -3,11 +3,11 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
 <head>
-<title th:text="#{user.create.details}">_USER PAGE_</title>
+	<title th:text="#{user.create.details}">_USER PAGE_</title>
 </head>
 <body>
 
-<main layout:fragment="page" ddl:bundle-includes="remote-apis-create">
+<main layout:fragment="page" ddl:bundle-includes="users-password">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
 				<form role="form" action="/users/1/edit"
@@ -77,7 +77,10 @@
 									<label class="control-label" th:text="#{user.password}"	for="password">_Password_</label>
 									<div th:if="${#maps.containsKey(errors, 'password')}" th:text="${errors.password}" class="alert alert-warning">_Password Error_</div>
 									<input type="password" id="password" name="password" class="form-control input-full password" th:placeholder="#{user.password}" />
+									<div th:replace="templates/requirements :: pw-requirements"></div>
 								</div>
+
+
 	
 								<div class="form-group">
 									<label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm Password_</label> 

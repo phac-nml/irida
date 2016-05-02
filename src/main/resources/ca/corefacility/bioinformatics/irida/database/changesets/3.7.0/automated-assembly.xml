@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="automated-assembly" author="tom">
+
+		<dropForeignKeyConstraint baseTableName="sequencing_object"
+			constraintName="FK_SEQUENCING_OBJECT_ASSEMBLED_GENOME" />
+		<dropColumn tableName="sequencing_object" columnName="assembled_genome" />
+		<dropColumn tableName="sequencing_object_AUD" columnName="assembled_genome" />
+
+		<addColumn tableName="sequencing_object">
+			<column name="automated_assembly" type="bigint(20)">
+				<constraints referencedTableName="analysis_submission"
+					referencedColumnNames="id" nullable="true" foreignKeyName="FK_SEQUENCING_OBJECT_ASSEMBLY" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sequencing_object_AUD">
+			<column name="automated_assembly" type="bigint(20)" />
+		</addColumn>
+
+		<addColumn tableName="project">
+			<column name="assemble_uploads" type="bit(1)" valueBoolean="false"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="project_AUD">
+			<column name="assemble_uploads" type="bit(1)" valueBoolean="false"/>
+		</addColumn>
+
+		<dropTable tableName="assembled_genome_analysis" />
+
+	</changeSet>
+</databaseChangeLog>
