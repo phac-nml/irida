@@ -26,6 +26,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
@@ -184,6 +185,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.analysisCleanedState = AnalysisCleanedState.NOT_CLEANED;
 	}
 
+	@Column(name = "analysis_description")
+	@Lob
+	private String analysisDescription;
+
 	/**
 	 * Builds a new {@link AnalysisSubmission} with the given {@link Builder}.
 	 * 
@@ -208,6 +213,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.namedParameters = builder.namedParameters;
 		this.remoteFilesSingle = (builder.remoteFilesSingle != null) ? builder.remoteFilesSingle : Sets.newHashSet();
 		this.remoteFilesPaired = (builder.remoteFilesPaired != null) ? builder.remoteFilesPaired : Sets.newHashSet();
+		this.analysisDescription = (builder.analysisDescription);
 	}
 
 	/**
@@ -501,6 +507,24 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		return namedParameters;
 	}
 
+
+	/**
+	 * Get the description of the analysis
+	 * @return The description of the analysis
+     */
+	public String getAnalysisDescription() {
+		return this.analysisDescription;
+	}
+
+	/**
+	 * Set the description of the analysis for this submission
+	 * @param description
+	 * 				The description of the analysis
+     */
+	public void setAnalysisDescription(String description) {
+		this.analysisDescription = description;
+	}
+
 	/**
 	 * Used to build up an {@link AnalysisSubmission}.
 	 * 
@@ -515,6 +539,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private UUID workflowId;
 		private Map<String, String> inputParameters;
 		private IridaWorkflowNamedParameters namedParameters;
+		private String analysisDescription;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -668,6 +693,18 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		public Builder withNamedParameters(final IridaWorkflowNamedParameters parameters) {
 			checkNotNull(parameters, "named parameters cannot be null.");
 			this.namedParameters = parameters;
+			return this;
+		}
+
+		/**
+		 * Sets the description of the analysis run
+		 * @param analysisDescription
+		 * 				description of the analysis
+         * @return A {@link Builder}
+         */
+		public Builder analysisDescription(final String analysisDescription) {
+			this.analysisDescription = analysisDescription;
+
 			return this;
 		}
 

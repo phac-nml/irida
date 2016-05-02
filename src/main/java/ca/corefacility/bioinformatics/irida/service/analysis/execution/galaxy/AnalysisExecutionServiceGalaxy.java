@@ -22,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Service for performing analyses within a Galaxy execution manager.
  * 
@@ -70,8 +68,8 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
 				+ AnalysisState.NEW);
 
-		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.DOWNLOADING));
+		analysisSubmission.setAnalysisState(AnalysisState.DOWNLOADING);
+		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyAsync.downloadFilesForSubmission(preparingAnalysis);
 	}
@@ -86,8 +84,8 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisState.FINISHED_DOWNLOADING.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
 				+ AnalysisState.FINISHED_DOWNLOADING);
 
-		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.PREPARING));
+		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
+		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyAsync.prepareSubmission(preparingAnalysis);
 	}
@@ -102,8 +100,8 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisState.PREPARED.equals(analysisSubmission.getAnalysisState()), " analysis should be "
 				+ AnalysisState.PREPARED);
 
-		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.SUBMITTING));
+		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
+		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyAsync.executeAnalysis(submittingAnalysis);
 	}
@@ -118,8 +116,8 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
 				" analysis should be " + AnalysisState.FINISHED_RUNNING);
 
-		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(submittedAnalysis.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.COMPLETING));
+		submittedAnalysis.setAnalysisState(AnalysisState.COMPLETING);
+		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(submittedAnalysis);
 
 		return analysisExecutionServiceGalaxyAsync.transferAnalysisResults(submittingAnalysis);
 	}
@@ -147,8 +145,8 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		checkArgument(AnalysisCleanedState.NOT_CLEANED.equals(analysisSubmission.getAnalysisCleanedState()),
 				"cleaned state is not " + AnalysisCleanedState.NOT_CLEANED);
 
-		AnalysisSubmission cleaningAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisCleanedState", AnalysisCleanedState.CLEANING));
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANING);
+		AnalysisSubmission cleaningAnalysis = analysisSubmissionService.update(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyCleanupAsync.cleanupSubmission(cleaningAnalysis);
 	}

@@ -65,7 +65,8 @@ You can see which filters are currently applied to the table under the filter bu
 
 Clicking on the filters will clear that specific filter.
 
-### Creating a new project
+Creating a new project
+----------------------
 
 {% include tutorials/common/creating-a-project.md %}
 
@@ -220,3 +221,16 @@ Recent activities include adding or modifying project members and adding new sam
 ![Project recent activities.](images/project-recent-activities.png)
 
 <a href="../user-groups/">Previous: Managing user groups</a><a href="../samples/" style="float: right;">Next: Managing samples</a>
+
+Managing automated assemblies
+-----------------------------
+
+Data that is uploaded to a project in IRIDA can be automatically assembled using IRIDA's assembly and annotation pipeline.  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
+
+From the project page, click the **Settings** tab at the top.
+
+![Project settings tab.](images/project-settings-tab.png)
+
+To enable automated assemblies, check the *Automatically assemble data uploaded to project* box.  Any new data uploaded to the project will now be automatically assembled.
+
+![Automated assembly check](images/project-settings-automated-assembly.png)

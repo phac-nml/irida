@@ -5,8 +5,9 @@
 <head>
     <title th:text="${user.label}">_USER PAGE_</title>
 </head>
+
 <body>
-<main layout:fragment="page">
+<main layout:fragment="page" ddl:bundle-includes="users-password">
     <div class="row">
         <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
             <form role="form" action="/users/1/edit"
@@ -80,6 +81,7 @@
                             </div>
                             <input type="password" id="password" name="password" class="form-control input-full"
                                    placeholder="Password"/>
+                            <div th:replace="templates/requirements :: pw-requirements"></div>
                         </div>
 
                         <div class="form-group">
@@ -91,7 +93,7 @@
 
                         <div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
                             <label class="control-label" th:text="#{user.enabled}" for="enabled">_Enabled_</label>
-                            <input type="checkbox" name="enabled" th:checked="${user.enabled}"/>
+                            <input type="checkbox" name="enabled" id="enabled" th:checked="${user.enabled}"/>
                         </div>
                     </div>
                     <div class="panel-footer text-right">

@@ -96,7 +96,7 @@ Most programming languages have libraries with convenient interfaces for dealing
 ### Java
 {:.no_toc}
 
-For Python, we recommend that you use [Spring Security OAuth2](http://projects.spring.io/spring-security-oauth/) or [Apache OLTU](https://oltu.apache.org/). We internally use Spring Security OAuth2 to implement server-side OAuth2.
+For Java, we recommend that you use [Spring Security OAuth2](http://projects.spring.io/spring-security-oauth/) or [Apache OLTU](https://oltu.apache.org/). We internally use Spring Security OAuth2 to implement server-side OAuth2.
 
 ### Python
 {:.no_toc}

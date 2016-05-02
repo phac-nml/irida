@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
-import ca.corefacility.bioinformatics.irida.model.genomeFile.AssembledGenomeAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -385,25 +384,5 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 
 		return sortProperties;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
-	public Set<AssembledGenomeAnalysis> findAssembliesForSample(Sample sample) {
-		Set<AssembledGenomeAnalysis> assembledGenomesSet = new HashSet<>();
-		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
-		
-		for (SampleSequencingObjectJoin join : sequencesForSample) {
-			AssembledGenomeAnalysis assembledGenomeAnalysis = join.getObject().getAssembledGenome();
-			if (assembledGenomeAnalysis != null) {
-				assembledGenomesSet.add(assembledGenomeAnalysis);
-			}
-		}
-
-		return assembledGenomesSet;
 	}
 }

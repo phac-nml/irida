@@ -82,6 +82,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
+	private static final String ACTIVE_NAV_SETTINGS = "settings";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -94,6 +95,7 @@ public class ProjectsController {
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
+	public static final String PROJECT_SETTINGS_PAGE = PROJECTS_DIR + "project_settings";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -207,6 +209,60 @@ public class ProjectsController {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return SPECIFIC_PROJECT_PAGE;
 	}
+	
+	/**
+	 * Request for a {@link Project} settings page
+	 * 
+	 * @param projectId
+	 *            the ID of the {@link Project} to read
+	 * @param model
+	 *            Model for the view
+	 * @param principal
+	 *            Logged in user
+	 * @return name of the project settings page
+	 */
+	@RequestMapping(value = "/projects/{projectId}/settings")
+	@PreAuthorize("hasPermission(#projectId, 'isProjectOwner')")
+	public String getProjectSettingsPage(@PathVariable Long projectId, final Model model, final Principal principal) {
+		logger.debug("Getting project settings for [Project " + projectId + "]");
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
+		return PROJECT_SETTINGS_PAGE;
+	}
+
+	/**
+	 * Update the project assembly setting for the {@link Project}
+	 * 
+	 * @param projectId
+	 *            the ID of a {@link Project}
+	 * @param assemble
+	 *            Whether or not to do automated assemblies
+	 * @param model
+	 *            Model for the view
+	 * @return success message if successful
+	 */
+	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
+	@PreAuthorize("hasPermission(#projectId, 'isProjectOwner')")
+	@ResponseBody
+	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
+			final Model model, Locale locale) {
+		Project read = projectService.read(projectId);
+		read.setAssembleUploads(assemble);
+		projectService.update(read);
+
+		String message = null;
+		if (assemble) {
+			message = messageSource.getMessage("project.settings.notifications.assemble.enabled",
+					new Object[] { read.getLabel() }, locale);
+		} else {
+			message = messageSource.getMessage("project.settings.notifications.assemble.disabled",
+					new Object[] { read.getLabel() }, locale);
+		}
+
+		return ImmutableMap.of("result", message);
+	}
 
 	/**
 	 * Gets the name of the template for the new project page
@@ -225,18 +281,21 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Creates a new project and displays a list of users for the user to add to the project
+	 * Creates a new project and displays a list of users for the user to add to
+	 * the project
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 * @param name
-	 * 		String name of the project
+	 *            String name of the project
 	 * @param organism
-	 * 		Organism name
+	 *            Organism name
 	 * @param projectDescription
-	 * 		Brief description of the project
+	 *            Brief description of the project
 	 * @param remoteURL
-	 * 		URL for the project wiki
+	 *            URL for the project wiki
+	 * @param assemble
+	 *            Enable or disable automated assemblies
 	 *
 	 * @return The name of the add users to project page
 	 */
@@ -244,12 +303,15 @@ public class ProjectsController {
 	public String createNewProject(final Model model, @RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
-			@RequestParam(required = false, defaultValue = "") String remoteURL) {
+			@RequestParam(required = false, defaultValue = "") String remoteURL,
+			@RequestParam(required = false, defaultValue = "false") boolean assemble) {
 
 		Project p = new Project(name);
 		p.setOrganism(organism);
 		p.setProjectDescription(projectDescription);
 		p.setRemoteURL(remoteURL);
+		p.setAssembleUploads(assemble);
+
 		Project project;
 		try {
 			project = projectService.create(p);

@@ -36,7 +36,7 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	public int getSequenceFileCount() {
-		return driver.findElements(By.cssSelector("tr")).size();
+		return driver.findElements(By.className("sequence-file-row")).size();
 	}
 	
 	public String getSampleName(){
