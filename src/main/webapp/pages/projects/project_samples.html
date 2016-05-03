@@ -6,7 +6,7 @@
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
     <script th:inline="javascript">
-        //        window.dependencies = ['irida.projects.samples.controller'];
+        window.dependencies = ['irida.projects.samples.controller'];
         var PAGE = {
             urls: {
                 associated: {
@@ -44,6 +44,9 @@
             display: inline-block !important;
             float: right;
         }
+        .project-label{
+            border-left: 4px solid #ECEFF1;
+        }
     </style>
 </head>
 <body>
@@ -53,12 +56,14 @@
 
     <div dt:conf="samplesTable">
         <div dt:confType="extrajs" dt:bundles="project-samples-table" dt:placeholder="before_end_document_ready"/>
+        <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
+        <!--<div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.highlightAssociatedProjectRows"></div>-->
     </div>
     <table id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
         <thead>
         <tr>
-            <th dt:property="sample.sampleName" th:text="#{project.samples.table.name}"></th>
-            <th dt:property="project.name" th:text="#{project.samples.table.project}"></th>
+            <th dt:property="sample.sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
+            <th dt:property="project.name" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
             <th width="120px" dt:property="sample.createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
                 dt:renderFunction="datatables-utils#datatable.formatDate"></th>
             <th width="120px" dt:property="sample.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
@@ -66,6 +71,39 @@
         </tr>
         </thead>
     </table>
+    <div class="hidden">
+        <div id="toolbar" role="toolbar" aria-label="Sample Table Tools">
+            <div th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown="" auto-close="outsideClick"
+                 ng-controller="AssociatedProjectsController as apCtrl">
+                <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
+                    <th:block th:text="#{project.samples.nav.associated}"></th:block>
+                    &nbsp;
+                    <fa:icon type="caret-down" fixed="fixed"/>
+                </button>
+                <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"
+                    aria-labelledby="associated-btn">
+                    <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">
+                        <a href="#" style="display: block;" data:id="${associated.getId()}"
+                           ng-click="apCtrl.toggleAssociatedProject($event)">
+                            <div class="checkbox" style="display: block;">
+                                <label>
+                                    <input class="associated-cb" type="checkbox"/>
+                                    &nbsp;
+                                    <th:block th:text="${associated.getName()}"></th:block>
+                                </label>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <a th:if="${#lists.isEmpty(associatedProjects)}"
+               th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default">
+                <fa:icon type="create"/>
+                &nbsp;
+                <th:block th:text="#{project.samples.nav.associated-create}"></th:block>
+            </a>
+        </div>
+    </div>
 </main>
 </body>
 

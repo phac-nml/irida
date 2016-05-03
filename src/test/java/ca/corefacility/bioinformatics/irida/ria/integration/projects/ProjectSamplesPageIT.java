@@ -104,6 +104,14 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 3 pages of samples", 3, page.getPaginationCount());
 	}
 
+	@Test
+	public void testAssociatedProjects() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		assertEquals("Should be displaying 21 samples", "Showing 1 to 10 of 21 entries", page.getTableInfo());
+		page.displayAssociatedProject();
+		assertEquals("Should be displaying 22 samples", "Showing 1 to 10 of 22 entries", page.getTableInfo());
+	}
+
 	// TODO (JOSH - 2016-04-18): Re-implement testing sample selection
 	@Ignore
 	@Test

@@ -185,6 +185,12 @@ public class FontAwesome {
 	private static final String CARET_DOWN_ICON = "caret-down";
 
 	/*
+	 * Attribute for creating a new item
+	 */
+	private static final String CREATE_ATTRIBUTE = "create";
+	private static final String CREATE_ICON = "plus";
+
+	/*
 	 * Attribute for next and previous buttons.
 	 */
 	public static final String NEXT_ATTRIBUTE = "next";
@@ -237,6 +243,7 @@ public class FontAwesome {
 			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
 			.put(GROUP_ATTRIBUTE, GROUP_ICON)
 			.put(ALIGN_ATTRIBUTE, ALIGN_ICON)
+			.put(CREATE_ATTRIBUTE, CREATE_ICON)
 			.build();
 	// @formatter:on
 

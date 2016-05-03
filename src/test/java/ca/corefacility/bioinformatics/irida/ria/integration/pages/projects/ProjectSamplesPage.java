@@ -29,6 +29,18 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "samplesTable")
 	private WebElement samplesTable;
 
+	@FindBy(id = "processingIndicator")
+	private WebElement tableProcessingIndicator;
+
+	@FindBy(id = "associated-btn")
+	private WebElement associatedProjectMenuBtn;
+
+	@FindBy(css = "#associated-dropdown")
+	private WebElement associatedDropdown;
+
+	@FindBy(className = "associated-cb")
+	private List<WebElement> associatedCbs;
+
 	@FindBy(id = "selectAllBtn")
 	private WebElement selectAll;
 
@@ -283,6 +295,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		List<String> names = new ArrayList<>();
 		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
 		return names;
+	}
+
+	public void displayAssociatedProject() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+
+		associatedProjectMenuBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(associatedDropdown));
+		associatedCbs.get(0).click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("processingIndicator")));
 	}
 
 	private void enterSelect2Value(String value) {
