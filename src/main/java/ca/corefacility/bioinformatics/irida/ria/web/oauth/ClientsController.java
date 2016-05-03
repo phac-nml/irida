@@ -202,14 +202,13 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
 			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
-		Map<String, Object> updates = new HashMap<>();
 		IridaClientDetails readClient = clientDetailsService.read(clientId);
 
 		if (accessTokenValiditySeconds != 0) {
-			updates.put("accessTokenValiditySeconds", accessTokenValiditySeconds);
+			readClient.setAccessTokenValiditySeconds(accessTokenValiditySeconds);
 		}
 		if (!Strings.isNullOrEmpty(authorizedGrantTypes)) {
-			updates.put("authorizedGrantTypes", ImmutableSet.of(authorizedGrantTypes));
+			readClient.setAuthorizedGrantTypes(ImmutableSet.of(authorizedGrantTypes));
 		}
 
 		Set<String> scopes = new HashSet<>();
@@ -227,17 +226,17 @@ public class ClientsController extends BaseController {
 			}
 		}
 		
-		updates.put("scope", scopes);
-		updates.put("autoApprovableScopes", autoScopes);
+		readClient.setScope(scopes);
+		readClient.setAutoApprovableScopes(autoScopes);
 		
 		if (!Strings.isNullOrEmpty(new_secret)) {
-			String clientSecret = generateClientSecret();
-			updates.put("clientSecret", clientSecret);
+			String clientSecret = generateClientSecret();;
+			readClient.setClientSecret(clientSecret);
 		}
 
 		String response;
 		try {
-			clientDetailsService.update(clientId, updates);
+			clientDetailsService.update(readClient);
 			response = "redirect:/clients/" + clientId;
 		} catch (RuntimeException e) {
 			handleCreateUpdateException(e, model, locale, scope_write, scope_read, scope_auto_write, scope_auto_read, readClient.getClientId(),
