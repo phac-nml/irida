@@ -20,6 +20,8 @@
     AssociatedProjectsController.prototype.toggleAssociatedProject = function ($event) {
       // If the input is click we need to prevent the default since we will select it later and need
       // to know the state of it before the click event.
+      // IMP: This is because selection is allowed by clicking anywhere on the dropdown associated with the checkbox
+      //      or the project name - giving a larger click area.
       if(!$($event.target).is('input')) {
         $event.preventDefault();
       }
