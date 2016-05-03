@@ -392,6 +392,8 @@ public class ClientsController extends BaseController {
 
 		List<List<String>> clientsData = new ArrayList<>();
 		for (IridaClientDetails client : search) {
+			// get the number of active tokens for the client
+			int activeTokensForClient = clientDetailsService.countActiveTokensForClient(client);
 
 			String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
 
@@ -400,6 +402,7 @@ public class ClientsController extends BaseController {
 			row.add(client.getClientId());
 			row.add(grants);
 			row.add(Formats.DATE.format(client.getCreatedDate()));
+			row.add(String.valueOf(activeTokensForClient));
 
 			clientsData.add(row);
 		}
