@@ -21,6 +21,10 @@
               + row[0] + '">' + data + '</a>';
           },
           'targets': 1
+        },
+        {
+          'sortable': false,
+          'targets': 4
         }
       ]
     });

@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -87,9 +88,8 @@ public class ClientsControllerTest {
 		client2.setId(2L);
 		Page<IridaClientDetails> clientPage = new PageImpl<>(Lists.newArrayList(client1, client2));
 
-		when(
-				clientDetailsService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
-						any(String.class))).thenReturn(clientPage);
+		when(clientDetailsService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
+				any(String.class))).thenReturn(clientPage);
 
 		Map<String, Object> ajaxClientList = controller.getAjaxClientList(page, size, draw, sortColumn, direction,
 				searchValue);
@@ -140,8 +140,8 @@ public class ClientsControllerTest {
 		String scope_read = "read";
 		String scope_write = "";
 
-		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
-				+ IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME);
+		DataIntegrityViolationException ex = new DataIntegrityViolationException(
+				"Error: " + IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME);
 
 		when(clientDetailsService.create(client)).thenThrow(ex);
 
@@ -176,7 +176,6 @@ public class ClientsControllerTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testSubmitEditClient() {
 		IridaClientDetails client = new IridaClientDetails();
 		Long id = 1L;
@@ -185,23 +184,20 @@ public class ClientsControllerTest {
 		String scope_read = "read";
 
 		when(clientDetailsService.read(id)).thenReturn(client);
-		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "","","", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", "", "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
-		@SuppressWarnings("rawtypes")
-		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
-		verify(clientDetailsService).update(eq(id), captor.capture());
+		ArgumentCaptor<IridaClientDetails> captor = ArgumentCaptor.forClass(IridaClientDetails.class);
+		verify(clientDetailsService).update(captor.capture());
 
-		Map<String, Object> value = captor.getValue();
-		assertTrue(value.containsKey("scope"));
-		Set<String> scope = (Set<String>) value.get("scope");
+		IridaClientDetails updated = captor.getValue();
+
+		Set<String> scope = updated.getScope();
 		assertTrue(scope.contains(scope_read));
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testSubmitEditClientError() {
 		IridaClientDetails client = new IridaClientDetails();
 		Long id = 1L;
@@ -210,35 +206,34 @@ public class ClientsControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(clientDetailsService.read(id)).thenReturn(client);
-		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
-				+ IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME);
+		DataIntegrityViolationException ex = new DataIntegrityViolationException(
+				"Error: " + IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME);
 
-		when(clientDetailsService.update(eq(id), any(Map.class))).thenThrow(ex);
+		when(clientDetailsService.update(any(IridaClientDetails.class))).thenThrow(ex);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "","","", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", model, locale);
 		assertEquals(ClientsController.EDIT_CLIENT_PAGE, postCreateClient);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testSubmitEditWithClientSecretUpdate() {
 		IridaClientDetails client = new IridaClientDetails();
+		String originalSecret = "original";
 		Long id = 1L;
 		client.setId(id);
+		client.setClientSecret(originalSecret);
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(clientDetailsService.read(id)).thenReturn(client);
-		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "","","", "true", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "true", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
-		@SuppressWarnings("rawtypes")
-		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
-		verify(clientDetailsService).update(eq(id), captor.capture());
+		ArgumentCaptor<IridaClientDetails> captor = ArgumentCaptor.forClass(IridaClientDetails.class);
+		verify(clientDetailsService).update(captor.capture());
 
-		Map<String, Object> value = captor.getValue();
-		assertTrue(value.containsKey("clientSecret"));
+		IridaClientDetails value = captor.getValue();
+		assertNotEquals("Secret should be different", originalSecret, value.getClientSecret());
 	}
 
 	@Test

@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.Collection;
-import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
@@ -86,14 +84,10 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	public IridaClientDetails read(Long object) {
 		return super.read(object);
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
+	
 	@Override
-	public IridaClientDetails update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
-			EntityExistsException, InvalidPropertyException {
-		return super.update(id, updatedFields);
+	public IridaClientDetails update(IridaClientDetails object) {
+		return super.update(object);
 	}
 
 	/**
