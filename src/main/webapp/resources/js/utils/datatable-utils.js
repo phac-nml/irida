@@ -40,10 +40,35 @@ var ProjectColourer = (function () {
   return ProjectColours;
 }());
 
+var RowSelection = (function ($) {
+  "use strict";
+  var selected = [];
+
+  function RowSelection() {
+  }
+
+  RowSelection.prototype.selectRow = function (row) {
+    var $row = $(row);
+
+    var id = $row.find("a").data("id");
+
+    if ($row.hasClass("selected")) {
+      selected.splice(selected.indexOf(id), 1);
+      $row.removeClass("selected");
+    } else {
+      selected.push(id);
+      $row.addClass("selected");
+    }
+  };
+
+  return RowSelection;
+}(window.jQuery));
+
 var datatable = (function(moment, $, tl, page) {
   'use strict';
   // This is used to get a colour for the project label in a table cell
-  var projectColourer = new ProjectColourer();
+  var projectColourer = new ProjectColourer(),
+      rowSelection    = new RowSelection();
 
 
   /**
@@ -65,7 +90,7 @@ var datatable = (function(moment, $, tl, page) {
       return data;
     }
     else {
-      return "<a class='btn btn-link' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
+      return "<a data-id='" + full.sample.identifier + "' class='btn btn-link' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
     }
   }
 
@@ -142,6 +167,10 @@ var datatable = (function(moment, $, tl, page) {
     }
   }
 
+  function selectRow(row) {
+    rowSelection.selectRow(row);
+  }
+
   return {
     formatDate                    : formatDate,
     i18n                          : i18n,
@@ -149,6 +178,7 @@ var datatable = (function(moment, $, tl, page) {
     tableDrawn                    : tableDrawn,
     displayListSize               : displayListSize,
     formatSampleLink              : formatSampleLink,
-    highlightAssociatedProjectRows: highlightAssociatedProjectRows
+    highlightAssociatedProjectRows: highlightAssociatedProjectRows,
+    selectRow                     : selectRow
   };
 })(window.moment, window.jQuery, window.TL, window.PAGE);

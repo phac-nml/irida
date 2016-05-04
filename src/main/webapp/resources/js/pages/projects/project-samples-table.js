@@ -17,3 +17,7 @@ angular.element($target).injector().invoke(["$rootScope", "$compile", function (
     return $compile(tools)($rootScope);
   });
 }]);
+
+$("#samplesTable tbody").on('click', "tr", function () {
+  datatable.selectRow(this);
+});
