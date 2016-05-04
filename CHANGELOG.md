@@ -15,6 +15,7 @@ Changes
 * [UI] Added password restriction list when creating or editing user info, and when resetting a password.
 * [Developer] Changed organization of sequencing data to make it easier to add other types of sequencing objects and automate tasks on data upload.
 * [UI/Workflow] Added per-project option to automatically assemble uploaded sequence data.
+* [UI]: Added active tokens count to OAuth client list page.
 
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------
