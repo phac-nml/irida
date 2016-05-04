@@ -40,7 +40,7 @@ public class CartControllerTest {
 	UserService userService;
 	SequencingObjectService sequencingObjectService;
 	SampleRemoteService sampleRemoteService;
-	
+
 	CartController controller;
 
 	private Long projectId;
@@ -55,8 +55,9 @@ public class CartControllerTest {
 		userService = mock(UserService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		sampleRemoteService = mock(SampleRemoteService.class);
-		
-		controller = new CartController(sampleService, userService, projectService, sequencingObjectService, sampleRemoteService);
+
+		controller = new CartController(sampleService, userService, projectService, sequencingObjectService,
+				sampleRemoteService);
 
 		testData();
 	}
@@ -189,8 +190,8 @@ public class CartControllerTest {
 	@Test
 	public void testGetCartMap() {
 		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-        RequestContextHolder.setRequestAttributes(ra);
-		
+		RequestContextHolder.setRequestAttributes(ra);
+
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
 		controller.setSelected(selected);
