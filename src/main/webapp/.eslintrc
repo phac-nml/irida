@@ -1,6 +1,5 @@
 {
-    "globals": {
-        "window": true,
-        "document": true
+    "env": {
+        "browser": true
     }
 }
