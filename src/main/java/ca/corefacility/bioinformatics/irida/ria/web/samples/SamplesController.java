@@ -45,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -305,23 +306,16 @@ public class SamplesController extends BaseController {
 			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 
-		final Map<String, List<MultipartFile>> pairedUpFiles = files.stream().collect(
-				Collectors.groupingBy((final MultipartFile f) -> {
-					final Matcher m = PAIR_PATTERN.matcher(f.getOriginalFilename());
-					if (m.find()) {
-						return m.group(1);
-					} else {
-						return f.getOriginalFilename();
-					}
-				}));
+		final Map<String, List<Path>> pairedFiles = SamplePairer.getPairedFiles(files);
+		final List<Path> singleFiles = SamplePairer.getSingleFiles(files);
 
-		for (String key : pairedUpFiles.keySet()) {
-			List<MultipartFile> list = pairedUpFiles.get(key);
-			if (list.size() > 1) {
-				createSequenceFilePairsInSample(list, sample);
-			} else {
-				createSequenceFileInSample(list.get(0), sample);
-			}
+		for (String key : pairedFiles.keySet()) {
+			List<Path> list = pairedFiles.get(key);
+			createSequenceFilePairsInSample(list, sample);
+		}
+
+		for (Path path: singleFiles) {
+			createSequenceFileInSample(path, sample);
 		}
 	}
 
@@ -334,8 +328,8 @@ public class SamplesController extends BaseController {
 	 *            {@link Sample} to add the file to.
 	 * @throws IOException
 	 */
-	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = createSequenceFile(file);
+	private void createSequenceFileInSample(Path file, Sample sample) throws IOException {
+		SequenceFile sequenceFile = new SequenceFile(file);
 		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
 	}
 
@@ -349,28 +343,10 @@ public class SamplesController extends BaseController {
 	 *            {@link Sample} to add the pair to.
 	 * @throws IOException
 	 */
-	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
-		SequenceFile firstFile = createSequenceFile(pair.get(0));
-		SequenceFile secondFile = createSequenceFile(pair.get(1));
+	private void createSequenceFilePairsInSample(List<Path> pair, Sample sample) throws IOException {
+		SequenceFile firstFile = new SequenceFile(pair.get(0));
+		SequenceFile secondFile = new SequenceFile(pair.get(1));
 		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
-	}
-
-	/**
-	 * Private method to move the sequence file into the correct directory and
-	 * create the {@link SequenceFile} object.
-	 *
-	 * @param file
-	 *            {@link MultipartFile} sequence file uploaded.
-	 *
-	 * @return {@link SequenceFile}
-	 * @throws IOException
-	 *             Exception thrown if there is an error handling the file.
-	 */
-	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-		file.transferTo(target.toFile());
-		return new SequenceFile(target);
 	}
 
 	/**
