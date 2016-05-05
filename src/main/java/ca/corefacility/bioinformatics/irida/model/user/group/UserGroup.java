@@ -26,6 +26,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * A collection of {@link User} accounts is a {@link UserGroup}. The

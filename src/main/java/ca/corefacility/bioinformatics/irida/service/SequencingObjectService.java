@@ -69,6 +69,8 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 *
 	 * @param sequenceFiles
 	 *            A {@link Set} of {@link SequencingObject}s.
+	 * @param <T>
+	 *            The type of sequencing object which should be returned
 	 * @return A {@link Map} of between {@link Sample} and
 	 *         {@link SequencingObject}.
 	 * @throws DuplicateSampleException

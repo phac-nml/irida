@@ -16,6 +16,12 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -28,15 +34,13 @@ import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.collect.Sets;
-
 public class CartControllerTest {
 	SampleService sampleService;
 	ProjectService projectService;
 	UserService userService;
 	SequencingObjectService sequencingObjectService;
 	SampleRemoteService sampleRemoteService;
-	
+
 	CartController controller;
 
 	private Long projectId;
@@ -51,8 +55,9 @@ public class CartControllerTest {
 		userService = mock(UserService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		sampleRemoteService = mock(SampleRemoteService.class);
-		
-		controller = new CartController(sampleService, userService, projectService, sequencingObjectService, sampleRemoteService);
+
+		controller = new CartController(sampleService, userService, projectService, sequencingObjectService,
+				sampleRemoteService);
 
 		testData();
 	}
@@ -184,6 +189,9 @@ public class CartControllerTest {
 
 	@Test
 	public void testGetCartMap() {
+		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
+		RequestContextHolder.setRequestAttributes(ra);
+
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
 		controller.setSelected(selected);
@@ -200,6 +208,7 @@ public class CartControllerTest {
 		for (Map<String, Object> map : sList) {
 			assertTrue(map.containsKey("id"));
 			assertTrue(map.containsKey("label"));
+			assertTrue(map.containsKey("href"));
 		}
 	}
 
