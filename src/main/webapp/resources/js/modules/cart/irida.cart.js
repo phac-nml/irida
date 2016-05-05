@@ -226,14 +226,11 @@
     svc.exportFromCart = function (args) {
       return CartService.all()
         .then(function (data) {
-          var projects = data;
+          var projects = data.projects;
           _.each(projects, function (project) {
             var samples = project.samples;
             _.each(samples, function (sample) {
-              var sequenceFiles = sample.sequenceFiles;
-              _.each(sequenceFiles, function (sequenceFile) {
-                addSampleFile(sample.label, sequenceFile.selfRef);
-              });
+              addSampleFile(sample.label, sample.href);
             });
           });
           return getSampleFormEntities(args);

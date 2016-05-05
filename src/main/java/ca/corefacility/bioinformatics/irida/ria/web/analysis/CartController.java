@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.collect.ImmutableMap;
@@ -326,10 +327,10 @@ public class CartController {
 		List<Map<String, Object>> projectList = new ArrayList<>();
 		for (Project p : projects) {
 			Set<Sample> selectedSamplesForProject = selected.get(p);
-			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject);
+			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject, p.getId());
 
-			Map<String, Object> projectMap = ImmutableMap
-					.of("id", p.getId(), "label", p.getLabel(), "samples", samples);
+			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
+					samples);
 			projectList.add(projectMap);
 		}
 
@@ -344,11 +345,15 @@ public class CartController {
 	 * @return A List<Map<String,Object>> containing the relevant Sample
 	 *         information
 	 */
-	private List<Map<String, Object>> getSamplesAsList(Set<Sample> samples) {
+	private List<Map<String, Object>> getSamplesAsList(Set<Sample> samples, Long projectId) {
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		for (Sample s : samples) {
-			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel()
-					,"sequenceFiles",getSequenceFileList(s));
+			String sampleHref = linkTo(
+					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, s.getId())).withSelfRel()
+							.getHref();
+
+			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel(), "sequenceFiles",
+					getSequenceFileList(s), "href", sampleHref);
 			sampleList.add(sampleMap);
 		}
 		return sampleList;
