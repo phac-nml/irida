@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.0.0 to 1.0.1
+--------------
+* [UI]: Fixed a bug where exporting to Galaxy from the cart was not working.
+
 1.0.0-alpha10 to 1.0.0
 ----------------------
 * [UI]: Fixed a bug where project filtering on the projects table excluded projects that did not have an organism
