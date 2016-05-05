@@ -46,6 +46,7 @@
         }
         .project-label{
             border-left: 4px solid #ECEFF1;
+            padding-left: 4px;
         }
         tbody tr:hover {
             cursor: pointer;
@@ -63,7 +64,7 @@
     <div dt:conf="samplesTable">
         <div dt:confType="extrajs" dt:bundles="project-samples-table" dt:placeholder="before_end_document_ready"/>
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
-        <!--<div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.highlightAssociatedProjectRows"></div>-->
+        <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
     </div>
     <table id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
         <thead>
