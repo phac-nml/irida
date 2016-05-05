@@ -60,6 +60,12 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * 
 	 * @param userGroupRepository
 	 *            the {@link UserGroupRepository}
+	 * @param userGroupJoinRepository
+	 *            the {@link UserGroupJoinRepository}
+	 * @param userRepository
+	 *            the {@link UserRepository}
+	 * @param userGroupProjectJoinRepository
+	 *            The {@link UserGroupProjectJoinRepository}
 	 * @param validator
 	 *            the {@link Validator}
 	 */

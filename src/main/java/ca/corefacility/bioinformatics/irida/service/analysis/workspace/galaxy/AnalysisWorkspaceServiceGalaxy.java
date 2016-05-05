@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFi
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -104,13 +105,16 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            A service for setting up parameters in Galaxy.
 	 * @param sampleRemoteService
 	 *            A service for handling {@link Sample}s from remote services
+	 * @param sequencingObjectService
+	 *            A service for reading {@link SequencingObject}s
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService, GalaxyLibrariesService galaxyLibrariesService,
 			IridaWorkflowsService iridaWorkflowsService,
 			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
 			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy,
-			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService, SequencingObjectService sequencingObjectService) {
+			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService,
+			SequencingObjectService sequencingObjectService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyLibrariesService = galaxyLibrariesService;

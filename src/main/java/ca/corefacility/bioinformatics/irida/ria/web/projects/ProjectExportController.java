@@ -277,8 +277,6 @@ public class ProjectExportController {
 	/**
 	 * Get the view to see all ncbi exports
 	 * 
-	 * @param projectId
-	 *            which {@link Project} to get exports for
 	 * @param model
 	 *            model for the view
 	 * @return name of the exports list view

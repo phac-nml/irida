@@ -127,7 +127,7 @@ public class ProjectMembersController {
 	 * 
 	 * @param projectId
 	 *            The ID of the project
-	 * @param userId
+	 * @param memberId
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role for the user on the project
@@ -154,7 +154,7 @@ public class ProjectMembersController {
 	 * 
 	 * @param projectId
 	 *            The ID of the project
-	 * @param userId
+	 * @param memberId
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role for the user on the project
@@ -219,12 +219,6 @@ public class ProjectMembersController {
 	 *            The project to remove from
 	 * @param userId
 	 *            The user to remove
-	 * @param principal
-	 *            a reference to the logged in user.
-	 * @throws ProjectWithoutOwnerException
-	 *             if removing the user leaves the project with no owner
-	 * @throws ProjectSelfEditException
-	 *             if a user is trying to remove themself from the project.
 	 */
 	@RequestMapping(path = "{projectId}/members/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -249,12 +243,6 @@ public class ProjectMembersController {
 	 *            The project to remove from
 	 * @param userId
 	 *            The user to remove
-	 * @param principal
-	 *            a reference to the logged in user.
-	 * @throws ProjectWithoutOwnerException
-	 *             if removing the user leaves the project with no owner
-	 * @throws ProjectSelfEditException
-	 *             if a user is trying to remove themself from the project.
 	 */
 	@RequestMapping(path = "{projectId}/groups/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -281,13 +269,6 @@ public class ProjectMembersController {
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role to set
-	 * @param principal
-	 *            a reference to the logged in user.
-	 * @throws ProjectWithoutOwnerException
-	 *             if changing the user role on the project leaves it without an
-	 *             owner
-	 * @throws ProjectSelfEditException
-	 *             if a user tries to change their own role on a project.
 	 */
 	@RequestMapping(path = "{projectId}/members/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
@@ -317,13 +298,6 @@ public class ProjectMembersController {
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role to set
-	 * @param principal
-	 *            a reference to the logged in user.
-	 * @throws ProjectWithoutOwnerException
-	 *             if changing the user role on the project leaves it without an
-	 *             owner
-	 * @throws ProjectSelfEditException
-	 *             if a user tries to change their own role on a project.
 	 */
 	@RequestMapping(path = "{projectId}/groups/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
@@ -408,11 +382,11 @@ public class ProjectMembersController {
 	/**
 	 * Get a string to tell the user which group they're going to delete.
 	 * 
-	 * @param userGroupId
+	 * @param memberId
 	 *            the user group that's about to be deleted.
-	 * @param locale
-	 *            the locale of the browser.
-	 * @return a message indicating which group is going to be deleted.
+	 * @param model
+	 *            model for rendering the view
+	 * @return name of the user removal modal
 	 */
 	@RequestMapping(path = "/removeUserModal", method = RequestMethod.POST)
 	public String getRemoveUserModal(final @RequestParam Long memberId, final Model model) {
@@ -424,11 +398,11 @@ public class ProjectMembersController {
 	/**
 	 * Get a string to tell the user which group they're going to delete.
 	 * 
-	 * @param userGroupId
+	 * @param memberId
 	 *            the user group that's about to be deleted.
-	 * @param locale
-	 *            the locale of the browser.
-	 * @return a message indicating which group is going to be deleted.
+	 * @param model
+	 *            Model for rendering the view
+	 * @return Name of the user group removal modal
 	 */
 	@RequestMapping(path = "/removeUserGroupModal", method = RequestMethod.POST)
 	public String getRemoveUserGroupModal(final @RequestParam Long memberId, final Model model) {
