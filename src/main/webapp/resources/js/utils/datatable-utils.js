@@ -40,7 +40,7 @@ var ProjectColourer = (function () {
   return ProjectColours;
 }());
 
-var RowSelection = (function ($) {
+var RowSelection = (function () {
   "use strict";
   var selected = [];
 
@@ -48,23 +48,35 @@ var RowSelection = (function ($) {
   }
 
   RowSelection.prototype.selectRow = function (row) {
-    var $row = $(row);
+    // Anchor tag expected to have a data attribute 'id'
+    // Expected on first anchor in row.
+    var anchor = row.getElementsByTagName("a")[0],
+      id;
+    if (typeof anchor === "undefined") {
+      throw new Error("No anchor tag found for sample name");
+    }
+    id = anchor.dataset.id;
+    if(typeof id === "undefined") {
+      throw new Error("Expected anchor tag for sample to contain sample identifier");
+    }
 
-    var id = $row.find("a").data("id");
-
-    if ($row.hasClass("selected")) {
+    if(row.classList.contains("selected")) {
       selected.splice(selected.indexOf(id), 1);
-      $row.removeClass("selected");
+      row.classList.remove("selected");
     } else {
       selected.push(id);
-      $row.addClass("selected");
+      row.classList.add("selected");
     }
   };
 
-  return RowSelection;
-}(window.jQuery));
+  RowSelection.prototype.isRowSelected = function (id) {
+    return selected.indexOf(id) > -1;
+  };
 
-var datatable = (function(moment, $, tl, page) {
+  return RowSelection;
+}());
+
+var datatable = (function(moment, tl, page) {
   'use strict';
   // This is used to get a colour for the project label in a table cell
   var projectColourer = new ProjectColourer(),
@@ -126,12 +138,19 @@ var datatable = (function(moment, $, tl, page) {
 
 
   function highlightAssociatedProjectRows(data, type, full) {
-    var $div = $("<div><div class='project-label'>&nbsp;" + data + "</div></div>");
+    var outer = document.createElement("div");
+    var div = document.createElement("div");
+    div.classList.add("project-label");
+    var text = document.createTextNode(data);
+    div.appendChild(text);
+
     if (full.sampleType === 'ASSOCIATED') {
       var colour = projectColourer.getColour(full.project.label);
-      $div.find("div.project-label").css("border-color", colour);
+      div.style.borderColor = colour;
     }
-    return $div.html();
+
+    outer.appendChild(div);
+    return outer.innerHTML;
   }
 
   /**
@@ -167,6 +186,12 @@ var datatable = (function(moment, $, tl, page) {
     }
   }
 
+  function projectRowCreated(row, item) {
+    if(rowSelection.isRowSelected(item.sample.identifier)) {
+      row.classList.add("selected");
+    }
+  }
+
   function selectRow(row) {
     rowSelection.selectRow(row);
   }
@@ -179,6 +204,7 @@ var datatable = (function(moment, $, tl, page) {
     displayListSize               : displayListSize,
     formatSampleLink              : formatSampleLink,
     highlightAssociatedProjectRows: highlightAssociatedProjectRows,
+    projectRowCreated             : projectRowCreated,
     selectRow                     : selectRow
   };
-})(window.moment, window.jQuery, window.TL, window.PAGE);
+})(window.moment, window.TL, window.PAGE);
