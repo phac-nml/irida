@@ -24,7 +24,7 @@ systemctl start docker
 
 # run the galaxy container, --restart=always makes sure it starts up on boot
 mkdir -p /home/irida/data/galaxy-export
-curl http://gorgon.corefacility.ca/~fbristow/irida-galaxy-docker.tar.gz | gunzip -c | docker load
+curl https://irida.corefacility.ca/downloads/docker/irida-galaxy-docker-latest.tar.gz | gunzip -c | docker load
 docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing fbristow/irida-galaxy-docker
 
 # wait for galaxy to succeed starting up for the first time, so we don't have to wait for postgres to start up next time
