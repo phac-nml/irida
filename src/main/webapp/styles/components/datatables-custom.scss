@@ -51,3 +51,18 @@
     transition: all 0.3s ease;
   }
 }
+
+
+table.selectable tbody tr:hover {
+  cursor: pointer;
+}
+
+
+table.selectable tbody tr.selected td {
+  background-color: #d9edf7!important;
+}
+
+.dataTables_wrapper .selected-counts {
+  height: 2em;
+  line-height: 2em;
+}
