@@ -93,6 +93,7 @@
 			ON pf.id=ss.sequencingobject_id INNER
 			JOIN sequencefile_sample_AUD ssa
 			ON ssa.sequencefile_id=pf.file_id
+			GROUP BY ss.id
 		</sql>
 
 		<!-- Drop sequencefile_sample -->
