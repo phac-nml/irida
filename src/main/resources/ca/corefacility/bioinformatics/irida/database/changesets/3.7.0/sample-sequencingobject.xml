@@ -7,6 +7,8 @@
 
 	<changeSet id="sample-sequencingobject" author="tom">
 
+		<validCheckSum>7:dc5edf7e83bce7650a6a12d81048ef8f</validCheckSum>
+		<validCheckSum>7:6f832717697f7095ad53978d328b9317</validCheckSum>
 		<!-- Create the join tables -->
 		<createTable tableName="sample_sequencingobject">
 			<column name="id" type="bigint(20)" autoIncrement="true">
@@ -65,6 +67,7 @@
 		</sql>
 
 		<!-- Add paired sample_seqobject_AUD data -->
+		<!-- Note: This may lose auditing information for sample merge operations -->
 		<sql>
 			INSERT INTO sample_sequencingobject_AUD (id, REV, REVTYPE,
 			created_date, sample_id, sequencingobject_id)
@@ -81,6 +84,7 @@
 		</sql>
 
 		<!-- Add single end sample_seqobject_AUD data -->
+		<!-- Note: This may lose auditing information for sample merge operations -->
 		<sql>
 			INSERT INTO sample_sequencingobject_AUD (id, REV, REVTYPE,
 			created_date,
@@ -93,6 +97,7 @@
 			ON pf.id=ss.sequencingobject_id INNER
 			JOIN sequencefile_sample_AUD ssa
 			ON ssa.sequencefile_id=pf.file_id
+			GROUP BY ss.id
 		</sql>
 
 		<!-- Drop sequencefile_sample -->
