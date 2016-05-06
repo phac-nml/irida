@@ -14,8 +14,8 @@ RUN sed -i -e 's/#admin_users = None/admin_users = admin@galaxy.org,workflowUser
 	sed -i -e 's/#allow_library_path_paste = False/allow_library_path_paste = True/' /etc/galaxy/galaxy.ini && \
 	sed -i -e 's/force_beta_workflow_scheduled_for_collections=True/force_beta_workflow_scheduled_for_collections=False/' /etc/galaxy/galaxy.ini
 
-RUN cpan App::cpanminus
-RUN cpanm Time::Piece XML::Simple Data::Dumper http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz --force
+RUN cpan App::cpanminus && rm -rf ~/.cpan
+RUN cpanm Time::Piece XML::Simple Data::Dumper http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz --force && rm -rf ~/.cpanm
 
 # Add spades and prokka to the image:
 RUN install-repository "-r 4287dd541327 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name flash" && \
@@ -23,9 +23,12 @@ RUN install-repository "-r 4287dd541327 --url https://irida.corefacility.ca/gala
 	install-repository "-r 51b76a5d78a5 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name assemblystats" && \
 	install-repository "-r 21734680d921 --url https://toolshed.g2.bx.psu.edu -o lionelguy --name spades" && \
 	install-repository "-r f5e44aad6498 --url https://toolshed.g2.bx.psu.edu -o crs4 --name prokka" && \
-	install-repository "-r 9ea374bb0350 --url https://toolshed.g2.bx.psu.edu -o jjohnson --name regex_find_replace"
+	install-repository "-r 9ea374bb0350 --url https://toolshed.g2.bx.psu.edu -o jjohnson --name regex_find_replace" && \
+	install-repository "-r 7bc329e1ada4 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name bundle_collections" && \
+	install-repository "-r c970d74729e9 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name combine_assembly_stats" && \
+	find /galaxy-central/tool_deps/ -iname '.git' | xargs -I {} rm -rf {}
 
-RUN apt update && apt install --yes gnuplot
+RUN apt update && apt install --yes gnuplot && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Overwrite the tbl2asn that comes with prokka because it's expired!
 RUN curl ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux64.tbl2asn.gz > tbl2asn.gz && \
