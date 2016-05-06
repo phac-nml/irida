@@ -25,15 +25,6 @@
 		};
 		/*]]>*/
 	</script>
-	<style>
-		@media (max-width: 767px) {
-			.affix {
-				position: static;
-				width: auto;
-				top: 0;
-			}
-		}
-	</style>
 </head>
 <body>
 <div layout:fragment="page" ng-app="irida.pipelines" ddl:bundle-includes="launch-pipeline" >
@@ -143,7 +134,7 @@
 						<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
 
 						<div>
-							<button id="btn-launch" class="btn btn-danger btn-action"
+							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
 							        th:title="#{workflow.launch.btn.title}"
 							        ng-click="pipeline.launch()">
 								<span class="fa fa-rocket"></span>
