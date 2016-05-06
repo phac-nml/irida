@@ -65,6 +65,7 @@
 		</sql>
 
 		<!-- Add paired sample_seqobject_AUD data -->
+		<!-- Note: This may lose auditing information for sample merge operations -->
 		<sql>
 			INSERT INTO sample_sequencingobject_AUD (id, REV, REVTYPE,
 			created_date, sample_id, sequencingobject_id)
@@ -81,6 +82,7 @@
 		</sql>
 
 		<!-- Add single end sample_seqobject_AUD data -->
+		<!-- Note: This may lose auditing information for sample merge operations -->
 		<sql>
 			INSERT INTO sample_sequencingobject_AUD (id, REV, REVTYPE,
 			created_date,
