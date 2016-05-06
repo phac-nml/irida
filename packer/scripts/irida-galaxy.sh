@@ -39,8 +39,7 @@ Requires=docker.service
 After=docker.service
 
 [Service]
-ExecStartPre=-/usr/bin/docker kill galaxy
-ExecStartPre=-/usr/bin/docker rm galaxy
+ExecStartPre=-/usr/bin/docker rm --force galaxy
 ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing fbristow/irida-galaxy-docker
 
 [Install]
