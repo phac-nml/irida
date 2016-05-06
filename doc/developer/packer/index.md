@@ -24,7 +24,7 @@ Building the VM
 
 You can build the VM once you've got the prerequisites installed. From the `packer/` directory in the root of the project folder, run:
 
-    packer build -only=virtualbox-iso template.json
+    packer build template.json
 
 This will:
 
