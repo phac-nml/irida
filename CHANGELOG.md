@@ -1,9 +1,10 @@
 Changes
 =======
 
-1.0.0 to 1.0.1
+1.0.0 to 1.1.0
 --------------
 * [UI]: Fixed a bug where exporting to Galaxy from the cart was not working.
+* [Developer]: Added a complete docker image for Galaxy, updated the VirtualBox appliance to use the Docker image.
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
