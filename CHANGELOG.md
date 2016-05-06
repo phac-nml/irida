@@ -4,6 +4,7 @@ Changes
 1.0.0 to 1.0.1
 --------------
 * [UI]: Fixed a bug where exporting to Galaxy from the cart was not working.
+* [UI]: Fixed a bug when the launch pipeline page was opened on a small display (<1000px) the "Launch Pipeline" button disappeared.
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
