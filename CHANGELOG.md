@@ -1,9 +1,11 @@
 Changes
 =======
 
-1.0.0 to 1.0.1
+1.0.0 to 1.1.0
 --------------
 * [UI]: Fixed a bug where exporting to Galaxy from the cart was not working.
+* [Database] Fixed an issue with migrating single end sequence files to the new SequencingObject model in cases where samples with single files had been merged.  IRIDA installs should skip directly to v1.0.2 from 1.0.0alpha-10 to avoid database update problems. (1.0.2)
+* [UI]: Fixed a bug when the launch pipeline page was opened on a small display (<1000px) the "Launch Pipeline" button disappeared.
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
