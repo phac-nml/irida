@@ -141,7 +141,7 @@ var RowClickHandler = (function (page) {
     // Update the selected counts
     var selectDiv = document.getElementsByClassName("selected-counts")[0];
     if(selected.length === 0 ) {
-      selectDiv.innerHTML = "";
+      selectDiv.innerHTML = page.i18n.selectedCounts.none;
     } else if (selected.length === 1) {
       selectDiv.innerHTML = page.i18n.selectedCounts.one;
     } else {
