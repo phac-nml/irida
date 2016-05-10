@@ -1,7 +1,5 @@
 // The contents of this file gets load via Dandelion Datatables to the end of IIFE.
-/*global oTable_samplesTable */
 
-var table = oTable_samplesTable;
 /*
  *  Add the toolbar to the table.
  *
@@ -17,3 +15,9 @@ angular.element($target).injector().invoke(["$rootScope", "$compile", function (
     return $compile(tools)($rootScope);
   });
 }]);
+
+// Need to dynamically insert the 0 selected counts
+document.querySelector(".selected-counts").innerHTML = PAGE.i18n.selectedCounts.none;
+
+// Handle clicking the table rows.
+document.querySelector("#samplesTable tbody").addEventListener("click", datatable.tbodyClickEvent, false);

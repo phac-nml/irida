@@ -35,6 +35,11 @@
                     days30: /*[[#{project.sample.filter.date.days30}]]*/ "Last 30 Days",
                     days60: /*[[#{project.sample.filter.date.days60}]]*/ "Last 60 Days",
                     days120: /*[[#{project.sample.filter.date.days120}]]*/ "Last 120 Days"
+                },
+                selectedCounts: {
+                    none: /*[[#{project.samples.counts.none}]]*/ "No samples selected",
+                    one: /*[[#{project.samples.counts.one}]]*/ "1 sample selected",
+                    other: /*[[#{project.samples.counts.more}]]*/ "{count} samples selected"
                 }
             }
         };
@@ -46,6 +51,7 @@
         }
         .project-label{
             border-left: 4px solid #ECEFF1;
+            padding-left: 4px;
         }
     </style>
 </head>
@@ -57,9 +63,9 @@
     <div dt:conf="samplesTable">
         <div dt:confType="extrajs" dt:bundles="project-samples-table" dt:placeholder="before_end_document_ready"/>
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
-        <!--<div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.highlightAssociatedProjectRows"></div>-->
+        <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
     </div>
-    <table id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
+    <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
         <thead>
         <tr>
             <th dt:property="sample.sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>

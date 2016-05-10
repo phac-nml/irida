@@ -112,8 +112,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be displaying 22 samples", "Showing 1 to 10 of 22 entries", page.getTableInfo());
 	}
 
-	// TODO (JOSH - 2016-04-18): Re-implement testing sample selection
-	@Ignore
 	@Test
 	public void testSampleSelection() {
 		logger.info("Testing sample selection for: Project Samples");
@@ -121,15 +119,10 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
 
 		page.selectSample(0);
+		assertEquals("Should be 1 selected samples", "1 sample selected", page.getSelectedInfoText());
+
 		page.selectSampleWithShift(4);
-		assertEquals("Should be 5 selected samples", "5 Samples Selected", page.getSelectedInfoText());
-
-		page.selectAllOrNone();
-		// Again, this is only the count for the current page!
-		assertEquals("Should be 21 selected samples", "21 Samples Selected", page.getSelectedInfoText());
-		page.selectAllOrNone();
-		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
-
+		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
 	}
 
 	// TODO (JOSH - 2016-04-18): Re-implement testing add to cart.
