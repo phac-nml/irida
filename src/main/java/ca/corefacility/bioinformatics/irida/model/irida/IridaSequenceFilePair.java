@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model.irida;
 
+import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import com.sksamuel.diffpatch.DiffMatchPatch;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -13,15 +16,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  */
 public interface IridaSequenceFilePair {
 
-	/**
-	 * Pattern for matching forward {@link SequenceFile}s from a file name.
-	 */
-	public static final Pattern FORWARD_PATTERN = Pattern.compile(".*_R1_\\d\\d\\d.*");
-
-	/**
-	 * Pattern for matching reverse {@link SequenceFile}s from a file name.
-	 */
-	public static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_\\d\\d\\d.*");
+	public static DiffMatchPatch diff = new DiffMatchPatch();
+	public static String[] forwardMatches = {"1", "f", "F"};
+	public static String[] reverseMatches = {"2", "r", "R"};
 
 	/**
 	 * Get the pair's identifier
@@ -37,8 +34,13 @@ public interface IridaSequenceFilePair {
 	 */
 	@JsonIgnore
 	public default IridaSequenceFile getForwardSequenceFile() {
-		return getFiles().stream().filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
-				.findFirst().get();
+		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		List<DiffMatchPatch.Diff> diffs = diff.diff_main(pair[0].getFile().toString(), pair[1].getFile().toString());
+		if (Stream.of(forwardMatches).anyMatch(x -> diffs.get(diffs.size()-3).text.equals(x))) {
+			return pair[0];
+		} else {
+			return pair[1];
+		}
 	}
 
 	/**
@@ -48,8 +50,13 @@ public interface IridaSequenceFilePair {
 	 */
 	@JsonIgnore
 	public default IridaSequenceFile getReverseSequenceFile() {
-		return getFiles().stream().filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
-				.findFirst().get();
+		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		List<DiffMatchPatch.Diff> diffs = diff.diff_main(pair[0].getFile().toString(), pair[1].getFile().toString());
+		if (Stream.of(reverseMatches).anyMatch(x -> diffs.get(diffs.size()-3).text.equals(x))) {
+			return pair[0];
+		} else {
+			return pair[1];
+		}
 	}
 
 	/**

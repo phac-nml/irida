@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.Collection;
@@ -10,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +42,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -91,7 +87,6 @@ public class SamplesController extends BaseController {
 	public static final String LONGITUDE = "longitude";
 	private static final ImmutableList<String> FIELDS = ImmutableList.of(SAMPLE_NAME, DESCRIPTION, ORGANISM, ISOLATE,
 			STRAIN, COLLECTED_BY, ISOLATION_SOURCE, GEOGRAPHIC_LOCATION_NAME, LATITUDE, LONGITUDE);
-	private static final Pattern PAIR_PATTERN = Pattern.compile("(.+)_R\\d_.*");
 
 	// Services
 	private final SampleService sampleService;
@@ -322,14 +317,14 @@ public class SamplesController extends BaseController {
 	/**
 	 * Create a {@link SequenceFile} and add it to a {@link Sample}
 	 * 
-	 * @param file
+	 * @param path
 	 *            {@link MultipartFile}
 	 * @param sample
 	 *            {@link Sample} to add the file to.
 	 * @throws IOException
 	 */
-	private void createSequenceFileInSample(Path file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = new SequenceFile(file);
+	private void createSequenceFileInSample(Path path, Sample sample) throws IOException {
+		SequenceFile sequenceFile = new SequenceFile(path);
 		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
 	}
 

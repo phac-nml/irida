@@ -3,8 +3,9 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -17,7 +18,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import com.sksamuel.diffpatch.DiffMatchPatch;
 import org.hibernate.envers.Audited;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
@@ -31,15 +36,11 @@ import com.google.common.collect.ImmutableSet;
 @Audited
 public class SequenceFilePair extends SequencingObject implements IridaSequenceFilePair {
 
-	/**
-	 * Pattern for matching forward {@link SequenceFile}s from a file name.
-	 */
-	private static final Pattern FORWARD_PATTERN = Pattern.compile(".*_R1_.*");
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePair.class);
 
-	/**
-	 * Pattern for matching reverse {@link SequenceFile}s from a file name.
-	 */
-	private static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_.*");
+	public static DiffMatchPatch diff = IridaSequenceFilePair.diff;
+	public static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
+	public static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Size(min = 2, max = 2)
@@ -63,8 +64,13 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 * @return The forward {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getForwardSequenceFile() {
-		return files.stream().filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
-				.findFirst().get();
+		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		List<DiffMatchPatch.Diff> diffs = diff.diff_main(pair[0].getFile().toString(), pair[1].getFile().toString());
+		if (Stream.of(forwardMatches).anyMatch(x -> diffs.get(diffs.size()-3).text.equals(x))) {
+			return (SequenceFile) pair[0];
+		} else {
+			return (SequenceFile) pair[1];
+		}
 	}
 
 	/**
@@ -73,8 +79,13 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 * @return The reverse {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getReverseSequenceFile() {
-		return files.stream().filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
-				.findFirst().get();
+		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		List<DiffMatchPatch.Diff> diffs = diff.diff_main(pair[0].getFile().toString(), pair[1].getFile().toString());
+		if (Stream.of(reverseMatches).anyMatch(x -> diffs.get(diffs.size()-3).text.equals(x))) {
+			return (SequenceFile) pair[0];
+		} else {
+			return (SequenceFile) pair[1];
+		}
 	}
 
 	@JsonIgnore
