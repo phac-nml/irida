@@ -1,10 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
@@ -18,17 +14,18 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import com.sksamuel.diffpatch.DiffMatchPatch;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
+
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 @Entity
 @Table(name = "sequence_file_pair")
@@ -36,9 +33,6 @@ import com.google.common.collect.ImmutableSet;
 @Audited
 public class SequenceFilePair extends SequencingObject implements IridaSequenceFilePair {
 
-	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePair.class);
-
-	public static DiffMatchPatch diff = IridaSequenceFilePair.diff;
 	public static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
 	public static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
 
@@ -65,11 +59,16 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 */
 	public SequenceFile getForwardSequenceFile() {
 		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
-		List<DiffMatchPatch.Diff> diffs = diff.diff_main(pair[0].getFile().toString(), pair[1].getFile().toString());
-		if (Stream.of(forwardMatches).anyMatch(x -> diffs.get(diffs.size()-3).text.equals(x))) {
+		String[] filenames = {pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString()};
+
+		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
+
+		if (Stream.of(forwardMatches).anyMatch( x -> String.valueOf(filenames[0].charAt(index)).equals(x) )) {
 			return (SequenceFile) pair[0];
-		} else {
+		} else if (Stream.of(forwardMatches).anyMatch( x -> String.valueOf(filenames[1].charAt(index)).equals(x) )) {
 			return (SequenceFile) pair[1];
+		} else {
+			throw new NoSuchElementException();
 		}
 	}
 
@@ -80,13 +79,21 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 */
 	public SequenceFile getReverseSequenceFile() {
 		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
-		List<DiffMatchPatch.Diff> diffs = diff.diff_main(pair[0].getFile().toString(), pair[1].getFile().toString());
-		if (Stream.of(reverseMatches).anyMatch(x -> diffs.get(diffs.size()-3).text.equals(x))) {
+
+		String[] filenames = {pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString()};
+
+		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
+
+		if (Stream.of(reverseMatches).anyMatch( x -> String.valueOf(filenames[0].charAt(index)).equals(x) )) {
 			return (SequenceFile) pair[0];
-		} else {
+		} else if (Stream.of(reverseMatches).anyMatch( x -> String.valueOf(filenames[1].charAt(index)).equals(x) )) {
 			return (SequenceFile) pair[1];
+		} else {
+			throw new NoSuchElementException();
 		}
 	}
+
+
 
 	@JsonIgnore
 	@Override

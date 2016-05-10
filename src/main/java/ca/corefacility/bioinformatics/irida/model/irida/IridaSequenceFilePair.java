@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.irida;
 
-import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -9,6 +9,7 @@ import com.sksamuel.diffpatch.DiffMatchPatch;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Interface describing a pair object storing forward and reverse
@@ -16,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  */
 public interface IridaSequenceFilePair {
 
-	public static DiffMatchPatch diff = new DiffMatchPatch();
 	public static String[] forwardMatches = {"1", "f", "F"};
 	public static String[] reverseMatches = {"2", "r", "R"};
 
@@ -35,11 +35,16 @@ public interface IridaSequenceFilePair {
 	@JsonIgnore
 	public default IridaSequenceFile getForwardSequenceFile() {
 		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
-		List<DiffMatchPatch.Diff> diffs = diff.diff_main(pair[0].getFile().toString(), pair[1].getFile().toString());
-		if (Stream.of(forwardMatches).anyMatch(x -> diffs.get(diffs.size()-3).text.equals(x))) {
+		String[] filenames = {pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString()};
+
+		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
+
+		if (Stream.of(forwardMatches).anyMatch( x -> String.valueOf(filenames[0].charAt(index)).equals(x) )) {
 			return pair[0];
-		} else {
+		} else if (Stream.of(forwardMatches).anyMatch( x -> String.valueOf(filenames[1].charAt(index)).equals(x) )) {
 			return pair[1];
+		} else {
+			throw new NoSuchElementException();
 		}
 	}
 
@@ -51,11 +56,17 @@ public interface IridaSequenceFilePair {
 	@JsonIgnore
 	public default IridaSequenceFile getReverseSequenceFile() {
 		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
-		List<DiffMatchPatch.Diff> diffs = diff.diff_main(pair[0].getFile().toString(), pair[1].getFile().toString());
-		if (Stream.of(reverseMatches).anyMatch(x -> diffs.get(diffs.size()-3).text.equals(x))) {
+
+		String[] filenames = {pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString()};
+
+		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
+
+		if (Stream.of(reverseMatches).anyMatch( x -> String.valueOf(filenames[0].charAt(index)).equals(x) )) {
 			return pair[0];
-		} else {
+		} else if (Stream.of(reverseMatches).anyMatch( x -> String.valueOf(filenames[1].charAt(index)).equals(x) )) {
 			return pair[1];
+		} else {
+			throw new NoSuchElementException();
 		}
 	}
 

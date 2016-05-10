@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import org.springframework.web.multipart.MultipartFile;
 import com.sksamuel.diffpatch.DiffMatchPatch;
 import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
@@ -28,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 public class SamplePairer {
 
-	private static DiffMatchPatch diff = IridaSequenceFilePair.diff;
+	private static DiffMatchPatch diff = new DiffMatchPatch();
 	
 	private static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
 	private static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
