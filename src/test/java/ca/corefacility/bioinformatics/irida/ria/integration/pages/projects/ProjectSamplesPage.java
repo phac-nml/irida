@@ -44,7 +44,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "selectAllBtn")
 	private WebElement selectAll;
 
-	@FindBy(id = "selected-counts")
+	@FindBy(className = "selected-counts")
 	private WebElement selectedCountInfo;
 
 	@FindBy(id = "samplesTable_info")
