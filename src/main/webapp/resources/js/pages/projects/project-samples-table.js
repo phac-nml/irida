@@ -17,7 +17,7 @@ angular.element($target).injector().invoke(["$rootScope", "$compile", function (
 }]);
 
 // Need to dynamically insert the 0 selected counts
-document.getElementsByClassName("selected-counts")[0].innerHTML = PAGE.i18n.selectedCounts.none;
+document.querySelector(".selected-counts").innerHTML = PAGE.i18n.selectedCounts.none;
 
 // Handle clicking the table rows.
 document.querySelector("#samplesTable tbody").addEventListener("click", datatable.tbodyClickEvent, false);
