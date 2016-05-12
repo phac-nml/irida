@@ -9,9 +9,7 @@ import java.nio.file.Path;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -42,63 +40,58 @@ public class SamplePairer {
 	 */
 	private static Map<String, List<MultipartFile>> organizeFiles(List<MultipartFile> files) throws IOException {
 
-		Map<String, List<MultipartFile>> filePaths = new HashMap<>();
+		Map<String, List<MultipartFile>> organizedFiles = new HashMap<>();
+
+
 		MultipartFile file1, file2;
 
-		Collections.sort(files, (a, b) -> a.getOriginalFilename().compareTo(b.getOriginalFilename()));
-		Iterator<MultipartFile> iter = files.iterator();
+		//Want to skip files that have already been organized
+		Map<MultipartFile, Boolean> wasChecked = new HashMap<>();
+		for(MultipartFile f: files) {
+			wasChecked.put(f, false);
+		}
 
-		if (iter.hasNext()) {
-			file1 = iter.next();
+		//check all uploaded files to see if they should be paired or left single
+		for (int i = 0; i < files.size(); i++) {
+			file1 = files.get(i);
 
-			//match up paired files
-			if (iter.hasNext()) {
-				while (iter.hasNext()) {
-					file2 = iter.next();
+			boolean pair = false;
+			if (!wasChecked.get(file1)) {
+				for (int j = i + 1; j < files.size() && !pair; j++) {
+					file2 = files.get(j);
 
-					Boolean isPair = true;
-					List<Diff> diffs = diff.diff_main(file1.getOriginalFilename(), file2.getOriginalFilename());
+					if (!wasChecked.get(file2)) {
 
-					//The size of the list is 4 when only 1 character differs between the two strings
-					//if the two files should be paired, this would be the list of diffs between the filenames:
-					//		diffs[0] = common prefix
-					//		diffs[1] = unique character 1 (e.g. "1" or "f")
-					//		diffs[2] = unique character 2 (e.g. "2" or "r")
-					//		diffs[3] = common suffix (e.g. ".fastq")
-					if (diffs.size() == 4) {
-						String file1ID = diffs.get(1).text;
-						String file2ID = diffs.get(2).text;
-						if (Stream.of(forwardMatches).anyMatch(x -> file1ID.contains(x))
-								&& Stream.of(reverseMatches).anyMatch(x -> file2ID.contains(x))) {
-							MultipartFile[] filePathPair = {file1, file2};
-							filePaths.put(diffs.get(0).text, Arrays.asList(filePathPair));
-							if (iter.hasNext()) {
-								file1 = iter.next(); //skip next because there's a match
-							} else {
-								file1 = null;
-								break;
+						List<Diff> diffs = diff.diff_main(file1.getOriginalFilename(), file2.getOriginalFilename());
+						//The size of `diffs` is 4 when only 1 character differs between the two strings
+						//if the two files should be paired, this would be the list of diffs between the filenames:
+						//		diffs[0] = common prefix
+						//		diffs[1] = unique character 1 (e.g. "1" or "f")
+						//		diffs[2] = unique character 2 (e.g. "2" or "r")
+						//		diffs[3] = common suffix (e.g. ".fastq")
+						if (diffs.size() == 4) {
+							String file1ID = diffs.get(1).text;
+							String file2ID = diffs.get(2).text;
+							if (Stream.of(forwardMatches).anyMatch(x -> file1ID.contains(x))
+									&& Stream.of(reverseMatches).anyMatch(x -> file2ID.contains(x))) {
+								pair = true;
+
+								MultipartFile[] filePair = {file1, file2};
+								organizedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
+								wasChecked.replace(file2, true);
 							}
-						} else {
-							isPair = false;
 						}
-					} else {
-						isPair = false;
 					}
-
-					if (!isPair) {
-						MultipartFile[] filePath = {file1};
-						filePaths.put(file1.getOriginalFilename(), Arrays.asList(filePath));
-						file1 = file2;
-					}
-				
+				}
+				if (!pair) {
+					MultipartFile[] singleFile = {file1};
+					organizedFiles.put(file1.getOriginalFilename(), Arrays.asList(singleFile));
 				}
 			}
-			if (!iter.hasNext() && file1 != null) {
-				MultipartFile[] filePath = {file1};
-				filePaths.put(file1.getOriginalFilename(), Arrays.asList(filePath));
-			}
+			wasChecked.replace(file1, true);
 		}
-		return filePaths;
+
+		return organizedFiles;
 	}
 
 	/**
