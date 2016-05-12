@@ -26,16 +26,15 @@ public class ReadSamplePermission extends BasePermission<Sample, Long> {
 	private final ReadProjectPermission readProjectPermission;
 
 	/**
-	 * Construct an instance of {@link ReadSamplePermission}.
+	 * Construct an instance of {@link ReadSamplePermission}
 	 * 
 	 * @param sampleRepository
-	 *            the sample repository.
-	 * @param userRepository
-	 *            the user repository.
-	 * @param pujRepository
-	 *            the project user join repository.
+	 *            The {@link SampleRepository}
 	 * @param psjRepository
-	 *            the project sample join repository.
+	 *            a {@link ProjectSampleJoinRepository}
+	 * @param readProjectPermission
+	 *            A {@link ReadProjectPermission} to test if you can read a
+	 *            project
 	 */
 	@Autowired
 	public ReadSamplePermission(final SampleRepository sampleRepository,

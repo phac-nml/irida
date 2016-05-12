@@ -113,6 +113,8 @@ public class GroupsController {
 	 *            the model to add violation constraints to.
 	 * @param locale
 	 *            the locale used by the browser.
+	 * @param principal
+	 *            The logged in user
 	 * @return the route back to the creation page on validation failure, or the
 	 *         destails page on success.
 	 */
@@ -406,8 +408,8 @@ public class GroupsController {
 	 * 
 	 * @param userGroupId
 	 *            the user group that's about to be deleted.
-	 * @param locale
-	 *            the locale of the browser.
+	 * @param model
+	 *            model for rendering view
 	 * @return a message indicating which group is going to be deleted.
 	 */
 	@RequestMapping(path = "/deleteConfirmModal", method = RequestMethod.POST)
@@ -420,10 +422,10 @@ public class GroupsController {
 	/**
 	 * Get a string to tell the user which group they're going to delete.
 	 * 
-	 * @param userGroupId
+	 * @param userId
 	 *            the user group that's about to be deleted.
-	 * @param locale
-	 *            the locale of the browser.
+	 * @param model
+	 *            model for the view to render
 	 * @return a message indicating which group is going to be deleted.
 	 */
 	@RequestMapping(path = "/removeUserModal", method = RequestMethod.POST)
@@ -442,6 +444,10 @@ public class GroupsController {
 	 *            The ID of the user
 	 * @param groupRole
 	 *            The role to set
+	 * @param locale
+	 *            Locale of the logged in user
+	 * 
+	 * @return message indicating update result
 	 */
 	@RequestMapping(path = "/{groupId}/members/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody

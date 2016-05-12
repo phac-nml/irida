@@ -24,7 +24,9 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -32,6 +34,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * {@link UserGroup}. This class closely mirrors the {@link ProjectUserJoin} in
  * that a {@link UserGroup} is assigned a level of access using the
  * {@link ProjectRole} enum.
+ * 
+ * @see ProjectUserJoin
+ * @see ProjectRole
  */
 @Entity
 @Table(name = "user_group_member")
@@ -109,17 +114,17 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 
 	public enum UserGroupRole {
 		GROUP_OWNER, GROUP_MEMBER;
-		
-	    public static UserGroupRole fromString(String code) {
-	        switch (code.toUpperCase()) {
-	            case "GROUP_MEMBER":
-	                return GROUP_MEMBER;
-	            case "GROUP_OWNER":
-	                return GROUP_OWNER;
-	            default:
-	                return GROUP_MEMBER;
-	        }
-	    }
+
+		public static UserGroupRole fromString(String code) {
+			switch (code.toUpperCase()) {
+			case "GROUP_MEMBER":
+				return GROUP_MEMBER;
+			case "GROUP_OWNER":
+				return GROUP_OWNER;
+			default:
+				return GROUP_MEMBER;
+			}
+		}
 	}
 
 	@Override
@@ -155,7 +160,7 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 	public UserGroupRole getRole() {
 		return this.role;
 	}
-	
+
 	public void setRole(final UserGroupRole role) {
 		this.role = role;
 	}
