@@ -4,8 +4,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.sksamuel.diffpatch.DiffMatchPatch;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;

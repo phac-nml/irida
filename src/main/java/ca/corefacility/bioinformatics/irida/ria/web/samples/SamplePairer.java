@@ -5,7 +5,6 @@ import com.sksamuel.diffpatch.DiffMatchPatch;
 import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.util.ArrayList;
@@ -41,9 +40,9 @@ public class SamplePairer {
 	 * 			where the key is the common prefix of two paired files,
 	 * 			or the full file name of a single sequence file
 	 */
-	private static Map<String, List<Path>> organizeFiles(List<MultipartFile> files) throws IOException {
+	private static Map<String, List<MultipartFile>> organizeFiles(List<MultipartFile> files) throws IOException {
 
-		Map<String, List<Path>> filePaths = new HashMap<>();
+		Map<String, List<MultipartFile>> filePaths = new HashMap<>();
 		MultipartFile file1, file2;
 
 		Collections.sort(files, (a, b) -> a.getOriginalFilename().compareTo(b.getOriginalFilename()));
@@ -71,7 +70,7 @@ public class SamplePairer {
 						String file2ID = diffs.get(2).text;
 						if (Stream.of(forwardMatches).anyMatch(x -> file1ID.contains(x))
 								&& Stream.of(reverseMatches).anyMatch(x -> file2ID.contains(x))) {
-							Path[] filePathPair = {transferSequenceFile(file1), transferSequenceFile(file2)};
+							MultipartFile[] filePathPair = {file1, file2};
 							filePaths.put(diffs.get(0).text, Arrays.asList(filePathPair));
 							if (iter.hasNext()) {
 								file1 = iter.next(); //skip next because there's a match
@@ -87,7 +86,7 @@ public class SamplePairer {
 					}
 
 					if (!isPair) {
-						Path[] filePath = {transferSequenceFile(file1)};
+						MultipartFile[] filePath = {file1};
 						filePaths.put(file1.getOriginalFilename(), Arrays.asList(filePath));
 						file1 = file2;
 					}
@@ -95,7 +94,7 @@ public class SamplePairer {
 				}
 			}
 			if (!iter.hasNext() && file1 != null) {
-				Path[] filePath = {transferSequenceFile(file1)};
+				MultipartFile[] filePath = {file1};
 				filePaths.put(file1.getOriginalFilename(), Arrays.asList(filePath));
 			}
 		}
@@ -109,14 +108,14 @@ public class SamplePairer {
 	 *            List of {@link MultipartFile}s uploaded
 	 * @return Map of {@link Path}s to paired sequence files.
 	 */
-	public static Map<String, List<Path>> getPairedFiles(List<MultipartFile> files) throws IOException {
+	public static Map<String, List<MultipartFile>> getPairedFiles(List<MultipartFile> files) throws IOException {
 
-		Map<String, List<Path>> pairedFiles = new HashMap<>();
+		Map<String, List<MultipartFile>> pairedFiles = new HashMap<>();
 
-		Map<String, List<Path>> allFiles = organizeFiles(files);
+		Map<String, List<MultipartFile>> allFiles = organizeFiles(files);
 
 		for (String key : allFiles.keySet()) {
-			List<Path> item = allFiles.get(key);
+			List<MultipartFile> item = allFiles.get(key);
 			if (item.size() > 1) {
 				pairedFiles.put(key, item);
 			}
@@ -132,14 +131,14 @@ public class SamplePairer {
 	 *            List of {@link MultipartFile}s uploaded
 	 * @return List of {@link Path}s to single sequence files.
 	 */
-	public static List<Path> getSingleFiles(List<MultipartFile> files) throws IOException {
+	public static List<MultipartFile> getSingleFiles(List<MultipartFile> files) throws IOException {
 
-		List<Path> singleFilePaths = new ArrayList<>();
+		List<MultipartFile> singleFilePaths = new ArrayList<>();
 
-		Map<String, List<Path>> allFiles = organizeFiles(files);
+		Map<String, List<MultipartFile>> allFiles = organizeFiles(files);
 
 		for (String key : allFiles.keySet()) {
-			List<Path> item = allFiles.get(key);
+			List<MultipartFile> item = allFiles.get(key);
 			if (item.size() == 1) {
 				singleFilePaths.add(item.get(0));
 			}
@@ -147,20 +146,4 @@ public class SamplePairer {
 
 		return singleFilePaths;
 	}
-
-	/**
-	 * Transfer sequence files into temporary directories when uploaded
-	 *
-	 * @param file
-	 *            Single {@link MultipartFile}s uploaded to a sample
-	 * @return {@link Path} to the uploaded sequence file.
-	 */
-	private static Path transferSequenceFile(MultipartFile file) throws IOException {
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-		file.transferTo(target.toFile());
-		return target;
-	}
-
-
 }

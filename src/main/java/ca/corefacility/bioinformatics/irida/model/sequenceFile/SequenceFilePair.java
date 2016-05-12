@@ -14,11 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import com.sksamuel.diffpatch.DiffMatchPatch;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,8 +30,8 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 @Audited
 public class SequenceFilePair extends SequencingObject implements IridaSequenceFilePair {
 
-	public static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
-	public static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
+	private static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
+	private static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Size(min = 2, max = 2)

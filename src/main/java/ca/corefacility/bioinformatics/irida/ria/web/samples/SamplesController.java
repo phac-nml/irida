@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.Collection;
@@ -301,30 +302,30 @@ public class SamplesController extends BaseController {
 			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 
-		final Map<String, List<Path>> pairedFiles = SamplePairer.getPairedFiles(files);
-		final List<Path> singleFiles = SamplePairer.getSingleFiles(files);
+		final Map<String, List<MultipartFile>> pairedFiles = SamplePairer.getPairedFiles(files);
+		final List<MultipartFile> singleFiles = SamplePairer.getSingleFiles(files);
 
 		for (String key : pairedFiles.keySet()) {
-			List<Path> list = pairedFiles.get(key);
+			List<MultipartFile> list = pairedFiles.get(key);
 			createSequenceFilePairsInSample(list, sample);
 		}
 
-		for (Path path: singleFiles) {
-			createSequenceFileInSample(path, sample);
+		for (MultipartFile file: singleFiles) {
+			createSequenceFileInSample(file, sample);
 		}
 	}
 
 	/**
 	 * Create a {@link SequenceFile} and add it to a {@link Sample}
 	 * 
-	 * @param path
+	 * @param file
 	 *            {@link MultipartFile}
 	 * @param sample
 	 *            {@link Sample} to add the file to.
 	 * @throws IOException
 	 */
-	private void createSequenceFileInSample(Path path, Sample sample) throws IOException {
-		SequenceFile sequenceFile = new SequenceFile(path);
+	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
+		SequenceFile sequenceFile = createSequenceFile(file);
 		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
 	}
 
@@ -338,10 +339,28 @@ public class SamplesController extends BaseController {
 	 *            {@link Sample} to add the pair to.
 	 * @throws IOException
 	 */
-	private void createSequenceFilePairsInSample(List<Path> pair, Sample sample) throws IOException {
-		SequenceFile firstFile = new SequenceFile(pair.get(0));
-		SequenceFile secondFile = new SequenceFile(pair.get(1));
+	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
+		SequenceFile firstFile = createSequenceFile(pair.get(0));
+		SequenceFile secondFile = createSequenceFile(pair.get(1));
 		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
+	}
+
+	/**
+	 * Private method to move the sequence file into the correct directory and
+	 * create the {@link SequenceFile} object.
+	 *
+	 * @param file
+	 *            {@link MultipartFile} sequence file uploaded.
+	 *
+	 * @return {@link SequenceFile}
+	 * @throws IOException
+	 *             Exception thrown if there is an error handling the file.
+	 */
+	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
+		file.transferTo(target.toFile());
+		return new SequenceFile(target);
 	}
 
 	/**
