@@ -44,8 +44,35 @@
     };
     return AssociatedProjectsController;
   }());
+
+  var ToolsController = (function () {
+    function ToolsController($scope) {
+      var vm = this;
+
+      function setButtonState(count) {
+        vm.disabled = {
+          lessThanOne: count < 1,
+          lessThanTwo: count < 2
+        };
+        console.log(vm.disabled);
+      }
+
+      $scope.$on("SAMPLE_SELECTION_EVENT", function (event, args) {
+        setButtonState(args.count);
+      });
+
+      setButtonState(0);
+    }
+
+    ToolsController.prototype.merge = function () {
+      console.log("MERGE");
+    };
+
+    return ToolsController;
+  }());
   
   ng.module("irida.projects.samples.controller", [])
-    .controller('AssociatedProjectsController', [AssociatedProjectsController]);
+    .controller('AssociatedProjectsController', [AssociatedProjectsController])
+    .controller('ToolsController', ["$scope", ToolsController])
   ;
 }(window.angular, window.PAGE));

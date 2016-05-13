@@ -147,6 +147,10 @@ var RowClickHandler = (function (page) {
     } else {
       selectDiv.innerHTML = page.i18n.selectedCounts.other.replace("{count}", selected.length);
     }
+
+    var elm = document.querySelector("[ng-app]");
+    var scope = angular.element(elm).scope();
+    scope.$broadcast("SAMPLE_SELECTION_EVENT", {count: selected.length});
   };
 
   /**
