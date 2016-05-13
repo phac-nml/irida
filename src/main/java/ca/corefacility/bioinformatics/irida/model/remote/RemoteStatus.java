@@ -1,35 +1,53 @@
 package ca.corefacility.bioinformatics.irida.model.remote;
 
+import javax.annotation.Generated;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
 
 /**
  * Information about an entity that was copied from a remote api
  */
 @Entity
+@Table(name = "remote_status", uniqueConstraints = @UniqueConstraint(columnNames = "url"))
+@Audited
 public class RemoteStatus {
 
 	@Id
-	private String remoteURL;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
+
+	@Column(name = "url")
+	private String url;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private SyncStatus syncStatus;
 
-	public RemoteStatus(String remoteURL) {
+	@SuppressWarnings("unused")
+	private RemoteStatus() {
+	}
+
+	public RemoteStatus(String url) {
 		syncStatus = SyncStatus.UNSYNCHRONIZED;
-		this.remoteURL = remoteURL;
+		this.url = url;
 	}
 
-	public String getRemoteURL() {
-		return remoteURL;
+	public String getURL() {
+		return url;
 	}
 
-	public void setRemoteURL(String remoteURL) {
-		this.remoteURL = remoteURL;
+	public void setURL(String url) {
+		this.url = url;
 	}
 
 	public void setSyncStatus(SyncStatus syncStatus) {
