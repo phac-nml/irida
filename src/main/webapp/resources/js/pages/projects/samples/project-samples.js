@@ -1,3 +1,4 @@
+/*globals oTable_samplesTable */
 (function (ng, page) {
   "use strict";
 
@@ -80,18 +81,21 @@
       }
     };
 
+    // TODO (Josh - 2016-05-13): Finish copy function
     ToolsController.prototype.copy = function () {
       if(!this.disabled.lessThanOne) {
         console.log("COPY");
       }
     };
 
+    // TODO (Josh - 2016-05-13): Finish move function
     ToolsController.prototype.move = function () {
       if(!this.disabled.lessThanOne) {
         console.log("MOVE");
       }
     };
 
+    // TODO (Josh - 2016-05-13): Finish remove function
     ToolsController.prototype.remove = function () {
       if(!this.disabled.lessThanOne) {
         console.log("REMOVE");

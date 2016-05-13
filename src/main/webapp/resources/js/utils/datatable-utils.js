@@ -123,12 +123,20 @@ var RowClickHandler = (function (page) {
 
   }
 
+  /**
+   * Tell all angular dependencies that the selected count has been updated;
+   * @param count
+   */
   function broadcastSelectionCounts(count) {
     var elm = document.querySelector("[ng-app]");
     var scope = angular.element(elm).scope();
     scope.$broadcast("SAMPLE_SELECTION_EVENT", {count: count});
   }
 
+  /**
+   * Update the table selected counts in the information area.
+   * @param count
+   */
   function displaySelectionCounts(count) {
     var selectDiv = document.querySelector(".selected-counts");
     if(selected.length === 0 ) {
@@ -140,6 +148,10 @@ var RowClickHandler = (function (page) {
     }
   }
 
+  /**
+   * Complete all updates when the count changes.
+   * @param count
+   */
   function updateSelectionCounts(count) {
     displaySelectionCounts(count);
     broadcastSelectionCounts(count);
@@ -173,10 +185,17 @@ var RowClickHandler = (function (page) {
     return selected.indexOf(id) > -1;
   };
 
+  /**
+   * Get List of all selected ids.
+   * @returns {Array}
+   */
   RowSelection.prototype.getSelectedIds = function () {
     return selected;
   };
 
+  /**
+   * Clear all selected indexes
+   */
   RowSelection.prototype.clearSelected = function () {
     selected = [];
     updateSelectionCounts(0);
