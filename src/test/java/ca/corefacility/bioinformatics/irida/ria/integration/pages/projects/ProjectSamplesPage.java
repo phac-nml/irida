@@ -53,6 +53,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = "tbody tr")
 	private List<WebElement> tableRows;
 
+	@FindBy(id = "sample-tools")
+	private WebElement toolsDropdownBtn;
+
 	@FindBy(id = "mergeBtn")
 	private WebElement mergeBtn;
 
@@ -224,16 +227,20 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void mergeSamplesWithOriginalName() {
-		mergeBtn.click();
+		toolsDropdownBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
+		mergeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
 
 	public void mergeSamplesWithNewName(String newName) {
-		mergeBtn.click();
+		toolsDropdownBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
+		mergeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		newMergeNameInput.sendKeys(newName);
 		// This wait is for 350 ms because there is a debounce of 300 ms on the input field in which

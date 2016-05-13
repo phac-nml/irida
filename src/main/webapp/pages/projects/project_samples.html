@@ -117,7 +117,7 @@
                     </button>
                     <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
                         <li ng-class="{disabled: toolsCtrl.disabled.lessThanTwo}">
-                            <a href="#" ng-click="toolsCtrl.merge()">
+                            <a id="mergeBtn" href="#" ng-click="toolsCtrl.merge()">
                                 <fa:icon type="merge" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
                             </a>
