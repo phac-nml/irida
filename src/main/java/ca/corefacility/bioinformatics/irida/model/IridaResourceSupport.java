@@ -13,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
+
 /**
  * Adds a collection of {@link Link}s to extending objects. Similar to
  * {@link ResourceSupport}
@@ -165,6 +167,15 @@ public class IridaResourceSupport {
 		if (link != null) {
 			return link.getHref();
 		}
+		return null;
+	}
+
+	//TODO: Make these abstract
+	public void setRemoteStatus(RemoteStatus status) {
+
+	}
+
+	public RemoteStatus getRemoteStatus() {
 		return null;
 	}
 }
