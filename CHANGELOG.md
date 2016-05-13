@@ -7,6 +7,7 @@ Changes
 * [Database] Fixed an issue with migrating single end sequence files to the new SequencingObject model in cases where samples with single files had been merged.  IRIDA installs should skip directly to v1.0.2 from 1.0.0alpha-10 to avoid database update problems. (1.0.2)
 * [Developer]: Added a complete docker image for Galaxy, updated the VirtualBox appliance to use the Docker image.
 * [UI]: Fixed a bug when the launch pipeline page was opened on a small display (<1000px) the "Launch Pipeline" button disappeared.
+* [Developer]: Added support for a wider variety of naming patters when pairing uploaded sequence files. 
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
