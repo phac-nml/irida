@@ -62,12 +62,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerExcept
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
@@ -90,6 +92,7 @@ public class ProjectsController {
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
+	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
@@ -105,6 +108,9 @@ public class ProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
+	
+	@Autowired
+	private ProjectRemoteService projectRemoteService;
 
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
@@ -278,6 +284,27 @@ public class ProjectsController {
 			model.addAttribute("errors", new HashMap<>());
 		}
 		return CREATE_NEW_PROJECT_PAGE;
+	}
+	
+	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
+	public String getSynchronizeProjectPage(final Model model) {
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<>());
+		}
+		return SYNC_NEW_PROJECT_PAGE;
+	}
+	
+	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
+	@ResponseBody
+	public String syncProject(final Model model, @RequestParam String url) {
+
+		Project read = projectRemoteService.read(url);
+		read.setId(null);
+		read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+
+		projectService.create(read);
+
+		return read.toString();
 	}
 
 	/**
