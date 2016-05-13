@@ -24,7 +24,7 @@
             vm.count += p.samples.length;
             // Sort the samples by created date.
             p.samples.sort(function (a, b) {
-              return a.createdDate - b.createdDate > 0;
+              return b.createdDate -a.createdDate > 0;
             });
             if (collapse) {
               vm.collapsed[p.id] = true;
