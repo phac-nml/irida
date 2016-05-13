@@ -6,6 +6,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Information about an entity that was copied from a remote api
+ */
 @Entity
 public class RemoteStatus {
 

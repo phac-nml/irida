@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
@@ -66,6 +67,8 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 
 		Type resource = exchange.getBody().getResource();
 		resource.setRemoteAPI(remoteAPI);
+
+		resource = setRemoteStatus(resource);
 		return resource;
 	}
 
@@ -81,6 +84,8 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 		List<Type> resources = exchange.getBody().getResource().getResources();
 		for (Type r : resources) {
 			r.setRemoteAPI(remoteAPI);
+
+			r = setRemoteStatus(r);
 		}
 		return resources;
 	}
@@ -94,6 +99,15 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 		ResponseEntity<String> forEntity = restTemplate.getForEntity(remoteAPI.getServiceURI(), String.class);
 
 		return forEntity.getStatusCode() == HttpStatus.OK;
+	}
+
+	protected Type setRemoteStatus(Type entity) {
+		String selfHref = entity.getSelfHref();
+		RemoteStatus remoteStatus = new RemoteStatus(selfHref);
+
+		entity.setRemoteStatus(remoteStatus);
+
+		return entity;
 	}
 
 }
