@@ -112,14 +112,32 @@
                 </a>
                 <div style="display: inline-block;" uib-dropdown="" ng-controller="ToolsController as toolsCtrl">
                     <button id="sample-tools" class="btn btn-default" uib-dropdown-toggle="" type="button">
-                        __Tools__ &nbsp;
+                        <th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;
                         <fa:icon type="caret-down" fixed="fixed"/>
                     </button>
                     <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                        <li ng-hide="toolsCtrl.disabled.lessThanTwo">
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanTwo}">
                             <a href="#" ng-click="toolsCtrl.merge()">
-                                <fa:icon type="merge" fixed="true"/>
-                                <span th:text="#{project.samples.nav.merge}">Merge</span>
+                                <fa:icon type="merge" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
+                            </a>
+                        </li>
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                            <a href="#" ng-click="toolsCtrl.copy()">
+                                <fa:icon type="copy" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
+                            </a>
+                        </li>
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                            <a href="#" ng-click="toolsCtrl.move()">
+                                <fa:icon type="move" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
+                            </a>
+                        </li>
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                            <a href="#" ng-click="toolsCtrl.remove()">
+                                <fa:icon type="delete" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
                             </a>
                         </li>
                     </ul>

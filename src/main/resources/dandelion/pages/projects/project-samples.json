@@ -1,9 +1,9 @@
 {
   "dependencies": [
     "select2-bootstrap",
-    "angular-messages",
     "bootstrap-daterangepicker",
-    "angular-daterangepicker-enhanced"
+    "angular-daterangepicker-enhanced",
+    "angular-messages"
   ],
   "assets": [
     {
