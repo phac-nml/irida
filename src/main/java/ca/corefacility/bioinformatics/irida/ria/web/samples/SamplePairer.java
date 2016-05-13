@@ -10,8 +10,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
@@ -46,21 +48,18 @@ public class SamplePairer {
 		MultipartFile file1, file2;
 
 		//Want to skip files that have already been organized
-		Map<MultipartFile, Boolean> wasChecked = new HashMap<>();
-		for(MultipartFile f: files) {
-			wasChecked.put(f, false);
-		}
+		Set<MultipartFile> wasChecked = new HashSet<>();
 
 		//check all uploaded files to see if they should be paired or left single
 		for (int i = 0; i < files.size(); i++) {
 			file1 = files.get(i);
 
 			boolean pair = false;
-			if (!wasChecked.get(file1)) {
+			if (!wasChecked.contains(file1)) {
 				for (int j = i + 1; j < files.size() && !pair; j++) {
 					file2 = files.get(j);
 
-					if (!wasChecked.get(file2)) {
+					if (!wasChecked.contains(file2)) {
 
 						List<Diff> diffs = diff.diff_main(file1.getOriginalFilename(), file2.getOriginalFilename());
 						//The size of `diffs` is 4 when only 1 character differs between the two strings
@@ -78,7 +77,7 @@ public class SamplePairer {
 
 								MultipartFile[] filePair = {file1, file2};
 								organizedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
-								wasChecked.replace(file2, true);
+								wasChecked.add(file2);
 							}
 						}
 					}
@@ -88,7 +87,7 @@ public class SamplePairer {
 					organizedFiles.put(file1.getOriginalFilename(), Arrays.asList(singleFile));
 				}
 			}
-			wasChecked.replace(file1, true);
+			wasChecked.add(file1);
 		}
 
 		return organizedFiles;
