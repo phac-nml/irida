@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.remote;
 
-import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -18,7 +16,9 @@ import org.hibernate.envers.Audited;
  * Information about an entity that was copied from a remote api
  */
 @Entity
-@Table(name = "remote_status", uniqueConstraints = @UniqueConstraint(columnNames = "url"))
+
+//TODO: Add when done testing uniqueConstraints = @UniqueConstraint(columnNames = "url")
+@Table(name = "remote_status")
 @Audited
 public class RemoteStatus {
 
