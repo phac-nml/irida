@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="remote-status" author="tom">
+
+		<createTable tableName="remote_status">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="syncStatus" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="url" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="remote_status_AUD">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_STATUS_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="syncStatus" type="varchar(255)" />
+			<column name="url" type="varchar(255)" />
+		</createTable>
+
+		<addColumn tableName="project">
+			<column name="remoteStatus_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_PROJECT_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="project_AUD">
+			<column name="remoteStatus_id" type="bigint(20)" />
+		</addColumn>
+
+	</changeSet>
+</databaseChangeLog>
