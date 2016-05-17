@@ -14,4 +14,6 @@ public interface SequenceFilePairRemoteService extends RemoteService<SequenceFil
 	 * @return List of {@link SequenceFilePair}s
 	 */
 	List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
+	
+	public SequenceFilePair mirrorPair(SequenceFilePair pair);
 }
