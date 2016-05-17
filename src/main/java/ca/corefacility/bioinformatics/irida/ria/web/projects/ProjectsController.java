@@ -70,6 +70,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Projec
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizationService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
@@ -111,6 +112,9 @@ public class ProjectsController {
 	
 	@Autowired
 	private ProjectRemoteService projectRemoteService;
+	
+	@Autowired
+	private ProjectSynchronizationService projectSyncronizationService;
 
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
@@ -303,7 +307,7 @@ public class ProjectsController {
 		read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
 
 		projectService.create(read);
-
+		
 		return read.toString();
 	}
 
