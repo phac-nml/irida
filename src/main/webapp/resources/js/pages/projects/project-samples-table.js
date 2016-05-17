@@ -1,9 +1,10 @@
 // The contents of this file gets load via Dandelion Datatables to the end of IIFE.
 
 // Add the toolbar to the table since this does not exist until datatables loads the table.
-var toolbar = $(".filter-row > div")[0],
-    tools   = $("#toolbar");
-$(toolbar).html(tools);
+
+var toolbarDiv = document.querySelector(".filter-row > div"),
+    toolbar = document.querySelector("#toolbar");
+toolbarDiv.appendChild(toolbar);
 
 // Need to dynamically insert the 0 selected counts
 document.querySelector(".selected-counts").innerHTML = PAGE.i18n.selectedCounts.none;
