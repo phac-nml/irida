@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.announcements;
 
-
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,25 +12,22 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.validation.constraints.NotNull;
+import javax.persistence.UniqueConstraint;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.GenerationType;
 import javax.persistence.TemporalType;
-
 import java.util.Date;
 
-
 @Entity
-@Table(name = "announcement")
+@Table(name = "announcement_user", uniqueConstraints = @UniqueConstraint(columnNames = {"announcement_id", "user_id"}))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Announcement implements IridaThing {
+public class AnnouncementUserJoin implements Join<Announcement, User> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,55 +35,46 @@ public class Announcement implements IridaThing {
     private Long id;
 
     @CreatedDate
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date")
-    private final Date createdDate;
+    private Date createdDate;
 
-    @Column(name = "message")
-    @Lob
-    private String message;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "announcement_id")
+    private Announcement announcement;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "created_by_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    public Announcement() {
+    public AnnouncementUserJoin() {
         createdDate = new Date();
     }
 
-    public Announcement(String message, User user) {
+    public AnnouncementUserJoin(Announcement announcement, User user) {
         this();
-        this.message = message;
+        this.announcement = announcement;
         this.user = user;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public Date getCreatedDate() {
         return createdDate;
     }
 
-    public String getMessage() {
-        return message;
+    public Date getTimestamp() {
+        return getCreatedDate();
     }
 
-    public User getCreatedById() {
+    public Long getId() {
+        return id;
+    }
+
+    public Announcement getSubject() {
+        return announcement;
+    }
+
+    public User getObject() {
         return user;
-    }
-
-    public String getLabel() {
-        return getMessage();
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setCreatedById(User user) {
-        this.user = user;
     }
 
 }
