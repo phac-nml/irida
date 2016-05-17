@@ -22,6 +22,10 @@
           vm.remote = data.remote;
           _.each(vm.projects, function (p) {
             vm.count += p.samples.length;
+            // Sort the samples by created date.
+            p.samples.sort(function (a, b) {
+              return b.createdDate -a.createdDate > 0;
+            });
             if (collapse) {
               vm.collapsed[p.id] = true;
             }

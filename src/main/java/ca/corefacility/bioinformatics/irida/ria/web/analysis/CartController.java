@@ -352,7 +352,7 @@ public class CartController {
 					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, s.getId())).withSelfRel()
 							.getHref();
 
-			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel(), "sequenceFiles",
+			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel(), "createdDate", s.getCreatedDate(), "sequenceFiles",
 					getSequenceFileList(s), "href", sampleHref);
 			sampleList.add(sampleMap);
 		}

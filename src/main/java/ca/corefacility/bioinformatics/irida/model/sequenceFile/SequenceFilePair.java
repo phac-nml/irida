@@ -2,6 +2,12 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -14,7 +20,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -47,6 +52,22 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		this();
 		files.add(file1);
 		files.add(file2);
+	}
+
+ 	@Override
+ 	public int hashCode() {
+ 		return Objects.hash(files);
+ 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof SequenceFilePair) {
+			SequenceFilePair pair = (SequenceFilePair) obj;
+
+			return super.equals(obj) && Objects.equals(files, pair.files);
+		}
+
+		return false;
 	}
 
 	/**
@@ -89,8 +110,6 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 			throw new NoSuchElementException();
 		}
 	}
-
-
 
 	@JsonIgnore
 	@Override
