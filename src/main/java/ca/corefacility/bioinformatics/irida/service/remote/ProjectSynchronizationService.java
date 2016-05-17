@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -44,8 +45,16 @@ public class ProjectSynchronizationService {
 		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
 
 		for (Project project : markedProjects) {
-			syncProject(project);
+			// Set the correct authorization for the user who's syncing the
+			// project
+
+			try {
+				syncProject(project);
+			} catch (IridaOAuthException e) {
+				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
+			}
 		}
+
 	}
 
 	public void syncProject(Project project) {
@@ -64,7 +73,7 @@ public class ProjectSynchronizationService {
 
 	public void syncSample(Sample sample, Project project) {
 		sampleService.create(sample);
-		
+
 		projectService.addSampleToProject(project, sample);
 
 		List<SequenceFilePair> sequenceFilePairsForSample = pairRemoteService.getSequenceFilePairsForSample(sample);

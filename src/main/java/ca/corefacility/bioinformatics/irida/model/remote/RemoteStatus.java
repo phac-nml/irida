@@ -17,7 +17,8 @@ import org.hibernate.envers.Audited;
  */
 @Entity
 
-//TODO: Add when done testing uniqueConstraints = @UniqueConstraint(columnNames = "url")
+// TODO: Add when done testing uniqueConstraints = @UniqueConstraint(columnNames
+// = "url")
 @Table(name = "remote_status")
 @Audited
 public class RemoteStatus {
@@ -74,6 +75,10 @@ public class RemoteStatus {
 		/**
 		 * Up to date
 		 */
-		SYNCHRONIZED
+		SYNCHRONIZED,
+		/**
+		 * No active OAuth2 token to synchronize this project
+		 */
+		UNAUTHORIZED
 	}
 }
