@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.util.*;
+import java.util.stream.Stream;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -18,13 +19,15 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
+
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 @Entity
 @Table(name = "sequence_file_pair")
@@ -32,15 +35,8 @@ import com.google.common.collect.ImmutableSet;
 @Audited
 public class SequenceFilePair extends SequencingObject implements IridaSequenceFilePair {
 
-	/**
-	 * Pattern for matching forward {@link SequenceFile}s from a file name.
-	 */
-	private static final Pattern FORWARD_PATTERN = Pattern.compile(".*_R1_.*");
-
-	/**
-	 * Pattern for matching reverse {@link SequenceFile}s from a file name.
-	 */
-	private static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_.*");
+	private static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
+	private static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Size(min = 2, max = 2)
@@ -57,12 +53,12 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		files.add(file1);
 		files.add(file2);
 	}
-	
+
  	@Override
  	public int hashCode() {
  		return Objects.hash(files);
  	}
- 	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SequenceFilePair) {
@@ -80,8 +76,18 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 * @return The forward {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getForwardSequenceFile() {
-		return files.stream().filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
-				.findFirst().get();
+		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+		String[] filenames = {pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString()};
+
+		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
+
+		if (Stream.of(forwardMatches).anyMatch( x -> String.valueOf(filenames[0].charAt(index)).equals(x) )) {
+			return (SequenceFile) pair[0];
+		} else if (Stream.of(forwardMatches).anyMatch( x -> String.valueOf(filenames[1].charAt(index)).equals(x) )) {
+			return (SequenceFile) pair[1];
+		} else {
+			throw new NoSuchElementException();
+		}
 	}
 
 	/**
@@ -90,8 +96,19 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 * @return The reverse {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getReverseSequenceFile() {
-		return files.stream().filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
-				.findFirst().get();
+		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
+
+		String[] filenames = {pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString()};
+
+		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
+
+		if (Stream.of(reverseMatches).anyMatch( x -> String.valueOf(filenames[0].charAt(index)).equals(x) )) {
+			return (SequenceFile) pair[0];
+		} else if (Stream.of(reverseMatches).anyMatch( x -> String.valueOf(filenames[1].charAt(index)).equals(x) )) {
+			return (SequenceFile) pair[1];
+		} else {
+			throw new NoSuchElementException();
+		}
 	}
 
 	@JsonIgnore

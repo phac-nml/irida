@@ -138,13 +138,13 @@ public class AnalysisCollectionServiceGalaxyIT {
 		sequenceFilePathAInvalidName = tempDir.resolve("testDataA_R_INVALID_1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathAInvalidName, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePath2A = tempDir.resolve("testData2A_R2_001.fastq");
+		sequenceFilePath2A = tempDir.resolve("testDataA_R2_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath2A, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePathB = tempDir.resolve("testDataB_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathB, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePath2B = tempDir.resolve("testData2B_R2_001.fastq");
+		sequenceFilePath2B = tempDir.resolve("testDataB_R2_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath2B, StandardCopyOption.REPLACE_EXISTING);
 
 		pairSequenceFiles1A = new ArrayList<>();

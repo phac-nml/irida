@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,7 +88,6 @@ public class SamplesController extends BaseController {
 	public static final String LONGITUDE = "longitude";
 	private static final ImmutableList<String> FIELDS = ImmutableList.of(SAMPLE_NAME, DESCRIPTION, ORGANISM, ISOLATE,
 			STRAIN, COLLECTED_BY, ISOLATION_SOURCE, GEOGRAPHIC_LOCATION_NAME, LATITUDE, LONGITUDE);
-	private static final Pattern PAIR_PATTERN = Pattern.compile("(.+)_R\\d_.*");
 
 	// Services
 	private final SampleService sampleService;
@@ -305,23 +302,16 @@ public class SamplesController extends BaseController {
 			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 
-		final Map<String, List<MultipartFile>> pairedUpFiles = files.stream().collect(
-				Collectors.groupingBy((final MultipartFile f) -> {
-					final Matcher m = PAIR_PATTERN.matcher(f.getOriginalFilename());
-					if (m.find()) {
-						return m.group(1);
-					} else {
-						return f.getOriginalFilename();
-					}
-				}));
+		final Map<String, List<MultipartFile>> pairedFiles = SamplePairer.getPairedFiles(files);
+		final List<MultipartFile> singleFiles = SamplePairer.getSingleFiles(files);
 
-		for (String key : pairedUpFiles.keySet()) {
-			List<MultipartFile> list = pairedUpFiles.get(key);
-			if (list.size() > 1) {
-				createSequenceFilePairsInSample(list, sample);
-			} else {
-				createSequenceFileInSample(list.get(0), sample);
-			}
+		for (String key : pairedFiles.keySet()) {
+			List<MultipartFile> list = pairedFiles.get(key);
+			createSequenceFilePairsInSample(list, sample);
+		}
+
+		for (MultipartFile file: singleFiles) {
+			createSequenceFileInSample(file, sample);
 		}
 	}
 
