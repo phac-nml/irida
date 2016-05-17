@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.remote;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 @Service
 public class ProjectSynchronizationService {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectSynchronizationService.class);
+
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private SequencingObjectService objectService;
@@ -44,15 +48,23 @@ public class ProjectSynchronizationService {
 	public void findMarkedProjectsToSync() {
 		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
 
+		logger.debug("Checking for projects to sync");
+
 		for (Project project : markedProjects) {
 			// Set the correct authorization for the user who's syncing the
 			// project
-
+			logger.debug("Syncing project at " + project.getRemoteStatus().getURL());
+			project.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
+			projectService.update(project);
 			try {
 				syncProject(project);
 			} catch (IridaOAuthException e) {
+				logger.debug(
+						"Can't sync project project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
 				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
 			}
+
+			logger.debug("Done project " + project.getRemoteStatus().getURL());
 		}
 
 	}
