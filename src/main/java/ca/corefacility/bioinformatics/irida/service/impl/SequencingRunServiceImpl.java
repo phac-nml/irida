@@ -181,7 +181,6 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
 	public Page<SequencingRun> list(int page, int size, Direction order, String... sortProperties)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
 		return super.list(page, size, order, sortProperties);
 	}
 }
