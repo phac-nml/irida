@@ -11,6 +11,8 @@ Changes
 * [UI]: Fixed a bug when the launch pipeline page was opened on a small display (<1000px) the "Launch Pipeline" button disappeared.
 * [Developer]: Added support for a wider variety of naming patters when pairing uploaded sequence files. 
 * [UI]: Fixed a bug where the `hashCode` method on `SequenceFilePair` was *only* using the date the pair was created, causing `Set`s of pairs to be much smaller than expected. (1.0.3)
+* [UI]: Fixed a UI bug in Internet Explorer 11 where the IRIDA logo and the Projects menu were overlapping.
+* [Developer]: Fixed a couple of broken links in documentation.
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
