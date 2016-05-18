@@ -11,6 +11,8 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,7 +129,8 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 				submissions = submissionRepository
 						.findAnalysisSubmissionForSequenceFilePair((SequenceFilePair) sequencingObject);
 			} else if (sequencingObject instanceof SingleEndSequenceFile) {
-				submissions = submissionRepository.findAnalysisSubmissionForSequenceFile((SingleEndSequenceFile) sequencingObject);
+				submissions = submissionRepository
+						.findAnalysisSubmissionForSequenceFile((SingleEndSequenceFile) sequencingObject);
 			}
 
 			// If there are no submissions, we can delete the pair and file
@@ -166,8 +169,19 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
-	public SequencingRun update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
-			EntityExistsException, InvalidPropertyException {
+	public SequencingRun update(Long id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
+	public Page<SequencingRun> list(int page, int size, Direction order, String... sortProperties)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return super.list(page, size, order, sortProperties);
 	}
 }
