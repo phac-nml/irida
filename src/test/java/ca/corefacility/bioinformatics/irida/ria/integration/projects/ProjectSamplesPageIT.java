@@ -140,7 +140,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	}
 
-	// TODO (JOSH - 2016-04-18): Re-implement testing merging samples
 	@Ignore
 	@Test
 	public void testMergeSamples() {
@@ -148,7 +147,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Select some samples
 		page.selectSample(0);
 		page.selectSample(1);
-		assertEquals("Should be 2 selected samples", "2 Samples Selected", page.getSelectedInfoText());
+		assertEquals("Should be 2 selected samples", "2 samples selected", page.getSelectedInfoText());
 		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 
 		// Merge these samples with the original name

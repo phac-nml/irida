@@ -1,3 +1,4 @@
+// TODO (Josh - 2016-05-13): DELETE THIS FILE WHEN COMPLETING PROJECT SAMPLE UPDATE
 (function (ng, $, SamplesFilter) {
 	"use strict";
 

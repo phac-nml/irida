@@ -95,16 +95,15 @@
      * @param selectedSamples - samples to merge
      * @returns {*}
      */
-    function openMergeModal(selectedSamples) {
-      var ids = _getSampleIds(selectedSamples);
+    function openMergeModal(sampleIds) {
       return $uibModal.open({
-        templateUrl : page.urls.modals.merge + "?" + $.param({sampleIds: ids}),
+        templateUrl : page.urls.modals.merge + "?" + $.param({sampleIds: sampleIds}),
         openedClass : 'merge-modal',
         controllerAs: "mergeCtrl",
         controller  : "MergeController",
         resolve     : {
           samples: function () {
-            return selectedSamples;
+            return sampleIds;
           }
         }
       }).result;
@@ -198,10 +197,9 @@
    * @param samples
    * @constructor
    */
-  function MergeModalController($uibModalInstance, samples) {
+  function MergeModalController($uibModalInstance, sampleIds) {
     var vm = this;
-    vm.samples = samples;
-    vm.selected = vm.samples[0].getId();
+    vm.selected = sampleIds[0];
 
     // If user enters a custom name it is not allowed to have spaces
     vm.validNameRE = /^[a-zA-Z0-9-_]+$/;
@@ -215,12 +213,8 @@
 
 
     vm.doMerge = function () {
-      // Get the sampleIds to merge
-      var ids = samples.map(function (sample) {
-        return sample.getId();
-      });
       $uibModalInstance.close({
-        ids          : ids,
+        ids          : sampleIds,
         mergeSampleId: vm.selected,
         newName      : vm.name
       });
@@ -300,7 +294,7 @@
     };
   }
 
-  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ui.bootstrap", "daterangepicker"])
+  ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ngMessages", "ui.bootstrap", "daterangepicker"])
     .factory("modalService", ["$uibModal", modalService])
     .service("FilterStateService", ["$rootScope", FilterStateService])
     .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])

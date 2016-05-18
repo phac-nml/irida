@@ -1,3 +1,4 @@
+/*globals oTable_samplesTable */
 (function (ng, page) {
   "use strict";
 
@@ -44,8 +45,68 @@
     };
     return AssociatedProjectsController;
   }());
+
+  var ToolsController = (function () {
+    var modalService;
+    var sampleService;
+
+    function ToolsController($scope, ModalService, SampleService) {
+      var vm = this;
+      modalService = ModalService;
+      sampleService = SampleService;
+
+      function setButtonState(count) {
+        vm.disabled = {
+          lessThanOne: count < 1,
+          lessThanTwo: count < 2
+        };
+      }
+
+      $scope.$on("SAMPLE_SELECTION_EVENT", function (event, args) {
+        setButtonState(args.count);
+      });
+
+      setButtonState(0);
+    }
+
+    ToolsController.prototype.merge = function () {
+      if (!this.disabled.lessThanTwo) {
+        var ids = datatable.getSelectedIds();
+        modalService.openMergeModal(ids).then(function(result) {
+          sampleService.merge(result).then(function() {
+            datatable.clearSelected();
+            oTable_samplesTable.ajax.reload(null, false);
+          });
+        });
+      }
+    };
+
+    // TODO (Josh - 2016-05-13): Finish copy function
+    ToolsController.prototype.copy = function () {
+      if(!this.disabled.lessThanOne) {
+        console.log("COPY");
+      }
+    };
+
+    // TODO (Josh - 2016-05-13): Finish move function
+    ToolsController.prototype.move = function () {
+      if(!this.disabled.lessThanOne) {
+        console.log("MOVE");
+      }
+    };
+
+    // TODO (Josh - 2016-05-13): Finish remove function
+    ToolsController.prototype.remove = function () {
+      if(!this.disabled.lessThanOne) {
+        console.log("REMOVE");
+      }
+    };
+
+    return ToolsController;
+  }());
   
-  ng.module("irida.projects.samples.controller", [])
-    .controller('AssociatedProjectsController', [AssociatedProjectsController]);
+  ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
+    .controller('AssociatedProjectsController', [AssociatedProjectsController])
+    .controller('ToolsController', ["$scope", "modalService", "SampleService", ToolsController])
   ;
 }(window.angular, window.PAGE));

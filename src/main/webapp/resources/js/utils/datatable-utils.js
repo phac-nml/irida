@@ -124,6 +124,40 @@ var RowClickHandler = (function (page) {
   }
 
   /**
+   * Tell all angular dependencies that the selected count has been updated;
+   * @param count
+   */
+  function broadcastSelectionCounts(count) {
+    var elm = document.querySelector("[ng-app]");
+    var scope = angular.element(elm).scope();
+    scope.$broadcast("SAMPLE_SELECTION_EVENT", {count: count});
+  }
+
+  /**
+   * Update the table selected counts in the information area.
+   * @param count
+   */
+  function displaySelectionCounts(count) {
+    var selectDiv = document.querySelector(".selected-counts");
+    if(selected.length === 0 ) {
+      selectDiv.innerHTML = page.i18n.selectedCounts.none;
+    } else if (selected.length === 1) {
+      selectDiv.innerHTML = page.i18n.selectedCounts.one;
+    } else {
+      selectDiv.innerHTML = page.i18n.selectedCounts.other.replace("{count}", count);
+    }
+  }
+
+  /**
+   * Complete all updates when the count changes.
+   * @param count
+   */
+  function updateSelectionCounts(count) {
+    displaySelectionCounts(count);
+    broadcastSelectionCounts(count);
+  }
+
+  /**
    * Table body click event
    * @param row
    * @param isMultiple
@@ -139,14 +173,7 @@ var RowClickHandler = (function (page) {
     }
 
     // Update the selected counts
-    var selectDiv = document.querySelector(".selected-counts");
-    if(selected.length === 0 ) {
-      selectDiv.innerHTML = page.i18n.selectedCounts.none;
-    } else if (selected.length === 1) {
-      selectDiv.innerHTML = page.i18n.selectedCounts.one;
-    } else {
-      selectDiv.innerHTML = page.i18n.selectedCounts.other.replace("{count}", selected.length);
-    }
+    updateSelectionCounts(selected.length);
   };
 
   /**
@@ -158,8 +185,20 @@ var RowClickHandler = (function (page) {
     return selected.indexOf(id) > -1;
   };
 
+  /**
+   * Get List of all selected ids.
+   * @returns {Array}
+   */
+  RowSelection.prototype.getSelectedIds = function () {
+    return selected;
+  };
+
+  /**
+   * Clear all selected indexes
+   */
   RowSelection.prototype.clearSelected = function () {
     selected = [];
+    updateSelectionCounts(0);
   };
 
   return RowSelection;
@@ -300,6 +339,14 @@ var datatable = (function(moment, tl, page) {
     }
   }
 
+  function getSelectedIds() {
+    return rowClickHandler.getSelectedIds();
+  }
+
+  function clearSelected() {
+    rowClickHandler.clearSelected();
+  }
+
   return {
     formatDate                    : formatDate,
     i18n                          : i18n,
@@ -309,6 +356,8 @@ var datatable = (function(moment, tl, page) {
     formatSampleLink              : formatSampleLink,
     highlightAssociatedProjectRows: highlightAssociatedProjectRows,
     projectRowCreated             : projectRowCreated,
-    tbodyClickEvent               : tbodyClickEvent
+    tbodyClickEvent               : tbodyClickEvent,
+    getSelectedIds                : getSelectedIds,
+    clearSelected                 : clearSelected
   };
 })(window.moment, window.TL, window.PAGE);

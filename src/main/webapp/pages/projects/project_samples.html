@@ -56,7 +56,7 @@
     </style>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables">
+<main id="project-samples-main" layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables">
 
 
 
@@ -78,43 +78,77 @@
         </thead>
     </table>
     <div class="hidden">
-        <div id="toolbar" role="toolbar" aria-label="Sample Table Tools">
-            <div th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown="" auto-close="outsideClick"
-                 ng-controller="AssociatedProjectsController as apCtrl">
-                <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
-                    <th:block th:text="#{project.samples.nav.associated}"></th:block>
+        <div id="toolbar">
+            <div style="display: inline-block;" role="toolbar" aria-label="Sample Table Tools">
+                <div style="display: inline-block;" th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown=""
+                     auto-close="outsideClick"
+                     ng-controller="AssociatedProjectsController as apCtrl">
+                    <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
+                        <th:block th:text="#{project.samples.nav.associated}"></th:block>
+                        &nbsp;
+                        <fa:icon type="caret-down" fixed="fixed"/>
+                    </button>
+                    <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"
+                        aria-labelledby="associated-btn">
+                        <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">
+                            <a href="#" style="display: block;" data:id="${associated.getId()}"
+                               ng-click="apCtrl.toggleAssociatedProject($event)">
+                                <div class="checkbox" style="display: block;">
+                                    <label>
+                                        <input class="associated-cb" type="checkbox"/>
+                                        &nbsp;
+                                        <th:block th:text="${associated.getName()}"></th:block>
+                                    </label>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <a th:if="${#lists.isEmpty(associatedProjects)}"
+                   th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default">
+                    <fa:icon type="create"/>
                     &nbsp;
-                    <fa:icon type="caret-down" fixed="fixed"/>
-                </button>
-                <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"
-                    aria-labelledby="associated-btn">
-                    <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">
-                        <a href="#" style="display: block;" data:id="${associated.getId()}"
-                           ng-click="apCtrl.toggleAssociatedProject($event)">
-                            <div class="checkbox" style="display: block;">
-                                <label>
-                                    <input class="associated-cb" type="checkbox"/>
-                                    &nbsp;
-                                    <th:block th:text="${associated.getName()}"></th:block>
-                                </label>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+                    <th:block th:text="#{project.samples.nav.associated-create}"></th:block>
+                </a>
+                <div style="display: inline-block;" uib-dropdown="" ng-controller="ToolsController as toolsCtrl">
+                    <button id="sample-tools" class="btn btn-default" uib-dropdown-toggle="" type="button">
+                        <th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;
+                        <fa:icon type="caret-down" fixed="fixed"/>
+                    </button>
+                    <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanTwo}">
+                            <a id="mergeBtn" href="#" ng-click="toolsCtrl.merge()">
+                                <fa:icon type="merge" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
+                            </a>
+                        </li>
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                            <a href="#" ng-click="toolsCtrl.copy()">
+                                <fa:icon type="copy" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
+                            </a>
+                        </li>
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                            <a href="#" ng-click="toolsCtrl.move()">
+                                <fa:icon type="move" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
+                            </a>
+                        </li>
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                            <a href="#" ng-click="toolsCtrl.remove()">
+                                <fa:icon type="delete" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <a th:if="${#lists.isEmpty(associatedProjects)}"
-               th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default">
-                <fa:icon type="create"/>
-                &nbsp;
-                <th:block th:text="#{project.samples.nav.associated-create}"></th:block>
-            </a>
         </div>
     </div>
 </main>
 </body>
 
 <th:block layout:fragment="scripts">
-    <script type="text/ng-template" id="buttons.html" th:include="projects/partials/samples.tmpl :: toolbar"></script>
     <script type="text/ng-template" id="filterButtons.html">
         <div th:replace="projects/partials/samples.tmpl :: filterButtons"></div>
     </script>
@@ -127,11 +161,6 @@
                 <span class="label label-default" ng-if="filter==='date' &amp;&amp; value['endDate']!==null" ng-click="samplesCtrl.clearFilterProperty('endDate')"><th:block th:text="#{project.sample.filter-date.endDate}"></th:block> : {{ value.endDate | date }}</span>
             </span>
         </div>
-    </script>
-
-    <script th:inline="javascript" type="text/ng-template" id="selectedCounts.html">
-        <ng-pluralize id="selected-count-info" count="samplesCtrl.selected.length"
-                      data:when="#{project.samples.table.selected}"></ng-pluralize>
     </script>
 
     <script id="filter.modal.html" type="text/ng-template">
