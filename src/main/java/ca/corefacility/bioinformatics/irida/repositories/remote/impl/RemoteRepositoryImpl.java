@@ -68,7 +68,7 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 		Type resource = exchange.getBody().getResource();
 		resource.setRemoteAPI(remoteAPI);
 
-		resource = setRemoteStatus(resource);
+		resource = setRemoteStatus(resource, remoteAPI);
 		return resource;
 	}
 
@@ -85,7 +85,7 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 		for (Type r : resources) {
 			r.setRemoteAPI(remoteAPI);
 
-			r = setRemoteStatus(r);
+			r = setRemoteStatus(r, remoteAPI);
 		}
 		return resources;
 	}
@@ -101,9 +101,16 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 		return forEntity.getStatusCode() == HttpStatus.OK;
 	}
 
-	protected Type setRemoteStatus(Type entity) {
+	/**
+	 * Set the {@link RemoteStatus} of a read remote entity
+	 * 
+	 * @param entity
+	 *            The entity to set the remote status on
+	 * @return the enhanced entity
+	 */
+	protected Type setRemoteStatus(Type entity, RemoteAPI api) {
 		String selfHref = entity.getSelfHref();
-		RemoteStatus remoteStatus = new RemoteStatus(selfHref);
+		RemoteStatus remoteStatus = new RemoteStatus(selfHref, api);
 
 		entity.setRemoteStatus(remoteStatus);
 

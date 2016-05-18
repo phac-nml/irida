@@ -146,11 +146,13 @@ public class IridaResourceSupport {
 		return this.links.hashCode();
 	}
 
+	@Deprecated
 	@JsonIgnore
 	public RemoteAPI getRemoteAPI() {
 		return remoteAPI;
 	}
 
+	@Deprecated
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;
 	}
@@ -170,7 +172,7 @@ public class IridaResourceSupport {
 		return null;
 	}
 
-	//TODO: Make these abstract
+	// TODO: Make these abstract
 	public void setRemoteStatus(RemoteStatus status) {
 
 	}

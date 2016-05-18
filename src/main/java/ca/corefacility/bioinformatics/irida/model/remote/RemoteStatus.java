@@ -4,13 +4,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
 /**
  * Information about an entity that was copied from a remote api
@@ -27,8 +31,13 @@ public class RemoteStatus {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	Long id;
 
+	@NotNull
 	@Column(name = "url")
 	private String url;
+
+	@NotNull
+	@ManyToOne(fetch = FetchType.EAGER)
+	private RemoteAPI api;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -38,9 +47,10 @@ public class RemoteStatus {
 	private RemoteStatus() {
 	}
 
-	public RemoteStatus(String url) {
+	public RemoteStatus(String url, RemoteAPI api) {
 		syncStatus = SyncStatus.UNSYNCHRONIZED;
 		this.url = url;
+		this.api = api;
 	}
 
 	public String getURL() {
@@ -57,6 +67,10 @@ public class RemoteStatus {
 
 	public SyncStatus getSyncStatus() {
 		return syncStatus;
+	}
+
+	public RemoteAPI getApi() {
+		return api;
 	}
 
 	public enum SyncStatus {
