@@ -3,6 +3,7 @@ Changes
 
 1.0.0 to 1.1.0
 --------------
+* [UI]: Fixed issue with IE11 caching ajax calls.
 * [UI]: Samples in the cart are now sorted by created date.
 * [UI]: Fixed a bug where exporting to Galaxy from the cart was not working.
 * [Database] Fixed an issue with migrating single end sequence files to the new SequencingObject model in cases where samples with single files had been merged.  IRIDA installs should skip directly to v1.0.2 from 1.0.0alpha-10 to avoid database update problems. (1.0.2)
