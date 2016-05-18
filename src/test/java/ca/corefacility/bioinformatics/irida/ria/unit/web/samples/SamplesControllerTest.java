@@ -62,8 +62,8 @@ import com.google.common.collect.Lists;
 /**
  */
 public class SamplesControllerTest {
-	public static final String[] MULTIPARTFILE_PATHS = { "src/test/resources/files/test_file_1.fastq",
-			"src/test/resources/files/test_file_2.fastq" };
+	public static final String[] MULTIPARTFILE_PATHS = { "src/test/resources/files/test_file_A.fastq",
+			"src/test/resources/files/test_file_B.fastq" };
 	public static final String[] MULTIPARTFILE_PAIR_PATHS = { "src/test/resources/files/pairs/pair_test_R1_001.fastq",
 			"src/test/resources/files/pairs/pair_test_R2_001.fastq" };
 
@@ -276,7 +276,7 @@ public class SamplesControllerTest {
 		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
 		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
 				eq(sample));
-		assertEquals("Should have the correct file name", "test_file_2.fastq", sequenceFileArgumentCaptor.getValue()
+		assertEquals("Should have the correct file name", "test_file_B.fastq", sequenceFileArgumentCaptor.getValue()
 				.getLabel());
 	}
 

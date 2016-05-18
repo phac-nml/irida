@@ -553,6 +553,16 @@
 			<artifactId>biojava3-core</artifactId>
 			<version>${biojava.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sksamuel.diff</groupId>
+			<artifactId>diff</artifactId>
+			<version>1.1.11</version>
+		</dependency>
 
 		<!-- Validation API -->
 		<dependency>
