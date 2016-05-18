@@ -1,14 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -20,9 +24,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -119,26 +128,35 @@ public class SequencingRunController {
 	/**
 	 * Get a list of all the sequencing runs
 	 * 
+	 * @param criterias
+	 *            a {@link DatatablesCriterias} of the sort and paging options
 	 * @param locale
 	 *            the locale used by the browser for the current request.
 	 * 
-	 * @return A Collection of Maps contaning sequencing run params
+	 * @return A DatatablesResponse of SequencingRunDatablesResponse of the runs
 	 */
-	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/ajax/list")
 	@ResponseBody
-	public List<Map<String, Object>> getSequencingRuns(Locale locale) {
-		List<Map<String, Object>> list = new ArrayList<>();
-		for (SequencingRun run : sequencingRunService.findAll()) {
-			Map<String, Object> runMap = new HashMap<>();
-			runMap.put("identifier", run.getId());
-			runMap.put("createdDate", run.getCreatedDate());
-			runMap.put("sequencerType", run.getSequencerType());
-			runMap.put("uploadStatus", messageSource.getMessage(UPLOAD_STATUS_MESSAGE_BASE
-					+ run.getUploadStatus().toString(), null, locale));
+	public DatatablesResponse<SequencingRunDatablesResponse> listSequencingRuns(
+			@DatatablesParams DatatablesCriterias criterias, Locale locale) {
 
-			list.add(runMap);
-		}
-		return list;
+		int currentPage = DatatablesUtils.getCurrentPage(criterias);
+		Integer pageSize = criterias.getLength();
+		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
+
+		String sortProperty = (String) sortProps.get(DatatablesUtils.SORT_STRING);
+		Sort.Direction order = (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION);
+
+		Page<SequencingRun> list = sequencingRunService.list(currentPage, pageSize, order, sortProperty);
+
+		List<SequencingRunDatablesResponse> collect = list.getContent().stream()
+				.map(s -> new SequencingRunDatablesResponse(s, messageSource
+						.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale)))
+				.collect(Collectors.toList());
+
+		DataSet<SequencingRunDatablesResponse> dataSet = new DataSet<>(collect, list.getTotalElements(),
+				list.getTotalElements());
+		return DatatablesResponse.build(dataSet, criterias);
 	}
 
 	private Model getPageDetails(Long runId, Model model) {
@@ -154,5 +172,38 @@ public class SequencingRunController {
 		model.addAttribute("run", run);
 
 		return model;
+	}
+
+	/**
+	 * Class for holding a response for datatables to display
+	 */
+	public class SequencingRunDatablesResponse {
+		Long id;
+		Date createdDate;
+		String sequencerType;
+		String uploadStatus;
+
+		public SequencingRunDatablesResponse(SequencingRun run, String statusMessage) {
+			this.id = run.getId();
+			this.createdDate = run.getCreatedDate();
+			this.sequencerType = run.getSequencerType();
+			this.uploadStatus = statusMessage;
+		}
+
+		public Date getCreatedDate() {
+			return createdDate;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public String getSequencerType() {
+			return sequencerType;
+		}
+
+		public String getUploadStatus() {
+			return uploadStatus;
+		}
 	}
 }
