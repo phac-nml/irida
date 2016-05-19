@@ -4,15 +4,11 @@
 var datatable = (function(moment, tl, page) {
   'use strict';
 
-  function _getDate(date) {
-    return moment(date).format(tl.date.moment.short);
+  function _getDate(date, type) {
+    return moment(date).format(tl.date.moment[type]);
   }
 
-  function _getTime(date) {
-    return moment(date).format(tl.date.moment.time);
-  }
-
-  function _createDateElement(date) {
+  function _createDateElement(date, format) {
     var wrapper = document.createElement("div"),
         dateSpan = document.createElement("span"),
         hiddenUnixSpan = document.createElement("span");
@@ -26,36 +22,9 @@ var datatable = (function(moment, tl, page) {
     dateSpan.appendChild(hiddenUnixSpan);
 
     // Add the formatted date
-    var dateNode = document.createTextNode(_getDate(date));
+    var dateNode = document.createTextNode(_getDate(date, format));
     dateSpan.appendChild(dateNode);
     return wrapper.innerHTML;
-  }
-
-  function _createTimeElement(date) {
-    var wrapper = document.createElement("div"),
-        span = document.createElement("span"),
-        faSpan = document.createElement("span");
-
-      // Wrap the div - so we can unwrap it to return
-      wrapper.appendChild(span);
-
-    // Create the font-awesome icon for the clock
-    faSpan.classList.add("fa");
-    faSpan.classList.add("fa-clock-o");
-    // Need some space before the icon
-    span.appendChild(document.createTextNode(" "));
-    span.appendChild(faSpan);
-    span.appendChild(document.createTextNode(" "));
-
-    var timeNode = document.createTextNode(' ' + _getTime(date));
-    span.appendChild(timeNode);
-    return wrapper.innerHTML;
-  }
-
-  function _createDateAndTimeElement(date) {
-    var dateHTML = _createDateElement(date),
-        timeHTML = _createTimeElement(date);
-    return dateHTML + timeHTML;
   }
 
   /**
@@ -66,7 +35,7 @@ var datatable = (function(moment, tl, page) {
    */
   function formatDate(date) {
     if (moment !== undefined && date !== undefined && tl.date && tl.date.moment.short) {
-      return _createDateElement(date);
+      return _createDateElement(date, "short");
     } else {
       return new Date(date);
     }
@@ -74,7 +43,7 @@ var datatable = (function(moment, tl, page) {
 
   function formatDateWithTime(date) {
     if (moment !== undefined && date !== undefined && tl.date && tl.date.moment.short) {
-      return _createDateAndTimeElement(date);
+      return _createDateElement(date, "full");
     } else {
       return new Date(date);
     }
