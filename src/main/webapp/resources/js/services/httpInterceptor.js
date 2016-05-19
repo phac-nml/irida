@@ -14,6 +14,13 @@
     function httpProviderConfig ($httpProvider) {
         $httpProvider.interceptors.push('HttpInterceptor');
 
+        //initialize get if not there
+        if (!$httpProvider.defaults.headers.get) {
+            $httpProvider.defaults.headers.get = {};
+        }
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+
         // Make sure that all ajax form data is sent in the correct format.
         $httpProvider.defaults.transformRequest = function (data) {
             if (data === undefined) {

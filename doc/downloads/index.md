@@ -51,15 +51,11 @@ IRIDA MiSeq Uploader Tool
 
 The IRIDA MiSeq Uploader Tool is used to submit complete Illumina MiSeq instrument runs to an instance of IRIDA. You can access the latest stable release of the IRIDA MiSeq Uploader Tool at:
 
-<https://irida.corefacility.ca/downloads/tools/IRIDA_Uploader_latest.exe>
-
-You may also see all releases of the IRIDA MiSeq Uploader Tool at:
-
-<https://irida.corefacility.ca/downloads/tools>
+<https://github.com/phac-nml/irida-miseq-uploader/releases>
 
 The documentation for using the IRIDA MiSeq Uploader Tool is included in the package, but can also be found at:
 
-<https://irida.corefacility.ca/documentation/user/administrator/uploader/>
+<https://irida.corefacility.ca/documentation/user/tutorials/uploader-tool/>
 
 Sample Data
 -----------
