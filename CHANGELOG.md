@@ -13,6 +13,7 @@ Changes
 * [UI]: Fixed a bug where the `hashCode` method on `SequenceFilePair` was *only* using the date the pair was created, causing `Set`s of pairs to be much smaller than expected. (1.0.3)
 * [UI]: Fixed a UI bug in Internet Explorer 11 where the IRIDA logo and the Projects menu were overlapping.
 * [Developer]: Fixed a couple of broken links in documentation.
+* [Developer]: Re-fixed the `hashCode` bug so that the files collection is a `List` instead of a `Set`.  The `Set` was throwing a `NullPointerException` from Hibernate. (1.0.4)
 * [UI]: Displaying the modification time of samples in the project/samples table.
 * [UI]: Refactored Sequencing Runs list to use dandelion datatables.
 
