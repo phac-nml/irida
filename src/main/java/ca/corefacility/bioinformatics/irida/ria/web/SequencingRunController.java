@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,17 +19,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
-
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.collect.ImmutableMap;
+
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
  * Controller for displaying and interacting with {@link SequencingRun} objects
@@ -177,11 +174,11 @@ public class SequencingRunController {
 	/**
 	 * Class for holding a response for datatables to display
 	 */
-	public class SequencingRunDatablesResponse {
-		Long id;
-		Date createdDate;
-		String sequencerType;
-		String uploadStatus;
+	public static class SequencingRunDatablesResponse {
+		private final Long id;
+		private final Date createdDate;
+		private final String sequencerType;
+		private final String uploadStatus;
 
 		public SequencingRunDatablesResponse(SequencingRun run, String statusMessage) {
 			this.id = run.getId();
