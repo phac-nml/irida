@@ -41,5 +41,34 @@
 			</column>
 		</createTable>
 
+		<createTable tableName="announcement_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+							 foreignKeyName="FK_ANNOUNCEMENT_AUD"
+							 referencedColumnNames="id" referencedTableName="Revisions"/>
+			</column>
+			<column name="REVTYPE" type="tinyint(4)"/>
+			<column name="created_date" type="datetime"/>
+			<column name="message" type="longtext"/>
+			<column name="created_by_id" type="bigint(20)"/>
+		</createTable>
+
+		<createTable tableName="announcement_user_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+							 foreignKeyName="FK_ANNOUNCEMENT_USER_AUD"
+							 referencedColumnNames="id" referencedTableName="Revisions"/>
+			</column>
+			<column name="REVTYPE" type="tinyint(4)"/>
+			<column name="created_date" type="datetime"/>
+			<column name="announcement_id" type="bigint(20)"/>
+			<column name="user_id" type="bigint(20)"/>
+		</createTable>
 	</changeSet>
 </databaseChangeLog>
