@@ -1,10 +1,14 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+<<<<<<< HEAD
 import java.util.*;
 import java.util.stream.Stream;
+=======
+import java.util.ArrayList;
+>>>>>>> origin/issue376-seqfilepair-hashcode-fix
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,6 +29,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
@@ -38,14 +45,18 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	private static String[] forwardMatches = IridaSequenceFilePair.forwardMatches;
 	private static String[] reverseMatches = IridaSequenceFilePair.reverseMatches;
 
+	/**
+	 * This must be a list due to a hibernate bug. See Gitlab issue 376
+	 */
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Size(min = 2, max = 2)
-	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
-	private Set<SequenceFile> files;
+	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
+	private List<SequenceFile> files;
 
 	public SequenceFilePair() {
 		super();
-		files = new HashSet<>();
+		files = new ArrayList<>();
 	}
 
 	public SequenceFilePair(SequenceFile file1, SequenceFile file2) {
@@ -54,10 +65,17 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		files.add(file2);
 	}
 
+<<<<<<< HEAD
  	@Override
  	public int hashCode() {
  		return Objects.hash(files);
  	}
+=======
+	@Override
+	public int hashCode() {
+		return Objects.hash(files);
+	}
+>>>>>>> origin/issue376-seqfilepair-hashcode-fix
 
 	@Override
 	public boolean equals(Object obj) {
@@ -146,6 +164,6 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 			throw new IllegalArgumentException("SequenceFilePair must have 2 files");
 		}
 
-		this.files = files;
+		this.files = Lists.newArrayList(files);
 	}
 }
