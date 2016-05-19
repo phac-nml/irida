@@ -339,7 +339,7 @@
 					<td>{{entry.sample.organism}}</td>
 					<td class="modifiedDate" data-date="{{entry.sample.modifiedDate}}" tooltip-popup-delay='500'
 					    tooltip-placement="left" uib-tooltip="{{entry.sample.modifiedDate | date:'medium'}}" tooltip-append-to-body="true">
-						<span>{{entry.sample.modifiedDate | date:'mediumDate'}}</span>
+						<span>{{entry.sample.modifiedDate | date:'medium'}}</span>
 					</td>
 					<td ng-show="table.requested.associated || table.requested.remote">
 					   <span ng-if="entry.sampleType != 'LOCAL'">
