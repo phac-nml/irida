@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.announcements;
 
-
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import org.hibernate.envers.Audited;
@@ -26,7 +25,10 @@ import javax.persistence.TemporalType;
 
 import java.util.Date;
 
-
+/**
+ * An announcement object. Announcements can be created only by admin users, and announcements
+ * are displayed on the dashboard page.
+ */
 @Entity
 @Table(name = "announcement")
 @Audited
