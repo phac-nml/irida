@@ -3,6 +3,61 @@
 /*exported datatable*/
 var datatable = (function(moment, tl, page) {
   'use strict';
+
+  function _getDate(date) {
+    return moment(date).format(tl.date.moment.short);
+  }
+
+  function _getTime(date) {
+    return moment(date).format(tl.date.moment.time);
+  }
+
+  function _createDateElement(date) {
+    var wrapper = document.createElement("div"),
+        dateSpan = document.createElement("span"),
+        hiddenUnixSpan = document.createElement("span");
+
+    // Wrap the div - so we can unwrap it to return
+    wrapper.appendChild(dateSpan);
+
+    // Add the unix time for sorting purposes;
+    hiddenUnixSpan.classList.add("hidden");
+    hiddenUnixSpan.innerText = date;
+    dateSpan.appendChild(hiddenUnixSpan);
+
+    // Add the formatted date
+    var dateNode = document.createTextNode(_getDate(date));
+    dateSpan.appendChild(dateNode);
+    return wrapper.innerHTML;
+  }
+
+  function _createTimeElement(date) {
+    var wrapper = document.createElement("div"),
+        span = document.createElement("span"),
+        faSpan = document.createElement("span");
+
+      // Wrap the div - so we can unwrap it to return
+      wrapper.appendChild(span);
+
+    // Create the font-awesome icon for the clock
+    faSpan.classList.add("fa");
+    faSpan.classList.add("fa-clock-o");
+    // Need some space before the icon
+    span.appendChild(document.createTextNode(" "));
+    span.appendChild(faSpan);
+    span.appendChild(document.createTextNode(" "));
+
+    var timeNode = document.createTextNode(' ' + _getTime(date));
+    span.appendChild(timeNode);
+    return wrapper.innerHTML;
+  }
+
+  function _createDateAndTimeElement(date) {
+    var dateHTML = _createDateElement(date),
+        timeHTML = _createTimeElement(date);
+    return dateHTML + timeHTML;
+  }
+
   /**
    * Format the date in a table.
    * Requires the page to have the date format object.
@@ -11,10 +66,19 @@ var datatable = (function(moment, tl, page) {
    */
   function formatDate(date) {
     if (moment !== undefined && date !== undefined && tl.date && tl.date.moment.short) {
-      return '<div><span style="display: none !important;">' + date + '</span>' + moment(date).format(tl.date.moment.short) + '</div>';
+      return _createDateElement(date);
     } else {
       return new Date(date);
     }
+  }
+
+  function formatDateWithTime(date) {
+    if (moment !== undefined && date !== undefined && tl.date && tl.date.moment.short) {
+      return _createDateAndTimeElement(date);
+    } else {
+      return new Date(date);
+    }
+
   }
 
   /**
@@ -29,7 +93,7 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
   }
-  
+
   /**
    * Return the size of the list passed in the data param
    * @param data column data.  Should be a JSON list
@@ -82,6 +146,7 @@ var datatable = (function(moment, tl, page) {
 
   return {
     formatDate: formatDate,
+    formatDateWithTime: formatDateWithTime,
     i18n: i18n,
     forceContentSize: forceContentSize,
     tableDrawn: tableDrawn,
