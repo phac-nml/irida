@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -21,10 +22,11 @@ import javax.validation.constraints.Size;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 @Entity
 @Table(name = "sequence_file_pair")
@@ -42,14 +44,18 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 */
 	private static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_.*");
 
+	/**
+	 * This must be a list due to a hibernate bug. See Gitlab issue 376
+	 */
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Size(min = 2, max = 2)
-	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = { "files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
-	private Set<SequenceFile> files;
+	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
+	private List<SequenceFile> files;
 
 	public SequenceFilePair() {
 		super();
-		files = new HashSet<>();
+		files = new ArrayList<>();
 	}
 
 	public SequenceFilePair(SequenceFile file1, SequenceFile file2) {
@@ -57,12 +63,12 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		files.add(file1);
 		files.add(file2);
 	}
-	
- 	@Override
- 	public int hashCode() {
- 		return Objects.hash(files);
- 	}
- 	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(files);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SequenceFilePair) {
@@ -129,6 +135,6 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 			throw new IllegalArgumentException("SequenceFilePair must have 2 files");
 		}
 
-		this.files = files;
+		this.files = Lists.newArrayList(files);
 	}
 }
