@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="announcement" author="john">
+
+		<createTable tableName="announcement">
+			<column name="id" autoIncrement="true" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false"/>
+			</column>
+			<column name="message" type="longtext"/>
+			<column name="created_by_id" type="bigint(20)">
+				<constraints referencedTableName="user"
+					referencedColumnNames="id"
+					foreignKeyName="FK_USER_ID"/>
+			</column>
+		</createTable>
+
+		<createTable tableName="announcement_user">
+			<column name="id" autoIncrement="true" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false"/>
+			</column>
+			<column name="announcement_id" type="bigint(20)">
+				<constraints referencedTableName="announcement"
+							 referencedColumnNames="id"
+							 foreignKeyName="FK_ANNOUNCEMENT_ID"/>
+			</column>
+			<column name="user_id" type="bigint(20)">
+				<constraints referencedTableName="user"
+							 referencedColumnNames="id"
+							 foreignKeyName="FK_USER_ID_ANNOUNCEMENT"/>
+			</column>
+		</createTable>
+
+	</changeSet>
+</databaseChangeLog>

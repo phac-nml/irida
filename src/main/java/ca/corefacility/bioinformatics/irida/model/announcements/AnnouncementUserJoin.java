@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
@@ -35,6 +36,7 @@ public class AnnouncementUserJoin implements Join<Announcement, User> {
     private Long id;
 
     @CreatedDate
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date")
     private Date createdDate;
