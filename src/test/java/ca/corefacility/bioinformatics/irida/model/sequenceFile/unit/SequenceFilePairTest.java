@@ -44,10 +44,10 @@ public class SequenceFilePairTest {
 		Path tempDir = Paths.get("/tmp");
 
 		forwardPathGood = tempDir.resolve("Test_R1_001.fastq");
-		forwardPathBad = tempDir.resolve("Test_RS1_001.fastq");
+		forwardPathBad = tempDir.resolve("Test_A.fastq");
 
 		reversePathGood = tempDir.resolve("Test_R2_001.fastq");
-		reversePathBad = tempDir.resolve("Test_RS2_001.fastq");
+		reversePathBad = tempDir.resolve("Test_B.fastq");
 
 		sequenceFileForwardGood = new SequenceFile(forwardPathGood);
 		sequenceFileForwardBad = new SequenceFile(forwardPathBad);

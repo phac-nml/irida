@@ -225,7 +225,7 @@ public class SampleSequenceFilesIT {
 		asUser().expect().statusCode(HttpStatus.OK.value()).and()
 				.body("resource.fileName", equalTo("sequenceFile2_01_L001_R1_001.fastq.gz")).when().get(forwardLink);
 		asUser().expect().statusCode(HttpStatus.OK.value()).and()
-				.body("resource.fileName", equalTo("sequenceFile3_01_L001_R2_001.fastq.gz")).when().get(reverseLink);
+				.body("resource.fileName", equalTo("sequenceFile2_01_L001_R2_001.fastq.gz")).when().get(reverseLink);
 	}
 
 	@Test

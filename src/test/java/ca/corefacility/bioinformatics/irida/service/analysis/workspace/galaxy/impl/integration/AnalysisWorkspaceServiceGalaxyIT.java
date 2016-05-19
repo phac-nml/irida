@@ -189,13 +189,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathA, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePath2A = tempDir.resolve("testData2A_R2_001.fastq");
+		sequenceFilePath2A = tempDir.resolve("testDataA_R2_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath2A, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePathB = tempDir.resolve("testDataB_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathB, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePath2B = tempDir.resolve("testData2B_R2_001.fastq");
+		sequenceFilePath2B = tempDir.resolve("testDataB_R2_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath2B, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePath3 = tempDir.resolve("testData3_R1_001.fastq");
