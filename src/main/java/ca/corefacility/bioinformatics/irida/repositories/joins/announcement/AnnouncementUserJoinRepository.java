@@ -11,7 +11,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
 
 /**
- * Repository for managing {@link AnnouncementUserJoin}
+ * Repository for managing {@link AnnouncementUserJoin}s
  *
  */
 public interface AnnouncementUserJoinRepository extends PagingAndSortingRepository<AnnouncementUserJoin, Long>,
