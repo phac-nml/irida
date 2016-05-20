@@ -14,16 +14,6 @@ import java.util.List;
 public interface AnnouncementRepository extends PagingAndSortingRepository<Announcement, Long> {
 
     /**
-     * Get a collection of all created {@link Announcement}s
-     *
-     * @return
-     *      List of all {@link Announcement}s
-     */
-    @Query("select j from Announcement j")
-    public List<Announcement> getAllAnnouncements();
-
-
-    /**
      * Get all announcements created by a specific {@link User}
      * @param user
      *          The admin {@link User} that created the {@link Announcement}s
