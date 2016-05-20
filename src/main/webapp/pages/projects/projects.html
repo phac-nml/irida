@@ -56,8 +56,8 @@
                 <th dt:property="samples" dt:sortable="false" dt:searchable="false" th:text="#{projects.table.samples}"></th>
                 <th width="150px" dt:property="createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
                     dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-                <th width="150px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
-                    dt:renderFunction="datatables-utils#datatable.formatDate"></th>
+                <th width="200px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
+                    dt:renderFunction="datatables-utils#datatable.formatDateWithTime"></th>
             </tr>
             </thead>
         </table>

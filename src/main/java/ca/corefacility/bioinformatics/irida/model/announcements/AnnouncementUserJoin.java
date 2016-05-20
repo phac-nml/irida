@@ -24,6 +24,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
+/**
+ * {@link AnnouncementUserJoin} object
+ *
+ * This is created whenever a {@link User} has confirmed that they have read an {@link Announcement}
+ */
+
 @Entity
 @Table(name = "announcement_user", uniqueConstraints = @UniqueConstraint(columnNames = {"announcement_id", "user_id"}))
 @Audited
