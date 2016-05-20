@@ -1,12 +1,6 @@
 {
-  "dependencies": ["angular-busy"],
+  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3"],
   "assets": [
-    {
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/directives/datatables/irida-datatable.js"
-      }
-    },
     {
       "type": "js",
       "locations": {
@@ -15,3 +9,4 @@
     }
   ]
 }
+

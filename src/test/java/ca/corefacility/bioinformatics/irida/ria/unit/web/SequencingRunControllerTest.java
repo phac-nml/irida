@@ -9,14 +9,13 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
+
+import com.google.common.collect.ImmutableSet;
 
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -26,9 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.ria.web.SequencingRunController;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 public class SequencingRunControllerTest {
 	private SequencingRunController controller;
@@ -48,15 +44,6 @@ public class SequencingRunControllerTest {
 	@Test
 	public void testGetListPage() {
 		assertEquals(SequencingRunController.LIST_VIEW, controller.getListPage());
-	}
-
-	@Test
-	public void testGetSequencingRuns() {
-		List<SequencingRun> runs = Lists.newArrayList(new MiseqRun(SequencingRun.LayoutType.PAIRED_END, ""));
-		when(sequencingRunService.findAll()).thenReturn(runs);
-		List<Map<String, Object>> sequencingRuns = controller.getSequencingRuns(Locale.ENGLISH);
-		verify(sequencingRunService).findAll();
-		assertEquals(runs.size(), sequencingRuns.size());
 	}
 
 	@Test
