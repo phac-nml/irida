@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
 
 
 import javax.transaction.Transactional;
@@ -25,6 +26,7 @@ import java.util.List;
  *  Service for managing @{link Announcements}
  *
  */
+@Service
 public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement> implements AnnouncementService {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementServiceImpl.class);
