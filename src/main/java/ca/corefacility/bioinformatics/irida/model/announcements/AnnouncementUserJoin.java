@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.announcements;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -47,11 +48,11 @@ public class AnnouncementUserJoin implements Join<Announcement, User> {
     @Column(name = "created_date")
     private Date createdDate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "announcement_id")
     private Announcement announcement;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id")
     private User user;
 

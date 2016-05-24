@@ -32,12 +32,14 @@
 			<column name="announcement_id" type="bigint(20)">
 				<constraints referencedTableName="announcement"
 							 referencedColumnNames="id"
-							 foreignKeyName="FK_ANNOUNCEMENT_ID"/>
+							 foreignKeyName="FK_ANNOUNCEMENT_ID"
+							 deleteCascade="true"/>
 			</column>
 			<column name="user_id" type="bigint(20)">
 				<constraints referencedTableName="user"
 							 referencedColumnNames="id"
-							 foreignKeyName="FK_USER_ID_ANNOUNCEMENT"/>
+							 foreignKeyName="FK_USER_ID_ANNOUNCEMENT"
+							 deleteCascade="true"/>
 			</column>
 		</createTable>
 

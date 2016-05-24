@@ -56,10 +56,18 @@ public class Announcement implements IridaThing {
 
     public Announcement() {
         createdDate = new Date();
+        this.message = null;
+        this.user = null;
+    }
+
+    public Announcement(String message) {
+        this();
+        this.message = message;
+        this.user = null;
     }
 
     public Announcement(String message, User user) {
-        this();
+        this(message);
         this.message = message;
         this.user = user;
     }

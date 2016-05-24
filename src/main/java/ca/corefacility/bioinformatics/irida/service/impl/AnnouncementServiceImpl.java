@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
@@ -47,15 +49,54 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Announcement create(Announcement object) {
+        Announcement announcement = super.create(object);
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userRepository.loadUserByUsername(auth.getName());
+        announcement.setCreatedById(user);
+
+        announcementRepository.save(announcement);
+
+        return announcement;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    public Announcement read(Long id) {
+        return announcementRepository.findOne(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void delete(final Long id) {
+        super.delete(id);
+    }
+
+    /**
      *  {@inheritDoc}
      */
     @Override
     @Transactional
-    @PreAuthorize("hasRole('AS_USER')")
-    public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement, User user) {
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userRepository.loadUserByUsername(auth.getName());
         try {
-            AnnouncementUserJoin join = announcementUserJoinRepository.save(new AnnouncementUserJoin(announcement, user));
-            return join;
+            final AnnouncementUserJoin auj = new AnnouncementUserJoin(announcement, user);
+            return announcementUserJoinRepository.save(auj);
         }
         catch (DataIntegrityViolationException e) {
             throw new EntityExistsException("The user [" + user.getId() + "] has already marked announcement ["
@@ -68,7 +109,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @Transactional
-    @PreAuthorize("hasRole('AS_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
     public void markAnnouncementAsUnreadByUser(Announcement announcement, User user) throws EntityNotFoundException {
         announcementUserJoinRepository.delete(new AnnouncementUserJoin(announcement, user));
     }
@@ -78,7 +119,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @PreAuthorize("hasRole('AS_ADMIN')")
-    public List<Join<Announcement,User>> getConfirmedReadUsersforAnnouncement(Announcement announcement) {
+    public List<Join<Announcement,User>> getConfirmedReadUsersforAnnouncement(Announcement announcement) throws EntityNotFoundException {
         return announcementUserJoinRepository.getUsersByAnnouncementRead(announcement);
     }
 
@@ -87,7 +128,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @PreAuthorize("hasRole('AS_ADMIN')")
-    public List<User> getUnreadUsersForAnnouncement(Announcement announcement) {
+    public List<User> getUnreadUsersForAnnouncement(Announcement announcement) throws EntityNotFoundException {
         return announcementUserJoinRepository.getUsersByAnnouncementUnread(announcement);
     }
 
