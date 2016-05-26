@@ -3,10 +3,20 @@ Changes
 
 1.0.0 to 1.1.0
 --------------
+* [UI]: Added the time to modified dates.
+* [UI]: Fixed issue with IE11 caching ajax calls.
+* [UI]: Samples in the cart are now sorted by created date.
 * [UI]: Fixed a bug where exporting to Galaxy from the cart was not working.
 * [Database] Fixed an issue with migrating single end sequence files to the new SequencingObject model in cases where samples with single files had been merged.  IRIDA installs should skip directly to v1.0.2 from 1.0.0alpha-10 to avoid database update problems. (1.0.2)
 * [Developer]: Added a complete docker image for Galaxy, updated the VirtualBox appliance to use the Docker image.
 * [UI]: Fixed a bug when the launch pipeline page was opened on a small display (<1000px) the "Launch Pipeline" button disappeared.
+* [Developer]: Added support for a wider variety of naming patters when pairing uploaded sequence files.
+* [UI]: Fixed a bug where the `hashCode` method on `SequenceFilePair` was *only* using the date the pair was created, causing `Set`s of pairs to be much smaller than expected. (1.0.3)
+* [UI]: Fixed a UI bug in Internet Explorer 11 where the IRIDA logo and the Projects menu were overlapping.
+* [Developer]: Fixed a couple of broken links in documentation.
+* [Developer]: Re-fixed the `hashCode` bug so that the files collection is a `List` instead of a `Set`.  The `Set` was throwing a `NullPointerException` from Hibernate. (1.0.4)
+* [UI]: Displaying the modification time of samples in the project/samples table.
+* [UI]: Refactored Sequencing Runs list to use dandelion datatables.
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
@@ -94,7 +104,7 @@ Changes
 * [UI] Feature: Added ability to remove sequencing runs and all uploaded files from the web interface.
 * [UI] Feature: Upgrade to the latest version of Phylocanvas for rendering phylogenetic trees from SNVPhyl runs. We were falling back to PhyloSVG in Firefox on Linux because of a bug in Phylocanvas, but the bug has since been fixed, so now everyone gets Phylocanvas!
 * [UI] Feature/Bugfix: Updated the "Recent Activities" section to use angular directives. Also fixed a bug with how the links in recent activities were rendered.
-* [UI] Feature: Added a feature to filter samples in a project using a file with sample names. 
+* [UI] Feature: Added a feature to filter samples in a project using a file with sample names.
 * [UI] Feature: Paging is now down server side for the projects list, improving performance.
 * [Tools] Bugfix: Updated some of the permissions for listing projects for `ROLE_SEQUENCER` so that the new GUI uploader tool works.
 * [Developer] Feature: Fixed up a lot of the testing code to evaluate pass or fail based on the content of the page rather than the URL. This fixed timing issues in tests and actually validated some behaviour instead of assuming that stuff worked.
