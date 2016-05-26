@@ -21,7 +21,10 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -30,6 +33,8 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+
+import java.util.List;
 
 /**
  * Integration tests for testing out Announcements
@@ -80,10 +85,10 @@ public class AnnouncementServiceImplIT {
         }
     }
 
-    @Test
+    @Test(expected = AccessDeniedException.class)
     @WithMockUser(username = "user", roles = "USER")
     public void testDeleteAnnouncementAsUserFail() {
-
+        announcementService.delete(1L);
     }
 
     @Test (expected = EntityNotFoundException.class)
@@ -93,42 +98,47 @@ public class AnnouncementServiceImplIT {
     }
 
     @Test
-    @WithMockUser(username = "user1", roles = "USER")
+    @WithMockUser(username = "user3", roles = "USER")
     public void testUserMarkAnnouncementAsReadSuccess() {
-        Announcement a = announcementService.read(2L);
+        final Announcement a = announcementService.read(2L);
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
         try {
-            announcementService.markAnnouncementAsReadByUser(a);
+            announcementService.markAnnouncementAsReadByUser(a, user);
         } catch (AccessDeniedException e) {
             fail("User should be able able to mark announcement as read.");
         } catch (EntityExistsException e) {
-            fail("User can't mark announcement as read more than one time");
+            fail("Failed for unknown reason, stack trace follows:");
+            e.printStackTrace();
         }
 
     }
 
-    @Test
+    @Test (expected = EntityExistsException.class)
+    @WithMockUser(username = "user", roles = "USER")
     public void testUserMarkAnnouncementAsReadFailed() {
-
+        final Announcement a = announcementService.read(1L);
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        announcementService.markAnnouncementAsReadByUser(a, user);
     }
 
-    @Test
-    public void testUserUnmarkAnnouncementAsReadSuccess() {
-
-    }
 
     @Test
-    public void testUserUnmarkAnnouncementAsReadFailed() {
-
-    }
-
-    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
     public void testGetAllAnnouncements() {
-
+        List<Announcement> announcementList = announcementService.getAllAnnouncements();
+        assertEquals("Unexpected total number of announcements, ", 5, announcementList.size());
     }
 
     @Test
-    public void testGetAllUnreadAnnouncementsforUser() {
+    @WithMockUser(username = "user3", roles = "USER")
+    public void testGetUnreadAnnouncementsForUser() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        List<Announcement> announcementList = announcementService.getUnreadAnnouncements(user);
 
+        assertEquals("Number of unread announcements doesn't match expected value", 5, announcementList.size());
     }
 
 }

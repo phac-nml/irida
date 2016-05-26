@@ -13,13 +13,22 @@ import java.util.List;
 public interface AnnouncementService extends CRUDService<Long, Announcement> {
 
     /**
+     *      Get a list of all of the {@link User}s that have not confirmed they've read
+     *      the {@link Announcement}
+     * @param announcement
+     * @return List of {@link User}s that haven't confirmed they've read the announcement
+     */
+    public List<User> getUnreadUsersForAnnouncement(Announcement announcement);
+
+    /**
      *      Mark an {@link Announcement} object as read by a {@link User}
      * @param announcement
+     * @param user
      *
      * @return An {@link AnnouncementUserJoin} object representing the relationship between
      *          the announcement and the user
      */
-    public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement);
+    public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement, User user);
 
     /**
      *      Mark an {@link Announcement} as unread by a {@link User}
@@ -38,11 +47,17 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
     public List<Join<Announcement,User>> getConfirmedReadUsersforAnnouncement(Announcement announcement);
 
     /**
-     *      Get a list of all of the {@link User}s that have not confirmed they've read
-     *      the {@link Announcement}
-     * @param announcement
-     * @return List of {@link User}s that haven't confirmed they've read the announcement
+     *      Get a list of all of the {@link Announcement}s that currently exist
+     * @return List of {@link Announcement}s
      */
-    public List<User> getUnreadUsersForAnnouncement(Announcement announcement);
+    public List<Announcement> getAllAnnouncements();
+
+    /**
+     *      Get a list of {@link Announcement}s that have not been read by {@param user}
+     * @param user
+     *          {@link User} for whom we want to get unread announcements
+     * @return List of {@link Announcement}s that have not been read by the user
+     */
+    public List<Announcement> getUnreadAnnouncements(User user);
 
 }

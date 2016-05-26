@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.repositories.AnnouncementRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.Validator;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -91,9 +93,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @Transactional
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
-    public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement) {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userRepository.loadUserByUsername(auth.getName());
+    public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement, User user) throws EntityExistsException {
         try {
             final AnnouncementUserJoin auj = new AnnouncementUserJoin(announcement, user);
             return announcementUserJoinRepository.save(auj);
@@ -111,7 +111,11 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Transactional
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
     public void markAnnouncementAsUnreadByUser(Announcement announcement, User user) throws EntityNotFoundException {
-        announcementUserJoinRepository.delete(new AnnouncementUserJoin(announcement, user));
+
+        final AnnouncementUserJoin join = announcementUserJoinRepository.getAnnouncementUserJoin(announcement, user);
+        Long id = join.getId();
+
+        announcementUserJoinRepository.delete(id);
     }
 
     /**
@@ -132,4 +136,15 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
         return announcementUserJoinRepository.getUsersByAnnouncementUnread(announcement);
     }
 
+    @Override
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    public List<Announcement> getAllAnnouncements() {
+        return Lists.newArrayList(announcementRepository.findAll());
+    }
+
+    @Override
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    public List<Announcement> getUnreadAnnouncements(User user) {
+        return announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
+    }
 }

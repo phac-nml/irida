@@ -50,7 +50,7 @@ public interface AnnouncementUserJoinRepository extends PagingAndSortingReposito
      *          The {@link Announcement} to get list of users that have read it
      * @return {@link AnnouncementUserJoin} described by the announcement/user pair
      */
-    @Query("from AnnouncementUserJoin j where j.announcement = ?1 and j.user = ?2")
+    @Query("select j from AnnouncementUserJoin j where j.announcement = ?1 and j.user = ?2")
     public AnnouncementUserJoin getAnnouncementUserJoin(Announcement announcement, User user);
 
     /**
