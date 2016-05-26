@@ -58,6 +58,10 @@ public class ProjectSynchronizationService {
 			projectService.update(project);
 			try {
 				syncProject(project);
+
+				project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+				projectService.update(project);
 			} catch (IridaOAuthException e) {
 				logger.debug(
 						"Can't sync project project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
@@ -84,6 +88,7 @@ public class ProjectSynchronizationService {
 	}
 
 	public void syncSample(Sample sample, Project project) {
+		sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		sampleService.create(sample);
 
 		projectService.addSampleToProject(project, sample);
@@ -101,6 +106,9 @@ public class ProjectSynchronizationService {
 			file.setId(null);
 			syncSingleEndSequenceFile(file);
 		}
+
+		sample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		sampleService.update(sample);
 	}
 
 	public void syncSingleEndSequenceFile(SingleEndSequenceFile file) {

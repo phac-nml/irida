@@ -130,6 +130,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Sample update(final Long id, final Map<String, Object> updatedProperties) {
 		return super.update(id, updatedProperties);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateSample')")
+	@Override
+	public Sample update(Sample object) {
+		return super.update(object);
+	}
 
 	/**
 	 * {@inheritDoc}
