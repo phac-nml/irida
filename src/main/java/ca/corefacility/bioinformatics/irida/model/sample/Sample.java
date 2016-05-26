@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,13 +30,14 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 
 /**
  * A biological sample. Each sample may correspond to many files.
  * 
  * A {@link Sample} comprises of many attributes. The attributes assigned to a
- * {@link Sample} correspond to the NCBI Pathogen BioSample attributes. See <a
- * href=
+ * {@link Sample} correspond to the NCBI Pathogen BioSample attributes. See
+ * <a href=
  * "https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition"
  * >BioSample Attributes: Package Pathogen</a> for more information.
  * 
@@ -118,10 +120,13 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleSequencingObjectJoin> sequenceFiles;
-	
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE, mappedBy="sample")
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	@NotAudited
 	private List<SampleAddedProjectEvent> events;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private RemoteStatus remoteStatus;
 
 	public Sample() {
 		createdDate = new Date();
@@ -148,7 +153,8 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 					&& Objects.equals(organism, sample.organism) && Objects.equals(isolate, sample.isolate)
 					&& Objects.equals(strain, sample.strain) && Objects.equals(collectedBy, sample.collectedBy)
 					&& Objects.equals(collectionDate, sample.collectionDate)
-					&& Objects.equals(geographicLocationName, sample.geographicLocationName)&&  Objects.equals(isolationSource, sample.isolationSource)
+					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
+					&& Objects.equals(isolationSource, sample.isolationSource)
 					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
 		}
 
@@ -157,9 +163,8 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism,
-				isolate, strain, collectedBy, collectionDate, geographicLocationName, isolationSource, latitude,
-				longitude);
+		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism, isolate, strain,
+				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude);
 	}
 
 	@Override
@@ -281,5 +286,15 @@ public class Sample extends IridaResourceSupport implements MutableIridaThing, I
 
 	public void setIsolationSource(String isolationSource) {
 		this.isolationSource = isolationSource;
+	}
+
+	@Override
+	public RemoteStatus getRemoteStatus() {
+		return remoteStatus;
+	}
+
+	@Override
+	public void setRemoteStatus(RemoteStatus status) {
+		this.remoteStatus = status;
 	}
 }

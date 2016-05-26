@@ -48,5 +48,16 @@
 			<column name="remoteStatus_id" type="bigint(20)" />
 		</addColumn>
 
+		<addColumn tableName="sample">
+			<column name="remoteStatus_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_SAMPLE_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sample_AUD">
+			<column name="remoteStatus_id" type="bigint(20)" />
+		</addColumn>
+
 	</changeSet>
 </databaseChangeLog>
