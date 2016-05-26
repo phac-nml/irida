@@ -109,13 +109,8 @@ public class ProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
+	private final ProjectRemoteService projectRemoteService;
 	
-	@Autowired
-	private ProjectRemoteService projectRemoteService;
-	
-	@Autowired
-	private ProjectSynchronizationService projectSyncronizationService;
-
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 
@@ -138,11 +133,12 @@ public class ProjectsController {
 
 
 	@Autowired
-	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
+	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService, ProjectRemoteService projectRemoteService,
 			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
+		this.projectRemoteService = projectRemoteService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
