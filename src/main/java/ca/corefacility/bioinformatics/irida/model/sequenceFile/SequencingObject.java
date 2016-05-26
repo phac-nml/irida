@@ -30,6 +30,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -67,6 +68,9 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@JoinColumn(name = "automated_assembly", unique = true, nullable = true)
 	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private AnalysisSubmission automatedAssembly;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private RemoteStatus remoteStatus;
 
 	public SequencingObject() {
 		createdDate = new Date();
@@ -145,5 +149,15 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	
 	public void setAutomatedAssembly(AnalysisSubmission automatedAssembly) {
 		this.automatedAssembly = automatedAssembly;
+	}
+	
+	@Override
+	public RemoteStatus getRemoteStatus() {
+		return remoteStatus;
+	}
+	
+	@Override
+	public void setRemoteStatus(RemoteStatus remoteStatus) {
+		this.remoteStatus = remoteStatus;
 	}
 }

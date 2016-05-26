@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -116,10 +119,16 @@ public class ProjectSynchronizationService {
 	}
 
 	public void syncSequenceFilePair(SequenceFilePair pair, Sample sample) {
+		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		pair = pairRemoteService.mirrorPair(pair);
 
 		pair.getFiles().forEach(s -> s.setId(null));
 
 		objectService.createSequencingObjectInSample(pair, sample);
+		
+		RemoteStatus pairStatus = pair.getRemoteStatus();
+		pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+		
+		objectService.updateFields(pair.getId(), ImmutableMap.of("remoteStatus",pairStatus));
 	}
 }

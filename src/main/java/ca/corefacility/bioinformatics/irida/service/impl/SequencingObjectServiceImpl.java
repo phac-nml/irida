@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEv
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -201,6 +202,19 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequencingObject')")
 	public Boolean exists(Long id) {
 		return super.exists(id);
+	}
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequencingObject')")
+	public SequencingObject updateFields(Long id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
+
+		if (updatedFields.containsKey("remoteStatus") && updatedFields.size() == 1) {
+
+			return super.updateFields(id, updatedFields);
+		}
+
+		throw new InvalidPropertyException("SequencingObject cannot be updated except to set 'remoteStatus'");
 	}
 
 }
