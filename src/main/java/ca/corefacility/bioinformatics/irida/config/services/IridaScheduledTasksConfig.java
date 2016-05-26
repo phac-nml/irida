@@ -174,6 +174,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 		eventEmailTask.emailUserTasks();
 	}
 	
+	/**
+	 * Find projects which must be synchronized from remote sites
+	 */
 	@Scheduled(initialDelay = PROJECT_SYNC_RATE, fixedDelay = PROJECT_SYNC_RATE)
 	public void syncProject(){
 		projectSyncService.findMarkedProjectsToSync();

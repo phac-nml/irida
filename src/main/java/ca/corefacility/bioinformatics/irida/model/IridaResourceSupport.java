@@ -172,11 +172,24 @@ public class IridaResourceSupport {
 		return null;
 	}
 
+	/**
+	 * Set the {@link RemoteStatus} for this object if it was read from a remote
+	 * source
+	 * 
+	 * @param status
+	 *            the {@link RemoteStatus} object
+	 */
 	// TODO: Make these abstract
 	public void setRemoteStatus(RemoteStatus status) {
 
 	}
 
+	/**
+	 * Get the {@link RemoteStatus} for this object if it was read from a remote
+	 * source
+	 * 
+	 * @return a {@link RemoteStatus}
+	 */
 	public RemoteStatus getRemoteStatus() {
 		return null;
 	}
