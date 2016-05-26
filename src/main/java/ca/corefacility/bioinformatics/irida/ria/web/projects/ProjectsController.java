@@ -286,6 +286,13 @@ public class ProjectsController {
 		return CREATE_NEW_PROJECT_PAGE;
 	}
 	
+	/**
+	 * Get the page to synchronize remote projects
+	 * 
+	 * @param model
+	 *            Model to render for view
+	 * @return Name of the project sync page
+	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
 	public String getSynchronizeProjectPage(final Model model) {
 		if (!model.containsAttribute("errors")) {
@@ -293,17 +300,17 @@ public class ProjectsController {
 		}
 		return SYNC_NEW_PROJECT_PAGE;
 	}
-	
+
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
 	@ResponseBody
-	public String syncProject(final Model model, @RequestParam String url) {
+	public String syncProject(@RequestParam String url) {
 
 		Project read = projectRemoteService.read(url);
 		read.setId(null);
 		read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
 
 		projectService.create(read);
-		
+
 		return read.toString();
 	}
 
