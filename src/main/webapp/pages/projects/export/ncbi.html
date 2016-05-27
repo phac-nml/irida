@@ -54,10 +54,11 @@
       
       <div class="form-group row" th:with="dateFormat=#{locale.date.short}">
         <h3 class="control-label" th:text="#{project.export.samples}">Samples</h3>
+        <p class="help-block" th:utext="#{project.export.apply-all-hint}">_apply all hint_</p>
         <div class="horizontal-scroll">
           <table class="table table-striped sample-details-table">
             <thead>
-              <th th:text="#{project.export.sample}"></th>
+              <th></th>
               <th>
                 <label th:text="#{project.export.biosample.title}">_BioSample ID_</label>
                 <a data-toggle="modal" data-target="#bioSampleHelp"
@@ -100,28 +101,69 @@
                   <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
                   <button type="button" data:uib-tooltip="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button"><fa:icon type="remove"/></button>
                 </td>
-                <td><input class="form-control bioSample" name="bioSample" required="required" /></td>
-                <td><input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" /></td>
                 <td>
-                  <select class="form-control library_strategy" name="library_strategy" required="required">
-                    <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
-                  </select>
+                  <input class="form-control bioSample" name="bioSample" required="required" />
                 </td>
                 <td>
-                  <select class="form-control library_source" name="library_source" required="required">
-                    <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
-                  </select>
-                </td>
-                <td><input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" /></td>
-                <td>
-                  <select class="form-control instrument_model" name="instrument_model" required="required">
-                    <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
-                  </select>
+                  <input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" />
                 </td>
                 <td>
-                  <select class="form-control library_selection" name="library_selection" required="required">
-                    <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
-                  </select>
+                  <div class="input-group">
+                    <select class="form-control library_strategy" name="library_strategy" required="required">
+                      <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
+                    </select>
+                    <div class="input-group-addon">
+                      <a class="apply-all" data-type="library_strategy" href="#">
+                        <fa:icon type="apply-all"/>
+                      </a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="input-group">
+                    <select class="form-control library_source" name="library_source" required="required">
+                      <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
+                    </select>
+                    <div class="input-group-addon">
+                      <a class="apply-all" data-type="library_source" href="#">
+                        <fa:icon type="apply-all"/>
+                      </a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="input-group">
+                    <input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" />
+                    <div class="input-group-addon">
+                      <a class="apply-all" data-type="library_construction_protocol" href="#">
+                        <fa:icon type="apply-all"/>
+                      </a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="input-group">
+                    <select class="form-control instrument_model" name="instrument_model" required="required">
+                      <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
+                    </select>
+                    <div class="input-group-addon">
+                      <a class="apply-all" data-type="instrument_model" href="#">
+                        <fa:icon type="apply-all"/>
+                      </a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="input-group">
+                    <select class="form-control library_selection" name="library_selection" required="required">
+                      <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
+                    </select>
+                    <div class="input-group-addon">
+                      <a class="apply-all" data-type="library_selection" href="#">
+                        <fa:icon type="apply-all"/>
+                      </a>
+                    </div>
+                  </div>
                 </td>
               </tr>
             </tbody>  
@@ -387,6 +429,15 @@
 
         checkNumberValidSamples();
 
+      });
+      
+      $(".apply-all").on("click", function(){
+        var that = $(this);
+        var type = that.data("type");
+        
+        var value = that.closest(".input-group").find("."+type).val();
+        
+        $("."+type).val(value);
       });
 
       /**
