@@ -93,7 +93,7 @@
                 </th>
               </thead>
               <tbody>
-                <tr th:each="sample : ${samples}" th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}">
+                <tr class="sample-container" th:each="sample : ${samples}" th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}">
                   <td>
                     <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
                     <button type="button" data:uib-tooltip="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button"><fa:icon type="remove"/></button>
@@ -126,186 +126,15 @@
             </table>
           </div>
           
-          <div class="modal fade" id="bioSampleHelp" role="dialog" aria-labelledby="#Help">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h4 class="modal-title" id="Help" th:text="#{project.export.biosample.title}">_Help_</h4>					
-                </div>
-                <div class="modal-body">
-                  <p class="help-block" th:text="#{project.export.biosample.description}">_biosample to add data to_</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="modal fade" id="libraryNameHelp" role="dialog" aria-labelledby="#Help">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h4 class="modal-title" id="Help" th:text="#{project.export.library_name.title}">_Help_</h4>					
-                </div>
-                <div class="modal-body">
-                  <p class="help-block" th:utext="#{project.export.library_name.description}">_name of sequencing library_</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="modal fade" id="strategyHelp" role="dialog" aria-labelledby="#Help">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h4 class="modal-title" id="Help" th:text="#{project.export.library_strategy.title}">_Help_</h4>					
-                </div>
-                <div class="modal-body">
-                  <p class="help-block" th:utext="#{project.export.library_strategy.description}">_strategy used to create sequencing library_</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="modal fade" id="sourceHelp" role="dialog" aria-labelledby="#Help">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h4 class="modal-title" id="Help" th:text="#{project.export.library_source.title}">_Help_</h4>					
-                </div>
-                <div class="modal-body">
-                  <p class="help-block" th:utext="#{project.export.library_source.description}">_library source_</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="modal fade" id="constructionHelp" role="dialog" aria-labelledby="#Help">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h4 class="modal-title" id="Help" th:text="#{project.export.library_construction_protocol.title}">_Help_</h4>					
-                </div>
-                <div class="modal-body">
-                  <p class="help-block" th:utext="#{project.export.library_construction_protocol.description}">_protocol used ot create library_</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="modal fade" id="modelHelp" role="dialog" aria-labelledby="#Help">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h4 class="modal-title" id="Help" th:text="#{project.export.instrument_model.title}">_Help_</h4>					
-                </div>
-                <div class="modal-body">
-                  <p class="help-block" th:utext="#{project.export.instrument_model.descripton}">_instrument used to sequence data_</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="modal fade" id="selectionHelp" role="dialog" aria-labelledby="#Help">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h4 class="modal-title" id="Help" th:text="#{project.export.library_selection.title}">_Help_</h4>					
-                </div>
-                <div class="modal-body">
-                  <p class="help-block" th:utext="#{project.export.library_selection.description}">_how data for library was selected_</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
           <div th:id="${'files-' + sample.id}" th:attr="data-sample=${sample.id}" th:each="sample : ${samples}"
               th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
               hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
-            <div class="sample-container" th:if="${hasPaired or hasSingles}">
+            <div th:if="${hasPaired or hasSingles}">
               <h2>
                 <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
-                <button type="button" th:text="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button">Remove</button>
               </h2>
 
-
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label th:text="#{project.export.biosample.title}">_BioSample ID_</label>
-                  <input class="form-control bioSample" name="bioSample" required="required" />
-                  <p class="help-block" th:text="#{project.export.biosample.description}">_biosample to add data to_</p>
-                </div>
-
-                <div class="form-group col-md-6">
-                  <label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label>
-                  <input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" />
-                  <p class="help-block" th:utext="#{project.export.library_construction_protocol.description}">_protocol used ot crate library_</p>
-                </div>
-
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label th:text="#{project.export.library_name.title}">_Library Name_</label>
-                  <input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" />
-                  <p class="help-block" th:utext="#{project.export.library_name.description}">_name of sequencing library_</p>
-                </div>
-
-                <div class="form-group col-md-6">
-                  <label th:text="#{project.export.instrument_model.title}">_Instrument Model_</label>
-                  <select class="form-control instrument_model" name="instrument_model" required="required">
-                    <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
-                  </select>
-                  <p class="help-block" th:utext="#{project.export.instrument_model.descripton}">_instrument used to sequence data_</p>
-                </div>
-
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label th:text="#{project.export.library_strategy.title}">_Library Strategy_</label>
-                  <select class="form-control library_strategy" name="library_strategy" required="required">
-                    <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
-                  </select>
-                  <p class="help-block" th:utext="#{project.export.library_strategy.description}">_strategy used to create sequencing library_</p>
-                </div>
-
-                <div class="form-group col-md-6">
-                  <label th:text="#{project.export.library_selection.title}">_Library Selection_</label>
-                  <select class="form-control library_selection" name="library_selection" required="required">
-                    <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
-                  </select>
-                  <p class="help-block" th:utext="#{project.export.library_selection.description}">_how data for library was selected_</p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label th:text="#{project.export.library_source.title}">_Library Source_</label>
-                  <select class="form-control library_source" name="library_source" required="required">
-                    <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
-                  </select>
-                  <p class="help-block" th:utext="#{project.export.library_source.description}">_source material of library_</p>
-                </div>
-              </div>
-
-              <th:block >
+              <th:block>
                 <div class="alert alert-danger empty-file-warning" role="alert">
                   <p th:text="#{project.export.warning.nofiles}">_One or more files must be selected for upload_</p>
                 </div>
@@ -349,7 +178,123 @@
         </div>
       </div>
     </form>
+    
+    <!-- Help popups -->
+          
+    <div class="modal fade" id="bioSampleHelp" role="dialog" aria-labelledby="#Help">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="Help" th:text="#{project.export.biosample.title}">_Help_</h4>					
+          </div>
+          <div class="modal-body">
+            <p class="help-block" th:text="#{project.export.biosample.description}">_biosample to add data to_</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="libraryNameHelp" role="dialog" aria-labelledby="#Help">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="Help" th:text="#{project.export.library_name.title}">_Help_</h4>					
+          </div>
+          <div class="modal-body">
+            <p class="help-block" th:utext="#{project.export.library_name.description}">_name of sequencing library_</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="strategyHelp" role="dialog" aria-labelledby="#Help">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="Help" th:text="#{project.export.library_strategy.title}">_Help_</h4>					
+          </div>
+          <div class="modal-body">
+            <p class="help-block" th:utext="#{project.export.library_strategy.description}">_strategy used to create sequencing library_</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="sourceHelp" role="dialog" aria-labelledby="#Help">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="Help" th:text="#{project.export.library_source.title}">_Help_</h4>					
+          </div>
+          <div class="modal-body">
+            <p class="help-block" th:utext="#{project.export.library_source.description}">_library source_</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="constructionHelp" role="dialog" aria-labelledby="#Help">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="Help" th:text="#{project.export.library_construction_protocol.title}">_Help_</h4>					
+          </div>
+          <div class="modal-body">
+            <p class="help-block" th:utext="#{project.export.library_construction_protocol.description}">_protocol used ot create library_</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="modelHelp" role="dialog" aria-labelledby="#Help">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="Help" th:text="#{project.export.instrument_model.title}">_Help_</h4>					
+          </div>
+          <div class="modal-body">
+            <p class="help-block" th:utext="#{project.export.instrument_model.descripton}">_instrument used to sequence data_</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="selectionHelp" role="dialog" aria-labelledby="#Help">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="Help" th:text="#{project.export.library_selection.title}">_Help_</h4>					
+          </div>
+          <div class="modal-body">
+            <p class="help-block" th:utext="#{project.export.library_selection.description}">_how data for library was selected_</p>
+          </div>
+        </div>
+      </div>
+    </div>
+          
   </main>
+  
   <th:block layout:fragment="scripts" th:inline="javascript">
     <script>
       $("#submissionForm").submit(function(event) {
@@ -425,7 +370,12 @@
       * Remove the parent sample
       */
       $(".remove-button").on("click", function(){
-        $(this).closest(".sample-container").remove();
+        var sampleContainer = $(this).closest(".sample-container");
+        var sampleId = sampleContainer.data("sample");
+        
+        sampleContainer.remove();
+        
+        $("#files-"+sampleId).remove();
 
         checkNumberValidSamples();
 
