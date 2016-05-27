@@ -3,7 +3,6 @@
 
 <head>
   <title th:text="#{project.export.title}"></title>
-  <link rel="stylesheet" href="/resources/css/pages/sample_files.css" th:href="@{/resources/css/pages/sample_files.css}" />
   <script>
     window.dependencies = ['irida.ncbi'];
   </script>
@@ -19,9 +18,8 @@
       <p th:utext="#{project.export.files.description}">_Info_</p>
     </div>
     <form id="submissionForm" class="metadata-form">
-      <div class="form-group">
-        <label class="col-sm-2 control-label" th:text="#{project.export.metadata}">_Metadata_</label>
-        <div class="col-sm-10">
+      <div class="form-group" ddl:bundle-includes="ncbi-export-create">
+        <div class="col-sm-12">
 
           <div class="form-group">
             <label for="bioProject" th:text="#{project.export.bioproject.title}">_BioProject ID_</label>
@@ -51,9 +49,55 @@
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-2 control-label" th:text="#{project.export.files}">_Files_</label>
 
-        <div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
+        <div class="col-sm-12" th:with="dateFormat=#{locale.date.short}">
+          <h3 class="control-label" th:text="#{project.export.files}">_Files_</h3>
+          <div class="horizontal-scroll">
+            <table class="table table-bordered sample-details-table">
+              <thead>
+                <th></th>
+                <th><label th:text="#{project.export.biosample.title}">_BioSample ID_</label></th>
+                <th><label th:text="#{project.export.library_name.title}">_Library Name_</label></th>
+                <th><label th:text="#{project.export.library_strategy.title}">_Library Strategy_</label></th>
+                <th><label th:text="#{project.export.library_source.title}">_Library Source_</label></th>
+                <th><label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label></th>
+                <th><label th:text="#{project.export.instrument_model.title}">_Instrument Model_</label></th>
+                <th><label th:text="#{project.export.library_selection.title}">_Library Selection_</label></th>
+              </thead>
+              <tbody>
+                <tr th:each="sample : ${samples}">
+                  <td>
+                    <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
+                    <button type="button" class="btn btn-danger btn-xs remove-button"><fa:icon type="remove"/></button>
+                  </td>
+                  <td><input class="form-control bioSample" name="bioSample" required="required" /></td>
+                  <td><input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" /></td>
+                  <td>
+                    <select class="form-control library_strategy" name="library_strategy" required="required">
+                      <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-control library_source" name="library_source" required="required">
+                      <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
+                    </select>
+                  </td>
+                  <td><input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" /></td>
+                  <td>
+                    <select class="form-control instrument_model" name="instrument_model" required="required">
+                      <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-control library_selection" name="library_selection" required="required">
+                      <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>  
+            </table>
+          </div>
+          
           <div th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" th:each="sample : ${samples}"
               th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
               hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
