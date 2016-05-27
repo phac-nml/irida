@@ -313,6 +313,8 @@
 
         $(".sample-container").each(function() {
           var sample = $(this);
+          
+          var sampleId = sample.data("sample");
 
           var form = sample.find(".metadata-form");
 
@@ -324,13 +326,15 @@
 
           _.forEach(sampleElements, function(ele) {
             data[ele] = sample.find("." + ele).val();
-          });
+          });          
+          
+          var filesContainer = $("#files-"+sampleId);
 
-          sample.find('.paired_files:checked').each(function() {
+          filesContainer.find('.paired_files:checked').each(function() {
             paired.push($(this).val());
           });
 
-          sample.find('.single_files:checked').each(function() {
+          filesContainer.find('.single_files:checked').each(function() {
             single.push($(this).val());
           });
 
