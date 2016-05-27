@@ -96,76 +96,79 @@
               </th>
             </thead>
             <tbody>
-              <tr class="sample-container" th:each="sample : ${samples}" th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}">
-                <td>
-                  <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
-                  <button type="button" data:uib-tooltip="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button"><fa:icon type="remove"/></button>
-                </td>
-                <td>
-                  <input class="form-control bioSample" name="bioSample" required="required" />
-                </td>
-                <td>
-                  <input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" />
-                </td>
-                <td>
-                  <div class="input-group">
-                    <select class="form-control library_strategy" name="library_strategy" required="required">
-                      <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
-                    </select>
-                    <div class="input-group-addon">
-                      <a class="apply-all" data-type="library_strategy" href="#">
-                        <fa:icon type="apply-all"/>
-                      </a>
+              <div th:each="sample : ${samples}" th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
+                hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
+                <tr class="sample-container"  th:if="${hasPaired or hasSingles}">
+                  <td>
+                    <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
+                    <button type="button" data:uib-tooltip="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button"><fa:icon type="remove"/></button>
+                  </td>
+                  <td>
+                    <input class="form-control bioSample" name="bioSample" required="required" />
+                  </td>
+                  <td>
+                    <input class="form-control library_name" name="library_name" th:value="${sample.name}" required="required" />
+                  </td>
+                  <td>
+                    <div class="input-group">
+                      <select class="form-control library_strategy" name="library_strategy" required="required">
+                        <option th:each="sel : ${library_strategy}" th:value="${sel}" th:text="${sel.value}">_Strategy_</option>
+                      </select>
+                      <div class="input-group-addon">
+                        <a class="apply-all" data-type="library_strategy" href="#">
+                          <fa:icon type="apply-all"/>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <select class="form-control library_source" name="library_source" required="required">
-                      <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
-                    </select>
-                    <div class="input-group-addon">
-                      <a class="apply-all" data-type="library_source" href="#">
-                        <fa:icon type="apply-all"/>
-                      </a>
+                  </td>
+                  <td>
+                    <div class="input-group">
+                      <select class="form-control library_source" name="library_source" required="required">
+                        <option th:each="sel : ${library_source}" th:value="${sel}" th:text="${sel.value}">)_Source_</option>
+                      </select>
+                      <div class="input-group-addon">
+                        <a class="apply-all" data-type="library_source" href="#">
+                          <fa:icon type="apply-all"/>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" />
-                    <div class="input-group-addon">
-                      <a class="apply-all" data-type="library_construction_protocol" href="#">
-                        <fa:icon type="apply-all"/>
-                      </a>
+                  </td>
+                  <td>
+                    <div class="input-group">
+                      <input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" />
+                      <div class="input-group-addon">
+                        <a class="apply-all" data-type="library_construction_protocol" href="#">
+                          <fa:icon type="apply-all"/>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <select class="form-control instrument_model" name="instrument_model" required="required">
-                      <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
-                    </select>
-                    <div class="input-group-addon">
-                      <a class="apply-all" data-type="instrument_model" href="#">
-                        <fa:icon type="apply-all"/>
-                      </a>
+                  </td>
+                  <td>
+                    <div class="input-group">
+                      <select class="form-control instrument_model" name="instrument_model" required="required">
+                        <option th:each="instr : ${instrument_model}" th:value="${instr}" th:text="${instr.value}">_Instrument_</option>
+                      </select>
+                      <div class="input-group-addon">
+                        <a class="apply-all" data-type="instrument_model" href="#">
+                          <fa:icon type="apply-all"/>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <select class="form-control library_selection" name="library_selection" required="required">
-                      <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
-                    </select>
-                    <div class="input-group-addon">
-                      <a class="apply-all" data-type="library_selection" href="#">
-                        <fa:icon type="apply-all"/>
-                      </a>
+                  </td>
+                  <td>
+                    <div class="input-group">
+                      <select class="form-control library_selection" name="library_selection" required="required">
+                        <option th:each="sel : ${library_selection}" th:value="${sel}" th:text="${sel.value}">)_Selection_</option>
+                      </select>
+                      <div class="input-group-addon">
+                        <a class="apply-all" data-type="library_selection" href="#">
+                          <fa:icon type="apply-all"/>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              </div>
             </tbody>  
           </table>
         </div>
