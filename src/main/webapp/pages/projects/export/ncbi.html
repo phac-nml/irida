@@ -96,9 +96,9 @@
               </th>
             </thead>
             <tbody>
-              <div th:each="sample : ${samples}" th:id="${'sample-' + sample.id}" th:attr="data-sample=${sample.id}" th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
+              <div th:each="sample : ${samples}" th:id="${'sample-' + sample.id}" th:with="hasPaired=${#maps.containsKey(sample.files, 'paired_end') and #sets.size(sample.files.paired_end) &gt; 0},
                 hasSingles=${#maps.containsKey(sample.files, 'single_end') and #sets.size(sample.files.single_end) &gt; 0}">
-                <tr class="sample-container"  th:if="${hasPaired or hasSingles}">
+                <tr class="sample-container" th:attr="data-sample=${sample.id}" th:if="${hasPaired or hasSingles}">
                   <td>
                     <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
                     <button type="button" data:uib-tooltip="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button"><fa:icon type="remove"/></button>
