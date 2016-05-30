@@ -12,7 +12,8 @@
 <body>
 
 <div class="col-md-12" layout:fragment="page">
-	<h1 th:text="${project.label}">[Project Label]</h1>
+	<h1><th:block th:text="${project.label}"/>&nbsp;<small th:text="#{project.id}"/>&nbsp;<th:block  th:text="${project.getId()}"/></h1>
+
 	<ul class="nav nav-tabs subnav" th:with="baseLink=${'/projects/' + project.getId()}">
 		<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}" th:text="#{project.nav.samples}">[Samples]</a></li>
 		<li th:classappend="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}" th:text="#{project.nav.members}">[Members]</a></li>
