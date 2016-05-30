@@ -4,13 +4,6 @@
       layout:decorator="template/page">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
-
-    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
-          href="/resources/bower_components/select2/select2.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
-          href="/resources/bower_components/select2/select2-bootstrap.css"/>
-
-    <script>window.dependencies=["irida.project.new"];</script>
 </head>
 <body>
 <div layout:fragment="page">
@@ -45,61 +38,6 @@
     </div>
 </div>
 <th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/select2/select2.min.js}"
-            src="/resources/bower_components/select2/select2.min.js"></script>
-    <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
-            src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
-    <script>
-        $("#new-organism-warning").hide();
-        $(".organism-select").select2({
-            minimumInputLength: 2,
-            ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-                url: /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',
-                dataType: 'json',
-                data: function (term, page) {
-                    return {
-                        searchTerm: term // search term
-                    };
-                },
-                results: function (data, page) { // parse the results into the format expected by Select2.
-                    // since we are using custom formatting functions we do not need to alter remote JSON data
-                    return {results: data};
-                }
-            },
-            initSelection: function(element, callback) {
-            	var organism = $(element).val();
-            	if (organism !== "") {
-            		$.ajax(/*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search', {
-            			data: { searchTerm: organism },
-            			dataType: "json"
-            		}).done(function(data) {
-            			callback(data[0])
-            		});
-            	}
-            }
-
-        }).on("change", function(data){
-          if(data.added.searchTerm){
-            $("#new-organism-warning").show();
-          }
-          else{
-            $("#new-organism-warning").hide();
-          }
-        }).select2('val', /*[[${project} ? ${project.getOrganism()} : '']]*/ '');
-
-        (function() {
-            "use strict";
-
-            angular.module("irida.project.new", ["ui.bootstrap"])
-                    .controller('NewProjectController', function () {
-                        var vm = this;
-                        vm.project = {
-                            name: /*[[${project} ? ${project.getName()} : '']]*/ '',
-                            remoteURL: /*[[${project} ? ${project.getRemoteURL()} : '']]*/ '',
-                        };
-                    });
-        })();
-    </script>
 </th:block>
 </body>
 </html>
