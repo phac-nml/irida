@@ -17,6 +17,11 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * Service class to run a project synchornization task. Ths class will be
+ * responsible for communicating with Remote IRIDA installations and pulling
+ * metadata and sequencing data into the local installation.
+ */
 @Service
 public class ProjectSynchronizationService {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSynchronizationService.class);
@@ -45,6 +50,10 @@ public class ProjectSynchronizationService {
 		this.pairRemoteService = pairRemoteService;
 	}
 
+	/**
+	 * Find projects which should be synchronized and launch a synchornization
+	 * task.
+	 */
 	public void findMarkedProjectsToSync() {
 		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
 
@@ -69,6 +78,13 @@ public class ProjectSynchronizationService {
 
 	}
 
+	/**
+	 * Synchronize a given {@link Project} to the local installation.
+	 * 
+	 * @param project
+	 *            the {@link Project} to synchronize. This should have been read
+	 *            from a remote api.
+	 */
 	public void syncProject(Project project) {
 		String projectURL = project.getRemoteStatus().getURL();
 
@@ -83,6 +99,15 @@ public class ProjectSynchronizationService {
 
 	}
 
+	/**
+	 * Synchronize a given {@link Sample} to the local installation.
+	 * 
+	 * @param sample
+	 *            the {@link Sample} to synchronize. This should have been read
+	 *            from a remote api.
+	 * @param project
+	 *            The {@link Project} the {@link Sample} belongs in.
+	 */
 	public void syncSample(Sample sample, Project project) {
 		sampleService.create(sample);
 
@@ -103,10 +128,20 @@ public class ProjectSynchronizationService {
 		}
 	}
 
+	// TODO: Fill out this method
 	public void syncSingleEndSequenceFile(SingleEndSequenceFile file) {
 		// objectService.create(file);
 	}
 
+	/**
+	 * Synchronize a given {@link SequenceFilePair} to the local installation.
+	 * 
+	 * @param pair
+	 *            the {@link SequenceFilePair} to sync. This should have been
+	 *            read from a remote api.
+	 * @param sample
+	 *            The {@link Sample} to add the pair to.
+	 */
 	public void syncSequenceFilePair(SequenceFilePair pair, Sample sample) {
 		pair = pairRemoteService.mirrorPair(pair);
 
