@@ -101,3 +101,10 @@ input[type="search"] {
   overflow: hidden!important;
   text-overflow: ellipsis!important;
 }
+
+.wrap-cell {
+  max-width: 250px!important;
+  white-space: normal;
+  word-wrap:break-word;
+  text-align: left!important;
+}
