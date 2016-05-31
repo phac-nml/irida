@@ -59,7 +59,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		logger.info("Testing page set up for: Project Samples");
 		LoginPage.loginAsManager(driver());
 		page.goToPage();
-		assertTrue(page.getTitle().equals("project"));
+		assertTrue(page.getTitle().equals("project ID 1"));
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
 
 		page.showSamplesDropdownMenu();
