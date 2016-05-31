@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import javax.validation.Validator;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *  Service for managing @{link Announcements}
@@ -72,9 +74,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
-    public Announcement read(Long id) {
-        return announcementRepository.findOne(id);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void delete(final Long id) {
+        super.delete(id);
     }
 
     /**
@@ -82,9 +84,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void delete(final Long id) {
-        super.delete(id);
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    public Announcement read(Long id) {
+        return super.read(id);
     }
 
     /**
@@ -123,9 +125,10 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @PreAuthorize("hasRole('AS_ADMIN')")
-    public List<Join<Announcement,User>> getConfirmedReadUsersforAnnouncement(Announcement announcement) throws EntityNotFoundException {
+    public List<Join<Announcement,User>> getReadUsersForAnnouncement(Announcement announcement) throws EntityNotFoundException {
         return announcementUserJoinRepository.getUsersByAnnouncementRead(announcement);
     }
+
 
     /**
      *  {@inheritDoc}
@@ -136,15 +139,66 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
         return announcementUserJoinRepository.getUsersByAnnouncementUnread(announcement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    public List<Join<Announcement, User>> getReadAnnouncementsForUser(User user) {
+        return new ArrayList<>();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    public List<Announcement> getUnreadAnnouncementsForUser(User user) {
+        return announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
     public List<Announcement> getAllAnnouncements() {
         return Lists.newArrayList(announcementRepository.findAll());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
-    public List<Announcement> getUnreadAnnouncements(User user) {
-        return announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<Announcement> getAnnouncementsCreatedByUser(User user) {
+        return new ArrayList<>();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Long countReadsForOneAnnouncement(Announcement announcement) {
+        return announcementUserJoinRepository.countUsersForAnnouncement(announcement);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Map<Announcement, Long> countReadsForAllAnnouncements() {
+        Map<Announcement, Long> counts = new HashMap<>();
+        List<Announcement> announcements = getAllAnnouncements();
+
+        for (Announcement a: announcements) {
+            counts.put(a, countReadsForOneAnnouncement(a));
+        }
+
+        return counts;
+    }
+
 }

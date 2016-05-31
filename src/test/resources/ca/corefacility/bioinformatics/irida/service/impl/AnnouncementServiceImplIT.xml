@@ -45,6 +45,9 @@
 	<announcement id="5" created_date="2016-05-20 11:42:08.0"
 				  message="Do I really need to read this? Go away, announcement!"
 				  created_by_id="5"/>
+	<announcement id="6" created_date="2016-05-20 11:42:08.0"
+				  message="No one has read this announcement."
+				  created_by_id="5"/>
 
 	<announcement_user id="1" created_date="2016-05-20 11:42:08.0"
 					   announcement_id="1" user_id="1"/>

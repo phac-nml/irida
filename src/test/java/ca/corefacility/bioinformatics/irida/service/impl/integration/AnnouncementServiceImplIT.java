@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -35,6 +36,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Integration tests for testing out Announcements
@@ -98,6 +101,23 @@ public class AnnouncementServiceImplIT {
     }
 
     @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    public void testGetSingleAnnouncementById() {
+        Announcement a = announcementService.read(3L);
+        Long idExpected = 3L;
+        String messageExpected = "You cannot have your cake and eat it too.";
+
+        assertEquals("IDs for announcement doesn't match", idExpected, a.getId());
+        assertEquals("Announcement message content doesn't match expected", messageExpected, a.getMessage());
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    public void testGetAnnouncementNotExist() {
+        announcementService.read(800L);
+    }
+
+    @Test
     @WithMockUser(username = "user3", roles = "USER")
     public void testUserMarkAnnouncementAsReadSuccess() {
         final Announcement a = announcementService.read(2L);
@@ -128,7 +148,7 @@ public class AnnouncementServiceImplIT {
     @WithMockUser(username = "admin", roles = "ADMIN")
     public void testGetAllAnnouncements() {
         List<Announcement> announcementList = announcementService.getAllAnnouncements();
-        assertEquals("Unexpected total number of announcements, ", 5, announcementList.size());
+        assertEquals("Unexpected total number of announcements, ", 6, announcementList.size());
     }
 
     @Test
@@ -136,9 +156,38 @@ public class AnnouncementServiceImplIT {
     public void testGetUnreadAnnouncementsForUser() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userService.getUserByUsername(auth.getName());
-        List<Announcement> announcementList = announcementService.getUnreadAnnouncements(user);
+        List<Announcement> announcementList = announcementService.getUnreadAnnouncementsForUser(user);
+
+        assertEquals("Number of unread announcements doesn't match expected value", 6, announcementList.size());
+
+        Announcement ann = announcementService.read(6L);
+        announcementService.markAnnouncementAsReadByUser(ann, user);
+        announcementList = announcementService.getUnreadAnnouncementsForUser(user);
 
         assertEquals("Number of unread announcements doesn't match expected value", 5, announcementList.size());
+
     }
 
+    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    public void testCountReadUsersForAnnouncements() {
+        Map<Announcement, Long> counts = announcementService.countReadsForAllAnnouncements();
+
+        Set<Announcement> announcements = counts.keySet();
+
+        String failMessage = "Announcement count doesn't match";
+
+        for (Announcement a: announcements) {
+            Long id = a.getId();
+            if (id == 1) {
+                assertEquals(failMessage, new Long(4), counts.get(a));
+            } else if (id >= 2 && id <= 5) {
+                assertEquals(failMessage, new Long(1), counts.get(a));
+            } else if (id == 6) {
+                assertEquals(failMessage, new Long(0), counts.get(a));
+            } else {
+                fail("Error in counting, this announcement shouldn't be counted");
+            }
+        }
+    }
 }

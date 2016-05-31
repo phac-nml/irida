@@ -6,19 +6,13 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  */
 public interface AnnouncementService extends CRUDService<Long, Announcement> {
 
-    /**
-     *      Get a list of all of the {@link User}s that have not confirmed they've read
-     *      the {@link Announcement}
-     * @param announcement
-     * @return List of {@link User}s that haven't confirmed they've read the announcement
-     */
-    public List<User> getUnreadUsersForAnnouncement(Announcement announcement);
 
     /**
      *      Mark an {@link Announcement} object as read by a {@link User}
@@ -44,7 +38,32 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
      *          The {@link Announcement} for which we want to load users that have read it
      * @return List of {@link User}s that have read the announcement
      */
-    public List<Join<Announcement,User>> getConfirmedReadUsersforAnnouncement(Announcement announcement);
+    public List<Join<Announcement,User>> getReadUsersForAnnouncement(Announcement announcement);
+
+    /**
+     *      Get a list of all of the {@link User}s that have not confirmed they've read
+     *      the {@link Announcement}
+     * @param announcement
+     *          The
+     * @return List of {@link User}s that haven't confirmed they've read the announcement
+     */
+    public List<User> getUnreadUsersForAnnouncement(Announcement announcement);
+
+    /**
+     *      Get a list of {@link Announcement}s that have been read by {@param user}
+     * @param user
+     *          {@link User} for whom we want to get unread announcements
+     * @return list of {@link Join} objects representing announcements marked as read by a user
+     */
+    public List<Join<Announcement, User>> getReadAnnouncementsForUser(User user);
+
+    /**
+     *      Get a list of {@link Announcement}s that have not been read by {@param user}
+     * @param user
+     *          {@link User} for whom we want to get unread announcements
+     * @return List of {@link Announcement}s that have not been read by the user
+     */
+    public List<Announcement> getUnreadAnnouncementsForUser(User user);
 
     /**
      *      Get a list of all of the {@link Announcement}s that currently exist
@@ -53,11 +72,25 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
     public List<Announcement> getAllAnnouncements();
 
     /**
-     *      Get a list of {@link Announcement}s that have not been read by {@param user}
+     *      Get a list of {@link Announcement}s created by specific admin {@link User}
      * @param user
-     *          {@link User} for whom we want to get unread announcements
-     * @return List of {@link Announcement}s that have not been read by the user
+     *          The admin {@link User} who created the announcements
+     * @return List of announcements created by the admin, empty list if {@param user} is not an admin
      */
-    public List<Announcement> getUnreadAnnouncements(User user);
+    public List<Announcement> getAnnouncementsCreatedByUser(User user);
 
+    /**
+     *      Get a count of the number of {@link User}s who have read {@param announcement}
+     * @param announcement
+     *          {@link Announcement} for which we want the number of users who have read it
+     * @return number of users who have read {@param announcement}
+     */
+    public Long countReadsForOneAnnouncement(Announcement announcement);
+
+    /**
+     *      Get a map where the keys are {@link Announcement}s and the values are {@link Integer}s
+     *      representing the number of {@link User}s who have read that announcement.
+     * @return A Map of announcements and counts of users who have read that announcement
+     */
+    public Map<Announcement, Long> countReadsForAllAnnouncements();
 }
