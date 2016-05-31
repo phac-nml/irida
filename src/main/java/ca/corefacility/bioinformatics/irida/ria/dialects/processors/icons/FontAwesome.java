@@ -161,6 +161,12 @@ public class FontAwesome {
 	
 	public static final String ALIGN_ATTRIBUTE = "align";
 	public static final String ALIGN_ICON = "align-right";
+	
+	/*
+	 * Attribute to apply to all
+	 */
+	public static final String APPLY_ALL_ATTRIBUTE = "apply-all";
+	public static final String APPLY_ALL_ICON = "sort";
 
 	/*
 	 * Attribute for next and previous buttons.
@@ -211,6 +217,7 @@ public class FontAwesome {
 			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
 			.put(GROUP_ATTRIBUTE, GROUP_ICON)
 			.put(ALIGN_ATTRIBUTE, ALIGN_ICON)
+			.put(APPLY_ALL_ATTRIBUTE, APPLY_ALL_ICON)
 			.build();
 	// @formatter:on
 
