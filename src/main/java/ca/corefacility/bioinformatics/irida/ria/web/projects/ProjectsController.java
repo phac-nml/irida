@@ -301,17 +301,24 @@ public class ProjectsController {
 		return SYNC_NEW_PROJECT_PAGE;
 	}
 
+	/**
+	 * Get a {@link Project} from a remote api and mark it to be synchronized in
+	 * this IRIDA installation
+	 * 
+	 * @param url
+	 *            the URL of the remote project
+	 * @return Redirect to the new project.
+	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
-	@ResponseBody
 	public String syncProject(@RequestParam String url) {
 
 		Project read = projectRemoteService.read(url);
 		read.setId(null);
 		read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
 
-		projectService.create(read);
+		read = projectService.create(read);
 
-		return read.toString();
+		return "redirect:/projects/" + read.getId() + "/metadata";
 	}
 
 	/**

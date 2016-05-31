@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemot
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 @Service
-public class SequenceFielPairRemoteServiceImpl extends RemoteServiceImpl<SequenceFilePair>
+public class SequenceFilePairRemoteServiceImpl extends RemoteServiceImpl<SequenceFilePair>
 		implements SequenceFilePairRemoteService {
 
 	public static final String SAMPLE_SEQENCE_FILE_PAIRS_REL = RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS;
@@ -28,7 +28,7 @@ public class SequenceFielPairRemoteServiceImpl extends RemoteServiceImpl<Sequenc
 	private SequenceFileRemoteRepository sequenceFileRemoteRepository;
 
 	@Autowired
-	public SequenceFielPairRemoteServiceImpl(SequenceFilePairRemoteRepository repository,
+	public SequenceFilePairRemoteServiceImpl(SequenceFilePairRemoteRepository repository,
 			SequenceFileRemoteRepository sequenceFileRemoteRepository, RemoteAPIRepository remoteAPIRepository) {
 		super(repository, remoteAPIRepository);
 		this.repository = repository;
