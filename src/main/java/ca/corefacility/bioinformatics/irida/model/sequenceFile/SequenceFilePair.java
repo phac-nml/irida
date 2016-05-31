@@ -1,16 +1,13 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-<<<<<<< HEAD
-import java.util.*;
-import java.util.stream.Stream;
-=======
 import java.util.ArrayList;
->>>>>>> origin/issue376-seqfilepair-hashcode-fix
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -30,8 +27,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
@@ -65,17 +60,10 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		files.add(file2);
 	}
 
-<<<<<<< HEAD
- 	@Override
- 	public int hashCode() {
- 		return Objects.hash(files);
- 	}
-=======
 	@Override
 	public int hashCode() {
 		return Objects.hash(files);
 	}
->>>>>>> origin/issue376-seqfilepair-hashcode-fix
 
 	@Override
 	public boolean equals(Object obj) {
@@ -95,13 +83,13 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	 */
 	public SequenceFile getForwardSequenceFile() {
 		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
-		String[] filenames = {pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString()};
+		String[] filenames = { pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString() };
 
 		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
 
-		if (Stream.of(forwardMatches).anyMatch( x -> String.valueOf(filenames[0].charAt(index)).equals(x) )) {
+		if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[0].charAt(index)).equals(x))) {
 			return (SequenceFile) pair[0];
-		} else if (Stream.of(forwardMatches).anyMatch( x -> String.valueOf(filenames[1].charAt(index)).equals(x) )) {
+		} else if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[1].charAt(index)).equals(x))) {
 			return (SequenceFile) pair[1];
 		} else {
 			throw new NoSuchElementException();
@@ -116,13 +104,13 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	public SequenceFile getReverseSequenceFile() {
 		IridaSequenceFile[] pair = getFiles().toArray(new IridaSequenceFile[getFiles().size()]);
 
-		String[] filenames = {pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString()};
+		String[] filenames = { pair[0].getFile().getFileName().toString(), pair[1].getFile().getFileName().toString() };
 
 		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
 
-		if (Stream.of(reverseMatches).anyMatch( x -> String.valueOf(filenames[0].charAt(index)).equals(x) )) {
+		if (Stream.of(reverseMatches).anyMatch(x -> String.valueOf(filenames[0].charAt(index)).equals(x))) {
 			return (SequenceFile) pair[0];
-		} else if (Stream.of(reverseMatches).anyMatch( x -> String.valueOf(filenames[1].charAt(index)).equals(x) )) {
+		} else if (Stream.of(reverseMatches).anyMatch(x -> String.valueOf(filenames[1].charAt(index)).equals(x))) {
 			return (SequenceFile) pair[1];
 		} else {
 			throw new NoSuchElementException();
