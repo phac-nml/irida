@@ -4,56 +4,30 @@
 <head>
 <title th:text="#{sequencingruns.title}">_Clients_</title>
 	<script th:inline="javascript">
-		window.dependencies = ['SequencingRuns'];
+		
 		var PAGE = {
 			urls: {
-				list: /*[[@{/sequencingRuns/ajax/list}]]*/ '/sequencingRuns/ajax/list'
+				link: /*[[@{/sequencingRuns/}]]*/ '/sequencingRuns/'
 			}
 		};
 	</script>
 </head>
 <body>
-    <main layout:fragment="main" ddl:bundle-includes="sequencing-runs-list">
-    <h1 th:text="#{sequencingruns.title}">_Sequencing runs_</h1>
-
-    <div class="col-md-12" ng-controller="RunsTableCtrl as table">
-        <table id="runsTable" class="table ng-cloak">
-            <thead>
-                <tr ng-controller="SortCtrl as sCtrl">
-                    <th id="sortId" th:text="#{iridaThing.id}" sort-by="" onsort="sCtrl.onSort"
-                        sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="id">_ID_</th>
-                    <th id="sortType" th:text="#{sequencingruns.type}" sort-by="" onsort="sCtrl.onSort"
-                        sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="sequencerType">_sequencer_</th>
-                    <th id="sortStatus" th:text="#{sequencingruns.uploadStatus}" sort-by="" onsort="sCtrl.onSort"
-                        sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="uploadStatus">_sequencer_</th>
-                    <th id="sortCreatedDate" th:text="#{iridaThing.timestamp}" sort-by="" onsort="sCtrl.onSort"
-                        sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="createdDate">_Created
-                        date_</th>
+    <main layout:fragment="main" ddl:bundle-includes="sequencing-runs-list" ddl:asset-css-excludes="jquery.datatables">
+        <div class="col-md-12">
+            <h1 th:text="#{sequencingruns.title}">_Sequencing runs_</h1>
+            
+            <table id="groupsTable" dt:table="true" dt:url="@{/sequencingRuns/ajax/list}" dt:filterPlaceholder="none" dt:filterable="false">
+                <thead>
+                <tr role="row">
+                    <th dt:property="id" th:text="#{iridaThing.id}" dt:renderFunction="sequencing-runs-list#runsTable.runLinkRow" dt:sortInitDirection="desc"></th>
+                    <th dt:property="sequencerType" dt:sortable="false" th:text="#{sequencingruns.type}"></th>
+                    <th dt:property="uploadStatus" th:text="#{sequencingruns.uploadStatus}"></th>
+                    <th dt:property="createdDate" th:text="#{iridaThing.timestamp}" dt:renderFunction="datatables-utils#datatable.formatDate" ></th>
                 </tr>
-            </thead>
-            <tbody>
-                <tr class="run-row"
-                    ng-repeat="run in table.runs | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
-                    <td class="run-id"><a class="btn btn-default btn-xs"
-                        data:ng-href="@{'/sequencingRuns/{{run.identifier}}'}" href="#">{{run.identifier}}</a></td>
-                    <td>{{run.sequencerType}}</td>
-                    <td>{{run.uploadStatus}}</td>
-                    <td class="createdDate" data-date="{{run.createdDate}}" tooltip-popup-delay='500'
-                        tooltip-placement="left" uib-tooltip="{{run.createdDate | date:'medium'}}"><span>{{run.createdDate
-                            | date:'mediumDate'}}</span></td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="5" class="text-center" ng-controller="PagingCtrl as paging">
-                        <uib-pagination ng-model="paging.page"
-                            items-per-page="paging.count" total-items="paging.total" ng-change="paging.update()"></uib-pagination>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-
-    </div>
+                </thead>
+            </table>
+        </div>
     </main>
 </body>
 </html>

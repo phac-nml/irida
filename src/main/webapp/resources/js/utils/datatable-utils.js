@@ -211,6 +211,30 @@ var datatable = (function(moment, tl, page) {
       rowClickHandler = new RowClickHandler();
 
 
+
+  function _getDate(date, type) {
+    return moment(date).format(tl.date.moment[type]);
+  }
+
+  function _createDateElement(date, format) {
+    var wrapper = document.createElement("div"),
+        dateSpan = document.createElement("span"),
+        hiddenUnixSpan = document.createElement("span");
+
+    // Wrap the div - so we can unwrap it to return
+    wrapper.appendChild(dateSpan);
+
+    // Add the unix time for sorting purposes;
+    hiddenUnixSpan.classList.add("hidden");
+    hiddenUnixSpan.innerText = date;
+    dateSpan.appendChild(hiddenUnixSpan);
+
+    // Add the formatted date
+    var dateNode = document.createTextNode(_getDate(date, format));
+    dateSpan.appendChild(dateNode);
+    return wrapper.innerHTML;
+  }
+
   /**
    * Format the date in a table.
    * Requires the page to have the date format object.
@@ -219,7 +243,7 @@ var datatable = (function(moment, tl, page) {
    */
   function formatDate(date) {
     if (moment !== undefined && date !== undefined && tl.date && tl.date.moment.short) {
-      return '<div><span style="display: none !important;">' + date + '</span>' + moment(date).format(tl.date.moment.short) + '</div>';
+      return _createDateElement(date, "short");
     } else {
       return new Date(date);
     }
@@ -232,6 +256,15 @@ var datatable = (function(moment, tl, page) {
     else {
       return "<a data-id='" + full.sample.identifier + "' class='btn btn-link' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
     }
+  }
+
+  function formatDateWithTime(date) {
+    if (moment !== undefined && date !== undefined && tl.date && tl.date.moment.short) {
+      return _createDateElement(date, "full");
+    } else {
+      return new Date(date);
+    }
+
   }
 
   /**
@@ -349,6 +382,7 @@ var datatable = (function(moment, tl, page) {
 
   return {
     formatDate                    : formatDate,
+    formatDateWithTime            : formatDateWithTime,
     i18n                          : i18n,
     forceContentSize              : forceContentSize,
     tableDrawn                    : tableDrawn,

@@ -9,10 +9,6 @@ Downloading IRIDA
 =================
 {:.no_toc}
 
-All IRIDA downloads can be found at:
-
-<https://irida.corefacility.ca/downloads>
-
 You can find individual download links, and links to corresponding documentation in the sections below.
 
 * This comment becomes the toc
@@ -36,11 +32,11 @@ IRIDA Web Interface
 
 The IRIDA web interface is distributed as a `war` archive. You can access the latest stable release of IRIDA at:
 
-<https://irida.corefacility.ca/downloads/webapp/irida-latest.war>
+<https://github.com/phac-nml/irida/releases/latest>
 
 You may also see all releases of the IRIDA web interface at:
 
-<https://irida.corefacility.ca/downloads/webapp/>
+<https://github.com/phac-nml/irida/releases>
 
 The documentation for installing and configuring the IRIDA web interface (and Galaxy!) can be found at:
 
@@ -51,15 +47,15 @@ IRIDA MiSeq Uploader Tool
 
 The IRIDA MiSeq Uploader Tool is used to submit complete Illumina MiSeq instrument runs to an instance of IRIDA. You can access the latest stable release of the IRIDA MiSeq Uploader Tool at:
 
-<https://irida.corefacility.ca/downloads/tools/IRIDA_Uploader_latest.exe>
+<https://github.com/phac-nml/irida-miseq-uploader/releases/latest>
 
 You may also see all releases of the IRIDA MiSeq Uploader Tool at:
 
-<https://irida.corefacility.ca/downloads/tools>
+<https://github.com/phac-nml/irida-miseq-uploader/releases>
 
 The documentation for using the IRIDA MiSeq Uploader Tool is included in the package, but can also be found at:
 
-<https://irida.corefacility.ca/documentation/user/administrator/uploader/>
+<https://irida.corefacility.ca/documentation/user/tutorials/uploader-tool/>
 
 Sample Data
 -----------

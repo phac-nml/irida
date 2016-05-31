@@ -93,13 +93,13 @@ public class FontAwesome {
 	 */
 	private static final String PIPELINE_TYPE_ATTRIBUTE = "pipelineType";
 	private static final String PIPELINE_TYPE_ICON = "cogs";
-	
+
 	/*
 	Attribute for pipeline types
 	 */
 	private static final String PIPELINE_VERSION_ATTRIBUTE = "pipelineVersion";
 	private static final String PIPELINE_VERSION_ICON = "code-fork";
-	
+
 	/*
 	Attribute for pipeline state
 	 */
@@ -110,10 +110,10 @@ public class FontAwesome {
 	 */
 	private static final String FILE_ATTRIBUTE = "file";
 	private static final String FILE_ICON = "file-o";
-	
+
 	private static final String PROJECT_ATTRIBUTE = "project";
 	private static final String PROJECT_ICON = "folder";
-	
+
 	/*
 	Attribute to display terminal icon
 	 */
@@ -138,7 +138,7 @@ public class FontAwesome {
 	 */
 	private static final String USER_ATTRIBUTE = "user";
 	private static final String USER_ICON = "user";
-	
+
 	/*
 	 * Attribute for a group icon
 	 */
@@ -171,6 +171,12 @@ public class FontAwesome {
 
 	public static final String ALIGN_ATTRIBUTE = "align";
 	public static final String ALIGN_ICON = "align-right";
+
+	/*
+	 * Attribute to apply to all
+	 */
+	public static final String APPLY_ALL_ATTRIBUTE = "apply-all";
+	public static final String APPLY_ALL_ICON = "sort";
 
 	/*
 	 * Attribute for cloud upload
@@ -244,6 +250,7 @@ public class FontAwesome {
 			.put(GROUP_ATTRIBUTE, GROUP_ICON)
 			.put(ALIGN_ATTRIBUTE, ALIGN_ICON)
 			.put(CREATE_ATTRIBUTE, CREATE_ICON)
+			.put(APPLY_ALL_ATTRIBUTE, APPLY_ALL_ICON)
 			.build();
 	// @formatter:on
 

@@ -1,0 +1,17 @@
+{
+  "dependencies": [],
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/pages/ncbi_export_create.css"
+      }
+    },
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/pages/sample_files.css"
+      }
+    }
+  ]
+}

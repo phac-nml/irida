@@ -364,7 +364,6 @@
         message.count++;
         message[s.sampleType]++;
       });
-
       $rootScope.$broadcast('SELECTED_COUNT', message);
     }
 
