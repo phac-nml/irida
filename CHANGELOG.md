@@ -3,6 +3,7 @@ Changes
 
 1.0.0 to 1.1.0
 --------------
+* [UI]: Full analysis name is now displayed in table
 * [UI]: Added the project ID to all project specific pages.
 * [UI]: Added the time to modified dates.
 * [UI]: Fixed issue with IE11 caching ajax calls.
