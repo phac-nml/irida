@@ -251,6 +251,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void copySamples(String project) {
+		toolsDropdownBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		copyBtn.click();
 		copyMoveSamples(project);
 	}

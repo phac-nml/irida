@@ -167,8 +167,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have the new sample name", newSampleName, name);
 	}
 
-	// TODO (JOSH - 2016-04-18): Re-implement testing copying samples
-	@Ignore
 	@Test
 	public void testCopySamples() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);

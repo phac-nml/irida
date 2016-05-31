@@ -188,8 +188,7 @@ var RowClickHandler = (function (page) {
   /**
    * Get List of all selected ids.
    * @returns {Array}
-   */
-  RowSelection.prototype.getSelectedIds = function () {
+   */RowSelection.prototype.getSelectedIds = function () {
     return selected;
   };
 
@@ -254,7 +253,7 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
     else {
-      return "<a data-id='" + full.sample.identifier + "' class='btn btn-link' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
+      return "<a data-id='" + full.sample.identifier + "' class='btn btn-link sample-label' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
     }
   }
 
