@@ -236,9 +236,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
 
-	public void mergeSamplesWithNewName(String newName) {
+	private WebDriverWait openToolsDropdown() {
 		toolsDropdownBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		return new WebDriverWait(driver, 10);
+	}
+
+	public void mergeSamplesWithNewName(String newName) {
+		WebDriverWait wait = openToolsDropdown();
 		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
 		mergeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
@@ -251,14 +255,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void copySamples(String project) {
-		toolsDropdownBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = openToolsDropdown();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		copyBtn.click();
 		copyMoveSamples(project);
 	}
 
 	public void moveSamples(String projectNum) {
+		WebDriverWait wait = openToolsDropdown();
+		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
 		copyMoveSamples(projectNum);
 	}
