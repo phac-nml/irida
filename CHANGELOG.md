@@ -3,6 +3,7 @@ Changes
 
 1.0.0 to 1.1.0
 --------------
+* [UI]: Fixed issue were login page was being displayed even though the user was logged in.
 * [UI]: Full analysis name is now displayed in table
 * [UI]: Added the project ID to all project specific pages.
 * [UI]: Added the time to modified dates.
@@ -22,7 +23,8 @@ Changes
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
-* [UI]: Fixed a bug where project filtering on the projects table excluded projects that did not have an organism
+* [UI]: Fixed a bug where project filtering on the projects table excluded projects that did not 
+have an organism
 * [Developer]: Make all of the responses when working with samples have the same set of links.
 * [UI]: Show the version of the pipeline on the pipeline details page.
 * [Developer]: Fixed a bug where updating project modified time on addition of a sample caused the uploader to fail.
