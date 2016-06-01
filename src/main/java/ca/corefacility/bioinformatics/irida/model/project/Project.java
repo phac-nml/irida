@@ -12,8 +12,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 
 /**
@@ -91,6 +94,10 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 	private List<RemoteRelatedProject> remoteRelatedProjects;
 
 	private String organism;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "remote_status")
+	private RemoteStatus remoteStatus;
 
 	public Project() {
 		assembleUploads = false;
@@ -196,6 +203,16 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 	
 	public boolean getAssembleUploads(){
 		return assembleUploads;
+	}
+	
+	@Override
+	public RemoteStatus getRemoteStatus() {
+		return remoteStatus;
+	}
+	
+	@Override
+	public void setRemoteStatus(RemoteStatus remoteStatus) {
+		this.remoteStatus = remoteStatus;
 	}
 	
 	

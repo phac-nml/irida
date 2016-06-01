@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.repository.query.Param;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -12,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -337,4 +339,14 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
 			final Integer count, final Direction sortDirection, final String... sortedBy);
+	
+	/**
+	 * Get a list of {@link Project}s from remote sites that have a given
+	 * {@link SyncStatus}
+	 * 
+	 * @param syncStatus
+	 *            the {@link SyncStatus} to get {@link Project}s for
+	 * @return a list of {@link Project}
+	 */
+	public List<Project> getProjectsWithRemoteSyncStatus(SyncStatus syncStatus);
 }

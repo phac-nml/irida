@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template/page">
+<head>
+    <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
+</head>
+<body>
+<div layout:fragment="page">
+    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
+        <form name="new_project" class="ng-cloak" th:action="@{/projects/synchronize}" method="post" role="form"
+              novalidate="novalidate"
+              ng-controller="NewProjectController as vm">
+            <section class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="control-label" for="name"> <span >_Project_URL_</span>
+                            <small uib-tooltip-placement="right" data:uib-tooltip="#{projects.create.form.required}"
+                                   class="fa fa-fw fa-asterisk"></small>
+                        </label>
+                        <input class="form-control input-full" type="text" id="url" name="url"
+                               required="required"
+                               placeholder="Required" th:placeholder="#{form.required}"/>
+                    </div>
+                </div>
+                <div class="panel-footer text-right">
+                    <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}"
+                       th:text="#{projects.create.form.cancel}">Cancel</a>
+                    <button id="submitBtn" type="submit" class="btn btn-primary" ng-disabled="new_project.$invalid">
+                        <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
+                        <span class="glyphicon glyphicon-chevron-right"></span></button>
+                </div>
+            </section>
+        </form>
+    </div>
+</div>
+<th:block layout:fragment="scripts" th:inline="javascript">
+</th:block>
+</body>
+</html>

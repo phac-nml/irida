@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.nio.file.Path;
 import java.util.Date;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -17,12 +15,10 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
-
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
+
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 
 /**
  * {@link SequencingObject} from a single ended sequence run. This class will
@@ -70,80 +66,13 @@ public class SingleEndSequenceFile extends SequencingObject implements IridaSing
 	 * {@inheritDoc}
 	 */
 	@Override
+	@JsonIgnore
 	public Set<SequenceFile> getFiles() {
 		return ImmutableSet.of(file);
 	}
 
-	@JsonIgnore
 	public SequenceFile getSequenceFile() {
 		return file;
-	}
-
-	/**
-	 * Proxying SequenceFile inner properties
-	 */
-
-	public Path getFile() {
-		return file.getFile();
-	}
-
-	/**
-	 * Add one optional property to the map of properties
-	 * 
-	 * @param key
-	 *            The key of the property to add
-	 * @param value
-	 *            The value of the property to add
-	 */
-	@JsonAnySetter
-	public void addOptionalProperty(String key, String value) {
-		file.addOptionalProperty(key, value);
-	}
-
-	/**
-	 * Get the Map of optional properties
-	 * 
-	 * @return A {@code Map<String,String>} of all the optional propertie
-	 */
-	@JsonAnyGetter
-	public Map<String, String> getOptionalProperties() {
-		return file.getOptionalProperties();
-	}
-
-	/**
-	 * Get an individual optional property
-	 * 
-	 * @param key
-	 *            The key of the property to read
-	 * @return A String of the property's value
-	 */
-	public String getOptionalProperty(String key) {
-		return file.getOptionalProperty(key);
-	}
-
-	/**
-	 * Get the size of the file.
-	 *
-	 * @return The String representation of the file size
-	 */
-	@JsonIgnore
-	public String getFileSize() {
-		return file.getFileSize();
-	}
-
-	/**
-	 * Set the Map of optional properties
-	 * 
-	 * @param optionalProperties
-	 *            A {@code Map<String,String>} of all the optional properties
-	 *            for this object
-	 */
-	public void setOptionalProperties(Map<String, String> optionalProperties) {
-		file.setOptionalProperties(optionalProperties);
-	}
-
-	public String getFileName() {
-		return file.getFileName().toString();
 	}
 
 	@Override

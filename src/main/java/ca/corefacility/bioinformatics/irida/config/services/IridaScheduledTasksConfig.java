@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.export.ExportUploadService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizationService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
@@ -68,6 +69,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Autowired 	
 	private ProjectEventEmailScheduledTask eventEmailTask;
 	
+	@Autowired
+	private ProjectSynchronizationService projectSyncService;
+	
 	@Value("${irida.scheduled.threads}")
 	private int threadCount = 2;
 
@@ -81,6 +85,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	
 	// rate in MS of the upload status checking
 	private static final long UPLOAD_STATUS_TASK_RATE = 300000; // 5 minutes
+	
+	// rate in MS of the upload status checking
+	private static final long PROJECT_SYNC_RATE = 60000; // 60 seconds
 	
 	/**
 	 * Rate in milliseconds of the cleanup task.
@@ -165,6 +172,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Scheduled(cron = "${irida.scheduled.subscription.cron}")
 	public void emailProjectEvents() {
 		eventEmailTask.emailUserTasks();
+	}
+	
+	/**
+	 * Find projects which must be synchronized from remote sites
+	 */
+	@Scheduled(initialDelay = PROJECT_SYNC_RATE, fixedDelay = PROJECT_SYNC_RATE)
+	public void syncProject(){
+		projectSyncService.findMarkedProjectsToSync();
 	}
 
 	/**
