@@ -18,9 +18,9 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
 /**
  * Information about an entity that was copied from a remote api. Entities using
- * this class should implement {@link RemoteSynchornizable}
+ * this class should implement {@link RemoteSynchronizable}
  * 
- * @see RemoteSynchornizable
+ * @see RemoteSynchronizable
  */
 @Entity
 
