@@ -167,6 +167,6 @@ public class ProjectSynchronizationService {
 		RemoteStatus pairStatus = pair.getRemoteStatus();
 		pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
 
-		objectService.updateFields(pair.getId(), ImmutableMap.of("remoteStatus", pairStatus));
+		objectService.updateRemoteStatus(pair.getId(), pairStatus);
 	}
 }

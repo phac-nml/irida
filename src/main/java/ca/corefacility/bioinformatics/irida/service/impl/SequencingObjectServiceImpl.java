@@ -16,12 +16,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -206,15 +209,10 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequencingObject')")
-	public SequencingObject updateFields(Long id, Map<String, Object> updatedFields)
+	public SequencingObject updateRemoteStatus(Long id, RemoteStatus remoteStatus)
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 
-		if (updatedFields.containsKey("remoteStatus") && updatedFields.size() == 1) {
-
-			return super.updateFields(id, updatedFields);
-		}
-
-		throw new InvalidPropertyException("SequencingObject cannot be updated except to set 'remoteStatus'");
+		return super.updateFields(id, ImmutableMap.of("remoteStatus", remoteStatus));
 	}
 
 }
