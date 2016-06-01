@@ -4,6 +4,7 @@ Changes
 1.0.0 to 1.1.0
 --------------
 * [UI]: Fixed issue were login page was being displayed even though the user was logged in.
+* [UI]: Full analysis name is now displayed in table
 * [UI]: Added the project ID to all project specific pages.
 * [UI]: Added the time to modified dates.
 * [UI]: Fixed issue with IE11 caching ajax calls.
