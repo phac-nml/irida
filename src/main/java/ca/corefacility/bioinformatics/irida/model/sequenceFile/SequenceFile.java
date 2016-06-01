@@ -40,6 +40,8 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchornizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
@@ -56,7 +58,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
-		VersionedFileFields<Long>, IridaSequenceFile {
+		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchornizable {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
 
@@ -95,6 +97,10 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@NotAudited
 	@JoinColumn(name = "fastqc_analysis_id")
 	private AnalysisFastQC fastqcAnalysis;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "remote_status")
+	private RemoteStatus remoteStatus;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -266,5 +272,15 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 			throw new AnalysisAlreadySetException(
 					"The FastQC Analysis can only be applied to a sequence file one time.");
 		}
+	}
+	
+	@Override
+	public RemoteStatus getRemoteStatus() {
+		return remoteStatus;
+	}
+
+	@Override
+	public void setRemoteStatus(RemoteStatus remoteStatus) {
+		this.remoteStatus = remoteStatus;
 	}
 }

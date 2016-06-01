@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -15,8 +17,8 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  * objects.
  */
 @Repository
-public class SequenceFilePairRemoteRepositoryImpl extends RemoteRepositoryImpl<SequenceFilePair> implements
-		SequenceFilePairRemoteRepository {
+public class SequenceFilePairRemoteRepositoryImpl extends RemoteRepositoryImpl<SequenceFilePair>
+		implements SequenceFilePairRemoteRepository {
 	private static final ParameterizedTypeReference<ListResourceWrapper<SequenceFilePair>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<SequenceFilePair>>() {
 	};
 	private static final ParameterizedTypeReference<ResourceWrapper<SequenceFilePair>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<SequenceFilePair>>() {
@@ -25,5 +27,16 @@ public class SequenceFilePairRemoteRepositoryImpl extends RemoteRepositoryImpl<S
 	@Autowired
 	public SequenceFilePairRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
 		super(tokenService, listTypeReference, objectTypeReference);
+	}
+
+	@Override
+	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {
+		entity = super.setRemoteStatus(entity, api);
+
+		SequenceFilePair pair = (SequenceFilePair) entity;
+
+		pair.getFiles().forEach(f -> super.setRemoteStatus(f, api));
+
+		return entity;
 	}
 }

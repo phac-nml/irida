@@ -157,13 +157,16 @@ public class ProjectSynchronizationService {
 		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		pair = pairRemoteService.mirrorPair(pair);
 
-		pair.getFiles().forEach(s -> s.setId(null));
+		pair.getFiles().forEach(s -> {
+			s.setId(null);
+			s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		});
 
 		objectService.createSequencingObjectInSample(pair, sample);
-		
+
 		RemoteStatus pairStatus = pair.getRemoteStatus();
 		pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
-		
-		objectService.updateFields(pair.getId(), ImmutableMap.of("remoteStatus",pairStatus));
+
+		objectService.updateFields(pair.getId(), ImmutableMap.of("remoteStatus", pairStatus));
 	}
 }
