@@ -41,6 +41,7 @@ public class RemoteStatus {
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Column(name = "sync_status")
 	private SyncStatus syncStatus;
 
 	@SuppressWarnings("unused")
