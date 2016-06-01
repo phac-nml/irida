@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchornizable;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -47,7 +48,8 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Sample extends IridaResourceSupport implements MutableIridaThing, IridaSample, Comparable<Sample> {
+public class Sample extends IridaResourceSupport
+		implements MutableIridaThing, IridaSample, Comparable<Sample>, RemoteSynchornizable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

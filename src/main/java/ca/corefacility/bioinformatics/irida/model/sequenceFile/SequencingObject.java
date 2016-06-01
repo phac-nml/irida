@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchornizable;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -45,7 +46,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class SequencingObject extends IridaResourceSupport implements MutableIridaThing {
+public abstract class SequencingObject extends IridaResourceSupport implements MutableIridaThing, RemoteSynchornizable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
