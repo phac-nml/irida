@@ -20,11 +20,11 @@ Changes
 * [Developer]: Re-fixed the `hashCode` bug so that the files collection is a `List` instead of a `Set`.  The `Set` was throwing a `NullPointerException` from Hibernate. (1.0.4)
 * [UI]: Displaying the modification time of samples in the project/samples table.
 * [UI]: Refactored Sequencing Runs list to use dandelion datatables.
+* [UI]: Fixed a bug where groups on a project with manager role were not allowed to behave like a manager. (1.0.5)
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
-* [UI]: Fixed a bug where project filtering on the projects table excluded projects that did not 
-have an organism
+* [UI]: Fixed a bug where project filtering on the projects table excluded projects that did not have an organism
 * [Developer]: Make all of the responses when working with samples have the same set of links.
 * [UI]: Show the version of the pipeline on the pipeline details page.
 * [Developer]: Fixed a bug where updating project modified time on addition of a sample caused the uploader to fail.
