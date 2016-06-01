@@ -70,6 +70,7 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	private AnalysisSubmission automatedAssembly;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
 	public SequencingObject() {
