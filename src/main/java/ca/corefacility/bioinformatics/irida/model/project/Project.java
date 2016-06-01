@@ -94,7 +94,8 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 
 	private String organism;
 	
-	@OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@Column(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
 	public Project() {
