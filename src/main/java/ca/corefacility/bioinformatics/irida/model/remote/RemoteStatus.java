@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.remote;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -47,11 +51,16 @@ public class RemoteStatus {
 	@Column(name = "sync_status")
 	private SyncStatus syncStatus;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "last_read")
+	private Date lastRead;
+
 	@SuppressWarnings("unused")
 	private RemoteStatus() {
 	}
 
 	public RemoteStatus(String url, RemoteAPI api) {
+		lastRead = new Date();
 		syncStatus = SyncStatus.UNSYNCHRONIZED;
 		this.url = url;
 		this.api = api;
@@ -75,6 +84,14 @@ public class RemoteStatus {
 
 	public RemoteAPI getApi() {
 		return api;
+	}
+
+	public Date getLastRead() {
+		return lastRead;
+	}
+
+	public void setLastRead(Date lastRead) {
+		this.lastRead = lastRead;
 	}
 
 	public enum SyncStatus {
