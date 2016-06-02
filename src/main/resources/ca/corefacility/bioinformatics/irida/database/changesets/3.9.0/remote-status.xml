@@ -48,5 +48,38 @@
 			<column name="remote_status" type="bigint(20)" />
 		</addColumn>
 
+		<addColumn tableName="sample">
+			<column name="remote_status" type="bigint(20)">
+				<constraints foreignKeyName="FK_SAMPLE_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sample_AUD">
+			<column name="remote_status" type="bigint(20)" />
+		</addColumn>
+
+		<addColumn tableName="sequencing_object">
+			<column name="remote_status" type="bigint(20)">
+				<constraints foreignKeyName="FK_SEQOBJECT_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sequencing_object_AUD">
+			<column name="remote_status" type="bigint(20)" />
+		</addColumn>
+
+		<addColumn tableName="sequence_file">
+			<column name="remote_status" type="bigint(20)">
+				<constraints foreignKeyName="FK_SEQUENCEFILE_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sequence_file_AUD ">
+			<column name="remote_status" type="bigint(20)" />
+		</addColumn>
+
 	</changeSet>
 </databaseChangeLog>

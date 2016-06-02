@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -67,6 +70,10 @@ public class ProjectSynchronizationService {
 			projectService.update(project);
 			try {
 				syncProject(project);
+
+				project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+				projectService.update(project);
 			} catch (IridaOAuthException e) {
 				logger.debug(
 						"Can't sync project project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
@@ -109,6 +116,7 @@ public class ProjectSynchronizationService {
 	 *            The {@link Project} the {@link Sample} belongs in.
 	 */
 	public void syncSample(Sample sample, Project project) {
+		sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		sampleService.create(sample);
 
 		projectService.addSampleToProject(project, sample);
@@ -126,6 +134,9 @@ public class ProjectSynchronizationService {
 			file.setId(null);
 			syncSingleEndSequenceFile(file);
 		}
+
+		sample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		sampleService.update(sample);
 	}
 
 	// TODO: Fill out this method
@@ -143,10 +154,19 @@ public class ProjectSynchronizationService {
 	 *            The {@link Sample} to add the pair to.
 	 */
 	public void syncSequenceFilePair(SequenceFilePair pair, Sample sample) {
+		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		pair = pairRemoteService.mirrorPair(pair);
 
-		pair.getFiles().forEach(s -> s.setId(null));
+		pair.getFiles().forEach(s -> {
+			s.setId(null);
+			s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		});
 
 		objectService.createSequencingObjectInSample(pair, sample);
+
+		RemoteStatus pairStatus = pair.getRemoteStatus();
+		pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+		objectService.updateRemoteStatus(pair.getId(), pairStatus);
 	}
 }

@@ -108,7 +108,7 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 	 *            The entity to set the remote status on
 	 * @return the enhanced entity
 	 */
-	protected Type setRemoteStatus(Type entity, RemoteAPI api) {
+	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {
 		String selfHref = entity.getSelfHref();
 		RemoteStatus remoteStatus = new RemoteStatus(selfHref, api);
 
