@@ -29,6 +29,9 @@ public class SequenceFilePairRemoteRepositoryImpl extends RemoteRepositoryImpl<S
 		super(tokenService, listTypeReference, objectTypeReference);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {
 		entity = super.setRemoteStatus(entity, api);
