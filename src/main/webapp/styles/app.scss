@@ -102,6 +102,13 @@ input[type="search"] {
   text-overflow: ellipsis!important;
 }
 
+.wrap-cell {
+  max-width: 250px!important;
+  white-space: normal;
+  word-wrap:break-word;
+  text-align: left!important;
+}
+
 // Use for ordered lists that require continued numbering.
 
 ol.start {

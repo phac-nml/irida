@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 public class LoginControllerTest {
 	private LoginController controller;
 	private EmailController emailController;
-	
+
 	@Before
 	public void setUp() {
 		this.emailController = mock(EmailController.class);
@@ -31,6 +31,6 @@ public class LoginControllerTest {
 	public void testShowLoginPage() {
 		Model model = new ExtendedModelMap();
 		HttpSession ses = mock(HttpSession.class);
-		assertEquals("login", controller.showLogin(model, false, null,null, ses));
+		assertEquals("login", controller.showLogin(model, false, null, null, null, ses));
 	}
 }
