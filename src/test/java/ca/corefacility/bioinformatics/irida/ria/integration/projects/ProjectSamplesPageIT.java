@@ -178,7 +178,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.copySamples(newProjectName);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
-		List<String> newNames = page.getSampleNamesOnPage().subList(0, 1);
+		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
 
 		for(int i = 0; i == names.size(); i++) {
 			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
