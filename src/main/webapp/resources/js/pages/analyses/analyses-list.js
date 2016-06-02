@@ -14,7 +14,7 @@ var analysesTable = (function (tl, page, $, moment, notifications) {
 	 */
 	function createLinkButton(data, type, full) {
 		if (full.id) {
-			return "<a class='btn btn-link crop' title='" + data + "' href='" + tl.BASE_URL + "analysis/" + full.id + "'>" + data + "</a>";
+			return "<a class='btn btn-link wrap-cell' title='" + data + "' href='" + tl.BASE_URL + "analysis/" + full.id + "'>" + data + "</a>";
 		}
 		return data;
 	}
