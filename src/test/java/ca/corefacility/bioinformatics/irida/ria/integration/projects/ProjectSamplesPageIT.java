@@ -44,7 +44,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		logger.info("Testing page set up for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
-		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project"));
+		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project ID 1"));
 		assertEquals("Should display 10 projects initially.", 10, page.getNumberProjectsDisplayed());
 
 		// TODO (JOSH - 2016-04-18): Test all buttons
