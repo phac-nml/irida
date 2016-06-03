@@ -58,8 +58,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Announcement create(Announcement object) {
-        Announcement announcement = super.create(object);
+    public Announcement create(Announcement announcement) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userRepository.loadUserByUsername(auth.getName());
         announcement.setCreatedById(user);
