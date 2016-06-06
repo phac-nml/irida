@@ -46,7 +46,7 @@
     };
 
     SampleService.prototype.move = function (params) {
-      params.move = true;
+      params.remove = true;
       return copyMoveSamples(params);
     };
 

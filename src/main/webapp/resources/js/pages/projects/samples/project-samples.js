@@ -106,7 +106,7 @@
       if(!this.disabled.lessThanOne) {
           var ids = datatable.getSelectedIds();
           modalService.openMoveModal(ids).then(function (result) {
-              sampleService.copy(result)
+              sampleService.move(result)
                   .then(function () {
                       datatable.clearSelected();
                       oTable_samplesTable.ajax.reload(null, false);
