@@ -89,6 +89,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "copy-samples-modal")
 	private WebElement copySamplesModal;
 
+	@FindBy(id = "confirm-copy-samples")
+	private WebElement copyModalConfirmBtn;
+
 	@FindBy(id = "projectsSelect")
 	private WebElement projectsSelectInput;
 
@@ -337,8 +340,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
-		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
-		copyOkBtn.click();
+		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
+		copyModalConfirmBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
 	}
 }
