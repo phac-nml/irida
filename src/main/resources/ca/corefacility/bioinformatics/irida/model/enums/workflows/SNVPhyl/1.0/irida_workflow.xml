@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-	<id>e7252168-3286-4ee1-90b9-6b9db6388a22</id>
+	<id>84360882-2959-4479-a20a-539feacb6922</id>
 	<name>SNVPhyl</name>
 	<version>1.0</version>
 	<analysisType>phylogenomics</analysisType>
