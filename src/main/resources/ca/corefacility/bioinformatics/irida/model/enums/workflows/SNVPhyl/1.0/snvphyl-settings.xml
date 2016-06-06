@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<snvphylWorkflows>
+	<snvphylWorkflow version="1.0" type="single-end-invalid-positions" uuid="c0e4f8c5-8a47-4a22-a42c-5256fd30526b" dockerContainer="apetkau/snvphyl-1.0.0">
+		<inputs>
+			<sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
+			<invalidPositions>invalid_positions</invalidPositions>
+			<reference>reference</reference>
+        	</inputs>
+		<parameters>
+			<parameter name="alternative-allele-fraction" defaultValue="0.75">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="ao" />
+			</parameter>
+			<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="mean_mapping" />
+			</parameter>
+			<parameter name="minimum-read-coverage" defaultValue="15">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="coverage" />
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/verify_map/verify_map/1.7.0"
+					parameterName="mindepth" />
+			</parameter>
+			<parameter name="repeat-minimum-length" defaultValue="150">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/find_repeats/findrepeat/1.7.0"
+					parameterName="length" />
+			</parameter>
+			<parameter name="repeat-minimum-pid" defaultValue="90">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/find_repeats/findrepeat/1.7.0"
+					parameterName="pid" />
+			</parameter>
+			<parameter name="filter-density-window-size" defaultValue="100">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="use_density_filter.window_size" />
+			</parameter>
+			<parameter name="filter-density-threshold" defaultValue="10">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="use_density_filter.threshold" />
+			</parameter>
+		</parameters>
+		<outputs>
+			<output name="filter-stats" fileName="filterStats.txt" />
+			<output name="mapping-quality" fileName="mappingQuality.txt" />
+			<output name="tree" fileName="phylogeneticTree.newick" />
+			<output name="matrix" fileName="snvMatrix.tsv" />
+			<output name="table" fileName="snvTable.tsv" />
+			<output name="core" fileName="vcf2core.tsv" />
+		</outputs>
+	</snvphylWorkflow>
+	<snvphylWorkflow version="1.0" type="single-end" uuid="fbfb9d9e-9ab4-418a-a518-5ff58e12e4e8" dockerContainer="apetkau/snvphyl-1.0.0">
+		<inputs>
+			<sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
+			<reference>reference</reference>
+        	</inputs>
+		<parameters>
+			<parameter name="alternative-allele-fraction" defaultValue="0.75">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="ao" />
+			</parameter>
+			<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="mean_mapping" />
+			</parameter>
+			<parameter name="minimum-read-coverage" defaultValue="15">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="coverage" />
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/verify_map/verify_map/1.7.0"
+					parameterName="mindepth" />
+			</parameter>
+			<parameter name="repeat-minimum-length" defaultValue="150">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/find_repeats/findrepeat/1.7.0"
+					parameterName="length" />
+			</parameter>
+			<parameter name="repeat-minimum-pid" defaultValue="90">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/find_repeats/findrepeat/1.7.0"
+					parameterName="pid" />
+			</parameter>
+			<parameter name="filter-density-window-size" defaultValue="100">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="use_density_filter.window_size" />
+			</parameter>
+			<parameter name="filter-density-threshold" defaultValue="10">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="use_density_filter.threshold" />
+			</parameter>
+		</parameters>
+		<outputs>
+			<output name="filter-stats" fileName="filterStats.txt" />
+			<output name="mapping-quality" fileName="mappingQuality.txt" />
+			<output name="tree" fileName="phylogeneticTree.newick" />
+			<output name="matrix" fileName="snvMatrix.tsv" />
+			<output name="table" fileName="snvTable.tsv" />
+			<output name="core" fileName="vcf2core.tsv" />
+		</outputs>
+	</snvphylWorkflow>
+	<snvphylWorkflow version="1.0" type="paired-end-invalid-positions" uuid="d34806e3-e3ea-4909-a73d-eca702105a5f" dockerContainer="apetkau/snvphyl-1.0.0">
+		<inputs>
+			<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+			<invalidPositions>invalid_positions</invalidPositions>
+			<reference>reference</reference>
+        	</inputs>
+		<parameters>
+			<parameter name="alternative-allele-fraction" defaultValue="0.75">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="ao" />
+			</parameter>
+			<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="mean_mapping" />
+			</parameter>
+			<parameter name="minimum-read-coverage" defaultValue="15">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="coverage" />
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/verify_map/verify_map/1.7.0"
+					parameterName="mindepth" />
+			</parameter>
+			<parameter name="repeat-minimum-length" defaultValue="150">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/find_repeats/findrepeat/1.7.0"
+					parameterName="length" />
+			</parameter>
+			<parameter name="repeat-minimum-pid" defaultValue="90">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/find_repeats/findrepeat/1.7.0"
+					parameterName="pid" />
+			</parameter>
+			<parameter name="filter-density-window-size" defaultValue="100">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="use_density_filter.window_size" />
+			</parameter>
+			<parameter name="filter-density-threshold" defaultValue="10">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="use_density_filter.threshold" />
+			</parameter>
+		</parameters>
+		<outputs>
+			<output name="filter-stats" fileName="filterStats.txt" />
+			<output name="mapping-quality" fileName="mappingQuality.txt" />
+			<output name="tree" fileName="phylogeneticTree.newick" />
+			<output name="matrix" fileName="snvMatrix.tsv" />
+			<output name="table" fileName="snvTable.tsv" />
+			<output name="core" fileName="vcf2core.tsv" />
+		</outputs>
+	</snvphylWorkflow>
+	<snvphylWorkflow version="1.0" type="paired-end" uuid="1122afdd-99c8-4177-82ee-519d2c6b59d7" dockerContainer="apetkau/snvphyl-1.0.0">
+		<inputs>
+			<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+			<reference>reference</reference>
+        	</inputs>
+		<parameters>
+			<parameter name="alternative-allele-fraction" defaultValue="0.75">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="ao" />
+			</parameter>
+			<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="mean_mapping" />
+			</parameter>
+			<parameter name="minimum-read-coverage" defaultValue="15">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="coverage" />
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/verify_map/verify_map/1.7.0"
+					parameterName="mindepth" />
+			</parameter>
+			<parameter name="repeat-minimum-length" defaultValue="150">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/find_repeats/findrepeat/1.7.0"
+					parameterName="length" />
+			</parameter>
+			<parameter name="repeat-minimum-pid" defaultValue="90">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/find_repeats/findrepeat/1.7.0"
+					parameterName="pid" />
+			</parameter>
+			<parameter name="filter-density-window-size" defaultValue="100">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="use_density_filter.window_size" />
+			</parameter>
+			<parameter name="filter-density-threshold" defaultValue="10">
+				<toolParameter
+					toolId="jupiter:9009/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
+					parameterName="use_density_filter.threshold" />
+			</parameter>
+		</parameters>
+		<outputs>
+			<output name="filter-stats" fileName="filterStats.txt" />
+			<output name="mapping-quality" fileName="mappingQuality.txt" />
+			<output name="tree" fileName="phylogeneticTree.newick" />
+			<output name="matrix" fileName="snvMatrix.tsv" />
+			<output name="table" fileName="snvTable.tsv" />
+			<output name="core" fileName="vcf2core.tsv" />
+		</outputs>
+	</snvphylWorkflow>
+	<snvphylWorkflow version="0.3" type="paired-end-invalid-positions" uuid="adc49bb2-0c74-45a0-8aed-9cf6a6b2d322" dockerContainer="apetkau/snvphyl-galaxy-0.3">
+		<inputs>
+			<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+			<invalidPositions>invalid_positions</invalidPositions>
+			<reference>reference</reference>
+        	</inputs>
+		<parameters>
+			<parameter name="alternative-allele-fraction" defaultValue="0.75">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+					parameterName="ao" />
+			</parameter>
+			<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+					parameterName="mean_mapping" />
+			</parameter>
+			<parameter name="minimum-read-coverage" defaultValue="15">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+					parameterName="coverage" />
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.5.0"
+					parameterName="mindepth" />
+			</parameter>
+			<parameter name="repeat-minimum-length" defaultValue="150">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0"
+					parameterName="length" />
+			</parameter>
+			<parameter name="repeat-minimum-pid" defaultValue="90">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0"
+					parameterName="pid" />
+			</parameter>
+		</parameters>
+		<outputs>
+			<output name="filter-stats" fileName="filterStats.txt" />
+			<output name="mapping-quality" fileName="mappingQuality.txt" />
+			<output name="tree" fileName="phylogeneticTree.newick" />
+			<output name="tree-stats" fileName="phylogeneticTreeStats.txt" />
+			<output name="matrix" fileName="snpMatrix.tsv" />
+			<output name="table" fileName="snpTable.tsv" />
+			<output name="core" fileName="vcf2core.tsv" />
+		</outputs>
+	</snvphylWorkflow>
+	<snvphylWorkflow version="0.3" type="paired-end" uuid="242e582b-30b3-4f1a-8fba-576ca27cb618" dockerContainer="apetkau/snvphyl-galaxy-0.3">
+		<inputs>
+			<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+			<reference>reference</reference>
+        	</inputs>
+		<parameters>
+			<parameter name="alternative-allele-fraction" defaultValue="0.75">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+					parameterName="ao" />
+			</parameter>
+			<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+					parameterName="mean_mapping" />
+			</parameter>
+			<parameter name="minimum-read-coverage" defaultValue="15">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/1.5.0"
+					parameterName="coverage" />
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.5.0"
+					parameterName="mindepth" />
+			</parameter>
+			<parameter name="repeat-minimum-length" defaultValue="150">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0"
+					parameterName="length" />
+			</parameter>
+			<parameter name="repeat-minimum-pid" defaultValue="90">
+				<toolParameter
+					toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.5.0"
+					parameterName="pid" />
+			</parameter>
+		</parameters>
+		<outputs>
+			<output name="filter-stats" fileName="filterStats.txt" />
+			<output name="mapping-quality" fileName="mappingQuality.txt" />
+			<output name="tree" fileName="phylogeneticTree.newick" />
+			<output name="tree-stats" fileName="phylogeneticTreeStats.txt" />
+			<output name="matrix" fileName="snpMatrix.tsv" />
+			<output name="table" fileName="snpTable.tsv" />
+			<output name="core" fileName="vcf2core.tsv" />
+		</outputs>
+	</snvphylWorkflow>
+	<snvphylWorkflow version="0.2-beta-1" type="paired-end" uuid="d33b86c5-61c2-4929-ba95-c30e429e4675" dockerContainer="apetkau/snvphyl-galaxy:0.2-beta-1">
+		<inputs>
+			<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+			<reference>reference</reference>
+		</inputs>
+		<parameters>
+			<parameter name="repeat-minimum-length" defaultValue="150">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4"
+						parameterName="length" />
+			</parameter>
+			<parameter name="repeat-minimum-pid" defaultValue="90">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4"
+						parameterName="pid" />
+			</parameter>
+			<parameter name="minimum-percent-coverage" defaultValue="80">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4"
+						parameterName="minmap" />
+			</parameter>
+			<parameter name="alternative-allele-fraction" defaultValue="0.75">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+						parameterName="options_type.section_input_filters_type.min_alternate_fraction" />
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+						parameterName="ao" />
+			</parameter>
+			<parameter name="minimum-mapping-quality" defaultValue="30">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+						parameterName="options_type.section_input_filters_type.quality_filter_type.min_mapping_quality" />
+			</parameter>
+			<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+						parameterName="mean_mapping" />
+			</parameter>
+			<parameter name="minimum-base-quality" defaultValue="30">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+						parameterName="options_type.section_input_filters_type.quality_filter_type.min_base_quality" />
+			</parameter>
+			<parameter name="minimum-read-coverage" defaultValue="15">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+						parameterName="options_type.section_input_filters_type.min_coverage" />
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+						parameterName="coverage" />
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4"
+						parameterName="mindepth" />
+			</parameter>
+		</parameters>
+		<outputs>
+			<output name="filter-stats" fileName="filterStats.txt" />
+			<output name="mapping-quality" fileName="mappingQuality.txt" />
+			<output name="tree" fileName="phylogeneticTree.newick" />
+			<output name="tree-stats" fileName="phylogeneticTreeStats.txt" />
+			<output name="matrix" fileName="snpMatrix.tsv" />
+			<output name="table" fileName="snpTable.tsv" />
+			<output name="core" fileName="vcf2core.tsv" />
+		</outputs>
+	</snvphylWorkflow>
+	<snvphylWorkflow version="0.2-beta-1" type="paired-end-invalid-positions" uuid="40c147c5-a886-4947-abb0-c22d78acb484" dockerContainer="apetkau/snvphyl-galaxy:0.2-beta-1">
+		<inputs>
+			<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+			<invalidPositions>invalid_positions</invalidPositions>
+			<reference>reference</reference>
+        	</inputs>
+		<parameters>
+			<parameter name="repeat-minimum-length" defaultValue="150">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4"
+						parameterName="length" />
+			</parameter>
+			<parameter name="repeat-minimum-pid" defaultValue="90">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/0.0.4"
+						parameterName="pid" />
+			</parameter>
+			<parameter name="minimum-percent-coverage" defaultValue="80">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4"
+						parameterName="minmap" />
+			</parameter>
+			<parameter name="alternative-allele-fraction" defaultValue="0.75">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+						parameterName="options_type.section_input_filters_type.min_alternate_fraction" />
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+						parameterName="ao" />
+			</parameter>
+			<parameter name="minimum-mapping-quality" defaultValue="30">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+						parameterName="options_type.section_input_filters_type.quality_filter_type.min_mapping_quality" />
+			</parameter>
+			<parameter name="minimum-mean-mapping-quality" defaultValue="30">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+						parameterName="mean_mapping" />
+			</parameter>
+			<parameter name="minimum-base-quality" defaultValue="30">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+						parameterName="options_type.section_input_filters_type.quality_filter_type.min_base_quality" />
+			</parameter>
+			<parameter name="minimum-read-coverage" defaultValue="15">
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/freebayes/freebayes/0.0.4"
+						parameterName="options_type.section_input_filters_type.min_coverage" />
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/vcf2pseudoalignment/vcf2pseudoalignment/0.0.16"
+						parameterName="coverage" />
+				<toolParameter
+						toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/0.0.4"
+						parameterName="mindepth" />
+			</parameter>
+		</parameters>
+		<outputs>
+			<output name="filter-stats" fileName="filterStats.txt" />
+			<output name="mapping-quality" fileName="mappingQuality.txt" />
+			<output name="tree" fileName="phylogeneticTree.newick" />
+			<output name="tree-stats" fileName="phylogeneticTreeStats.txt" />
+			<output name="matrix" fileName="snpMatrix.tsv" />
+			<output name="table" fileName="snpTable.tsv" />
+			<output name="core" fileName="vcf2core.tsv" />
+		</outputs>
+	</snvphylWorkflow>
+</snvphylWorkflows>
