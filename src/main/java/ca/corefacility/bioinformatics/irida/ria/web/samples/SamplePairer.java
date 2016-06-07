@@ -69,22 +69,22 @@ public class SamplePairer {
 						if (diffs.size() == 4) {
 							String file1ID = diffs.get(1).text;
 							String file2ID = diffs.get(2).text;
-							if (Stream.of(forwardMatches).anyMatch(x -> file1ID.contains(x))
-									&& Stream.of(reverseMatches).anyMatch(x -> file2ID.contains(x))) {
+							//Sometimes files uploaded get put in a different ordering such that
+							//the first file is the "reverse" sequence file and the last file is
+							//the "forward" sequence file. This long condition checks for that
+							//situation.
+							if ((Stream.of(forwardMatches).anyMatch(x -> file1ID.contains(x))
+									&& Stream.of(reverseMatches).anyMatch(x -> file2ID.contains(x)))
+									|| (Stream.of(reverseMatches).anyMatch(x -> file1ID.contains(x))
+									&& Stream.of(forwardMatches).anyMatch(x -> file2ID.contains(x)))) {
 								filePair = new MultipartFile[]{file1, file2};
-
-							}
-							else if (Stream.of(reverseMatches).anyMatch(x -> file1ID.contains(x))
-									&& Stream.of(forwardMatches).anyMatch(x -> file2ID.contains(x))) {
-								filePair = new MultipartFile[]{file2, file1};
-
 							}
 						}
 
 						if (filePair != null) {
 							pair = true;
 							organizedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
-							logger.debug("Uploaded files [" + filePair[0].getName() + ", " + filePair[1].getName()
+							logger.trace("Uploaded files [" + filePair[0].getName() + ", " + filePair[1].getName()
 								+ "] were paired.");
 							wasChecked.add(file2);
 						}
@@ -93,7 +93,7 @@ public class SamplePairer {
 				if (!pair) {
 					MultipartFile[] singleFile = {file1};
 					organizedFiles.put(file1.getOriginalFilename(), Arrays.asList(singleFile));
-					logger.debug("Uploaded file [" + file1.getName() +"] was not paired");
+					logger.trace("Uploaded file [" + file1.getName() +"] was not paired");
 				}
 			}
 			wasChecked.add(file1);
