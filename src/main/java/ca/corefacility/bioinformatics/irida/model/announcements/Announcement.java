@@ -56,12 +56,20 @@ public class Announcement implements IridaThing {
     @CreatedBy
     private User user;
 
+    /**
+     *      Default constructor, needed by Hibernate.
+     */
     private Announcement() {
         createdDate = new Date();
         this.message = null;
         this.user = null;
     }
 
+    /**
+     *      Create a new {@link Announcement} object, for display on the front page.
+     * @param message
+     * @param user
+     */
     public Announcement(String message, User user) {
         this();
         this.message = message;

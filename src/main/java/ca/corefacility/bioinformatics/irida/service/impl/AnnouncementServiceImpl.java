@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.Validator;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,7 +156,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      * {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public List<Announcement> getUnreadAnnouncementsForUser(User user) {
         return announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
     }
