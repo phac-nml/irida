@@ -192,18 +192,27 @@ public class AnnouncementServiceImplIT {
     }
 
     @Test
+    @WithMockUser (username = "admin", roles = "ADMIN")
     public void testGetReadUsersForAnnouncement() {
-
+        List<Join<Announcement, User>> list = announcementService.getReadUsersForAnnouncement(announcementService.read(1L));
+        assertEquals("Number of read users was unexpected", 4, list.size());
     }
 
     @Test
-    public void testGetUnreadUserForAnnouncement() {
-
+    @WithMockUser (username = "admin", roles = "ADMIN")
+    public void testGetUnreadUsersForAnnouncement() {
+        List<User> list = announcementService.getUnreadUsersForAnnouncement(announcementService.read(1L));
+        assertEquals("Number of read users was unexpected", 1, list.size());
     }
 
     @Test
+    @WithMockUser(username = "user", roles = "USER")
     public void testGetReadAnnouncementsForUser() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        List<Join<Announcement, User>> readList = announcementService.getReadAnnouncementsForUser(user);
 
+        assertEquals("Number of read announcements doesn't match expected value", 5, readList.size());
     }
 
     @Test
@@ -231,13 +240,63 @@ public class AnnouncementServiceImplIT {
     }
 
     @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
     public void testGetAnnouncementsCreatedByAdmin() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        List<Announcement> announcements = announcementService.getAnnouncementsCreatedByUser(user);
 
+        for (Announcement a: announcements) {
+            assertEquals("Announcement was not created by the selected user", user, a.getCreatedById());
+        }
+
+        int beforeSize = announcements.size();
+
+        announcementService.create(new Announcement("The newest announcement", user));
+        announcementService.create(new Announcement("No, this is the newest one!", user));
+
+        assertEquals("Number of announcements doesn't match", beforeSize + 2,
+                announcementService.getAnnouncementsCreatedByUser(user).size());
+
+        announcementService.delete(1L);
+
+        assertEquals("Number of announcements doesn't match", beforeSize + 1,
+                announcementService.getAnnouncementsCreatedByUser(user).size());
+
+        announcementService.create(new Announcement("Someone else made me do it!",
+                userService.getUserByUsername("admin2")));
+
+        announcements = announcementService.getAnnouncementsCreatedByUser(user);
+
+        for (Announcement a: announcements) {
+            assertEquals("Announcement was not created by the selected user", user, a.getCreatedById());
+        }
     }
 
     @Test
-    public void testGetReadsForSingleAnnouncements() {
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    public void testGetReadCountsForSingleAnnouncements() {
+        Long count1 = announcementService.countReadsForOneAnnouncement(announcementService.read(1L));
+        Long count2 = announcementService.countReadsForOneAnnouncement(announcementService.read(2L));
+        Long count3 = announcementService.countReadsForOneAnnouncement(announcementService.read(3L));
+        Long count4 = announcementService.countReadsForOneAnnouncement(announcementService.read(4L));
+        Long count5 = announcementService.countReadsForOneAnnouncement(announcementService.read(5L));
+        Long count6 = announcementService.countReadsForOneAnnouncement(announcementService.read(6L));
 
+        assertEquals("Number of reads for announcement doesn't match", 4L, (long) count1);
+        assertEquals("Number of reads for announcement doesn't match", 1L, (long) count2);
+        assertEquals("Number of reads for announcement doesn't match", 1L, (long) count3);
+        assertEquals("Number of reads for announcement doesn't match", 1L, (long) count4);
+        assertEquals("Number of reads for announcement doesn't match", 1L, (long) count5);
+        assertEquals("Number of reads for announcement doesn't match", 0, (long) count6);
+
+        announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(1L));
+        announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(2L));
+        announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(3L));
+
+        Long newCount = announcementService.countReadsForOneAnnouncement(announcementService.read(6L));
+
+        assertEquals("Number of reads for announcement doesn't match", 3L, (long) newCount);
     }
 
     @Test
