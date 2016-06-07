@@ -33,6 +33,7 @@ import java.util.Map;
  *
  */
 @Service
+
 public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement> implements AnnouncementService {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementServiceImpl.class);
@@ -83,7 +84,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public Announcement read(Long id) {
         return super.read(id);
     }
@@ -93,7 +94,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement, User user) throws EntityExistsException {
         try {
             final AnnouncementUserJoin auj = new AnnouncementUserJoin(announcement, user);
@@ -110,20 +111,24 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void markAnnouncementAsUnreadByUser(Announcement announcement, User user) throws EntityNotFoundException {
 
-        final AnnouncementUserJoin join = announcementUserJoinRepository.getAnnouncementUserJoin(announcement, user);
-        Long id = join.getId();
-
-        announcementUserJoinRepository.delete(id);
+        try {
+            final AnnouncementUserJoin join = announcementUserJoinRepository.getAnnouncementUserJoin(announcement, user);
+            Long id = join.getId();
+            announcementUserJoinRepository.delete(id);
+        } catch (NullPointerException e) {
+            throw new EntityNotFoundException("The user [" + user.getId() + "] has not yet read announcement ["
+                    + announcement.getId() + "]: cannot mark as unread.");
+        }
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasRole('AS_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<Join<Announcement,User>> getReadUsersForAnnouncement(Announcement announcement) throws EntityNotFoundException {
         return announcementUserJoinRepository.getUsersByAnnouncementRead(announcement);
     }
@@ -133,7 +138,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      *  {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasRole('AS_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> getUnreadUsersForAnnouncement(Announcement announcement) throws EntityNotFoundException {
         return announcementUserJoinRepository.getUsersByAnnouncementUnread(announcement);
     }
@@ -142,9 +147,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      * {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public List<Join<Announcement, User>> getReadAnnouncementsForUser(User user) {
-        return new ArrayList<>();
+        return announcementUserJoinRepository.getAnnouncementsReadByUser(user);
     }
 
 
@@ -161,7 +166,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      * {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_SEQUENCER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public List<Announcement> getAllAnnouncements() {
         return Lists.newArrayList(announcementRepository.findAll());
     }
@@ -172,7 +177,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<Announcement> getAnnouncementsCreatedByUser(User user) {
-        return new ArrayList<>();
+        return announcementRepository.getAnnouncementsByCreator(user);
     }
 
     /**

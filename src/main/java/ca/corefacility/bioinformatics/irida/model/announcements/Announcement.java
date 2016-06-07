@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.announcements;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -52,22 +53,17 @@ public class Announcement implements IridaThing {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "created_by_id")
+    @CreatedBy
     private User user;
 
-    public Announcement() {
+    private Announcement() {
         createdDate = new Date();
         this.message = null;
         this.user = null;
     }
 
-    public Announcement(String message) {
-        this();
-        this.message = message;
-        this.user = null;
-    }
-
     public Announcement(String message, User user) {
-        this(message);
+        this();
         this.message = message;
         this.user = user;
     }

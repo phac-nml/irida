@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ import java.util.Set;
         WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/AnnouncementServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
+
 public class AnnouncementServiceImplIT {
 
     @Autowired
@@ -60,7 +62,9 @@ public class AnnouncementServiceImplIT {
     @Test
     @WithMockUser(username = "admin", roles = "ADMIN")
     public void testCreateAnnouncementAsAdmin() {
-        Announcement an = new Announcement("This is a message");
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        Announcement an = new Announcement("This is a message", user);
         try {
             announcementService.create(an);
         } catch (AccessDeniedException e) {
@@ -75,7 +79,9 @@ public class AnnouncementServiceImplIT {
     @Test(expected = AccessDeniedException.class)
     @WithMockUser(username = "user", roles = "USER")
     public void testCreateAnnouncementNotAdmin() {
-        announcementService.create(new Announcement("This is a message"));
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        announcementService.create(new Announcement("This is a message", user));
     }
 
     @Test
@@ -143,12 +149,61 @@ public class AnnouncementServiceImplIT {
         announcementService.markAnnouncementAsReadByUser(a, user);
     }
 
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    public void testMarkAnnouncementAsUnreadSuccess() {
+        final Announcement a = announcementService.read(1L);
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        announcementService.markAnnouncementAsUnreadByUser(a, user);
+    }
 
     @Test
     @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testGetAllAnnouncements() {
-        List<Announcement> announcementList = announcementService.getAllAnnouncements();
-        assertEquals("Unexpected total number of announcements, ", 6, announcementList.size());
+    public void testMarkAnnouncementAsUnreadForOtherUser() {
+        final Announcement a1 = announcementService.read(1L);
+        final Announcement a2 = announcementService.read(2L);
+
+        final User user = userService.getUserByUsername("user");
+
+        //for checking whether announcements or users have been incorrectly deleted from the database
+
+        final int numUsersBefore = Lists.newArrayList(userService.findAll()).size();
+        final int numAnnsBefore = announcementService.getAllAnnouncements().size();
+
+        announcementService.markAnnouncementAsUnreadByUser(a1, user);
+        announcementService.markAnnouncementAsUnreadByUser(a2, user);
+
+        final int numUsersAfter = Lists.newArrayList(userService.findAll()).size();
+        final int numAnnsAfter = announcementService.getAllAnnouncements().size();
+
+        assertEquals("User was incorrectly modified/deleted", numUsersBefore, numUsersAfter);
+        assertEquals("Announcement was incorrectly modified/deleted", numAnnsBefore, numAnnsAfter);
+
+    }
+
+    @Test (expected = EntityNotFoundException.class)
+    @WithMockUser(username = "user3", roles = "USER")
+    public void testMarkAnnouncementAsUnreadFailed() {
+        final Announcement a = announcementService.read(1L);
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        announcementService.markAnnouncementAsUnreadByUser(a, user);
+    }
+
+    @Test
+    public void testGetReadUsersForAnnouncement() {
+
+    }
+
+    @Test
+    public void testGetUnreadUserForAnnouncement() {
+
+    }
+
+    @Test
+    public void testGetReadAnnouncementsForUser() {
+
     }
 
     @Test
@@ -165,6 +220,23 @@ public class AnnouncementServiceImplIT {
         announcementList = announcementService.getUnreadAnnouncementsForUser(user);
 
         assertEquals("Number of unread announcements doesn't match expected value", 5, announcementList.size());
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    public void testGetAllAnnouncements() {
+        List<Announcement> announcementList = announcementService.getAllAnnouncements();
+        assertEquals("Unexpected total number of announcements, ", 6, announcementList.size());
+    }
+
+    @Test
+    public void testGetAnnouncementsCreatedByAdmin() {
+
+    }
+
+    @Test
+    public void testGetReadsForSingleAnnouncements() {
 
     }
 
