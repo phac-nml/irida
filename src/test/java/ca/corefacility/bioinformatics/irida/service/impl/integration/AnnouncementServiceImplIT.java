@@ -202,7 +202,7 @@ public class AnnouncementServiceImplIT {
     @WithMockUser (username = "admin", roles = "ADMIN")
     public void testGetUnreadUsersForAnnouncement() {
         List<User> list = announcementService.getUnreadUsersForAnnouncement(announcementService.read(1L));
-        assertEquals("Number of read users was unexpected", 1, list.size());
+        assertEquals("Number of unread users was unexpected", 2, list.size());
     }
 
     @Test
