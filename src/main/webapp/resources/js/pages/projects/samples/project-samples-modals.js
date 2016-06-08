@@ -59,11 +59,10 @@
 
     /**
      * Open the modal to remove samples from a project.
-     * @param selectedSamples
+     * @param ids
      * @returns {*}
      */
-    function openRemoveModal(selectedSamples) {
-      var ids = _getSampleIds(selectedSamples);
+    function openRemoveModal(ids) {
       return $uibModal.open({
         size        : 'lg',
         templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
@@ -265,7 +264,7 @@
   function FilterModalController($uibModalInstance, stateService) {
     var vm = this;
     vm.filter = stateService.getState();
-    
+
     vm.options = {ranges: {}};
     vm.options.ranges[page.i18n.dateFilter.days30] = [moment().subtract(30, 'days'), moment()];
     vm.options.ranges[page.i18n.dateFilter.days60] = [moment().subtract(60, 'days'), moment()];
