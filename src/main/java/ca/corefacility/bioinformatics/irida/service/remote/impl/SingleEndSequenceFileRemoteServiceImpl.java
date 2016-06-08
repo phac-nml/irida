@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
@@ -19,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
  * {@link SingleEndSequenceFileRemoteRepository}
  */
 @Service
-public class SingleEndSequenceFileRemoteServiceImpl extends RemoteServiceImpl<SingleEndSequenceFile> implements
+public class SingleEndSequenceFileRemoteServiceImpl extends SequencingObjectRemoteServiceImpl<SingleEndSequenceFile> implements
 		SingleEndSequenceFileRemoteService {
 
 	public static final String SAMPLE_SEQENCE_FILE_UNPAIRED_REL = RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED;
@@ -27,9 +28,9 @@ public class SingleEndSequenceFileRemoteServiceImpl extends RemoteServiceImpl<Si
 	private SingleEndSequenceFileRemoteRepository repository;
 
 	@Autowired
-	public SingleEndSequenceFileRemoteServiceImpl(SingleEndSequenceFileRemoteRepository repository,
+	public SingleEndSequenceFileRemoteServiceImpl(SingleEndSequenceFileRemoteRepository repository, SequenceFileRemoteRepository fileRemoteRepository,
 			RemoteAPIRepository remoteAPIRepository) {
-		super(repository, remoteAPIRepository);
+		super(repository, fileRemoteRepository, remoteAPIRepository);
 		this.repository = repository;
 	}
 
