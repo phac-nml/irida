@@ -51,19 +51,25 @@ public class RemoteStatus {
 	@Column(name = "sync_status")
 	private SyncStatus syncStatus;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "last_read")
-	private Date lastRead;
+	@Column(name = "remote_hash_code")
+	private int remoteHashCode;
 
 	@SuppressWarnings("unused")
 	private RemoteStatus() {
 	}
 
 	public RemoteStatus(String url, RemoteAPI api) {
-		lastRead = new Date();
 		syncStatus = SyncStatus.UNSYNCHRONIZED;
 		this.url = url;
 		this.api = api;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getURL() {
@@ -86,12 +92,12 @@ public class RemoteStatus {
 		return api;
 	}
 
-	public Date getLastRead() {
-		return lastRead;
+	public int getRemoteHashCode() {
+		return remoteHashCode;
 	}
 
-	public void setLastRead(Date lastRead) {
-		this.lastRead = lastRead;
+	public void setRemoteHashCode(int remoteHashCode) {
+		this.remoteHashCode = remoteHashCode;
 	}
 
 	public enum SyncStatus {
