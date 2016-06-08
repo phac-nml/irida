@@ -222,14 +222,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 				By.cssSelector("#cart-count-notification .angular-notifications-icon div"));
 	}
 
-	public void removeSamples() {
-		removeBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(removeModal));
-		removeBtnOK.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-modal")));
-	}
-
 	public void mergeSamplesWithOriginalName() {
 		toolsDropdownBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -243,6 +235,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private WebDriverWait openToolsDropdown() {
 		toolsDropdownBtn.click();
 		return new WebDriverWait(driver, 10);
+	}
+
+	public void removeSamples() {
+		WebDriverWait wait = openToolsDropdown();
+		wait.until(ExpectedConditions.elementToBeClickable(removeBtn));
+		removeBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(removeModal));
+		removeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-modal")));
 	}
 
 	public void mergeSamplesWithNewName(String newName) {

@@ -205,7 +205,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	// TODO (JOSH - 2016-04-18): Re-implement testing for removing samples
-	@Ignore
 	@Test
 	public void testRemoveSamplesFromProject() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -214,8 +213,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Select some samples
 		page.selectSample(0);
 		page.selectSample(1);
-		assertEquals("Should be 2 selected samples", "2 Samples Selected", page.getSelectedInfoText());
-		assertTrue("Remove button should be enabled since 2 samples selected", page.isRemoveBtnEnabled());
 
 		// Remove process
 		page.removeSamples();

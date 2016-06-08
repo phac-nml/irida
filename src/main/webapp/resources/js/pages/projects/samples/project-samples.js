@@ -115,10 +115,16 @@
       }
     };
 
-    // TODO (Josh - 2016-05-13): Finish remove function
     ToolsController.prototype.remove = function () {
       if(!this.disabled.lessThanOne) {
-        console.log("REMOVE");
+        var ids = datatable.getSelectedIds();
+        modalService.openRemoveModal(ids).then(function () {
+          sampleService.remove(ids)
+            .then(function () {
+              datatable.clearSelected();
+              oTable_samplesTable.ajax.reload(null, false);
+            })
+        });
       }
     };
 
