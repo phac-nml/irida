@@ -89,6 +89,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "copy-samples-modal")
 	private WebElement copySamplesModal;
 
+	@FindBy(id = "confirm-copy-samples")
+	private WebElement copyModalConfirmBtn;
+
 	@FindBy(id = "projectsSelect")
 	private WebElement projectsSelectInput;
 
@@ -198,7 +201,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectSample(int row) {
-		WebElement checkbox = tableRows.get(row);
+		// Need to get the anything but the first column as that is a link to the sample!
+		WebElement checkbox = tableRows.get(row).findElements(By.cssSelector("td")).get(2);
 		checkbox.click();
 	}
 
@@ -236,9 +240,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
 
-	public void mergeSamplesWithNewName(String newName) {
+	private WebDriverWait openToolsDropdown() {
 		toolsDropdownBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		return new WebDriverWait(driver, 10);
+	}
+
+	public void mergeSamplesWithNewName(String newName) {
+		WebDriverWait wait = openToolsDropdown();
 		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
 		mergeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
@@ -251,11 +259,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void copySamples(String project) {
+		WebDriverWait wait = openToolsDropdown();
+		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		copyBtn.click();
 		copyMoveSamples(project);
 	}
 
 	public void moveSamples(String projectNum) {
+		WebDriverWait wait = openToolsDropdown();
+		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
 		copyMoveSamples(projectNum);
 	}
@@ -328,8 +340,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
-		wait.until(ExpectedConditions.elementToBeClickable(copyBtn));
-		copyOkBtn.click();
+		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
+		copyModalConfirmBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
 	}
 }

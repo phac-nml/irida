@@ -8,16 +8,9 @@
    */
   function modalService($uibModal) {
 
-    function _getSampleIds(samples) {
-      return samples.map(function(sample) {
-        return sample.getId();
-      })
-    }
-
     function _copyMoveModal(config) {
-      var ids = _getSampleIds(config.selectedSamples);
       return $uibModal.open({
-        templateUrl: config.url + "&" + $.param({sampleIds: ids}),
+        templateUrl: config.url + "&" + $.param({sampleIds: config.selectedSamples}),
         openedClass: "copy-modal",
         controllerAs: "copyModalCtrl",
         controller  : ["$uibModalInstance", function ($uibModalInstance) {
@@ -42,7 +35,7 @@
 
           vm.doCopy = function () {
             $uibModalInstance.close({
-              sampleIds: ids,
+              sampleIds: config.selectedSamples,
               newProjectId: vm.project
             });
           };

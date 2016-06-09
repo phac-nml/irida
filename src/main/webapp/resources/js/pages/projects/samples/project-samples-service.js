@@ -7,6 +7,28 @@
       post = $http.post
     }
 
+    /**
+     * Show all success and error messages for samples being copied.
+     * @param result
+       */
+    function showCopyRemoveErrors(result) {
+      if (result.message) {
+        notifications.show({type: "success", msg: result.message});
+      }
+      if (result.warnings) {
+        result.warnings.forEach(function(warning) {
+          notifications.show({type: "warning", msg: warning});
+        })
+      }
+    }
+
+    function copyMoveSamples(params) {
+      return post(page.urls.samples.copy, params)
+          .success(function (result) {
+            showCopyRemoveErrors(result);
+          });
+    }
+
     SampleService.prototype.merge = function (data) {
       var params = {
         sampleIds: data.ids,
@@ -17,6 +39,15 @@
         .success(function(result) {
           notifications.show({type: result.result, msg: result.message});
         });
+    };
+
+    SampleService.prototype.copy = function (params) {
+      return copyMoveSamples(params);
+    };
+
+    SampleService.prototype.move = function (params) {
+      params.remove = true;
+      return copyMoveSamples(params);
     };
 
     return SampleService;

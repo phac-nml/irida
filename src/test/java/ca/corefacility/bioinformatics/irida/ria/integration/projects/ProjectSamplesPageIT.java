@@ -167,8 +167,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have the new sample name", newSampleName, name);
 	}
 
-	// TODO (JOSH - 2016-04-18): Re-implement testing copying samples
-	@Ignore
 	@Test
 	public void testCopySamples() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -180,15 +178,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.copySamples(newProjectName);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
-		List<String> newNames = page.getSampleNamesOnPage().subList(0, 1);
+		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
 
 		for(int i = 0; i == names.size(); i++) {
 			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
 		}
 	}
 
-	// TODO (JOSH - 2016-04-18): Re-implement testing moving samples
-	@Ignore
 	@Test
 	public void testMoveSamples() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -196,8 +192,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		List<String> movedNames = page.getSampleNamesOnPage().subList(2, 3);
 		page.selectSample(2);
 		page.selectSample(3);
-		assertTrue("Move button should be enabled", page.isMoveBtnEnabled());
-
 		page.moveSamples("project3");
 		assertEquals("Should be displaying 19 samples", "Showing 1 to 10 of 19 entries", page.getTableInfo());
 

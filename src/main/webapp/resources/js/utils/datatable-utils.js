@@ -74,11 +74,12 @@ var RowClickHandler = (function (page) {
   }
 
   function deselectRow(row) {
-    var id = getRowId(row);
+    var id = getRowId(row),
+        index = selected.indexOf(id);
     // Make sure the row is selected
-    if (selected.indexOf(id) > -1) {
+    if (index > -1) {
       row.classList.remove("selected");
-      selected.splice(selected.indexOf(id), 1);
+      selected.splice(index, 1);
     }
   }
 
@@ -188,8 +189,7 @@ var RowClickHandler = (function (page) {
   /**
    * Get List of all selected ids.
    * @returns {Array}
-   */
-  RowSelection.prototype.getSelectedIds = function () {
+   */RowSelection.prototype.getSelectedIds = function () {
     return selected;
   };
 
@@ -197,6 +197,11 @@ var RowClickHandler = (function (page) {
    * Clear all selected indexes
    */
   RowSelection.prototype.clearSelected = function () {
+    // Need to clear the class from the table:
+    var rows = document.querySelectorAll(".selected");
+    [].forEach.call(rows, function (row) {
+      deselectRow(row);
+    });
     selected = [];
     updateSelectionCounts(0);
   };
@@ -254,7 +259,7 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
     else {
-      return "<a data-id='" + full.sample.identifier + "' class='btn btn-link' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
+      return "<a data-id='" + full.sample.identifier + "' class='btn btn-link sample-label' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "'>" + data + "</a>";
     }
   }
 
@@ -279,7 +284,7 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
   }
-  
+
   /**
    * Return the size of the list passed in the data param
    * @param data column data.  Should be a JSON list

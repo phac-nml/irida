@@ -123,19 +123,19 @@
                             </a>
                         </li>
                         <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
-                            <a href="#" ng-click="toolsCtrl.copy()">
+                            <a id="copyBtn" href="#" ng-click="toolsCtrl.copy()">
                                 <fa:icon type="copy" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
                             </a>
                         </li>
                         <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
-                            <a href="#" ng-click="toolsCtrl.move()">
+                            <a id="moveBtn" href="#" ng-click="toolsCtrl.move()">
                                 <fa:icon type="move" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
                             </a>
                         </li>
                         <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
-                            <a href="#" ng-click="toolsCtrl.remove()">
+                            <a id="removeBtn" href="#" ng-click="toolsCtrl.remove()">
                                 <fa:icon type="delete" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
                             </a>

@@ -69,6 +69,9 @@
       setButtonState(0);
     }
 
+      /**
+       * Merge Samples
+       */
     ToolsController.prototype.merge = function () {
       if (!this.disabled.lessThanTwo) {
         var ids = datatable.getSelectedIds();
@@ -81,17 +84,34 @@
       }
     };
 
-    // TODO (Josh - 2016-05-13): Finish copy function
+      /**
+       * Copy Samples
+       */
     ToolsController.prototype.copy = function () {
       if(!this.disabled.lessThanOne) {
-        console.log("COPY");
+          var ids = datatable.getSelectedIds();
+          modalService.openCopyModal(ids).then(function (result) {
+              sampleService.copy(result)
+                  .then(function () {
+                      datatable.clearSelected();
+                  })
+          });
       }
     };
 
-    // TODO (Josh - 2016-05-13): Finish move function
+      /**
+       * Move Samples
+       */
     ToolsController.prototype.move = function () {
       if(!this.disabled.lessThanOne) {
-        console.log("MOVE");
+          var ids = datatable.getSelectedIds();
+          modalService.openMoveModal(ids).then(function (result) {
+              sampleService.move(result)
+                  .then(function () {
+                      datatable.clearSelected();
+                      oTable_samplesTable.ajax.reload(null, false);
+                  })
+          });
       }
     };
 
@@ -104,8 +124,8 @@
 
     return ToolsController;
   }());
-  
-  ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
+
+    ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
     .controller('AssociatedProjectsController', [AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", ToolsController])
   ;
