@@ -5,7 +5,7 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
-public interface SequenceFilePairRemoteService extends RemoteService<SequenceFilePair> {
+public interface SequenceFilePairRemoteService extends SequencingObjectRemoteService<SequenceFilePair> {
 	/**
 	 * Get the {@link SequenceFilePair}s for a given remote {@link Sample}
 	 * 
@@ -14,14 +14,4 @@ public interface SequenceFilePairRemoteService extends RemoteService<SequenceFil
 	 * @return List of {@link SequenceFilePair}s
 	 */
 	List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
-
-	/**
-	 * Download a {@link SequenceFilePair} and related {@link SequenceFile}s
-	 * from a remote service
-	 * 
-	 * @param pair
-	 *            the {@link SequenceFilePair} to download
-	 * @return The enhanced {@link SequenceFilePair}
-	 */
-	public SequenceFilePair mirrorPair(SequenceFilePair pair);
 }

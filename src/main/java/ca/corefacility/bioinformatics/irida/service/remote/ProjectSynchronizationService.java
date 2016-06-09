@@ -213,7 +213,7 @@ public class ProjectSynchronizationService {
 	 */
 	public void syncSequenceFilePair(SequenceFilePair pair, Sample sample) {
 		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
-		pair = pairRemoteService.mirrorPair(pair);
+		pair = pairRemoteService.mirrorSequencingObject(pair);
 
 		pair.getFiles().forEach(s -> {
 			s.setId(null);
