@@ -21,6 +21,7 @@
 				<constraints nullable="false" referencedTableName="remote_api"
 					referencedColumnNames="id" foreignKeyName="FK_REMOTE_STATUS_API" />
 			</column>
+			<column name="remote_hash_code" type="int" />
 		</createTable>
 
 		<createTable tableName="remote_status_AUD">
@@ -35,6 +36,7 @@
 			<column name="sync_status" type="varchar(255)" />
 			<column name="url" type="varchar(255)" />
 			<column name="api_id" type="bigint(20)" />
+			<column name="remote_hash_code" type="int" />
 		</createTable>
 
 		<addColumn tableName="project">

@@ -47,6 +47,9 @@ public class RemoteStatus {
 	@Column(name = "sync_status")
 	private SyncStatus syncStatus;
 
+	@Column(name = "remote_hash_code")
+	private int remoteHashCode;
+
 	@SuppressWarnings("unused")
 	private RemoteStatus() {
 	}
@@ -55,6 +58,14 @@ public class RemoteStatus {
 		syncStatus = SyncStatus.UNSYNCHRONIZED;
 		this.url = url;
 		this.api = api;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getURL() {
@@ -75,6 +86,14 @@ public class RemoteStatus {
 
 	public RemoteAPI getApi() {
 		return api;
+	}
+
+	public int getRemoteHashCode() {
+		return remoteHashCode;
+	}
+
+	public void setRemoteHashCode(int remoteHashCode) {
+		this.remoteHashCode = remoteHashCode;
 	}
 
 	public enum SyncStatus {

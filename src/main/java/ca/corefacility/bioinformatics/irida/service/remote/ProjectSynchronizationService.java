@@ -1,19 +1,24 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -66,18 +71,14 @@ public class ProjectSynchronizationService {
 			// Set the correct authorization for the user who's syncing the
 			// project
 			logger.debug("Syncing project at " + project.getRemoteStatus().getURL());
-			project.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
-			projectService.update(project);
+
 			try {
 				syncProject(project);
-
-				project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-				projectService.update(project);
 			} catch (IridaOAuthException e) {
 				logger.debug(
 						"Can't sync project project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
 				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
+				projectService.update(project);
 			}
 
 			logger.debug("Done project " + project.getRemoteStatus().getURL());
@@ -92,18 +93,44 @@ public class ProjectSynchronizationService {
 	 *            the {@link Project} to synchronize. This should have been read
 	 *            from a remote api.
 	 */
-	public void syncProject(Project project) {
+	private void syncProject(Project project) {
+		project.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
+		projectService.update(project);
+
 		String projectURL = project.getRemoteStatus().getURL();
 
 		Project readProject = projectRemoteService.read(projectURL);
+
+		// if project was updated remotely, update it here
+		if (checkForChanges(project.getRemoteStatus(), readProject)) {
+			logger.debug("found changes for project " + readProject.getSelfHref());
+
+			// ensure we use the same IDs
+			readProject = updateIds(project, readProject);
+
+			project = projectService.update(readProject);
+		}
+
+		List<Join<Project, Sample>> localSamples = sampleService.getSamplesForProject(project);
+
+		// get all the samples by their url
+		Map<String, Sample> samplesByUrl = new HashMap<>();
+		localSamples.forEach(j -> {
+			Sample sample = j.getObject();
+			String url = sample.getRemoteStatus().getURL();
+
+			samplesByUrl.put(url, sample);
+		});
 
 		List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
 
 		for (Sample s : readSamplesForProject) {
 			s.setId(null);
-			syncSample(s, project);
+			syncSample(s, project, samplesByUrl);
 		}
 
+		project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		projectService.update(project);
 	}
 
 	/**
@@ -115,17 +142,48 @@ public class ProjectSynchronizationService {
 	 * @param project
 	 *            The {@link Project} the {@link Sample} belongs in.
 	 */
-	public void syncSample(Sample sample, Project project) {
-		sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
-		sampleService.create(sample);
+	public void syncSample(Sample sample, Project project, Map<String, Sample> existingSamples) {
+		Sample localSample;
+		if (existingSamples.containsKey(sample.getRemoteStatus().getURL())) {
+			// if the sample already exists check if it's been updated
+			localSample = existingSamples.get(sample.getRemoteStatus().getURL());
 
-		projectService.addSampleToProject(project, sample);
+			// if there's changes, update the sample
+			if (checkForChanges(localSample.getRemoteStatus(), sample)) {
+				logger.debug("found changes for sample " + sample.getSelfHref());
+
+				// ensure the ids are properly set
+				sample = updateIds(localSample, sample);
+				sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
+
+				localSample = sampleService.update(sample);
+			}
+
+		} else {
+			// if the sample doesn't already exist create it
+			sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
+			localSample = sampleService.create(sample);
+			projectService.addSampleToProject(project, sample);
+		}
+
+		// get the local files and organize by their url
+		Collection<SampleSequencingObjectJoin> localPairs = objectService.getSequencesForSampleOfType(localSample,
+				SequenceFilePair.class);
+		Map<String, SequenceFilePair> pairsByUrl = new HashMap<>();
+		localPairs.forEach(j -> {
+			SequenceFilePair pair = (SequenceFilePair) j.getObject();
+			String url = pair.getRemoteStatus().getURL();
+
+			pairsByUrl.put(url, pair);
+		});
 
 		List<SequenceFilePair> sequenceFilePairsForSample = pairRemoteService.getSequenceFilePairsForSample(sample);
 
 		for (SequenceFilePair pair : sequenceFilePairsForSample) {
-			pair.setId(null);
-			syncSequenceFilePair(pair, sample);
+			if (!pairsByUrl.containsKey(pair.getRemoteStatus().getURL())) {
+				pair.setId(null);
+				syncSequenceFilePair(pair, localSample);
+			}
 		}
 
 		List<SingleEndSequenceFile> unpairedFilesForSample = singleEndRemoteService.getUnpairedFilesForSample(sample);
@@ -135,8 +193,8 @@ public class ProjectSynchronizationService {
 			syncSingleEndSequenceFile(file);
 		}
 
-		sample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-		sampleService.update(sample);
+		localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		sampleService.update(localSample);
 	}
 
 	// TODO: Fill out this method
@@ -168,5 +226,35 @@ public class ProjectSynchronizationService {
 		pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
 
 		objectService.updateRemoteStatus(pair.getId(), pairStatus);
+	}
+
+	/**
+	 * Check if an object has been updated since it was last read
+	 * 
+	 * @param originalStatus
+	 *            the original object's {@link RemoteStatus}
+	 * @param read
+	 *            the newly read {@link RemoteSynchronizable} object
+	 * @return true if the object has changed, false if not
+	 */
+	private boolean checkForChanges(RemoteStatus originalStatus, RemoteSynchronizable read) {
+		return originalStatus.getRemoteHashCode() != read.hashCode();
+	}
+
+	/**
+	 * Update the IDs of a newly read object and it's associated RemoteStatus to
+	 * the IDs of a local copy
+	 * 
+	 * @param original
+	 *            the original object
+	 * @param updated
+	 *            the newly read updated object
+	 * @return the enhanced newly read object
+	 */
+	private <Type extends MutableIridaThing & RemoteSynchronizable> Type updateIds(Type original, Type updated) {
+		updated.setId(original.getId());
+		updated.getRemoteStatus().setId(original.getRemoteStatus().getId());
+
+		return updated;
 	}
 }
