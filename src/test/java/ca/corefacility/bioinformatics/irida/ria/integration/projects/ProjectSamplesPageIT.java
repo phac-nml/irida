@@ -207,7 +207,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testRemoveSamplesFromProject() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		assertFalse("Remove button should be disabled since no samples selected", page.isRemoveBtnEnabled());
 
 		// Select some samples
 		page.selectSample(0);
