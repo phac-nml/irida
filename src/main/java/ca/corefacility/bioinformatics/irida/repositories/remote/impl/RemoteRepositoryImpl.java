@@ -112,16 +112,17 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 	 */
 	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {
 		String selfHref = entity.getSelfHref();
-		
+
+		// Get the logged in user and set them in the remote status object
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		RemoteStatus remoteStatus = new RemoteStatus(selfHref, api);
-		
-		if(principal instanceof User){
+
+		if (principal instanceof User) {
 			remoteStatus.setReadBy((User) principal);
 		}
-	
+
 		remoteStatus.setRemoteHashCode(entity.hashCode());
-		
+
 		entity.setRemoteStatus(remoteStatus);
 
 		return entity;
