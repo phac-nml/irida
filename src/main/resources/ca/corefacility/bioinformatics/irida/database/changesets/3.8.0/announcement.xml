@@ -39,16 +39,12 @@
 								 referencedColumnNames="id"
 								 baseColumnNames="user_id"
 								 baseTableName="announcement_user"
-								 constraintName="FK_USER_ID_ANNOUNCEMENT"
-								 onDelete="SET NULL"
-								 onUpdate="CASCADE"/>
+								 constraintName="FK_USER_ID_ANNOUNCEMENT"/>
 		<addForeignKeyConstraint referencedTableName="announcement"
 								 referencedColumnNames="id"
 								 baseColumnNames="announcement_id"
 								 baseTableName="announcement_user"
-								 constraintName="FK_ANNOUNCEMENT_ID_ANNOUNCEMENT"
-								 onDelete="SET NULL"
-								 onUpdate="CASCADE"/>
+								 constraintName="FK_ANNOUNCEMENT_ID_ANNOUNCEMENT"/>
 
 		<createTable tableName="announcement_AUD">
 			<column name="id" type="bigint(20)">
