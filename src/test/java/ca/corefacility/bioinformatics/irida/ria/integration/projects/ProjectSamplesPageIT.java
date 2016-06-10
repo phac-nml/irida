@@ -204,7 +204,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		}
 	}
 
-	// TODO (JOSH - 2016-04-18): Re-implement testing for removing samples
 	@Test
 	public void testRemoveSamplesFromProject() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
