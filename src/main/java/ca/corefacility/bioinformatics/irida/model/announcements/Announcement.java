@@ -53,7 +53,6 @@ public class Announcement implements IridaThing {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "created_by_id")
-    @CreatedBy
     private User user;
 
     /**
@@ -66,21 +65,9 @@ public class Announcement implements IridaThing {
     }
 
     /**
-     *      Create a new {@link Announcement} object for displaying {@param message}. The
-     *      admin {@link User} that created the message will be recorded using the
-     *      {@link ca.corefacility.bioinformatics.irida.service.SecurityAuditorAware} interface along with the
-     *      {@link CreatedBy} annotation on the user field.
-     * @param message The content of the announcement to display
-     */
-    public Announcement(String message) {
-        this();
-        this.message = message;
-    }
-
-    /**
      *      Create a new {@link Announcement} object, for display on the front page.
-     * @param message The content of the announcement to display
-     * @param user The {@link User} who created the announcement
+     * @param message Content of the announcement
+     * @param user The {@link User} that created the announcement
      */
     public Announcement(String message, User user) {
         this();

@@ -14,7 +14,6 @@ import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -33,6 +32,7 @@ import java.util.Map;
  *
  */
 @Service
+
 public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement> implements AnnouncementService {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementServiceImpl.class);
@@ -59,7 +59,12 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Announcement create(Announcement announcement) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userRepository.loadUserByUsername(auth.getName());
+        announcement.setCreatedById(user);
+
         announcementRepository.save(announcement);
+
         return announcement;
     }
 

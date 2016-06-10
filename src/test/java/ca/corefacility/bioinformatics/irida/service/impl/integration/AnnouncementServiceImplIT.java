@@ -60,9 +60,11 @@ public class AnnouncementServiceImplIT {
     private UserService userService;
 
     @Test
-    @WithMockUser(username = "admin2", roles = "ADMIN")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     public void testCreateAnnouncementAsAdmin() {
-        Announcement an = new Announcement("This is a message");
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        Announcement an = new Announcement("This is a message", user);
         try {
             announcementService.create(an);
         } catch (AccessDeniedException e) {
@@ -77,7 +79,9 @@ public class AnnouncementServiceImplIT {
     @Test(expected = AccessDeniedException.class)
     @WithMockUser(username = "user", roles = "USER")
     public void testCreateAnnouncementNotAdmin() {
-        announcementService.create(new Announcement("This is a message"));
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        announcementService.create(new Announcement("This is a message", user));
     }
 
     @Test
