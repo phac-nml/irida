@@ -3,6 +3,9 @@ Changes
 
 1.0.0 to 1.1.0
 --------------
+* [UI]: Fixed issue were login page was being displayed even though the user was logged in.
+* [UI]: Full analysis name is now displayed in table
+* [UI]: Added the project ID to all project specific pages.
 * [UI]: Added the time to modified dates.
 * [UI]: Fixed issue with IE11 caching ajax calls.
 * [UI]: Samples in the cart are now sorted by created date.
@@ -17,6 +20,7 @@ Changes
 * [Developer]: Re-fixed the `hashCode` bug so that the files collection is a `List` instead of a `Set`.  The `Set` was throwing a `NullPointerException` from Hibernate. (1.0.4)
 * [UI]: Displaying the modification time of samples in the project/samples table.
 * [UI]: Refactored Sequencing Runs list to use dandelion datatables.
+* [UI]: Fixed a bug where groups on a project with manager role were not allowed to behave like a manager. (1.0.5)
 
 1.0.0-alpha10 to 1.0.0
 ----------------------

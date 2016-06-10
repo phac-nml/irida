@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -19,10 +21,10 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 public class LoginController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	private static final String LOGIN_PAGE = "login";
-	
-	
+
+
 	private final EmailController emailController;
-	
+
 	@Autowired
 	public LoginController(final EmailController emailController) {
 		this.emailController = emailController;
@@ -38,17 +40,24 @@ public class LoginController extends BaseController {
 			@RequestParam(value = "error", required = false, defaultValue = "false") Boolean hasError,
 			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
 			@RequestParam(value="galaxyClientID",required=false) String galaxyClientID,
+			Principal principal,
 			HttpSession httpSession) {
+
+		if (principal != null) {
+			logger.debug("User is already logged in.");
+			return "forward:/dashboard";
+		}
+
 		logger.debug("Displaying login page.");
-		
+
 		model.addAttribute("emailConfigured", emailController.isMailConfigured());
-		
+
 		//External exporting functionality
 		if(galaxyCallbackURL != null && galaxyClientID !=null) {
 			httpSession.setAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
 			httpSession.setAttribute(ProjectsController.GALAXY_CLIENT_ID_NAME, galaxyClientID);
 		}
-	
+
 		model.addAttribute("error", hasError);
 		return LOGIN_PAGE;
 	}
