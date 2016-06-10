@@ -274,10 +274,10 @@ public class ProjectSynchronizationService {
 	}
 
 	/**
-	 * Set the given authentication in the SecurityContextHolder and return the
+	 * Set the given user's authentication in the SecurityContextHolder
 	 * 
 	 * @param userAuthentication
-	 *            The Authentication to set
+	 *            The {@link User} to set in the context holder
 	 */
 	private void setAuthentication(User user) {
 		PreAuthenticatedAuthenticationToken userAuthentication = new PreAuthenticatedAuthenticationToken(user, null,
