@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.event;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -13,6 +14,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
  */
 @Entity
 public class SampleRemovedProjectEvent extends ProjectEvent {
+
+	@Column(name = "sample_name")
 	String sampleName;
 
 	public SampleRemovedProjectEvent() {
