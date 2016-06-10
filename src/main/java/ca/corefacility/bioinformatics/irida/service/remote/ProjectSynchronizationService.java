@@ -8,7 +8,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -21,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -68,8 +74,13 @@ public class ProjectSynchronizationService {
 		logger.debug("Checking for projects to sync");
 
 		for (Project project : markedProjects) {
-			// Set the correct authorization for the user who's syncing the
-			// project
+			/*
+			 * Set the correct authorization for the user who's syncing the
+			 * project
+			 */
+			User readBy = project.getRemoteStatus().getReadBy();
+			setAuthentication(readBy);
+
 			logger.debug("Syncing project at " + project.getRemoteStatus().getURL());
 
 			try {
@@ -79,9 +90,13 @@ public class ProjectSynchronizationService {
 						"Can't sync project project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
 				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
 				projectService.update(project);
+			} finally {
+				// clear the context holder when you're done
+				SecurityContextHolder.clearContext();
+
+				logger.debug("Done project " + project.getRemoteStatus().getURL());
 			}
 
-			logger.debug("Done project " + project.getRemoteStatus().getURL());
 		}
 
 	}
@@ -256,5 +271,20 @@ public class ProjectSynchronizationService {
 		updated.getRemoteStatus().setId(original.getRemoteStatus().getId());
 
 		return updated;
+	}
+
+	/**
+	 * Set the given authentication in the SecurityContextHolder and return the
+	 * 
+	 * @param userAuthentication
+	 *            The Authentication to set
+	 */
+	private void setAuthentication(User user) {
+		PreAuthenticatedAuthenticationToken userAuthentication = new PreAuthenticatedAuthenticationToken(user, null,
+				Lists.newArrayList(user.getSystemRole()));
+
+		SecurityContext context = SecurityContextHolder.createEmptyContext();
+		context.setAuthentication(userAuthentication);
+		SecurityContextHolder.setContext(context);
 	}
 }
