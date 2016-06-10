@@ -43,17 +43,20 @@
       }
       this.updateSamplesTable();
     };
+
     return AssociatedProjectsController;
   }());
 
   var ToolsController = (function () {
     var modalService;
     var sampleService;
+    var cartService;
 
-    function ToolsController($scope, ModalService, SampleService) {
+    function ToolsController($scope, ModalService, SampleService, CartService) {
       var vm = this;
       modalService = ModalService;
       sampleService = SampleService;
+      cartService = CartService;
 
       function setButtonState(count) {
         vm.disabled = {
@@ -128,11 +131,18 @@
       }
     };
 
+    ToolsController.prototype.addToCart = function () {
+      cartService.add(page.project.id, datatable.getSelectedIds())
+          .then(function () {
+            datatable.clearSelected();
+          });
+    };
+
     return ToolsController;
   }());
 
     ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
     .controller('AssociatedProjectsController', [AssociatedProjectsController])
-    .controller('ToolsController', ["$scope", "modalService", "SampleService", ToolsController])
+    .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
   ;
 }(window.angular, window.PAGE));

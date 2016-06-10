@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,7 +76,7 @@ public class CartControllerIT {
 		Long projectId = 2L;
 		Project project = projectService.read(projectId);
 		Set<Long> sampleIds = Sets.newHashSet(4L);
-		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, sampleIds);
+		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, sampleIds, Locale.US);
 		assertTrue((boolean) addProjectSample.get("success"));
 
 		Set<Sample> selectedSamplesForProject = controller.getSelected().get(project);
