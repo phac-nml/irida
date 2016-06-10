@@ -134,7 +134,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateSample')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canUpdateSample')")
 	@Override
 	public Sample update(Sample object) {
 		return super.update(object);
