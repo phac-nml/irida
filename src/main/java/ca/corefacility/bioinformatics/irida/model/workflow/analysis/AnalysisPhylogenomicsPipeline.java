@@ -40,12 +40,12 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 	}
 
 	@JsonIgnore
-	public AnalysisOutputFile getSnpMatrix() {
+	public AnalysisOutputFile getSnvMatrix() {
 		return getAnalysisOutputFile("matrix");
 	}
 
 	@JsonIgnore
-	public AnalysisOutputFile getSnpTable() {
+	public AnalysisOutputFile getSnvTable() {
 		return getAnalysisOutputFile("table");
 	}
 	

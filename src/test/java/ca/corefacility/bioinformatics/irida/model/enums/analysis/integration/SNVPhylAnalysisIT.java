@@ -104,13 +104,13 @@ public class SNVPhylAnalysisIT {
 	private List<Path> sequenceFilePathsC1List;
 	private List<Path> sequenceFilePathsC2List;
 
-	private Path outputSnpTable1;
-	private Path outputSnpMatrix1;
+	private Path outputSnvTable1;
+	private Path outputSnvMatrix1;
 	private Path vcf2core1;
 	private Path filterStats1;
 	
-	private Path outputSnpTable2;
-	private Path outputSnpMatrix2;
+	private Path outputSnvTable2;
+	private Path outputSnvMatrix2;
 	private Path vcf2core2;
 	private Path filterStats2;
 
@@ -177,13 +177,13 @@ public class SNVPhylAnalysisIT {
 		referenceFilePath = Files.createTempFile("reference", ".fasta");
 		Files.copy(referenceFilePathReal, referenceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
-		outputSnpTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvTable.tsv").toURI());
-		outputSnpMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvMatrix.tsv").toURI());
+		outputSnvTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvTable.tsv").toURI());
+		outputSnvMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvMatrix.tsv").toURI());
 		vcf2core1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/vcf2core.tsv").toURI());
 		filterStats1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/filterStats.txt").toURI());
 		
-		outputSnpTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvTable.tsv").toURI());
-		outputSnpMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvMatrix.tsv").toURI());
+		outputSnvTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvTable.tsv").toURI());
+		outputSnvMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvMatrix.tsv").toURI());
 		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.tsv").toURI());
 		filterStats2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/filterStats.txt").toURI());
 	}
@@ -242,23 +242,23 @@ public class SNVPhylAnalysisIT {
 				.getAnalysisOutputFiles().size());
 		
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
+		String matrixContent = new Scanner(analysisPhylogenomics.getSnvMatrix().getFile().toFile()).useDelimiter("\\Z")
 				.next();
 		assertTrue(
 				"snpMatrix should be the same but is \"" + matrixContent + "\"",
-				com.google.common.io.Files.equal(outputSnpMatrix1.toFile(), analysisPhylogenomics.getSnpMatrix()
+				com.google.common.io.Files.equal(outputSnvMatrix1.toFile(), analysisPhylogenomics.getSnvMatrix()
 						.getFile().toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvMatrix()
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnvTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
-				com.google.common.io.Files.equal(outputSnpTable1.toFile(), analysisPhylogenomics.getSnpTable().getFile()
+				com.google.common.io.Files.equal(outputSnvTable1.toFile(), analysisPhylogenomics.getSnvTable().getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvTable()
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
@@ -356,23 +356,23 @@ public class SNVPhylAnalysisIT {
 				.getAnalysisOutputFiles().size());
 		
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
+		String matrixContent = new Scanner(analysisPhylogenomics.getSnvMatrix().getFile().toFile()).useDelimiter("\\Z")
 				.next();
 		assertTrue(
 				"snpMatrix should be the same but is \"" + matrixContent + "\"",
-				com.google.common.io.Files.equal(outputSnpMatrix2.toFile(), analysisPhylogenomics.getSnpMatrix()
+				com.google.common.io.Files.equal(outputSnvMatrix2.toFile(), analysisPhylogenomics.getSnvMatrix()
 						.getFile().toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvMatrix()
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnvTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
-				com.google.common.io.Files.equal(outputSnpTable2.toFile(), analysisPhylogenomics.getSnpTable().getFile()
+				com.google.common.io.Files.equal(outputSnvTable2.toFile(), analysisPhylogenomics.getSnvTable().getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvTable()
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
@@ -424,7 +424,7 @@ public class SNVPhylAnalysisIT {
 			final ToolExecution ex = toolsToVisit.remove(0);
 			toolsToVisit.addAll(ex.getPreviousSteps());
 
-			if (ex.getToolName().contains("VCF 2 pseudoalignment")) {
+			if (ex.getToolName().contains("Consolidate VCFs")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minVcf2AlignCov = params.get("coverage");
 				altAlleleFraction = params.get("ao");
