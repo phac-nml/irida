@@ -21,6 +21,7 @@ Changes
 * [UI]: Displaying the modification time of samples in the project/samples table.
 * [UI]: Refactored Sequencing Runs list to use dandelion datatables.
 * [UI]: Fixed a bug where groups on a project with manager role were not allowed to behave like a manager. (1.0.5)
+* [UI]: Added a project event for removing samples from a project.
 
 1.0.0-alpha10 to 1.0.0
 ----------------------
