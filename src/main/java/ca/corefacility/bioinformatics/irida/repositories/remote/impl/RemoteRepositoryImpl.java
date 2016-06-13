@@ -7,12 +7,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
@@ -110,9 +112,17 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 	 */
 	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {
 		String selfHref = entity.getSelfHref();
+
+		// Get the logged in user and set them in the remote status object
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		RemoteStatus remoteStatus = new RemoteStatus(selfHref, api);
+
+		if (principal instanceof User) {
+			remoteStatus.setReadBy((User) principal);
+		}
+
 		remoteStatus.setRemoteHashCode(entity.hashCode());
-		
+
 		entity.setRemoteStatus(remoteStatus);
 
 		return entity;
