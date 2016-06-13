@@ -140,7 +140,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	}
 
-	@Ignore
 	@Test
 	public void testMergeSamples() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
