@@ -243,7 +243,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		removeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(removeModal));
 		removeBtnOK.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-modal")));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-samples-modal")));
 	}
 
 	public void mergeSamplesWithNewName(String newName) {
@@ -256,7 +256,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		// time the AngularJS model on the input does not update - prevents flickering of input error warnings.
 		waitForTime(350);
 		mergeBtnOK.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("merge-modal")));
 	}
 
 	public void copySamples(String project) {
