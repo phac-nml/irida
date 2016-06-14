@@ -222,7 +222,8 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 		
-		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2");
+		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2",
+				"filter-density-threshold", "2", "filter-density-window-size", "20");
 
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
@@ -335,8 +336,10 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
-		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.90", "minimum-read-coverage", "2",
-				"minimum-percent-coverage", "75", "minimum-mean-mapping-quality", "20");
+		Map<String, String> parameters = ImmutableMap.<String, String> builder()
+				.put("alternative-allele-fraction", "0.90").put("minimum-read-coverage", "2")
+				.put("minimum-percent-coverage", "75").put("minimum-mean-mapping-quality", "20")
+				.put("filter-density-threshold", "3").put("filter-density-window-size", "30").build();
 		
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
@@ -416,6 +419,8 @@ public class SNVPhylAnalysisIT {
 		String altAlleleFraction = null;
 		String minimumPercentCoverage = null;
 		String minimumDepthVerify = null;
+		String filterDensityThreshold = null;
+		String filterDensityWindowSize = null;
 		
 		// navigate through the tree to make sure that you can find both types
 		// of input tools: the one where you upload the reference file, and the
@@ -428,6 +433,8 @@ public class SNVPhylAnalysisIT {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minVcf2AlignCov = params.get("coverage");
 				altAlleleFraction = params.get("ao");
+				filterDensityThreshold = params.get("use_density_filter.threshold");
+				filterDensityWindowSize = params.get("use_density_filter.window_size");
 				break;
 			}
 		}
@@ -453,5 +460,7 @@ public class SNVPhylAnalysisIT {
 		assertEquals("incorrect alternative allele fraction", "\"0.90\"", altAlleleFraction);
 		assertEquals("incorrect minimum depth for verify map", "\"2\"", minimumDepthVerify);
 		assertEquals("incorrect min percent coverage for verify map", "\"75\"", minimumPercentCoverage);
+		assertEquals("incorrect filter density threshold", "3", filterDensityThreshold);
+		assertEquals("incorrect filter density window size", "30", filterDensityWindowSize);
 	}
 }

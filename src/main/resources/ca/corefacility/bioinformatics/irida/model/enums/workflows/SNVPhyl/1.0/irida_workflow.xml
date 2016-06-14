@@ -44,12 +44,12 @@
 				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.7.0"
 				parameterName="mindepth" />
 		</parameter>
-		<parameter name="filter-density-window-size" defaultValue="100">
+		<parameter name="filter-density-window-size" defaultValue="20">
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
 				parameterName="use_density_filter.window_size" />
 		</parameter>
-		<parameter name="filter-density-threshold" defaultValue="10">
+		<parameter name="filter-density-threshold" defaultValue="2">
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0"
 				parameterName="use_density_filter.threshold" />
