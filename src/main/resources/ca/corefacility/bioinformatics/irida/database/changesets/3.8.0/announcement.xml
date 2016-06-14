@@ -29,19 +29,22 @@
 			<column name="created_date" type="datetime">
 				<constraints nullable="false"/>
 			</column>
-			<column name="announcement_id" type="bigint(20)">
-				<constraints referencedTableName="announcement"
-							 referencedColumnNames="id"
-							 foreignKeyName="FK_ANNOUNCEMENT_ID"/>
-			</column>
-			<column name="user_id" type="bigint(20)">
-				<constraints referencedTableName="user"
-							 referencedColumnNames="id"
-							 foreignKeyName="FK_USER_ID_ANNOUNCEMENT"/>
-			</column>
+			<column name="announcement_id" type="bigint(20)"/>
+			<column name="user_id" type="bigint(20)"/>
 		</createTable>
 
 		<addUniqueConstraint tableName="announcement_user" columnNames="announcement_id, user_id"/>
+
+		<addForeignKeyConstraint referencedTableName="user"
+								 referencedColumnNames="id"
+								 baseColumnNames="user_id"
+								 baseTableName="announcement_user"
+								 constraintName="FK_USER_ID_ANNOUNCEMENT"/>
+		<addForeignKeyConstraint referencedTableName="announcement"
+								 referencedColumnNames="id"
+								 baseColumnNames="announcement_id"
+								 baseTableName="announcement_user"
+								 constraintName="FK_ANNOUNCEMENT_ID_ANNOUNCEMENT"/>
 
 		<createTable tableName="announcement_AUD">
 			<column name="id" type="bigint(20)">

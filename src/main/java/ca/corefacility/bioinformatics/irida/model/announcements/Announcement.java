@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,6 +25,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.TemporalType;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * An announcement object. Announcements can be created only by admin users, and announcements
@@ -54,10 +56,23 @@ public class Announcement implements IridaThing {
     @JoinColumn(name = "created_by_id")
     private User user;
 
-    public Announcement() {
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "announcement")
+    private List<AnnouncementUserJoin> users;
+
+    /**
+     *      Default constructor, needed by Hibernate.
+     */
+    private Announcement() {
         createdDate = new Date();
+        this.message = null;
+        this.user = null;
     }
 
+    /**
+     *      Create a new {@link Announcement} object, for display on the front page.
+     * @param message Content of the announcement
+     * @param user The {@link User} that created the announcement
+     */
     public Announcement(String message, User user) {
         this();
         this.message = message;
