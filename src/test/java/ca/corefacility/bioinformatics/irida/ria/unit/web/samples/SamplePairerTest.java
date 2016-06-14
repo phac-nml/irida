@@ -52,11 +52,11 @@ public class SamplePairerTest {
     }
 
     /**
-     * Create a list of {@link MultipartFile}
+     * Create a list of {@link MultipartFile}s
      *
      * @param list
      *            A list of paths to files.
-     * @return
+     * @return List of {@link MultipartFile}s
      * @throws IOException
      */
     private List<MultipartFile> createMultipartFileList(String[] list) throws IOException {
@@ -70,4 +70,17 @@ public class SamplePairerTest {
         return fileList;
     }
 
+    @Test
+    public void getPairedNameReversed() throws IOException{
+        String[] reverse_files = {"src/test/resources/files/pairs/pair_test_R2_001.fastq", "src/test/resources/files/pairs/pair_test_R1_001.fastq"};
+
+        List<MultipartFile> allFiles = createMultipartFileList(reverse_files);
+        Set<String> keys = SamplePairer.getPairedFiles(allFiles).keySet();
+
+        assertEquals("Paired files not correctly organized into pairs by prefix", 1, keys.size());
+
+        for (String s: keys) {
+            assertEquals("Pairs don't contain the right number of sequence files", 2, SamplePairer.getPairedFiles(allFiles).get(s).size());
+        }
+    }
 }

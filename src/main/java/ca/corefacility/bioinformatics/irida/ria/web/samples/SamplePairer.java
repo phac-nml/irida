@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import com.sksamuel.diffpatch.DiffMatchPatch;
 import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
@@ -7,13 +9,7 @@ import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
@@ -25,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 */
 
 public class SamplePairer {
+	private static final Logger logger = LoggerFactory.getLogger(SamplePairer.class);
 
 	private static DiffMatchPatch diff = new DiffMatchPatch();
 	
@@ -60,10 +57,11 @@ public class SamplePairer {
 					file2 = files.get(j);
 
 					if (!wasChecked.contains(file2)) {
+						MultipartFile[] filePair = null;
 
 						List<Diff> diffs = diff.diff_main(file1.getOriginalFilename(), file2.getOriginalFilename());
 						//The size of `diffs` is 4 when only 1 character differs between the two strings
-						//if the two files should be paired, this would be the list of diffs between the filenames:
+						//if the two files should be paired, this would be the list of diffs between the file names:
 						//		diffs[0] = common prefix
 						//		diffs[1] = unique character 1 (e.g. "1" or "f")
 						//		diffs[2] = unique character 2 (e.g. "2" or "r")
@@ -71,20 +69,31 @@ public class SamplePairer {
 						if (diffs.size() == 4) {
 							String file1ID = diffs.get(1).text;
 							String file2ID = diffs.get(2).text;
-							if (Stream.of(forwardMatches).anyMatch(x -> file1ID.contains(x))
-									&& Stream.of(reverseMatches).anyMatch(x -> file2ID.contains(x))) {
-								pair = true;
-
-								MultipartFile[] filePair = {file1, file2};
-								organizedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
-								wasChecked.add(file2);
+							//Sometimes files uploaded get put in a different ordering such that
+							//the first file is the "reverse" sequence file and the last file is
+							//the "forward" sequence file. This long condition checks for that
+							//situation.
+							if ((Stream.of(forwardMatches).anyMatch(x -> file1ID.contains(x))
+									&& Stream.of(reverseMatches).anyMatch(x -> file2ID.contains(x)))
+									|| (Stream.of(reverseMatches).anyMatch(x -> file1ID.contains(x))
+									&& Stream.of(forwardMatches).anyMatch(x -> file2ID.contains(x)))) {
+								filePair = new MultipartFile[]{file1, file2};
 							}
+						}
+
+						if (filePair != null) {
+							pair = true;
+							organizedFiles.put(diffs.get(0).text, Arrays.asList(filePair));
+							logger.trace("Uploaded files [" + filePair[0].getName() + ", " + filePair[1].getName()
+								+ "] were paired.");
+							wasChecked.add(file2);
 						}
 					}
 				}
 				if (!pair) {
 					MultipartFile[] singleFile = {file1};
 					organizedFiles.put(file1.getOriginalFilename(), Arrays.asList(singleFile));
+					logger.trace("Uploaded file [" + file1.getName() +"] was not paired");
 				}
 			}
 			wasChecked.add(file1);
