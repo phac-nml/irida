@@ -211,7 +211,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Select some samples
 		page.selectSample(0);
 		page.selectSample(1);
-		page.selectSample(2);
 
 		// Remove process
 		page.removeSamples();
