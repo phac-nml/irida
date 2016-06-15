@@ -4,6 +4,10 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+1.0.0 to 0.11.0
+---------------
+* No special upgrade steps required, just deploy the new `war` file.
+
 1.0.0-alpha10 to 1.0.0
 ----------------------
 * You may now configure the link and text that gets rendered on web pages under the 'Help' menu for accessing an external help forum. You can configure the link and text by adding some keys to `/etc/irida/web.conf`:
