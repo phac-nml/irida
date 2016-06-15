@@ -212,7 +212,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Remove process
 		page.removeSamples();
-		assertFalse("Remove button should be disabled since no samples selected", page.isRemoveBtnEnabled());
 		assertEquals("Should be only 2 pages of projects now", 2, page.getPaginationCount());
 		page.selectPaginationPage(2);
 		assertEquals("Should only be displaying 9 samples.", 9, page.getNumberProjectsDisplayed());
