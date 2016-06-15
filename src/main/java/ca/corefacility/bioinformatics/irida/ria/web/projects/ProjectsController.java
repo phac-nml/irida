@@ -58,7 +58,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -68,9 +70,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizationService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
@@ -110,6 +112,7 @@ public class ProjectsController {
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
 	private final ProjectRemoteService projectRemoteService;
+	private RemoteAPIService remoteApiService;
 	
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
@@ -134,7 +137,7 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService, ProjectRemoteService projectRemoteService,
-			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService, MessageSource messageSource) {
+			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService, RemoteAPIService remoteApiService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -143,6 +146,7 @@ public class ProjectsController {
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.messageSource = messageSource;
+		this.remoteApiService = remoteApiService;
 		this.fileSizeConverter = new FileSizeConverter();
 	}
 
@@ -295,9 +299,14 @@ public class ProjectsController {
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
 	public String getSynchronizeProjectPage(final Model model) {
+		
+		Iterable<RemoteAPI> apis = remoteApiService.findAll();
+		model.addAttribute("apis",apis);
+		
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
 		}
+		
 		return SYNC_NEW_PROJECT_PAGE;
 	}
 
@@ -310,15 +319,29 @@ public class ProjectsController {
 	 * @return Redirect to the new project.
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
-	public String syncProject(@RequestParam String url) {
+	public String syncProject(@RequestParam String url, Model model) {
 
-		Project read = projectRemoteService.read(url);
-		read.setId(null);
-		read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+		try {
+			Project read = projectRemoteService.read(url);
+			read.setId(null);
+			read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
 
-		read = projectService.create(read);
+			read = projectService.create(read);
 
-		return "redirect:/projects/" + read.getId() + "/metadata";
+			return "redirect:/projects/" + read.getId() + "/metadata";
+		} catch (IridaOAuthException ex) {
+			Map<String, String> errors = new HashMap<>();
+			errors.put("oauthError", ex.getMessage());
+			model.addAttribute("errors", errors);
+			return getSynchronizeProjectPage(model);
+		}
+	}
+	
+	@RequestMapping(value = "/projects/ajax/api/{apiId}")
+	@ResponseBody
+	public List<Project> ajaxGetProjectsForApi(@PathVariable Long apiId) {
+		RemoteAPI api = remoteApiService.read(apiId);
+		return projectRemoteService.listProjectsForAPI(api);
 	}
 
 	/**

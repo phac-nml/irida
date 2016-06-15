@@ -9,13 +9,29 @@
 <div layout:fragment="page">
     <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
         <form name="new_project" class="ng-cloak" th:action="@{/projects/synchronize}" method="post" role="form"
-              novalidate="novalidate"
-              ng-controller="NewProjectController as vm">
+              novalidate="novalidate">
             <section class="panel panel-default">
                 <div class="panel-heading">
                     <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
                 </div>
                 <div class="panel-body">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <select class="form-control api-selection" id="api-selection">
+                                    <option th:each="api : ${apis}" th:text="${api.name}" th:value="${api.id}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <span id="api-status" class="api-status">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                </span>
+                            
+                                <button type="button" class="oauth-connect-link btn btn-default hidden" id="connect-button"
+                                    th:text="#{remoteapi.status.connect.button}">_Connect_</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="control-label" for="name"> <span >_Project_URL_</span>
                             <small uib-tooltip-placement="right" data:uib-tooltip="#{projects.create.form.required}"
@@ -38,6 +54,24 @@
     </div>
 </div>
 <th:block layout:fragment="scripts" th:inline="javascript">
+    <script>
+        $(document).ready(function(){
+            var connectButtonId = "#connect-button";
+            $("#api-selection").on("change", function(){
+                $(connectButtonId).addClass("hidden");
+                var val = $(this).val();
+                $(connectButtonId).data("api-id", val);
+                getApiStatus(val,"#api-status", connectButtonId);
+            })
+            
+            var originalApiId = $("#api-selection").val();
+            
+            $(connectButtonId).data("api-id", originalApiId);
+            getApiStatus(originalApiId, "#api-status", connectButtonId);
+        });
+        
+    </script>
+    <script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
 </th:block>
 </body>
 </html>
