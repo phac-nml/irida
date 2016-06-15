@@ -12,10 +12,11 @@
               novalidate="novalidate">
             <section class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
+                    <h2 class="panel-title">_Synchronize New Project_</h2>
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
+                        <label class="control-label" for="api-selection">_Remote API_</label>
                         <div class="row">
                             <div class="col-md-8">
                                 <select class="form-control api-selection" id="api-selection">
@@ -33,11 +34,17 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label" for="name"> <span >_Project_URL_</span>
+                        <label class="control-label" for="project">_Project_</label>
+                        <select class="form-control project-select" id="project-select">
+                            <option class="select-api-opt" th:value="0">_Select_</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="name"><span>_Project_URL_</span>
                             <small uib-tooltip-placement="right" data:uib-tooltip="#{projects.create.form.required}"
                                    class="fa fa-fw fa-asterisk"></small>
                         </label>
-                        <input class="form-control input-full" type="text" id="url" name="url"
+                        <input class="form-control input-full" type="text" id="projectUrl" name="url"
                                required="required"
                                placeholder="Required" th:placeholder="#{form.required}"/>
                     </div>
@@ -59,16 +66,56 @@
             var connectButtonId = "#connect-button";
             $("#api-selection").on("change", function(){
                 $(connectButtonId).addClass("hidden");
-                var val = $(this).val();
-                $(connectButtonId).data("api-id", val);
-                getApiStatus(val,"#api-status", connectButtonId);
-            })
+                
+                var apiId = $(this).val();
+                $(connectButtonId).data("api-id", apiId);
+                getApiStatus(apiId ,"#api-status", connectButtonId);
+                
+                getApiProjects(apiId);    
+            });
+            
+            $("#project-select").on("change", function(){
+               var projectUrl = $(this).val();
+               
+               if(projectUrl == 0){
+                   projectUrl = null;
+               }
+               
+               $("#projectUrl").val(projectUrl);
+            });
             
             var originalApiId = $("#api-selection").val();
             
             $(connectButtonId).data("api-id", originalApiId);
             getApiStatus(originalApiId, "#api-status", connectButtonId);
+            getApiProjects(originalApiId);
         });
+        
+        function getApiProjects(apiId){
+            var url = /*[[@{/projects/ajax/api/}]]*/ "/projects/ajax/api/";
+            url = url + apiId;
+            
+            $(".project-option").remove();
+            $("#projectUrl").val("");
+            
+            var projectSelect = $("#project-select");
+            
+            $.ajax({
+                url: url,
+                success: function(vals){
+                    $(".project-option").remove();
+                    
+                    $.each(vals, function (i, project) {
+                        var projectUrl = project.remoteStatus.url;
+                        projectSelect.append('<option class="project-option" value="'+projectUrl+'">'+project.label+'</option>');
+                    });
+                    projectSelect.prop("disabled", false);
+                },
+                error: function(){
+                    projectSelect.prop("disabled", true);
+                }
+            });
+        }
         
     </script>
     <script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
