@@ -22,6 +22,7 @@ Changes
 * [UI]: Refactored Sequencing Runs list to use dandelion datatables.
 * [UI]: Fixed a bug where groups on a project with manager role were not allowed to behave like a manager. (1.0.5)
 * [UI]: Added a project event for removing samples from a project.
+* [UI]: Updated NCBI SRA uploader UI to be easier to prepare large numbers of samples.
 * [Developer]: Dropped version down to a *slightly* lower number.
 
 1.0.0-alpha10 to 1.0.0
