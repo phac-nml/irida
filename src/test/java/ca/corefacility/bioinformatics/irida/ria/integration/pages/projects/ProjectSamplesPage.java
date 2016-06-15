@@ -198,6 +198,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	// Actions
 	public void selectPaginationPage(int page) {
 		pagination.get(page).findElement(By.cssSelector("a")).click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".dataTables_processing")));
 	}
 
 	public void selectSample(int row) {

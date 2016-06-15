@@ -64,7 +64,6 @@
      */
     function openRemoveModal(ids) {
       return $uibModal.open({
-        size        : 'lg',
         templateUrl : page.urls.modals.remove + "?" + $.param({sampleIds: ids}),
         openedClass : 'remove-modal',
         controllerAs: "removeCtrl",
