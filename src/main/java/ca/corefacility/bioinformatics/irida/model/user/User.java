@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 
 /**
  * A user object.
@@ -118,6 +119,9 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 
 	@OneToMany(mappedBy = "user")
 	private Collection<RemoteAPIToken> tokens;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
+	private List<AnnouncementUserJoin> announcements;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.
