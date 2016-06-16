@@ -15,6 +15,7 @@
                     <h2 class="panel-title" th:text="#{projects.sync.heading}">_Synchronize New Project_</h2>
                 </div>
                 <div class="panel-body">
+                    <div th:if="${#maps.containsKey(errors, 'oauthError')}" th:text="#{projects.sync.error.oauth}" class="alert alert-warning">_Oauth Error_</div>
                     <div class="form-group">
                         <label class="control-label" for="api-selection" th:text="#{projects.sync.remoteapi}">_Remote API_</label>
                         <div class="row">
