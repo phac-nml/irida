@@ -316,7 +316,8 @@ public class ProjectsController {
 	 * 
 	 * @param url
 	 *            the URL of the remote project
-	 * @return Redirect to the new project.
+	 * @return Redirect to the new project. If an oauth exception occurs it will
+	 *         be forwarded back to the creation page.
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
 	public String syncProject(@RequestParam String url, Model model) {
@@ -337,6 +338,14 @@ public class ProjectsController {
 		}
 	}
 	
+	/**
+	 * List all the {@link Project}s that can be read for a user from a given
+	 * {@link RemoteAPI}
+	 * 
+	 * @param apiId
+	 *            the local ID of the {@link RemoteAPI}
+	 * @return a List of {@link Project}s
+	 */
 	@RequestMapping(value = "/projects/ajax/api/{apiId}")
 	@ResponseBody
 	public List<Project> ajaxGetProjectsForApi(@PathVariable Long apiId) {
