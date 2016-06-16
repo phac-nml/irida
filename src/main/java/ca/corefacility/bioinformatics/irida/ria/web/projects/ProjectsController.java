@@ -58,6 +58,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -333,6 +334,12 @@ public class ProjectsController {
 		} catch (IridaOAuthException ex) {
 			Map<String, String> errors = new HashMap<>();
 			errors.put("oauthError", ex.getMessage());
+			model.addAttribute("errors", errors);
+			return getSynchronizeProjectPage(model);
+		}
+		catch(EntityNotFoundException ex){
+			Map<String, String> errors = new HashMap<>();
+			errors.put("urlError", ex.getMessage());
 			model.addAttribute("errors", errors);
 			return getSynchronizeProjectPage(model);
 		}
