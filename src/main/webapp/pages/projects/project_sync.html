@@ -12,11 +12,11 @@
               novalidate="novalidate">
             <section class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="panel-title">_Synchronize New Project_</h2>
+                    <h2 class="panel-title" th:text="#{projects.sync.heading}">_Synchronize New Project_</h2>
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
-                        <label class="control-label" for="api-selection">_Remote API_</label>
+                        <label class="control-label" for="api-selection" th:text="#{projects.sync.remoteapi}">_Remote API_</label>
                         <div class="row">
                             <div class="col-md-8">
                                 <select class="form-control api-selection" id="api-selection">
@@ -32,28 +32,31 @@
                                     th:text="#{remoteapi.status.connect.button}">_Connect_</button>
                             </div>
                         </div>
+                        <p class="help-block" th:text="#{projects.sync.api.help}">_Connect to a Remote API_</p>
                     </div>
                     <div class="form-group">
-                        <label class="control-label" for="project">_Project_</label>
+                        <label class="control-label" for="project" th:text="#{projects.sync.project}">_Project_</label>
                         <select class="form-control project-select" id="project-select">
-                            <option class="select-api-opt" th:value="0">_Select_</option>
+                            <option class="select-api-opt" th:value="0" th:text="#{projects.sync.select}">_Select_</option>
                         </select>
+                        <p class="help-block" th:text="#{projects.sync.project.help}">_Select a project to synchornize_</p>
                     </div>
                     <div class="form-group">
-                        <label class="control-label" for="name"><span>_Project_URL_</span>
+                        <label class="control-label" for="name"><span th:text="#{projects.sync.url}">_Project_URL_</span>
                             <small uib-tooltip-placement="right" data:uib-tooltip="#{projects.create.form.required}"
                                    class="fa fa-fw fa-asterisk"></small>
                         </label>
                         <input class="form-control input-full" type="text" id="projectUrl" name="url"
                                required="required"
                                placeholder="Required" th:placeholder="#{form.required}"/>
+                        <p class="help-block" th:text="#{projects.sync.url.help}">_API URL_</p>
                     </div>
                 </div>
                 <div class="panel-footer text-right">
                     <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}"
                        th:text="#{projects.create.form.cancel}">Cancel</a>
                     <button id="submitBtn" type="submit" class="btn btn-primary" ng-disabled="new_project.$invalid">
-                        <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
+                        <span th:text="#{projects.sync.create}">Create Project</span>&nbsp;
                         <span class="glyphicon glyphicon-chevron-right"></span></button>
                 </div>
             </section>
