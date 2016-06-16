@@ -20,6 +20,7 @@
   ],
   "builders": [
     {
+      "vm_name": "irida-virtual-appliance",
       "type": "virtualbox-iso",
       "boot_command": [
         "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
@@ -45,7 +46,8 @@
         [ "modifyvm", "{{.Name}}", "--cpus", "8" ],
 	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_tomcat,tcp,,48888,,80" ],
 	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_ssh,tcp,,42222,,22" ],
-	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_galaxy,tcp,,49999,,9090" ]
+	[ "modifyvm", "{{.Name}}", "--natpf1", "guest_galaxy,tcp,,49999,,9090" ],
+	[ "modifyvm", "{{.Name}}", "--nictype1", "virtio" ]
       ]
     }
   ]
