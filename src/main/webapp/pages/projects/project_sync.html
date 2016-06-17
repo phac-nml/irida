@@ -7,30 +7,59 @@
 </head>
 <body>
 <div layout:fragment="page">
-    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
+    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg" ddl:bundle-includes="project-sync">
         <form name="new_project" class="ng-cloak" th:action="@{/projects/synchronize}" method="post" role="form"
-              novalidate="novalidate"
-              ng-controller="NewProjectController as vm">
+              novalidate="novalidate">
             <section class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
+                    <h2 class="panel-title" th:text="#{projects.sync.heading}">_Synchronize New Project_</h2>
                 </div>
                 <div class="panel-body">
+                    <div th:if="${#maps.containsKey(errors, 'oauthError')}" th:text="#{projects.sync.error.oauth}" class="alert alert-warning">_Oauth Error_</div>
+                    <div th:if="${#maps.containsKey(errors, 'urlError')}" th:text="#{projects.sync.error.url}" class="alert alert-warning">_URL Error_</div>
                     <div class="form-group">
-                        <label class="control-label" for="name"> <span >_Project_URL_</span>
+                        <label class="control-label" for="api-selection" th:text="#{projects.sync.remoteapi}">_Remote API_</label>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <select class="form-control api-selection" id="api-selection">
+                                    <option th:each="api : ${apis}" th:text="${api.name}" th:value="${api.id}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <span id="api-status" class="api-status">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                </span>
+                            
+                                <button type="button" class="oauth-connect-link btn btn-default hidden" id="connect-button"
+                                    th:text="#{remoteapi.status.connect.button}">_Connect_</button>
+                            </div>
+                        </div>
+                        <p class="help-block" th:text="#{projects.sync.api.help}">_Connect to a Remote API_</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="project" th:text="#{projects.sync.project}">_Project_</label>
+                        <select class="form-control project-select" id="project-select">
+                            <option class="select-api-opt" th:value="0" th:text="#{projects.sync.select}">_Select_</option>
+                        </select>
+                        <p class="help-block" th:text="#{projects.sync.project.help}">_Select a project to synchornize_</p>
+                    </div>
+                    <div><a data-toggle="collapse" href="#advancedCollapse"><span th:text="#{projects.sync.advanced}">_Advanced_</span> <fa:icon type="hide"/></a></div>
+                    <div id="advancedCollapse" class="form-group collapse">
+                        <label class="control-label" for="name"><span th:text="#{projects.sync.url}">_Project_URL_</span>
                             <small uib-tooltip-placement="right" data:uib-tooltip="#{projects.create.form.required}"
                                    class="fa fa-fw fa-asterisk"></small>
                         </label>
-                        <input class="form-control input-full" type="text" id="url" name="url"
+                        <input class="form-control input-full" type="text" id="projectUrl" name="url"
                                required="required"
                                placeholder="Required" th:placeholder="#{form.required}"/>
+                        <p class="help-block" th:text="#{projects.sync.url.help}">_API URL_</p>
                     </div>
                 </div>
                 <div class="panel-footer text-right">
                     <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}"
                        th:text="#{projects.create.form.cancel}">Cancel</a>
                     <button id="submitBtn" type="submit" class="btn btn-primary" ng-disabled="new_project.$invalid">
-                        <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
+                        <span th:text="#{projects.sync.create}">Create Project</span>&nbsp;
                         <span class="glyphicon glyphicon-chevron-right"></span></button>
                 </div>
             </section>
@@ -38,6 +67,7 @@
     </div>
 </div>
 <th:block layout:fragment="scripts" th:inline="javascript">
+    <script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
 </th:block>
 </body>
 </html>
