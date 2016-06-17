@@ -140,6 +140,9 @@
                                 <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
                             </a>
                         </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}" th:text="#{project.samples.nav.new}">Create New Sample</a></li>
                     </ul>
                 </div>
             </div>
