@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.11.0 to 0.12.0
+----------------
+* [Developer]: Added `FetchMode.SELECT` to `SequenceFilePair.files` as Hibernate was including the children multiple times in the result set. (0.11.1)
+
 1.0.0 to 0.11.0
 ---------------
 * [UI]: Fixed issue were login page was being displayed even though the user was logged in.
