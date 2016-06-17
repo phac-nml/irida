@@ -4,6 +4,9 @@ Changes
 0.11.0 to 0.12.0
 ----------------
 * [Developer]: Added `FetchMode.SELECT` to `SequenceFilePair.files` as Hibernate was including the children multiple times in the result set. (0.11.1)
+* [Developer]: Packer now waits for tomcat to start during the build so that the database is fully deployed before distribution.
+* [Developer]: Packer renames the VM on output.
+* [Developer]: The Virtualbox appliance that's built now uses the `virtio` network adapter because the Intel one had serious performance issues over NAT.
 
 1.0.0 to 0.11.0
 ---------------
