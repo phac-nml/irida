@@ -63,6 +63,15 @@ public class ProjectOwnerPermission extends BasePermission<Project, Long> {
 	@Override
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
 		logger.trace("Testing permission for [" + authentication + "] has manager permissions on project [" + p + "]");
+		
+		/**
+		 * Check to ensure if project is remote that it's being updated in the
+		 * right context
+		 */
+		if (!RemoteUpdatePermission.canUpdateRemoteObject(p, authentication)) {
+			return false;
+		}
+		
 		// check if the user is a project owner for this project
 		User u = userRepository.loadUserByUsername(authentication.getName());
 		List<Join<Project, User>> projectUsers = pujRepository.getUsersForProjectByRole(p, ProjectRole.PROJECT_OWNER);
