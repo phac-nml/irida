@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
 
 /**
@@ -29,8 +29,8 @@ public class RemoteUpdatePermission {
 	 *         the authentication is a
 	 *         {@link ProjectSynchronizationAuthenticationToken}
 	 */
-	public static boolean canUpdateRemoteObject(IridaResourceSupport object, Authentication authentication) {
-		if (object.isRemote()) {
+	public static boolean canUpdateRemoteObject(Object object, Authentication authentication) {
+		if (object instanceof RemoteSynchronizable && ((RemoteSynchronizable) object).isRemote()) {
 			/*
 			 * if the object is remote and the authentication is a
 			 * ProjectSynchronizationAuthenticationToken, everything's ok
