@@ -1,3 +1,12 @@
+wait_for_tomcat() {
+	echo "Waiting patiently for Tomcat to start..."
+	while ! bash -c "curl http://localhost:8080 2> /dev/null > /dev/null" ; do
+		echo -n '.'
+		sleep 1
+	done
+	echo "Tomcat has (hopefully) started by now..."
+}
+
 # install java and apr
 yum -y install epel-release
 yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-client tomcat-native
@@ -41,7 +50,11 @@ JAVA_OPTS="-Dspring.profiles.active=prod"
 EOF
 
 systemctl enable tomcat
+systemctl enable mariadb
 systemctl start tomcat
+
+wait_for_tomcat
+
 systemctl stop tomcat
 systemctl stop mariadb
 
