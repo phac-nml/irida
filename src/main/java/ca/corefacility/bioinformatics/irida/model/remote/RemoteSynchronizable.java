@@ -21,4 +21,18 @@ public interface RemoteSynchronizable {
 	 *            the {@link RemoteStatus} to set
 	 */
 	public void setRemoteStatus(RemoteStatus remoteStatus);
+
+	/**
+	 * Check if this entity was read from a remote api
+	 * 
+	 * @return true if the object was read from a remote api
+	 */
+	public default boolean isRemote() {
+		RemoteStatus status = getRemoteStatus();
+
+		if (status != null && status.getURL() != null) {
+			return true;
+		}
+		return false;
+	}
 }
