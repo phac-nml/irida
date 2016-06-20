@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
-
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -27,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -280,8 +278,8 @@ public class ProjectSynchronizationService {
 	 *            The {@link User} to set in the context holder
 	 */
 	private void setAuthentication(User user) {
-		PreAuthenticatedAuthenticationToken userAuthentication = new PreAuthenticatedAuthenticationToken(user, null,
-				Lists.newArrayList(user.getSystemRole()));
+		ProjectSynchronizationAuthenticationToken userAuthentication = new ProjectSynchronizationAuthenticationToken(
+				user);
 
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(userAuthentication);
