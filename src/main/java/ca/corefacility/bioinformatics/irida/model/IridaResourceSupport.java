@@ -193,4 +193,18 @@ public class IridaResourceSupport {
 	public RemoteStatus getRemoteStatus() {
 		return null;
 	}
+	
+	/**
+	 * Check if this entity was read from a remote api
+	 * 
+	 * @return true if the object was read from a remote api
+	 */
+	public boolean isRemote() {
+		RemoteStatus status = getRemoteStatus();
+
+		if (status != null && status.getURL() != null) {
+			return true;
+		}
+		return false;
+	}
 }
