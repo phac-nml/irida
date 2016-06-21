@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.security.permissions.ManageProjectMembersPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -24,11 +25,14 @@ public class ProjectControllerUtils {
 	private final UserService userService;
 	
 	private final ProjectOwnerPermission projectOwnerPermission;
+	private final ManageProjectMembersPermission projectMembersPermission;
 
 	@Autowired
-	public ProjectControllerUtils(final UserService userService, final ProjectOwnerPermission projectOwnerPermission) {
+	public ProjectControllerUtils(final UserService userService, final ProjectOwnerPermission projectOwnerPermission,
+			final ManageProjectMembersPermission projectMembersPermission) {
 		this.userService = userService;
 		this.projectOwnerPermission = projectOwnerPermission;
+		this.projectMembersPermission = projectMembersPermission;
 	}
 
 	/**
@@ -54,7 +58,10 @@ public class ProjectControllerUtils {
 
 		boolean isOwner = projectOwnerPermission.isAllowed(SecurityContextHolder.getContext().getAuthentication(),
 				project);
-
 		model.addAttribute("isOwner", isOwner);
+
+		boolean manageMembers = projectMembersPermission
+				.isAllowed(SecurityContextHolder.getContext().getAuthentication(), project);
+		model.addAttribute("manageMembers", manageMembers);
 	}
 }

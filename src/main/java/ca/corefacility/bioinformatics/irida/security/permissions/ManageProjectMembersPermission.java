@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -20,8 +21,9 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
+@Component
 public class ManageProjectMembersPermission extends BasePermission<Project, Long> {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectOwnerPermission.class);
+	private static final Logger logger = LoggerFactory.getLogger(ManageProjectMembersPermission.class);
 	private static final String PERMISSION_PROVIDED = "manageProjectMembers";
 
 	private final UserRepository userRepository;

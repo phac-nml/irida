@@ -38,7 +38,7 @@ ddl:bundle-includes="project-members">
                 <div class="btn-group">
                     <button id="add-members-button" class="btn btn-default"
                        type="button" data-toggle="modal" data-target="#addMemberModal"
-                       th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
+                       th:if="${isAdmin} or ${manageMembers}" href="#addMembersLink"
                        th:text="#{project.members.edit.add}">_Add Members_</button>
                 </div>
             </div>
@@ -56,10 +56,10 @@ ddl:bundle-includes="project-members">
                 <thead>
                 <tr role="row">
                     <th dt:property="object.username" dt:searchable="true" th:text="#{project.table.collaborator.name}" dt:renderFunction="project-members#projectMembersTable.memberNameLinkRow"></th>
-                    <th dt:property="projectRole" th:if="${isAdmin} or ${isOwner}" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRole"></th>
-                    <th dt:property="projectRole" th:if="not (${isAdmin} or ${isOwner})" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRoleAsText"></th>
+                    <th dt:property="projectRole" th:if="${isAdmin} or ${manageMembers}" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRole"></th>
+                    <th dt:property="projectRole" th:if="not (${isAdmin} or ${manageMembers})" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRoleAsText"></th>
                     <th width="150px" dt:property="createdDate" th:text="#{project.table.collaborator.since}" dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-                    <th width="50px" th:if="${isAdmin} or ${isOwner}" dt:sortable="false" dt:renderFunction="project-members#projectMembersTable.removeMemberButton"></th>
+                    <th width="50px" th:if="${isAdmin} or ${manageMembers}" dt:sortable="false" dt:renderFunction="project-members#projectMembersTable.removeMemberButton"></th>
                 </tr>
                 </thead>
             </table>
