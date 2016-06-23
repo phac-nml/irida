@@ -129,7 +129,6 @@
       return $http.post(urls.add, {projectId: projectId, sampleIds: samples})
           .then(function(result) {
             scope.$emit('cart.update');
-            console.log(result);
             notifications.show({msg: result.data.message});
           });
     };
