@@ -146,7 +146,7 @@
                         <li>
                             <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}" th:text="#{project.samples.nav.new}">Create New Sample</a></li>
                     </ul>
-                    <button class="btn btn-primary" th:text="#{project.samples.nav.add-to-cart}" ng-click="toolsCtrl.addToCart()">Add To Cart</button>
+                    <button id="cart-add-btn" class="btn btn-primary" th:text="#{project.samples.nav.add-to-cart}" ng-click="toolsCtrl.addToCart()">Add To Cart</button>
                 </div>
             </div>
         </div>
