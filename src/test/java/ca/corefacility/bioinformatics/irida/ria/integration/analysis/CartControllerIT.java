@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -77,7 +78,7 @@ public class CartControllerIT {
 		Project project = projectService.read(projectId);
 		Set<Long> sampleIds = Sets.newHashSet(4L);
 		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, sampleIds, Locale.US);
-		assertTrue((boolean) addProjectSample.get("success"));
+		assertEquals("Should be 1 sample in the cart", "1 sample was added to the cart.",  addProjectSample.get("message"));
 
 		Set<Sample> selectedSamplesForProject = controller.getSelected().get(project);
 		for (Sample s : selectedSamplesForProject) {
@@ -100,7 +101,7 @@ public class CartControllerIT {
 			assertTrue(selectedSamplesForProject.contains(j.getObject()));
 		}
 	}
-	
+
 	@Test
 	@WithMockUser(username = "mrtest", roles = "ADMIN")
 	public void testClearCart(){
