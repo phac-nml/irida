@@ -7,7 +7,7 @@
  */
 var ProjectColourer = (function () {
   "use strict";
-  
+
   var index    = 0, // Index of the current colour
       // These colours are intense colours pick from
       // https://www.google.com/design/spec/style/color.html#color-color-palette A better solution might be to allow
@@ -75,20 +75,29 @@ var RowClickHandler = (function (page) {
 
   function deselectRow(row) {
     var id = getRowId(row),
+        cb = row.querySelector('input[type=checkbox]'),
         index = selected.indexOf(id);
     // Make sure the row is selected
     if (index > -1) {
       row.classList.remove("selected");
+      cb.checked = false;
       selected.splice(index, 1);
     }
+  }
+
+  function toggleRowCheckbox (row, isSelected) {
+    var cb = row.querySelector("input[type=checkbox]");
+    cb.checked = isSelected;
   }
 
   function toggleRowSelection(row) {
     if (row.classList.contains("selected")) {
       deselectRow(row);
+      toggleRowCheckbox(row, false);
       lastSelectedId = undefined;
     } else {
       selectRow(row);
+      toggleRowCheckbox(row, true);
       lastSelectedId = getRowId(row);
     }
   }
@@ -355,6 +364,7 @@ var datatable = (function(moment, tl, page) {
   function projectRowCreated(row, item) {
     if (rowClickHandler.isRowSelected(item.sample.identifier)) {
       row.classList.add("selected");
+      row.querySelector("input[type=checkbox]").checked = true;
     }
   }
 
@@ -385,6 +395,15 @@ var datatable = (function(moment, tl, page) {
     rowClickHandler.clearSelected();
   }
 
+  function formatCheckbox(row, item, data) {
+    var wrapper = document.createElement("div");
+    var cb = document.createElement("input");
+    wrapper.appendChild(cb);
+    cb.type = "checkbox";
+
+    return wrapper.innerHTML;
+  }
+
   return {
     formatDate                    : formatDate,
     formatDateWithTime            : formatDateWithTime,
@@ -397,6 +416,7 @@ var datatable = (function(moment, tl, page) {
     projectRowCreated             : projectRowCreated,
     tbodyClickEvent               : tbodyClickEvent,
     getSelectedIds                : getSelectedIds,
-    clearSelected                 : clearSelected
+    clearSelected                 : clearSelected,
+    formatCheckbox                : formatCheckbox
   };
 })(window.moment, window.TL, window.PAGE);
