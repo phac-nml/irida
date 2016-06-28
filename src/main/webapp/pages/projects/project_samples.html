@@ -8,6 +8,9 @@
     <script th:inline="javascript">
         window.dependencies = ['irida.projects.samples.controller'];
         var PAGE = {
+            project: {
+                id: /*[[${project.getId()}]]*/ '4'
+            },
             urls: {
                 associated: {
                     local: /*[[@{/projects/{id}/ajax/associated(id=${project.getId()})}]]*/ ''
@@ -27,8 +30,7 @@
                     remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
                     merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
                     copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
-                },
-                remote: /*[[@{/projects/{id}/associated/remote/samples(id=${project.getId()})}]]*/ ''
+                }
             },
             i18n: {
                 dateFilter: {
@@ -144,6 +146,7 @@
                         <li>
                             <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}" th:text="#{project.samples.nav.new}">Create New Sample</a></li>
                     </ul>
+                    <button id="cart-add-btn" class="btn btn-primary" ng-click="toolsCtrl.addToCart()"><fa:icon type="cart-plus" />&nbsp;<th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block></button>
                 </div>
             </div>
         </div>

@@ -104,7 +104,7 @@
     };
   }
 
-  function CartService(scope, $http, $q) {
+  function CartService(scope, $http, notifications) {
     var svc = this,
       urls = {
         all: TL.BASE_URL + 'cart',
@@ -125,20 +125,12 @@
         });
     };
 
-    svc.add = function (samples) {
-      var promises = [];
-
-      _.forEach(samples, function (s) {
-        if (s.type === PROJECTS_TYPES.REMOTE) {
-          promises.push($http.post(urls.addRemote, {sampleURL: s.sample}));
-        } else {
-          promises.push($http.post(urls.add, {projectId: s.project, sampleIds: [s.sample]}));
-        }
-      });
-
-      return $q.all(promises).then(function () {
-        scope.$broadcast('cart.update', {});
-      });
+    svc.add = function (projectId, samples) {
+      return $http.post(urls.add, {projectId: projectId, sampleIds: samples})
+          .then(function(result) {
+            scope.$emit('cart.update');
+            notifications.show({msg: result.data.message});
+          });
     };
 
     svc.clear = function () {
@@ -353,8 +345,8 @@
   }
 
   angular
-    .module('irida.cart', [])
-    .service('CartService', ['$rootScope', '$http', '$q', CartService])
+    .module('irida.cart', ["irida.notifications"])
+    .service('CartService', ['$rootScope', '$http', "notifications", CartService])
     .controller('CartSliderController', ['CartService', '$uibModal', CartSliderController])
     .controller('GalaxyDialogCtrl', ['$uibModalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])

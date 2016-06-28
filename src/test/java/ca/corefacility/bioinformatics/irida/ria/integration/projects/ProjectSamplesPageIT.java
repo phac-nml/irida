@@ -125,15 +125,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
 	}
 
-	// TODO (JOSH - 2016-04-18): Re-implement testing add to cart.
-	@Ignore
 	@Test
 	public void testAddSamplesToCart() {
 		logger.info("Testing adding samples to the global cart.");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		page.selectSample(0);
 		page.selectSampleWithShift(4);
-		assertEquals("Should be 5 selected samples", "5 Samples Selected", page.getSelectedInfoText());
+		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
 
 		page.addSelectedSamplesToCart();
 		assertEquals("Should be 5 samples in the cart", 5, page.getCartCount());

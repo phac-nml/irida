@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -40,6 +42,7 @@ public class CartControllerTest {
 	UserService userService;
 	SequencingObjectService sequencingObjectService;
 	SampleRemoteService sampleRemoteService;
+	MessageSource messageSource;
 
 	CartController controller;
 
@@ -55,9 +58,10 @@ public class CartControllerTest {
 		userService = mock(UserService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		sampleRemoteService = mock(SampleRemoteService.class);
+		messageSource = mock(MessageSource.class);
 
 		controller = new CartController(sampleService, userService, projectService, sequencingObjectService,
-				sampleRemoteService);
+				sampleRemoteService, messageSource);
 
 		testData();
 	}
@@ -65,9 +69,10 @@ public class CartControllerTest {
 	@Test
 	public void testAddProjectSample() {
 		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
-		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, subIds);
+		when(messageSource.getMessage("cart.one-sample-added", new Object[] {}, Locale.US)).thenReturn("1 sample was added to the cart.");
+		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, subIds, Locale.US);
 
-		assertTrue((boolean) addProjectSample.get("success"));
+		assertEquals("Should be one sample in the cart", "1 sample was added to the cart.", (String) addProjectSample.get("message"));
 
 		verify(projectService).read(projectId);
 		for (Long id : subIds) {
