@@ -671,7 +671,7 @@
 								<jetty.port>${jetty.port}</jetty.port>
 								<server.base.url>http://localhost:${jetty.port}</server.base.url>
 							</systemPropertyVariables>
-							<rerunFailingTestsCount>5</rerunFailingTestsCount>
+							<rerunFailingTestsCount>1</rerunFailingTestsCount>
 						</configuration>
 					</execution>
 				</executions>

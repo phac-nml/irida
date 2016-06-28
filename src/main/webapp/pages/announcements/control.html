@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.w3.org/1999/xhtml"
+      layout:decorator="template/page">
+
+<head>
+    <title th:text="#{announcement.admin-menu}">THIS IS SOMETHING WRONG</title>
+</head>
+
+<body>
+<div class="row" layout:fragment="page" ddl:includes="livestampjs">
+    <section class="panel panel-info">
+        <div class="panel-heading">
+            <h3 th:text="#{announcement.admin-menu}"></h3>
+            <a class="btn btn-primary btn-sm" th:text="#{announcement.create.title}"
+               th:href="@{create}">_Create NEW_</a>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <li class="list-group-item event-item" th:each="ann : ${announcements}">
+                    <span th:text="${ann.getMessage()}">_Announcement Content_</span>
+                    <span class="event-date" th:with="dateFormat=#{locale.date.long}" data-livestamp="1466773101">
+                        <span uib-tooltip-placement="right"
+                          data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
+                          data-livestamp="1466773101"></span>
+                    </span>
+                    <span data:livestamp="1466773101"></span>
+
+                    <a class="btn pull-right" id="details"
+                       th:href="@{/announcements/{announcementID}/details(announcementID=${ann.getId()})}">
+                        <div class="glyphicon glyphicon-pencil"></div>
+                    </a>
+
+                </li>
+            </ul>
+        </div>
+    </section>
+</div>
+</body>
+</html>
