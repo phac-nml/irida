@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 @Component
 public class ManageProjectMembersPermission extends ModifyProjectPermission {
 	
-	private static final String PERMISSION_PROVIDED = "manageProjectMembers";
+	private static final String PERMISSION_PROVIDED = "canManageProjectMembers";
 
 	/**
 	 * Construct an instance of {@link ManageProjectMembersPermission}.
