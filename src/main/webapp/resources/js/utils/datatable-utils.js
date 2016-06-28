@@ -7,7 +7,7 @@
  */
 var ProjectColourer = (function () {
   "use strict";
-  
+
   var index    = 0, // Index of the current colour
       // These colours are intense colours pick from
       // https://www.google.com/design/spec/style/color.html#color-color-palette A better solution might be to allow
@@ -75,10 +75,12 @@ var RowClickHandler = (function (page) {
 
   function deselectRow(row) {
     var id = getRowId(row),
+        cb = row.querySelector('input[type=checkbox]'),
         index = selected.indexOf(id);
     // Make sure the row is selected
     if (index > -1) {
       row.classList.remove("selected");
+      cb.checked = false;
       selected.splice(index, 1);
     }
   }
