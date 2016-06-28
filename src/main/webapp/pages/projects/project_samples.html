@@ -70,6 +70,7 @@
     <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
         <thead>
         <tr>
+            <th dt:sortable="false" width="20px" dt:renderFunction="datatables-utils#datatable.formatCheckbox"></th>
             <th dt:property="sample.sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
             <th dt:property="project.name" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
             <th width="120px" dt:property="sample.createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
