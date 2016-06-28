@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -56,12 +57,12 @@ public class ProjectControllerUtils {
 		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
 		model.addAttribute("isAdmin", isAdmin);
 
-		boolean isOwner = projectOwnerPermission.isAllowed(SecurityContextHolder.getContext().getAuthentication(),
-				project);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
 		model.addAttribute("isOwner", isOwner);
 
-		boolean manageMembers = projectMembersPermission
-				.isAllowed(SecurityContextHolder.getContext().getAuthentication(), project);
+		boolean manageMembers = projectMembersPermission.isAllowed(authentication, project);
 		model.addAttribute("manageMembers", manageMembers);
 	}
 }
