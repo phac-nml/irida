@@ -53,7 +53,7 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 		 * Check to ensure if project is remote that it's being updated in the
 		 * right context
 		 */
-		if (canUpdateRemoteObject(p, authentication)) {
+		if (! canUpdateRemoteObject(p, authentication)) {
 			return false;
 		}
 
