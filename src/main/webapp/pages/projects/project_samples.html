@@ -29,7 +29,8 @@
                     local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
                     remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
                     merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
-                    copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ ''
+                    copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
+                    download: /*[[@{/projects/{id}/download/files(id=${project.getId()})}]]*/ '/projects/{projectId}/download/files'
                 }
             },
             i18n: {
@@ -113,8 +114,9 @@
                     &nbsp;
                     <th:block th:text="#{project.samples.nav.associated-create}"></th:block>
                 </a>
-                <div style="display: inline-block;" uib-dropdown="" ng-controller="ToolsController as toolsCtrl">
-                    <button id="sample-tools" class="btn btn-default" uib-dropdown-toggle="" type="button">
+                <div style="display: inline-block;" ng-controller="ToolsController as toolsCtrl">
+                    <div style="display: inline-block;" uib-dropdown="" >
+                        <button id="sample-tools" class="btn btn-default" uib-dropdown-toggle="" type="button">
                         <th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;
                         <fa:icon type="caret-down" fixed="fixed"/>
                     </button>
@@ -147,6 +149,17 @@
                         <li>
                             <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}" th:text="#{project.samples.nav.new}">Create New Sample</a></li>
                     </ul>
+                    </div>
+                    <div style="display: inline-block;" uib-dropdown="">
+                        <button id="export-samples-btn" class="btn btn-default" uib-dropdown-toggle="">
+                            <th:block th:text="#{project.samples.export.label}" />&nbsp;
+                            <fa:icon type="caret-down" fixed="fixed"/>
+                        </button>
+                        <ul class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="export-samples-btn">
+                            <li role="menuitem" ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                                <a href="#" ng-click="toolsCtrl.download()"><fa:icon type="download" />&nbsp;<th:block th:text="#{project.samples.export.download}"/></a></li>
+                        </ul>
+                    </div>
                     <button id="cart-add-btn" class="btn btn-primary" ng-click="toolsCtrl.addToCart()"><fa:icon type="cart-plus" />&nbsp;<th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block></button>
                 </div>
             </div>

@@ -138,6 +138,13 @@
           });
     };
 
+    ToolsController.prototype.download = function () {
+      var ids = datatable.getSelectedIds();
+      if (ids.length > 0) {
+        sampleService.download(ids);
+      }
+    };
+
     return ToolsController;
   }());
 
