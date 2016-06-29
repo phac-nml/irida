@@ -204,6 +204,12 @@ public class FontAwesome {
 	public static final String PREVIOUS_ATTRIBUTE = "prev";
 	public static final String PREVIOUS_ICON = "chevron-circle-left";
 
+	/**
+	 * Attribute for copying to clipboard
+	 */
+	public static final String CLIPBOARD_ATTRIBUTE = "clipboard";
+	public static final String CLIPBOARD_ICON = "clipboard";
+
 	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
     * attribute to append this class. This will line up the icons properly.
@@ -251,6 +257,7 @@ public class FontAwesome {
 			.put(ALIGN_ATTRIBUTE, ALIGN_ICON)
 			.put(CREATE_ATTRIBUTE, CREATE_ICON)
 			.put(APPLY_ALL_ATTRIBUTE, APPLY_ALL_ICON)
+			.put(CLIPBOARD_ATTRIBUTE, CLIPBOARD_ICON)
 			.build();
 	// @formatter:on
 

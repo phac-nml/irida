@@ -31,7 +31,8 @@
                     merge: /*[[@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}]]*/ '',
                     copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
                     download: /*[[@{/projects/{id}/download/files(id=${project.getId()})}]]*/ '/projects/1/download/files',
-                    ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi'
+                    ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
+                    linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker'
                 }
             },
             i18n: {
@@ -159,6 +160,9 @@
                         <ul class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="export-samples-btn">
                             <li role="menuitem" ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
                                 <a href="#" ng-click="toolsCtrl.download()"><fa:icon type="download" />&nbsp;<th:block th:text="#{project.samples.export.download}"/></a></li>
+                            <li th:if="${linkerAvailable}" role="menuitem">
+                                <a href="#" ng-click="toolsCtrl.linker()"><fa:icon type="terminal" />&nbsp;<th:block th:text="#{project.samples.export.linker}"/></a>
+                            </li>
                             <li role="menuitem" ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
                                 <a href="#" ng-click="toolsCtrl.ncbiExport()"><fa:icon type="upload" />&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/></a>
                             </li>

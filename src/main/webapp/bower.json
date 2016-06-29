@@ -42,7 +42,8 @@
     "angular-datatables": "~0.5.2",
     "angular-bootstrap-lightbox": "0.10.0",
     "angular-daterangepicker-enhanced": "^0.1.24",
-    "lodash": "4.6.1"
+    "lodash": "4.6.1",
+    "clipboard": "^1.5.12"
   },
   "devDependencies": {},
   "resolutions": {

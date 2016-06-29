@@ -152,6 +152,11 @@
       }
     };
 
+    ToolsController.prototype.linker = function () {
+      var ids = datatable.getSelectedIds();
+      modalService.openLinkerModal(ids);
+    };
+
     return ToolsController;
   }());
 
