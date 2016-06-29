@@ -145,6 +145,13 @@
       }
     };
 
+    ToolsController.prototype.ncbiExport = function () {
+      var ids = datatable.getSelectedIds();
+      if (ids.length > 0) {
+        sampleService.ncbiExport(ids);
+      }
+    };
+
     return ToolsController;
   }());
 
