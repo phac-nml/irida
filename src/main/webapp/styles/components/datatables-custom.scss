@@ -69,5 +69,5 @@ table.selectable tbody tr.selected td {
 
 // Prevents table from overflowing the panel box that wraps it.
 .table-wrapper {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
