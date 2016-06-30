@@ -129,11 +129,11 @@ public class ReadSamplePermissionTest {
 		roles.add(Role.ROLE_ADMIN);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
+		when(sampleRepository.findOne(1L)).thenReturn(new Sample());
 
 		assertTrue("permission was not granted to admin.", readSamplePermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(psjRepository);
-		verifyZeroInteractions(sampleRepository);
 	}
 }
