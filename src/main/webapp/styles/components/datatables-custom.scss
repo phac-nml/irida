@@ -66,3 +66,8 @@ table.selectable tbody tr.selected td {
   height: 2em;
   line-height: 2em;
 }
+
+// Prevents table from overflowing the panel box that wraps it.
+.table-wrapper {
+  overflow-x: scroll;
+}
