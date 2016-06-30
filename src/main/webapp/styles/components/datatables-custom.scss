@@ -33,7 +33,14 @@
   justify-content: center;
 }
 
+.table-wrapper {
+  overflow: auto;
+}
+
 .dataTable {
+  border: 1px solid #DDDDDD;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+
   th {
     vertical-align: top !important;
   }
@@ -66,3 +73,17 @@ table.selectable tbody tr.selected td {
   height: 2em;
   line-height: 2em;
 }
+
+// Prevents table from overflowing the panel box that wraps it.
+//.dataTables_wrapper {
+//  .panel {
+//    overflow: hidden;
+//  }
+//}
+
+//@media (max-width: 1200px) {
+//  .dataTables_wrapper .table-wrapper {
+//    overflow: auto;
+//  }
+//}
+

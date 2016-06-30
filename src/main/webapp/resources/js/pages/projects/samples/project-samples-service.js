@@ -1,4 +1,4 @@
-(function (ng, page) {
+(function (ng, $, page) {
   "use strict";
 
   var SampleService = (function () {
@@ -56,6 +56,18 @@
           notifications.show({type: data.result, msg: data.message})
         });
     };
+    
+    SampleService.prototype.download = function (ids) {
+      var url = page.urls.samples.download + "?" + $.param({ids: ids});
+      var iframe = document.querySelector("#download-iframe");
+      if (iframe === null) {
+        iframe = document.createElement("iframe");
+        iframe.setAttribute("id", "download-iframe");
+        iframe.style.display = "none";
+      }
+      iframe.setAttribute('src', url);
+      document.body.appendChild(iframe);
+    };
 
     return SampleService;
   }());
@@ -63,4 +75,4 @@
   ng.module("irida.projects.samples.service", ["irida.cart"])
     .service('SampleService', ["$http", SampleService])
   ;
-}(window.angular, window.PAGE));
+}(window.angular, window.jQuery, window.PAGE));

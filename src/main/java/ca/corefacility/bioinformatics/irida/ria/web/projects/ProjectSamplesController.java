@@ -637,7 +637,7 @@ public class ProjectSamplesController {
 	 *             if we fail to read a file from the filesystem.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/download/files")
-	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids, HttpServletResponse response)
+	public void downloadSamples(@PathVariable Long projectId, @RequestParam(value = "ids[]") List<Long> ids, HttpServletResponse response)
 			throws IOException {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
