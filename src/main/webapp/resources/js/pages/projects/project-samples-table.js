@@ -6,6 +6,10 @@ var toolbarDiv = document.querySelector(".filter-row > div"),
     toolbar = document.querySelector("#toolbar");
 toolbarDiv.appendChild(toolbar);
 
+var filterDiv= document.querySelector("#samplesTable_filter"),
+  filterBtns = document.querySelector("#filter-btns");
+filterDiv.appendChild(filterBtns);
+
 // Need to dynamically insert the 0 selected counts
 document.querySelector(".selected-counts").innerHTML = PAGE.i18n.selectedCounts.none;
 

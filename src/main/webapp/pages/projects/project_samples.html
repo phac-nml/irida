@@ -62,9 +62,6 @@
 </head>
 <body>
 <main id="project-samples-main" layout:fragment="main" ddl:bundle-includes="project-samples" ddl:asset-css-excludes="jquery.datatables">
-
-
-
     <div dt:conf="samplesTable">
         <div dt:confType="extrajs" dt:bundles="project-samples-table" dt:placeholder="before_end_document_ready"/>
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
@@ -84,12 +81,14 @@
         </thead>
     </table>
     <div class="hidden">
+        <samples-filter id="filter-btns"></samples-filter>
         <div id="toolbar">
-            <div style="display: inline-block;" role="toolbar" aria-label="Sample Table Tools">
+            <div role="toolbar" aria-label="Sample Table Tools">
                 <div style="display: inline-block;" th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown=""
                      auto-close="outsideClick"
                      ng-controller="AssociatedProjectsController as apCtrl">
-                    <button id="associated-btn" class="btn btn-default" uib-dropdown-toggle="" aria-haspopup="true">
+                    <button id="associated-btn" class="btn btn-default btn-sm" uib-dropdown-toggle=""
+                            aria-haspopup="true">
                         <th:block th:text="#{project.samples.nav.associated}"></th:block>
                         &nbsp;
                         <fa:icon type="caret-down" fixed="fixed"/>
@@ -111,14 +110,14 @@
                     </ul>
                 </div>
                 <a th:if="${#lists.isEmpty(associatedProjects)}"
-                   th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default">
+                   th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default btn-sm">
                     <fa:icon type="create"/>
                     &nbsp;
                     <th:block th:text="#{project.samples.nav.associated-create}"></th:block>
                 </a>
                 <div style="display: inline-block;" ng-controller="ToolsController as toolsCtrl">
                     <div style="display: inline-block;" uib-dropdown="" >
-                        <button id="sample-tools" class="btn btn-default" uib-dropdown-toggle="" type="button">
+                        <button id="sample-tools" class="btn btn-default btn-sm" uib-dropdown-toggle="" type="button">
                         <th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;
                         <fa:icon type="caret-down" fixed="fixed"/>
                     </button>
@@ -153,7 +152,7 @@
                     </ul>
                     </div>
                     <div style="display: inline-block;" uib-dropdown="">
-                        <button id="export-samples-btn" class="btn btn-default" uib-dropdown-toggle="">
+                        <button id="export-samples-btn" class="btn btn-default btn-sm" uib-dropdown-toggle="">
                             <th:block th:text="#{project.samples.export.label}" />&nbsp;
                             <fa:icon type="caret-down" fixed="fixed"/>
                         </button>
@@ -168,7 +167,11 @@
                             </li>
                         </ul>
                     </div>
-                    <button id="cart-add-btn" class="btn btn-primary" ng-click="toolsCtrl.addToCart()"><fa:icon type="cart-plus" />&nbsp;<th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block></button>
+                    <button id="cart-add-btn" class="btn btn-primary btn-sm" ng-click="toolsCtrl.addToCart()">
+                        <fa:icon type="cart-plus"/>
+                        &nbsp;
+                        <th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block>
+                    </button>
                 </div>
             </div>
         </div>
@@ -270,6 +273,29 @@
             <ul>
                 <li ng-repeat='item in items' th:text="#{project.samples.display.notification.item}"></li>
             </ul>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="filter.html">
+        <div style="display: inline-block; margin-left: 3px;">
+            <div class="btn-group btn-group-sm" uib-dropdown="">
+                <button type="button" class="btn btn-default">Filter</button>
+                <button type="button" class="btn btn-default" uib-dropdown-toggle="">
+                    <fa:icon type="caret-down"/>
+                    <span class="sr-only">Filter Options</span>
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu="" role="menu">
+                    <li role="menuitem">
+                        <a href="#" ng-click="filterCtrl.filterByFile()">
+                            <input type="file" style="display: none;" id="filter-file-input"/>
+                            <fa:icon type="file" fixed="fixed"/>
+                            &nbsp;
+                            <th:block th:text="#{project.sample.filterByFile.modal.title}"/>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-sm">Clear</button>
         </div>
     </script>
 </th:block>

@@ -160,7 +160,36 @@
     return ToolsController;
   }());
 
+  var FilterController = (function () {
+    function FilterController() {
+
+    }
+
+    FilterController.prototype.filterByFile = function () {
+      // setTimeout allows angularjs digest cycle to complete.
+      setTimeout(function () {
+        document.querySelector("#filter-file-input").click();
+      }, 0);
+    };
+
+    return FilterController;
+  }());
+
+  var samplesFilter = (function () {
+    function samplesFilter() {
+      return {
+        replace: true,
+        templateUrl: 'filter.html',
+        controllerAs: 'filterCtrl',
+        controller: [FilterController]
+      };
+    }
+
+    return samplesFilter;
+  }());
+
     ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
+      .directive('samplesFilter', [samplesFilter])
     .controller('AssociatedProjectsController', [AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
   ;
