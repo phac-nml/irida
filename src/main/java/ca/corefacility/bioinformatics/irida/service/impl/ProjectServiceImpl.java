@@ -177,7 +177,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#id, 'isProjectOwner')")
+	@PreAuthorize("hasPermission(#id, 'isProjectOwner')")
 	public Project update(final Long id, final Map<String, Object> updateProperties) {
 		return super.update(id, updateProperties);
 	}
@@ -187,7 +187,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#object, 'isProjectOwner')")
+	@PreAuthorize("hasPermission(#object, 'isProjectOwner')")
 	public Project update(Project object) {
 		return super.update(object);
 	}
@@ -208,7 +208,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(UserRoleSetProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageProjectMembers')")
+	@PreAuthorize("hasPermission(#project, 'canManageProjectMembers')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
 		try {
 			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
@@ -225,7 +225,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(UserRemovedProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageProjectMembers')")
+	@PreAuthorize("hasPermission(#project, 'canManageProjectMembers')")
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
 		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
