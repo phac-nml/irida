@@ -2,6 +2,33 @@
 (function (ng, page) {
   "use strict";
 
+  var filterByFile = (function () {
+
+    function filterByFile($parse) {
+      return {
+        restrict: 'A',
+        scope   : false,
+        link    : function (scope, element, attrs) {
+          var fn = $parse(attrs.filterByFile);
+
+          element.on('change', function (onChangeEvent) {
+            var reader = new FileReader();
+
+            reader.onload = function (onLoadEvent) {
+              scope.$apply(function () {
+                fn(scope, {$fileContent: onLoadEvent.target.result});
+              });
+            };
+
+            reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+          });
+        }
+      }
+    }
+
+    return filterByFile;
+  }());
+
   var AssociatedProjectsController = (function () {
     function AssociatedProjectsController() {
       this.visible = [];
@@ -161,15 +188,21 @@
   }());
 
   var FilterController = (function () {
-    function FilterController() {
-
+    var service;
+    function FilterController(sampleService) {
+      service = sampleService;
     }
 
-    FilterController.prototype.filterByFile = function () {
+    FilterController.prototype.openFileSelect = function () {
       // setTimeout allows angularjs digest cycle to complete.
       setTimeout(function () {
         document.querySelector("#filter-file-input").click();
       }, 0);
+    };
+
+    FilterController.prototype.filterByFile = function ($fileContent) {
+      var samplesNames = $fileContent.match(/[^\r\n]+/g);
+      service.filterBySampleNames(samplesNames);
     };
 
     return FilterController;
@@ -181,7 +214,7 @@
         replace: true,
         templateUrl: 'filter.html',
         controllerAs: 'filterCtrl',
-        controller: [FilterController]
+        controller: ["SampleService", FilterController]
       };
     }
 
@@ -189,6 +222,7 @@
   }());
 
     ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
+      .directive('filterByFile', ["$parse", filterByFile])
       .directive('samplesFilter', [samplesFilter])
     .controller('AssociatedProjectsController', [AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])

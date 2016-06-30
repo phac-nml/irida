@@ -286,8 +286,9 @@
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu="" role="menu">
                     <li role="menuitem">
-                        <a href="#" ng-click="filterCtrl.filterByFile()">
-                            <input type="file" style="display: none;" id="filter-file-input"/>
+                        <input type="file" style="display: none;" id="filter-file-input"
+                               filter-by-file="filterCtrl.filterByFile($fileContent)"/>
+                        <a href="#" ng-click="filterCtrl.openFileSelect()">
                             <fa:icon type="file" fixed="fixed"/>
                             &nbsp;
                             <th:block th:text="#{project.sample.filterByFile.modal.title}"/>

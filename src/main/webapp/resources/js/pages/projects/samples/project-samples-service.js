@@ -76,6 +76,16 @@
       location.href = page.urls.samples.ncbi + "?" + $.param({ids: ids});
     };
 
+    SampleService.prototype.filterBySampleNames = function(sampleNames) {
+      console.log(oTable_samplesTable.settings())
+      // oTable_samplesTable.settings().aoServerParams.push({
+      //   samples: sampleNames
+      // });
+      // console.log(oTable_samplesTable.ajax.params);
+      // oTable_samplesTable.ajax.params.fred = "penner";
+      oTable_samplesTable.ajax.reload();
+    };
+
     return SampleService;
   }());
 
