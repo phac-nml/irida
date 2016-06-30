@@ -59,6 +59,18 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 
 		return super.customPermissionAllowed(authentication, p);
 	}
+	
+	@Override
+	protected boolean adminAccessAllowed(Authentication authentication, Object targetDomainObject) {
+		/*
+		 * if the object is a remote object, don't allow admin updating permissions
+		 */
+		if (targetDomainObject instanceof RemoteSynchronizable && ((RemoteSynchronizable) targetDomainObject).isRemote()) {
+			return false;
+		}
+		
+		return true;
+	}
 
 	@Override
 	public String getPermissionProvided() {
