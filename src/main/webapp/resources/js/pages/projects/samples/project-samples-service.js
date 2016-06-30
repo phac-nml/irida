@@ -3,8 +3,11 @@
 
   var SampleService = (function () {
     var post;
-    function SampleService ($http) {
-      post = $http.post
+    var location;
+
+    function SampleService ($http, $window) {
+      post = $http.post;
+      location = $window.location;
     }
 
     /**
@@ -69,10 +72,14 @@
       document.body.appendChild(iframe);
     };
 
+    SampleService.prototype.ncbiExport = function (ids) {
+      location.href = page.urls.samples.ncbi + "?" + $.param({ids: ids});
+    };
+
     return SampleService;
   }());
 
   ng.module("irida.projects.samples.service", ["irida.cart"])
-    .service('SampleService', ["$http", SampleService])
+    .service('SampleService', ["$http", "$window", SampleService])
   ;
 }(window.angular, window.jQuery, window.PAGE));
