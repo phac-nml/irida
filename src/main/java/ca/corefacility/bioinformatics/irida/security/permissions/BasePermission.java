@@ -164,7 +164,17 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 		}
 	}
 	
-	protected boolean adminAccessAllowed(Authentication authentication, Object targetDomainObject){
+	/**
+	 * Check whether admins should be quick-approved for this permission. This
+	 * may be overridden for special cases
+	 * 
+	 * @param authentication
+	 *            The authentication of the logged in user
+	 * @param targetDomainObject
+	 *            the object that is being acted on
+	 * @return true of the admin should be approved
+	 */
+	protected boolean adminAccessAllowed(Authentication authentication, Object targetDomainObject) {
 		return true;
 	}
 }
