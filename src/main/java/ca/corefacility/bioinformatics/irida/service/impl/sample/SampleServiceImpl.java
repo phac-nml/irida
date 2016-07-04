@@ -385,4 +385,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return sortProperties;
 	}
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Page<ProjectSampleJoin> findSampleByNameInProject(Project project, List<String> sampleNames, int currentPage, int pageSize, Sort.Direction direction, String sortProperty) {
+		return sampleRepository.findSampleByNameInProject(project, sampleNames,
+				new PageRequest(currentPage, pageSize, direction, sortProperty));
+	}
 }

@@ -77,12 +77,16 @@
     };
 
     SampleService.prototype.filterBySampleNames = function(sampleNames) {
-      console.log(oTable_samplesTable.settings())
-      // oTable_samplesTable.settings().aoServerParams.push({
-      //   samples: sampleNames
-      // });
-      // console.log(oTable_samplesTable.ajax.params);
-      // oTable_samplesTable.ajax.params.fred = "penner";
+      var url = oTable_samplesTable.ajax.url();
+
+      // Since we are modifying the url, we need to make sure that if we modify it again,
+      // we remove the original query.
+      var index = url.indexOf("?");
+      if(index > -1) {
+        url = url.substring(0, index);
+      }
+
+      oTable_samplesTable.ajax.url(url + "?" + $.param({sampleNames: sampleNames}));
       oTable_samplesTable.ajax.reload();
     };
 

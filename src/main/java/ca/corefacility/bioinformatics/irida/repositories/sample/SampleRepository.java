@@ -1,8 +1,13 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
@@ -26,4 +31,7 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	 */
 	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1 and j.sample.sampleName = ?2")
 	public Sample getSampleBySampleName(Project p, String sampleName) throws EntityNotFoundException;
+
+	@Query("select j from ProjectSampleJoin j where j.project = ?1 and j.sample.sampleName in ?2")
+	public Page<ProjectSampleJoin> findSampleByNameInProject(Project project, List<String> sampleNames, Pageable pageable);
 }

@@ -331,6 +331,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getProjectSamples(@PathVariable Long projectId,
 			@DatatablesParams DatatablesCriterias criterias,
+			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated) {
 		List<Project> projects = new ArrayList<>();
 		// Check to see if any associated projects need to be added to the query.
@@ -344,7 +345,12 @@ public class ProjectSamplesController {
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias);
 
 		final Page<ProjectSampleJoin> page;
-		if (Strings.isNullOrEmpty(utils.getSearch())) {
+		if (!sampleNames.isEmpty()) {
+			Project project = projectService.read(projectId);
+			page = sampleService
+					.findSampleByNameInProject(project, sampleNames, utils.getCurrentPage(), utils.getPageSize(),
+							utils.getSortDirection(), utils.getSortProperty());
+		} else if (Strings.isNullOrEmpty(utils.getSearch())) {
 			// No search term, therefore filter on the attributes
 			ProjectSamplesFilterCriteria filter = utils.getFilter();
 			page = sampleService

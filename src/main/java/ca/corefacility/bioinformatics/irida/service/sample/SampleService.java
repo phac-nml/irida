@@ -227,4 +227,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Double estimateCoverageForSample(Sample sample,
 			ReferenceFile referenceFile) throws SequenceFileAnalysisException;
+
+	public Page<ProjectSampleJoin> findSampleByNameInProject(Project project, List<String> sampleNames, int currentPage,
+			int pageSize, Sort.Direction direction, String sortProperty);
 }
