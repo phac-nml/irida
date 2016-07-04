@@ -3,7 +3,8 @@
     "select2-bootstrap",
     "bootstrap-daterangepicker",
     "angular-daterangepicker-enhanced",
-    "angular-messages"
+    "angular-messages",
+    "clipboard"
   ],
   "assets": [
     {

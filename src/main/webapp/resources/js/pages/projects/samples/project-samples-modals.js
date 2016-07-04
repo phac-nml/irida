@@ -1,4 +1,4 @@
-(function (ng, page, project) {
+(function (ng, $, page, project) {
   "use strict";
 
   /**
@@ -127,13 +127,32 @@
       }).result;
     }
 
+    function openLinkerModal(ids) {
+      var modal = $uibModal.open({
+        templateUrl: page.urls.samples.linker + "?" + $.param({projectId: page.project.id, ids: ids}),
+        controllerAs: "lCtrl",
+        controller: ["$uibModalInstance", function ($uibModalInstance) {
+          var vm = this;
+          vm.close = $uibModalInstance.close;
+        }]
+      });
+
+      // Set up copy to clipboard functionality.
+      modal.opened.then(function () {
+        new Clipboard(".clipboard-btn");
+      });
+
+      return modal.result;
+    }
+
     return {
       openFilterModal            : openFilterModal,
       openMoveModal              : openMoveModal,
       openCopyModal              : openCopyModal,
       openRemoveModal            : openRemoveModal,
       openMergeModal             : openMergeModal,
-      openAssociatedProjectsModal: openAssociatedProjectsModal
+      openAssociatedProjectsModal: openAssociatedProjectsModal,
+      openLinkerModal            : openLinkerModal
     };
   }
 
@@ -292,4 +311,4 @@
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
     .controller("FilterModalController", ["$uibModalInstance", "FilterStateService", FilterModalController])
   ;
-}(window.angular, window.PAGE, window.project));
+}(window.angular, window.jQuery, window.PAGE, window.project));
