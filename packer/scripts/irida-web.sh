@@ -26,7 +26,7 @@ ln -s /home/irida/irida.conf /etc/irida/irida.conf
 curl -O https://irida.corefacility.ca/documentation/administrator/web/config/web.conf
 ln -s /home/irida/web.conf /etc/irida/web.conf
 
-sed -i 's_server.base.url=.*_server.base.url=http://localhost:48888/irida/_' /etc/irida/irida.conf
+sed -i 's_server.base.url=.*_server.base.url=http://localhost:48888/irida/_' /etc/irida/web.conf
 
 ## Set up the directories in /etc/irida/irida.conf
 
