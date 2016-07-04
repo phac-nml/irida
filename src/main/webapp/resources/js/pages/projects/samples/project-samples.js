@@ -188,9 +188,18 @@
   }());
 
   var FilterController = (function () {
-    var service;
-    function FilterController(sampleService) {
+    var service, scope;
+    function FilterController(sampleService, $scope) {
+      var vm = this;
+      vm.ddEnabled = false;
       service = sampleService;
+      scope = $scope;
+
+      scope.$on("SAMPLE_SELECTION_EVENT", function (event, args) {
+        if(args.count > 0) {
+          vm.ddEnabled = true;
+        }
+      });
     }
 
     FilterController.prototype.openFileSelect = function () {
@@ -214,16 +223,47 @@
         replace: true,
         templateUrl: 'filter.html',
         controllerAs: 'filterCtrl',
-        controller: ["SampleService", FilterController]
+        controller: ["SampleService", "$scope", FilterController]
       };
     }
 
     return samplesFilter;
   }());
 
+  var filteredTags = (function () {
+    var  reloadCmds = {
+      file: 'CLEAR_FILE_FILTER'
+    };
+    function filteredTags() {
+      return {
+        replace     : true,
+        templateUrl : 'filtered-tags.html',
+        controllerAs: 'tags',
+        controller  : ['$scope', function ($scope) {
+          var vm = this;
+          vm.tag = {
+            file: false
+          };
+
+          $scope.$on('FILE_FILTER', function () {
+            vm.tag.file = true;
+          });
+
+          vm.close = function (type) {
+            vm.tag[type] = false;
+            $scope.$broadcast(reloadCmds[type]);
+          };
+        }]
+      };
+    }
+
+    return filteredTags;
+  }());
+
     ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
       .directive('filterByFile', ["$parse", filterByFile])
       .directive('samplesFilter', [samplesFilter])
+      .directive('filteredTags', [filteredTags])
     .controller('AssociatedProjectsController', [AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
   ;

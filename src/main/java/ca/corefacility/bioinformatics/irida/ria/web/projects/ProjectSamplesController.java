@@ -320,6 +320,43 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Get a listing of sample names not found in the current project based on a list.
+	 *
+	 * @param projectId
+	 * 		{@link Project} identifier for project
+	 * @param sampleNames
+	 * 		{@link List} of sample names
+	 * @param locale
+	 * 		{@link Locale} local of current user
+	 *
+	 * @return
+	 */
+	@RequestMapping("/projects/{projectId}/ajax/samples/missing")
+	@ResponseBody
+	public Map<String, Object> getSampleNamesNotInProject(@PathVariable Long projectId,
+			@RequestParam(value = "sampleNames[]") List<String> sampleNames, Locale locale) {
+		Project project = projectService.read(projectId);
+		List<String> missingNames = new ArrayList<>();
+
+		for (String name : sampleNames) {
+			try {
+				sampleService.getSampleBySampleName(project, name);
+			} catch (EntityNotFoundException ex) {
+				missingNames.add(name);
+			}
+		}
+
+		Map<String, Object> result = new HashMap<>();
+		result.put("missingNames", missingNames);
+		result.put("message", messageSource.getMessage("project.sample.filterByFile.error", new Object[] {
+				sampleNames.size() - missingNames.size(),
+				sampleNames.size()
+		}, locale));
+
+		return result;
+	}
+
+	/**
 	 * Get a list of all samples within the project
 	 *
 	 * @param projectId
