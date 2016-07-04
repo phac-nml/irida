@@ -376,6 +376,11 @@ public class SamplesController extends BaseController {
 	private boolean isProjectManagerForSample(Sample sample, Principal principal) {
 		User userByUsername = userService.getUserByUsername(principal.getName());
 
+		//if the sample is remote nobody should be able to edit
+		if(sample.isRemote()){
+			return false;
+		}
+		
 		if (userByUsername.getSystemRole().equals(Role.ROLE_ADMIN)) {
 			return true;
 		}
