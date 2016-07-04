@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
@@ -60,5 +61,22 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 		final List<Join<Project, Sample>> projects = projectSampleJoinRepository
 				.getProjectForSample(targetDomainObject);
 		return projects.stream().anyMatch(p -> projectOwnerPermission.isAllowed(authentication, p.getSubject()));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean adminAccessAllowed(Authentication authentication, Object targetDomainObject) {
+		/*
+		 * if the object is a remote object, don't allow admin updating
+		 * permissions
+		 */
+		if (targetDomainObject instanceof RemoteSynchronizable
+				&& ((RemoteSynchronizable) targetDomainObject).isRemote()) {
+			return false;
+		}
+
+		return true;
 	}
 }
