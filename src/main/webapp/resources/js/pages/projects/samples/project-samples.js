@@ -30,8 +30,10 @@
   }());
 
   var AssociatedProjectsController = (function () {
-    function AssociatedProjectsController() {
+    var scope;
+    function AssociatedProjectsController($rootScope) {
       this.visible = [];
+      scope = $rootScope;
     }
     AssociatedProjectsController.prototype.updateSamplesTable = function () {
       var params = "";
@@ -69,6 +71,8 @@
         checkbox.prop('checked', true);
       }
       this.updateSamplesTable();
+
+      scope.$broadcast('ASSOCIATED_PROJECTS_CHANGE', {count: this.visible.length});
     };
 
     return AssociatedProjectsController;
@@ -191,14 +195,12 @@
     var service, scope;
     function FilterController(sampleService, $scope) {
       var vm = this;
-      vm.ddEnabled = false;
+      vm.fileFilterDisabled = false;
       service = sampleService;
       scope = $scope;
 
-      scope.$on("SAMPLE_SELECTION_EVENT", function (event, args) {
-        if(args.count > 0) {
-          vm.ddEnabled = true;
-        }
+      scope.$on("ASSOCIATED_PROJECTS_CHANGE", function (event, args) {
+        vm.fileFilterDisabled = args.count > 0;
       });
     }
 
@@ -212,6 +214,11 @@
     FilterController.prototype.filterByFile = function ($fileContent) {
       var samplesNames = $fileContent.match(/[^\r\n]+/g);
       service.filterBySampleNames(samplesNames);
+      document.querySelector("#filter-file-input").value = "";
+    };
+
+    FilterController.prototype.clearAll = function() {
+      scope.$emit("CLEAR_FILTERS");
     };
 
     return FilterController;
@@ -245,6 +252,14 @@
             file: false
           };
 
+          $scope.$on("ASSOCIATED_PROJECTS_CHANGE", function (event, args) {
+            if(args.count > 0) {
+              resetTags();
+            }
+          });
+
+          $scope.$on("CLEAR_FILTERS", resetTags);
+
           $scope.$on('FILE_FILTER', function () {
             vm.tag.file = true;
           });
@@ -253,6 +268,10 @@
             vm.tag[type] = false;
             $scope.$broadcast(reloadCmds[type]);
           };
+
+          function resetTags() {
+            vm.tag.file = false;
+          }
         }]
       };
     }
@@ -264,7 +283,7 @@
       .directive('filterByFile', ["$parse", filterByFile])
       .directive('samplesFilter', [samplesFilter])
       .directive('filteredTags', [filteredTags])
-    .controller('AssociatedProjectsController', [AssociatedProjectsController])
+    .controller('AssociatedProjectsController', ["$rootScope", AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
   ;
 }(window.angular, window.PAGE));

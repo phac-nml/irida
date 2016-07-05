@@ -15,16 +15,19 @@
       oTable_samplesTable.ajax.url(url);
     }
 
+    function _reloadTable() {
+      _clearFileFilteredURL();
+      oTable_samplesTable.ajax.reload();
+    }
+
     function SampleService ($http, $window, $rootScope) {
       post = $http.post;
       get = $http.get;
       location = $window.location;
       scope = $rootScope;
 
-      scope.$on('CLEAR_FILE_FILTER', function () {
-        _clearFileFilteredURL();
-        oTable_samplesTable.ajax.reload();
-      });
+      scope.$on('CLEAR_FILE_FILTER', _reloadTable);
+      scope.$on("CLEAR_FILTERS", _reloadTable);
     }
 
     /**
@@ -94,10 +97,7 @@
     };
 
     SampleService.prototype.filterBySampleNames = function(sampleNames) {
-      _clearFileFilteredURL();
-      var url = oTable_samplesTable.ajax.url();
-      oTable_samplesTable.ajax.url(url + "?" + $.param({sampleNames: sampleNames}));
-      oTable_samplesTable.ajax.reload(function (result) {
+      oTable_samplesTable.ajax.url(page.urls.samples.project + "/?" + $.param({sampleNames: sampleNames})).load(function (result) {
         var difference = sampleNames.length - result.recordsTotal;
         if (difference === 0) {
           notifications.show({type: "success", msg: page.i18n.fileFilter.success});
