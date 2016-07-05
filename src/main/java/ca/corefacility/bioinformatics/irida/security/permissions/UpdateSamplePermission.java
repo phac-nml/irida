@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 
@@ -60,6 +61,14 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 	protected boolean customPermissionAllowed(final Authentication authentication, final Sample targetDomainObject) {
 		final List<Join<Project, Sample>> projects = projectSampleJoinRepository
 				.getProjectForSample(targetDomainObject);
+
+		/*
+		 * If it's a local sample, ROLE_SEQUENCER should be able to update it.
+		 */
+		if (!targetDomainObject.isRemote() && authentication.getAuthorities().contains(Role.ROLE_SEQUENCER)) {
+			return true;
+		}
+		
 		return projects.stream().anyMatch(p -> projectOwnerPermission.isAllowed(authentication, p.getSubject()));
 	}
 	
