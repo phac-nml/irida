@@ -65,7 +65,8 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 		/*
 		 * If it's a local sample, ROLE_SEQUENCER should be able to update it.
 		 */
-		if (!targetDomainObject.isRemote() && authentication.getAuthorities().contains(Role.ROLE_SEQUENCER)) {
+		if ((!targetDomainObject.isRemote()) && authentication.getAuthorities().stream()
+				.anyMatch(g -> g.getAuthority().equals(Role.ROLE_SEQUENCER.getAuthority()))) {
 			return true;
 		}
 		
