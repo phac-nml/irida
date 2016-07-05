@@ -191,6 +191,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Project update(Project object) {
 		return super.update(object);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canManageProjectMembers')")
+	public Project updateProjectSettings(Project project, boolean assembleUploads) {
+		project.setAssembleUploads(assembleUploads);
+		return update(project);
+	}
 
 	/**
 	 * {@inheritDoc}

@@ -349,4 +349,15 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a list of {@link Project}
 	 */
 	public List<Project> getProjectsWithRemoteSyncStatus(SyncStatus syncStatus);
+	
+	/**
+	 * Update select {@link Project} settings
+	 * 
+	 * @param project
+	 *            The project to update select settings on
+	 * @param assembleUploads
+	 *            whether to assemble newly uploaded data
+	 * @return the updated {@link Project}
+	 */
+	public Project updateProjectSettings(Project project, boolean assembleUploads);
 }
