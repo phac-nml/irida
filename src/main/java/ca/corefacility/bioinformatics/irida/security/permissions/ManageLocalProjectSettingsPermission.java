@@ -10,12 +10,12 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepos
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 @Component
-public class ManageProjectMembersPermission extends ModifyProjectPermission {
+public class ManageLocalProjectSettingsPermission extends ModifyProjectPermission {
 	
-	private static final String PERMISSION_PROVIDED = "canManageProjectMembers";
+	private static final String PERMISSION_PROVIDED = "canManageLocalProjectSettings";
 
 	/**
-	 * Construct an instance of {@link ManageProjectMembersPermission}.
+	 * Construct an instance of {@link ManageLocalProjectSettingsPermission}.
 	 * 
 	 * @param projectRepository
 	 *            the project repository.
@@ -25,7 +25,7 @@ public class ManageProjectMembersPermission extends ModifyProjectPermission {
 	 *            the project user join repository.
 	 */
 	@Autowired
-	public ManageProjectMembersPermission(final ProjectRepository projectRepository,
+	public ManageLocalProjectSettingsPermission(final ProjectRepository projectRepository,
 			final UserRepository userRepository, final ProjectUserJoinRepository pujRepository,
 			final UserGroupProjectJoinRepository ugpjRepository, final UserGroupJoinRepository ugRepository) {
 		super(projectRepository, userRepository, pujRepository, ugpjRepository, ugRepository);

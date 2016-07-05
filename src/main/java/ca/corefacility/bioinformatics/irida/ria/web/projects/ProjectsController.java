@@ -233,7 +233,7 @@ public class ProjectsController {
 	 * @return name of the project settings page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings")
-	@PreAuthorize("hasPermission(#projectId, 'canManageProjectMembers')")
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public String getProjectSettingsPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project settings for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
@@ -255,7 +255,7 @@ public class ProjectsController {
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
-	@PreAuthorize("hasPermission(#projectId, 'canManageProjectMembers')")
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	@ResponseBody
 	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
 			final Model model, Locale locale) {
