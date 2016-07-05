@@ -227,4 +227,25 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Double estimateCoverageForSample(Sample sample,
 			ReferenceFile referenceFile) throws SequenceFileAnalysisException;
+
+	/**
+	 * Get a {@link} {@link ProjectSampleJoin} that is filtered on a list of sample names
+	 *
+	 * @param project
+	 * 		the {@link Project} containing the {@link Sample}s
+	 * @param sampleNames
+	 * 		{@link List} of {@link String} sample names to filter on.
+	 * @param currentPage
+	 * 		{@link Integer} the current page in the table
+	 * @param pageSize
+	 * 		{@link Integer} the size of the current page
+	 * @param direction
+	 * 		{@link Sort.Direction} direction the page is sorted
+	 * @param sortProperty
+	 * 		{@link String} the column the page is sorted on.
+	 *
+	 * @return {@link Page} of {@link ProjectSampleJoin}
+	 */
+	public Page<ProjectSampleJoin> findSampleByNameInProject(Project project, List<String> sampleNames, int currentPage,
+			int pageSize, Sort.Direction direction, String sortProperty);
 }

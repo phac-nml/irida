@@ -2,9 +2,38 @@
 (function (ng, page) {
   "use strict";
 
+  var filterByFile = (function () {
+
+    function filterByFile($parse) {
+      return {
+        restrict: 'A',
+        scope   : false,
+        link    : function (scope, element, attrs) {
+          var fn = $parse(attrs.filterByFile);
+
+          element.on('change', function (onChangeEvent) {
+            var reader = new FileReader();
+
+            reader.onload = function (onLoadEvent) {
+              scope.$apply(function () {
+                fn(scope, {$fileContent: onLoadEvent.target.result});
+              });
+            };
+
+            reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+          });
+        }
+      }
+    }
+
+    return filterByFile;
+  }());
+
   var AssociatedProjectsController = (function () {
-    function AssociatedProjectsController() {
+    var scope;
+    function AssociatedProjectsController($rootScope) {
       this.visible = [];
+      scope = $rootScope;
     }
     AssociatedProjectsController.prototype.updateSamplesTable = function () {
       var params = "";
@@ -42,6 +71,8 @@
         checkbox.prop('checked', true);
       }
       this.updateSamplesTable();
+
+      scope.$broadcast('ASSOCIATED_PROJECTS_CHANGE', {count: this.visible.length});
     };
 
     return AssociatedProjectsController;
@@ -160,8 +191,101 @@
     return ToolsController;
   }());
 
+  var FilterController = (function () {
+    var service, scope;
+    function FilterController(sampleService, $scope) {
+      var vm = this;
+      vm.fileFilterDisabled = false;
+      service = sampleService;
+      scope = $scope;
+
+      scope.$on("ASSOCIATED_PROJECTS_CHANGE", function (event, args) {
+        vm.fileFilterDisabled = args.count > 0;
+      });
+    }
+
+    FilterController.prototype.openFileSelect = function () {
+      // setTimeout allows angularjs digest cycle to complete.
+      setTimeout(function () {
+        document.querySelector("#filter-file-input").click();
+      }, 0);
+    };
+
+    FilterController.prototype.filterByFile = function ($fileContent) {
+      var samplesNames = $fileContent.match(/[^\r\n]+/g);
+      service.filterBySampleNames(samplesNames);
+      document.querySelector("#filter-file-input").value = "";
+    };
+
+    FilterController.prototype.clearAll = function() {
+      scope.$emit("CLEAR_FILTERS");
+    };
+
+    return FilterController;
+  }());
+
+  var samplesFilter = (function () {
+    function samplesFilter() {
+      return {
+        replace: true,
+        templateUrl: 'filter.html',
+        controllerAs: 'filterCtrl',
+        controller: ["SampleService", "$scope", FilterController]
+      };
+    }
+
+    return samplesFilter;
+  }());
+
+  var filteredTags = (function () {
+    var  reloadCmds = {
+      file: 'CLEAR_FILE_FILTER'
+    };
+    function filteredTags() {
+      return {
+        replace     : true,
+        templateUrl : 'filtered-tags.html',
+        controllerAs: 'tags',
+        controller  : ['$scope', function ($scope) {
+          var vm = this;
+          vm.tag = {
+            file: false
+          };
+
+          $scope.$on("ASSOCIATED_PROJECTS_CHANGE", function (event, args) {
+            if(args.count > 0) {
+              resetTags();
+            }
+          });
+
+          $scope.$on("CLEAR_FILTERS", resetTags);
+
+          $scope.$on('FILE_FILTER', function () {
+            $scope.$apply(function () {
+              vm.tag.file = true;
+            });
+          });
+
+          vm.close = function (type) {
+            vm.tag[type] = false;
+            $scope.$broadcast(reloadCmds[type]);
+          };
+
+          function resetTags() {
+            vm.tag.file = false;
+          }
+        }]
+      };
+    }
+
+    return filteredTags;
+  }());
+
     ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
-    .controller('AssociatedProjectsController', [AssociatedProjectsController])
+      .directive('filterByFile', ["$parse", filterByFile])
+      .directive('samplesFilter', [samplesFilter])
+      .directive('filteredTags', [filteredTags])
+    .controller('AssociatedProjectsController', ["$rootScope", AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
   ;
 }(window.angular, window.PAGE));
