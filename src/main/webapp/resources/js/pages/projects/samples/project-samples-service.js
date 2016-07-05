@@ -28,6 +28,9 @@
 
       scope.$on('CLEAR_FILE_FILTER', _reloadTable);
       scope.$on("CLEAR_FILTERS", _reloadTable);
+      scope.$on("FILTER_TABLE", function (event, args) {
+        
+      });
     }
 
     /**

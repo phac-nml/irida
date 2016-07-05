@@ -193,11 +193,12 @@
 
   var FilterController = (function () {
     var service, scope;
-    function FilterController(sampleService, $scope) {
+    function FilterController(sampleService, $scope, modalService) {
       var vm = this;
       vm.fileFilterDisabled = false;
       service = sampleService;
       scope = $scope;
+      this.modalService = modalService;
 
       scope.$on("ASSOCIATED_PROJECTS_CHANGE", function (event, args) {
         vm.fileFilterDisabled = args.count > 0;
@@ -221,6 +222,10 @@
       scope.$emit("CLEAR_FILTERS");
     };
 
+    FilterController.prototype.openFilterModal = function() {
+      this.modalService.openFilterModal();
+    };
+
     return FilterController;
   }());
 
@@ -230,7 +235,7 @@
         replace: true,
         templateUrl: 'filter.html',
         controllerAs: 'filterCtrl',
-        controller: ["SampleService", "$scope", FilterController]
+        controller: ["SampleService", "$scope", "modalService", FilterController]
       };
     }
 
