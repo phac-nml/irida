@@ -261,7 +261,9 @@
           $scope.$on("CLEAR_FILTERS", resetTags);
 
           $scope.$on('FILE_FILTER', function () {
-            vm.tag.file = true;
+            $scope.$apply(function () {
+              vm.tag.file = true;
+            });
           });
 
           vm.close = function (type) {

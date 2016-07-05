@@ -110,8 +110,8 @@
             msg += "</ul>";
             notifications.show({type: "warning", msg: msg, timeout: false});
           });
-          scope.$broadcast("FILE_FILTER");
         }
+        scope.$broadcast("FILE_FILTER");
       });
     };
 
