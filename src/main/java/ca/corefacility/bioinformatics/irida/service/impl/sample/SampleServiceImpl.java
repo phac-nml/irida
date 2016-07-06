@@ -126,7 +126,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateSample')")
+	@PreAuthorize("hasPermission(#id, 'canUpdateSample')")
 	public Sample update(final Long id, final Map<String, Object> updatedProperties) {
 		return super.update(id, updatedProperties);
 	}
@@ -134,7 +134,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canUpdateSample')")
+	@PreAuthorize("hasPermission(#object, 'canUpdateSample')")
 	@Override
 	public Sample update(Sample object) {
 		return super.update(object);
@@ -186,7 +186,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canUpdateSample')")
+	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
 	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) {
 		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, object.getId());
 		ssoRepository.delete(readObjectForSample);
@@ -216,7 +216,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	public Sample mergeSamples(Project project, Sample mergeInto, Sample... toMerge) {
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);

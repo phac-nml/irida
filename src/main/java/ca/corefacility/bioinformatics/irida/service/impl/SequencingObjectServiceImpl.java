@@ -110,7 +110,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
+	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
 	@LaunchesProjectEvent(DataAddedToSampleProjectEvent.class)
 	public SampleSequencingObjectJoin createSequencingObjectInSample(SequencingObject seqObject, Sample sample) {
 		// create the sequencing object
