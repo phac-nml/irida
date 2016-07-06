@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PostLoad;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +41,47 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory) {
 		this.entityManager = entityManager;
 		this.baseDirectory = baseDirectory;
+	}
+	
+	public static class RelativePathTranslatorListener {
+		
+		private static final Map<Class<?>, Path> baseDirectories = new ConcurrentHashMap<>();
+		
+		private static final Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
+		/**
+		 * Get a collection of fields that have type Path.
+		 * 
+		 * @param type
+		 *            the class type to get field references for.
+		 * @return the set of field references for the class.
+		 */
+		private static Set<Field> findPathFields(final Class<?> type) {
+			return Arrays.stream(type.getDeclaredFields()).filter(pathFilter).collect(Collectors.toSet());
+		}
+		
+		public static void addBaseDirectory(final Class<?> c, final Path p) {
+			baseDirectories.put(c, p);
+		}
+		
+		@PostLoad
+		public void absolutePath(final VersionedFileFields<Long> fileSystemEntity) {
+			logger.debug("Going to get an absolute path after loading.");
+			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
+			// now find any members that are of type Path:
+			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
+
+			// for every member that's a path, make it an absolute path based on the
+			// base directory
+			for (final Field field : pathFields) {
+				ReflectionUtils.makeAccessible(field);
+				final Path source = (Path) ReflectionUtils.getField(field, fileSystemEntity);
+				if (source != null) {
+					
+					final Path absolutePath = directoryForType.resolve(source);
+					ReflectionUtils.setField(field, fileSystemEntity, absolutePath);
+				}
+			}
+		}
 	}
 
 	/**
@@ -133,8 +178,10 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 					logger.error("Unable to move file into new directory", e);
 					throw new StorageException("Failed to move file into new directory.", e);
 				}
+				
+				final Path relativePath = baseDirectory.relativize(target);
 
-				ReflectionUtils.setField(field, objectToWrite, target);
+				ReflectionUtils.setField(field, objectToWrite, relativePath);
 			}
 		}
 
