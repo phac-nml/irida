@@ -115,6 +115,7 @@ public class ReadSequencingObjectPermissionTest {
 		roles.add(Role.ROLE_ADMIN);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
+		when(sequencingObjectRepository.findOne(1L)).thenReturn(new SingleEndSequenceFile(null));
 
 		assertTrue("permission was not granted to admin.", permission.isAllowed(auth, 1L));
 
@@ -123,6 +124,5 @@ public class ReadSequencingObjectPermissionTest {
 		verifyZeroInteractions(psjRepository);
 		verifyZeroInteractions(userRepository);
 		verifyZeroInteractions(ssoRepository);
-		verifyZeroInteractions(sequencingObjectRepository);
 	}
 }

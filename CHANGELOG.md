@@ -1,8 +1,17 @@
 Changes
 =======
 
-1.0.0 to 1.1.0
---------------
+0.11.0 to 0.12.0
+----------------
+* [Developer]: Added `FetchMode.SELECT` to `SequenceFilePair.files` as Hibernate was including the children multiple times in the result set. (0.11.1)
+* [Developer]: Packer now waits for tomcat to start during the build so that the database is fully deployed before distribution.
+* [Developer]: Packer renames the VM on output.
+* [Developer]: The Virtualbox appliance that's built now uses the `virtio` network adapter because the Intel one had serious performance issues over NAT.
+* [UI]: FastQC images were not rendering in Firefox because the request behaviour changed. (0.11.2)
+* [UI]: Fixed a permissions issue with reading NCBI submissions. (0.11.3)
+
+1.0.0 to 0.11.0
+---------------
 * [UI]: Fixed issue were login page was being displayed even though the user was logged in.
 * [UI]: Full analysis name is now displayed in table
 * [UI]: Added the project ID to all project specific pages.
@@ -21,6 +30,9 @@ Changes
 * [UI]: Displaying the modification time of samples in the project/samples table.
 * [UI]: Refactored Sequencing Runs list to use dandelion datatables.
 * [UI]: Fixed a bug where groups on a project with manager role were not allowed to behave like a manager. (1.0.5)
+* [UI]: Added a project event for removing samples from a project.
+* [UI]: Updated NCBI SRA uploader UI to be easier to prepare large numbers of samples.
+* [Developer]: Dropped version down to a *slightly* lower number.
 
 1.0.0-alpha10 to 1.0.0
 ----------------------

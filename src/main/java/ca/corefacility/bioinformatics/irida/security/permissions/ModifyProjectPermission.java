@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -21,10 +20,8 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
-@Component
-public class ManageProjectMembersPermission extends BasePermission<Project, Long> {
-	private static final Logger logger = LoggerFactory.getLogger(ManageProjectMembersPermission.class);
-	private static final String PERMISSION_PROVIDED = "manageProjectMembers";
+public abstract class ModifyProjectPermission extends BasePermission<Project,Long>{
+	private static final Logger logger = LoggerFactory.getLogger(ModifyProjectPermission.class);
 
 	private final UserRepository userRepository;
 	private final ProjectUserJoinRepository pujRepository;
@@ -32,7 +29,7 @@ public class ManageProjectMembersPermission extends BasePermission<Project, Long
 	private final UserGroupJoinRepository ugRepository;
 
 	/**
-	 * Construct an instance of {@link ManageProjectMembersPermission}.
+	 * Construct an instance of {@link ModifyProjectPermission}.
 	 * 
 	 * @param projectRepository
 	 *            the project repository.
@@ -42,9 +39,9 @@ public class ManageProjectMembersPermission extends BasePermission<Project, Long
 	 *            the project user join repository.
 	 */
 	@Autowired
-	public ManageProjectMembersPermission(final ProjectRepository projectRepository,
-			final UserRepository userRepository, final ProjectUserJoinRepository pujRepository,
-			final UserGroupProjectJoinRepository ugpjRepository, final UserGroupJoinRepository ugRepository) {
+	public ModifyProjectPermission(final ProjectRepository projectRepository, final UserRepository userRepository,
+			final ProjectUserJoinRepository pujRepository, final UserGroupProjectJoinRepository ugpjRepository,
+			final UserGroupJoinRepository ugRepository) {
 		super(Project.class, Long.class, projectRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
@@ -55,9 +52,9 @@ public class ManageProjectMembersPermission extends BasePermission<Project, Long
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
-		logger.trace("Testing permission for [" + authentication + "] has manager permissions on project [" + p + "]");
+		logger.trace("Testing permission for [" + authentication + "] can modify project [" + p + "]");
 
 		// check if the user is a project owner for this project
 		User u = userRepository.loadUserByUsername(authentication.getName());
@@ -91,10 +88,5 @@ public class ManageProjectMembersPermission extends BasePermission<Project, Long
 
 		logger.trace("Permission DENIED for [" + authentication + "] on project [" + p + "]");
 		return false;
-	}
-
-	@Override
-	public String getPermissionProvided() {
-		return PERMISSION_PROVIDED;
 	}
 }

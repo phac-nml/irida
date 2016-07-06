@@ -150,7 +150,7 @@ public class SequenceFileController {
 	 * @throws IOException
 	 *             if we can't write the image out to the response.
 	 */
-	@RequestMapping(value = "/sequenceFiles/img/{sequencingObjectId}/file/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
+	@RequestMapping(value = "/sequenceFiles/img/{sequencingObjectId}/file/{sequenceFileId}/{type}")
 	public void downloadSequenceFileImages(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId,
 			@PathVariable String type, HttpServletResponse response, @RequestParam(defaultValue = "false") boolean thumb)
 			throws IOException {
@@ -177,6 +177,7 @@ public class SequenceFileController {
 				response.getOutputStream().write(chart);
 			}
 		}
+		response.setContentType(MediaType.IMAGE_PNG_VALUE);
 		response.flushBuffer();
 	}
 

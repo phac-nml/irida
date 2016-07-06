@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerExcept
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.SampleRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
@@ -177,7 +178,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#id, 'isProjectOwner')")
+	@PreAuthorize("hasPermission(#id, 'isProjectOwner')")
 	public Project update(final Long id, final Map<String, Object> updateProperties) {
 		return super.update(id, updateProperties);
 	}
@@ -187,9 +188,19 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#object, 'isProjectOwner')")
+	@PreAuthorize("hasPermission(#object, 'isProjectOwner')")
 	public Project update(Project object) {
 		return super.update(object);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
+	public Project updateProjectSettings(Project project, boolean assembleUploads) {
+		project.setAssembleUploads(assembleUploads);
+		return update(project);
 	}
 
 	/**
@@ -208,7 +219,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(UserRoleSetProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'manageProjectMembers')")
+	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
 		try {
 			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
@@ -225,7 +236,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(UserRemovedProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'manageProjectMembers')")
+	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
 		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
@@ -241,7 +252,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(UserGroupRemovedProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'manageProjectMembers')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
 		if (!allowRoleChange(project, j.getProjectRole())) {
@@ -256,7 +267,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(UserRoleSetProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project,'manageProjectMembers')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project,'canManageLocalProjectSettings')")
 	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
 			throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
@@ -279,7 +290,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'manageProjectMembers')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
 			ProjectRole projectRole) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
@@ -374,6 +385,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	@LaunchesProjectEvent(SampleRemovedProjectEvent.class)
 	public void removeSampleFromProject(Project project, Sample sample) {
 		ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, sample);
 		psjRepository.delete(readSampleForProject);
@@ -390,6 +402,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	@LaunchesProjectEvent(SampleRemovedProjectEvent.class)
 	public void removeSamplesFromProject(Project project, Iterable<Sample> samples) {
 		for (Sample s : samples) {
 			removeSampleFromProject(project, s);
@@ -573,7 +586,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'manageProjectMembers')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup, final ProjectRole role) {
 		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
 	}

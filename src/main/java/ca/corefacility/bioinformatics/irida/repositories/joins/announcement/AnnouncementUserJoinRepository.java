@@ -50,7 +50,7 @@ public interface AnnouncementUserJoinRepository extends PagingAndSortingReposito
      *          The {@link Announcement} to get list of users that have read it
      * @return {@link AnnouncementUserJoin} described by the announcement/user pair
      */
-    @Query("from AnnouncementUserJoin j where j.announcement = ?1 and j.user = ?2")
+    @Query("select j from AnnouncementUserJoin j where j.announcement = ?1 and j.user = ?2")
     public AnnouncementUserJoin getAnnouncementUserJoin(Announcement announcement, User user);
 
     /**
@@ -62,7 +62,19 @@ public interface AnnouncementUserJoinRepository extends PagingAndSortingReposito
      *         link between announcement and user
      */
     @Query("select j from AnnouncementUserJoin j where j.announcement = ?1")
-    public List<Join<Announcement, User>> getUsersByAnnouncementsRead(Announcement announcement);
+    public List<Join<Announcement, User>> getUsersByAnnouncementRead(Announcement announcement);
+
+    /**
+     * Get a collection of the {@link User}s that have not read an {@link Announcement}
+     *
+     * @param announcement
+     *          The {@link Announcement} to get list of users that have not read it
+     * @return A collection of {@link AnnouncementUserJoin}s describing the
+     *         link between announcement and user
+     */
+    @Query ("select u from User u where u not in " +
+            "(select j.user from AnnouncementUserJoin j where j.announcement = ?1)")
+    public List<User> getUsersByAnnouncementUnread(Announcement announcement);
 
     /**
      * Count how many {@link User}s have read a specific {@link Announcement}

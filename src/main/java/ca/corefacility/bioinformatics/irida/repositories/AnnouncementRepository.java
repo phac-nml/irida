@@ -11,7 +11,7 @@ import java.util.List;
  * Repository for managing {@link Announcement}s
  *
  */
-public interface AnnouncementRepository extends PagingAndSortingRepository<Announcement, Long> {
+public interface AnnouncementRepository extends IridaJpaRepository<Announcement, Long> {
 
     /**
      * Get all announcements created by a specific {@link User}
