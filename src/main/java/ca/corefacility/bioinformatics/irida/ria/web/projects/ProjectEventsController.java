@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectE
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.SampleRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
@@ -50,6 +51,7 @@ public class ProjectEventsController {
 									.put(UserRoleSetProjectEvent.class, "user-role-event")
 									.put(UserRemovedProjectEvent.class, "user-removed-event")
 									.put(SampleAddedProjectEvent.class, "sample-added-event")
+									.put(SampleRemovedProjectEvent.class, "sample-removed-event")
 									.put(DataAddedToSampleProjectEvent.class, "data-added-event")
 									.put(UserGroupRoleSetProjectEvent.class, "user-group-role-event")
 									.put(UserGroupRemovedProjectEvent.class, "user-group-removed-event")

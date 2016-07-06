@@ -96,7 +96,7 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasPermission('#project','canReadProject')")
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@PostFilter("hasPermission(filterObject, 'canReadExportSubmission')")
 	public List<NcbiExportSubmission> getSubmissionsForProject(Project project) {
 		return repository.getSubmissionsForProject(project);

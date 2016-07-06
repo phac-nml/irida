@@ -1,3 +1,12 @@
+wait_for_tomcat() {
+	echo "Waiting patiently for Tomcat to start..."
+	while ! bash -c "curl http://localhost:8080 2> /dev/null > /dev/null" ; do
+		echo -n '.'
+		sleep 1
+	done
+	echo "Tomcat has (hopefully) started by now..."
+}
+
 # install java and apr
 yum -y install epel-release
 yum -y install apr tomcat java-1.8.0-openjdk-headless mariadb-server mariadb-client tomcat-native
@@ -17,7 +26,7 @@ ln -s /home/irida/irida.conf /etc/irida/irida.conf
 curl -O https://irida.corefacility.ca/documentation/administrator/web/config/web.conf
 ln -s /home/irida/web.conf /etc/irida/web.conf
 
-sed -i 's_server.base.url=.*_server.base.url=http://localhost:48888/irida/_' /etc/irida/irida.conf
+sed -i 's_server.base.url=.*_server.base.url=http://localhost:48888/irida/_' /etc/irida/web.conf
 
 ## Set up the directories in /etc/irida/irida.conf
 
@@ -41,7 +50,11 @@ JAVA_OPTS="-Dspring.profiles.active=prod"
 EOF
 
 systemctl enable tomcat
+systemctl enable mariadb
 systemctl start tomcat
+
+wait_for_tomcat
+
 systemctl stop tomcat
 systemctl stop mariadb
 

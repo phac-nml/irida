@@ -21,6 +21,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -47,6 +49,7 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 	@Size(min = 2, max = 2)
 	@CollectionTable(name = "sequence_file_pair_files", joinColumns = @JoinColumn(name = "pair_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"files_id" }, name = "UK_SEQUENCE_FILE_PAIR"))
+	@Fetch(FetchMode.SELECT)
 	private List<SequenceFile> files;
 
 	public SequenceFilePair() {

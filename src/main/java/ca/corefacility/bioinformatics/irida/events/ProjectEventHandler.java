@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectE
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.SampleRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
@@ -70,7 +71,7 @@ public class ProjectEventHandler {
 		final Date eventDate = new Date();
 
 		Collection<ProjectEvent> events = new ArrayList<>();
-		
+
 		if (eventClass.equals(SampleAddedProjectEvent.class)) {
 			events.add(handleSampleAddedProjectEvent(methodEvent));
 		} else if (eventClass.equals(UserRemovedProjectEvent.class)) {
@@ -89,11 +90,13 @@ public class ProjectEventHandler {
 			events.add(handleUserGroupRoleSetProjectEvent(methodEvent));
 		} else if (eventClass.equals(UserGroupRemovedProjectEvent.class)) {
 			events.add(handleUserGroupRemovedEvent(methodEvent));
+		} else if (eventClass.equals(SampleRemovedProjectEvent.class)) {
+			events.addAll(handleSampleRemovedEvent(methodEvent));
 		} else {
 			logger.warn("No handler found for event class " + eventClass.getName());
 		}
-		
-		for (ProjectEvent e : events){
+
+		for (ProjectEvent e : events) {
 			Project project = e.getProject();
 			project.setModifiedDate(eventDate);
 			projectRepository.save(project);
@@ -141,7 +144,7 @@ public class ProjectEventHandler {
 		}
 		return eventRepository.save(new UserRemovedProjectEvent(project, user));
 	}
-	
+
 	/**
 	 * Create a {@link UserRemovedProjectEvent}. The method arguments must
 	 * contain a {@link Project} and {@link User}
@@ -176,10 +179,10 @@ public class ProjectEventHandler {
 		return eventRepository.save(new UserRoleSetProjectEvent(join));
 
 	}
-	
+
 	/**
-	 * Create a {@link UserGroupRoleSetProjectEvent}. The method must have returned a
-	 * {@link UserGroupProjectJoin}
+	 * Create a {@link UserGroupRoleSetProjectEvent}. The method must have
+	 * returned a {@link UserGroupProjectJoin}
 	 * 
 	 * @param event
 	 *            The {@link MethodEvent} that this event is being launched from
@@ -204,7 +207,7 @@ public class ProjectEventHandler {
 	private Collection<DataAddedToSampleProjectEvent> handleSequenceFileAddedEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
 		Collection<DataAddedToSampleProjectEvent> events = new ArrayList<>();
-		
+
 		if (Collection.class.isAssignableFrom(returnValue.getClass())) {
 			Collection<?> collection = (Collection<?>) returnValue;
 
@@ -222,7 +225,7 @@ public class ProjectEventHandler {
 			}
 			events.addAll(handleIndividualSequenceFileAddedEvent((SampleSequencingObjectJoin) returnValue));
 		}
-		
+
 		return events;
 	}
 
@@ -234,7 +237,8 @@ public class ProjectEventHandler {
 	 *            a {@link SampleSequencingObjectJoin} to turn into a
 	 *            {@link DataAddedToSampleProjectEvent}
 	 */
-	private Collection<DataAddedToSampleProjectEvent> handleIndividualSequenceFileAddedEvent(SampleSequencingObjectJoin join) {
+	private Collection<DataAddedToSampleProjectEvent> handleIndividualSequenceFileAddedEvent(
+			SampleSequencingObjectJoin join) {
 		Sample subject = join.getSubject();
 
 		Collection<DataAddedToSampleProjectEvent> events = new ArrayList<>();
@@ -243,6 +247,38 @@ public class ProjectEventHandler {
 		for (Join<Project, Sample> psj : projectForSample) {
 			events.add(eventRepository.save(new DataAddedToSampleProjectEvent(psj.getSubject(), subject)));
 		}
+		return events;
+	}
+
+	/**
+	 * Create {@link SampleRemovedProjectEvent}s for any {@link Sample}s removed
+	 * from a {@link Project}
+	 * 
+	 * @param event
+	 *            the {@link MethodEvent} containing params from the method call
+	 * @return a collectino of {@link SampleRemovedProjectEvent}s
+	 */
+	private Collection<SampleRemovedProjectEvent> handleSampleRemovedEvent(MethodEvent event) {
+		Collection<SampleRemovedProjectEvent> events = new ArrayList<>();
+		Optional<Object> projectOpt = Arrays.stream(event.getArgs()).filter(e -> e instanceof Project).findAny();
+		Optional<Object> sampleOpt = Arrays.stream(event.getArgs()).filter(e -> e instanceof Sample).findAny();
+		Optional<Object> sampleListOpt = Arrays.stream(event.getArgs()).filter(e -> e instanceof Iterable).findAny();
+
+		if (projectOpt.isPresent()) {
+			Project project = (Project) projectOpt.get();
+			if (sampleOpt.isPresent()) {
+				Sample sample = (Sample) sampleOpt.get();
+
+				events.add(eventRepository.save(new SampleRemovedProjectEvent(project, sample.getSampleName())));
+			} else if (sampleListOpt.isPresent()) {
+				@SuppressWarnings("unchecked")
+				Iterable<Sample> samples = (Iterable<Sample>) sampleListOpt.get();
+				for (Sample sample : samples) {
+					events.add(eventRepository.save(new SampleRemovedProjectEvent(project, sample.getSampleName())));
+				}
+			}
+		}
+
 		return events;
 	}
 }

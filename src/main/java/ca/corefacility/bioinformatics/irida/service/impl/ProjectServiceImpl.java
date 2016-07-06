@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerExcept
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.SampleRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
@@ -384,6 +385,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	@LaunchesProjectEvent(SampleRemovedProjectEvent.class)
 	public void removeSampleFromProject(Project project, Sample sample) {
 		ProjectSampleJoin readSampleForProject = psjRepository.readSampleForProject(project, sample);
 		psjRepository.delete(readSampleForProject);
@@ -400,6 +402,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	@LaunchesProjectEvent(SampleRemovedProjectEvent.class)
 	public void removeSamplesFromProject(Project project, Iterable<Sample> samples) {
 		for (Sample s : samples) {
 			removeSampleFromProject(project, s);
