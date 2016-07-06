@@ -18,6 +18,7 @@
     function _reloadTable() {
       _clearFileFilteredURL();
       page.ajaxParam = {date:{}};
+      oTable_samplesTable.search("");
       oTable_samplesTable.ajax.reload();
     }
 
