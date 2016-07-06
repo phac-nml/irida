@@ -370,9 +370,9 @@ public class ProjectSamplesController {
 			@DatatablesParams DatatablesCriterias criterias,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
-			@RequestParam(required = false) String name,
-			@RequestParam(required = false) String minDate,
-			@RequestParam(required = false) String endDate) {
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false) Long minDate,
+			@RequestParam(required = false) Long endDate) {
 		List<Project> projects = new ArrayList<>();
 		// Check to see if any associated projects need to be added to the query.
 		if (!associated.isEmpty()) {
@@ -390,18 +390,17 @@ public class ProjectSamplesController {
 			page = sampleService
 					.findSampleByNameInProject(project, sampleNames, utils.getCurrentPage(), utils.getPageSize(),
 							utils.getSortDirection(), utils.getSortProperty());
-		} else {
+		} else if (!Strings.isNullOrEmpty(utils.getSearch())) {
+			// Generic search required.
+			page = sampleService.getSearchedSamplesForProjects(projects, utils.getSearch(), utils.getCurrentPage(),
+					utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
+		}
+		else{
 			// No search term, therefore filter on the attributes
-			ProjectSamplesFilterCriteria filter = utils.getFilter();
 			page = sampleService
 					.getFilteredSamplesForProjects(projects, utils.getName(), utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(),
 							utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
 		}
-//		else {
-//			// Generic search required.
-//			page = sampleService.getSearchedSamplesForProjects(projects, utils.getSearch(), utils.getCurrentPage(),
-//					utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
-//		}
 
 		// Create a more usable Map of the sample data.
 		List<Map<String, Object>> sampleMap = new ArrayList<>();

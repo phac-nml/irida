@@ -256,12 +256,15 @@
 
     this.setState = function(s) {
       currState = _.clone(s);
-      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
+      $rootScope.$broadcast("FILTER_TABLE", {filter: {
+        name: s.name,
+        minDate: !!s.date.startDate  ? s.date.startDate.valueOf() : "",
+        endDate: !!s.date.endDate  ? s.date.endDate.valueOf() : ""
+      }});
     };
 
-    $rootScope.$on('CLEAR_FILTER', function () {
+    $rootScope.$on('CLEAR_FILTERS', function () {
       currState = _.clone(defaultState);
-      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
     });
 
     $rootScope.$on('CLEAR_FILTER_PROPERTY', function (event, args) {

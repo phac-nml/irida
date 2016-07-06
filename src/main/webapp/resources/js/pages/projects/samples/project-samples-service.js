@@ -27,17 +27,31 @@
       location = $window.location;
       scope = $rootScope;
 
-      scope.$on('CLEAR_FILE_FILTER', function () {
-        _clearFileFilteredURL();
+      /**
+       * Clear specific filters applied to the samples table.
+       */
+      scope.$on('FILTER_CLEARED', function (event, args) {
+        if (args.type === "file") {
+          _clearFileFilteredURL();
+        } else {
+          delete page.ajaxParam[args.type]
+        }
         oTable_samplesTable.ajax.reload();
       });
 
+      /**
+       * Clear all filters that are active on the project samples table.
+       */
       scope.$on("CLEAR_FILTERS", _reloadTable);
 
+      /**
+       * Filter the project samples table based on the filter modal.
+       */
       scope.$on("FILTER_TABLE", function (event, args) {
-        page.ajaxParam.name = args.filter.name;
-        page.ajaxParam.startDate = !!args.filter.date.startDate  ? args.filter.date.startDate.valueOf() : undefined;
-        page.ajaxParam.endDate = !!args.filter.date.endDate  ? args.filter.date.endDate.valueOf() : undefined;
+        // Setting the page object, since dandelion datatables establishes the custom
+        // params dynamically.  We add to them in the sample-ajax-params.js file.
+        ng.extend(page.ajaxParam, args.filter);
+        // Reload the tables (which will call for these custom params).
         oTable_samplesTable.ajax.reload();
       });
     }

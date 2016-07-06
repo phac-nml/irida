@@ -71,17 +71,14 @@ public class ProjectSampleSpecification {
 				predicateList
 						.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + name + "%"));
 			}
-			//			if (!Strings.isNullOrEmpty((String)filter.get("organism"))) {
-			//				predicateList.add(criteriaBuilder.like(root.get("sample").get("organism"), "%" + filter.get("organism") + "%"));
-			//			}
-			//			if (filter.get("minDate") != null) {
-			//				predicateList.add(criteriaBuilder.greaterThanOrEqualTo(
-			//						root.get("createdDate"), (Date)filter.get("minDate")));
-			//			}
-			//			if (filter.get("maxDate") != null) {
-			//				predicateList.add(criteriaBuilder
-			//						.lessThanOrEqualTo(root.get("createdDate"), (Date)filter.get("maxDate")));
-			//			}
+			if (minDate != null) {
+				predicateList.add(criteriaBuilder.greaterThanOrEqualTo(
+						root.get("sample").get("modifiedDate"), minDate));
+			}
+			if (maxDate != null) {
+				predicateList.add(criteriaBuilder
+						.lessThanOrEqualTo(root.get("sample").get("modifiedDate"), maxDate));
+			}
 			if (predicateList.size() > 0) {
 				return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
 			} else {

@@ -24,14 +24,14 @@ public class ProjectSamplesDatatableUtils extends DatatablesUtils {
 	final Date minDate;
 	final Date endDate;
 
-	public ProjectSamplesDatatableUtils(DatatablesCriterias criterias, String name, String minDate, String endDate) {
+	public ProjectSamplesDatatableUtils(DatatablesCriterias criterias, String name, Long minDate, Long endDate) {
 		this.currentPage = getCurrentPage(criterias);
 		this.pageSize = criterias.getLength();
 		this.search = criterias.getSearch();
 		this.filter = new ProjectSamplesFilterCriteria(criterias.getColumnDefs());
-		this.name = name.equals("undefined") ? filter.getName().length() > 0 ? filter.getName() : null : name;
-		this.minDate = minDate.equals("undefined") ? null : new Date(Long.parseLong(minDate));
-		this.endDate = endDate.equals("undefined")  ? null : new Date(Long.parseLong(endDate));
+		this.name = Strings.isNullOrEmpty(name) ? null : name;
+		this.minDate = minDate == null ? null : new Date(minDate);
+		this.endDate = endDate == null ? null : new Date(endDate);
 
 		ColumnDef sortedColumn = criterias.getSortedColumnDefs().get(0);
 		this.sortDirection = generateSortDirection(sortedColumn);

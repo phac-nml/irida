@@ -2,13 +2,16 @@ function samplesAjaxParams() {
   return {
     data: {
       name: function () {
-        return PAGE.ajaxParam.name
+        var name = PAGE.ajaxParam.name;
+        return typeof name === "string" ? name : "";
       },
       minDate: function () {
-        return PAGE.ajaxParam.startDate;
+        var minDate = PAGE.ajaxParam.minDate;
+        return typeof minDate === "number" ? minDate : "";
       },
       endDate: function () {
-        return PAGE.ajaxParam.endDate;
+        var endDate = PAGE.ajaxParam.endDate;
+        return typeof endDate === "number" ? endDate : "";
       }
     }
   }
