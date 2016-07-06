@@ -17,6 +17,7 @@
 
     function _reloadTable() {
       _clearFileFilteredURL();
+      page.ajaxParam = {date:{}};
       oTable_samplesTable.ajax.reload();
     }
 
@@ -26,10 +27,18 @@
       location = $window.location;
       scope = $rootScope;
 
-      scope.$on('CLEAR_FILE_FILTER', _reloadTable);
+      scope.$on('CLEAR_FILE_FILTER', function () {
+        _clearFileFilteredURL();
+        oTable_samplesTable.ajax.reload();
+      });
+
       scope.$on("CLEAR_FILTERS", _reloadTable);
+
       scope.$on("FILTER_TABLE", function (event, args) {
-        
+        page.ajaxParam.name = args.filter.name;
+        page.ajaxParam.startDate = !!args.filter.date.startDate  ? args.filter.date.startDate.valueOf() : undefined;
+        page.ajaxParam.endDate = !!args.filter.date.endDate  ? args.filter.date.endDate.valueOf() : undefined;
+        oTable_samplesTable.ajax.reload();
       });
     }
 

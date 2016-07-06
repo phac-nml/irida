@@ -330,7 +330,7 @@ public class ProjectSamplesControllerTest {
 		when(criterias.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
 
 		DatatablesResponse<Map<String, Object>> response = controller
-				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of());
+				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of(), null, null, null);
 		List<Map<String, Object>> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
 		Sample sampleData = (Sample) data.get(0).get("sample");
