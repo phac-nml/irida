@@ -62,6 +62,24 @@
 					<div class="sidebar__value" id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
 					     th:title="${#calendars.format(sample.getModifiedDate(), 'dd MMM yyyy')}"></div>
 				</div>
+				<div th:if="${sample.isRemote()}" th:with="status=${sample.getRemoteStatus()}">
+					<div class="sidebar__item">
+						<div class="sidebar__icon">
+							<fa:icon type="remote" />
+						</div>
+						<div th:text="#{sample.sync.source}">_Source_</div>
+						<div class="sidebar__value">
+							<a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a>
+						</div>
+					</div>
+					<div class="sidebar__item">
+						<div class="sidebar__icon">
+							<fa:icon type="remote" />
+						</div>
+						<div th:text="#{project.sync.status}">_Status_</div>
+						<div class="sidebar__value" th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_status_</div>
+					</div>
+				</div>
 			</div>
 		</aside>
 
