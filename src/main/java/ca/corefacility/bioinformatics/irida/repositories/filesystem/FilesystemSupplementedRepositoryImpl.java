@@ -43,6 +43,11 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		this.baseDirectory = baseDirectory;
 	}
 	
+	/**
+	 * A JPA event listener to translate the relative paths stored in the database to
+	 * absolute paths so that everyone after the repository knows where the file is
+	 * actually stored. 
+	 */
 	public static class RelativePathTranslatorListener {
 		
 		private static final Map<Class<?>, Path> baseDirectories = new ConcurrentHashMap<>();
@@ -164,16 +169,16 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				try {
 					if (!Files.exists(sequenceFileDir)) {
 						Files.createDirectory(sequenceFileDir);
-						logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
+						logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
 					}
 
 					if (!Files.exists(sequenceFileDirWithRevision)) {
 						Files.createDirectory(sequenceFileDirWithRevision);
-						logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+						logger.debug("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
 					}
 
 					Files.move(source, target);
-					logger.trace("Moved file " + source + " to " + target);
+					logger.debug("Moved file " + source + " to " + target);
 				} catch (IOException e) {
 					logger.error("Unable to move file into new directory", e);
 					throw new StorageException("Failed to move file into new directory.", e);
