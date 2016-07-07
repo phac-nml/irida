@@ -7,12 +7,11 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import liquibase.integration.spring.SpringLiquibase;
-
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,11 +19,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.jdbc.datasource.init.ScriptException;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.util.StringUtils;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
+
+import liquibase.integration.spring.SpringLiquibase;
 
 @Configuration
 @Profile({ "dev", "prod", "it" })
@@ -37,6 +38,38 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 	private static final String HIBERNATE_IMPORT_FILES = "hibernate.hbm2ddl.import_files";
 	private static final String HIBERNATE_HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
+	
+	/**
+	 * Custom implementation of the SpringLiquibase bean (for doing liquibase on spring startup) that
+	 * exposes the application context so that we can have access to the application context in custom
+	 * java changesets.
+	 *
+	 */
+	public static class ApplicationContextAwareSpringLiquibase extends SpringLiquibase {
+		private final ApplicationContext applicationContext;
+		
+		public ApplicationContextAwareSpringLiquibase(final ApplicationContext applicationContext) {
+			this.applicationContext = applicationContext;
+		}
+		
+		protected SpringResourceOpener createResourceOpener() {
+			return new ApplicationContextSpringResourceOpener(getChangeLog());
+		}
+		
+		/**
+		 * Custom SpringResourceOpener that gives access to the application context.
+		 *
+		 */
+		public class ApplicationContextSpringResourceOpener extends SpringResourceOpener {
+			public ApplicationContextSpringResourceOpener(final String parentFile) {
+				super(parentFile);
+			}
+			
+			public ApplicationContext getApplicationContext() {
+				return ApplicationContextAwareSpringLiquibase.this.applicationContext;
+			}
+		}
+	}
 
 	/**
 	 * Create an instance of {@link SpringLiquibase} to update the database
@@ -52,9 +85,9 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 */
 	@Bean
 	@Profile({ "dev", "prod", "it" })
-	public SpringLiquibase springLiquibase(final DataSource dataSource) throws SQLException {
+	public SpringLiquibase springLiquibase(final DataSource dataSource, final ApplicationContext applicationContext) throws SQLException {
 
-		final SpringLiquibase springLiquibase = new SpringLiquibase();
+		final ApplicationContextAwareSpringLiquibase springLiquibase = new ApplicationContextAwareSpringLiquibase(applicationContext);
 		springLiquibase.setDataSource(dataSource);
 		springLiquibase.setChangeLog("classpath:ca/corefacility/bioinformatics/irida/database/all-changes.xml");
 
