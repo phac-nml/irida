@@ -275,11 +275,11 @@
     <script type="text/ng-template" id="filter.html">
         <div style="display: inline-block; margin-left: 3px;">
             <div class="btn-group btn-group-sm" uib-dropdown="">
-                <button id="filterByPropertyBtn" type="button" class="btn btn-default" ng-click="filterCtrl.openFilterModal()">Filter</button>
+                <button id="filterByPropertyBtn" type="button" class="btn btn-default" ng-click="filterCtrl.openFilterModal()" th:text="#{project.samples.filter.label}">Filter</button>
                 <button type="button" class="btn btn-default" uib-dropdown-toggle=""
                         ng-disabled="filterCtrl.fileFilterDisabled">
                     <fa:icon type="caret-down"/>
-                    <span class="sr-only">Filter Options</span>
+                    <span class="sr-only" th:text="#{project.samples.filter.sr-label}">Filter Options</span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu="" role="menu">
                     <li role="menuitem">
