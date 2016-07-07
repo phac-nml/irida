@@ -16,7 +16,7 @@
 	<div class="remote-hint" th:if="${project.isRemote()}" th:with="status=${project.getRemoteStatus()}">
 		<span><fa:icon type="remote" /> <span th:text="#{project.sync.source}">_Project source _</span>: <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a></span>
 		&nbsp;
-		<span><span th:text="#{project.sync.status}">_Status: _</span>: <span th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_api_</span></span>
+		<span><fa:icon type="pipelineState"/> <span th:text="#{project.sync.status}">_Status: _</span>: <span th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_api_</span></span>
 	</div>
 
 	<ul class="nav nav-tabs subnav" th:with="baseLink=${'/projects/' + project.getId()}">
