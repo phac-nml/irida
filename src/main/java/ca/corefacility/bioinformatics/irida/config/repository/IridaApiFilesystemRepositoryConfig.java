@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.FilesystemPathListener;
 import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 @Configuration
@@ -110,11 +109,6 @@ public class IridaApiFilesystemRepositoryConfig {
 		return configureDirectory(snapshotFileBaseDirectory, "snapshot-file-dev");
 	}
 	
-	@Bean
-	public FilesystemPathListener filesystemPathListener() {
-		return new FilesystemPathListener();
-	}
-
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
 		if (!Files.exists(baseDirectory)) {

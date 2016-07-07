@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -75,11 +76,12 @@ public class SequenceFileRepositoryImplTest {
 
 		// the created file should reside in the base directory within a new
 		// directory using the sequence file's identifier.
-		Path p = FileSystems.getDefault().getPath(baseDirectory.toString(), lid.toString(),
+		Path p = Paths.get(lid.toString(),
 				s.getFileRevisionNumber().toString(), filename);
+		final Path absolute = baseDirectory.resolve(p);
 		assertEquals(p, s.getFile());
-		assertTrue(Files.exists(p));
-		Files.delete(p);
+		assertTrue(Files.exists(absolute));
+		Files.delete(absolute);
 	}
 
 	@Test
@@ -146,10 +148,10 @@ public class SequenceFileRepositoryImplTest {
 		Path updatedFile = sf.getFile();
 		assertEquals(updatedFile.getFileName(), oldFile.getFileName());
 		// the contents of the file should be different:
-		try (Scanner sc = new Scanner(updatedFile)) {
+		try (Scanner sc = new Scanner(baseDirectory.resolve(updatedFile))) {
 			assertEquals("The updated text is not correct.", updatedText, sc.nextLine());
 		}
-		try (Scanner sc = new Scanner(originalFile)) {
+		try (Scanner sc = new Scanner(baseDirectory.resolve(originalFile))) {
 			assertEquals("The original file was not preserved.", originalText, sc.nextLine());
 		}
 	}
@@ -169,10 +171,10 @@ public class SequenceFileRepositoryImplTest {
 		SequenceFile updated = repository.save(original);
 		Path updatedPersistedFile = updated.getFile();
 		assertEquals(updatedFile.getFileName(), updatedPersistedFile.getFileName());
-		assertTrue(Files.exists(updatedPersistedFile));
+		assertTrue(Files.exists(baseDirectory.resolve(updatedPersistedFile)));
 
 		// make sure that the other file is still there:
 		Path file = original.getFile();
-		assertTrue(Files.exists(file));
+		assertTrue(Files.exists(baseDirectory.resolve(file)));
 	}
 }
