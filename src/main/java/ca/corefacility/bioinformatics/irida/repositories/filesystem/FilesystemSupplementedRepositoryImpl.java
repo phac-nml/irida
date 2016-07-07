@@ -166,6 +166,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			for (Field field : fieldsToUpdate) {
 				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
 				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
+				logger.debug("Target directory is [" + target.toString() + "]");
 				try {
 					if (!Files.exists(sequenceFileDir)) {
 						Files.createDirectory(sequenceFileDir);
