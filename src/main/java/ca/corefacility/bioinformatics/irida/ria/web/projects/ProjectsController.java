@@ -743,6 +743,7 @@ public class ProjectsController {
 		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
 		map.put("createdDate", project.getCreatedDate());
 		map.put("modifiedDate", project.getModifiedDate());
+		map.put("remote", project.isRemote());
 
 		return map;
 	}

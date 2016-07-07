@@ -13,6 +13,11 @@
 
 <div class="col-md-12" layout:fragment="page">
 	<h1><th:block th:text="${project.label}"/>&nbsp;<small th:text="#{project.id}"/>&nbsp;<th:block  th:text="${project.getId()}"/></h1>
+	<div class="remote-hint" th:if="${project.isRemote()}" th:with="status=${project.getRemoteStatus()}">
+		<span><fa:icon type="remote" /> <span th:text="#{project.sync.source}">_Project source _</span>: <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a></span>
+		&nbsp;
+		<span><fa:icon type="pipelineState"/> <span th:text="#{project.sync.status}">_Status: _</span>: <span th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_api_</span></span>
+	</div>
 
 	<ul class="nav nav-tabs subnav" th:with="baseLink=${'/projects/' + project.getId()}">
 		<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}" th:text="#{project.nav.samples}">[Samples]</a></li>
