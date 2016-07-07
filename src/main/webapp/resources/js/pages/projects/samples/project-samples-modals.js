@@ -83,7 +83,7 @@
 
     /**
      * Open the modal to handle merging samples
-     * @param selectedSamples - samples to merge
+     * @param sampleIds - ids for samples to merge
      * @returns {*}
      */
     function openMergeModal(sampleIds) {
@@ -280,6 +280,7 @@
   /**
    * Controller for handling filtering samples by properties
    * @param $uibModalInstance
+   * @param stateService
    * @constructor
    */
   function FilterModalController($uibModalInstance, stateService) {

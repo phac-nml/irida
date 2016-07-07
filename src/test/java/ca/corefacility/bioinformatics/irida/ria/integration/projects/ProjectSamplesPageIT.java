@@ -219,8 +219,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	// TODO: (Josh - 2016-02-05) Create test for export linker
 
-	// TODO (JOSH - 2016-04-18): Re-implement testing for filtering samples by properties.
-	@Ignore
 	@Test
 	public void testFilteringSamplesByProperties() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
