@@ -166,16 +166,20 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			for (Field field : fieldsToUpdate) {
 				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
 				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
-				logger.debug("Target directory is [" + target.toString() + "]");
+				logger.debug("Target is [" + target.toString() + "]");
 				try {
 					if (!Files.exists(sequenceFileDir)) {
 						Files.createDirectory(sequenceFileDir);
 						logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
+					} else {
+						logger.debug("Directory [" + sequenceFileDir.toString() + "] already exists.");
 					}
 
 					if (!Files.exists(sequenceFileDirWithRevision)) {
 						Files.createDirectory(sequenceFileDirWithRevision);
 						logger.debug("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+					} else {
+						logger.debug("Directory [" + sequenceFileDirWithRevision.toString() + "] already exists.");
 					}
 
 					Files.move(source, target);
