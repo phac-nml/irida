@@ -10,7 +10,7 @@
             },
             urls: {
                 'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
-
+                'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync'
             }
         };
     </script>
@@ -18,16 +18,30 @@
 
 <body>
   <main layout:fragment="main" ddl:bundle-includes="project-settings" >
-    <div class="row">
-      <div class="col-md-12">
-      <div class="checkbox">
-        <label>
-          <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
-          <span th:text="#{project.settings.assemble}">_Automatically assemble uploads_</span>
-        </label>
-      </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">_Basic project settings_</div>
+      <div class="panel-body">
+        <div class="checkbox">
+          <label>
+            <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
+            <span th:text="#{project.settings.assemble}">_Automatically assemble uploads_</span>
+          </label>
+        </div>
       </div>
     </div>
+    
+    <div class="panel panel-default" th:if="${project.isRemote()}">
+      <div class="panel-heading">_Project Sync Settings_</div>
+      <div class="panel-body">
+        <div class="form-group">
+          <label class="control-label" for="frequency">_Sync Frequency_</label>
+          <select id="frequency" class="form-control input-full sync-setting">
+            <option th:each="freq : ${frequencies}" th:value="${freq}" th:text="#{'project.settings.frequency.' + ${freq}}" th:selected="${project.getSyncFrequency() == freq}"></option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
   </main>
 
 </body>

@@ -65,6 +65,7 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -238,6 +239,7 @@ public class ProjectsController {
 		logger.debug("Getting project settings for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		return PROJECT_SETTINGS_PAGE;
@@ -275,6 +277,34 @@ public class ProjectsController {
 			message = messageSource.getMessage("project.settings.notifications.assemble.disabled",
 					new Object[] { read.getLabel() }, locale);
 		}
+
+		return ImmutableMap.of("result", message);
+	}
+
+	/**
+	 * Update the project sync settings
+	 * 
+	 * @param projectId
+	 *            the project id to update
+	 * @param frequency
+	 *            the sync frequency to set
+	 * @param locale
+	 *            user's locale
+	 * @return result message if successful
+	 */
+	@RequestMapping(value = "/projects/{projectId}/settings/sync", method = RequestMethod.POST)
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
+	@ResponseBody
+	public Map<String, String> updateProjectSyncSettings(@PathVariable Long projectId,
+			@RequestParam ProjectSyncFrequency frequency, Locale locale) {
+		Project read = projectService.read(projectId);
+
+		Map<String, Object> updates = new HashMap<>();
+		updates.put("syncFrequency", frequency);
+
+		projectService.updateProjectSettings(read, updates);
+
+		String message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
 
 		return ImmutableMap.of("result", message);
 	}
