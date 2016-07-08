@@ -38,6 +38,8 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -202,9 +204,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Project updateProjectSettings(Project project, Map<String, Object> updates) {
 		// ensure only accepted fields are updated
-		List<String> validSettings = Lists.newArrayList("assembleUploads", "syncFreqeuncy", "remoteStatus");
+		List<String> validSettings = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus");
 
-		Set<String> keys = updates.keySet();
+		Set<String> keys = Sets.newHashSet(updates.keySet());
 
 		keys.removeAll(validSettings);
 		if (!keys.isEmpty()) {
