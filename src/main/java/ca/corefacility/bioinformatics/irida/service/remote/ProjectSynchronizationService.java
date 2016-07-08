@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
@@ -60,6 +63,27 @@ public class ProjectSynchronizationService {
 		this.sampleRemoteService = sampleRemoteService;
 		this.singleEndRemoteService = singleEndRemoteService;
 		this.pairRemoteService = pairRemoteService;
+	}
+	
+	public void findProjectsToMark(){
+		List<Project> remoteProjects = projectService.getRemoteProjects();
+		
+		for(Project p : remoteProjects){
+			RemoteStatus remoteStatus = p.getRemoteStatus();
+			Date lastUpdate = remoteStatus.getLastUpdate();
+			ProjectSyncFrequency syncFrequency = p.getSyncFrequency();
+			
+			if(syncFrequency != null){
+				Date nextSync = DateUtils.addDays(lastUpdate, syncFrequency.getDays());
+				
+				if(nextSync.before(new Date())){
+					Map<String,Object> updates = new HashMap<>();
+					remoteStatus.setSyncStatus(SyncStatus.MARKED);
+					updates.put("remoteStatus", remoteStatus);
+					projectService.updateProjectSettings(p, updates);
+				}
+			}
+		}
 	}
 
 	/**
