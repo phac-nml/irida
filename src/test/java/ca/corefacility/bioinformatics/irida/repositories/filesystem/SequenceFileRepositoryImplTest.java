@@ -7,9 +7,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -75,12 +75,11 @@ public class SequenceFileRepositoryImplTest {
 
 		// the created file should reside in the base directory within a new
 		// directory using the sequence file's identifier.
-		Path p = Paths.get(lid.toString(),
+		Path p = FileSystems.getDefault().getPath(baseDirectory.toString(), lid.toString(),
 				s.getFileRevisionNumber().toString(), filename);
-		final Path absolute = baseDirectory.resolve(p);
 		assertEquals(p, s.getFile());
-		assertTrue(Files.exists(absolute));
-		Files.delete(absolute);
+		assertTrue(Files.exists(p));
+		Files.delete(p);
 	}
 
 	@Test

@@ -129,7 +129,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	protected Type saveInternal(final Type entity) {
 		logger.trace("In write internal, before doing any persisting.");
 		if (entity.getId() == null) {
-			logger.debug("file has never been saved before, writing to database.");
+			logger.trace("file has never been saved before, writing to database.");
 			// save the initial version of the file to the database so that we
 			// get an identifier attached to it.
 			entityManager.persist(entity);
