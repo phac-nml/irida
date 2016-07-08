@@ -77,4 +77,12 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	 */
 	@Query("FROM Project p WHERE p.remoteStatus.syncStatus=:syncStatus")
 	public List<Project> getProjectsWithRemoteSyncStatus(@Param("syncStatus") SyncStatus syncStatus);
+	
+	/**
+	 * Get a list of all {@link Project}s from remote sites
+	 * 
+	 * @return a list of {@link Project}
+	 */
+	@Query("FROM Project p WHERE p.remoteStatus != NULL")
+	public List<Project> getRemoteProjects();
 }

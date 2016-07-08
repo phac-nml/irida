@@ -56,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -201,6 +202,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Project updateProjectSettings(Project project, boolean assembleUploads) {
 		Project read = read(project.getId());
 		read.setAssembleUploads(assembleUploads);
+		return update(read);
+	}
+	
+	public Project updateProjectSyncSettings(Project project, ProjectSyncFrequency frequency){
+		Project read = read(project.getId());
+		read.setSyncFrequency(frequency);
 		return update(read);
 	}
 

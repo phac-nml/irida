@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.repository.query.Param;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -12,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -351,6 +351,13 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public List<Project> getProjectsWithRemoteSyncStatus(SyncStatus syncStatus);
 	
 	/**
+	 * Get a list of all {@link Project}s from remote sites
+	 * 
+	 * @return a list of {@link Project}
+	 */
+	public List<Project> getRemoteProjects();
+	
+	/**
 	 * Update select {@link Project} settings
 	 * 
 	 * @param project
@@ -360,4 +367,12 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the updated {@link Project}
 	 */
 	public Project updateProjectSettings(Project project, boolean assembleUploads);
+	
+	/**
+	 * Update the frequency that a project should be synchronized
+	 * @param project the project to sync
+	 * @param frequency how often to sync
+	 * @return the updated project
+	 */
+	public Project updateProjectSyncSettings(Project project, ProjectSyncFrequency frequency);
 }
