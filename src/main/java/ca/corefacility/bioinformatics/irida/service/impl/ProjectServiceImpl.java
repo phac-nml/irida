@@ -199,8 +199,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Project updateProjectSettings(Project project, boolean assembleUploads) {
-		project.setAssembleUploads(assembleUploads);
-		return update(project);
+		Project read = read(project.getId());
+		read.setAssembleUploads(assembleUploads);
+		return update(read);
 	}
 
 	/**
@@ -598,6 +599,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<Project> getProjectsWithRemoteSyncStatus(SyncStatus syncStatus) {
 		return projectRepository.getProjectsWithRemoteSyncStatus(syncStatus);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<Project> getRemoteProjects(){
+		return projectRepository.getRemoteProjects();
 	}
 	
 	/**
