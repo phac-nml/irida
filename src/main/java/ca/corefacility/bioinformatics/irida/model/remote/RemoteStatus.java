@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.remote;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -51,10 +53,12 @@ public class RemoteStatus {
 
 	@Column(name = "remote_hash_code")
 	private int remoteHashCode;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="read_by")
+	@JoinColumn(name = "read_by")
 	private User readBy;
+
+	private Date lastUpdate;
 
 	@SuppressWarnings("unused")
 	private RemoteStatus() {
@@ -101,13 +105,21 @@ public class RemoteStatus {
 	public void setRemoteHashCode(int remoteHashCode) {
 		this.remoteHashCode = remoteHashCode;
 	}
-	
+
 	public User getReadBy() {
 		return readBy;
 	}
-	
+
 	public void setReadBy(User readBy) {
 		this.readBy = readBy;
+	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 
 	public enum SyncStatus {
