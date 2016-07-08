@@ -73,11 +73,11 @@ public class ProjectSynchronizationService {
 			Date lastUpdate = remoteStatus.getLastUpdate();
 			ProjectSyncFrequency syncFrequency = p.getSyncFrequency();
 			
-			if(syncFrequency != null){
+			if (syncFrequency != null && syncFrequency != ProjectSyncFrequency.NEVER) {
 				Date nextSync = DateUtils.addDays(lastUpdate, syncFrequency.getDays());
-				
-				if(nextSync.before(new Date())){
-					Map<String,Object> updates = new HashMap<>();
+
+				if (nextSync.before(new Date())) {
+					Map<String, Object> updates = new HashMap<>();
 					remoteStatus.setSyncStatus(SyncStatus.MARKED);
 					updates.put("remoteStatus", remoteStatus);
 					projectService.updateProjectSettings(p, updates);
