@@ -8,6 +8,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -100,6 +102,9 @@ public class Project extends IridaResourceSupport
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
+	
+	@Enumerated(EnumType.STRING)
+	private ProjectSyncFrequency syncFrequency;
 
 	public Project() {
 		assembleUploads = false;
@@ -217,5 +222,11 @@ public class Project extends IridaResourceSupport
 		this.remoteStatus = remoteStatus;
 	}
 	
-	
+	public ProjectSyncFrequency getSyncFrequency() {
+		return syncFrequency;
+	}
+
+	public void setSyncFrequency(ProjectSyncFrequency syncFrequency) {
+		this.syncFrequency = syncFrequency;
+	}
 }
