@@ -260,8 +260,11 @@ public class ProjectsController {
 	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
 			final Model model, Locale locale) {
 		Project read = projectService.read(projectId);
-		read.setAssembleUploads(assemble);
-		projectService.updateProjectSettings(read, assemble);
+		
+		Map<String,Object> updates = new HashMap<>();
+		updates.put("assembleUploads", assemble);
+		
+		projectService.updateProjectSettings(read, updates);
 		
 
 		String message = null;

@@ -192,22 +192,33 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#object, 'isProjectOwner')")
 	public Project update(Project object) {
 		return super.update(object);
-	}
+	}	
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
-	public Project updateProjectSettings(Project project, boolean assembleUploads) {
+	public Project updateProjectSettings(Project project, Map<String,Object> updates){
+		String assemble = "assembleUploads";
+		String frequency = "syncFrequency";
+		
 		Project read = read(project.getId());
-		read.setAssembleUploads(assembleUploads);
-		return update(read);
-	}
-	
-	public Project updateProjectSyncSettings(Project project, ProjectSyncFrequency frequency){
-		Project read = read(project.getId());
-		read.setSyncFrequency(frequency);
+		
+		if(updates.containsKey(assemble)){
+			read.setAssembleUploads((boolean) updates.get(assemble));
+			updates.remove(assemble);
+		}
+		
+		if(updates.containsKey(frequency)){
+			read.setSyncFrequency((ProjectSyncFrequency) updates.get(frequency));
+			updates.remove(frequency);
+		}
+		
+		if(! updates.isEmpty()){
+			throw new IllegalArgumentException("Invalid update fields for project settings: " + updates.keySet());
+		}
+		
 		return update(read);
 	}
 

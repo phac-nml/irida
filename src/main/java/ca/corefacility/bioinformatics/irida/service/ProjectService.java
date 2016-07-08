@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
@@ -359,20 +360,9 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	
 	/**
 	 * Update select {@link Project} settings
-	 * 
-	 * @param project
-	 *            The project to update select settings on
-	 * @param assembleUploads
-	 *            whether to assemble newly uploaded data
+	 * @param project the project to update
+	 * @param updates a map of fields to update
 	 * @return the updated {@link Project}
 	 */
-	public Project updateProjectSettings(Project project, boolean assembleUploads);
-	
-	/**
-	 * Update the frequency that a project should be synchronized
-	 * @param project the project to sync
-	 * @param frequency how often to sync
-	 * @return the updated project
-	 */
-	public Project updateProjectSyncSettings(Project project, ProjectSyncFrequency frequency);
+	public Project updateProjectSettings(Project project, Map<String,Object> updates);
 }
