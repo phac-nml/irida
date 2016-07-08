@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -199,27 +200,18 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
-	public Project updateProjectSettings(Project project, Map<String,Object> updates){
-		String assemble = "assembleUploads";
-		String frequency = "syncFrequency";
-		
-		Project read = read(project.getId());
-		
-		if(updates.containsKey(assemble)){
-			read.setAssembleUploads((boolean) updates.get(assemble));
-			updates.remove(assemble);
-		}
-		
-		if(updates.containsKey(frequency)){
-			read.setSyncFrequency((ProjectSyncFrequency) updates.get(frequency));
-			updates.remove(frequency);
-		}
-		
-		if(! updates.isEmpty()){
+	public Project updateProjectSettings(Project project, Map<String, Object> updates) {
+		// ensure only accepted fields are updated
+		List<String> validSettings = Lists.newArrayList("assembleUploads", "syncFreqeuncy", "remoteStatus");
+
+		Set<String> keys = updates.keySet();
+
+		keys.removeAll(validSettings);
+		if (!keys.isEmpty()) {
 			throw new IllegalArgumentException("Invalid update fields for project settings: " + updates.keySet());
 		}
-		
-		return update(read);
+
+		return updateFields(project.getId(), updates);
 	}
 
 	/**
