@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PostLoad;
+import javax.persistence.PostUpdate;
+import javax.persistence.PreUpdate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * actually stored. 
 	 */
 	public static class RelativePathTranslatorListener {
+		private static final Logger logger = LoggerFactory.getLogger(RelativePathTranslatorListener.class);
 		
 		private static final Map<Class<?>, Path> baseDirectories = new ConcurrentHashMap<>();
 		
@@ -68,8 +71,9 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		}
 		
 		@PostLoad
+		@PostUpdate
 		public void absolutePath(final VersionedFileFields<Long> fileSystemEntity) {
-			logger.debug("Going to get an absolute path after loading.");
+			logger.trace("Going to get an absolute path after loading.");
 			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
 			// now find any members that are of type Path:
 			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
@@ -80,9 +84,36 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				ReflectionUtils.makeAccessible(field);
 				final Path source = (Path) ReflectionUtils.getField(field, fileSystemEntity);
 				if (source != null) {
-					
+					logger.trace("About to get ABSOLUTE path for [" + source.toString() + "] from base directory [" + directoryForType.toString() + "]");
 					final Path absolutePath = directoryForType.resolve(source);
 					ReflectionUtils.setField(field, fileSystemEntity, absolutePath);
+					logger.trace("Setting ABSOLUTE path to [" + absolutePath.toString() + "] from relative path [" + source.toString() +"]");
+				}
+			}
+		}
+		
+		@PreUpdate
+		public void relativePath(final VersionedFileFields<Long> fileSystemEntity) {
+			logger.trace("In pre-update, going to translate to relative path.");
+			
+			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
+			// now find any members that are of type Path:
+			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
+
+			// for every member that's a path, make it an absolute path based on the
+			// base directory
+			for (final Field field : pathFields) {
+				ReflectionUtils.makeAccessible(field);
+				final Path source = (Path) ReflectionUtils.getField(field, fileSystemEntity);
+				if (source != null) {
+					if (source.getRoot() != null) {
+						logger.trace("About to get RELATIVE path for [" + source.toString() + "] from base directory [" + directoryForType.toString() + "]");
+						final Path relativePath = directoryForType.relativize(source);
+						ReflectionUtils.setField(field, fileSystemEntity, relativePath);
+						logger.trace("Setting RELATIVE path to [" + relativePath.toString() + "] from absolute path [" + source.toString() +"]");
+					} else {
+						logger.trace("We just about tried to get a RELATIVE path for a RELATIVE path! Everybody panic!");
+					}
 				}
 			}
 		}
@@ -96,20 +127,16 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * @return the persisted entity.
 	 */
 	protected Type saveInternal(final Type entity) {
+		logger.trace("In write internal, before doing any persisting.");
 		if (entity.getId() == null) {
+			logger.debug("file has never been saved before, writing to database.");
 			// save the initial version of the file to the database so that we
 			// get an identifier attached to it.
 			entityManager.persist(entity);
 		}
+		logger.trace("About to write files to disk.");
 		writeFilesToDisk(baseDirectory, entity);
-		return entityManager.merge(entity);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Type updateWithoutFileRevision(Type entity) {
+		logger.trace("Returning merged entity.");
 		return entityManager.merge(entity);
 	}
 
@@ -169,16 +196,16 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				try {
 					if (!Files.exists(sequenceFileDir)) {
 						Files.createDirectory(sequenceFileDir);
-						logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
+						logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
 					} else {
-						logger.debug("Directory [" + sequenceFileDir.toString() + "] already exists.");
+						logger.trace("Directory [" + sequenceFileDir.toString() + "] already exists.");
 					}
 
 					if (!Files.exists(sequenceFileDirWithRevision)) {
 						Files.createDirectory(sequenceFileDirWithRevision);
-						logger.debug("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+						logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
 					} else {
-						logger.debug("Directory [" + sequenceFileDirWithRevision.toString() + "] already exists.");
+						logger.trace("Directory [" + sequenceFileDirWithRevision.toString() + "] already exists.");
 					}
 
 					Files.move(source, target);
@@ -187,10 +214,8 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 					logger.error("Unable to move file into new directory", e);
 					throw new StorageException("Failed to move file into new directory.", e);
 				}
-				
-				final Path relativePath = baseDirectory.relativize(target);
 
-				ReflectionUtils.setField(field, objectToWrite, relativePath);
+				ReflectionUtils.setField(field, objectToWrite, target);
 			}
 		}
 
