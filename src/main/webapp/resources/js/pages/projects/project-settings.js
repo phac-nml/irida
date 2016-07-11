@@ -30,6 +30,10 @@ var projectSettings = (function(page, notifications) {
         updateSyncSettings({'forceSync': "true"});
     });
     
+    $(document).ready(function(){
+       getApiStatus(page.vars.apiId, "#api-status", "#connect-button");
+    });
+    
     function updateSyncSettings(params){
         $.ajax({
             url: page.urls.sync,

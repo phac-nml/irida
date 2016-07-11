@@ -11,6 +11,9 @@
             urls: {
                 'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
                 'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync'
+            },
+            vars: {
+                'apiId': /*[[${project.getRemoteStatus().getApi().getId()}]]*/ '1'
             }
         };
     </script>
@@ -41,6 +44,18 @@
           </div>
         </div>
         <div class="form-group">
+          <label class="control-label" th:text="#{project.settings.api}">_API_</label>
+          <div th:with="status = ${project.getRemoteStatus()}">
+            <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a>
+            <span id="api-status" class="api-status">
+                <i class="fa fa-spinner fa-spin"></i>
+            </span>
+        
+            <button type="button" class="oauth-connect-link btn btn-default hidden" id="connect-button"
+                th:text="#{remoteapi.status.connect.button}">_Connect_</button>
+          </div>
+        </div>
+        <div class="form-group">
           <label class="control-label" for="frequency" th:text="#{project.settings.sync.frequency}">_Sync Frequency_</label>
           <select id="frequency" class="form-control input-full sync-setting">
             <option th:each="freq : ${frequencies}" th:value="${freq}" th:text="#{'project.settings.frequency.' + ${freq}}" th:selected="${project.getSyncFrequency() == freq}"></option>
@@ -50,7 +65,9 @@
     </div>
     
   </main>
-
+  <th:block layout:fragment="scripts" th:inline="javascript">
+      <script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
+  </th:block>
 </body>
 
 </html>
