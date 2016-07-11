@@ -52,7 +52,7 @@
             </span>
         
             <button type="button" class="oauth-connect-link btn btn-default hidden" id="connect-button"
-                th:text="#{remoteapi.status.connect.button}">_Connect_</button>
+                th:text="#{remoteapi.status.connect.button}" th:attr="data-api-id=${status.getApi().getId()}">_Connect_</button>
           </div>
         </div>
         <div class="form-group">
