@@ -66,6 +66,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -288,6 +289,8 @@ public class ProjectsController {
 	 *            the project id to update
 	 * @param frequency
 	 *            the sync frequency to set
+	 * @param forceSync
+	 *            Set the project's sync status to MARKED
 	 * @param locale
 	 *            user's locale
 	 * @return result message if successful
@@ -296,11 +299,21 @@ public class ProjectsController {
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	@ResponseBody
 	public Map<String, String> updateProjectSyncSettings(@PathVariable Long projectId,
-			@RequestParam ProjectSyncFrequency frequency, Locale locale) {
+			@RequestParam(required = false) ProjectSyncFrequency frequency,
+			@RequestParam(required = false, defaultValue = "false") boolean forceSync, Locale locale) {
 		Project read = projectService.read(projectId);
+		RemoteStatus remoteStatus = read.getRemoteStatus();
 
 		Map<String, Object> updates = new HashMap<>();
-		updates.put("syncFrequency", frequency);
+		
+		if(frequency != null){
+			updates.put("syncFrequency", frequency);
+		}
+		
+		if(forceSync){
+			remoteStatus.setSyncStatus(SyncStatus.MARKED);
+			updates.put("remoteStatus", remoteStatus);
+		}
 
 		projectService.updateProjectSettings(read, updates);
 

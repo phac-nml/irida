@@ -19,7 +19,7 @@
 <body>
   <main layout:fragment="main" ddl:bundle-includes="project-settings" >
     <div class="panel panel-default">
-      <div class="panel-heading">_Basic project settings_</div>
+      <div class="panel-heading" th:text="#{project.settings.basic.heading}">_Basic project settings_</div>
       <div class="panel-body">
         <div class="checkbox">
           <label>
@@ -31,10 +31,17 @@
     </div>
     
     <div class="panel panel-default" th:if="${project.isRemote()}">
-      <div class="panel-heading">_Project Sync Settings_</div>
+      <div class="panel-heading" th:text="#{project.settings.sync.heading}">_Project Sync Settings_</div>
       <div class="panel-body">
         <div class="form-group">
-          <label class="control-label" for="frequency">_Sync Frequency_</label>
+          <label class="control-label" th:text="#{project.settings.sync.lastSync}">_Last Sync_</label>
+          <div>
+            <span th:text="${#calendars.format(project.getRemoteStatus().getLastUpdate(), 'dd MMM yyyy hh:mma')}"></span>
+            <button id="forceSync" role="button" class="btn btn-primary btn-sm" th:text="#{project.settings.sync.forceSync}">_Force Sync_</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="frequency" th:text="#{project.settings.sync.frequency}">_Sync Frequency_</label>
           <select id="frequency" class="form-control input-full sync-setting">
             <option th:each="freq : ${frequencies}" th:value="${freq}" th:text="#{'project.settings.frequency.' + ${freq}}" th:selected="${project.getSyncFrequency() == freq}"></option>
           </select>
