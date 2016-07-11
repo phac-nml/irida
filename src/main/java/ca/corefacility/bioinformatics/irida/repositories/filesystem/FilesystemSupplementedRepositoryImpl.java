@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreUpdate;
 
@@ -72,6 +73,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		
 		@PostLoad
 		@PostUpdate
+		@PostPersist
 		public void absolutePath(final VersionedFileFields<Long> fileSystemEntity) {
 			logger.trace("Going to get an absolute path after loading.");
 			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
@@ -84,10 +86,12 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				ReflectionUtils.makeAccessible(field);
 				final Path source = (Path) ReflectionUtils.getField(field, fileSystemEntity);
 				if (source != null) {
-					logger.trace("About to get ABSOLUTE path for [" + source.toString() + "] from base directory [" + directoryForType.toString() + "]");
-					final Path absolutePath = directoryForType.resolve(source);
-					ReflectionUtils.setField(field, fileSystemEntity, absolutePath);
-					logger.trace("Setting ABSOLUTE path to [" + absolutePath.toString() + "] from relative path [" + source.toString() +"]");
+					if (source.getRoot() == null) {
+						logger.trace("About to get ABSOLUTE path for [" + source.toString() + "] from base directory [" + directoryForType.toString() + "]");
+						final Path absolutePath = directoryForType.resolve(source);
+						ReflectionUtils.setField(field, fileSystemEntity, absolutePath);
+						logger.trace("Setting ABSOLUTE path to [" + absolutePath.toString() + "] from relative path [" + source.toString() +"]");
+					}
 				}
 			}
 		}
@@ -111,8 +115,6 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 						final Path relativePath = directoryForType.relativize(source);
 						ReflectionUtils.setField(field, fileSystemEntity, relativePath);
 						logger.trace("Setting RELATIVE path to [" + relativePath.toString() + "] from absolute path [" + source.toString() +"]");
-					} else {
-						logger.trace("We just about tried to get a RELATIVE path for a RELATIVE path! Everybody panic!");
 					}
 				}
 			}
