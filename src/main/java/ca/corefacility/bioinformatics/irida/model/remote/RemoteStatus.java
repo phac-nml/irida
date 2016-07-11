@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -58,6 +60,8 @@ public class RemoteStatus {
 	@JoinColumn(name = "read_by")
 	private User readBy;
 
+	@Column(name="last_update")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
 
 	@SuppressWarnings("unused")
@@ -68,6 +72,7 @@ public class RemoteStatus {
 		syncStatus = SyncStatus.UNSYNCHRONIZED;
 		this.url = url;
 		this.api = api;
+		lastUpdate = new Date();
 	}
 
 	public Long getId() {

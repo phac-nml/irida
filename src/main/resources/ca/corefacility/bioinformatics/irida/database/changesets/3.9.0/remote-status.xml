@@ -26,6 +26,7 @@
 				<constraints referencedColumnNames="id"
 					referencedTableName="user" foreignKeyName="FK_REMOTE_OBJECT_READ_BY" />
 			</column>
+			<column name="last_update" type="datetime" />
 		</createTable>
 
 		<createTable tableName="remote_status_AUD">
@@ -42,6 +43,7 @@
 			<column name="api_id" type="bigint(20)" />
 			<column name="remote_hash_code" type="int" />
 			<column name="read_by" type="bigint(20)" />
+			<column name="last_update" type="datetime" />
 		</createTable>
 
 		<addColumn tableName="project">
@@ -49,10 +51,12 @@
 				<constraints foreignKeyName="FK_PROJECT_REMOTE_STATUS"
 					referencedColumnNames="id" referencedTableName="remote_status" />
 			</column>
+			<column name="sync_frequency" type="varchar(255)" />
 		</addColumn>
 
 		<addColumn tableName="project_AUD">
 			<column name="remote_status" type="bigint(20)" />
+			<column name="sync_frequency" type="varchar(255)" />
 		</addColumn>
 
 		<addColumn tableName="sample">

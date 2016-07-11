@@ -103,6 +103,7 @@ public class Project extends IridaResourceSupport
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 	
+	@Column(name = "sync_frequency")
 	@Enumerated(EnumType.STRING)
 	private ProjectSyncFrequency syncFrequency;
 
