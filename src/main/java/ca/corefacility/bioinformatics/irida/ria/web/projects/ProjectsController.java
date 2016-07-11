@@ -350,6 +350,8 @@ public class ProjectsController {
 		
 		Iterable<RemoteAPI> apis = remoteApiService.findAll();
 		model.addAttribute("apis",apis);
+		model.addAttribute("frequencies", ProjectSyncFrequency.values());
+		model.addAttribute("defaultFrequency", ProjectSyncFrequency.WEEKLY);
 		
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
@@ -368,12 +370,13 @@ public class ProjectsController {
 	 *         be forwarded back to the creation page.
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
-	public String syncProject(@RequestParam String url, Model model) {
+	public String syncProject(@RequestParam String url, @RequestParam ProjectSyncFrequency syncFrequency, Model model) {
 
 		try {
 			Project read = projectRemoteService.read(url);
 			read.setId(null);
 			read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+			read.setSyncFrequency(syncFrequency);
 
 			read = projectService.create(read);
 
@@ -383,8 +386,7 @@ public class ProjectsController {
 			errors.put("oauthError", ex.getMessage());
 			model.addAttribute("errors", errors);
 			return getSynchronizeProjectPage(model);
-		}
-		catch(EntityNotFoundException ex){
+		} catch (EntityNotFoundException ex) {
 			Map<String, String> errors = new HashMap<>();
 			errors.put("urlError", ex.getMessage());
 			model.addAttribute("errors", errors);

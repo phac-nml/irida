@@ -43,6 +43,14 @@
                         </select>
                         <p class="help-block" th:text="#{projects.sync.project.help}">_Select a project to synchornize_</p>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label" for="frequency" th:text="#{project.settings.sync.frequency}">_Sync Frequency_</label>
+                        <select id="frequency" name="syncFrequency" class="form-control input-full">
+                            <option th:each="freq : ${frequencies}" th:value="${freq}" th:selected="${freq == defaultFrequency}" th:text="#{'project.settings.frequency.' + ${freq}}"></option>
+                        </select>
+                        <p class="help-block" th:text="#{projects.sync.frequency.help}">_How often should the project be synchronized_</p>
+                    </div>
+                    
                     <div><a data-toggle="collapse" href="#advancedCollapse"><span th:text="#{projects.sync.advanced}">_Advanced_</span> <fa:icon type="hide"/></a></div>
                     <div id="advancedCollapse" class="form-group collapse">
                         <label class="control-label" for="name"><span th:text="#{projects.sync.url}">_Project_URL_</span>
