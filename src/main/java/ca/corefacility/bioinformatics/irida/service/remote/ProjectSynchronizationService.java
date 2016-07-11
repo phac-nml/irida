@@ -91,6 +91,9 @@ public class ProjectSynchronizationService {
 	 * task.
 	 */
 	public void findMarkedProjectsToSync() {
+		//mark any projects which should be synched first
+		findProjectsToMark();
+		
 		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
 
 		logger.debug("Checking for projects to sync");
@@ -137,13 +140,13 @@ public class ProjectSynchronizationService {
 		String projectURL = project.getRemoteStatus().getURL();
 
 		Project readProject = projectRemoteService.read(projectURL);
+		
+		// ensure we use the same IDs
+		readProject = updateIds(project, readProject);
 
 		// if project was updated remotely, update it here
 		if (checkForChanges(project.getRemoteStatus(), readProject)) {
 			logger.debug("found changes for project " + readProject.getSelfHref());
-
-			// ensure we use the same IDs
-			readProject = updateIds(project, readProject);
 
 			project = projectService.update(readProject);
 		}
@@ -166,7 +169,9 @@ public class ProjectSynchronizationService {
 			syncSample(s, project, samplesByUrl);
 		}
 
+		project.setRemoteStatus(readProject.getRemoteStatus());
 		project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		
 		projectService.update(project);
 	}
 
