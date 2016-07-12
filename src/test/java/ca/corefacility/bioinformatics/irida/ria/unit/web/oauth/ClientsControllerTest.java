@@ -125,7 +125,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.create(client)).thenReturn(client);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		verify(clientDetailsService).create(client);
@@ -145,7 +145,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.create(client)).thenThrow(ex);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", "", model, locale);
 
 		assertEquals(ClientsController.ADD_CLIENT_PAGE, postCreateClient);
 		assertTrue(model.containsAttribute("errors"));

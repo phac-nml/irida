@@ -70,6 +70,9 @@ public class ClientsController extends BaseController {
 
 	private final List<Integer> AVAILABLE_TOKEN_VALIDITY = Lists.newArrayList(1800, 3600, 7200, 21600, 43200, 86400,
 			172800, 604800);
+	
+	private final List<Integer> AVAILABLE_REFRESH_TOKEN_VALIDITY = Lists.newArrayList(604800, 2592000, 7776000,
+			15552000);
 
 	@Autowired
 	public ClientsController(IridaClientDetailsService clientDetailsService, MessageSource messageSource) {
@@ -263,11 +266,14 @@ public class ClientsController extends BaseController {
 		model.addAttribute("available_grants", AVAILABLE_GRANTS);
 
 		model.addAttribute("available_token_validity", AVAILABLE_TOKEN_VALIDITY);
+		model.addAttribute("available_refresh_token_validity", AVAILABLE_REFRESH_TOKEN_VALIDITY);
 
 		// set the default token validity
 		if (!model.containsAttribute("given_tokenValidity")) {
 			model.addAttribute("given_tokenValidity", IridaClientDetails.DEFAULT_TOKEN_VALIDITY);
 		}
+		
+		model.addAttribute("refresh_validity", IridaClientDetails.DEFAULT_REFRESH_TOKEN_VALIDITY);
 
 		return ADD_CLIENT_PAGE;
 	}
@@ -299,7 +305,8 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String scope_read,
 			@RequestParam(required = false, defaultValue = "") String scope_write,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
-			@RequestParam(required = false, defaultValue = "") String scope_auto_write,Model model, Locale locale) {
+			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
+			@RequestParam(required = false, defaultValue = "") String refresh, Model model, Locale locale) {
 		client.setClientSecret(generateClientSecret());
 
 		Set<String> autoScopes = new HashSet<>();
@@ -317,9 +324,15 @@ public class ClientsController extends BaseController {
 				autoScopes.add("read");
 			}
 		}
+		
+		if(refresh.equals("refresh")){
+			client.getAuthorizedGrantTypes().add("refresh_token");
+		}
 
 		client.setScope(scopes);
 		client.setAutoApprovableScopes(autoScopes);
+		
+		
 
 		String responsePage = null;
 		try {
