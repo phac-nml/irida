@@ -20,4 +20,34 @@ var projectSettings = (function(page, notifications) {
         });
     });
     
+    $(".sync-setting").change(function(){
+        var freq = $(this).val();
+        
+        updateSyncSettings({'frequency': freq});
+    });
+    
+    $("#forceSync").on('click', function(){
+        updateSyncSettings({'forceSync': "true"});
+    });
+    
+    $(document).ready(function(){
+       getApiStatus(page.vars.apiId, "#api-status", "#connect-button");
+    });
+    
+    function updateSyncSettings(params){
+        $.ajax({
+            url: page.urls.sync,
+            type: 'POST',
+            data: params, 
+            statusCode : {
+                200 : function(response){
+                    notifications.show({'msg': response.result});
+                }
+            },
+            fail : function(){
+                notifications.show({'msg': page.i18n.error, type:"error"});
+            }
+        });
+    }
+    
 })(window.PAGE, window.notifications);

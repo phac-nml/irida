@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
@@ -63,10 +66,45 @@ public class ProjectSynchronizationService {
 	}
 
 	/**
+	 * Method checking for remote projects that have passed their frequency
+	 * time. It will mark them as {@link SyncStatus#MARKED}
+	 */
+	public void findProjectsToMark() {
+		List<Project> remoteProjects = projectService.getRemoteProjects();
+
+		for (Project p : remoteProjects) {
+			// check the frequency for each remote project
+			RemoteStatus remoteStatus = p.getRemoteStatus();
+			Date lastUpdate = remoteStatus.getLastUpdate();
+			ProjectSyncFrequency syncFrequency = p.getSyncFrequency();
+
+			// if the project is set to be synched
+			if (syncFrequency != null && syncFrequency != ProjectSyncFrequency.NEVER) {
+
+				/*
+				 * find the next sync date and see if it's passed. if it has set
+				 * as MARKED
+				 */
+				Date nextSync = DateUtils.addDays(lastUpdate, syncFrequency.getDays());
+
+				if (nextSync.before(new Date())) {
+					Map<String, Object> updates = new HashMap<>();
+					remoteStatus.setSyncStatus(SyncStatus.MARKED);
+					updates.put("remoteStatus", remoteStatus);
+					projectService.updateProjectSettings(p, updates);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Find projects which should be synchronized and launch a synchornization
 	 * task.
 	 */
 	public void findMarkedProjectsToSync() {
+		// mark any projects which should be synched first
+		findProjectsToMark();
+
 		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
 
 		logger.debug("Checking for projects to sync");
@@ -114,12 +152,12 @@ public class ProjectSynchronizationService {
 
 		Project readProject = projectRemoteService.read(projectURL);
 
+		// ensure we use the same IDs
+		readProject = updateIds(project, readProject);
+
 		// if project was updated remotely, update it here
 		if (checkForChanges(project.getRemoteStatus(), readProject)) {
 			logger.debug("found changes for project " + readProject.getSelfHref());
-
-			// ensure we use the same IDs
-			readProject = updateIds(project, readProject);
 
 			project = projectService.update(readProject);
 		}
@@ -142,7 +180,9 @@ public class ProjectSynchronizationService {
 			syncSample(s, project, samplesByUrl);
 		}
 
+		project.setRemoteStatus(readProject.getRemoteStatus());
 		project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+
 		projectService.update(project);
 	}
 

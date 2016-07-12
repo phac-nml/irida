@@ -37,6 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -56,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -81,6 +85,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 @Service
 public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {
 
+	// settings that can be updated locally for a remote project
+	public List<String> VALID_LOCAL_SETTINGS = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus");
+	
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
 	private final ProjectUserJoinRepository pujRepository;
@@ -191,16 +198,22 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#object, 'isProjectOwner')")
 	public Project update(Project object) {
 		return super.update(object);
-	}
+	}	
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
-	public Project updateProjectSettings(Project project, boolean assembleUploads) {
-		project.setAssembleUploads(assembleUploads);
-		return update(project);
+	public Project updateProjectSettings(Project project, Map<String, Object> updates) {
+		// ensure only accepted fields are updated
+		Set<String> keys = Sets.newHashSet(updates.keySet());
+		keys.removeAll(VALID_LOCAL_SETTINGS);
+		if (!keys.isEmpty()) {
+			throw new IllegalArgumentException("Invalid update fields for project settings: " + updates.keySet());
+		}
+
+		return updateFields(project.getId(), updates);
 	}
 
 	/**
@@ -598,6 +611,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<Project> getProjectsWithRemoteSyncStatus(SyncStatus syncStatus) {
 		return projectRepository.getProjectsWithRemoteSyncStatus(syncStatus);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<Project> getRemoteProjects(){
+		return projectRepository.getRemoteProjects();
 	}
 	
 	/**

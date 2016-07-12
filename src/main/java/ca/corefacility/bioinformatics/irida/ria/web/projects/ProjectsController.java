@@ -65,6 +65,8 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -238,6 +240,7 @@ public class ProjectsController {
 		logger.debug("Getting project settings for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		return PROJECT_SETTINGS_PAGE;
@@ -255,13 +258,15 @@ public class ProjectsController {
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	@ResponseBody
 	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
 			final Model model, Locale locale) {
 		Project read = projectService.read(projectId);
-		read.setAssembleUploads(assemble);
-		projectService.updateProjectSettings(read, assemble);
+		
+		Map<String,Object> updates = new HashMap<>();
+		updates.put("assembleUploads", assemble);
+		
+		projectService.updateProjectSettings(read, updates);
 		
 
 		String message = null;
@@ -272,6 +277,45 @@ public class ProjectsController {
 			message = messageSource.getMessage("project.settings.notifications.assemble.disabled",
 					new Object[] { read.getLabel() }, locale);
 		}
+
+		return ImmutableMap.of("result", message);
+	}
+
+	/**
+	 * Update the project sync settings
+	 * 
+	 * @param projectId
+	 *            the project id to update
+	 * @param frequency
+	 *            the sync frequency to set
+	 * @param forceSync
+	 *            Set the project's sync status to MARKED
+	 * @param locale
+	 *            user's locale
+	 * @return result message if successful
+	 */
+	@RequestMapping(value = "/projects/{projectId}/settings/sync", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> updateProjectSyncSettings(@PathVariable Long projectId,
+			@RequestParam(required = false) ProjectSyncFrequency frequency,
+			@RequestParam(required = false, defaultValue = "false") boolean forceSync, Locale locale) {
+		Project read = projectService.read(projectId);
+		RemoteStatus remoteStatus = read.getRemoteStatus();
+
+		Map<String, Object> updates = new HashMap<>();
+		
+		if(frequency != null){
+			updates.put("syncFrequency", frequency);
+		}
+		
+		if(forceSync){
+			remoteStatus.setSyncStatus(SyncStatus.MARKED);
+			updates.put("remoteStatus", remoteStatus);
+		}
+
+		projectService.updateProjectSettings(read, updates);
+
+		String message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
 
 		return ImmutableMap.of("result", message);
 	}
@@ -304,6 +348,8 @@ public class ProjectsController {
 		
 		Iterable<RemoteAPI> apis = remoteApiService.findAll();
 		model.addAttribute("apis",apis);
+		model.addAttribute("frequencies", ProjectSyncFrequency.values());
+		model.addAttribute("defaultFrequency", ProjectSyncFrequency.WEEKLY);
 		
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
@@ -322,12 +368,13 @@ public class ProjectsController {
 	 *         be forwarded back to the creation page.
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
-	public String syncProject(@RequestParam String url, Model model) {
+	public String syncProject(@RequestParam String url, @RequestParam ProjectSyncFrequency syncFrequency, Model model) {
 
 		try {
 			Project read = projectRemoteService.read(url);
 			read.setId(null);
 			read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+			read.setSyncFrequency(syncFrequency);
 
 			read = projectService.create(read);
 
@@ -337,8 +384,7 @@ public class ProjectsController {
 			errors.put("oauthError", ex.getMessage());
 			model.addAttribute("errors", errors);
 			return getSynchronizeProjectPage(model);
-		}
-		catch(EntityNotFoundException ex){
+		} catch (EntityNotFoundException ex) {
 			Map<String, String> errors = new HashMap<>();
 			errors.put("urlError", ex.getMessage());
 			model.addAttribute("errors", errors);
