@@ -32,8 +32,8 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
  */
 @Service("clientDetails")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaClientDetails> implements
-		IridaClientDetailsService {
+public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaClientDetails>
+		implements IridaClientDetailsService {
 	private IridaClientDetailsRepository clientDetailsRepository;
 
 	private TokenStore tokenStore;
@@ -72,8 +72,8 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 * {@inheritDoc}
 	 */
 	@Override
-	public IridaClientDetails create(IridaClientDetails object) throws ConstraintViolationException,
-			EntityExistsException {
+	public IridaClientDetails create(IridaClientDetails object)
+			throws ConstraintViolationException, EntityExistsException {
 		return super.create(object);
 	}
 
@@ -84,7 +84,7 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	public IridaClientDetails read(Long object) {
 		return super.read(object);
 	}
-	
+
 	@Override
 	public IridaClientDetails update(IridaClientDetails object) {
 		return super.update(object);
@@ -121,7 +121,12 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 */
 	public void revokeTokensForClient(IridaClientDetails client) {
 		Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
-		findTokensByClientId.forEach(tokenStore::removeAccessToken);
+		for (OAuth2AccessToken token : findTokensByClientId) {
+			tokenStore.removeAccessToken(token);
+			if (token.getRefreshToken() != null) {
+				tokenStore.removeRefreshToken(token.getRefreshToken());
+			}
+		}
 	}
 
 }
