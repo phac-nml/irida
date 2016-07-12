@@ -290,6 +290,11 @@ public class ProjectsController {
 	 *            the sync frequency to set
 	 * @param forceSync
 	 *            Set the project's sync status to MARKED
+	 * @param changeUser
+	 *            update the user on a remote project to the current logged in
+	 *            user
+	 * @param principal
+	 *            The current logged in user
 	 * @param locale
 	 *            user's locale
 	 * @return result message if successful
@@ -298,7 +303,8 @@ public class ProjectsController {
 	@ResponseBody
 	public Map<String, String> updateProjectSyncSettings(@PathVariable Long projectId,
 			@RequestParam(required = false) ProjectSyncFrequency frequency,
-			@RequestParam(required = false, defaultValue = "false") boolean forceSync, Locale locale) {
+			@RequestParam(required = false, defaultValue = "false") boolean forceSync, 
+			@RequestParam(required = false, defaultValue = "false") boolean changeUser, Principal principal, Locale locale) {
 		Project read = projectService.read(projectId);
 		RemoteStatus remoteStatus = read.getRemoteStatus();
 
@@ -310,6 +316,14 @@ public class ProjectsController {
 		
 		if(forceSync){
 			remoteStatus.setSyncStatus(SyncStatus.MARKED);
+			updates.put("remoteStatus", remoteStatus);
+		}
+		
+		if(changeUser){
+			//ensure the user can read the project
+			projectRemoteService.read(remoteStatus.getURL());
+			User user = userService.getUserByUsername(principal.getName());
+			remoteStatus.setReadBy(user);
 			updates.put("remoteStatus", remoteStatus);
 		}
 

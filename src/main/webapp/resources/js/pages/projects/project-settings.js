@@ -30,6 +30,10 @@ var projectSettings = (function(page, notifications) {
         updateSyncSettings({'forceSync': "true"});
     });
     
+    $("#becomeSyncUser").on('click', function(){
+        updateSyncSettings({'changeUser': "true"});
+    });
+    
     $(document).ready(function(){
        getApiStatus(page.vars.apiId, "#api-status", "#connect-button");
     });
@@ -44,7 +48,7 @@ var projectSettings = (function(page, notifications) {
                     notifications.show({'msg': response.result});
                 }
             },
-            fail : function(){
+            error : function(){
                 notifications.show({'msg': page.i18n.error, type:"error"});
             }
         });
