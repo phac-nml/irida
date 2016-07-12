@@ -42,6 +42,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Controller for all {@link IridaClientDetails} related views
@@ -165,6 +166,10 @@ public class ClientsController extends BaseController {
 			model.addAttribute("given_scope_auto_" + autoScope,true);
 		}
 		
+		if(client.getAuthorizedGrantTypes().contains("refresh_token")){
+			model.addAttribute("refresh", true);
+		}
+		
 		getAddClientPage(model);
 
 		return EDIT_CLIENT_PAGE;
@@ -204,6 +209,8 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String scope_write,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
+			@RequestParam(required = false, defaultValue = "") String refresh,
+			@RequestParam(required = false, defaultValue = "0") Integer refreshTokenValidity,
 			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
 		IridaClientDetails readClient = clientDetailsService.read(clientId);
 
@@ -211,7 +218,7 @@ public class ClientsController extends BaseController {
 			readClient.setAccessTokenValiditySeconds(accessTokenValiditySeconds);
 		}
 		if (!Strings.isNullOrEmpty(authorizedGrantTypes)) {
-			readClient.setAuthorizedGrantTypes(ImmutableSet.of(authorizedGrantTypes));
+			readClient.setAuthorizedGrantTypes(Sets.newHashSet(authorizedGrantTypes));
 		}
 
 		Set<String> scopes = new HashSet<>();
@@ -235,6 +242,16 @@ public class ClientsController extends BaseController {
 		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();;
 			readClient.setClientSecret(clientSecret);
+		}
+		
+		if (refresh.equals("refresh")) {
+			readClient.getAuthorizedGrantTypes().add("refresh_token");
+		} else {
+			readClient.getAuthorizedGrantTypes().remove("refresh_token");
+		}
+		
+		if(refreshTokenValidity != 0){
+			readClient.setRefreshTokenValiditySeconds(refreshTokenValidity);
 		}
 
 		String response;
