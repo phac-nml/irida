@@ -258,7 +258,6 @@ public class ProjectsController {
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	@ResponseBody
 	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
 			final Model model, Locale locale) {
@@ -296,7 +295,6 @@ public class ProjectsController {
 	 * @return result message if successful
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings/sync", method = RequestMethod.POST)
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	@ResponseBody
 	public Map<String, String> updateProjectSyncSettings(@PathVariable Long projectId,
 			@RequestParam(required = false) ProjectSyncFrequency frequency,

@@ -64,16 +64,27 @@ public class ProjectSynchronizationService {
 		this.singleEndRemoteService = singleEndRemoteService;
 		this.pairRemoteService = pairRemoteService;
 	}
-	
-	public void findProjectsToMark(){
+
+	/**
+	 * Method checking for remote projects that have passed their frequency
+	 * time. It will mark them as {@link SyncStatus#MARKED}
+	 */
+	public void findProjectsToMark() {
 		List<Project> remoteProjects = projectService.getRemoteProjects();
-		
-		for(Project p : remoteProjects){
+
+		for (Project p : remoteProjects) {
+			// check the frequency for each remote project
 			RemoteStatus remoteStatus = p.getRemoteStatus();
 			Date lastUpdate = remoteStatus.getLastUpdate();
 			ProjectSyncFrequency syncFrequency = p.getSyncFrequency();
-			
+
+			// if the project is set to be synched
 			if (syncFrequency != null && syncFrequency != ProjectSyncFrequency.NEVER) {
+
+				/*
+				 * find the next sync date and see if it's passed. if it has set
+				 * as MARKED
+				 */
 				Date nextSync = DateUtils.addDays(lastUpdate, syncFrequency.getDays());
 
 				if (nextSync.before(new Date())) {
@@ -91,9 +102,9 @@ public class ProjectSynchronizationService {
 	 * task.
 	 */
 	public void findMarkedProjectsToSync() {
-		//mark any projects which should be synched first
+		// mark any projects which should be synched first
 		findProjectsToMark();
-		
+
 		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
 
 		logger.debug("Checking for projects to sync");
@@ -140,7 +151,7 @@ public class ProjectSynchronizationService {
 		String projectURL = project.getRemoteStatus().getURL();
 
 		Project readProject = projectRemoteService.read(projectURL);
-		
+
 		// ensure we use the same IDs
 		readProject = updateIds(project, readProject);
 
@@ -171,7 +182,7 @@ public class ProjectSynchronizationService {
 
 		project.setRemoteStatus(readProject.getRemoteStatus());
 		project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-		
+
 		projectService.update(project);
 	}
 
