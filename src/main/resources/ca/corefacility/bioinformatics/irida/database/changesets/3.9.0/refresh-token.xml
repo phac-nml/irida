@@ -19,5 +19,11 @@
 			</column>
 		</createTable>
 
+		<addColumn tableName="remote_api_token">
+			<column name="refresh_token" type="varchar(255)" />
+		</addColumn>
+		<addColumn tableName="remote_api_token_AUD">
+			<column name="refresh_token" type="varchar(255)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>
