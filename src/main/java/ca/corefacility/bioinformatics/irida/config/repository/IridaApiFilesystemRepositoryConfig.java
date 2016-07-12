@@ -125,7 +125,7 @@ public class IridaApiFilesystemRepositoryConfig {
 	private Path configureDirectory(String pathName, String defaultDevPathPrefix) throws IOException {
 		Path baseDirectory = Paths.get(pathName);
 		if (!Files.exists(baseDirectory)) {
-			baseDirectory = Files.createTempDirectory(defaultDevPathPrefix);
+			baseDirectory = Files.createDirectories(baseDirectory);
 			BASE_DIRECTORIES.add(baseDirectory);
 			logger.info(String
 					.format("The directory [%s] does not exist, but it looks like you're running in a dev environment, "
