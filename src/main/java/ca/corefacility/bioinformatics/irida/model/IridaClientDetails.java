@@ -54,7 +54,7 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 	public final static String CLIENT_ID_CONSTRAINT_NAME = "UK_CLIENT_DETAILS_CLIENT_ID";
 	// 12 hours
 	public final static Integer DEFAULT_TOKEN_VALIDITY = 43200;
-	public final static Integer DEFAULT_REFRESH_TOKEN_VALIDITY = 43200;
+	public final static Integer DEFAULT_REFRESH_TOKEN_VALIDITY = 2592000;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
