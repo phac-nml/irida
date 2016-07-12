@@ -148,7 +148,7 @@ public class OltuAuthorizationController {
 		String accessToken = accessTokenResponse.getAccessToken();
 
 		// TODO: Handle Refresh Tokens
-		// String refreshToken = accessTokenResponse.getRefreshToken();
+		String refreshToken = accessTokenResponse.getRefreshToken();
 
 		// check the token expiry
 		Long expiresIn = accessTokenResponse.getExpiresIn();
@@ -156,7 +156,7 @@ public class OltuAuthorizationController {
 		logger.debug("Token expiry: " + expiry);
 
 		// create the OAuth2 token and store it
-		RemoteAPIToken token = new RemoteAPIToken(accessToken, remoteAPI, expiry);
+		RemoteAPIToken token = new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
 		tokenService.create(token);
 
 		// redirect the response back to the requested resource
