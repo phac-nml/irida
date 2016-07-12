@@ -85,6 +85,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 @Service
 public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {
 
+	// settings that can be updated locally for a remote project
+	public List<String> VALID_LOCAL_SETTINGS = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus");
+	
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
 	private final ProjectUserJoinRepository pujRepository;
@@ -204,11 +207,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Project updateProjectSettings(Project project, Map<String, Object> updates) {
 		// ensure only accepted fields are updated
-		List<String> validSettings = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus");
-
 		Set<String> keys = Sets.newHashSet(updates.keySet());
-
-		keys.removeAll(validSettings);
+		keys.removeAll(VALID_LOCAL_SETTINGS);
 		if (!keys.isEmpty()) {
 			throw new IllegalArgumentException("Invalid update fields for project settings: " + updates.keySet());
 		}
