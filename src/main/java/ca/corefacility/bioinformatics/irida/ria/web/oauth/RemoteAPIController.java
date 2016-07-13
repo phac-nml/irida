@@ -296,7 +296,7 @@ public class RemoteAPIController extends BaseController {
 		RemoteAPI api = remoteAPIService.read(apiId);
 		
 		try {
-			authController.updateTokenFromRefreshToken(api);
+			tokenService.updateTokenFromRefreshToken(api);
 			projectRemoteService.getServiceStatus(api);
 			return VALID_OAUTH_CONNECTION;
 		} catch (IridaOAuthException ex) {

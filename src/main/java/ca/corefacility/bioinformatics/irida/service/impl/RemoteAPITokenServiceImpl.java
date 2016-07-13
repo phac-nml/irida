@@ -1,6 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.net.URI;
+import java.util.Date;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.apache.oltu.oauth2.client.OAuthClient;
+import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
+import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +29,22 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 @Service
-public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
+public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteAPITokenServiceImpl.class);
+
+	private static final long ONE_SECOND_IN_MS = 1000;
 
 	private RemoteApiTokenRepository tokenRepository;
 	private UserRepository userRepository;
+	private final OAuthClient oauthClient;
 
 	@Autowired
-	public RemoteAPITokenServiceImpl(RemoteApiTokenRepository tokenRepository, UserRepository userRepository) {
+	public RemoteAPITokenServiceImpl(RemoteApiTokenRepository tokenRepository, UserRepository userRepository,
+			OAuthClient oauthClient) {
 		super();
 		this.tokenRepository = tokenRepository;
 		this.userRepository = userRepository;
+		this.oauthClient = oauthClient;
 	}
 
 	/**
@@ -37,29 +52,28 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	 */
 	@Transactional
 	@Override
-	public void create(RemoteAPIToken token) {
+	public RemoteAPIToken create(RemoteAPIToken token) {
 		User user = userRepository.loadUserByUsername(getUserName());
 		token.setUser(user);
-		
-		//if an old token exists, get the old token's info so we can update it
-		token=getOldTokenId(token);
-		
-		tokenRepository.save(token);
+
+		// if an old token exists, get the old token's info so we can update it
+		token = getOldTokenId(token);
+
+		return tokenRepository.save(token);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public RemoteAPIToken getToken(RemoteAPI remoteAPI) throws EntityNotFoundException{
+	public RemoteAPIToken getToken(RemoteAPI remoteAPI) throws EntityNotFoundException {
 		User user = userRepository.loadUserByUsername(getUserName());
 		RemoteAPIToken readTokenForApiAndUser = tokenRepository.readTokenForApiAndUser(remoteAPI, user);
-		if(readTokenForApiAndUser == null){
+		if (readTokenForApiAndUser == null) {
 			throw new EntityNotFoundException("Couldn't find an OAuth2 token for this API and User");
 		}
 		return readTokenForApiAndUser;
 	}
-	
 
 	/**
 	 * {@inheritDoc}
@@ -67,13 +81,93 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	@Transactional
 	@Override
 	public void delete(RemoteAPI remoteAPI) throws EntityNotFoundException {
-			RemoteAPIToken token = getToken(remoteAPI);
-			tokenRepository.delete(token);
+		RemoteAPIToken token = getToken(remoteAPI);
+		tokenRepository.delete(token);
 	}
+
+	/**
+	 * Update the current oauth token using a refresh token if possible
+	 * 
+	 * @param api
+	 *            the {@link RemoteAPI} to update token for
+	 * @return the most recent token available
+	 * @throws OAuthSystemException
+	 * @throws OAuthProblemException
+	 */
+	@Transactional
+	public RemoteAPIToken updateTokenFromRefreshToken(RemoteAPI api)
+			throws OAuthSystemException, OAuthProblemException {
+		RemoteAPIToken token = null;
+
+		try {
+			token = getToken(api);
+
+			String refreshToken = token.getRefreshToken();
+
+			if (refreshToken != null) {
+				URI serviceTokenLocation = UriBuilder.fromUri(api.getServiceURI()).path("oauth").path("token").build();
+
+				OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
+						.setClientId(api.getClientId()).setClientSecret(api.getClientSecret())
+						.setRefreshToken(refreshToken).setGrantType(GrantType.REFRESH_TOKEN).buildBodyMessage();
+
+				OAuthJSONAccessTokenResponse accessToken = oauthClient.accessToken(tokenRequest);
+
+				token = buildTokenFromResponse(accessToken, api);
+
+				delete(api);
+				token = create(token);
+
+				logger.debug("Token for api " + api + " updated by refresh token.");
+			} else {
+				logger.debug("No refresh token for api " + api + ". Cannot update access token.");
+			}
+		} catch (EntityNotFoundException ex) {
+			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
+		}
+
+		return token;
+	}
+
+	@Transactional
+	public RemoteAPIToken createTokenFromAuthCode(String authcode, RemoteAPI remoteAPI, String tokenRedirect)
+			throws OAuthSystemException, OAuthProblemException {
+		String serviceURI = remoteAPI.getServiceURI();
+
+		// Build the token location for this service
+		URI serviceTokenLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("token").build();
+		logger.debug("Remote token location: " + serviceTokenLocation);
+
+		// Create the token request form the given auth code
+		OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
+				.setClientId(remoteAPI.getClientId()).setClientSecret(remoteAPI.getClientSecret())
+				.setRedirectURI(tokenRedirect).setCode(authcode).setGrantType(GrantType.AUTHORIZATION_CODE)
+				.buildBodyMessage();
+
+		// execute the request
+		OAuthJSONAccessTokenResponse accessTokenResponse = oauthClient.accessToken(tokenRequest);
+
+		// read the response for the access token
+		String accessToken = accessTokenResponse.getAccessToken();
+
+		// Handle Refresh Tokens
+		String refreshToken = accessTokenResponse.getRefreshToken();
+
+		// check the token expiry
+		Long expiresIn = accessTokenResponse.getExpiresIn();
+		Long currentTime = System.currentTimeMillis();
+		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
+		logger.debug("Token expiry: " + expiry);
+
+		// create the OAuth2 token and store it
+		RemoteAPIToken token = new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
 	
+		return create(token);
+	}
 
 	/**
 	 * Get the username of the currently logged in user.
+	 * 
 	 * @return String of the username of the currently logged in user
 	 */
 	private String getUserName() {
@@ -81,12 +175,13 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
 			UserDetails details = (UserDetails) authentication.getPrincipal();
 			String username = details.getUsername();
-			
+
 			return username;
 		}
-		throw new IllegalStateException("The currently logged in user could not be read from the SecurityContextHolder");
+		throw new IllegalStateException(
+				"The currently logged in user could not be read from the SecurityContextHolder");
 	}
-	
+
 	/**
 	 * Remove any old token for this user from the database
 	 * 
@@ -94,16 +189,34 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	 *            the api token to remove.
 	 * @return the token that was found.
 	 */
-	protected RemoteAPIToken getOldTokenId(RemoteAPIToken apiToken){
+	protected RemoteAPIToken getOldTokenId(RemoteAPIToken apiToken) {
 		RemoteAPIToken oldToken = null;
-		try{
+		try {
 			oldToken = getToken(apiToken.getRemoteApi());
 			logger.trace("Old token found for service " + apiToken.getRemoteApi());
 			apiToken.setId(oldToken.getId());
-		}catch(EntityNotFoundException ex){
+		} catch (EntityNotFoundException ex) {
 			logger.trace("No token found for service " + apiToken.getRemoteApi());
 		}
-		
+
 		return apiToken;
+	}
+
+	private RemoteAPIToken buildTokenFromResponse(OAuthJSONAccessTokenResponse accessTokenResponse,
+			RemoteAPI remoteAPI) {
+		// read the response for the access token
+		String accessToken = accessTokenResponse.getAccessToken();
+
+		// Handle Refresh Tokens
+		String refreshToken = accessTokenResponse.getRefreshToken();
+
+		// check the token expiry
+		Long expiresIn = accessTokenResponse.getExpiresIn();
+		Long currentTime = System.currentTimeMillis();
+		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
+		logger.debug("Token expiry: " + expiry);
+
+		// create the OAuth2 token
+		return new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
 	}
 }

@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
@@ -10,8 +13,9 @@ public interface RemoteAPITokenService {
 	 * 
 	 * @param token
 	 *            The token to create
+	 * @return the created token
 	 */
-	public void create(RemoteAPIToken token);
+	public RemoteAPIToken create(RemoteAPIToken token);
 	
 	/**
 	 * Get a token for a given service
@@ -33,4 +37,10 @@ public interface RemoteAPITokenService {
 	 *             if the token could not be found
 	 */
 	public void delete(RemoteAPI remoteAPI) throws EntityNotFoundException;
+	
+	public RemoteAPIToken createTokenFromAuthCode(String authcode, RemoteAPI remoteAPI, String tokenRedirect)
+			throws OAuthSystemException, OAuthProblemException;
+	
+	public RemoteAPIToken updateTokenFromRefreshToken(RemoteAPI api)
+			throws OAuthSystemException, OAuthProblemException;
 }

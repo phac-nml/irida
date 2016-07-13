@@ -1,19 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
 import java.net.URI;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 
-import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.client.response.OAuthAuthzResponse;
-import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
@@ -38,8 +32,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 public class OltuAuthorizationController {
 	private static final Logger logger = LoggerFactory.getLogger(OltuAuthorizationController.class);
 
-	private static final long ONE_SECOND_IN_MS = 1000;
-
 	@Value("${server.base.url}")
 	private String serverBase;
 
@@ -47,14 +39,11 @@ public class OltuAuthorizationController {
 
 	private final RemoteAPITokenService tokenService;
 	private final RemoteAPIService remoteAPIService;
-	private final OAuthClient oauthClient;
 
 	@Autowired
-	public OltuAuthorizationController(RemoteAPITokenService tokenService, RemoteAPIService remoteAPIService,
-			OAuthClient oauthClient) {
+	public OltuAuthorizationController(RemoteAPITokenService tokenService, RemoteAPIService remoteAPIService) {
 		this.tokenService = tokenService;
 		this.remoteAPIService = remoteAPIService;
-		this.oauthClient = oauthClient;
 	}
 
 	/**
@@ -114,92 +103,25 @@ public class OltuAuthorizationController {
 	 *             if we can't get a response from the authorization server
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
-	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response, @RequestParam("apiId") Long apiId,
-			@RequestParam("redirect") String redirect) throws OAuthSystemException, OAuthProblemException {
-
-		// get the current time for the expiry calculation
-		Long currentTime = System.currentTimeMillis();
+	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("apiId") Long apiId, @RequestParam("redirect") String redirect)
+			throws OAuthSystemException, OAuthProblemException {
 
 		// Get the OAuth2 auth code
 		OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 		String code = oar.getCode();
 		logger.trace("Received auth code: " + code);
 
-		// Read the RemoteAPI from the RemoteAPIService and get the base URI
-		RemoteAPI remoteAPI = remoteAPIService.read(apiId);
-		String serviceURI = remoteAPI.getServiceURI();
-
-		// Build the token location for this service
-		URI serviceTokenLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("token").build();
-		logger.debug("Remote token location: " + serviceTokenLocation);
-
 		// Build the redirect URI to request a token from
 		String tokenRedirect = buildRedirectURI(apiId, redirect);
 
-		// Create the token request form the given auth code
-		OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
-				.setClientId(remoteAPI.getClientId()).setClientSecret(remoteAPI.getClientSecret())
-				.setRedirectURI(tokenRedirect).setCode(code).setGrantType(GrantType.AUTHORIZATION_CODE)
-				.buildBodyMessage();
+		// Read the RemoteAPI from the RemoteAPIService and get the base URI
+		RemoteAPI remoteAPI = remoteAPIService.read(apiId);
 
-		// execute the request
-		OAuthJSONAccessTokenResponse accessTokenResponse = oauthClient.accessToken(tokenRequest);
-
-		// read the response for the access token
-		String accessToken = accessTokenResponse.getAccessToken();
-
-		// Handle Refresh Tokens
-		String refreshToken = accessTokenResponse.getRefreshToken();
-
-		// check the token expiry
-		Long expiresIn = accessTokenResponse.getExpiresIn();
-		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
-		logger.debug("Token expiry: " + expiry);
-
-		// create the OAuth2 token and store it
-		RemoteAPIToken token = new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
-		tokenService.create(token);
+		tokenService.createTokenFromAuthCode(code, remoteAPI, tokenRedirect);
 
 		// redirect the response back to the requested resource
 		return "redirect:" + redirect;
-	}
-	
-	/**
-	 * Update the current oauth token using a refresh token if possible
-	 * 
-	 * @param api
-	 *            the {@link RemoteAPI} to update token for
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
-	 */
-	public void updateTokenFromRefreshToken(RemoteAPI api) throws OAuthSystemException, OAuthProblemException {
-
-		try {
-			RemoteAPIToken token = tokenService.getToken(api);
-
-			String refreshToken = token.getRefreshToken();
-
-			if (refreshToken != null) {
-				URI serviceTokenLocation = UriBuilder.fromUri(api.getServiceURI()).path("oauth").path("token").build();
-
-				OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
-						.setClientId(api.getClientId()).setClientSecret(api.getClientSecret())
-						.setRefreshToken(refreshToken).setGrantType(GrantType.REFRESH_TOKEN).buildBodyMessage();
-
-				OAuthJSONAccessTokenResponse accessToken = oauthClient.accessToken(tokenRequest);
-
-				RemoteAPIToken newToken = buildTokenFromResponse(accessToken, api);
-
-				tokenService.delete(api);
-				tokenService.create(newToken);
-
-				logger.debug("Token for api " + api + " updated by refresh token.");
-			} else {
-				logger.debug("No refresh token for api " + api + ". Cannot update access token.");
-			}
-		} catch (EntityNotFoundException ex) {
-			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
-		}
 	}
 
 	/**
@@ -218,28 +140,12 @@ public class OltuAuthorizationController {
 				.queryParam("redirect", redirectPage).build();
 		return build.toString();
 	}
-	
-	private RemoteAPIToken buildTokenFromResponse(OAuthJSONAccessTokenResponse accessTokenResponse, RemoteAPI remoteAPI){
-		// read the response for the access token
-		String accessToken = accessTokenResponse.getAccessToken();
-
-		// Handle Refresh Tokens
-		String refreshToken = accessTokenResponse.getRefreshToken();
-
-		// check the token expiry
-		Long expiresIn = accessTokenResponse.getExpiresIn();
-		Long currentTime = System.currentTimeMillis();
-		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
-		logger.debug("Token expiry: " + expiry);
-
-		// create the OAuth2 token
-		return new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
-	}
 
 	/**
 	 * Set the base URL of this server
 	 * 
-	 * @param serverBase the base url of the server.
+	 * @param serverBase
+	 *            the base url of the server.
 	 */
 	public void setServerBase(String serverBase) {
 		this.serverBase = serverBase;
