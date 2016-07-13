@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -147,7 +148,7 @@ public class OltuAuthorizationController {
 		// read the response for the access token
 		String accessToken = accessTokenResponse.getAccessToken();
 
-		// TODO: Handle Refresh Tokens
+		// Handle Refresh Tokens
 		String refreshToken = accessTokenResponse.getRefreshToken();
 
 		// check the token expiry
@@ -161,6 +162,44 @@ public class OltuAuthorizationController {
 
 		// redirect the response back to the requested resource
 		return "redirect:" + redirect;
+	}
+	
+	/**
+	 * Update the current oauth token using a refresh token if possible
+	 * 
+	 * @param api
+	 *            the {@link RemoteAPI} to update token for
+	 * @throws OAuthSystemException
+	 * @throws OAuthProblemException
+	 */
+	public void updateTokenFromRefreshToken(RemoteAPI api) throws OAuthSystemException, OAuthProblemException {
+
+		try {
+			RemoteAPIToken token = tokenService.getToken(api);
+
+			String refreshToken = token.getRefreshToken();
+
+			if (refreshToken != null) {
+				URI serviceTokenLocation = UriBuilder.fromUri(api.getServiceURI()).path("oauth").path("token").build();
+
+				OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
+						.setClientId(api.getClientId()).setClientSecret(api.getClientSecret())
+						.setRefreshToken(refreshToken).setGrantType(GrantType.REFRESH_TOKEN).buildBodyMessage();
+
+				OAuthJSONAccessTokenResponse accessToken = oauthClient.accessToken(tokenRequest);
+
+				RemoteAPIToken newToken = buildTokenFromResponse(accessToken, api);
+
+				tokenService.delete(api);
+				tokenService.create(newToken);
+
+				logger.debug("Token for api " + api + " updated by refresh token.");
+			} else {
+				logger.debug("No refresh token for api " + api + ". Cannot update access token.");
+			}
+		} catch (EntityNotFoundException ex) {
+			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
+		}
 	}
 
 	/**
@@ -178,6 +217,23 @@ public class OltuAuthorizationController {
 		URI build = UriBuilder.fromUri(serverBase + TOKEN_ENDPOINT).queryParam("apiId", apiId)
 				.queryParam("redirect", redirectPage).build();
 		return build.toString();
+	}
+	
+	private RemoteAPIToken buildTokenFromResponse(OAuthJSONAccessTokenResponse accessTokenResponse, RemoteAPI remoteAPI){
+		// read the response for the access token
+		String accessToken = accessTokenResponse.getAccessToken();
+
+		// Handle Refresh Tokens
+		String refreshToken = accessTokenResponse.getRefreshToken();
+
+		// check the token expiry
+		Long expiresIn = accessTokenResponse.getExpiresIn();
+		Long currentTime = System.currentTimeMillis();
+		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
+		logger.debug("Token expiry: " + expiry);
+
+		// create the OAuth2 token
+		return new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
 	}
 
 	/**
