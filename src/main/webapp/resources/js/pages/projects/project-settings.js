@@ -35,8 +35,12 @@ var projectSettings = (function(page, notifications) {
     });
     
     $(document).ready(function(){
-       getApiStatus(page.vars.apiId, "#api-status", "#connect-button");
+       getApiStatus(page.vars.apiId, "#api-status", "#connect-button", showConnectedActions);
     });
+    
+    function showConnectedActions(){
+        $(".api-connected-action").show();
+    }
     
     function updateSyncSettings(params){
         $.ajax({
