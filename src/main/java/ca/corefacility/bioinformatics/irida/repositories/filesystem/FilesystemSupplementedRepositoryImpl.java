@@ -71,13 +71,21 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			baseDirectories.put(c, p);
 		}
 		
+		/**
+		 * Whenever a {@link VersionedFileFields} is loaded from the database,
+		 * we need to translate it's path from a relative path to an absolute
+		 * path based on the storage directory for the type.
+		 * 
+		 * @param fileSystemEntity
+		 *            the object to make absolute paths for
+		 */
 		@PostLoad
 		@PostUpdate
 		@PostPersist
 		public void absolutePath(final VersionedFileFields<Long> fileSystemEntity) {
 			logger.trace("Going to get an absolute path after loading.");
 			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
-			// now find any members that are of type Path:
+			// find any members that are of type Path:
 			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
 
 			// for every member that's a path, make it an absolute path based on the
@@ -85,37 +93,50 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			for (final Field field : pathFields) {
 				ReflectionUtils.makeAccessible(field);
 				final Path source = (Path) ReflectionUtils.getField(field, fileSystemEntity);
-				if (source != null) {
-					if (source.getRoot() == null) {
-						logger.trace("About to get ABSOLUTE path for [" + source.toString() + "] from base directory [" + directoryForType.toString() + "]");
-						final Path absolutePath = directoryForType.resolve(source);
-						ReflectionUtils.setField(field, fileSystemEntity, absolutePath);
-						logger.trace("Setting ABSOLUTE path to [" + absolutePath.toString() + "] from relative path [" + source.toString() +"]");
-					}
+				// source will have a null root **only** if it's a relative
+				// path. basically: don't try to make an absolute path out of
+				// one that's already absolute.
+				if (source != null && source.getRoot() == null) {
+					logger.trace("About to get ABSOLUTE path for [" + source.toString() + "] from base directory ["
+							+ directoryForType.toString() + "]");
+					final Path absolutePath = directoryForType.resolve(source);
+					ReflectionUtils.setField(field, fileSystemEntity, absolutePath);
+					logger.trace("Setting ABSOLUTE path to [" + absolutePath.toString() + "] from relative path ["
+							+ source.toString() + "]");
 				}
 			}
 		}
 		
+		/**
+		 * Before persisting a {@link VersionedFileFields} to the database, we
+		 * need to translate it to a relative path by stripping the storage
+		 * directory for the type.
+		 * 
+		 * @param fileSystemEntity
+		 *            the object to make relative paths for.
+		 */
 		@PreUpdate
 		public void relativePath(final VersionedFileFields<Long> fileSystemEntity) {
 			logger.trace("In pre-update, going to translate to relative path.");
 			
 			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
-			// now find any members that are of type Path:
+			// find any members that are of type Path:
 			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
 
-			// for every member that's a path, make it an absolute path based on the
+			// for every member that's a path, make it a relative path based on the
 			// base directory
 			for (final Field field : pathFields) {
 				ReflectionUtils.makeAccessible(field);
 				final Path source = (Path) ReflectionUtils.getField(field, fileSystemEntity);
-				if (source != null) {
-					if (source.getRoot() != null) {
-						logger.trace("About to get RELATIVE path for [" + source.toString() + "] from base directory [" + directoryForType.toString() + "]");
-						final Path relativePath = directoryForType.relativize(source);
-						ReflectionUtils.setField(field, fileSystemEntity, relativePath);
-						logger.trace("Setting RELATIVE path to [" + relativePath.toString() + "] from absolute path [" + source.toString() +"]");
-					}
+				// source will have a not-null root **only** if it's an absolute
+				// path.
+				if (source != null && source.getRoot() != null) {
+					logger.trace("About to get RELATIVE path for [" + source.toString() + "] from base directory ["
+							+ directoryForType.toString() + "]");
+					final Path relativePath = directoryForType.relativize(source);
+					ReflectionUtils.setField(field, fileSystemEntity, relativePath);
+					logger.trace("Setting RELATIVE path to [" + relativePath.toString() + "] from absolute path ["
+							+ source.toString() + "]");
 				}
 			}
 		}
@@ -199,19 +220,15 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 					if (!Files.exists(sequenceFileDir)) {
 						Files.createDirectory(sequenceFileDir);
 						logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
-					} else {
-						logger.trace("Directory [" + sequenceFileDir.toString() + "] already exists.");
 					}
 
 					if (!Files.exists(sequenceFileDirWithRevision)) {
 						Files.createDirectory(sequenceFileDirWithRevision);
 						logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
-					} else {
-						logger.trace("Directory [" + sequenceFileDirWithRevision.toString() + "] already exists.");
 					}
 
 					Files.move(source, target);
-					logger.debug("Moved file " + source + " to " + target);
+					logger.trace("Moved file " + source + " to " + target);
 				} catch (IOException e) {
 					logger.error("Unable to move file into new directory", e);
 					throw new StorageException("Failed to move file into new directory.", e);
