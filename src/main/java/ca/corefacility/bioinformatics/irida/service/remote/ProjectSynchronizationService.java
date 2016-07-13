@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
@@ -29,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -49,12 +51,13 @@ public class ProjectSynchronizationService {
 	private SampleRemoteService sampleRemoteService;
 	private SingleEndSequenceFileRemoteService singleEndRemoteService;
 	private SequenceFilePairRemoteService pairRemoteService;
+	private RemoteAPITokenService tokenService;
 
 	@Autowired
 	public ProjectSynchronizationService(ProjectService projectService, SampleService sampleService,
 			SequencingObjectService objectService, ProjectRemoteService projectRemoteService,
 			SampleRemoteService sampleRemoteService, SingleEndSequenceFileRemoteService singleEndRemoteService,
-			SequenceFilePairRemoteService pairRemoteService) {
+			SequenceFilePairRemoteService pairRemoteService, RemoteAPITokenService tokenService) {
 
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -63,6 +66,7 @@ public class ProjectSynchronizationService {
 		this.sampleRemoteService = sampleRemoteService;
 		this.singleEndRemoteService = singleEndRemoteService;
 		this.pairRemoteService = pairRemoteService;
+		this.tokenService = tokenService;
 	}
 
 	/**
@@ -120,11 +124,17 @@ public class ProjectSynchronizationService {
 			logger.debug("Syncing project at " + project.getRemoteStatus().getURL());
 
 			try {
+				RemoteAPI api = project.getRemoteStatus().getApi();
+				tokenService.updateTokenFromRefreshToken(api);
+				
 				syncProject(project);
 			} catch (IridaOAuthException e) {
-				logger.debug(
-						"Can't sync project project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
+				logger.debug("Can't sync project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
 				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
+				projectService.update(project);
+			} catch (Exception e) {
+				logger.debug("An error occurred while synchronizing project " + project.getRemoteStatus().getURL(), e);
+				project.getRemoteStatus().setSyncStatus(SyncStatus.ERROR);
 				projectService.update(project);
 			} finally {
 				// clear the context holder when you're done
