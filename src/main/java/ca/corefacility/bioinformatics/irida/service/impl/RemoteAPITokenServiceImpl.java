@@ -86,17 +86,10 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	}
 
 	/**
-	 * Update the current oauth token using a refresh token if possible
-	 * 
-	 * @param api
-	 *            the {@link RemoteAPI} to update token for
-	 * @return the most recent token available
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
+	 * {@inheritDoc}
 	 */
 	@Transactional
-	public RemoteAPIToken updateTokenFromRefreshToken(RemoteAPI api)
-			throws OAuthSystemException, OAuthProblemException {
+	public RemoteAPIToken updateTokenFromRefreshToken(RemoteAPI api) {
 		RemoteAPIToken token = null;
 
 		try {
@@ -124,6 +117,8 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 			}
 		} catch (EntityNotFoundException ex) {
 			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
+		} catch (OAuthProblemException | OAuthSystemException ex) {
+			logger.error("Updating token by refresh token failed", ex);
 		}
 
 		return token;

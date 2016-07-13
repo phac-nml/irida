@@ -16,7 +16,7 @@ public interface RemoteAPITokenService {
 	 * @return the created token
 	 */
 	public RemoteAPIToken create(RemoteAPIToken token);
-	
+
 	/**
 	 * Get a token for a given service
 	 * 
@@ -27,7 +27,7 @@ public interface RemoteAPITokenService {
 	 *             if the token could not be found
 	 */
 	public RemoteAPIToken getToken(RemoteAPI remoteAPI) throws EntityNotFoundException;
-	
+
 	/**
 	 * Delete a token for the logged in user and a given {@link RemoteAPI}
 	 * 
@@ -37,10 +37,30 @@ public interface RemoteAPITokenService {
 	 *             if the token could not be found
 	 */
 	public void delete(RemoteAPI remoteAPI) throws EntityNotFoundException;
-	
+
+	/**
+	 * Create a new {@link RemoteAPIToken} from a given auth code
+	 * 
+	 * @param authcode
+	 *            the auth code to create a token for
+	 * @param remoteAPI
+	 *            the remote api to get a token for
+	 * @param tokenRedirect
+	 *            a redirect url to get the token from
+	 * @return the newly created token
+	 * @throws OAuthSystemException
+	 * @throws OAuthProblemException
+	 */
 	public RemoteAPIToken createTokenFromAuthCode(String authcode, RemoteAPI remoteAPI, String tokenRedirect)
 			throws OAuthSystemException, OAuthProblemException;
-	
-	public RemoteAPIToken updateTokenFromRefreshToken(RemoteAPI api)
-			throws OAuthSystemException, OAuthProblemException;
+
+	/**
+	 * Update a given {@link RemoteAPI}'s OAuth token by refresh token if
+	 * available
+	 * 
+	 * @param api
+	 *            the API to update
+	 * @return the most recent token if available
+	 */
+	public RemoteAPIToken updateTokenFromRefreshToken(RemoteAPI api);
 }
