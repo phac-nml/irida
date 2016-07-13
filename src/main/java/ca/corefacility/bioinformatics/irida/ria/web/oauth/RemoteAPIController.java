@@ -296,16 +296,12 @@ public class RemoteAPIController extends BaseController {
 		RemoteAPI api = remoteAPIService.read(apiId);
 		
 		try {
-			tokenService.updateTokenFromRefreshToken(api);
 			projectRemoteService.getServiceStatus(api);
 			return VALID_OAUTH_CONNECTION;
 		} catch (IridaOAuthException ex) {
 			logger.debug("Can't connect to API: " + ex.getMessage());
 			return INVALID_OAUTH_TOKEN;
-		} catch (OAuthSystemException | OAuthProblemException ex) {
-			logger.debug("Can't update with refresh token: " + ex.getMessage());
-			return INVALID_OAUTH_TOKEN;
-		} 
+		}
 	}
 
 	/**
