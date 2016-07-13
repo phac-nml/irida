@@ -49,7 +49,12 @@ var projectSettings = (function(page, notifications) {
             data: params, 
             statusCode : {
                 200 : function(response){
-                    notifications.show({'msg': response.result});
+                    if(response.result){
+                        notifications.show({'msg': response.result});
+                    }
+                    else if(response.error){
+                        notifications.show({'msg': response.error, type:"error"});
+                    }
                 }
             },
             error : function(){
