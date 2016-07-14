@@ -35,7 +35,7 @@
     
     <div class="panel panel-default" th:if="${project.isRemote()}">
       <div class="panel-heading" th:text="#{project.settings.sync.heading}">_Project Sync Settings_</div>
-      <div class="panel-body">
+      <div class="panel-body" th:with="status = ${project.getRemoteStatus()}">
         <div class="form-group">
           <label class="control-label" th:text="#{project.settings.sync.lastSync}">_Last Sync_</label>
           <div>
@@ -45,7 +45,7 @@
         </div>
         <div class="form-group">
           <label class="control-label" th:text="#{project.settings.api}">_API_</label>
-          <div th:with="status = ${project.getRemoteStatus()}">
+          <div>
             <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a>
             <span id="api-status" class="api-status">
                 <i class="fa fa-spinner fa-spin"></i>
@@ -60,6 +60,15 @@
           <select id="frequency" class="form-control input-full sync-setting">
             <option th:each="freq : ${frequencies}" th:value="${freq}" th:text="#{'project.settings.frequency.' + ${freq}}" th:selected="${project.getSyncFrequency() == freq}"></option>
           </select>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="frequency" th:text="#{project.settings.sync.user}">_Sync User_</label>
+          <div>
+            <a href="#" th:text="${status.getReadBy().getLabel()}" th:href="@{/users/{id}(id=${status.getReadBy().getId()})}">_User</a>
+            <span class="api-connected-action" hidden="hidden">
+              <button id="becomeSyncUser" role="button" class="btn btn-primary btn-sm" th:text="#{project.settings.sync.becomeSyncUser}">_Become owner_</button>
+            </span>
+          </div>
         </div>
       </div>
     </div>
