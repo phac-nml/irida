@@ -65,7 +65,9 @@
           <label class="control-label" for="frequency" th:text="#{project.settings.sync.user}">_Sync User_</label>
           <div>
             <a href="#" th:text="${status.getReadBy().getLabel()}" th:href="@{/users/{id}(id=${status.getReadBy().getId()})}">_User</a>
-            <button id="becomeSyncUser" role="button" class="btn btn-primary btn-sm" th:text="#{project.settings.sync.becomeSyncUser}">_Force Sync_</button>
+            <span class="api-connected-action" hidden="hidden">
+              <button id="becomeSyncUser" role="button" class="btn btn-primary btn-sm" th:text="#{project.settings.sync.becomeSyncUser}">_Become owner_</button>
+            </span>
           </div>
         </div>
       </div>

@@ -35,8 +35,12 @@ var projectSettings = (function(page, notifications) {
     });
     
     $(document).ready(function(){
-       getApiStatus(page.vars.apiId, "#api-status", "#connect-button");
+       getApiStatus(page.vars.apiId, "#api-status", "#connect-button", showConnectedActions);
     });
+    
+    function showConnectedActions(){
+        $(".api-connected-action").show();
+    }
     
     function updateSyncSettings(params){
         $.ajax({
@@ -45,7 +49,12 @@ var projectSettings = (function(page, notifications) {
             data: params, 
             statusCode : {
                 200 : function(response){
-                    notifications.show({'msg': response.result});
+                    if(response.result){
+                        notifications.show({'msg': response.result});
+                    }
+                    else if(response.error){
+                        notifications.show({'msg': response.error, type:"error"});
+                    }
                 }
             },
             error : function(){

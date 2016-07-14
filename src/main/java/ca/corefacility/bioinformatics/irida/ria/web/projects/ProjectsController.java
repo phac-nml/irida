@@ -303,35 +303,53 @@ public class ProjectsController {
 	@ResponseBody
 	public Map<String, String> updateProjectSyncSettings(@PathVariable Long projectId,
 			@RequestParam(required = false) ProjectSyncFrequency frequency,
-			@RequestParam(required = false, defaultValue = "false") boolean forceSync, 
-			@RequestParam(required = false, defaultValue = "false") boolean changeUser, Principal principal, Locale locale) {
+			@RequestParam(required = false, defaultValue = "false") boolean forceSync,
+			@RequestParam(required = false, defaultValue = "false") boolean changeUser, Principal principal,
+			Locale locale) {
 		Project read = projectService.read(projectId);
 		RemoteStatus remoteStatus = read.getRemoteStatus();
 
 		Map<String, Object> updates = new HashMap<>();
 		
-		if(frequency != null){
+		String message = null;
+		String error = null;
+
+		if (frequency != null) {
 			updates.put("syncFrequency", frequency);
+			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
 		}
-		
-		if(forceSync){
+
+		if (forceSync) {
 			remoteStatus.setSyncStatus(SyncStatus.MARKED);
 			updates.put("remoteStatus", remoteStatus);
+			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
 		}
-		
-		if(changeUser){
-			//ensure the user can read the project
-			projectRemoteService.read(remoteStatus.getURL());
-			User user = userService.getUserByUsername(principal.getName());
-			remoteStatus.setReadBy(user);
-			updates.put("remoteStatus", remoteStatus);
+
+		if (changeUser) {
+			// ensure the user can read the project
+			try{
+				projectRemoteService.read(remoteStatus.getURL());
+				
+				User user = userService.getUserByUsername(principal.getName());
+				remoteStatus.setReadBy(user);
+				updates.put("remoteStatus", remoteStatus);
+				message = messageSource.getMessage("project.settings.notifications.sync.userchange", new Object[] {}, locale);
+			}catch(Exception ex){
+				error = messageSource.getMessage("project.settings.notifications.sync.userchange.error", new Object[] {}, locale);
+			}
 		}
 
 		projectService.updateProjectSettings(read, updates);
+		
+		Map<String,String> response;
+		if(error == null){
+			response = ImmutableMap.of("result", message);
+		}
+		else{
+			response = ImmutableMap.of("error", error);
+		}
 
-		String message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
-
-		return ImmutableMap.of("result", message);
+		return response;
 	}
 
 	/**
