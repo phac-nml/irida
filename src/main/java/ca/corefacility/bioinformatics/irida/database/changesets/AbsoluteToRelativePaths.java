@@ -44,11 +44,16 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 
 	@Override
 	public void setFileOpener(ResourceAccessor resourceAccessor) {
-		logger.info("Setting the file opener.");
-		if (resourceAccessor instanceof ApplicationContextAwareSpringLiquibase) {
+		logger.info("The resource accessor is of type [" + resourceAccessor.getClass() + "]");
+		final ApplicationContext applicationContext;
+		if (resourceAccessor instanceof ApplicationContextSpringResourceOpener) {
+			applicationContext = ((ApplicationContextSpringResourceOpener) resourceAccessor).getApplicationContext();
+		} else {
+			applicationContext = null;	
+		}
+		
+		if (applicationContext != null) {
 			logger.info("We're running inside of a spring instance, getting the existing application context.");
-			final ApplicationContext applicationContext = ((ApplicationContextSpringResourceOpener) resourceAccessor)
-					.getApplicationContext();
 			this.sequenceFileDirectory = applicationContext.getBean("sequenceFileBaseDirectory", Path.class);
 			this.referenceFileDirectory = applicationContext.getBean("referenceFileBaseDirectory", Path.class);
 			this.outputFileDirectory = applicationContext.getBean("outputFileBaseDirectory", Path.class);
