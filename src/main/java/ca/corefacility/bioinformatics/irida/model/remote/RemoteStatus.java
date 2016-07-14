@@ -147,6 +147,10 @@ public class RemoteStatus {
 		/**
 		 * No active OAuth2 token to synchronize this project
 		 */
-		UNAUTHORIZED
+		UNAUTHORIZED, 
+		/**
+		 * An error occurred while synchronizing.
+		 */
+		ERROR
 	}
 }

@@ -2,14 +2,16 @@
   "use strict";
 
   $(function() {
-    $("#tokenValidity").select2().select2("val", page.validity);
-    $("#authorizedGrantTypes").select2();
     $("#scope_read").change(function() {
       handleChecked(this,"#scope_auto_read_div");
     });
     $("#scope_write").change(function() {
       handleChecked(this,"#scope_auto_write_div");
     });
+    
+    $("#refresh").change(function(){
+      handleChecked(this,"#refresh-token-container");
+    })
 
     var handleChecked = function(item, itemToShow) {
       if(item.checked) {
