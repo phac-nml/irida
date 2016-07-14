@@ -31,18 +31,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Controller for all {@link IridaClientDetails} related views
@@ -69,10 +68,32 @@ public class ClientsController extends BaseController {
 
 	private final List<String> AVAILABLE_GRANTS = Lists.newArrayList("password", "authorization_code");
 
-	private final List<Integer> AVAILABLE_TOKEN_VALIDITY = Lists.newArrayList(1800, 3600, 7200, 21600, 43200, 86400,
-			172800, 604800);
-	
-	private final List<Integer> AVAILABLE_REFRESH_TOKEN_VALIDITY = Lists.newArrayList(604800, 2592000, 7776000,
+	private final List<Integer> AVAILABLE_TOKEN_VALIDITY = Lists.newArrayList(
+			// 30 minutes
+			1800,
+			// 1 hour
+			3600,
+			// 2 hours
+			7200,
+			// 6 hours
+			21600,
+			// 12 hours
+			43200,
+			// 1 day
+			86400,
+			// 2 days
+			172800,
+			// 7 days
+			604800);
+
+	private final List<Integer> AVAILABLE_REFRESH_TOKEN_VALIDITY = Lists.newArrayList(
+			// 7 days
+			604800,
+			// 1 month
+			2592000,
+			// 3 months
+			7776000,
+			// 6 months
 			15552000);
 
 	@Autowired
