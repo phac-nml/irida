@@ -108,11 +108,13 @@ public class SNVPhylAnalysisIT {
 	private Path outputSnvMatrix1;
 	private Path vcf2core1;
 	private Path filterStats1;
+	private Path snvAlign1;
 	
 	private Path outputSnvTable2;
 	private Path outputSnvMatrix2;
 	private Path vcf2core2;
 	private Path filterStats2;
+	private Path snvAlign2;
 
 	/**
 	 * Sets up variables for testing.
@@ -181,11 +183,13 @@ public class SNVPhylAnalysisIT {
 		outputSnvMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvMatrix.tsv").toURI());
 		vcf2core1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/vcf2core.tsv").toURI());
 		filterStats1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/filterStats.txt").toURI());
+		snvAlign1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvAlignment.phy").toURI());
 		
 		outputSnvTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvTable.tsv").toURI());
 		outputSnvMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvMatrix.tsv").toURI());
 		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.tsv").toURI());
 		filterStats2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/filterStats.txt").toURI());
+		snvAlign2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvAlignment.phy").toURI());
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -239,7 +243,7 @@ public class SNVPhylAnalysisIT {
 				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals("the phylogenomics pipeline should have 7 output files.", 7, analysisPhylogenomics
+		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
 		
 		@SuppressWarnings("resource")
@@ -284,6 +288,16 @@ public class SNVPhylAnalysisIT {
 				com.google.common.io.Files.equal(filterStats1.toFile(), analysisPhylogenomics.getFilterStats().getFile()
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+				.getCreatedByTool());
+		
+		@SuppressWarnings("resource")
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getSnvAlign().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"snvAlign should be the same but is \"" + snvAlignContent + "\"",
+				com.google.common.io.Files.equal(snvAlign1.toFile(), analysisPhylogenomics.getSnvAlign().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvAlign()
 				.getCreatedByTool());
 		
 		// only test to make sure the files have a valid size since PhyML uses a
@@ -355,7 +369,7 @@ public class SNVPhylAnalysisIT {
 				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals("the phylogenomics pipeline should have 7 output files.", 7, analysisPhylogenomics
+		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
 		
 		@SuppressWarnings("resource")
@@ -400,6 +414,16 @@ public class SNVPhylAnalysisIT {
 				com.google.common.io.Files.equal(filterStats2.toFile(), analysisPhylogenomics.getFilterStats().getFile()
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+				.getCreatedByTool());
+		
+		@SuppressWarnings("resource")
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getSnvAlign().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"snvAlign should be the same but is \"" + snvAlignContent + "\"",
+				com.google.common.io.Files.equal(snvAlign2.toFile(), analysisPhylogenomics.getSnvAlign().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvAlign()
 				.getCreatedByTool());
 		
 		// only test to make sure the files have a valid size since PhyML uses a
