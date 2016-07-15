@@ -222,7 +222,7 @@ public class AnalysisProvenanceServiceGalaxy {
 	 * @return a flat key/value collection of all parameters supplied to the in
 	 *         valueMap.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static Map<String, String> buildParamMap(final Map<String, Object> valueMap, final String... prefix) {
 		final Map<String, String> paramStrings = new HashMap<>();
 		final Set<String> valueMapKeys = valueMap.keySet().stream().filter(k -> !PARAMETERS_TO_IGNORE.contains(k))
@@ -248,10 +248,16 @@ public class AnalysisProvenanceServiceGalaxy {
 						paramStrings.putAll(buildParamMap((Map<String, Object>) value, prefixes));
 					} else if (value instanceof List) {
 						// if it's a list, the contents are *probably*
-						// Map<String, Object>.
-						final List<Map<String, Object>> valueList = (List<Map<String, Object>>) value;
-						for (final Map<String, Object> listMap : valueList) {
-							paramStrings.putAll(buildParamMap(listMap, prefixes));
+						// Map<String, Object>, or List<String>
+						
+						// Check class of objects in List, if String just use toString() on List
+						if (String.class.equals(((List)value).get(0).getClass())) {
+							paramStrings.put(key, value.toString());
+						} else {
+							final List<Map<String, Object>> valueList = (List<Map<String, Object>>) value;
+							for (final Map<String, Object> listMap : valueList) {
+								paramStrings.putAll(buildParamMap(listMap, prefixes));
+							}
 						}
 					} else if (value.toString().trim().startsWith(JSON_TEXT_MAP_INDICATOR)) {
 						// if we have a JSON Map (something that has '{' as the
@@ -264,9 +270,17 @@ public class AnalysisProvenanceServiceGalaxy {
 						// the first character in the String), then parse it
 						// with Jackson, then recurse on *each* of the parsed
 						// maps inside the array.
-						List<Map<String, Object>> list = mapper.readValue(value.toString(), List.class);
-						for (final Map<String, Object> jsonValueMap : list) {
-							paramStrings.putAll(buildParamMap(jsonValueMap, prefixes));
+						
+						List list = mapper.readValue(value.toString(), List.class);
+						
+						// Check class of objects in List, if String just use toString() on List
+						if (String.class.equals(list.get(0).getClass())) {
+							paramStrings.put(key, value.toString());
+						} else {
+							List<Map<String, Object>> listMap = (List<Map<String, Object>>)list;
+							for (final Map<String, Object> jsonValueMap : listMap) {
+								paramStrings.putAll(buildParamMap(jsonValueMap, prefixes));
+							}
 						}
 					} else {
 						// if none of those things, then we'll just assume it's
