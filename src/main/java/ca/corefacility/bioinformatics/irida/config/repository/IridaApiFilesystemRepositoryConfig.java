@@ -37,14 +37,11 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${snapshot.file.base.directory}") String snapshotFileBaseDirectory;
 
-	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
+	private static final Set<Path> TEMPORARY_BASE_DIRECTORIES = new HashSet<>();
 
-	// Franklin: I assume that the scope of a configuration bean is the lifetime
-	// of the application, so the directory should only get deleted *after* the
-	// tests have finished running.
 	@PreDestroy
 	public void tearDown() throws IOException {
-		for (Path b : BASE_DIRECTORIES) {
+		for (Path b : TEMPORARY_BASE_DIRECTORIES) {
 			Files.walkFileTree(b, new RecursiveDeleteVisitor());
 		}
 	}
@@ -126,7 +123,7 @@ public class IridaApiFilesystemRepositoryConfig {
 		Path baseDirectory = Paths.get(pathName);
 		if (!Files.exists(baseDirectory)) {
 			baseDirectory = Files.createDirectories(baseDirectory);
-			BASE_DIRECTORIES.add(baseDirectory);
+			TEMPORARY_BASE_DIRECTORIES.add(baseDirectory);
 			logger.info(String
 					.format("The directory [%s] does not exist, but it looks like you're running in a dev environment, "
 							+ "so I created a temporary location at [%s]. This directory *will* be removed at shutdown time.",
