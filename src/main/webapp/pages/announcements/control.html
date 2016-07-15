@@ -8,31 +8,26 @@
 </head>
 
 <body>
-<div class="row" layout:fragment="page" ddl:includes="livestampjs">
+<div class="row" layout:fragment="page" ddl:includes="announcement" ddl:asset-css-excludes="jquery.datatables">
     <section class="panel panel-info">
         <div class="panel-heading">
-            <h3 th:text="#{announcement.admin-menu}"></h3>
-            <a class="btn btn-primary btn-sm" th:text="#{announcement.create.title}"
+            <span class="panel-title" th:text="#{announcement.admin-menu}"></span>
+            <a class="btn btn-primary btn-sm pull-right" th:text="#{announcement.create.title}"
                th:href="@{create}">_Create NEW_</a>
         </div>
         <div class="panel-body">
-            <ul class="list-group">
-                <li class="list-group-item event-item" th:each="ann : ${announcements}">
-                    <span th:text="${ann.getMessage()}">_Announcement Content_</span>
-                    <span class="event-date" th:with="dateFormat=#{locale.date.long}" data-livestamp="1466773101">
-                        <span uib-tooltip-placement="right"
-                          data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
-                          data-livestamp="1466773101"></span>
-                    </span>
-                    <span data:livestamp="1466773101"></span>
+            <table id="announcement-table" dt:table="true" dt:serverside="true"
+                   dt:url="@{/announcements/control/ajax/list}">
+                <thead>
+                    <tr role="row">
+                        <th dt:property="announcement.message" dt:searchable="true" th:text="#{announcement.control.message}"></th>
+                        <th width="150px" dt:property="announcement.createdById.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
+                        <th width="150px" dt:property="announcement.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{announcement.control.createdDate}"></th>
+                        <th width="50px" dt:sortable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.detailsButton"></th>
+                    </tr>
+                </thead>
 
-                    <a class="btn pull-right" id="details"
-                       th:href="@{/announcements/{announcementID}/details(announcementID=${ann.getId()})}">
-                        <div class="glyphicon glyphicon-pencil"></div>
-                    </a>
-
-                </li>
-            </ul>
+            </table>
         </div>
     </section>
 </div>
