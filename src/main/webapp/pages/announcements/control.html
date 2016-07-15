@@ -21,7 +21,7 @@
                 <thead>
                     <tr role="row">
                         <th dt:property="announcement.message" dt:searchable="true" th:text="#{announcement.control.message}"></th>
-                        <th width="150px" dt:property="announcement.createdById.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
+                        <th width="150px" dt:property="announcement.user.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
                         <th width="150px" dt:property="announcement.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{announcement.control.createdDate}"></th>
                         <th width="50px" dt:sortable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.detailsButton"></th>
                     </tr>

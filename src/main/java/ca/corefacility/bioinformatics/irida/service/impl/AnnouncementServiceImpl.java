@@ -64,7 +64,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     public Announcement create(Announcement announcement) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userRepository.loadUserByUsername(auth.getName());
-        announcement.setCreatedById(user);
+        announcement.setUser(user);
 
         announcementRepository.save(announcement);
 

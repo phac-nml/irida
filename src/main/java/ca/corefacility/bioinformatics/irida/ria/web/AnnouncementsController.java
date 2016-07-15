@@ -46,11 +46,6 @@ public class AnnouncementsController extends BaseController{
     private static final String ANNOUNCEMENT_CREATE_PAGE = "announcements/create";
     private static final String ANNOUNCEMENT_DETAIL_PAGE = "announcements/details";
 
-    private static final String SORT_BY_ID = "id";
-    private static final String SORT_ASCENDING = "asc";
-
-    final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "message", "username", "user", "createdDate");
-
     private final UserService userService;
     private final AnnouncementService announcementService;
     private final MessageSource messageSource;

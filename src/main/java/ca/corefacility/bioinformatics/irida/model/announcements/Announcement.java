@@ -91,7 +91,7 @@ public class Announcement implements IridaThing {
         return message;
     }
 
-    public User getCreatedById() {
+    public User getUser() {
         return user;
     }
 
@@ -103,7 +103,7 @@ public class Announcement implements IridaThing {
         this.message = message;
     }
 
-    public void setCreatedById(User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

@@ -247,7 +247,7 @@ public class AnnouncementServiceImplIT {
         List<Announcement> announcements = announcementService.getAnnouncementsCreatedByUser(user);
 
         for (Announcement a: announcements) {
-            assertEquals("Announcement was not created by the selected user", user, a.getCreatedById());
+            assertEquals("Announcement was not created by the selected user", user, a.getUser());
         }
 
         int beforeSize = announcements.size();
@@ -269,7 +269,7 @@ public class AnnouncementServiceImplIT {
         announcements = announcementService.getAnnouncementsCreatedByUser(user);
 
         for (Announcement a: announcements) {
-            assertEquals("Announcement was not created by the selected user", user, a.getCreatedById());
+            assertEquals("Announcement was not created by the selected user", user, a.getUser());
         }
     }
 

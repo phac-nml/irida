@@ -21,7 +21,8 @@ public class AnnouncementSpecification {
         return new Specification<Announcement>() {
             @Override
             public Predicate toPredicate(Root<Announcement> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                return cb.or(cb.like(root.get("message"), "%" + searchString + "%"));
+                return cb.or(cb.like(root.get("message"), "%" + searchString + "%"),
+                             cb.like(root.get("user").get("username"), "%" + searchString + "%"));
             }
         };
     }
