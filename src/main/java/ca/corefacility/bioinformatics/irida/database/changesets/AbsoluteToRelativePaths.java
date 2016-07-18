@@ -1,12 +1,7 @@
 package ca.corefacility.bioinformatics.irida.database.changesets;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Properties;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,22 +70,8 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			this.outputFileRepository = applicationContext.getBean(AnalysisOutputFileRepository.class);
 			this.sequenceFileSnapshotRepository = applicationContext.getBean(SequenceFileSnapshotRepository.class);
 		} else {
-			logger.info("Need to manually load the keys from the config file, we're not running in a spring context.");
-			try {
-				final Set<InputStream> resources = resourceAccessor.getResourcesAsStream("/etc/irida/irida.conf");
-				// should only be one file in the set since we specified exactly
-				// one file
-				final InputStream config = resources.iterator().next();
-				final Properties properties = new Properties();
-				properties.load(config);
-
-				this.sequenceFileDirectory = Paths.get(properties.getProperty("sequence.file.base.directory"));
-				this.referenceFileDirectory = Paths.get(properties.getProperty("reference.file.base.directory"));
-				this.outputFileDirectory = Paths.get(properties.getProperty("output.file.base.directory"));
-				this.snapshotFileDirectory = Paths.get(properties.getProperty("snapshot.file.base.directory"));
-			} catch (final IOException e) {
-				logger.error("Failed to load config file.", e);
-			}
+			logger.error("This changeset *must* be run from a servlet container as it requires access to Spring's application context.");
+			throw new IllegalStateException("This changeset *must* be run from a servlet container as it requires access to Spring's application context.");
 		}
 	}
 
