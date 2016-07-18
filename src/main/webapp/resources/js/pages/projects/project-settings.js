@@ -35,7 +35,10 @@ var projectSettings = (function(page, notifications) {
     });
     
     $(document).ready(function(){
-       getApiStatus(page.vars.apiId, "#api-status", "#connect-button", showConnectedActions);
+       var apiId = $("#connect-button").data("api-id");
+       if(apiId != null){
+        getApiStatus(apiId, "#api-status", "#connect-button", showConnectedActions);
+       }
     });
     
     function showConnectedActions(){

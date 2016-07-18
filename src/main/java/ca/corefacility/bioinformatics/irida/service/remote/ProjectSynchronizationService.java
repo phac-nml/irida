@@ -126,7 +126,7 @@ public class ProjectSynchronizationService {
 			try {
 				RemoteAPI api = project.getRemoteStatus().getApi();
 				tokenService.updateTokenFromRefreshToken(api);
-				
+
 				syncProject(project);
 			} catch (IridaOAuthException e) {
 				logger.debug("Can't sync project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
@@ -253,16 +253,35 @@ public class ProjectSynchronizationService {
 
 		for (SingleEndSequenceFile file : unpairedFilesForSample) {
 			file.setId(null);
-			syncSingleEndSequenceFile(file);
+			syncSingleEndSequenceFile(file, localSample);
 		}
 
 		localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 		sampleService.update(localSample);
 	}
 
-	// TODO: Fill out this method
-	public void syncSingleEndSequenceFile(SingleEndSequenceFile file) {
-		// objectService.create(file);
+	/**
+	 * Synchronize a given {@link SingleEndSequenceFile} to the local
+	 * installation
+	 * 
+	 * @param file
+	 *            the {@link SingleEndSequenceFile} to sync
+	 * @param sample
+	 *            the {@link Sample} to add the file to
+	 */
+	public void syncSingleEndSequenceFile(SingleEndSequenceFile file, Sample sample) {
+		RemoteStatus fileStatus = file.getRemoteStatus();
+		fileStatus.setSyncStatus(SyncStatus.UPDATING);
+		file = singleEndRemoteService.mirrorSequencingObject(file);
+
+		file.getSequenceFile().setId(null);
+		file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+		objectService.createSequencingObjectInSample(file, sample);
+
+		fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+		objectService.updateRemoteStatus(file.getId(), fileStatus);
 	}
 
 	/**

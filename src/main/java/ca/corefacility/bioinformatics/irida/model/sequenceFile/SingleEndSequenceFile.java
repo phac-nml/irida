@@ -32,7 +32,7 @@ public class SingleEndSequenceFile extends SequencingObject implements IridaSing
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@NotNull
-	private final SequenceFile file;
+	private SequenceFile file;
 
 	// Default constructor for hibernate
 	@SuppressWarnings("unused")
@@ -73,6 +73,10 @@ public class SingleEndSequenceFile extends SequencingObject implements IridaSing
 
 	public SequenceFile getSequenceFile() {
 		return file;
+	}
+	
+	public void setSequenceFile(SequenceFile file) {
+		this.file = file;
 	}
 
 	@Override
