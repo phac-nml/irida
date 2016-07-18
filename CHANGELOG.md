@@ -9,6 +9,7 @@ Changes
 * [Developer]: The Virtualbox appliance that's built now uses the `virtio` network adapter because the Intel one had serious performance issues over NAT.
 * [UI]: FastQC images were not rendering in Firefox because the request behaviour changed. (0.11.2)
 * [UI]: Fixed a permissions issue with reading NCBI submissions. (0.11.3)
+* [UI]: Implemented a project synchronization feature to pull remote samples and data from other IRIDA installations.
 
 1.0.0 to 0.11.0
 ---------------
