@@ -13,6 +13,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileSnapshotRepository;
 import liquibase.change.custom.CustomSqlChange;
 import liquibase.database.Database;
 import liquibase.exception.CustomChangeException;
@@ -29,6 +37,11 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 	private Path referenceFileDirectory;
 	private Path outputFileDirectory;
 	private Path snapshotFileDirectory;
+
+	private SequenceFileRepository sequenceFileRepository;
+	private ReferenceFileRepository referenceFileRepository;
+	private AnalysisOutputFileRepository outputFileRepository;
+	private SequenceFileSnapshotRepository sequenceFileSnapshotRepository;
 
 	@Override
 	public String getConfirmationMessage() {
@@ -47,15 +60,20 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 		if (resourceAccessor instanceof ApplicationContextSpringResourceOpener) {
 			applicationContext = ((ApplicationContextSpringResourceOpener) resourceAccessor).getApplicationContext();
 		} else {
-			applicationContext = null;	
+			applicationContext = null;
 		}
-		
+
 		if (applicationContext != null) {
 			logger.info("We're running inside of a spring instance, getting the existing application context.");
 			this.sequenceFileDirectory = applicationContext.getBean("sequenceFileBaseDirectory", Path.class);
 			this.referenceFileDirectory = applicationContext.getBean("referenceFileBaseDirectory", Path.class);
 			this.outputFileDirectory = applicationContext.getBean("outputFileBaseDirectory", Path.class);
 			this.snapshotFileDirectory = applicationContext.getBean("snapshotFileBaseDirectory", Path.class);
+
+			this.sequenceFileRepository = applicationContext.getBean(SequenceFileRepository.class);
+			this.referenceFileRepository = applicationContext.getBean(ReferenceFileRepository.class);
+			this.outputFileRepository = applicationContext.getBean(AnalysisOutputFileRepository.class);
+			this.sequenceFileSnapshotRepository = applicationContext.getBean(SequenceFileSnapshotRepository.class);
 		} else {
 			logger.info("Need to manually load the keys from the config file, we're not running in a spring context.");
 			try {
@@ -78,7 +96,53 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 
 	@Override
 	public ValidationErrors validate(Database database) {
-		return null;
+		final ValidationErrors validationErrors = new ValidationErrors();
+
+		final Iterable<SequenceFile> sequenceFiles = sequenceFileRepository.findAll();
+		for (final SequenceFile sf : sequenceFiles) {
+			if (!sf.getFile().startsWith(this.sequenceFileDirectory)) {
+				validationErrors.addError("Sequence file with id [" + sf.getId() + "] with path ["
+						+ sf.getFile().toString() + "] is not under path specified in /etc/irida/irida.conf ["
+						+ this.sequenceFileDirectory.toString()
+						+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				break;
+			}
+		}
+
+		final Iterable<ReferenceFile> referenceFiles = referenceFileRepository.findAll();
+		for (final ReferenceFile rf : referenceFiles) {
+			if (!rf.getFile().startsWith(this.referenceFileDirectory)) {
+				validationErrors.addError("Reference file with id [" + rf.getId() + "] with path ["
+						+ rf.getFile().toString() + "] is not under path specified in /etc/irida/irida.conf ["
+						+ this.referenceFileDirectory.toString()
+						+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				break;
+			}
+		}
+
+		final Iterable<AnalysisOutputFile> outputFiles = outputFileRepository.findAll();
+		for (final AnalysisOutputFile of : outputFiles) {
+			if (!of.getFile().startsWith(this.outputFileDirectory)) {
+				validationErrors.addError("Output file with id [" + of.getId() + "] with path ["
+						+ of.getFile().toString() + "] is not under path specified in /etc/irida/irida.conf ["
+						+ this.outputFileDirectory.toString()
+						+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				break;
+			}
+		}
+
+		final Iterable<SequenceFileSnapshot> snapshotFiles = sequenceFileSnapshotRepository.findAll();
+		for (final SequenceFileSnapshot sf : snapshotFiles) {
+			if (!sf.getFile().startsWith(this.snapshotFileDirectory)) {
+				validationErrors.addError("Output file with id [" + sf.getId() + "] with path ["
+						+ sf.getFile().toString() + "] is not under path specified in /etc/irida/irida.conf ["
+						+ this.snapshotFileDirectory.toString()
+						+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				break;
+			}
+		}
+
+		return validationErrors;
 	}
 
 	@Override
