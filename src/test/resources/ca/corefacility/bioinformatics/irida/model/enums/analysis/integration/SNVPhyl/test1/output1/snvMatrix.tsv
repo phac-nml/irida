@@ -1,5 +1,5 @@
 strain	SampleB	SampleC	SampleA	reference	
-SampleB	0	2	1	1	
-SampleC	2	0	1	1	
-SampleA	1	1	0	0	
-reference	1	1	0	0	
+SampleB	0	3	2	2	
+SampleC	3	0	1	1	
+SampleA	2	1	0	0	
+reference	2	1	0	0	

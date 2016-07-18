@@ -115,6 +115,12 @@ public class SNVPhylAnalysisIT {
 	private Path vcf2core2;
 	private Path filterStats2;
 	private Path snvAlign2;
+	
+	private Path outputSnvTable3;
+	private Path outputSnvMatrix3;
+	private Path vcf2core3;
+	private Path filterStats3;
+	private Path snvAlign3;
 
 	/**
 	 * Sets up variables for testing.
@@ -190,6 +196,12 @@ public class SNVPhylAnalysisIT {
 		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.tsv").toURI());
 		filterStats2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/filterStats.txt").toURI());
 		snvAlign2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvAlignment.phy").toURI());
+		
+		outputSnvTable3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvTable.tsv").toURI());
+		outputSnvMatrix3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvMatrix.tsv").toURI());
+		vcf2core3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/vcf2core.tsv").toURI());
+		filterStats3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/filterStats.txt").toURI());
+		snvAlign3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvAlignment.phy").toURI());
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -227,7 +239,7 @@ public class SNVPhylAnalysisIT {
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 		
 		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2",
-				"filter-density-threshold", "2", "filter-density-window-size", "20");
+				"filter-density-threshold", "2", "filter-density-window-size", "3");
 
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
@@ -486,5 +498,156 @@ public class SNVPhylAnalysisIT {
 		assertEquals("incorrect min percent coverage for verify map", "\"75\"", minimumPercentCoverage);
 		assertEquals("incorrect filter density threshold", "3", filterDensityThreshold);
 		assertEquals("incorrect filter density window size", "30", filterDensityWindowSize);
+	}
+	
+	/**
+	 * Tests out successfully executing the SNVPhyl pipeline and passing a lower value for SNV density threshold to filter out SNVs.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testSNVPhylSuccessRemoveSNVDensity() throws Exception {
+		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
+				sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
+				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+
+		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2",
+				"filter-density-threshold", "2", "filter-density-window-size", "4");
+		
+		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
+				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
+				parameters, snvPhylWorkflow.getWorkflowIdentifier());
+
+		completeSubmittedAnalyses(submission.getId());
+
+		submission = analysisSubmissionRepository.findOne(submission.getId());
+		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
+
+		Analysis analysis = submission.getAnalysis();
+		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
+				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
+		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
+
+		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
+				.getAnalysisOutputFiles().size());
+		
+		@SuppressWarnings("resource")
+		String matrixContent = new Scanner(analysisPhylogenomics.getSnvMatrix().getFile().toFile()).useDelimiter("\\Z")
+				.next();
+		assertTrue(
+				"snpMatrix should be the same but is \"" + matrixContent + "\"",
+				com.google.common.io.Files.equal(outputSnvMatrix3.toFile(), analysisPhylogenomics.getSnvMatrix()
+						.getFile().toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvMatrix()
+				.getCreatedByTool());
+		
+		@SuppressWarnings("resource")
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnvTable().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"snpTable should be the same but is \"" + snpTableContent + "\"",
+				com.google.common.io.Files.equal(outputSnvTable3.toFile(), analysisPhylogenomics.getSnvTable().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvTable()
+				.getCreatedByTool());
+		
+		@SuppressWarnings("resource")
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
+				com.google.common.io.Files.equal(vcf2core3.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
+				.getCreatedByTool());
+		
+		// only check size of mapping quality file due to samples output in random order
+		assertTrue("the mapping quality file should not be empty.",
+				Files.size(analysisPhylogenomics.getMappingQuality().getFile()) > 0);
+		
+		@SuppressWarnings("resource")
+		String filterStatsContent = new Scanner(analysisPhylogenomics.getFilterStats().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"filterStats should be the same but is \"" + filterStatsContent + "\"",
+				com.google.common.io.Files.equal(filterStats3.toFile(), analysisPhylogenomics.getFilterStats().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+				.getCreatedByTool());
+		
+		@SuppressWarnings("resource")
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getSnvAlign().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"snvAlign should be the same but is \"" + snvAlignContent + "\"",
+				com.google.common.io.Files.equal(snvAlign3.toFile(), analysisPhylogenomics.getSnvAlign().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvAlign()
+				.getCreatedByTool());
+		
+		// only test to make sure the files have a valid size since PhyML uses a
+		// random seed to generate the tree (and so changes results)
+		assertTrue("the phylogenetic tree file should not be empty.",
+				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+		assertTrue("the phylogenetic tree stats file should not be empty.",
+				Files.size(analysisPhylogenomics.getPhylogeneticTreeStats().getFile()) > 0);
+
+		// try to follow the phylogenomics provenance all the way back to the
+		// upload tools
+		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
+				.getCreatedByTool());
+		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
+
+		String minVcf2AlignCov = null;
+		String altAlleleFraction = null;
+		String minimumPercentCoverage = null;
+		String minimumDepthVerify = null;
+		String filterDensityThreshold = null;
+		String filterDensityWindowSize = null;
+		
+		// navigate through the tree to make sure that you can find both types
+		// of input tools: the one where you upload the reference file, and the
+		// one where you upload the reads.
+		while (!toolsToVisit.isEmpty()) {
+			final ToolExecution ex = toolsToVisit.remove(0);
+			toolsToVisit.addAll(ex.getPreviousSteps());
+
+			if (ex.getToolName().contains("Consolidate VCFs")) {
+				final Map<String, String> params = ex.getExecutionTimeParameters();
+				minVcf2AlignCov = params.get("coverage");
+				altAlleleFraction = params.get("ao");
+				filterDensityThreshold = params.get("use_density_filter.threshold");
+				filterDensityWindowSize = params.get("use_density_filter.window_size");
+				break;
+			}
+		}
+		
+		// try to follow the mapping quality provenance all the way back to the
+		// upload tools
+		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getMappingQuality()
+				.getCreatedByTool());
+		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
+		
+		while (!toolsToVisit.isEmpty()) {
+			final ToolExecution ex = toolsToVisit.remove(0);
+			toolsToVisit.addAll(ex.getPreviousSteps());
+			
+			if (ex.getToolName().contains("Verify Mapping Quality")) {
+				final Map<String, String> params = ex.getExecutionTimeParameters();
+				minimumPercentCoverage = params.get("minmap");
+				minimumDepthVerify = params.get("mindepth");
+			}
+		}
+		
+		assertEquals("incorrect minimum vcf 2 align coverage", "\"2\"", minVcf2AlignCov);
+		assertEquals("incorrect alternative allele fraction", "\"0.75\"", altAlleleFraction);
+		assertEquals("incorrect minimum depth for verify map", "\"2\"", minimumDepthVerify);
+		assertEquals("incorrect min percent coverage for verify map", "\"80\"", minimumPercentCoverage);
+		assertEquals("incorrect filter density threshold", "2", filterDensityThreshold);
+		assertEquals("incorrect filter density window size", "4", filterDensityWindowSize);
 	}
 }

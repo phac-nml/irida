@@ -2,11 +2,11 @@ Chromosome	Genomes
 reference	ALL	SampleA	SampleB	SampleC
 Total number of N's and -'s	0	0	0	0
 Total percent of N's and -'s	0.00	0.00	0.00	0.00
-Total number of unfiltered variants in chromosome: 2
+Total number of unfiltered variants in chromosome: 3
 
 ================= Filter Summary Statistics =====================
-Number of sites used to generate phylogeny: 2
-Total number of sites identified: 2
+Number of sites used to generate phylogeny: 3
+Total number of sites identified: 3
 Number of sites filtered: 0
 Percentage of sites filtered: 0.00
 Coverage filtered: 0
