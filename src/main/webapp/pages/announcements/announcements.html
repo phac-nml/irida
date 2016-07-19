@@ -1,0 +1,17 @@
+
+<th:block class="announcement-text"></th:block>
+
+<th:block class="announcement-text" th:fragment="announcement-item">
+    <div class="announcement-content">
+        <ol th:each="ann : ${announcements}">
+            <li class="list-group-item">
+                <span th:text="${ann.getMessage()}">_Announcement Content_</span>
+                <div class="event-date" th:with="dateFormat=#{locale.date.long}" >
+                    <div uib-tooltip-placement="top"
+                         data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
+                         data:livestamp="${ann.createdDate}"></div>
+                </div>
+            </li>
+        </ol>
+    </div>
+</th:block>
