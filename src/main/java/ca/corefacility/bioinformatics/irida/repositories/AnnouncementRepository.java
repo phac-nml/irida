@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
+
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
-
-import java.util.List;
 
 /**
  * Repository for managing {@link Announcement}s

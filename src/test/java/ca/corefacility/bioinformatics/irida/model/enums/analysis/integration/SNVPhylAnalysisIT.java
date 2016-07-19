@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -34,9 +36,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -47,15 +57,9 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Integration tests for SNVPhyl pipeline.
@@ -70,7 +74,7 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/model/enums/analysis/integration/SNVPhyl/SNVPhylAnalysisIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SNVPhylAnalysisIT {
-
+	
 	@Autowired
 	private DatabaseSetupGalaxyITService databaseSetupGalaxyITService;
 
@@ -86,6 +90,9 @@ public class SNVPhylAnalysisIT {
 	@Autowired
 	@Qualifier("rootTempDirectory")
 	private Path rootTempDirectory;
+	
+	@Autowired
+	private SequencingObjectService sequencingObjectService;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -206,6 +213,18 @@ public class SNVPhylAnalysisIT {
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.monitorRunningAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.transferAnalysesResults());
 	}
+	
+	private void waitForFilesToSettle(SequenceFilePair... filePairs) throws InterruptedException {
+		// wait for the files to be moved into the right place, then get the
+		// records from the database again so that we get the right path.
+		Set<SequenceFile> files = null;
+		
+		do {
+			Thread.sleep(500);
+			files = Arrays.stream(filePairs).map(p -> sequencingObjectService.read(p.getId()))
+					.map(p -> p.getFiles()).flatMap(l -> l.stream()).collect(Collectors.toSet());
+		} while(!files.stream().allMatch(f -> f.getFastQCAnalysis() != null));
+	}
 
 	/**
 	 * Tests out successfully executing the SNVPhyl pipeline.
@@ -222,6 +241,8 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 		
+		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
+				
 		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2");
 
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
@@ -334,6 +355,8 @@ public class SNVPhylAnalysisIT {
 				sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+		
+		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
 		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.90", "minimum-read-coverage", "2",
 				"minimum-percent-coverage", "75", "minimum-mean-mapping-quality", "20");
