@@ -1,14 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:data="http://www.w3.org/1999/xhtml"
       layout:decorator="template/page">
 
 <head>
-    <title th:text="#{announcement.admin-menu}">THIS IS SOMETHING WRONG</title>
+    <title th:text="#{announcement.admin-menu}">_Announcement_</title>
+    <script th:inline="javascript">
+        var PAGE = {
+            urls: {
+                link:       /*[[@{/announcements/}]]*/ '/announcements',
+                details:    /*[[@{/details/}]]*/ '/detail'
+            },
+            i18n: {
+                edit: /*[[#{announcement.control.editDetails}]]*/ '_View_Edit_Announcement'
+            }
+        };
+    </script>
 </head>
 
 <body>
-<div class="row" layout:fragment="page" ddl:includes="announcement" ddl:asset-css-excludes="jquery.datatables">
+<div layout:fragment="page" ddl:bundle-includes="announcement" ddl:asset-css-excludes="jquery.datatables">
     <section class="panel panel-info">
         <div class="panel-heading">
             <span class="panel-title" th:text="#{announcement.admin-menu}"></span>
@@ -16,14 +28,16 @@
                th:href="@{create}">_Create NEW_</a>
         </div>
         <div class="panel-body">
-            <table id="announcement-table" dt:table="true" dt:serverside="true"
-                   dt:url="@{/announcements/control/ajax/list}">
+            <div dt:conf="announcementTable">
+                <div dt:confType="callback" dt:type="createdRow" dt:function="announcement#announcementTable.detailsCallback" />
+            </div>
+            <table id="announcementTable" dt:table="true" dt:url="@{/announcements/control/ajax/list}">
                 <thead>
                     <tr role="row">
-                        <th dt:property="announcement.message" dt:searchable="true" th:text="#{announcement.control.message}"></th>
+                        <th dt:property="announcement.message" dt:searchable="true" dt:renderFunction="announcement#announcementTable.announcementLinkRow" th:text="#{announcement.control.message}"></th>
                         <th width="150px" dt:property="announcement.user.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
-                        <th width="150px" dt:property="announcement.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{announcement.control.createdDate}"></th>
-                        <th width="50px" dt:sortable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.detailsButton"></th>
+                        <th width="150px" dt:property="announcement.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" dt:sortInitDirection="desc" th:text="#{announcement.control.createdDate}"></th>
+                        <th dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderDetailsButton"/>
                     </tr>
                 </thead>
 
