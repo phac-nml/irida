@@ -104,10 +104,6 @@ public class AnnouncementsController extends BaseController{
 
         model.addAttribute("announcements", announcements);
 
-        if (model.containsAttribute("errors")) {
-            logger.error("There have been errors! Could not get control page");
-        }
-
         return ANNOUNCEMENT_ADMIN_PAGE;
     }
 
