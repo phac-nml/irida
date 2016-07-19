@@ -24,10 +24,10 @@
     <section class="panel panel-info">
         <div class="panel-heading">
             <span class="panel-title" th:text="#{announcement.admin-menu}"></span>
-            <a class="btn btn-primary btn-sm pull-right" th:text="#{announcement.create.title}"
-               th:href="@{create}">_Create NEW_</a>
         </div>
         <div class="panel-body">
+            <a class="btn btn-default btn-sm pull-left" th:text="#{announcement.create.title}"
+               th:href="@{create}">_Create NEW_</a>
             <div dt:conf="announcementTable">
                 <div dt:confType="callback" dt:type="createdRow" dt:function="announcement#announcementTable.detailsCallback" />
             </div>
