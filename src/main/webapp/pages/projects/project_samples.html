@@ -274,24 +274,29 @@
 
     <script type="text/ng-template" id="filter.html">
         <div style="display: inline-block; margin-left: 3px;">
-            <div class="btn-group btn-group-sm" uib-dropdown="">
-                <button id="filterByPropertyBtn" type="button" class="btn btn-default" ng-click="filterCtrl.openFilterModal()" th:text="#{project.samples.filter.label}">Filter</button>
-                <button type="button" class="btn btn-default" uib-dropdown-toggle=""
-                        ng-disabled="filterCtrl.fileFilterDisabled">
-                    <fa:icon type="caret-down"/>
-                    <span class="sr-only" th:text="#{project.samples.filter.sr-label}">Filter Options</span>
+            <div class="btn-group btn-group-sm">
+                <button id="filterByPropertyBtn" data:uib-tooltip="#{project.samples.filter.label}" type="button"
+                        class="btn btn-default" ng-click="filterCtrl.openFilterModal()">
+                    <span class="fa fa-filter"></span>
                 </button>
-                <ul class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                    <li role="menuitem">
-                        <input type="file" style="display: none;" id="filter-file-input"
-                               filter-by-file="filterCtrl.filterByFile($fileContent)"/>
-                        <a href="#" ng-click="filterCtrl.openFileSelect()">
-                            <fa:icon type="file" fixed="fixed"/>
-                            &nbsp;
-                            <th:block th:text="#{project.sample.filterByFile.modal.title}"/>
-                        </a>
-                    </li>
-                </ul>
+                <button class="btn btn-default" ng-click="filterCtrl.openFileSelect()"
+                        data:uib-tooltip="#{project.sample.filterByFile.modal.title}"
+                        tooltip-append-to-body="true">
+                    <input type="file" style="display: none;" id="filter-file-input"
+                           filter-by-file="filterCtrl.filterByFile($fileContent)"/>
+                    <span class="fa fa-file-o"></span>
+                </button>
+                <!--<ul class="dropdown-menu" uib-dropdown-menu="" role="menu">-->
+                <!--<li role="menuitem">-->
+                <!--<input type="file" style="display: none;" id="filter-file-input"-->
+                <!--filter-by-file="filterCtrl.filterByFile($fileContent)"/>-->
+                <!--<a href="#" ng-click="filterCtrl.openFileSelect()">-->
+                <!--<fa:icon type="file" fixed="fixed"/>-->
+                <!--&nbsp;-->
+                <!--<th:block th:text="#{project.sample.filterByFile.modal.title}"/>-->
+                <!--</a>-->
+                <!--</li>-->
+                <!--</ul>-->
             </div>
             <button id="clearFilterBtn" class="btn btn-sm" th:text="#{form.btn.clear}" ng-click="filterCtrl.clearAll()">Clear</button>
         </div>
