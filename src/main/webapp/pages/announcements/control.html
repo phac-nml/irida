@@ -17,33 +17,39 @@
             }
         };
     </script>
+    <style>
+        .dataTables_paginate {
+            text-align: center!important;
+        }
+    </style>
 </head>
 
 <body>
 <div layout:fragment="page" ddl:bundle-includes="announcement" ddl:asset-css-excludes="jquery.datatables">
-    <section class="panel panel-info">
-        <div class="panel-heading">
-            <span class="panel-title" th:text="#{announcement.admin-menu}"></span>
-        </div>
-        <div class="panel-body">
-            <a class="btn btn-default btn-sm pull-left" th:text="#{announcement.create.title}"
-               th:href="@{create}">_Create NEW_</a>
-            <div dt:conf="announcementTable">
-                <div dt:confType="callback" dt:type="createdRow" dt:function="announcement#announcementTable.detailsCallback" />
-            </div>
-            <table id="announcementTable" dt:table="true" dt:url="@{/announcements/control/ajax/list}">
-                <thead>
-                    <tr role="row">
-                        <th dt:property="announcement.message" dt:searchable="true" dt:renderFunction="announcement#announcementTable.announcementLinkRow" th:text="#{announcement.control.message}"></th>
-                        <th width="150px" dt:property="announcement.user.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
-                        <th width="150px" dt:property="announcement.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" dt:sortInitDirection="desc" th:text="#{announcement.control.createdDate}"></th>
-                        <th dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderDetailsButton"/>
-                    </tr>
-                </thead>
 
-            </table>
+    <h1 th:text="#{announcement.admin-menu}"></h1>
+
+    <div dt:conf="announcementTable">
+        <div dt:confType="callback" dt:type="createdRow" dt:function="announcement#announcementTable.detailsCallback" />
+        <div dt:confType="extrahtml" dt:uid="2">
+            <div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
+                <a class="btn btn-default" th:text="#{announcement.create.title}"
+                   th:href="@{create}">_Create NEW_</a>
+            </div>
         </div>
-    </section>
+    </div>
+    <table id="announcementTable" dt:table="true" dt:url="@{/announcements/control/ajax/list}">
+        <thead>
+            <tr role="row">
+                <th dt:property="message" dt:searchable="true" th:text="#{announcement.control.message}"></th>
+                <th width="150px" dt:property="user.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
+                <th width="150px" dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" dt:sortInitDirection="desc" th:text="#{announcement.control.createdDate}"></th>
+                <th dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderDetailsButton"/>
+            </tr>
+        </thead>
+
+    </table>
+
 </div>
 </body>
 </html>

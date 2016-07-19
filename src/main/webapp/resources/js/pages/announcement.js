@@ -9,7 +9,7 @@ var announcementTable = (function(page) {
     function detailsCallback(row, data) {
         var row = $(row);
         row.find(".details-btn").click(function () {
-            window.location.href = page.urls.link + data.announcement.identifier + page.urls.details;
+            window.location.href = page.urls.link + data.identifier + page.urls.details;
         });
     };
 

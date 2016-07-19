@@ -105,7 +105,7 @@ public class AnnouncementsController extends BaseController{
         model.addAttribute("announcements", announcements);
 
         if (model.containsAttribute("errors")) {
-            logger.debug("There have been errors! Print this out in a message/dialog");
+            logger.error("There have been errors! Could not get control page");
         }
 
         return ANNOUNCEMENT_ADMIN_PAGE;
@@ -169,7 +169,7 @@ public class AnnouncementsController extends BaseController{
             announcementService.update(announcement);
         } catch (Exception e) {
             model.addAttribute("errors", "Announcement was not updated successfully");
-            logger.error(e.getMessage());
+            logger.error("Announcement could not be updated or saved to the database.", e.getMessage());
         }
         return "redirect:/announcements/admin";
     }
@@ -207,7 +207,7 @@ public class AnnouncementsController extends BaseController{
      *                  The model for the view
      * @param principal
      *                  The currently logged in user (must be an admin)
-     * @return Returns the
+     * @return Returns the detail page for the announcement
      * @throws IOException
      */
     @RequestMapping(value = "/{announcementID}/details", method = RequestMethod.GET)
@@ -217,21 +217,27 @@ public class AnnouncementsController extends BaseController{
                                              Principal principal) throws IOException {
         Announcement announcement = announcementService.read(announcementID);
         User user = userService.getUserByUsername(principal.getName());
-        if (user.getSystemRole().equals(Role.ROLE_ADMIN)){
-            logger.trace("Announcement " + announcement.getId() + ": " +
-                announcement.getMessage());
+        logger.trace("Announcement " + announcement.getId() + ": " +
+            announcement.getMessage());
 
-            model.addAttribute("announcement", announcement);
+        model.addAttribute("announcement", announcement);
 
-        } else {
-            throw new AccessDeniedException("Do not have permissions to edit this announcement");
-        }
         return ANNOUNCEMENT_DETAIL_PAGE;
     }
 
+    /**
+     * Get all announcements to be displayed in a datatable for admin control centre
+     *
+     * @param criteria
+     *                  Criteria/options for the datatable when rendering table items/rows
+     * @param principal
+     *                  Currently logged in user (must be admin)
+     * @return A map containing all of the data to be displayed in the datatables
+     *
+     */
     @RequestMapping(value = "/control/ajax/list", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody DatatablesResponse<AnnouncementDataTableResponse> getAnnouncementsAdmin(
+    public @ResponseBody DatatablesResponse<Announcement> getAnnouncementsAdmin(
             final @DatatablesParams DatatablesCriterias criteria, final Principal principal) {
         final int currentPage = DatatablesUtils.getCurrentPage(criteria);
         final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
@@ -248,27 +254,13 @@ public class AnnouncementsController extends BaseController{
         final String searchString = criteria.getSearch();
         final Page<Announcement> announcements = announcementService.search(AnnouncementSpecification
                 .searchAnnouncement(searchString), currentPage, criteria.getLength(), direction, sortName);
-        final List<AnnouncementDataTableResponse> announcementDataTableResponseList = announcements.getContent().stream()
-                .map(an -> new AnnouncementDataTableResponse(an))
+        final List<Announcement> announcementDataTableResponseList = announcements.getContent().stream()
                 .collect(Collectors.toList());
 
-        final DataSet<AnnouncementDataTableResponse> announcementDataSet = new DataSet<>(announcementDataTableResponseList,
+        final DataSet<Announcement> announcementDataSet = new DataSet<>(announcementDataTableResponseList,
                 announcements.getTotalElements(), announcements.getTotalElements());
 
         logger.debug("Total number of announcements: " + announcementDataSet.getTotalRecords());
         return DatatablesResponse.build(announcementDataSet, criteria);
-    }
-
-
-    private static final class AnnouncementDataTableResponse {
-        private final Announcement announcement;
-
-        public AnnouncementDataTableResponse(final Announcement announcement) {
-            this.announcement = announcement;
-        }
-
-        public Announcement getAnnouncement() {
-            return this.announcement;
-        }
     }
 }
