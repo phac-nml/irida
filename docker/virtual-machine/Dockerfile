@@ -2,7 +2,7 @@
 #
 #
 
-FROM apetkau/snvphyl-galaxy-0.3
+FROM apetkau/snvphyl-galaxy-1.0
 
 MAINTAINER Franklin Bristow, franklin.bristow@phac-aspc.gc.ca
 
