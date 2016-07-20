@@ -2,7 +2,7 @@
 #
 #
 
-FROM apetkau/galaxy-irida-15.10:1.0
+FROM apetkau/snvphyl-galaxy-1.0
 
 MAINTAINER Aaron Petkau, aaron.petkau@gmail.com
 
