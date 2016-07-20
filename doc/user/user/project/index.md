@@ -220,8 +220,6 @@ Recent activities include adding or modifying project members and adding new sam
 
 ![Project recent activities.](images/project-recent-activities.png)
 
-<a href="../user-groups/">Previous: Managing user groups</a><a href="../samples/" style="float: right;">Next: Managing samples</a>
-
 Managing automated assemblies
 -----------------------------
 
@@ -234,3 +232,53 @@ From the project page, click the **Settings** tab at the top.
 To enable automated assemblies, check the *Automatically assemble data uploaded to project* box.  Any new data uploaded to the project will now be automatically assembled.
 
 ![Automated assembly check](images/project-settings-automated-assembly.png)
+
+Synchronizing a remote project
+------------------------------
+
+IRIDA allows you to synchronize projects between different IRIDA installations.  A remote project appears similar to a local project, but users are not allowed to add samples or sequencing data to a remote project.  Instead all data associated with a remote project will be pulled from a remote IRIDA API on a regular schedule.  The only data that can be managed for a remote project is the members that are allowed to view the project and associated sample data.
+
+#### Connecting to a remote API
+
+Before a remote project can be synchronized a connection must be set up between the IRIDA project host installation and the receiving IRIDA installation.  The connection between installations is handled by the IRIDA client and remote api connections.
+
+First the IRIDA installation hosting the project must create a client which will be used to connect to the REST API.  The client must be created with a grant type of `authorization_code` and scope of `read`.  It is also recommended to enable refresh tokens for clients which will be involved in project synchornization.  Documentation on creating system clients can be found in the adminstrator guide's [managing system clients section](/user/administrator/#managing-system-clients) and it must be performed by a system administrator.
+
+Next the receiving IRIDA installation must set up a remote API connection to the hosting IRIDA site.  Information on adding a remote API connection can be found in the administrator guide's [adding a remote api section](/user/administrator/#adding-a-remote-api) and must also be perfomed by an administrator.
+
+#### Creating a remote synchronized project
+
+Once the client and remote APIs have been created a user create a synchronized project.  Note that in order to synchronize a remote project, a user must have login credentials to the host IRIDA installation and be a project member on the project they wish to synchronize.
+
+To begin creating a synchronized project, click the `Synchronize Remote Project` option in the `Projects` menu. 
+
+![Synchronize menu option](images/synchronize-menu-option.png) 
+
+Once on the `Synchronize New Remote Project` page, you must select the required remote API and verify your connection status.  If you don't have a valid connection to the remote API you must click the `Connect` button and follow the instructions to connect to the remote API to proceed.  For more information on connecting to remote APIs see the [remote APIs documentation](/user/user/dashboard/#remote-apis).
+
+![Synchronize api connect](images/synchronize-connect-api.png)
+
+Once you have connected to the remote API, you can select the project you wish to synchronize from the `project` dropdown.  Here you wil be given a listing of all the projects you have access to on the remote IRIDA installation.  
+
+After you have selected your project, you can select a synchronization frequency.  You should select a frequency that matches how often data will be added to the project.  This option can be updated later in the project settings panel.
+
+![Synchronize details](images/synchronize-details.png)
+
+The advanced section allows you to manually paste in an IRIDA project's REST URL rather than selecting it from the projects dropdown.  This option should only be used by advanced IRIDA users.
+
+Once your project and an appropriate synchronization frequency have been selected, click the `Synchronize Project` button to create your project.
+
+After the synchronized project has been created, you can view it's synchronization status at the top of the project's landing page.
+
+![Synchronization status](images/synchronize-status.png)
+
+The status section will be one of the following messages:
+
+* `Marked for synchronization` - This project will be synchronized when the next project synchornization job runs.
+* `Updating` - This project is currently being synchronized.
+* `Synchronized` - This project is up to date since the last project synchronization job has been run.
+* `Unauthorized` - The user who has created the synchronized project can no longer read the project on the host IRIDA installation.
+* `Error` - An error occurred during the last project synchronization job.
+* `Unsynchronized` - This project will no longer be synchronized.
+
+<a href="../user-groups/">Previous: Managing user groups</a><a href="../samples/" style="float: right;">Next: Managing samples</a>
