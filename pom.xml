@@ -583,11 +583,6 @@
 			<artifactId>blend4j</artifactId>
 			<version>${com.github.jmchilton.blend4j.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.jmchilton.galaxybootstrap</groupId>
-			<artifactId>galaxybootstrap</artifactId>
-			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
-		</dependency>
 
 		<!-- Image manipulation -->
 		<dependency>
@@ -997,8 +992,7 @@
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-ec2499861b11310743862b2d3e2f0a88dde27a51</com.github.jmchilton.blend4j.version>
-		<com.github.jmchilton.galaxybootstrap.version>0.5.0</com.github.jmchilton.galaxybootstrap.version>
+		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-de5dd26b0c346c4c03fe1c4112a070bc58072cbe</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.5.1</liquibase.version>
