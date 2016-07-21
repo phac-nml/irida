@@ -220,19 +220,6 @@ Recent activities include adding or modifying project members and adding new sam
 
 ![Project recent activities.](images/project-recent-activities.png)
 
-Managing automated assemblies
------------------------------
-
-Data that is uploaded to a project in IRIDA can be automatically assembled using IRIDA's assembly and annotation pipeline.  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
-
-From the project page, click the **Settings** tab at the top.
-
-![Project settings tab.](images/project-settings-tab.png)
-
-To enable automated assemblies, check the *Automatically assemble data uploaded to project* box.  Any new data uploaded to the project will now be automatically assembled.
-
-![Automated assembly check](images/project-settings-automated-assembly.png)
-
 Synchronizing a remote project
 ------------------------------
 
@@ -250,15 +237,15 @@ Next the receiving IRIDA installation must set up a remote API connection to the
 
 Once the client and remote APIs have been created a user create a synchronized project.  Note that in order to synchronize a remote project, a user must have login credentials to the host IRIDA installation and be a project member on the project they wish to synchronize.
 
-To begin creating a synchronized project, click the `Synchronize Remote Project` option in the `Projects` menu. 
+To begin creating a synchronized project, click the **Synchronize Remote Project** option in the **Projects** menu. 
 
 ![Synchronize menu option](images/synchronize-menu-option.png) 
 
-Once on the `Synchronize New Remote Project` page, you must select the required remote API and verify your connection status.  If you don't have a valid connection to the remote API you must click the `Connect` button and follow the instructions to connect to the remote API to proceed.  For more information on connecting to remote APIs see the [remote APIs documentation](/user/user/dashboard/#remote-apis).
+Once on the **Synchronize New Remote Project** page, you must select the required remote API and verify your connection status.  If you don't have a valid connection to the remote API you must click the `Connect` button and follow the instructions to connect to the remote API to proceed.  For more information on connecting to remote APIs see the [remote APIs documentation](/user/user/dashboard/#remote-apis).
 
 ![Synchronize api connect](images/synchronize-connect-api.png)
 
-Once you have connected to the remote API, you can select the project you wish to synchronize from the `project` dropdown.  Here you wil be given a listing of all the projects you have access to on the remote IRIDA installation.  
+Once you have connected to the remote API, you can select the project you wish to synchronize from the **Project** dropdown.  Here you wil be given a listing of all the projects you have access to on the remote IRIDA installation.  
 
 After you have selected your project, you can select a synchronization frequency.  You should select a frequency that matches how often data will be added to the project.  This option can be updated later in the project settings panel.
 
@@ -266,7 +253,7 @@ After you have selected your project, you can select a synchronization frequency
 
 The advanced section allows you to manually paste in an IRIDA project's REST URL rather than selecting it from the projects dropdown.  This option should only be used by advanced IRIDA users.
 
-Once your project and an appropriate synchronization frequency have been selected, click the `Synchronize Project` button to create your project.
+Once your project and an appropriate synchronization frequency have been selected, click the **Synchronize Project** button to create your project.
 
 After the synchronized project has been created, you can view it's synchronization status at the top of the project's landing page.
 
@@ -280,5 +267,31 @@ The status section will be one of the following messages:
 * `Unauthorized` - The user who has created the synchronized project can no longer read the project on the host IRIDA installation.
 * `Error` - An error occurred during the last project synchronization job.
 * `Unsynchronized` - This project will no longer be synchronized.
+
+Managing project settings
+-------------------------
+
+If you are a manager on a project you can manage settings on individual projects.  These settings can be found in the **Settings** tab at the top of the project page.
+
+![Project settings tab.](images/project-settings-tab.png)
+
+#### Automated assemblies
+
+Data that is uploaded to a project in IRIDA can be automatically assembled using IRIDA's assembly and annotation pipeline.  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
+
+To enable automated assemblies, check the *Automatically assemble data uploaded to project* box.  Any new data uploaded to the project will now be automatically assembled.
+
+![Automated assembly check](images/project-settings-automated-assembly.png)
+
+#### Remote project settings
+
+Settings for remote synchronized projects can also be managed from the project settings page.  These settings will only appear for synchronized projects.
+
+![Automated assembly check](images/project-settings-sync.png)
+
+* **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchornization before it's scheduled sync time. 
+* **Remote API** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
+* **Synchronization Frequency** - How often the project will be synchronized.  You can update this setting here.
+* **Synchronization User** - The accout which will be used to request project updates from the remote IRIDA installation.  This user account must have access to the project on the remote IRIDA API in order for synchronization to proceed.  Click **Become Synchronization User** to set this to be your user account.   
 
 <a href="../user-groups/">Previous: Managing user groups</a><a href="../samples/" style="float: right;">Next: Managing samples</a>
