@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUser
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
      * @return An {@link AnnouncementUserJoin} object representing the relationship between
      *          the announcement and the user
      */
-    public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement, User user);
+    public AnnouncementUserJoin markAnnouncementAsReadByUser(Announcement announcement, User user);
 
     /**
      *      Mark an {@link Announcement} as unread by a {@link User}
@@ -38,7 +39,7 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
      *          The {@link Announcement} for which we want to load users that have read it
      * @return List of {@link User}s that have read the announcement
      */
-    public List<Join<Announcement,User>> getReadUsersForAnnouncement(Announcement announcement);
+    public List<AnnouncementUserJoin> getReadUsersForAnnouncement(Announcement announcement);
 
     /**
      *      Get a list of all of the {@link User}s that have not confirmed they've read
@@ -55,7 +56,7 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
      *          {@link User} for whom we want to get unread announcements
      * @return list of {@link Join} objects representing announcements marked as read by a user
      */
-    public List<Join<Announcement, User>> getReadAnnouncementsForUser(User user);
+    public List<AnnouncementUserJoin> getReadAnnouncementsForUser(User user);
 
     /**
      *      Get a list of {@link Announcement}s that have not been read by {@param user}

@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
@@ -75,7 +77,7 @@ public class AnnouncementsController extends BaseController{
                                             final Model model, Principal principal) {
 
         User user = userService.getUserByUsername(principal.getName());
-        List<Join<Announcement, User>> joins = announcementService.getReadAnnouncementsForUser(user);
+        List<AnnouncementUserJoin> joins = announcementService.getReadAnnouncementsForUser(user);
         List<Announcement> announcements = new ArrayList<>();
 
         for (Join<Announcement, User> j: joins) {
@@ -226,15 +228,14 @@ public class AnnouncementsController extends BaseController{
      *
      * @param criteria
      *                  Criteria/options for the datatable when rendering table items/rows
-     * @param principal
-     *                  Currently logged in user (must be admin)
+     *
      * @return A map containing all of the data to be displayed in the datatables
      *
      */
     @RequestMapping(value = "/control/ajax/list", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public @ResponseBody DatatablesResponse<Announcement> getAnnouncementsAdmin(
-            final @DatatablesParams DatatablesCriterias criteria, final Principal principal) {
+            final @DatatablesParams DatatablesCriterias criteria) {
         final int currentPage = DatatablesUtils.getCurrentPage(criteria);
         final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
         final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
@@ -258,5 +259,95 @@ public class AnnouncementsController extends BaseController{
 
         logger.debug("Total number of announcements: " + announcementDataSet.getTotalRecords());
         return DatatablesResponse.build(announcementDataSet, criteria);
+    }
+
+    /**
+     * Get user read status for current announcement
+     *
+     * @param announcementID
+     *              The announcement we want read status/information about
+     * @param criterias
+     *              Criteria/options for the datatable when rendering
+     * @return A map of objects containing user and announcement read information
+     */
+    @RequestMapping(value = "/{announcementID}/details/ajax/list", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public @ResponseBody DatatablesResponse<AnnouncementUserDataTableResponse> getUserAnnouncementInfoTable(
+            @PathVariable Long announcementID,
+            final @DatatablesParams DatatablesCriterias criterias) {
+
+        final Announcement currentAnnouncement = announcementService.read(announcementID);
+
+        final int currentPage = DatatablesUtils.getCurrentPage(criterias);
+        final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criterias);
+        final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
+        String sortName = sortProperties.get("sort_string").toString();
+        sortName = sortName.replaceAll("announcement.", "");
+        if (sortName.equals("user")) {
+            sortName = "username";
+        }
+
+        final String searchString = criterias.getSearch();
+        final Page<User> users = userService.search(UserSpecification.searchUser(searchString), currentPage,
+                criterias.getLength(), direction, sortName);
+        final List<AnnouncementUserDataTableResponse> announcementUserDataTableResponses = users.getContent().stream()
+                .map(user -> new AnnouncementUserDataTableResponse(user.getUsername(), userHasRead(user, currentAnnouncement)))
+                .collect(Collectors.toList());
+
+        final DataSet<AnnouncementUserDataTableResponse> announcementUserDataSet = new DataSet<>(announcementUserDataTableResponses,
+                users.getTotalElements(), users.getTotalElements());
+
+        return DatatablesResponse.build(announcementUserDataSet, criterias);
+    }
+
+
+    private AnnouncementUserJoin userHasRead(final User user, final Announcement announcement) {
+        final List<AnnouncementUserJoin> readUsers = announcementService.getReadUsersForAnnouncement(announcement);
+        final Optional<AnnouncementUserJoin> currentAnnouncement = readUsers.stream()
+                .filter(j -> j.getObject().equals(user)).findAny();
+        if (currentAnnouncement.isPresent()) {
+            return currentAnnouncement.get();
+        } else {
+            return null;
+        }
+    }
+
+
+    private static final class AnnouncementUserDataTableResponse {
+        private final String username;
+        private final AnnouncementUserJoin join;
+        private final Date createdDate;
+        private final boolean hasRead;
+
+        public AnnouncementUserDataTableResponse(final String username, final AnnouncementUserJoin join) {
+            this.username = username;
+            this.join = join;
+            if (join != null) {
+                createdDate = join.getCreatedDate();
+                hasRead = true;
+            } else {
+                createdDate = null;
+                hasRead = false;
+            }
+        }
+
+        @SuppressWarnings("unused")
+        public String getUsername() {
+            return this.username;
+        }
+
+        @SuppressWarnings("unused")
+        public AnnouncementUserJoin getJoin() {
+            return this.join;
+        }
+
+        public Date getCreatedDate() {
+            return this.createdDate;
+        }
+
+        public boolean getHasRead() {
+            return this.hasRead;
+        }
+
     }
 }

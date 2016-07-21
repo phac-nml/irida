@@ -111,7 +111,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @Transactional
     @PreAuthorize("hasAnyRole('ROLE_USER')")
-    public Join<Announcement, User> markAnnouncementAsReadByUser(Announcement announcement, User user) throws EntityExistsException {
+    public AnnouncementUserJoin markAnnouncementAsReadByUser(Announcement announcement, User user) throws EntityExistsException {
         try {
             final AnnouncementUserJoin auj = new AnnouncementUserJoin(announcement, user);
             return announcementUserJoinRepository.save(auj);
@@ -145,7 +145,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<Join<Announcement,User>> getReadUsersForAnnouncement(Announcement announcement) throws EntityNotFoundException {
+    public List<AnnouncementUserJoin> getReadUsersForAnnouncement(Announcement announcement) throws EntityNotFoundException {
         return announcementUserJoinRepository.getUsersByAnnouncementRead(announcement);
     }
 
@@ -164,7 +164,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @PreAuthorize("hasAnyRole('ROLE_USER')")
-    public List<Join<Announcement, User>> getReadAnnouncementsForUser(User user) {
+    public List<AnnouncementUserJoin> getReadAnnouncementsForUser(User user) {
         return announcementUserJoinRepository.getAnnouncementsReadByUser(user);
     }
 

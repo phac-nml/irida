@@ -5,17 +5,30 @@
 
 <head>
     <title th:text="#{announcement.admin-menu}">THIS IS SOMETHING WRONG</title>
+    <script th:inline="javascript">
+        var PAGE = {
+            i18n: {
+                markRead: /*[[#{announcement.markRead}]]*/ 'Mark_as_Read',
+                markUnread: /*[[#{announcement.markUnread}]]*/ 'Mark_as_Unread'
+            }
+        };
+    </script>
+    <style>
+        .dataTables_paginate {
+            text-align: center!important;
+        }
+    </style>
 </head>
 
 <body>
-<div class="row" layout:fragment="page">
+<div layout:fragment="page" ddl:bundle-includes="announcement" ddl:asset-css-excludes="jquery.datatables">
     <form name="update_announcement" class="ng-cloak"
           th:action="@{/announcements/{aID}/details(aID=${announcement.getId()})}"
           method="post" role="form"
           novalidate="novalidate">
         <section class="panel panel-default">
             <div class="panel-heading">
-                <h2 class="panel-title" th:text="#{announcement.control.details.title}"></h2>
+                <h2 class="panel-title" th:text="#{announcement.control.details.edit}"></h2>
             </div>
             <div class="panel-body">
                 <textarea class="form-control input-full" type="text" id="message" name="message"
@@ -37,6 +50,29 @@
             </div>
         </section>
     </form>
+
+
+    <h1 th:text="#{announcement.control.details.title}"></h1>
+
+    <!--<div dt:conf="announcementTable">-->
+        <!--<div dt:confType="callback" dt:type="createdRow" dt:function="announcement#announcementTable.detailsCallback" />-->
+    <!--</div>-->
+    <table id="announcementUserTable" dt:table="true" dt:url="@{/announcements/__${announcement.getId()}__/details/ajax/list}">
+        <thead>
+        <tr role="row">
+            <th dt:property="username" dt:searchable="true" th:text="#{announcement.control.details.username}"></th>
+            <!--<th width="50px" dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderReadStatus" th:text="#{announcement.control.readStatus}"></th>-->
+            <th width="125px" dt:property="createdDate" dt:renderFunction="announcement#announcementTable.renderDateStatus" dt:sortInitDirection="desc" th:text="#{announcement.control.details.dateRead}"></th>
+            <th width="50px" dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderToggleStatusButtons"/>
+        </tr>
+        </thead>
+
+    </table>
+
+
+
 </div>
+
+
 </body>
 </html>
