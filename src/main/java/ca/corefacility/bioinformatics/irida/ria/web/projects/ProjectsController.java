@@ -316,15 +316,6 @@ public class ProjectsController {
 
 		if (frequency != null) {
 			updates.put("syncFrequency", frequency);
-			
-			/*
-			 * if the sync frequency is never, mark the project as
-			 * unsynchronized
-			 */
-			if (frequency.equals(ProjectSyncFrequency.NEVER)) {
-				remoteStatus.setSyncStatus(SyncStatus.UNSYNCHRONIZED);
-				updates.put("remoteStatus", remoteStatus);
-			}
 			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
 		}
 
