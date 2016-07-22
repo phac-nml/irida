@@ -21,12 +21,14 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
  * Class used to load up test workflows.
@@ -118,7 +120,7 @@ public class IridaWorkflowsConfig {
 
 		return new IridaWorkflowIdSet(defaultWorkflowIds);
 	}
-	
+
 	/**
 	 * Sets up an {@link Unmarshaller} for workflow objects.
 	 * 
@@ -139,5 +141,22 @@ public class IridaWorkflowsConfig {
 	@Bean
 	public IridaWorkflowLoaderService iridaWorkflowLoaderService() {
 		return new IridaWorkflowLoaderService(workflowDescriptionUnmarshaller());
+	}
+
+	/**
+	 * Builds a new {@link IridaWorkflowsService}.
+	 * 
+	 * @param iridaWorkflows
+	 *            The set of IridaWorkflows to use.
+	 * @param defaultIridaWorkflows
+	 *            The set of ids for default workflows to use.
+	 * @return A new {@link IridaWorkflowsService}.
+	 * @throws IridaWorkflowException
+	 *             If there was an error loading a workflow.
+	 */
+	@Bean
+	public IridaWorkflowsService iridaWorkflowsService(IridaWorkflowSet iridaWorkflows,
+			IridaWorkflowIdSet defaultIridaWorkflows) throws IridaWorkflowException {
+		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows);
 	}
 }
