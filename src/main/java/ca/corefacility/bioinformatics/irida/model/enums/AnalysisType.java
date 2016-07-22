@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
+
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
@@ -85,6 +88,13 @@ public enum AnalysisType {
 	 */
 	public Class<? extends Analysis> getAnalysisClass() {
 		return analysisClass;
+	}
+
+	public static AnalysisType[] valuesMinusDefault() {
+		AnalysisType[] values = AnalysisType.values();
+		Set<AnalysisType> valuesSet = Sets.newHashSet(values);
+		valuesSet.remove(AnalysisType.DEFAULT);
+		return valuesSet.toArray(new AnalysisType[values.length-1]);
 	}
 
 	/**
