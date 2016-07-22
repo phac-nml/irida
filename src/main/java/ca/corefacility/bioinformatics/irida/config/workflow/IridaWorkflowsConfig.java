@@ -16,6 +16,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -23,8 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
-
-import com.google.common.collect.Sets;
 
 /**
  * Class used to load up test workflows.
@@ -42,8 +44,6 @@ public class IridaWorkflowsConfig {
 	@Autowired
 	private Environment environment;
 
-	@Autowired
-	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
 
 	/**
 	 * Gets the {@link Path} for all IRIDA workflow types.
@@ -81,7 +81,7 @@ public class IridaWorkflowsConfig {
 				logger.warn("Workflow type directory " + iridaWorkflowTypesPath + " contains a file "
 						+ workflowTypePath + " that is not a proper workflow directory.");
 			} else {
-				iridaWorkflowsSet.addAll(iridaWorkflowLoaderService.loadAllWorkflowImplementations(workflowTypePath));
+				iridaWorkflowsSet.addAll(iridaWorkflowLoaderService().loadAllWorkflowImplementations(workflowTypePath));
 			}
 		}
 
@@ -117,5 +117,27 @@ public class IridaWorkflowsConfig {
 		}
 
 		return new IridaWorkflowIdSet(defaultWorkflowIds);
+	}
+	
+	/**
+	 * Sets up an {@link Unmarshaller} for workflow objects.
+	 * 
+	 * @return An {@link Unmarshaller} for workflow objects.
+	 */
+	@Bean
+	public Unmarshaller workflowDescriptionUnmarshaller() {
+		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
+		jaxb2marshaller.setPackagesToScan(new String[] { "ca.corefacility.bioinformatics.irida.model.workflow" });
+		return jaxb2marshaller;
+	}
+
+	/**
+	 * Constructs a service for loading up workflows for IRIDA.
+	 * 
+	 * @return A service for loading workflows for IRIDA.
+	 */
+	@Bean
+	public IridaWorkflowLoaderService iridaWorkflowLoaderService() {
+		return new IridaWorkflowLoaderService(workflowDescriptionUnmarshaller());
 	}
 }
