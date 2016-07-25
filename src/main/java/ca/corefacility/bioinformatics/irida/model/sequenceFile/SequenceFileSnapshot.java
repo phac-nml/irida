@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSnapshot;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
 
 /**
  * Remote representation of an {@link IridaSequenceFile}. This object will point
@@ -44,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSnapshot;
  */
 @Entity
 @Table(name = "remote_sequence_file")
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, RelativePathTranslatorListener.class})
 @Audited
 public class SequenceFileSnapshot implements IridaSequenceFile, MutableIridaThing, IridaSnapshot, VersionedFileFields<Long> {
 

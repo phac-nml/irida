@@ -11,11 +11,17 @@ import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
 import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 @Configuration
@@ -31,16 +37,25 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${snapshot.file.base.directory}") String snapshotFileBaseDirectory;
 
-	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
+	private static final Set<Path> TEMPORARY_BASE_DIRECTORIES = new HashSet<>();
 
-	// Franklin: I assume that the scope of a configuration bean is the lifetime
-	// of the application, so the directory should only get deleted *after* the
-	// tests have finished running.
 	@PreDestroy
 	public void tearDown() throws IOException {
-		for (Path b : BASE_DIRECTORIES) {
+		for (Path b : TEMPORARY_BASE_DIRECTORIES) {
 			Files.walkFileTree(b, new RecursiveDeleteVisitor());
 		}
+	}
+	
+	@Bean
+	public RelativePathTranslatorListener relativePathTranslatorListener(final @Qualifier("referenceFileBaseDirectory") Path referenceFileBaseDirectory, 
+			final @Qualifier("sequenceFileBaseDirectory") Path sequenceFileBaseDirectory,
+			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory,
+			final @Qualifier("snapshotFileBaseDirectory") Path snapshotFileBaseDirectory) {
+		RelativePathTranslatorListener.addBaseDirectory(SequenceFile.class, sequenceFileBaseDirectory);
+		RelativePathTranslatorListener.addBaseDirectory(ReferenceFile.class, referenceFileBaseDirectory);
+		RelativePathTranslatorListener.addBaseDirectory(AnalysisOutputFile.class, outputFileBaseDirectory);
+		RelativePathTranslatorListener.addBaseDirectory(SequenceFileSnapshot.class, snapshotFileBaseDirectory);
+		return new RelativePathTranslatorListener();
 	}
 
 	@Profile("prod")
@@ -90,7 +105,7 @@ public class IridaApiFilesystemRepositoryConfig {
 	public Path snapshotFileBaseDirectory() throws IOException {
 		return configureDirectory(snapshotFileBaseDirectory, "snapshot-file-dev");
 	}
-
+	
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
 		if (!Files.exists(baseDirectory)) {
@@ -107,8 +122,8 @@ public class IridaApiFilesystemRepositoryConfig {
 	private Path configureDirectory(String pathName, String defaultDevPathPrefix) throws IOException {
 		Path baseDirectory = Paths.get(pathName);
 		if (!Files.exists(baseDirectory)) {
-			baseDirectory = Files.createTempDirectory(defaultDevPathPrefix);
-			BASE_DIRECTORIES.add(baseDirectory);
+			baseDirectory = Files.createDirectories(baseDirectory);
+			TEMPORARY_BASE_DIRECTORIES.add(baseDirectory);
 			logger.info(String
 					.format("The directory [%s] does not exist, but it looks like you're running in a dev environment, "
 							+ "so I created a temporary location at [%s]. This directory *will* be removed at shutdown time.",

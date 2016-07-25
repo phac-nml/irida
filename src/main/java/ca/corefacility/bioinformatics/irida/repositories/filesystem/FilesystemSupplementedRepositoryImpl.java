@@ -6,11 +6,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PreUpdate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +44,103 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		this.entityManager = entityManager;
 		this.baseDirectory = baseDirectory;
 	}
+	
+	/**
+	 * A JPA event listener to translate the relative paths stored in the database to
+	 * absolute paths so that everyone after the repository knows where the file is
+	 * actually stored. 
+	 */
+	public static class RelativePathTranslatorListener {
+		private static final Logger logger = LoggerFactory.getLogger(RelativePathTranslatorListener.class);
+		
+		private static final Map<Class<?>, Path> baseDirectories = new ConcurrentHashMap<>();
+		
+		private static final Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
+		/**
+		 * Get a collection of fields that have type Path.
+		 * 
+		 * @param type
+		 *            the class type to get field references for.
+		 * @return the set of field references for the class.
+		 */
+		private static Set<Field> findPathFields(final Class<?> type) {
+			return Arrays.stream(type.getDeclaredFields()).filter(pathFilter).collect(Collectors.toSet());
+		}
+		
+		public static void addBaseDirectory(final Class<?> c, final Path p) {
+			baseDirectories.put(c, p);
+		}
+		
+		/**
+		 * Whenever a {@link VersionedFileFields} is loaded from the database,
+		 * we need to translate it's path from a relative path to an absolute
+		 * path based on the storage directory for the type.
+		 * 
+		 * @param fileSystemEntity
+		 *            the object to make absolute paths for
+		 */
+		@PostLoad
+		@PostUpdate
+		@PostPersist
+		public void absolutePath(final VersionedFileFields<Long> fileSystemEntity) {
+			logger.trace("Going to get an absolute path after loading.");
+			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
+			// find any members that are of type Path:
+			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
+
+			// for every member that's a path, make it an absolute path based on the
+			// base directory
+			for (final Field field : pathFields) {
+				ReflectionUtils.makeAccessible(field);
+				final Path source = (Path) ReflectionUtils.getField(field, fileSystemEntity);
+				// source will have a null root **only** if it's a relative
+				// path. basically: don't try to make an absolute path out of
+				// one that's already absolute.
+				if (source != null && source.getRoot() == null) {
+					logger.trace("About to get ABSOLUTE path for [" + source.toString() + "] from base directory ["
+							+ directoryForType.toString() + "]");
+					final Path absolutePath = directoryForType.resolve(source);
+					ReflectionUtils.setField(field, fileSystemEntity, absolutePath);
+					logger.trace("Setting ABSOLUTE path to [" + absolutePath.toString() + "] from relative path ["
+							+ source.toString() + "]");
+				}
+			}
+		}
+		
+		/**
+		 * Before persisting a {@link VersionedFileFields} to the database, we
+		 * need to translate it to a relative path by stripping the storage
+		 * directory for the type.
+		 * 
+		 * @param fileSystemEntity
+		 *            the object to make relative paths for.
+		 */
+		@PreUpdate
+		public void relativePath(final VersionedFileFields<Long> fileSystemEntity) {
+			logger.trace("In pre-update, going to translate to relative path.");
+			
+			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
+			// find any members that are of type Path:
+			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
+
+			// for every member that's a path, make it a relative path based on the
+			// base directory
+			for (final Field field : pathFields) {
+				ReflectionUtils.makeAccessible(field);
+				final Path source = (Path) ReflectionUtils.getField(field, fileSystemEntity);
+				// source will have a not-null root **only** if it's an absolute
+				// path.
+				if (source != null && source.getRoot() != null) {
+					logger.trace("About to get RELATIVE path for [" + source.toString() + "] from base directory ["
+							+ directoryForType.toString() + "]");
+					final Path relativePath = directoryForType.relativize(source);
+					ReflectionUtils.setField(field, fileSystemEntity, relativePath);
+					logger.trace("Setting RELATIVE path to [" + relativePath.toString() + "] from absolute path ["
+							+ source.toString() + "]");
+				}
+			}
+		}
+	}
 
 	/**
 	 * Actually persist the entity to disk and to the database.
@@ -47,20 +150,16 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * @return the persisted entity.
 	 */
 	protected Type saveInternal(final Type entity) {
+		logger.trace("In write internal, before doing any persisting.");
 		if (entity.getId() == null) {
+			logger.trace("file has never been saved before, writing to database.");
 			// save the initial version of the file to the database so that we
 			// get an identifier attached to it.
 			entityManager.persist(entity);
 		}
+		logger.trace("About to write files to disk.");
 		writeFilesToDisk(baseDirectory, entity);
-		return entityManager.merge(entity);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Type updateWithoutFileRevision(Type entity) {
+		logger.trace("Returning merged entity.");
 		return entityManager.merge(entity);
 	}
 
@@ -116,6 +215,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			for (Field field : fieldsToUpdate) {
 				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
 				Path target = sequenceFileDirWithRevision.resolve(source.getFileName());
+				logger.debug("Target is [" + target.toString() + "]");
 				try {
 					if (!Files.exists(sequenceFileDir)) {
 						Files.createDirectory(sequenceFileDir);
