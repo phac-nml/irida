@@ -1,0 +1,11 @@
+{
+  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3", "select2-bootstrap", "livestampjs"],
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/announcement.js"
+      }
+    }
+  ]
+}

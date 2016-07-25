@@ -609,8 +609,8 @@ INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, se
 
 INSERT INTO `remote_related_project`(id, created_date, remote_project_uri, project_id, remote_api_id) VALUES ('1','2015-03-27 11:13:39','http://localhost:8080/api/projects/5','4','1'); 
 
-INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_OWNER', 1, 2, NULL, 'UserRoleSetProjectEvent') 
-INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_USER', 3, 2, NULL, 'UserRoleSetProjectEvent')
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_OWNER', 1, 2, NULL, 'UserRoleSetProjectEvent');
+INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_USER', 3, 2, NULL, 'UserRoleSetProjectEvent');
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_OWNER', 3, 1, NULL, 'UserRoleSetProjectEvent');
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 3, 5, 1, 'SampleAddedProjectEvent');
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 3, 4, 2, 'SampleAddedProjectEvent');
@@ -632,3 +632,13 @@ INSERT INTO `ncbi_export_submission` (id, created_date, bio_project_id, namespac
 INSERT INTO `ncbi_export_biosample` (id, bioSample, instrument_model, library_construction_protocol, library_name, library_selection, library_source, library_strategy, submission_status) VALUES ('SUB001XXX', 'FakeBioSample001', 'ILLUMINAMISEQ', 'Fake Library Prep', 'Library001', 'RANDOM', 'GENOMIC', 'WGS', 'NEW');
 INSERT INTO `ncbi_export_submission_biosample` (ncbi_export_submission_id, bioSampleFiles_id) VALUES (1, 'SUB001XXX');
 INSERT INTO `ncbi_export_biosample_sequence_file_pair` (ncbi_export_biosample_id, pairs_id) VALUES ('SUB001XXX', 1);
+
+-- announcement
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (1, now(), "Welcome to IRIDA!", 4);
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (2, now(), "Here's another announcement!", 4);
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (3, now(), "Oh man this is cool!", 4);
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (4, now(), "You are now ready to science.", 4);
+
+-- announcement_user
+INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (1, now(), 1, 4);
+INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (2, now(), 2, 4);

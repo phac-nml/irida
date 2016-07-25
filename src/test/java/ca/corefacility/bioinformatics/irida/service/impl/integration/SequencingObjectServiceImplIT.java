@@ -208,8 +208,9 @@ public class SequencingObjectServiceImplIT {
 	}
 
 	@Test
-	@WithMockUser(username = "tom", roles = "SEQUENCER")
-	public void testCreateNotCompressedSequenceFile() throws IOException {
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testCreateNotCompressedSequenceFile() throws IOException, InterruptedException {
+		final Long expectedRevisionNumber = 2L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -225,11 +226,18 @@ public class SequencingObjectServiceImplIT {
 
 		// figure out what the version number of the sequence file is (should be
 		// 2; the file wasn't gzipped, but fastqc will have modified it.)
-		SequencingObject readObject = asRole(Role.ROLE_ADMIN, "tom").objectService.read(sequencingObject.getId());
-		sf = readObject.getFiles().iterator().next();
-		assertEquals("Wrong version number after processing.", Long.valueOf(2), sf.getFileRevisionNumber());
+		SequencingObject readObject = null;
+		do {
+			readObject = asRole(Role.ROLE_ADMIN, "admin").objectService.read(sequencingObject.getId());
+			sf = readObject.getFiles().iterator().next();
+			if (sf.getFileRevisionNumber() < expectedRevisionNumber) {
+				logger.info("Still waiting on thread to finish, having a bit of a sleep.");
+				Thread.sleep(1000);
+			}
+		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
+		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
+		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
@@ -256,7 +264,8 @@ public class SequencingObjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testCreateCompressedSequenceFile() throws IOException {
+	public void testCreateCompressedSequenceFile() throws IOException, InterruptedException {
+		final Long expectedRevisionNumber = 3L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
@@ -276,12 +285,18 @@ public class SequencingObjectServiceImplIT {
 		// 3; the file was gzipped)
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
-		SequencingObject readObject = asRole(Role.ROLE_ADMIN, "tom").objectService.read(sequencingObject.getId());
-		sf = readObject.getFiles().iterator().next();
-		assertEquals("Wrong version number after processing.", Long.valueOf(3L), sf.getFileRevisionNumber());
+		SequencingObject readObject = null;
+		do {
+			readObject = asRole(Role.ROLE_ADMIN, "admin").objectService.read(sequencingObject.getId());
+			sf = readObject.getFiles().iterator().next();
+			if (sf.getFileRevisionNumber() < expectedRevisionNumber) {
+				logger.info("Still waiting on thread to finish, having a bit of a sleep.");
+				Thread.sleep(1000);
+			}
+		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
+		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
-
-		AnalysisFastQC analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
+		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);

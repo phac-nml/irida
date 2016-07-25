@@ -809,6 +809,18 @@
 					<password>${liquibase.config.password}</password>
 					<changeLogFile>${liquibase.config.changeLogFile}</changeLogFile>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-beans</artifactId>
+						<version>${spring.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-context</artifactId>
+						<version>${spring.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 			<!-- Maven WAR plugin -->
@@ -989,7 +1001,7 @@
 		<com.github.jmchilton.galaxybootstrap.version>0.5.0</com.github.jmchilton.galaxybootstrap.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
-		<liquibase.version>3.2.2</liquibase.version>
+		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<ehcache.version>2.9.0</ehcache.version>
 		<jackson.version>2.5.1</jackson.version>
@@ -1080,7 +1092,6 @@
 		<profile>
 			<id>service_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
