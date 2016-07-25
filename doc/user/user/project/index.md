@@ -229,13 +229,13 @@ IRIDA allows you to synchronize projects between different IRIDA installations. 
 
 Before a remote project can be synchronized a connection must be set up between the IRIDA project host installation and the receiving IRIDA installation.  The connection between installations is handled by the IRIDA client and remote api connections.
 
-First the IRIDA installation hosting the project must create a client which will be used to connect to the REST API.  The client must be created with a grant type of `authorization_code` and scope of `read`.  It is also recommended to enable refresh tokens for clients which will be involved in project synchornization.  Documentation on creating system clients can be found in the adminstrator guide's [managing system clients section](/user/administrator/#managing-system-clients) and it must be performed by a system administrator.
+First the IRIDA installation hosting the project must create a client which will be used to connect to the REST API.  The client must be created with a grant type of `authorization_code` and scope of `read`.  It is also recommended to enable refresh tokens for clients which will be involved in project synchronization.  Documentation on creating system clients can be found in the adminstrator guide's [managing system clients section](/user/administrator/#managing-system-clients) and it must be performed by a system administrator.
 
 Next the receiving IRIDA installation must set up a remote API connection to the hosting IRIDA site.  Information on adding a remote API connection can be found in the administrator guide's [adding a remote api section](/user/administrator/#adding-a-remote-api) and must also be perfomed by an administrator.
 
 #### Creating a remote synchronized project
 
-Once the client and remote APIs have been created a user create a synchronized project.  Note that in order to synchronize a remote project, a user must have login credentials to the host IRIDA installation and be a project member on the project they wish to synchronize.
+Once the client and remote APIs have been created a user can create a synchronized project.  Note that in order to synchronize a remote project, a user must have login credentials to the host IRIDA installation and be a project member on the project they wish to synchronize.
 
 To begin creating a synchronized project, click the **Synchronize Remote Project** option in the **Projects** menu. 
 
@@ -261,7 +261,7 @@ After the synchronized project has been created, you can view it's synchronizati
 
 The status section will be one of the following messages:
 
-* `Marked for synchronization` - This project will be synchronized when the next project synchornization job runs.
+* `Marked for synchronization` - This project will be synchronized when the next project synchronization job runs.
 * `Updating` - This project is currently being synchronized.
 * `Synchronized` - This project is up to date since the last project synchronization job has been run.
 * `Unauthorized` - The user who has created the synchronized project can no longer read the project on the host IRIDA installation.
@@ -289,7 +289,7 @@ Settings for remote synchronized projects can also be managed from the project s
 
 ![Automated assembly check](images/project-settings-sync.png)
 
-* **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchornization before it's scheduled sync time. 
+* **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchronization before it's scheduled sync time. 
 * **Remote API** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
 * **Synchronization Frequency** - How often the project will be synchronized.  You can update this setting here.
 * **Synchronization User** - The accout which will be used to request project updates from the remote IRIDA installation.  This user account must have access to the project on the remote IRIDA API in order for synchronization to proceed.  Click **Become Synchronization User** to set this to be your user account.   
