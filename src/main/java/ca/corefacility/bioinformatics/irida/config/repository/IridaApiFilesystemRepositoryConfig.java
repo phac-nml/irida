@@ -7,8 +7,6 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.PreDestroy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 @Configuration
 public class IridaApiFilesystemRepositoryConfig {
@@ -38,13 +35,6 @@ public class IridaApiFilesystemRepositoryConfig {
 	private @Value("${snapshot.file.base.directory}") String snapshotFileBaseDirectory;
 
 	private static final Set<Path> TEMPORARY_BASE_DIRECTORIES = new HashSet<>();
-
-	@PreDestroy
-	public void tearDown() throws IOException {
-		for (Path b : TEMPORARY_BASE_DIRECTORIES) {
-			Files.walkFileTree(b, new RecursiveDeleteVisitor());
-		}
-	}
 	
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(final @Qualifier("referenceFileBaseDirectory") Path referenceFileBaseDirectory, 
