@@ -2,7 +2,7 @@
 var announcementTable = (function(page) {
 
     /**
-     * Renders button for each row in Announcement table that redirects to the details page for that announcemetn on click
+     * Renders button for each row in Announcement table that redirects to the details page for that announcement on click
      * @param data
      * @param type
      * @param full
@@ -20,7 +20,7 @@ var announcementTable = (function(page) {
      * @param full
      * @returns {string}
      */
-    function renderDateStatus(data, type, full) {
+    function renderDateAndStatus(data, type, full) {
         var iconClass;
         var date;
         if (full.join != null) {
@@ -54,7 +54,7 @@ var announcementTable = (function(page) {
 
     return {
         renderDetailsButton : renderDetailsButton,
-        renderDateStatus : renderDateStatus,
+        renderDateAndStatus : renderDateAndStatus,
         renderToggleStatusButtons : renderToggleStatusButtons,
         detailsCallback : detailsCallback,
         toggleReadStatusCallback : toggleReadStatusCallback

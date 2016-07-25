@@ -3,11 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -15,15 +13,12 @@ import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,10 +38,10 @@ public class AnnouncementsController extends BaseController{
 
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementsController.class);
 
-    private static final String ANNOUNCEMENT_PAGE = "announcements/announcements";
-    private static final String ANNOUNCEMENT_ADMIN_PAGE = "announcements/control";
-    private static final String ANNOUNCEMENT_CREATE_PAGE = "announcements/create";
-    private static final String ANNOUNCEMENT_DETAIL_PAGE = "announcements/details";
+    private static final String ANNOUNCEMENT_VIEW = "announcements/announcements";
+    private static final String ANNOUNCEMENT_ADMIN = "announcements/control";
+    private static final String ANNOUNCEMENTS_CREATE = "announcements/create";
+    private static final String ANNOUNCEMENTS_DETAILS = "announcements/details";
 
     private final UserService userService;
     private final AnnouncementService announcementService;
@@ -64,8 +59,6 @@ public class AnnouncementsController extends BaseController{
     /**
      * Gets a list of {@link Announcement}s for the current {@link User}
      *
-     * @param userId
-     *              ID of the user for which to get announcements
      * @param model
      *              Model for the view
      * @param principal
@@ -73,8 +66,7 @@ public class AnnouncementsController extends BaseController{
      * @return The announcement page containing announcement information for the user
      */
     @RequestMapping(value = "/announcements", method = RequestMethod.GET)
-    public String getAllAnnouncementsAsUser(@PathVariable("userId") Long userId,
-                                            final Model model, Principal principal) {
+    public String getAllAnnouncementsAsUser(final Model model, Principal principal) {
 
         User user = userService.getUserByUsername(principal.getName());
         List<AnnouncementUserJoin> joins = announcementService.getReadAnnouncementsForUser(user);
@@ -88,7 +80,37 @@ public class AnnouncementsController extends BaseController{
 
         model.addAttribute("announcements", announcements);
 
-        return ANNOUNCEMENT_PAGE;
+        return ANNOUNCEMENT_VIEW;
+    }
+
+    /**
+     * Gets a list of Announcements that the current user hasn't read yet
+     *
+     * @param model
+     *              Model for the view
+     * @param principal
+     *              The current user
+     * @return the fragment for viewing announcements in the dashboard
+     */
+    @RequestMapping(value = "/current_user")
+    public String getUnreadAnnouncementsForUser(final Model model, Principal principal) {
+        User user = userService.getUserByUsername(principal.getName());
+
+        List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
+
+        model.addAttribute("announcements", unreadAnnouncements);
+
+        return ANNOUNCEMENT_VIEW;
+    }
+
+    @RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
+    public String markAnnouncementRead(@PathVariable Long aID, Principal principal) {
+        User user = userService.getUserByUsername(principal.getName());
+        Announcement announcement = announcementService.read(aID);
+
+        announcementService.markAnnouncementAsReadByUser(announcement, user);
+
+        return ANNOUNCEMENT_VIEW;
     }
 
     /**
@@ -106,14 +128,14 @@ public class AnnouncementsController extends BaseController{
 
         model.addAttribute("announcements", announcements);
 
-        return ANNOUNCEMENT_ADMIN_PAGE;
+        return ANNOUNCEMENT_ADMIN;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getCreateAnnouncementPage(final Model model) {
 
-        return ANNOUNCEMENT_CREATE_PAGE;
+        return ANNOUNCEMENTS_CREATE;
     }
 
     /**
@@ -220,7 +242,7 @@ public class AnnouncementsController extends BaseController{
 
         model.addAttribute("announcement", announcement);
 
-        return ANNOUNCEMENT_DETAIL_PAGE;
+        return ANNOUNCEMENTS_DETAILS;
     }
 
     /**

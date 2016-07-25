@@ -1,15 +1,4 @@
-(function(angular, page) {
+(function(angular) {
 
-  /**
-   * Controller for the updates section.
-   * @constructor
-   */
-  function UpdateController () {
-    var vm = this;
-    vm.content = page.updates;
-  }
-
-  angular.module('irida.dashboard', ['hc.marked', 'irida.events'])
-    .controller('updateController', [UpdateController])
-  ;
+  angular.module('irida.dashboard', ['hc.marked', 'irida.events', 'irida.announcements']);
 })(window.angular, window.PAGE);
