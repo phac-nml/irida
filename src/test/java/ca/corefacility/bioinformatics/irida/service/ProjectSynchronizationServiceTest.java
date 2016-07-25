@@ -1,30 +1,29 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.text.SimpleDateFormat;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
-import static org.mockito.Matchers.any;
+import com.google.common.collect.Maps;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizationService;
@@ -124,5 +123,54 @@ public class ProjectSynchronizationServiceTest {
 		verify(projectService, times(3)).update(any(Project.class));
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
+	}
+	
+	@Test
+	public void testSyncNewSample(){
+		Sample sample = new Sample();
+		RemoteStatus sampleStatus = new RemoteStatus("http://sample",api);
+		sample.setRemoteStatus(sampleStatus);
+		
+		when(sampleService.create(sample)).thenReturn(sample);
+		
+		syncService.syncSample(sample, expired, Maps.newHashMap());
+		
+		verify(projectService).addSampleToProject(expired, sample);
+		
+		assertEquals(SyncStatus.SYNCHRONIZED,sample.getRemoteStatus().getSyncStatus());
+	}
+	
+	@Test
+	public void testExistingSample(){
+		Sample sample = new Sample();
+		RemoteStatus sampleStatus = new RemoteStatus("http://sample",api);
+		sample.setRemoteStatus(sampleStatus);
+		
+		Sample existingSample = new Sample();
+		existingSample.setRemoteStatus(sampleStatus);
+		
+		when(sampleService.update(any(Sample.class))).thenReturn(sample);
+		
+		syncService.syncSample(sample, expired, ImmutableMap.of("http://sample",existingSample));
+		
+		verify(projectService,times(0)).addSampleToProject(expired, sample);
+		verify(sampleService,times(2)).update(any(Sample.class));
+	}
+	
+	@Test
+	public void testSyncFiles(){
+		Sample sample = new Sample();
+		
+		SequenceFilePair pair = new SequenceFilePair();
+		RemoteStatus pairStatus = new RemoteStatus("http://pair",api);
+		pair.setRemoteStatus(pairStatus);
+		pair.setId(1L);
+		
+		when(pairRemoteService.mirrorSequencingObject(pair)).thenReturn(pair);
+		
+		syncService.syncSequenceFilePair(pair, sample);
+		
+		verify(pairRemoteService).mirrorSequencingObject(pair);
+		verify(objectService).createSequencingObjectInSample(pair, sample);
 	}
 }
