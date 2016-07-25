@@ -146,10 +146,10 @@ public class SequenceFileRepositoryImplTest {
 		Path updatedFile = sf.getFile();
 		assertEquals(updatedFile.getFileName(), oldFile.getFileName());
 		// the contents of the file should be different:
-		try (Scanner sc = new Scanner(updatedFile)) {
+		try (Scanner sc = new Scanner(baseDirectory.resolve(updatedFile))) {
 			assertEquals("The updated text is not correct.", updatedText, sc.nextLine());
 		}
-		try (Scanner sc = new Scanner(originalFile)) {
+		try (Scanner sc = new Scanner(baseDirectory.resolve(originalFile))) {
 			assertEquals("The original file was not preserved.", originalText, sc.nextLine());
 		}
 	}
@@ -169,10 +169,10 @@ public class SequenceFileRepositoryImplTest {
 		SequenceFile updated = repository.save(original);
 		Path updatedPersistedFile = updated.getFile();
 		assertEquals(updatedFile.getFileName(), updatedPersistedFile.getFileName());
-		assertTrue(Files.exists(updatedPersistedFile));
+		assertTrue(Files.exists(baseDirectory.resolve(updatedPersistedFile)));
 
 		// make sure that the other file is still there:
 		Path file = original.getFile();
-		assertTrue(Files.exists(file));
+		assertTrue(Files.exists(baseDirectory.resolve(file)));
 	}
 }

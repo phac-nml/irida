@@ -11,25 +11,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.annotation.PreDestroy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
+
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
 /**
  * A class containing information about the running instance of Galaxy for integration testing.
  *
  */
 public class LocalGalaxy {
-	private static final Logger logger = LoggerFactory
-			.getLogger(LocalGalaxy.class);
 
 	private URL galaxyURL;
 	private URL invalidGalaxyURL;

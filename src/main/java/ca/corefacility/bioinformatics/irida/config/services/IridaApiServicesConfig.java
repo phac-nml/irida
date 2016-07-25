@@ -27,7 +27,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -181,7 +181,7 @@ public class IridaApiServicesConfig {
 	@Bean(name = "fileProcessingChainExecutor")
 	@Profile({ "it", "test" })
 	public TaskExecutor fileProcessingChainExecutorIntegrationTest() {
-		return new SyncTaskExecutor();
+		return new SimpleAsyncTaskExecutor();
 	}
 
 	@Bean

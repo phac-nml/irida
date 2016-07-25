@@ -4,6 +4,11 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+0.11.0 to 0.12.0
+----------------
+* Make sure that the path prefixes in `/etc/irida/irida.conf` match what's in the database so that the relative path transformation works correctly.
+* No other special upgrade modifications required, just deploy the new `war` file.
+
 1.0.0 to 0.11.0
 ---------------
 * No special upgrade steps required, just deploy the new `war` file.
