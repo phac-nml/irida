@@ -1,4 +1,4 @@
-(function (ng, $, moment, page, project) {
+(function (ng, $, moment, Clipboard, Project, page, project) {
   "use strict";
 
   /**
@@ -26,7 +26,7 @@
                   text: p.text || p.name
                 });
               });
-            }
+            };
           };
 
           vm.cancel = function () {
@@ -228,7 +228,7 @@
         mergeSampleId: vm.selected,
         newName      : vm.name
       });
-    }
+    };
   }
 
   /**
@@ -242,14 +242,17 @@
         endDate: null
       }
     },
-      currState = _.clone(defaultState);
+      currState = {};
+    ng.copy(defaultState, currState);
 
     this.getState = function() {
-      return _.clone(currState);
+      var state = {};
+      ng.copy(currState, state);
+      return state;
     };
 
     this.setState = function(s) {
-      currState = _.clone(s);
+      ng.copy(s, currState);
       $rootScope.$broadcast("FILTER_TABLE", {filter: {
         name: s.name,
         minDate: !!s.date.startDate  ? s.date.startDate.valueOf() : "",
@@ -258,7 +261,7 @@
     };
 
     $rootScope.$on('CLEAR_FILTERS', function () {
-      currState = _.clone(defaultState);
+      ng.copy(defaultState, currState);
     });
 
     $rootScope.$on('CLEAR_FILTER_PROPERTY', function (event, args) {
@@ -316,4 +319,4 @@
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
     .controller("FilterModalController", ["$uibModalInstance", "FilterStateService", FilterModalController])
   ;
-}(window.angular, window.jQuery, window.moment, window.PAGE, window.project));
+}(window.angular, window.jQuery, window.moment, window.Clipboard, window.Project, window.PAGE, window.project));
