@@ -1,4 +1,4 @@
-(function (ng, $, page, project) {
+(function (ng, $, moment, page, project) {
   "use strict";
 
   /**
@@ -245,12 +245,6 @@
       currState = _.clone(defaultState);
 
     this.getState = function() {
-      if(currState.date.startDate !== null) {
-        currState.date.startDate = moment(currState.date.startDate);
-      }
-      if(currState.date.endDate !== null) {
-        currState.date.endDate = moment(currState.date.endDate);
-      }
       return _.clone(currState);
     };
 
@@ -292,6 +286,13 @@
     vm.options.ranges[page.i18n.dateFilter.days60] = [moment().subtract(60, 'days'), moment()];
     vm.options.ranges[page.i18n.dateFilter.days120] = [moment().subtract(120, 'days'), moment()];
 
+    if(vm.filter.date.startDate !== null) {
+      vm.options.startDate = vm.filter.date.startDate;
+    }
+    if(vm.filter.date.endDate !== null) {
+      vm.options.endDate = vm.filter.date.endDate;
+    }
+
     /**
      * Closes the modal window without making any changes
      */
@@ -315,4 +316,4 @@
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
     .controller("FilterModalController", ["$uibModalInstance", "FilterStateService", FilterModalController])
   ;
-}(window.angular, window.jQuery, window.PAGE, window.project));
+}(window.angular, window.jQuery, window.moment, window.PAGE, window.project));
