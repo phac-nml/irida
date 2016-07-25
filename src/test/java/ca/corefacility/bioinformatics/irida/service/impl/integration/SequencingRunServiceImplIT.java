@@ -12,8 +12,11 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,6 +28,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -33,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -58,6 +63,9 @@ import com.google.common.collect.ImmutableMap;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceImplIT.xml")
 @DatabaseTearDown({ "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml" })
 public class SequencingRunServiceImplIT {
+	
+	private static final Logger logger = LoggerFactory.getLogger(SequencingRunServiceImplIT.class);
+	
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
@@ -69,32 +77,35 @@ public class SequencingRunServiceImplIT {
 
 	@Autowired
 	private SequencingObjectService objectService;
+	
+	@Autowired
+	private AnalysisService analysisService;
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "SEQUENCER")
-	public void testAddSequenceFileToMiseqRunAsSequencer() throws IOException {
+	public void testAddSequenceFileToMiseqRunAsSequencer() throws IOException, InterruptedException {
 		testAddSequenceFileToMiseqRun();
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	public void testAddSequenceFileToMiseqRunAsAdmin() throws IOException {
+	public void testAddSequenceFileToMiseqRunAsAdmin() throws IOException, InterruptedException {
 		testAddSequenceFileToMiseqRun();
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", password = "password1", roles = "USER")
-	public void testAddSequenceFileToMiseqRunAsUser() throws IOException {
+	public void testAddSequenceFileToMiseqRunAsUser() throws IOException, InterruptedException {
 		testAddSequenceFileToMiseqRun();
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", password = "password1", roles = "MANAGER")
-	public void testAddSequenceFileToMiseqRunAsManager() throws IOException {
+	public void testAddSequenceFileToMiseqRunAsManager() throws IOException, InterruptedException {
 		testAddSequenceFileToMiseqRun();
 	}
 
-	private void testAddSequenceFileToMiseqRun() throws IOException {
+	private void testAddSequenceFileToMiseqRun() throws IOException, InterruptedException {
 
 		SequencingRun miseqRun = miseqRunService.read(1L);
 		// we can't actually know a file name in the XML file that we use to
@@ -112,14 +123,27 @@ public class SequencingRunServiceImplIT {
 		SequencingRun saved = miseqRunService.read(1L);
 
 		SequencingObject readObject = objectService.read(so.getId());
-		SequenceFile readFile = readObject.getFiles().iterator().next();
 
 		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService
 				.getSequencingObjectsForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequencingObjectsForSequencingRun.contains(so));
 
-		AnalysisFastQC analysis = readFile.getFastQCAnalysis();
-		assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+				.anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
+			AnalysisFastQC analysis = null;
+			do {
+				try {
+					readObject = objectService.read(so.getId());
+					SequenceFile readFile = readObject.getFiles().iterator().next();
+					analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, readFile.getId());
+				} catch (final EntityNotFoundException e) {
+					logger.info("Fastqc still isn't finished, sleeping a bit.");
+					Thread.sleep(1000);				
+				}
+			} while (analysis == null);
+			
+			assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
+		}
 	}
 
 	@Test
@@ -196,10 +220,11 @@ public class SequencingRunServiceImplIT {
 	 * detached from a transaction.
 	 * 
 	 * @throws IOException
+	 * @throws InterruptedException 
 	 */
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	public void testAddDetachedRunToSequenceFile() throws IOException {
+	public void testAddDetachedRunToSequenceFile() throws IOException, InterruptedException {
 		final String SEQUENCE = "ACGTACGTN";
 		final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n" + SEQUENCE + "\n+\n?????????")
 				.getBytes();
@@ -215,8 +240,16 @@ public class SequencingRunServiceImplIT {
 		objectService.createSequencingObjectInSample(so, sample);
 
 		miseqRunService.addSequencingObjectToSequencingRun(run, so);
-
-		AnalysisFastQC analysis = sf.getFastQCAnalysis();
+		AnalysisFastQC analysis = null;
+		do {
+			try {
+				analysis = analysisService.getFastQCAnalysisForSequenceFile(so, sf.getId());
+			} catch (final EntityNotFoundException e) {
+				logger.info("Fastqc still isn't finished, sleeping a bit.");
+				Thread.sleep(1000);				
+			}
+		} while (analysis == null);
+		
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
 	}
 }
