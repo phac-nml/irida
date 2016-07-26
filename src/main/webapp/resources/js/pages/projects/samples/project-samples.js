@@ -205,13 +205,6 @@
       });
     }
 
-    FilterController.prototype.openFileSelect = function () {
-      // setTimeout allows angularjs digest cycle to complete.
-      setTimeout(function () {
-        document.querySelector("#filter-file-input").click();
-      }, 0);
-    };
-
     FilterController.prototype.filterByFile = function ($fileContent) {
       var samplesNames = $fileContent.match(/[^\r\n]+/g);
       service.filterBySampleNames(samplesNames);
