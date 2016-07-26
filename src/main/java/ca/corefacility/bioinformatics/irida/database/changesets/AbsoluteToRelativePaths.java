@@ -2,20 +2,19 @@ package ca.corefacility.bioinformatics.irida.database.changesets;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileSnapshotRepository;
 import liquibase.change.custom.CustomSqlChange;
 import liquibase.database.Database;
 import liquibase.exception.CustomChangeException;
@@ -33,10 +32,7 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 	private Path outputFileDirectory;
 	private Path snapshotFileDirectory;
 
-	private SequenceFileRepository sequenceFileRepository;
-	private ReferenceFileRepository referenceFileRepository;
-	private AnalysisOutputFileRepository outputFileRepository;
-	private SequenceFileSnapshotRepository sequenceFileSnapshotRepository;
+	private DataSource dataSource;
 
 	@Override
 	public String getConfirmationMessage() {
@@ -65,13 +61,12 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			this.outputFileDirectory = applicationContext.getBean("outputFileBaseDirectory", Path.class);
 			this.snapshotFileDirectory = applicationContext.getBean("snapshotFileBaseDirectory", Path.class);
 
-			this.sequenceFileRepository = applicationContext.getBean(SequenceFileRepository.class);
-			this.referenceFileRepository = applicationContext.getBean(ReferenceFileRepository.class);
-			this.outputFileRepository = applicationContext.getBean(AnalysisOutputFileRepository.class);
-			this.sequenceFileSnapshotRepository = applicationContext.getBean(SequenceFileSnapshotRepository.class);
+			this.dataSource = applicationContext.getBean(DataSource.class);
 		} else {
-			logger.error("This changeset *must* be run from a servlet container as it requires access to Spring's application context.");
-			throw new IllegalStateException("This changeset *must* be run from a servlet container as it requires access to Spring's application context.");
+			logger.error(
+					"This changeset *must* be run from a servlet container as it requires access to Spring's application context.");
+			throw new IllegalStateException(
+					"This changeset *must* be run from a servlet container as it requires access to Spring's application context.");
 		}
 	}
 
@@ -79,49 +74,63 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 	public ValidationErrors validate(Database database) {
 		final ValidationErrors validationErrors = new ValidationErrors();
 
-		final Iterable<SequenceFile> sequenceFiles = sequenceFileRepository.findAll();
-		for (final SequenceFile sf : sequenceFiles) {
-			if (!sf.getFile().startsWith(this.sequenceFileDirectory)) {
-				validationErrors.addError("Sequence file with id [" + sf.getId() + "] with path ["
-						+ sf.getFile().toString() + "] is not under path specified in /etc/irida/irida.conf ["
-						+ this.sequenceFileDirectory.toString()
-						+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
-				break;
-			}
-		}
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		final Iterable<ReferenceFile> referenceFiles = referenceFileRepository.findAll();
-		for (final ReferenceFile rf : referenceFiles) {
-			if (!rf.getFile().startsWith(this.referenceFileDirectory)) {
-				validationErrors.addError("Reference file with id [" + rf.getId() + "] with path ["
-						+ rf.getFile().toString() + "] is not under path specified in /etc/irida/irida.conf ["
-						+ this.referenceFileDirectory.toString()
-						+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
-				break;
+		jdbcTemplate.query("select id, file_path from sequence_file", new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				Long id = rs.getLong(1);
+				Path path = Paths.get(rs.getString(2));
+				if (!path.startsWith(sequenceFileDirectory)) {
+					validationErrors.addError("Sequence file with id [" + id + "] with path [" + path
+							+ "] is not under path specified in /etc/irida/irida.conf ["
+							+ sequenceFileDirectory.toString()
+							+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				}
 			}
-		}
+		});
 
-		final Iterable<AnalysisOutputFile> outputFiles = outputFileRepository.findAll();
-		for (final AnalysisOutputFile of : outputFiles) {
-			if (!of.getFile().startsWith(this.outputFileDirectory)) {
-				validationErrors.addError("Output file with id [" + of.getId() + "] with path ["
-						+ of.getFile().toString() + "] is not under path specified in /etc/irida/irida.conf ["
-						+ this.outputFileDirectory.toString()
-						+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
-				break;
+		jdbcTemplate.query("select id, filePath from reference_file", new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				Long id = rs.getLong(1);
+				Path path = Paths.get(rs.getString(2));
+				if (!path.startsWith(sequenceFileDirectory)) {
+					validationErrors.addError("Reference file with id [" + id + "] with path [" + path
+							+ "] is not under path specified in /etc/irida/irida.conf ["
+							+ referenceFileDirectory.toString()
+							+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				}
 			}
-		}
+		});
 
-		final Iterable<SequenceFileSnapshot> snapshotFiles = sequenceFileSnapshotRepository.findAll();
-		for (final SequenceFileSnapshot sf : snapshotFiles) {
-			if (!sf.getFile().startsWith(this.snapshotFileDirectory)) {
-				validationErrors.addError("Output file with id [" + sf.getId() + "] with path ["
-						+ sf.getFile().toString() + "] is not under path specified in /etc/irida/irida.conf ["
-						+ this.snapshotFileDirectory.toString()
-						+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
-				break;
+		jdbcTemplate.query("select id, file_path from analysis_output_file", new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				Long id = rs.getLong(1);
+				Path path = Paths.get(rs.getString(2));
+				if (!path.startsWith(sequenceFileDirectory)) {
+					validationErrors.addError("Output file with id [" + id + "] with path [" + path
+							+ "] is not under path specified in /etc/irida/irida.conf ["
+							+ outputFileDirectory.toString()
+							+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				}
 			}
-		}
+		});
+
+		jdbcTemplate.query("select id, file_path from remote_sequence_file", new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				Long id = rs.getLong(1);
+				Path path = Paths.get(rs.getString(2));
+				if (!path.startsWith(sequenceFileDirectory)) {
+					validationErrors.addError("Sequence file snapshot with id [" + id + "] with path [" + path
+							+ "] is not under path specified in /etc/irida/irida.conf ["
+							+ snapshotFileDirectory.toString()
+							+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				}
+			}
+		});
 
 		return validationErrors;
 	}

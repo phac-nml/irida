@@ -83,17 +83,27 @@ public class ProjectSynchronizationService {
 			ProjectSyncFrequency syncFrequency = p.getSyncFrequency();
 
 			// if the project is set to be synched
-			if (syncFrequency != null && syncFrequency != ProjectSyncFrequency.NEVER) {
+			if (syncFrequency != null) {
+				if (syncFrequency != ProjectSyncFrequency.NEVER) {
+					/*
+					 * find the next sync date and see if it's passed. if it has
+					 * set as MARKED
+					 */
+					Date nextSync = DateUtils.addDays(lastUpdate, syncFrequency.getDays());
 
-				/*
-				 * find the next sync date and see if it's passed. if it has set
-				 * as MARKED
-				 */
-				Date nextSync = DateUtils.addDays(lastUpdate, syncFrequency.getDays());
-
-				if (nextSync.before(new Date())) {
+					if (nextSync.before(new Date())) {
+						Map<String, Object> updates = new HashMap<>();
+						remoteStatus.setSyncStatus(SyncStatus.MARKED);
+						updates.put("remoteStatus", remoteStatus);
+						projectService.updateProjectSettings(p, updates);
+					}
+				} else if (remoteStatus.getSyncStatus() != RemoteStatus.SyncStatus.UNSYNCHRONIZED) {
+					/*
+					 * if a sync frequency is NEVER and it's status isn't
+					 * UNSYNCHRONIZED, it should be set as such
+					 */
+					remoteStatus.setSyncStatus(SyncStatus.UNSYNCHRONIZED);
 					Map<String, Object> updates = new HashMap<>();
-					remoteStatus.setSyncStatus(SyncStatus.MARKED);
 					updates.put("remoteStatus", remoteStatus);
 					projectService.updateProjectSettings(p, updates);
 				}
