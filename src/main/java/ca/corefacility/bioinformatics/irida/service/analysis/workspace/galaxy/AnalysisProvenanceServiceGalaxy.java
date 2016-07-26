@@ -251,7 +251,7 @@ public class AnalysisProvenanceServiceGalaxy {
 						// Map<String, Object>, or List<String>
 						
 						// Check class of objects in List, if String just use toString() on List
-						if (String.class.equals(((List)value).get(0).getClass())) {
+						if (((List)value).size() == 0 || String.class.equals(((List)value).get(0).getClass())) {
 							paramStrings.put(key, value.toString());
 						} else {
 							final List<Map<String, Object>> valueList = (List<Map<String, Object>>) value;
@@ -274,8 +274,8 @@ public class AnalysisProvenanceServiceGalaxy {
 						List list = mapper.readValue(value.toString(), List.class);
 						
 						// Check class of objects in List, if String just use toString() on List
-						if (String.class.equals(list.get(0).getClass())) {
-							paramStrings.put(key, value.toString());
+						if (list.size() == 0 || String.class.equals(list.get(0).getClass())) {
+							paramStrings.put(key, list.toString());
 						} else {
 							List<Map<String, Object>> listMap = (List<Map<String, Object>>)list;
 							for (final Map<String, Object> jsonValueMap : listMap) {
