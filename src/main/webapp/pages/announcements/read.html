@@ -43,6 +43,7 @@
                                 </div>
                             </div>
                         </li>
+                        <li class="list-group-item" th:if="${#lists.isEmpty(readAnnouncements)}" th:text="#{announcement.no-read}"></li>
                     </ul>
                 </div>
             </div>

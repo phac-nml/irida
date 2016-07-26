@@ -66,7 +66,7 @@ public class AnnouncementsController extends BaseController{
      *              The user fetching the announcements (usually the one currently logged in)
      * @return The announcement page containing announcement information for the user
      */
-    @RequestMapping(value = "/current_user/read", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/read", method = RequestMethod.GET)
     public String getReadAnnouncementsAsUser(final Model model, Principal principal) {
 
         User user = userService.getUserByUsername(principal.getName());
@@ -88,7 +88,7 @@ public class AnnouncementsController extends BaseController{
      *              The current user
      * @return the fragment for viewing announcements in the dashboard
      */
-    @RequestMapping(value = "/current_user/unread")
+    @RequestMapping(value = "/user/unread")
     public String getUnreadAnnouncementsForUser(final Model model, Principal principal) {
         User user = userService.getUserByUsername(principal.getName());
 

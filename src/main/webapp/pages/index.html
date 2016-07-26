@@ -38,12 +38,12 @@
         <h4 class="pull-left" th:text="#{announcement.title}">_New Announcements_</h4>
         <div class="btn-group pull-right">
           <a class="btn btn-primary btn-sm" th:text="#{announcement.view-read}"
-              th:href="@{/announcements/current_user/read}">_All Announcements_</a>
+              th:href="@{/announcements/user/read}">_All Announcements_</a>
         </div>
       </div>
       <div class="panel-body">
         <div class="form-group">
-          <announcements data:url="@{announcements/current_user/unread}"></announcements>
+          <announcements data:url="@{announcements/user/unread}"></announcements>
         </div>
       </div>
     </section>

@@ -69,10 +69,17 @@
                     AnnouncementsService.markAnnouncementRead(url);
 
                     var target = angular.element(event.target).parent().parent(); //get the list item to hide it
+                    var listElement = target.parent(); //the list containing all the items
                     target.hide(400, function() {
                         target.remove();
                     });
 
+                    var numItems = $("ul#announcement-list").children().length;
+
+                    if (numItems <= 1) {
+                        $("#no-new-announcements").show(500);
+                        listElement.remove();
+                    }
 
                 };
             }

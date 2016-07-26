@@ -1,6 +1,6 @@
 <div id="announcements">
     <div class="form-group" ng-controller="AnnouncementItemCtrl as aCtrl">
-        <ul class="list-group">
+        <ul class="list-group" id="announcement-list">
             <li class="list-group-item announcement-item" th:each="ann : ${announcements}">
                 <marked class="announcement-content">
                     <p  th:text="${ann.getMessage()}">_Announcement Content_</p>
@@ -18,6 +18,9 @@
                 </div>
             </li>
             <li class="list-group-item" th:if="${#lists.isEmpty(announcements)}" th:text="#{announcement.no-new}"></li>
+        </ul>
+        <ul class="list-group" id="no-new-announcements" style="display: none;">
+            <li class="list-group-item" th:text="#{announcement.no-new}"></li>
         </ul>
     </div>
 </div>
