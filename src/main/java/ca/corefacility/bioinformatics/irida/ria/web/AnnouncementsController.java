@@ -39,9 +39,10 @@ public class AnnouncementsController extends BaseController{
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementsController.class);
 
     private static final String ANNOUNCEMENT_VIEW = "announcements/announcements";
+    private static final String ANNOUNCEMENT_VIEW_READ = "announcements/read";
     private static final String ANNOUNCEMENT_ADMIN = "announcements/control";
-    private static final String ANNOUNCEMENTS_CREATE = "announcements/create";
-    private static final String ANNOUNCEMENTS_DETAILS = "announcements/details";
+    private static final String ANNOUNCEMENT_CREATE = "announcements/create";
+    private static final String ANNOUNCEMENT_DETAILS = "announcements/details";
 
     private final UserService userService;
     private final AnnouncementService announcementService;
@@ -65,8 +66,8 @@ public class AnnouncementsController extends BaseController{
      *              The user fetching the announcements (usually the one currently logged in)
      * @return The announcement page containing announcement information for the user
      */
-    @RequestMapping(value = "/announcements", method = RequestMethod.GET)
-    public String getAllAnnouncementsAsUser(final Model model, Principal principal) {
+    @RequestMapping(value = "/current_user/read", method = RequestMethod.GET)
+    public String getReadAnnouncementsAsUser(final Model model, Principal principal) {
 
         User user = userService.getUserByUsername(principal.getName());
         List<AnnouncementUserJoin> joins = announcementService.getReadAnnouncementsForUser(user);
@@ -92,7 +93,7 @@ public class AnnouncementsController extends BaseController{
      *              The current user
      * @return the fragment for viewing announcements in the dashboard
      */
-    @RequestMapping(value = "/current_user")
+    @RequestMapping(value = "/current_user/unread")
     public String getUnreadAnnouncementsForUser(final Model model, Principal principal) {
         User user = userService.getUserByUsername(principal.getName());
 
@@ -135,7 +136,7 @@ public class AnnouncementsController extends BaseController{
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getCreateAnnouncementPage(final Model model) {
 
-        return ANNOUNCEMENTS_CREATE;
+        return ANNOUNCEMENT_CREATE;
     }
 
     /**
@@ -242,7 +243,7 @@ public class AnnouncementsController extends BaseController{
 
         model.addAttribute("announcement", announcement);
 
-        return ANNOUNCEMENTS_DETAILS;
+        return ANNOUNCEMENT_DETAILS;
     }
 
     /**

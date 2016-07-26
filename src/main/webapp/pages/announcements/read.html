@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.w3.org/1999/xhtml"
+      layout:decorator="template/page">
+
+<head>
+    <title th:text="#{announcement.read}">_Viewing read announcements_</title>
+    <script th:inline="javascript">
+        window.dependencies = ['irida.announcements'];
+    </script>
+</head>
+
+<body>
+<div class="row" layout:fragment="page" ddl:bundle-includes="announcement">
+    <div class="col-md-12" ng-app="irida.announcements">
+        <section class="panel panel-info">
+            <div class="panel-heading clearfix">
+                <h4 class="pull-left" th:text="#{announcement.read}">_Read Announcements_</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <!--<announcements data:url="@{announcements/current_user/read}"></announcements>-->
+                    <ul class="list-group">
+                        <li class="list-group-item announcement-item" th:each="ann : ${announcements}">
+                            <marked class="announcement-content">
+                                <p class="announcement-content" th:text="${ann.getMessage()}">_Announcement Content_</p>
+                            </marked>
+                        <div class="announcement-date" th:with="dateFormat=#{locale.date.long}" >
+                            <span uib-tooltip-placement="top"
+                            data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
+                            data:livestamp="${ann.createdDate}"></span>
+                        </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>

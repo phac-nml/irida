@@ -1,4 +1,4 @@
 (function(angular) {
 
-  angular.module('irida.dashboard', ['hc.marked', 'irida.events', 'irida.announcements']);
+  angular.module('irida.dashboard', ['irida.events', 'irida.announcements']);
 })(window.angular, window.PAGE);

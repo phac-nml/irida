@@ -59,7 +59,7 @@
         }
     }
 
-    angular.module('irida.announcements', [])
+    angular.module('irida.announcements', ['hc.marked'])
         .service('AnnouncementsService', ['$http', AnnouncementsService])
         .directive('announcements', ['AnnouncementsService', '$compile', announcements])
         .controller('AnnouncementItemCtrl', ['$window', '$scope', 'AnnouncementsService',
