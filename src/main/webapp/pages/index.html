@@ -23,7 +23,7 @@
       </div>
     </section>
   </div>
-  <div th:attr="class=${updates} ? 'col-md-7 col-sm-12 col-md-pull-5' : ''" class="col-md-7 col-sm-12 col-md-pull-5">
+  <div th:attr="class=${updates} ? 'col-md-7 col-sm-12 col-md-pull-5' : ''" class="col-md-6 col-sm-12 col-md-pull-5">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
@@ -38,6 +38,33 @@
         <div class="form-group">
             <events data:url="@{/events/current_user}"></events>
             </div>
+      </div>
+    </section>
+
+  </div>
+  <div th:attr="class=${updates} ? 'col-md-5 col-sm-12 col-md-pull-5 ' : ''" class="col-md-4 col-sm-12">
+    <section class="panel panel-info">
+      <div class="panel-heading clearfix">
+        <h4 class="pull-left" th:text="#{announcement.title}">_New Announcements_</h4>
+        <div class="btn-group pull-right">
+          <!--<a class="btn btn-info btn-sm" th:text="#{announcement.view-all}"-->
+              <!--th:href="@{/announcements/announcements}">_All Announcements_</a>-->
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="form-group">
+          <tbody>
+            <div th:if="${announcements != null}">
+              <tr th:each="announcement : ${announcements}">
+                <td th:text="${announcement.id}" />
+                <td th:text="${announcement.message}" />
+              </tr>
+            </div>
+            <div th:if="${announcements == null}">
+              <p th:text="#{announcement.no-new}">No new announcements.</p>
+            </div>
+          </tbody>
+        </div>
       </div>
     </section>
   </div>

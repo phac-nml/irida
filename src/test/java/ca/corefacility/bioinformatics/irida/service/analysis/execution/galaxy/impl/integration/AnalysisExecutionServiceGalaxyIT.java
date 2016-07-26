@@ -109,7 +109,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisService analysisService;
-
+	
 	@Autowired
 	private AnalysisExecutionService analysisExecutionService;
 
@@ -146,7 +146,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private UUID iridaTestAnalysisWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID iridaWorkflowIdInvalidWorkflowFile = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
 	private UUID iridaTestAnalysisWorkflowIdMissingOutput = UUID.fromString("63038f49-9f2c-4850-9de3-deb9eaf57512");
-	
+
 	/**
 	 * Sets up variables for testing.
 	 * 
@@ -259,15 +259,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		GalaxyWorkflowStatus status = analysisExecutionService.getWorkflowStatus(analysisExecuted);
 		analysisExecutionGalaxyITService.assertValidStatus(status);
-
-		AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
-
-		assertEquals(analysisExecuted.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
-		assertEquals(analysisExecuted.getRemoteWorkflowId(), savedSubmission.getRemoteWorkflowId());
-		assertEquals(analysisExecuted.getWorkflowId(), savedSubmission.getWorkflowId());
-		assertEquals(analysisExecuted.getInputFilesSingleEnd(), savedSubmission.getInputFilesSingleEnd());
-		assertEquals(analysisExecuted.getReferenceFile(), savedSubmission.getReferenceFile());
-		assertEquals(analysisExecuted.getAnalysisState(), savedSubmission.getAnalysisState());
 	}
 
 	/**
@@ -537,7 +528,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResults.getId(), analysisResultsDatabase.getId());
 
 		assertEquals(AnalysisPhylogenomicsPipeline.class, analysisResults.getClass());
-		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResultsDatabase;
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
@@ -621,7 +612,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
 				analysisResults.getClass());
-		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResultsDatabase;
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
@@ -1247,7 +1238,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals("analysis results is an invalid class", AnalysisAssemblyAnnotation.class,
 				analysisResults.getClass());
-		AnalysisAssemblyAnnotation analysisResultsAssembly = (AnalysisAssemblyAnnotation) analysisResults;
+		AnalysisAssemblyAnnotation analysisResultsAssembly = (AnalysisAssemblyAnnotation) analysisResultsDatabase;
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
@@ -1319,8 +1310,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResults.getExecutionManagerAnalysisId());
 
 		assertEquals(2, analysisResults.getAnalysisOutputFiles().size());
-		AnalysisOutputFile output1 = analysisResults.getAnalysisOutputFile("output1");
-		AnalysisOutputFile output2 = analysisResults.getAnalysisOutputFile("output2");
+		AnalysisOutputFile output1 = analysisResultsDatabase.getAnalysisOutputFile("output1");
+		AnalysisOutputFile output2 = analysisResultsDatabase.getAnalysisOutputFile("output2");
 
 		assertTrue("output files 1 should be equal",
 				com.google.common.io.Files.equal(expectedOutputFile1.toFile(), output1.getFile().toFile()));
@@ -1342,10 +1333,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				savedAnalysisFromDatabase.getId(), analysis.getId());
 
 		assertEquals(analysisResults.getId(), savedTest.getId());
-		assertEquals(analysisResults.getAnalysisOutputFile("output1").getFile(),
-				savedTest.getAnalysisOutputFile("output1").getFile());
-		assertEquals(analysisResults.getAnalysisOutputFile("output2").getFile(),
-				savedTest.getAnalysisOutputFile("output2").getFile());
 	}
 	
 	/**

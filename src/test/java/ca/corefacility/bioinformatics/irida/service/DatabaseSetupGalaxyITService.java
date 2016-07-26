@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,11 +17,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -32,8 +35,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.collect.Sets;
 
 /**
  * Stores common code for integration tests that require special database setup
@@ -78,6 +79,24 @@ public class DatabaseSetupGalaxyITService {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.sequencingObjectService = sequencingObjectService;
 	}
+	
+	
+	private void waitForFilesToSettle(SequencingObject... filePairs) {
+		// wait for the files to be moved into the right place, then get the
+		// records from the database again so that we get the right path.
+		Set<SequenceFile> files = null;
+		
+		do {
+			try {
+				Thread.sleep(500);
+			} catch (final InterruptedException e) {
+				
+			}
+			files = Arrays.stream(filePairs).map(p -> sequencingObjectService.read(p.getId()))
+					.map(p -> p.getFiles()).flatMap(l -> l.stream()).collect(Collectors.toSet());
+		} while(!files.stream().allMatch(f -> f.getFastQCAnalysis() != null));
+	}
+	
 
 	/**
 	 * Sets up an AnalysisSubmission and saves all dependencies in database.
@@ -123,6 +142,8 @@ public class DatabaseSetupGalaxyITService {
 			UUID iridaWorkflowId, AnalysisState state) {
 
 		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) setupSequencingObjectInDatabase(sampleId, sequenceFilePath).get(0);
+		waitForFilesToSettle(sequencingObject);
+		sequencingObject = (SingleEndSequenceFile) sequencingObjectService.read(sequencingObject.getId());
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
@@ -160,12 +181,17 @@ public class DatabaseSetupGalaxyITService {
 
 		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePaths1,
 				sequenceFilePaths2);
-
+		List<SequenceFilePair> settledFiles = new ArrayList<>();
+		for (final SequenceFilePair f : sequenceFilePairs) {
+			waitForFilesToSettle(f);
+			settledFiles.add((SequenceFilePair) sequencingObjectService.read(f.getId()));
+		}
+		
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
 				.name("paired analysis")
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
+				.inputFilesPaired(Sets.newHashSet(settledFiles))
 				.referenceFile(referenceFile)
 				.build();
 		analysisSubmissionService.create(submission);
@@ -450,10 +476,10 @@ public class DatabaseSetupGalaxyITService {
 
 		for (Path sequenceFilePath : sequenceFilePaths) {
 			SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(new SequenceFile(sequenceFilePath));
-			SampleSequencingObjectJoin join = sequencingObjectService.createSequencingObjectInSample(
-					singleEndSequenceFile, sample);
+			sequencingObjectService.createSequencingObjectInSample(singleEndSequenceFile, sample);
+			waitForFilesToSettle(singleEndSequenceFile);
 
-			returnedSequenceFiles.add((SingleEndSequenceFile) join.getObject());
+			returnedSequenceFiles.add((SingleEndSequenceFile) sequencingObjectService.read(singleEndSequenceFile.getId()));
 		}
 
 		return returnedSequenceFiles;
@@ -482,9 +508,10 @@ public class DatabaseSetupGalaxyITService {
 			SequenceFile sf1 = new SequenceFile(sequenceFiles1.get(i));
 			SequenceFile sf2 = new SequenceFile(sequenceFiles2.get(i));
 			SequenceFilePair pair = new SequenceFilePair(sf1, sf2);
-			SampleSequencingObjectJoin join = sequencingObjectService.createSequencingObjectInSample(pair, sample);
+			sequencingObjectService.createSequencingObjectInSample(pair, sample);
+			waitForFilesToSettle(pair);
 
-			returnedSequenceFilePairs.add((SequenceFilePair) join.getObject());
+			returnedSequenceFilePairs.add((SequenceFilePair) sequencingObjectService.read(pair.getId()));
 		}
 		return returnedSequenceFilePairs;
 	}

@@ -25,6 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
 
 /**
  * A reference file to be associated with a {@link Project}.
@@ -34,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 @Entity
 @Table(name = "reference_file")
 @Audited
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, RelativePathTranslatorListener.class})
 public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThing {
 
 	@Id
