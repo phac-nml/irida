@@ -544,7 +544,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0", 
-            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"use_density_filter\": \"{\\\"select_list\\\": \\\"yes\\\", \\\"threshold\\\": \\\"10\\\", \\\"window_size\\\": \\\"100\\\", \\\"__current_case__\\\": 0}\", \"ao\": \"\\\"${alternative_allele_proportion}\\\"\", \"mpileup\": \"null\", \"coverage\": \"\\\"${min_coverage}\\\"\", \"mean_mapping\": \"\\\"${min_mean_mapping}\\\"\", \"freebayes\": \"null\"}", 
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"use_density_filter\": \"{\\\"select_list\\\": \\\"yes\\\", \\\"threshold\\\": \\\"2\\\", \\\"window_size\\\": \\\"20\\\", \\\"__current_case__\\\": 0}\", \"ao\": \"\\\"${alternative_allele_proportion}\\\"\", \"mpileup\": \"null\", \"coverage\": \"\\\"${min_coverage}\\\"\", \"mean_mapping\": \"\\\"${min_mean_mapping}\\\"\", \"freebayes\": \"null\"}", 
             "tool_version": "1.7.0", 
             "type": "tool", 
             "uuid": "20d83b1e-ea37-48e3-b78d-56baf1021e6e", 
