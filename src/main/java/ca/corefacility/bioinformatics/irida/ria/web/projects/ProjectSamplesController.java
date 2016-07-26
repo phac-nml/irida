@@ -825,9 +825,18 @@ public class ProjectSamplesController {
 	}
 
 	@RequestMapping("/projects/{projectId}/samples/export")
-	public void exportProjectSamplesTable(@DatatablesParams DatatablesCriterias criterias, @RequestParam String type,
+	public void exportProjectSamplesTable(
+			@PathVariable Long projectId,
+			@RequestParam String type,
+			@DatatablesParams DatatablesCriterias criterias,
+			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
+			@RequestParam(required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false) Long minDate,
+			@RequestParam(required = false) Long endDate,
 			HttpServletRequest request,
 			HttpServletResponse response) {
+		logger.info(criterias.toString());
 
 	}
 

@@ -106,7 +106,7 @@
           notifications.show({type: data.result, msg: data.message})
         });
     };
-    
+
     SampleService.prototype.download = function (ids) {
       var url = page.urls.samples.download + "?" + $.param({ids: ids});
       var iframe = document.querySelector("#download-iframe");
@@ -143,11 +143,19 @@
     };
 
     SampleService.prototype.exportToFile = function (type) {
+      function getQueryParamsObject(paramString) {
+        var searchParams = new URLSearchParams(paramString);
+        return ({
+          sampleNames: searchParams.getAll("sampleNames[]")
+        });
+      }
+
+      var requestString = oTable_samplesTable.ajax.url().split('?')[1];
+      var params = getQueryParamsObject(requestString);
+      params.type = type;
       var tableParams = oTable_samplesTable.ajax.params();
-      post(page.urls.samples.export, {
-        criterias: tableParams,
-        type: type
-      });
+      ng.extend(params, tableParams);
+      post(page.urls.samples.export, params);
     };
 
     return SampleService;
