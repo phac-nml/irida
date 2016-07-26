@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
-import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 @Configuration
 public class IridaApiFilesystemRepositoryConfig {
@@ -36,15 +31,6 @@ public class IridaApiFilesystemRepositoryConfig {
 	private @Value("${output.file.base.directory}") String outputFileBaseDirectory;
 
 	private @Value("${snapshot.file.base.directory}") String snapshotFileBaseDirectory;
-
-	private static final Set<Path> TEMPORARY_BASE_DIRECTORIES = new HashSet<>();
-
-	@PreDestroy
-	public void tearDown() throws IOException {
-		for (Path b : TEMPORARY_BASE_DIRECTORIES) {
-			Files.walkFileTree(b, new RecursiveDeleteVisitor());
-		}
-	}
 	
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(final @Qualifier("referenceFileBaseDirectory") Path referenceFileBaseDirectory, 
@@ -123,10 +109,9 @@ public class IridaApiFilesystemRepositoryConfig {
 		Path baseDirectory = Paths.get(pathName);
 		if (!Files.exists(baseDirectory)) {
 			baseDirectory = Files.createDirectories(baseDirectory);
-			TEMPORARY_BASE_DIRECTORIES.add(baseDirectory);
 			logger.info(String
 					.format("The directory [%s] does not exist, but it looks like you're running in a dev environment, "
-							+ "so I created a temporary location at [%s]. This directory *will* be removed at shutdown time.",
+							+ "so I created a temporary location at [%s]. This directory *may* be removed at shutdown time.",
 							pathName, baseDirectory.toString()));
 		}
 		return baseDirectory;
