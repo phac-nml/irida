@@ -912,7 +912,7 @@
 						<configuration>
 							<mainClass>ca.corefacility.bioinformatics.irida.util.ToolsListExporter</mainClass>
 							<arguments>
-								<argument>${project.build.directory}/classes</argument>
+								<argument>${project.build.directory}/classes/tools-list.yml</argument>
 							</arguments>
 						</configuration>
 					</execution>

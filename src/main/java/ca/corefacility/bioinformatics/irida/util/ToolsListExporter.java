@@ -39,9 +39,7 @@ public class ToolsListExporter {
 
 	private static final Logger logger = LoggerFactory.getLogger(ToolsListExporter.class);
 
-	private static final String toolsListName = "tools-list.yml";
-
-	private static String usage = "Usage: " + ToolsListExporter.class.getName() + " [output-dir]";
+	private static String usage = "Usage: " + ToolsListExporter.class.getName() + " [output-file]";
 
 	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
@@ -53,7 +51,7 @@ public class ToolsListExporter {
 		IridaWorkflowsService iridaWorkflowsService = context.getBean(IridaWorkflowsService.class);
 		Map<AnalysisType, IridaWorkflow> workflows = iridaWorkflowsService
 				.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.valuesMinusDefault()));
-		
+
 		context.close();
 
 		return workflows;
@@ -66,7 +64,7 @@ public class ToolsListExporter {
 			throw new RuntimeException("Error: invalid number of arguments \n" + usage);
 		}
 
-		Path toolsListOutput = Paths.get(args[0], toolsListName);
+		Path toolsListOutput = Paths.get(args[0]);
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
 		Map<AnalysisType, IridaWorkflow> workflows = getDefaultWorkflows();
