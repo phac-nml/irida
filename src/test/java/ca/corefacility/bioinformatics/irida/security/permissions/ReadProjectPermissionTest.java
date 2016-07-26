@@ -110,25 +110,12 @@ public class ReadProjectPermissionTest {
 		roles.add(Role.ROLE_ADMIN);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
+		when(projectRepository.findOne(1L)).thenReturn(new Project());
 
 		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);
-		verifyZeroInteractions(projectRepository);
-	}
-
-	@Test
-	public void testPermitAdminWithoutDescription() {
-		// Collection<GrantedAuthority> roles = new ArrayList<>();
-		Collection<GrantedAuthority> roles = ImmutableList.of((GrantedAuthority) Role.ROLE_ADMIN);
-		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
-
-		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1L));
-
-		// we should fast pass through permission granted for administrators.
-		verifyZeroInteractions(userRepository);
-		verifyZeroInteractions(projectRepository);
 	}
 
 	@Test

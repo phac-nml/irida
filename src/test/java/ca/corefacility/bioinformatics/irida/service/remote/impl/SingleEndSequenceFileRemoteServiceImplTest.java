@@ -11,26 +11,28 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
-
-import com.google.common.collect.Lists;
 
 public class SingleEndSequenceFileRemoteServiceImplTest {
 	SingleEndSequenceFileRemoteService service;
 	SingleEndSequenceFileRemoteRepository repository;
+	SequenceFileRemoteRepository fileRepository;
 	RemoteAPIRepository apiRepo;
 
 	@Before
 	public void setUp() {
 		repository = mock(SingleEndSequenceFileRemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);
-		service = new SingleEndSequenceFileRemoteServiceImpl(repository, apiRepo);
+		service = new SingleEndSequenceFileRemoteServiceImpl(repository, fileRepository, apiRepo);
 	}
 
 	@Test

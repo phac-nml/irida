@@ -181,7 +181,7 @@
 					<ul class="uib-dropdown-menu ng-cloak" role="menu">
 						<li id="merge-li" ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
 						    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" tooltip-append-to-body="true"
-						    tooltip-placement="right">
+						    tooltip-placement="right" th:if="${not project.isRemote()}">
 							<a id="mergeBtn" href="#" ng-click="subnav.merge()">
 								<span class="fa fa-fw fa-compress"></span>
 								&nbsp;
@@ -198,7 +198,7 @@
 							</li>
 							<li id="move-li" class="local-only" ng-class="{disabled: subnav.count&lt;1 || ! subnav.localSelected}"
 							    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" tooltip-append-to-body="true"
-							    tooltip-placement="right">
+							    tooltip-placement="right" th:if="${not project.isRemote()}">
 								<a id="moveBtn" href="#" ng-click="subnav.openModal('move')">
 									<span class="fa fa-truck fa-fw"></span>
 									&nbsp;
@@ -207,14 +207,14 @@
 							</li>
 							<li id="remove-li" class="local-only" ng-class="{disabled: subnav.count&lt;1 || ! subnav.localSelected}"
 							    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" tooltip-append-to-body="true"
-							    tooltip-placement="right">
+							    tooltip-placement="right" th:if="${not project.isRemote()}">
 								<a id="removeBtn" href="#" ng-click="subnav.remove()">
 									<i class="fa fa-trash fa-fw"></i> &nbsp;
 									<span th:text="#{project.samples.nav.remove}"></span>
 								</a>
 							</li>
-							<li class="divider"></li>
-							<li>
+							<li class="divider" th:if="${not project.isRemote()}"></li>
+							<li th:if="${not project.isRemote()}">
 								<a th:href="@{/projects/{projectId}/samples/new(projectId=${project.getId()})}"
 								   href="#">
 									<span class="fa fa-fw fa-plus"></span>

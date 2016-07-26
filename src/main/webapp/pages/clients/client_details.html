@@ -90,6 +90,14 @@
                     <div class="sidebar__value tokenValidityInSeconds" id="client-token-validity"
                          th:text="${client.accessTokenValiditySeconds}">_Token Validity_</div>
                   </div>
+                  <div class="sidebar__item" th:if="${client.refreshTokenValiditySeconds > 0}">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-time"></i>
+                    </div>
+                    <div th:text="#{client.details.refreshValidity}">_ID_</div>
+                    <div class="sidebar__value tokenValidityInSeconds" id="refresh-token-validity"
+                         th:text="${client.refreshTokenValiditySeconds}">_Token Validity_</div>
+                  </div>
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">

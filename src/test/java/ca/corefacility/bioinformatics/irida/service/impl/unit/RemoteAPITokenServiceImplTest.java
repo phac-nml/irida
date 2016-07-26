@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
+import org.apache.oltu.oauth2.client.OAuthClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -33,13 +34,15 @@ public class RemoteAPITokenServiceImplTest {
 	private RemoteAPIToken remoteAPIToken;
 	private RemoteAPI remoteAPI;
 	private User user;
+	private OAuthClient oauthClient;
 	
 	
 	@Before
 	public void setUp(){
 		tokenRepository = mock(RemoteApiTokenRepository.class);
 		userRepo = mock(UserRepository.class);
-		service = new RemoteAPITokenServiceImpl(tokenRepository, userRepo);
+		oauthClient = mock(OAuthClient.class);
+		service = new RemoteAPITokenServiceImpl(tokenRepository, userRepo, oauthClient);
 		
 		user = new User("tom", "an@email.com", "password1", "tom", "matthews", "123456789");
 		remoteAPI = new RemoteAPI("apiname", "http://nowhere", "a test api", "clientId", "clientSecret");

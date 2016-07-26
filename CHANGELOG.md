@@ -10,6 +10,7 @@ Changes
 * [UI]: FastQC images were not rendering in Firefox because the request behaviour changed. (0.11.2)
 * [UI]: Fixed a permissions issue with reading NCBI submissions. (0.11.3)
 * [Developer]: Paths in the database (for sequence files, output files, references, remote) are stored as relative paths instead of absolute. This will make it easier to migrate filesystems in the future.
+* [UI]: Implemented a project synchronization feature to pull remote samples and data from other IRIDA installations.
 
 1.0.0 to 0.11.0
 ---------------

@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<div class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
+<div th:if="${canManageSample}" class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
 	<div class="panel-body" ng-hide="fileUploadCtrl.uploading || fileUploadCtrl.processing">
 		<div class="fileUpload btn btn-default btn-sm btn-block">
 			<th:block th:text="#{samples.files.upload.btn}"></th:block>
