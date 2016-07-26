@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
@@ -821,6 +822,13 @@ public class ProjectSamplesController {
 		}
 
 		return responseBody;
+	}
+
+	@RequestMapping("/projects/{projectId}/samples/export")
+	public void exportProjectSamplesTable(@DatatablesParams DatatablesCriterias criterias, @RequestParam String type,
+			HttpServletRequest request,
+			HttpServletResponse response) {
+
 	}
 
 	/**

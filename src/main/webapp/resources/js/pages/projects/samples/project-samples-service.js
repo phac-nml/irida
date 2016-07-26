@@ -142,6 +142,14 @@
       });
     };
 
+    SampleService.prototype.exportToFile = function (type) {
+      var tableParams = oTable_samplesTable.ajax.params();
+      post(page.urls.samples.export, {
+        criterias: tableParams,
+        type: type
+      });
+    };
+
     return SampleService;
   }());
 
