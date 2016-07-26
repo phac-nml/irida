@@ -63,6 +63,14 @@
             border-left: 4px solid #ECEFF1;
             padding-left: 4px;
         }
+        .inputfile {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
@@ -279,13 +287,11 @@
                         class="btn btn-default" ng-click="filterCtrl.openFilterModal()">
                     <span class="fa fa-filter"></span>
                 </button>
-                <button class="btn btn-default" ng-click="filterCtrl.openFileSelect()"
-                        data:uib-tooltip="#{project.sample.filterByFile.modal.title}"
-                        tooltip-append-to-body="true">
-                    <input type="file" style="display: none;" id="filter-file-input"
-                           filter-by-file="filterCtrl.filterByFile($fileContent)"/>
-                    <span class="fa fa-file-o"></span>
-                </button>
+                <label class="btn btn-default" for="filter-file-input" data:uib-tooltip="#{project.sample.filterByFile.modal.title}"
+                       tooltip-append-to-body="true">
+                    <input type="file" name="file" id="filter-file-input" class="inputfile" filter-by-file="filterCtrl.filterByFile($fileContent)"/>
+                    <fa:icon type="file" />
+                </label>
             </div>
             <button id="clearFilterBtn" class="btn btn-sm" th:text="#{form.btn.clear}" ng-click="filterCtrl.clearAll()">Clear</button>
         </div>
