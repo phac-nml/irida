@@ -70,18 +70,13 @@ public class AnnouncementsController extends BaseController{
     public String getReadAnnouncementsAsUser(final Model model, Principal principal) {
 
         User user = userService.getUserByUsername(principal.getName());
-        List<AnnouncementUserJoin> joins = announcementService.getReadAnnouncementsForUser(user);
-        List<Announcement> announcements = new ArrayList<>();
+        List<AnnouncementUserJoin> readAnnouncements = announcementService.getReadAnnouncementsForUser(user);
 
-        for (Join<Announcement, User> j: joins) {
-            announcements.add(j.getSubject());
-        }
+        logger.trace("Announcements list size: " + readAnnouncements.size());
 
-        logger.trace("Announcements list size: " + announcements.size());
+        model.addAttribute("readAnnouncements", readAnnouncements);
 
-        model.addAttribute("announcements", announcements);
-
-        return ANNOUNCEMENT_VIEW;
+        return ANNOUNCEMENT_VIEW_READ;
     }
 
     /**

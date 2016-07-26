@@ -64,12 +64,22 @@
         .directive('announcements', ['AnnouncementsService', '$compile', announcements])
         .controller('AnnouncementItemCtrl', ['$window', '$scope', 'AnnouncementsService',
             function($window, $scope, AnnouncementsService) {
-                $scope.markRead = function markRead(aID) {
+                $scope.markRead = function markRead(aID, event) {
                     var url = "/announcements/read/" + aID;
                     AnnouncementsService.markAnnouncementRead(url);
-                    $scope.$apply();
+
+                    var target = angular.element(event.target).parent().parent(); //get the list item to hide it
+                    target.hide(400, function() {
+                        target.remove();
+                    });
+
+
                 };
             }
         ]);
+
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    })
 
 })(window.angular);

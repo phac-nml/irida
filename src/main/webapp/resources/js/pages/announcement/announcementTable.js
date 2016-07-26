@@ -46,6 +46,7 @@ var announcementTable = (function(page) {
         row.find(".details-btn").click(function () {
             window.location.href = page.urls.link + data.identifier + page.urls.details;
         });
+        row.find('[data-toggle="tooltip"]').tooltip();
     };
 
     function toggleReadStatusCallback(row, data) {

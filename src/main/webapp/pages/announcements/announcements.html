@@ -3,16 +3,16 @@
         <ul class="list-group">
             <li class="list-group-item announcement-item" th:each="ann : ${announcements}">
                 <marked class="announcement-content">
-                <p  th:text="${ann.getMessage()}">_Announcement Content_</p>
+                    <p  th:text="${ann.getMessage()}">_Announcement Content_</p>
                 </marked>
                 <div class="announcement-date" th:with="dateFormat=#{locale.date.long}" >
                     <span uib-tooltip-placement="top"
                          data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
                          data:livestamp="${ann.createdDate}"></span>
                 </div>
-                <div class="btn-group announcement-markread" data-toggle='tooltip' data-placement='left' title="Mark Read">
-                    <button class="btn btn-default btn-xs pull-right mark-read"
-                            th:attr="ng-click='markRead(\'' + ${ann.getId()} + '\');'">
+                <div class='btn-group pull-right announcement-markread'>
+                    <button class="btn btn-default btn-xs pull-right" data-toggle="tooltip" data-placement="top" title="Mark as Read"
+                            th:attr="ng-click='markRead(\'' + ${ann.getId()} + '\', $event);'">
                         <span class="fa fa-check"></span>
                     </button>
                 </div>
