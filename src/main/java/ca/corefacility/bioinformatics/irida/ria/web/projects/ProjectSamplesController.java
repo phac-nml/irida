@@ -369,7 +369,10 @@ public class ProjectSamplesController {
 	public DatatablesResponse<Map<String, Object>> getProjectSamples(@PathVariable Long projectId,
 			@DatatablesParams DatatablesCriterias criterias,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
-			@RequestParam(required = false, defaultValue = "") List<Long> associated) {
+			@RequestParam(required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false) Long minDate,
+			@RequestParam(required = false) Long endDate) {
 		List<Project> projects = new ArrayList<>();
 		// Check to see if any associated projects need to be added to the query.
 		if (!associated.isEmpty()) {
@@ -379,7 +382,7 @@ public class ProjectSamplesController {
 		projects.add(projectService.read(projectId));
 
 		// Convert the criterias into a more usable format.
-		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias);
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
 
 		final Page<ProjectSampleJoin> page;
 		if (!sampleNames.isEmpty()) {
@@ -387,16 +390,16 @@ public class ProjectSamplesController {
 			page = sampleService
 					.findSampleByNameInProject(project, sampleNames, utils.getCurrentPage(), utils.getPageSize(),
 							utils.getSortDirection(), utils.getSortProperty());
-		} else if (Strings.isNullOrEmpty(utils.getSearch())) {
-			// No search term, therefore filter on the attributes
-			ProjectSamplesFilterCriteria filter = utils.getFilter();
-			page = sampleService
-					.getFilteredSamplesForProjects(projects, filter.getName(), null, null, utils.getCurrentPage(),
-							utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
-		} else {
+		} else if (!Strings.isNullOrEmpty(utils.getSearch())) {
 			// Generic search required.
 			page = sampleService.getSearchedSamplesForProjects(projects, utils.getSearch(), utils.getCurrentPage(),
 					utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
+		}
+		else{
+			// No search term, therefore filter on the attributes
+			page = sampleService
+					.getFilteredSamplesForProjects(projects, utils.getName(), utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(),
+							utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
 		}
 
 		// Create a more usable Map of the sample data.

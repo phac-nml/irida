@@ -193,11 +193,12 @@
 
   var FilterController = (function () {
     var service, scope;
-    function FilterController(sampleService, $scope) {
+    function FilterController(sampleService, $scope, modalService) {
       var vm = this;
       vm.fileFilterDisabled = false;
       service = sampleService;
       scope = $scope;
+      this.modalService = modalService;
 
       scope.$on("ASSOCIATED_PROJECTS_CHANGE", function (event, args) {
         vm.fileFilterDisabled = args.count > 0;
@@ -221,6 +222,10 @@
       scope.$emit("CLEAR_FILTERS");
     };
 
+    FilterController.prototype.openFilterModal = function() {
+      this.modalService.openFilterModal();
+    };
+
     return FilterController;
   }());
 
@@ -230,7 +235,7 @@
         replace: true,
         templateUrl: 'filter.html',
         controllerAs: 'filterCtrl',
-        controller: ["SampleService", "$scope", FilterController]
+        controller: ["SampleService", "$scope", "modalService", FilterController]
       };
     }
 
@@ -238,9 +243,6 @@
   }());
 
   var filteredTags = (function () {
-    var  reloadCmds = {
-      file: 'CLEAR_FILE_FILTER'
-    };
     function filteredTags() {
       return {
         replace     : true,
@@ -248,32 +250,49 @@
         controllerAs: 'tags',
         controller  : ['$scope', function ($scope) {
           var vm = this;
-          vm.tag = {
-            file: false
-          };
+          vm.tag = {};
 
+          /**
+           * Check to see if the tags need to change state based if
+           * there are any associated projects displayed.
+           */
           $scope.$on("ASSOCIATED_PROJECTS_CHANGE", function (event, args) {
             if(args.count > 0) {
-              resetTags();
+              vm.tag = {};
             }
           });
 
-          $scope.$on("CLEAR_FILTERS", resetTags);
+          /**
+           * Request to display tags for all currently applied filters.
+           */
+          $scope.$on("FILTER_TABLE", function (event, args) {
+            ng.extend(vm.tag, args.filter);
+          });
 
+          /**
+           * Request to clear all currently applied filters.
+           */
+          $scope.$on("CLEAR_FILTERS", function () {
+            vm.tag = {};
+          });
+
+          /**
+           * Request to display the filter by file tag
+           */
           $scope.$on('FILE_FILTER', function () {
             $scope.$apply(function () {
               vm.tag.file = true;
             });
           });
 
+          /**
+           * Close a particular tag/filter
+           * @param type The filter to remove
+           */
           vm.close = function (type) {
-            vm.tag[type] = false;
-            $scope.$broadcast(reloadCmds[type]);
+            delete vm.tag[type];
+            $scope.$broadcast('FILTER_CLEARED', {type: type});
           };
-
-          function resetTags() {
-            vm.tag.file = false;
-          }
         }]
       };
     }

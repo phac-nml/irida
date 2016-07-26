@@ -11,6 +11,7 @@
             project: {
                 id: /*[[${project.getId()}]]*/ '4'
             },
+            ajaxParam: {},
             urls: {
                 associated: {
                     local: /*[[@{/projects/{id}/ajax/associated(id=${project.getId()})}]]*/ ''
@@ -71,7 +72,7 @@
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
         <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
     </div>
-    <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
+    <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
         <thead>
         <tr>
             <th dt:sortable="false" width="20px" dt:renderFunction="datatables-utils#datatable.formatCheckbox"></th>
@@ -273,32 +274,29 @@
 
     <script type="text/ng-template" id="filter.html">
         <div style="display: inline-block; margin-left: 3px;">
-            <div class="btn-group btn-group-sm" uib-dropdown="">
-                <button type="button" class="btn btn-default">Filter</button>
-                <button type="button" class="btn btn-default" uib-dropdown-toggle=""
-                        ng-disabled="filterCtrl.fileFilterDisabled">
-                    <fa:icon type="caret-down"/>
-                    <span class="sr-only">Filter Options</span>
+            <div class="btn-group btn-group-sm">
+                <button id="filterByPropertyBtn" data:uib-tooltip="#{project.samples.filter.label}" type="button"
+                        class="btn btn-default" ng-click="filterCtrl.openFilterModal()">
+                    <span class="fa fa-filter"></span>
                 </button>
-                <ul class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                    <li role="menuitem">
-                        <input type="file" style="display: none;" id="filter-file-input"
-                               filter-by-file="filterCtrl.filterByFile($fileContent)"/>
-                        <a href="#" ng-click="filterCtrl.openFileSelect()">
-                            <fa:icon type="file" fixed="fixed"/>
-                            &nbsp;
-                            <th:block th:text="#{project.sample.filterByFile.modal.title}"/>
-                        </a>
-                    </li>
-                </ul>
+                <button class="btn btn-default" ng-click="filterCtrl.openFileSelect()"
+                        data:uib-tooltip="#{project.sample.filterByFile.modal.title}"
+                        tooltip-append-to-body="true">
+                    <input type="file" style="display: none;" id="filter-file-input"
+                           filter-by-file="filterCtrl.filterByFile($fileContent)"/>
+                    <span class="fa fa-file-o"></span>
+                </button>
             </div>
-            <button class="btn btn-sm" th:text="#{form.btn.clear}" ng-click="filterCtrl.clearAll()">Clear</button>
+            <button id="clearFilterBtn" class="btn btn-sm" th:text="#{form.btn.clear}" ng-click="filterCtrl.clearAll()">Clear</button>
         </div>
     </script>
 
     <script type="text/ng-template" id="filtered-tags.html">
         <div class="text-right">
             <span class="label label-default" ng-show="tags.tag.file" th:text="#{project.sample.filter-by-file}" ng-click="tags.close('file')"></span>
+            <span class="label label-default" ng-show="tags.tag.name" ng-click="tags.close('name')"><th:block th:text="#{project.samples.filter.by-name}"/> : {{tags.tag.name}}</span>
+            <span class="label label-default" ng-show="tags.tag.minDate" ng-click="tags.close('minDate')"><th:block th:text="#{project.samples.filter.by-minDate}"/> : {{tags.tag.minDate | date: 'mediumDate'}}</span>
+            <span class="label label-default" ng-show="tags.tag.endDate" ng-click="tags.close('endDate')"><th:block th:text="#{project.samples.filter.by-endDate}"/> : {{tags.tag.endDate | date: 'mediumDate'}}</span>
         </div>
     </script>
 </th:block>
