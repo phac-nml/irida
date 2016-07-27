@@ -257,7 +257,7 @@ public class AnnouncementsController extends BaseController{
      * @return A map containing all of the data to be displayed in the datatables
      *
      */
-    @RequestMapping(value = "/control/ajax/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/control/ajax/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public @ResponseBody DatatablesResponse<Announcement> getAnnouncementsAdmin(
             final @DatatablesParams DatatablesCriterias criteria) {
