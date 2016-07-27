@@ -158,6 +158,7 @@
 
       // Need an iframe here since it is a document download not just an ajax request.
       var iframe = document.createElement("iframe");
+      iframe.style.display = "none";
       iframe.src = page.urls.samples.export + "?" + $.param(params);
       document.body.appendChild(iframe);
     };
