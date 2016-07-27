@@ -152,10 +152,14 @@
 
       var requestString = oTable_samplesTable.ajax.url().split('?')[1];
       var params = getQueryParamsObject(requestString);
-      params.type = type;
+      params.dtf = type; // This is an important parameter name for exporting the correct format.
       var tableParams = oTable_samplesTable.ajax.params();
       ng.extend(params, tableParams);
-      post(page.urls.samples.export, params);
+
+      // Need an iframe here since it is a document download not just an ajax request.
+      var iframe = document.createElement("iframe");
+      iframe.src = page.urls.samples.export + "?" + $.param(params);
+      document.body.appendChild(iframe);
     };
 
     return SampleService;
