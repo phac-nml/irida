@@ -41,7 +41,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	private static final String ANONYMOUS_AUTHENTICATION_KEY = "anonymousTokenAuthProvider";
 
 	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
-			"ROLE_MANAGER > ROLE_USER", "ROLE_ADMIN > ROLE_SEQUENCER" };
+			"ROLE_MANAGER > ROLE_USER"};
 
 	private static final String ROLE_HIERARCHY = Joiner.on('\n').join(ROLE_HIERARCHIES);
 

@@ -167,6 +167,9 @@ public class FontAwesome {
 	 */
 	public static final String APPLY_ALL_ATTRIBUTE = "apply-all";
 	public static final String APPLY_ALL_ICON = "sort";
+	
+	public static final String REMOTE_ATTRIBUTE = "remote";
+	public static final String REMOTE_ICON = "exchange";
 
 	/*
 	 * Attribute for next and previous buttons.
@@ -218,6 +221,7 @@ public class FontAwesome {
 			.put(GROUP_ATTRIBUTE, GROUP_ICON)
 			.put(ALIGN_ATTRIBUTE, ALIGN_ICON)
 			.put(APPLY_ALL_ATTRIBUTE, APPLY_ALL_ICON)
+			.put(REMOTE_ATTRIBUTE, REMOTE_ICON)
 			.build();
 	// @formatter:on
 

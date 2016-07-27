@@ -53,4 +53,5 @@
 	<include file="changesets/3.6.0/all-changes.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/3.7.0/all-changes.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/3.8.0/all-changes.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/0.12.0/all-changes.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

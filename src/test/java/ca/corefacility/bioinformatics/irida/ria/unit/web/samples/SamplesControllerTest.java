@@ -92,10 +92,17 @@ public class SamplesControllerTest {
 
 	@Test
 	public void testGetSampleSpecificPage() {
+		String userName = "bob";
+		Principal principal = () -> userName;
+		User user = new User();
+		user.setSystemRole(Role.ROLE_ADMIN);
+		when(userService.getUserByUsername(userName)).thenReturn(user);
+		
+		
 		Model model = new ExtendedModelMap();
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
-		String result = controller.getSampleSpecificPage(model, sample.getId());
+		String result = controller.getSampleSpecificPage(model, sample.getId(), principal);
 		assertEquals("Returns the correct page name", "samples/sample", result);
 		assertTrue("Model contains the sample", model.containsAttribute("sample"));
 	}

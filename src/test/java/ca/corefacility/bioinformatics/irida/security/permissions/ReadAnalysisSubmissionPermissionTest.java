@@ -151,11 +151,12 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1", roles);
 
+		when(analysisSubmissionRepository.findOne(1L)).thenReturn(AnalysisSubmission.builder(workflowId).name("test")
+				.inputFilesSingleEnd(inputSingleFiles).referenceFile(referenceFile).build());
 		assertTrue("permission was not granted to admin.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);
-		verifyZeroInteractions(analysisSubmissionRepository);
 	}
 
 	@Test

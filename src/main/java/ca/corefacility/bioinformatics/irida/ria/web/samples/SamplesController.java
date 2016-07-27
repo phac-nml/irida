@@ -124,11 +124,12 @@ public class SamplesController extends BaseController {
 	 * @return The name of the page.
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/details", "/projects/{projectId}/samples/{sampleId}/details" })
-	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
+	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId, Principal principal) {
 		logger.debug("Getting sample page for sample [" + sampleId + "]");
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
 		return SAMPLE_PAGE;
 	}
 
@@ -376,6 +377,11 @@ public class SamplesController extends BaseController {
 	private boolean isProjectManagerForSample(Sample sample, Principal principal) {
 		User userByUsername = userService.getUserByUsername(principal.getName());
 
+		//if the sample is remote nobody should be able to edit
+		if(sample.isRemote()){
+			return false;
+		}
+		
 		if (userByUsername.getSystemRole().equals(Role.ROLE_ADMIN)) {
 			return true;
 		}

@@ -125,7 +125,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.create(client)).thenReturn(client);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		verify(clientDetailsService).create(client);
@@ -145,7 +145,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.create(client)).thenThrow(ex);
 
-		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", model, locale);
+		String postCreateClient = controller.postCreateClient(client, scope_read, scope_write, "", "", "", model, locale);
 
 		assertEquals(ClientsController.ADD_CLIENT_PAGE, postCreateClient);
 		assertTrue(model.containsAttribute("errors"));
@@ -185,7 +185,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(id)).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", "", "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", "", "", 0, "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		ArgumentCaptor<IridaClientDetails> captor = ArgumentCaptor.forClass(IridaClientDetails.class);
@@ -211,7 +211,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.update(any(IridaClientDetails.class))).thenThrow(ex);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", 0, "", model, locale);
 		assertEquals(ClientsController.EDIT_CLIENT_PAGE, postCreateClient);
 	}
 
@@ -226,7 +226,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(id)).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "true", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", 0, "true", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		ArgumentCaptor<IridaClientDetails> captor = ArgumentCaptor.forClass(IridaClientDetails.class);

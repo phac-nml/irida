@@ -27,7 +27,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -42,6 +42,9 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
@@ -64,15 +67,11 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * Configuration for the IRIDA platform.
@@ -82,7 +81,7 @@ import com.google.common.collect.Lists;
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
 		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
-		IridaCachingConfig.class, IridaWorkflowsConfig.class, WebEmailConfig.class })
+		IridaWorkflowsConfig.class, WebEmailConfig.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
@@ -182,7 +181,7 @@ public class IridaApiServicesConfig {
 	@Bean(name = "fileProcessingChainExecutor")
 	@Profile({ "it", "test" })
 	public TaskExecutor fileProcessingChainExecutorIntegrationTest() {
-		return new SyncTaskExecutor();
+		return new SimpleAsyncTaskExecutor();
 	}
 
 	@Bean
