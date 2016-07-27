@@ -87,6 +87,12 @@ public class RESTSampleSequenceFilesController {
 	 * Rel to a sequencefile's sequencing object
 	 */
 	public static final String REL_SEQ_OBJECT = "sequenceFile/sequencingObject";
+	
+	/**
+	 * Rel for a sequencefile's fastqc info
+	 */
+	public static final String REL_SEQ_QC = "sequencefile/qc";
+	public static final String REL_QC_SEQFILE = "qc/sequencefile";
 
 	/**
 	 * rel for forward and reverse files
@@ -297,6 +303,9 @@ public class RESTSampleSequenceFilesController {
 		file.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType, objectId))
 				.withRel(REL_SEQ_OBJECT));
+		
+		file.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readQCForSequenceFile(sampleId, objectType,
+				objectId, fileId)).withRel(REL_SEQ_QC));
 
 		file.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
@@ -307,18 +316,43 @@ public class RESTSampleSequenceFilesController {
 		return modelMap;
 	}
 	
+	/**
+	 * Get the fastqc metrics for a {@link SequenceFile}
+	 * 
+	 * @param sampleId
+	 *            {@link Sample} id of the file
+	 * @param objectType
+	 *            type of {@link SequencingObject}
+	 * @param objectId
+	 *            id of the {@link SequencingObject}
+	 * @param fileId
+	 *            id of the {@link SequenceFile}
+	 * @return an {@link AnalysisFastQC} for the file
+	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}/qc", method = RequestMethod.GET)
 	public ModelMap readQCForSequenceFile(@PathVariable Long sampleId, @PathVariable String objectType,
-			@PathVariable Long objectId, @PathVariable Long fileId){
+			@PathVariable Long objectId, @PathVariable Long fileId) {
 		ModelMap modelMap = new ModelMap();
-		
+
 		Sample sample = sampleService.read(sampleId);
-		SequencingObject readSequencingObjectForSample = sequencingObjectService.readSequencingObjectForSample(sample, objectId);
-		
-		AnalysisFastQC fastQCAnalysisForSequenceFile = analysisService.getFastQCAnalysisForSequenceFile(readSequencingObjectForSample, fileId);
-		
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME,fastQCAnalysisForSequenceFile);
-		
+		SequencingObject readSequencingObjectForSample = sequencingObjectService.readSequencingObjectForSample(sample,
+				objectId);
+
+		AnalysisFastQC fastQCAnalysisForSequenceFile = analysisService
+				.getFastQCAnalysisForSequenceFile(readSequencingObjectForSample, fileId);
+
+		if (fastQCAnalysisForSequenceFile == null) {
+			throw new EntityNotFoundException("No QC data for file");
+		}
+
+		fastQCAnalysisForSequenceFile.add(linkTo(methodOn(RESTSampleSequenceFilesController.class)
+				.readSequenceFileForSequencingObject(sampleId, objectType, objectId, fileId)).withRel(REL_QC_SEQFILE));
+
+		fastQCAnalysisForSequenceFile.add(linkTo(methodOn(RESTSampleSequenceFilesController.class)
+				.readQCForSequenceFile(sampleId, objectType, objectId, fileId)).withSelfRel());
+
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, fastQCAnalysisForSequenceFile);
+
 		return modelMap;
 	}
 
