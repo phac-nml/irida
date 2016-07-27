@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.sample;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -148,6 +149,23 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		} else {
 			throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
+	public List<Sample> getSamplesForProjectBySampleNameList(Project project, List<String> sampleNames) {
+		List<Sample> samples = new ArrayList<>();
+		for (String name : sampleNames) {
+			Sample sample = sampleRepository.getSampleBySampleName(project, name);
+			if (sample != null) {
+				samples.add(sample);
+			}
+		}
+		return samples;
 	}
 
 	/**

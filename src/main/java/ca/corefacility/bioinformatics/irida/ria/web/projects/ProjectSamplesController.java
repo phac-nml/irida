@@ -55,7 +55,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesFilterCriteria;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -63,6 +62,12 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.ExportConf;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.core.html.HtmlTable;
+import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -824,10 +829,34 @@ public class ProjectSamplesController {
 		return responseBody;
 	}
 
-	@RequestMapping("/projects/{projectId}/samples/export")
+	/**
+	 * Export {@link Sample} from a {@link Project} as either Excel or CSV formatted.
+	 *
+	 * @param projectId
+	 * 		the id for the {@link Project} the current project.
+	 * @param type
+	 * 		Type of file to export, must be from {@link ReservedFormat}
+	 * @param criterias
+	 * 		{@link DatatablesCriterias}
+	 * @param sampleNames
+	 * 		{@link List} of {@link Sample} names to export. Not required.
+	 * @param associated
+	 * 		{@link List} of ids for associated {@link Project}. Not Required.
+	 * @param name
+	 * 		Filter value for filtering on the name of a {@link Sample}. Not Required.
+	 * @param minDate
+	 * 		Filter value for the minimum date the {@link Sample} was modified.  Not Required.
+	 * @param endDate
+	 * 		Filter value for the maximum date the {@link Sample} was modified.  Not Required.
+	 * @param request
+	 * 		{@link HttpServletRequest}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples/export")
 	public void exportProjectSamplesTable(
 			@PathVariable Long projectId,
-			@RequestParam String type,
+			@RequestParam(value = "dtf") String type,
 			@DatatablesParams DatatablesCriterias criterias,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
@@ -836,8 +865,31 @@ public class ProjectSamplesController {
 			@RequestParam(required = false) Long endDate,
 			HttpServletRequest request,
 			HttpServletResponse response) {
-		logger.info(criterias.toString());
 
+		Project project = projectService.read(projectId);
+		List<Sample> samples;
+
+		// Check to see if it is filtered by a list
+		if (!sampleNames.isEmpty()) {
+			samples = sampleService.getSamplesForProjectBySampleNameList(project, sampleNames);
+		} else {
+			samples = new ArrayList<>();
+		}
+
+		ExportConf exportConf = new ExportConf.Builder(ReservedFormat.XLSX)
+				.header(true)
+				.exportClass(new XlsxExport())
+				.fileName(project.getName() + "_samples")
+				.build();
+
+		// Build an html table that can be exported into the required format.
+		HtmlTable table = new HtmlTableBuilder<Sample>()
+				.newBuilder("samples", samples, request, exportConf)
+				.column().fillWithProperty("id").title("ID")
+				.column().fillWithProperty("sampleName").title("Sample Name")
+				.build();
+
+		ExportUtils.renderExport(table, exportConf, response);
 	}
 
 	/**
