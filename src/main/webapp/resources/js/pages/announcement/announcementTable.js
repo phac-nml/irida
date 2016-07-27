@@ -53,7 +53,6 @@ var announcementTable = (function(page) {
         renderDetailsButton : renderDetailsButton,
         renderDateAndStatus : renderDateAndStatus,
         renderToggleStatusButtons : renderToggleStatusButtons,
-        detailsCallback : detailsCallback,
-        toggleReadStatusCallback : toggleReadStatusCallback
+        detailsCallback : detailsCallback
     };
 })(window.PAGE);
