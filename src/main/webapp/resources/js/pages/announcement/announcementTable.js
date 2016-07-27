@@ -49,10 +49,6 @@ var announcementTable = (function(page) {
         row.find('[data-toggle="tooltip"]').tooltip();
     };
 
-    function toggleReadStatusCallback(row, data) {
-
-    }
-
     return {
         renderDetailsButton : renderDetailsButton,
         renderDateAndStatus : renderDateAndStatus,

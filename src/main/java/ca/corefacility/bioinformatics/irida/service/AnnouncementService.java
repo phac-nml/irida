@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUser
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 

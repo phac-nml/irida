@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
@@ -99,6 +98,15 @@ public class AnnouncementsController extends BaseController{
         return ANNOUNCEMENT_VIEW;
     }
 
+    /**
+     *  Marks the announcement as read by the current user
+     *
+     * @param aID
+     *          ID of the {@link Announcement} to be marked
+     * @param principal
+     *          The current user
+     * @return
+     */
     @RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
     public String markAnnouncementRead(@PathVariable Long aID, Principal principal) {
         User user = userService.getUserByUsername(principal.getName());
@@ -232,7 +240,6 @@ public class AnnouncementsController extends BaseController{
                                              Model model,
                                              Principal principal) throws IOException {
         Announcement announcement = announcementService.read(announcementID);
-        User user = userService.getUserByUsername(principal.getName());
         logger.trace("Announcement " + announcement.getId() + ": " +
             announcement.getMessage());
 
@@ -318,7 +325,15 @@ public class AnnouncementsController extends BaseController{
         return DatatablesResponse.build(announcementUserDataSet, criterias);
     }
 
-
+    /**
+     * Utility method for checking whether the {@link Announcement} has been read by the {@link User}
+     *
+     * @param user
+     *          The user we want to check
+     * @param announcement
+     *          The announcement we wanna check.
+     * @return
+     */
     private AnnouncementUserJoin userHasRead(final User user, final Announcement announcement) {
         final List<AnnouncementUserJoin> readUsers = announcementService.getReadUsersForAnnouncement(announcement);
         final Optional<AnnouncementUserJoin> currentAnnouncement = readUsers.stream()
@@ -330,7 +345,9 @@ public class AnnouncementsController extends BaseController{
         }
     }
 
-
+    /**
+     * Utility/Container class for returning information about {@link Announcement}s and {@link User}s and their read statuses
+     */
     private static final class AnnouncementUserDataTableResponse {
         private final String username;
         private final AnnouncementUserJoin join;
