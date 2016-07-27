@@ -67,7 +67,7 @@
 	</outputs>
 	<toolRepositories>
 		<repository>
-			<name>suite_snvphyl_0_1_0</name>
+			<name>suite_snvphyl_1_0_0</name>
 			<owner>nml</owner>
 			<url>https://irida.corefacility.ca/galaxy-shed</url>
 			<revision>4e41de612a14</revision>
