@@ -33,6 +33,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -116,16 +118,18 @@ public class RESTSampleSequenceFilesController {
 	private SequencingRunService miseqRunService;
 
 	private SequencingObjectService sequencingObjectService;
+	private AnalysisService analysisService;
 
 	protected RESTSampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public RESTSampleSequenceFilesController(SampleService sampleService, SequencingRunService miseqRunService,
-			SequencingObjectService sequencingObjectService) {
+			SequencingObjectService sequencingObjectService, AnalysisService analysisService) {
 		this.sampleService = sampleService;
 		this.miseqRunService = miseqRunService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.analysisService = analysisService;
 	}
 
 	/**
@@ -300,6 +304,21 @@ public class RESTSampleSequenceFilesController {
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, file);
 
+		return modelMap;
+	}
+	
+	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}/qc", method = RequestMethod.GET)
+	public ModelMap readQCForSequenceFile(@PathVariable Long sampleId, @PathVariable String objectType,
+			@PathVariable Long objectId, @PathVariable Long fileId){
+		ModelMap modelMap = new ModelMap();
+		
+		Sample sample = sampleService.read(sampleId);
+		SequencingObject readSequencingObjectForSample = sequencingObjectService.readSequencingObjectForSample(sample, objectId);
+		
+		AnalysisFastQC fastQCAnalysisForSequenceFile = analysisService.getFastQCAnalysisForSequenceFile(readSequencingObjectForSample, fileId);
+		
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME,fastQCAnalysisForSequenceFile);
+		
 		return modelMap;
 	}
 
