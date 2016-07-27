@@ -20,25 +20,27 @@ var announcementTable = (function(page) {
      * @param full
      * @returns {string}
      */
-    function renderDateAndStatus(data, type, full) {
-        var iconClass;
-        var date;
+    function renderDate(data, type, full) {
+        var date = "";
         if (full.join != null) {
-            iconClass = "fa fa-check";
             date = " " + datatable.formatDate(full.createdDate);
-        } else {
-            iconClass = "fa fa-times";
-            date = "";
         }
-
-        return "<div><span class='" + iconClass + "'></span><span>" + date + "</span></div>";
+        return "<div><span>" + date + "</span></div>";
     }
 
-    function renderToggleStatusButtons(data, type, full) {
+    function renderStatus(data, type, full) {
+        var icon;
+        if (full.join != null) {
+            icon = "fa fa-check";
+        } else {
+            icon = "fa fa-times";
+        }
+        return "<div><span class='" + icon + "'></span></div>";
+    }
+
+    function renderToggleStatusSwitch(data, type, full) {
         return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.markRead + "'>" +
-            "<button type='button' class='btn btn-default btn-xs toggle-read'><span class='fa fa-check'></span></div>" +
-            "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.markUnread + "'>" +
-            "<button type='button' class='btn btn-default btn-xs toggle-unread'><span class='fa fa-times'></span></div>";
+            "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown'><span class='fa fa-check'></span></div>";
     }
 
     function detailsCallback(row, data) {
@@ -51,9 +53,9 @@ var announcementTable = (function(page) {
 
     return {
         renderDetailsButton : renderDetailsButton,
-        renderDateAndStatus : renderDateAndStatus,
-        renderToggleStatusButtons : renderToggleStatusButtons,
-        detailsCallback : detailsCallback,
-        toggleReadStatusCallback : toggleReadStatusCallback
+        renderDate : renderDate,
+        renderStatus : renderStatus,
+        renderToggleStatusSwitch : renderToggleStatusSwitch,
+        detailsCallback : detailsCallback
     };
 })(window.PAGE);

@@ -51,19 +51,26 @@
         </section>
     </form>
 
-    <h1 th:text="#{announcement.control.details.title}"></h1>
-    <table id="announcementUserTable" dt:table="true" dt:url="@{/announcements/__${announcement.getId()}__/details/ajax/list}">
-        <thead>
-        <tr role="row">
-            <th dt:property="username" dt:searchable="true" th:text="#{announcement.control.details.username}"></th>
-            <th width="125px" dt:property="createdDate" dt:renderFunction="announcement#announcementTable.renderDateAndStatus"
-                dt:sortInitDirection="desc" th:text="#{announcement.control.details.dateRead}"></th>
-            <th width="50px" dt:sortable="false" dt:searchable="false" dt:filterable="false"
-                dt:renderFunction="announcement#announcementTable.renderToggleStatusButtons"/>
-        </tr>
-        </thead>
-    </table>
-
+    <section class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title" th:text="#{announcement.control.details.title}"></h2>
+        </div>
+        <div class="panel-body">
+            <p>Number of users who have read this announcement: </p>
+        </div>
+        <div class="panel-body">
+            <table id="announcementUserTable" dt:table="true" dt:url="@{/announcements/__${announcement.getId()}__/details/ajax/list}">
+                <thead>
+                <tr role="row">
+                    <th dt:property="username" dt:searchable="true" th:text="#{announcement.control.details.username}"></th>
+                    <th width="45px" dt:property="createdDate" dt:renderFunction="announcement#announcementTable.renderStatus">Status</th>
+                    <th width="100px" dt:property="createdDate" dt:renderFunction="announcement#announcementTable.renderDate"
+                        dt:sortInitDirection="desc" th:text="#{announcement.control.details.dateRead}"></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </section>
 </div>
 </body>
 </html>
