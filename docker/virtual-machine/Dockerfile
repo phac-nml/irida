@@ -10,6 +10,9 @@ ENV GALAXY_CONFIG_BRAND IRIDA Galaxy
 
 WORKDIR /galaxy-central
 
+RUN cpan App::cpanminus && rm -rf ~/.cpan
+RUN cpanm Time::Piece XML::Simple Data::Dumper Bio::SeqIO && rm -rf ~/.cpanm
+
 RUN sed -i -e 's/#admin_users = None/admin_users = admin@galaxy.org,workflowUser@irida.corefacility.ca/' /etc/galaxy/galaxy.ini && \
 	sed -i -e 's/#allow_library_path_paste = False/allow_library_path_paste = True/' /etc/galaxy/galaxy.ini && \
 	sed -i -e 's/force_beta_workflow_scheduled_for_collections=True/force_beta_workflow_scheduled_for_collections=False/' /etc/galaxy/galaxy.ini
