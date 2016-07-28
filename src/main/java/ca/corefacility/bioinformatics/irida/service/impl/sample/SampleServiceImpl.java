@@ -164,23 +164,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
-	public List<Sample> getSamplesForProjectBySampleNameList(Project project, List<String> sampleNames) {
-		List<Sample> samples = new ArrayList<>();
-		for (String name : sampleNames) {
-			Sample sample = sampleRepository.getSampleBySampleName(project, name);
-			if (sample != null) {
-				samples.add(sample);
-			}
-		}
-		return samples;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@PreAuthorize("hasPermission(#seqObject, 'canReadSequencingObject')")
 	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject) {
 		return ssoRepository.getSampleForSequencingObject(seqObject);
