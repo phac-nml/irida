@@ -1,11 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.datatables;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.List;
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -30,19 +33,17 @@ public class ProjectSamplesTableExportTest {
 
 	private MockServletContext mockServletContext;
 	private MockHttpServletRequest request;
-	private SpringMessageResolver springMessageResolver;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		mockServletContext = new MockServletContext();
 		request = new MockHttpServletRequest(mockServletContext);
-		request.addPreferredLocale(Locale.US);
-
-		springMessageResolver = new SpringMessageResolver(request);
+		messageSource = mock(MessageSource.class);
 	}
 
 	@Test(expected = ExportFormatException.class)
 	public void shouldThrowAnErrorIfWrongFormat() throws ExportFormatException {
-		ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport("fred", "fred");
+		ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport("fred", "fred", messageSource, Locale.US);
 	}
 }

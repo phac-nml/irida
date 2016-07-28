@@ -866,7 +866,8 @@ public class ProjectSamplesController {
 			@RequestParam(required = false) Long minDate,
 			@RequestParam(required = false) Long endDate,
 			HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response,
+			Locale locale) {
 
 		Project project = projectService.read(projectId);
 		List<Project> projectList = new ArrayList<>();
@@ -902,7 +903,7 @@ public class ProjectSamplesController {
 
 		if (page != null) {
 			try {
-				ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples");
+				ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
 				ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);
 			} catch (ExportFormatException e) {
 				// Not much can be done for this since this is a file download.

@@ -1,17 +1,28 @@
 package ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export;
 
+import java.util.Locale;
+
+import org.springframework.context.MessageSource;
+
 import com.github.dandelion.datatables.core.export.CsvExport;
 import com.github.dandelion.datatables.core.export.ExportConf;
 import com.github.dandelion.datatables.core.export.ReservedFormat;
 import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
 
 /**
- * Created by josh on 2016-07-27.
+ * Abstract class to support exporting items from datatables into excel or csv.
  */
 abstract class TableExport {
 	protected ExportConf exportConf;
+	protected MessageSource messageSource;
+	protected Locale locale;
 
-	public TableExport(String exportFormat, String fileName) throws ExportFormatException {
+	public TableExport(String exportFormat, String fileName, MessageSource messageSource, Locale locale)
+			throws ExportFormatException {
+		this.messageSource = messageSource;
+		this.locale = locale;
+
+		// Create the correct export format based on the type required.
 		if (exportFormat.equals(ReservedFormat.XLSX)) {
 			this.exportConf = new ExportConf.Builder(ReservedFormat.XLSX)
 					.header(true)
