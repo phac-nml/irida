@@ -2,9 +2,9 @@
     <div class="form-group" ng-controller="AnnouncementItemCtrl as aCtrl">
         <ul class="list-group" id="announcement-list">
             <li class="list-group-item announcement-item" th:each="ann : ${announcements}">
-                <marked class="announcement-content">
-                    <p  th:text="${ann.getMessage()}">_Announcement Content_</p>
-                </marked>
+                <div class="announcement-content">
+                    <marked th:inline="text">[[${ann.getMessage()}]]</marked>
+                </div>
                 <div class="announcement-date" th:with="dateFormat=#{locale.date.long}" >
                     <span uib-tooltip-placement="top"
                          data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
