@@ -655,7 +655,7 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 | `self` | A link to this sequence file record. |
 | `sample` | A link to the sample that contains this sequence file. |
 | `sample/sequenceFiles` | A link to the collection of sequence files for the parent sample. |
-| `sequencefile/qc` | A link to the FastQC data for this collection of sequence files. |
+| `sequencefile/qc` | A link to the FastQC data for this sequence file. |
 
 ##### Properties
 {:.no_toc}
