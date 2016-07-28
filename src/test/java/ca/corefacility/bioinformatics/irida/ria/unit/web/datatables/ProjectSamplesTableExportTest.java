@@ -23,9 +23,8 @@ import com.github.dandelion.datatables.extras.spring3.i18n.SpringMessageResolver
 import com.google.common.collect.ImmutableList;
 
 /**
- * Created by josh on 2016-07-27.
+ * Unit Test for {@link ProjectSamplesTableExport}
  */
-
 public class ProjectSamplesTableExportTest {
 
 	@Autowired
