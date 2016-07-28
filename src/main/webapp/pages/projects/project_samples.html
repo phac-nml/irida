@@ -182,7 +182,13 @@
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
-                                <a href="#" ng-click="toolsCtrl.exportToExcel()">Export Excel File</a></li>
+                                <a href="#" ng-click="toolsCtrl.exportToFile('xlsx')">
+                                    <fa:icon type="excel" />&nbsp;<th:block th:text="#{project.samples.export-to-excel}"/>
+                                </a></li>
+                            <li>
+                                <a href="#" ng-click="toolsCtrl.exportToFile('csv')">
+                                    <fa:icon type="file" />&nbsp;<th:block th:text="#{project.samples.export-to-csv}"/>
+                                </a></li>
                         </ul>
                     </div>
                     <button id="cart-add-btn" class="btn btn-primary btn-sm" ng-click="toolsCtrl.addToCart()">
