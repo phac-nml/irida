@@ -876,7 +876,7 @@ public class ProjectSamplesController {
 
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
 
-		final int MAX_EXPORT_LENGTH = 100000;
+		final int MAX_EXPORT_LENGTH = Integer.MAX_VALUE;
 		// Check to see if it is filtered by a list
 		Page<ProjectSampleJoin> page;
 		if (!sampleNames.isEmpty()) {
