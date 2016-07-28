@@ -2,13 +2,16 @@ package ca.corefacility.bioinformatics.irida.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +108,7 @@ public class ToolsListExporter {
 
 		Map<AnalysisType, IridaWorkflow> workflows = getDefaultWorkflows();
 
+		Set<IridaWorkflowToolRepository> uniqueToolRepositories = new HashSet<>();
 		Map<String, Object> yamlMap = Maps.newHashMap();
 		yamlMap.put("api_key", "<Galaxy Admin user API key>");
 		yamlMap.put("galaxy_instance", "<IP address for target Galaxy instance>");
@@ -112,7 +116,16 @@ public class ToolsListExporter {
 		List<Map<String, String>> tools = Lists.newArrayList();
 		yamlMap.put("tools", tools);
 
-		for (IridaWorkflow workflow : workflows.values()) {
+		List<IridaWorkflow> workflowsSorted = workflows.values().stream().sorted(new Comparator<IridaWorkflow>() {
+
+			@Override
+			public int compare(IridaWorkflow o1, IridaWorkflow o2) {
+				return o1.getWorkflowDescription().getName().compareTo(o2.getWorkflowDescription().getName());
+			}
+
+		}).collect(Collectors.toList());
+
+		for (IridaWorkflow workflow : workflowsSorted) {
 			logger.info("Adding tools for workflow " + workflow);
 
 			String workflowName = workflow.getWorkflowDescription().getName();
@@ -124,34 +137,42 @@ public class ToolsListExporter {
 			String toolPanelSectionId = workflowName.toLowerCase() + "-" + workflowVersion.toLowerCase();
 
 			for (IridaWorkflowToolRepository toolRepository : workflow.getWorkflowDescription().getToolRepositories()) {
-				
-				// Append trailing '/' to URL, so it becomes for example http://example.com/galaxy-shed/
-				// This is because other software (e.g. bioblend) assume a Galaxy toolshed URL ends with a '/'
-				// Otherwise, the end component of the path is stripped (e.g., becomes http://example.com)
+
+				// Append trailing '/' to URL, so it becomes for example
+				// http://example.com/galaxy-shed/
+				// This is because other software (e.g. bioblend) assume a
+				// Galaxy toolshed URL ends with a '/'
+				// Otherwise, the end component of the path is stripped (e.g.,
+				// becomes http://example.com)
 				String toolRepositoryURLString = toolRepository.getUrl().toString();
 				if (!toolRepositoryURLString.endsWith("/")) {
 					toolRepositoryURLString += "/";
 				}
-				
-				tools.add(ImmutableMap.<String, String>builder()
-						.put("name", toolRepository.getName())
-						.put("owner", toolRepository.getOwner())
-						.put("tool_shed_url", toolRepositoryURLString)
-						.put("revision", toolRepository.getRevision())
-						.put("tool_panel_section_id", toolPanelSectionId)
-						.build());
+
+				if (uniqueToolRepositories.contains(toolRepository)) {
+					logger.info("Tool defined by " + toolRepository + " already exists, skipping ...");
+				} else {
+					uniqueToolRepositories.add(toolRepository);
+
+					tools.add(ImmutableMap.<String, String>builder()
+							.put("name", toolRepository.getName())
+							.put("owner", toolRepository.getOwner())
+							.put("tool_shed_url", toolRepositoryURLString)
+							.put("revision", toolRepository.getRevision())
+							.put("tool_panel_section_id", toolPanelSectionId).build());
+				}
 			}
 		}
 
 		// Bit of a hack, but does the job. Wanted to add a comment in the YAML
 		// file for each tool section for readability but no YAML library
 		// supports this. Instead, I do some pattern substitute/replace on a
-		// special String "toolsSectionName" to generate the comments.
+		// special String variable "toolsSectionName" to generate the comments.
 		String yaml = replaceAllWithCaptureGroup1(mapper.writeValueAsString(yamlMap), regexPattern, "\n  ", "\n");
 		if (yaml.matches(toolsSectionName)) {
 			throw new RuntimeException("Error: not all instances of \"" + toolsSectionName + "\" were replaced");
 		}
-		
+
 		PrintWriter outputFileWriter = new PrintWriter(toolsListOutput.toFile());
 		outputFileWriter.print(yaml);
 		outputFileWriter.close();
