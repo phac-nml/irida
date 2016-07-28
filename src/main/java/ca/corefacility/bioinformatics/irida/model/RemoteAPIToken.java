@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,6 +34,9 @@ public class RemoteAPIToken {
 
 	@NotNull
 	private String tokenString;
+	
+	@Column(name = "refresh_token")
+	private String refreshToken;
 
 	@NotNull
 	private Date expiryDate;
@@ -53,6 +57,14 @@ public class RemoteAPIToken {
 	public RemoteAPIToken(String tokenString, RemoteAPI remoteApi, Date expiryDate) {
 		super();
 		this.tokenString = tokenString;
+		this.remoteApi = remoteApi;
+		this.expiryDate = expiryDate;
+	}
+	
+	public RemoteAPIToken(String tokenString, String refreshToken, RemoteAPI remoteApi, Date expiryDate) {
+		super();
+		this.tokenString = tokenString;
+		this.refreshToken = refreshToken;
 		this.remoteApi = remoteApi;
 		this.expiryDate = expiryDate;
 	}
@@ -147,6 +159,14 @@ public class RemoteAPIToken {
 	 */
 	public boolean isExpired() {
 		return (new Date()).after(expiryDate);
+	}
+	
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+	
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	/**

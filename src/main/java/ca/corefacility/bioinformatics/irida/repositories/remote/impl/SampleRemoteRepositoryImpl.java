@@ -5,7 +5,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +38,6 @@ public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<Sample> imp
 	/**
 	 * {@inheritDoc}
 	 */
-	@Cacheable(value = SAMPLES_CACHE_NAME, key = "#uri")
 	@Override
 	public List<Sample> list(String uri, RemoteAPI remoteAPI) {
 		logger.trace("Listing remote samples from " + uri);

@@ -11,21 +11,22 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFilePairRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 @Service
-public class SequenceFielPairRemoteServiceImpl extends RemoteServiceImpl<SequenceFilePair> implements
-		SequenceFilePairRemoteService {
+public class SequenceFilePairRemoteServiceImpl extends SequencingObjectRemoteServiceImpl<SequenceFilePair>
+		implements SequenceFilePairRemoteService {
 
 	public static final String SAMPLE_SEQENCE_FILE_PAIRS_REL = RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS;
 
 	private SequenceFilePairRemoteRepository repository;
 
 	@Autowired
-	public SequenceFielPairRemoteServiceImpl(SequenceFilePairRemoteRepository repository,
-			RemoteAPIRepository remoteAPIRepository) {
-		super(repository, remoteAPIRepository);
+	public SequenceFilePairRemoteServiceImpl(SequenceFilePairRemoteRepository repository,
+			SequenceFileRemoteRepository sequenceFileRemoteRepository, RemoteAPIRepository remoteAPIRepository) {
+		super(repository, sequenceFileRemoteRepository, remoteAPIRepository);
 		this.repository = repository;
 	}
 
@@ -40,4 +41,5 @@ public class SequenceFielPairRemoteServiceImpl extends RemoteServiceImpl<Sequenc
 		RemoteAPI remoteApiForURI = getRemoteApiForURI(href);
 		return repository.list(href, remoteApiForURI);
 	}
+
 }

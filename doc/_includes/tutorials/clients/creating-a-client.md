@@ -13,7 +13,8 @@ When you add a client, you'll be required to provide the following information:
 1. A unique client ID,
 2. How long a token should be valid for once issued,
 3. The type of OAuth2 flow that a client should use,
-4. The scopes that the client is allowed to use (should the client be allowed to read, write, or both with the REST API).
+4. Whether to allow refresh tokens.
+5. The scopes that the client is allowed to use (should the client be allowed to read, write, or both with the REST API).
 
 
 ![Client details.]({{ site.baseurl }}/images/tutorials/clients/client-details.png)

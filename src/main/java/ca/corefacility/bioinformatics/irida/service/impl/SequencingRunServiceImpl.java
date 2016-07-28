@@ -81,7 +81,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN')")
 	public void addSequencingObjectToSequencingRun(SequencingRun run, SequencingObject seqobject) {
 		// attach a copy of the file to the current transaction.
 		seqobject = objectRepository.findOne(seqobject.getId());
@@ -90,7 +90,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN')")
 	public SequencingRun create(SequencingRun o) {
 		return super.create(o);
 	}
@@ -168,7 +168,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN')")
 	public SequencingRun update(Long id, Map<String, Object> updatedFields)
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
