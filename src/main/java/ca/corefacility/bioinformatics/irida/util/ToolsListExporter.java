@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -120,26 +121,38 @@ public class ToolsListExporter {
 			tools.add(ImmutableMap.of(toolsSectionName,
 					"### Tools for " + workflowName + " v" + workflowVersion + " ###"));
 
-			String toolPanelSectionId = workflowName.toLowerCase();
+			String toolPanelSectionId = workflowName.toLowerCase() + "-" + workflowVersion.toLowerCase();
 
 			for (IridaWorkflowToolRepository toolRepository : workflow.getWorkflowDescription().getToolRepositories()) {
+				
+				// Append trailing '/' to URL, so it becomes for example http://example.com/galaxy-shed/
+				// This is because other software (e.g. bioblend) assume a Galaxy toolshed URL ends with a '/'
+				// Otherwise, the end component of the path is stripped (e.g., becomes http://example.com)
+				String toolRepositoryURLString = toolRepository.getUrl().toString();
+				if (!toolRepositoryURLString.endsWith("/")) {
+					toolRepositoryURLString += "/";
+				}
+				
 				tools.add(ImmutableMap.<String, String>builder()
 						.put("name", toolRepository.getName())
 						.put("owner", toolRepository.getOwner())
-						.put("tool_shed_url", toolRepository.getUrl().toString())
+						.put("tool_shed_url", toolRepositoryURLString)
 						.put("revision", toolRepository.getRevision())
 						.put("tool_panel_section_id", toolPanelSectionId)
 						.build());
 			}
 		}
 
-		PrintWriter outputFileWriter = new PrintWriter(toolsListOutput.toFile());
-
 		// Bit of a hack, but does the job. Wanted to add a comment in the YAML
 		// file for each tool section for readability but no YAML library
 		// supports this. Instead, I do some pattern substitute/replace on a
 		// special String "toolsSectionName" to generate the comments.
 		String yaml = replaceAllWithCaptureGroup1(mapper.writeValueAsString(yamlMap), regexPattern, "\n  ", "\n");
+		if (yaml.matches(toolsSectionName)) {
+			throw new RuntimeException("Error: not all instances of \"" + toolsSectionName + "\" were replaced");
+		}
+		
+		PrintWriter outputFileWriter = new PrintWriter(toolsListOutput.toFile());
 		outputFileWriter.print(yaml);
 		outputFileWriter.close();
 		logger.info("Wrote tools list to: " + toolsListOutput.toAbsolutePath());
