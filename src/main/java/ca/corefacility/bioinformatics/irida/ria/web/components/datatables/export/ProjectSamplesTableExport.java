@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +13,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.models.ProjectSampleModel;
 
-import com.github.dandelion.datatables.core.export.ExportConf;
 import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
 import com.github.dandelion.datatables.core.html.HtmlTable;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Export project samples table.
