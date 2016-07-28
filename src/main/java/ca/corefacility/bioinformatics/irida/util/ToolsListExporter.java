@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.util;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,9 @@ public class ToolsListExporter {
 
 	private static String usage = "Usage: " + ToolsListExporter.class.getName() + " [output-file]";
 
+	private static final String toolsSectionName = "tools-section";
+	private static final Pattern regexPattern = Pattern.compile("- " + toolsSectionName + ": \"([^\"]+)\"");
+
 	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
@@ -55,6 +61,35 @@ public class ToolsListExporter {
 		context.close();
 
 		return workflows;
+	}
+
+	/**
+	 * Replaces all instances of pattern with capture group 1, with the given
+	 * prefix and postfix.
+	 * 
+	 * @param originalString
+	 *            The original String to search for replacement patterns.
+	 * @param pattern
+	 *            The regex pattern, assumes that this has one and only one
+	 *            capture group.
+	 * @param prefix
+	 *            The prefix before the capture group to print.
+	 * @param postfix
+	 *            The postfix after the capture group to print.
+	 * @return The replaced String.
+	 */
+	private static String replaceAllWithCaptureGroup1(String originalString, Pattern pattern, String prefix,
+			String postfix) {
+		Matcher matcher = pattern.matcher(originalString);
+
+		StringBuffer stringBuffer = new StringBuffer();
+		while (matcher.find()) {
+			String capture = matcher.group(1);
+			matcher.appendReplacement(stringBuffer, prefix + capture + postfix);
+		}
+		matcher.appendTail(stringBuffer);
+
+		return stringBuffer.toString();
 	}
 
 	public static void main(String[] args)
@@ -79,15 +114,34 @@ public class ToolsListExporter {
 		for (IridaWorkflow workflow : workflows.values()) {
 			logger.info("Adding tools for workflow " + workflow);
 
+			String workflowName = workflow.getWorkflowDescription().getName();
+			String workflowVersion = workflow.getWorkflowDescription().getVersion();
+
+			tools.add(ImmutableMap.of(toolsSectionName,
+					"### Tools for " + workflowName + " v" + workflowVersion + " ###"));
+
+			String toolPanelSectionId = workflowName.toLowerCase();
+
 			for (IridaWorkflowToolRepository toolRepository : workflow.getWorkflowDescription().getToolRepositories()) {
-				tools.add(ImmutableMap.<String, String>builder().put("name", toolRepository.getName())
+				tools.add(ImmutableMap.<String, String>builder()
+						.put("name", toolRepository.getName())
 						.put("owner", toolRepository.getOwner())
 						.put("tool_shed_url", toolRepository.getUrl().toString())
-						.put("revision", toolRepository.getRevision()).put("tool_panel_section_id", "default").build());
+						.put("revision", toolRepository.getRevision())
+						.put("tool_panel_section_id", toolPanelSectionId)
+						.build());
 			}
 		}
 
-		mapper.writeValue(toolsListOutput.toFile(), yamlMap);
+		PrintWriter outputFileWriter = new PrintWriter(toolsListOutput.toFile());
+
+		// Bit of a hack, but does the job. Wanted to add a comment in the YAML
+		// file for each tool section for readability but no YAML library
+		// supports this. Instead, I do some pattern substitute/replace on a
+		// special String "toolsSectionName" to generate the comments.
+		String yaml = replaceAllWithCaptureGroup1(mapper.writeValueAsString(yamlMap), regexPattern, "\n  ", "\n");
+		outputFileWriter.print(yaml);
+		outputFileWriter.close();
 		logger.info("Wrote tools list to: " + toolsListOutput.toAbsolutePath());
 	}
 }
