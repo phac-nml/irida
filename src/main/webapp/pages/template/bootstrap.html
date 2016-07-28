@@ -44,6 +44,11 @@
 								<span th:text="#{nav.main.project-create}">Create New Project</span>
 							</a>
 						</li>
+						<li role="menuitem">
+							<a th:href="@{/projects/synchronize}" href="/projects/synchronize">
+								<span th:text="#{nav.main.project-sync}">_Sync Remote project_</span>
+							</a>
+						</li>
 					</ul>
 				</li>
 				<li uib-dropdown="">
@@ -183,7 +188,7 @@
 				</li>
 				<li>
 					<a href="#" th:href="@{/remote_api}" data:uib-tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">
-						<i class="glyphicon glyphicon-transfer"></i>
+						<fa:icon type="remote"/>
 					</a>
 				</li>
 

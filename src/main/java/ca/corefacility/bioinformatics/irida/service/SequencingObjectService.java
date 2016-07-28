@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -88,4 +89,15 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @return a set of {@link SequencingObject}
 	 */
 	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun);
+	
+	/**
+	 * Update the {@link RemoteStatus} for a {@link SequencingObject}
+	 * 
+	 * @param id
+	 *            ID of the objet to update
+	 * @param remoteStatus
+	 *            a RemoteStatus to set
+	 * @return the updated {@link SequencingObject}
+	 */
+	public SequencingObject updateRemoteStatus(Long id, RemoteStatus remoteStatus);
 }
