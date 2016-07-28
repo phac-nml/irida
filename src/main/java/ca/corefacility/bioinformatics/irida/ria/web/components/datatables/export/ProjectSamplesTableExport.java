@@ -46,6 +46,16 @@ public class ProjectSamplesTableExport extends TableExport {
 		super(exportFormat, fileName, messageSource, locale);
 	}
 
+	/**
+	 * Generate a {@link HtmlTable} from the currently displayed {@link Sample}s
+	 *
+	 * @param page
+	 * 		{@link Page} of {@link ProjectSampleJoin} that are displayed.
+	 * @param request
+	 * 		the current {@link HttpServletRequest}
+	 *
+	 * @return {@link HtmlTable}
+	 */
 	public HtmlTable generateHtmlTable(Page<ProjectSampleJoin> page, HttpServletRequest request) {
 
 		List<ProjectSampleModel> samples = page.getContent().stream().map(ProjectSampleModel::new)
