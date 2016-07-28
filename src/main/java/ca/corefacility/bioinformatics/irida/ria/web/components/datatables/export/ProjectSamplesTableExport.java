@@ -1,15 +1,23 @@
 package ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.data.domain.Page;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.models.ProjectSampleModel;
 
 import com.github.dandelion.datatables.core.export.ExportConf;
 import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
 import com.github.dandelion.datatables.core.html.HtmlTable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Export project samples table.
@@ -20,9 +28,10 @@ public class ProjectSamplesTableExport extends TableExport {
 	 */
 	private static List<String> attributes = ImmutableList.of(
 			"id",
+			"sampleName",
+			"projectName",
 			"createdDate",
 			"modifiedDate",
-			"sampleName",
 			"description",
 			"organism",
 			"isolate",
@@ -39,8 +48,12 @@ public class ProjectSamplesTableExport extends TableExport {
 		super(exportFormat, fileName);
 	}
 
-	public HtmlTable generateHtmlTable(List<Sample> samples, HttpServletRequest request) {
-		HtmlTableBuilder.ColumnStep steps = new HtmlTableBuilder<Sample>()
+	public HtmlTable generateHtmlTable(Page<ProjectSampleJoin> page, HttpServletRequest request) {
+
+		List<ProjectSampleModel> samples = page.getContent().stream().map(ProjectSampleModel::new)
+				.collect(Collectors.toList());
+
+		HtmlTableBuilder.ColumnStep steps = new HtmlTableBuilder<ProjectSampleModel>()
 				.newBuilder("samples", samples, request, exportConf);
 
 		for (String attr : attributes) {
