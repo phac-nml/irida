@@ -213,6 +213,12 @@ public class FontAwesome {
 	public static final String CLIPBOARD_ATTRIBUTE = "clipboard";
 	public static final String CLIPBOARD_ICON = "clipboard";
 
+	/**
+	 * Attribute for exporting to excel
+	 */
+	public static final String EXCEL_ATTRIBUTE = "excel";
+	public static final String EXCEL_ICON = "file-excel-o";
+
 	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
     * attribute to append this class. This will line up the icons properly.
@@ -262,6 +268,7 @@ public class FontAwesome {
 			.put(APPLY_ALL_ATTRIBUTE, APPLY_ALL_ICON)
 			.put(CLIPBOARD_ATTRIBUTE, CLIPBOARD_ICON)
 			.put(REMOTE_ATTRIBUTE, REMOTE_ICON)
+			.put(EXCEL_ATTRIBUTE, EXCEL_ICON)
 			.build();
 	// @formatter:on
 
