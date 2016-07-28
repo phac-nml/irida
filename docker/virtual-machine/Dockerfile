@@ -4,7 +4,7 @@
 
 FROM apetkau/snvphyl-galaxy-1.0
 
-MAINTAINER Franklin Bristow, franklin.bristow@phac-aspc.gc.ca
+MAINTAINER Aaron Petkau, aaron.petkau@phac-aspc.gc.ca
 
 ENV GALAXY_CONFIG_BRAND IRIDA Galaxy
 
