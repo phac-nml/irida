@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -76,11 +75,9 @@ public class UpdateUserPermissionTest {
 		roles.add(Role.ROLE_ADMIN);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
+		when(userRepository.findOne(1L)).thenReturn(new User());
 
 		assertTrue("permission was not granted to admin.", updateUserPermission.isAllowed(auth, 1L));
-
-		// we should fast pass through to permission granted for administrators.
-		verifyZeroInteractions(userRepository);
 	}
 
 	@Test

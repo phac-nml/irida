@@ -11,7 +11,8 @@
     </style>
     <script th:inline="javascript">
         var PAGE = {
-            validity: /*[[${given_tokenValidity}]]*/ '43200'
+            validity: /*[[${given_tokenValidity}]]*/ '43200',
+            refresh_validity: /*[[${refresh_validity}]]*/ '2592000'
         };
     </script>
 </head>
@@ -45,9 +46,9 @@
                                  class="alert alert-warning">_Token Validity Error_
                             </div>
                             <select id="tokenValidity" name="accessTokenValiditySeconds"
-                                    th:selected="${given_tokenValidity}" class="form-control input-full">
+                                    class="form-control input-full">
                                 <option class="tokenValidityInSeconds" th:each="time : ${available_token_validity}"
-                                        th:value="${time}" th:text="${time}"/>
+                                        th:value="${time}" th:text="${time}" th:selected="${given_tokenValidity} == ${time}" />
                             </select>
 
                         </div>
@@ -63,6 +64,24 @@
                                     class="form-control input-full" required="required">
                                 <option th:each="grant : ${available_grants}" th:value="${grant}" th:text="${grant}"/>
                             </select>
+                            <div class="checkbox col-md-12">
+                                <label class="control-label" for="refresh">
+                                    <input type="checkbox" id="refresh" name="refresh" value="refresh"/>
+                                    <span th:text="#{client.refresh}">_Refresh_></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" id="refresh-token-container" hidden="hidden">
+                            <label class="control-label" th:text="#{client.details.refreshTokenValidity}" for="refreshTokenValidity">_Token
+                                Validity_</label>
+
+                            <select id="refreshTokenValidity" name="refreshTokenValidity"
+                                    class="form-control input-full">
+                                <option class="tokenValidityInSeconds" th:each="time : ${available_refresh_token_validity}"
+                                        th:value="${time}" th:text="${time}" th:selected="${refresh_validity} == ${time}"/>
+                            </select>
+
                         </div>
 
                         <div class="form-group">

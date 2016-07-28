@@ -9,7 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 /**
  * Service for storing and retrieving {@link SingleEndSequenceFile}s from a {@link RemoteAPI}
  */
-public interface SingleEndSequenceFileRemoteService extends RemoteService<SingleEndSequenceFile> {
+public interface SingleEndSequenceFileRemoteService extends SequencingObjectRemoteService<SingleEndSequenceFile> {
 
 	/**
 	 * Get all the {@link SingleEndSequenceFile}s associated with a {@link Sample}

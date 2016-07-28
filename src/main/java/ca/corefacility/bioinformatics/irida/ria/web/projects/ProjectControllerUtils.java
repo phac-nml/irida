@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.security.permissions.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -24,11 +26,14 @@ public class ProjectControllerUtils {
 	private final UserService userService;
 	
 	private final ProjectOwnerPermission projectOwnerPermission;
+	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 
 	@Autowired
-	public ProjectControllerUtils(final UserService userService, final ProjectOwnerPermission projectOwnerPermission) {
+	public ProjectControllerUtils(final UserService userService, final ProjectOwnerPermission projectOwnerPermission,
+			final ManageLocalProjectSettingsPermission projectMembersPermission) {
 		this.userService = userService;
 		this.projectOwnerPermission = projectOwnerPermission;
+		this.projectMembersPermission = projectMembersPermission;
 	}
 
 	/**
@@ -52,9 +57,12 @@ public class ProjectControllerUtils {
 		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
 		model.addAttribute("isAdmin", isAdmin);
 
-		boolean isOwner = projectOwnerPermission.isAllowed(SecurityContextHolder.getContext().getAuthentication(),
-				project);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+		boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
 		model.addAttribute("isOwner", isOwner);
+
+		boolean manageMembers = projectMembersPermission.isAllowed(authentication, project);
+		model.addAttribute("manageMembers", manageMembers);
 	}
 }

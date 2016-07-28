@@ -213,11 +213,6 @@
 			<artifactId>javax.interceptor-api</artifactId>
 			<version>${javax.interceptor-api.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>${ehcache.version}</version>
-		</dependency>
 
 		<!-- RDF Database -->
 		<dependency>
@@ -582,11 +577,6 @@
 			<groupId>com.github.jmchilton.blend4j</groupId>
 			<artifactId>blend4j</artifactId>
 			<version>${com.github.jmchilton.blend4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.jmchilton.galaxybootstrap</groupId>
-			<artifactId>galaxybootstrap</artifactId>
-			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
 
 		<!-- Image manipulation -->
@@ -997,13 +987,11 @@
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-ec2499861b11310743862b2d3e2f0a88dde27a51</com.github.jmchilton.blend4j.version>
-		<com.github.jmchilton.galaxybootstrap.version>0.5.0</com.github.jmchilton.galaxybootstrap.version>
+		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-29f28db211c300fcaf21a7a5992478fc5a9893cd</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>
-		<ehcache.version>2.9.0</ehcache.version>
 		<jackson.version>2.5.1</jackson.version>
 		<rest.assured.version>2.3.4</rest.assured.version>
 		<commons.fileupload.version>1.3.1</commons.fileupload.version>

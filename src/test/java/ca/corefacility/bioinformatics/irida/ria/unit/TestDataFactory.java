@@ -91,7 +91,7 @@ public class TestDataFactory {
 		Set<SingleEndSequenceFile> files = new HashSet<>();
 		files.add(constructSingleEndSequenceFile());
 		Long id = 5L;
-		final ReferenceFile rf = new ReferenceFile(files.iterator().next().getFile());
+		final ReferenceFile rf = new ReferenceFile(files.iterator().next().getSequenceFile().getFile());
 		rf.setId(id);
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID())
 				.name("submission-" + id)

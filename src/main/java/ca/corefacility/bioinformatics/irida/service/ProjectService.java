@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
@@ -11,7 +12,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -337,4 +340,29 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
 			final Integer count, final Direction sortDirection, final String... sortedBy);
+	
+	/**
+	 * Get a list of {@link Project}s from remote sites that have a given
+	 * {@link SyncStatus}
+	 * 
+	 * @param syncStatus
+	 *            the {@link SyncStatus} to get {@link Project}s for
+	 * @return a list of {@link Project}
+	 */
+	public List<Project> getProjectsWithRemoteSyncStatus(SyncStatus syncStatus);
+	
+	/**
+	 * Get a list of all {@link Project}s from remote sites
+	 * 
+	 * @return a list of {@link Project}
+	 */
+	public List<Project> getRemoteProjects();
+	
+	/**
+	 * Update select {@link Project} settings
+	 * @param project the project to update
+	 * @param updates a map of fields to update
+	 * @return the updated {@link Project}
+	 */
+	public Project updateProjectSettings(Project project, Map<String,Object> updates);
 }

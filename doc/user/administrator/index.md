@@ -105,6 +105,12 @@ You should choose the password grant type for applications that **are not** web-
 
 You should choose the authorization code grant type for applications that **are** web-based applications. In the authorization code grant type the user's web browser is redirected to IRIDA to allow the user to authorize the client's interaction with IRIDA. In the authorization code grant type, the user's username and password are *never* provided to the client.
 
+### Refresh Tokens
+{:.no_toc}
+Refresh tokens allow client applications to generate a new authorization token without input from the user.  Because refresh tokens are valid for much longer than authorization tokens, refresh tokens can be used to ensure a connection can be made to an IRIDA API for longer running jobs.  Refresh tokens should be used for instances that a client application will require a long term connection to the IRIDA API where users may not be able to validate their connection.
+
+You should choose a refresh token validity suitable for the client application.  Once a refresh token expires it will require a user to log in and reconnect to the IRIDA API.  It is suggested to use refresh tokens for clients which will be used for project synchronization. 
+
 ### Scopes
 {:.no_toc}
 

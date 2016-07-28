@@ -121,3 +121,8 @@ ol.start li:before, ol.continue li:before {
   content: counter(mycounter) ". ";
   counter-increment: mycounter;
 }
+
+.remote-hint {
+  font-size: 1.4em;
+  padding-bottom: 10px;
+}

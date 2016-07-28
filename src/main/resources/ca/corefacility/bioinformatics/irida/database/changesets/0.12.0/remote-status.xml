@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="remote-status" author="tom">
+
+		<createTable tableName="remote_status">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="sync_status" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="url" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="api_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="remote_api"
+					referencedColumnNames="id" foreignKeyName="FK_REMOTE_STATUS_API" />
+			</column>
+			<column name="remote_hash_code" type="int" />
+			<column name="read_by" type="bigint(20)">
+				<constraints referencedColumnNames="id"
+					referencedTableName="user" foreignKeyName="FK_REMOTE_OBJECT_READ_BY" />
+			</column>
+			<column name="last_update" type="datetime" />
+		</createTable>
+
+		<createTable tableName="remote_status_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_STATUS_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="sync_status" type="varchar(255)" />
+			<column name="url" type="varchar(255)" />
+			<column name="api_id" type="bigint(20)" />
+			<column name="remote_hash_code" type="int" />
+			<column name="read_by" type="bigint(20)" />
+			<column name="last_update" type="datetime" />
+		</createTable>
+
+		<addColumn tableName="project">
+			<column name="remote_status" type="bigint(20)">
+				<constraints foreignKeyName="FK_PROJECT_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+			<column name="sync_frequency" type="varchar(255)" />
+		</addColumn>
+
+		<addColumn tableName="project_AUD">
+			<column name="remote_status" type="bigint(20)" />
+			<column name="sync_frequency" type="varchar(255)" />
+		</addColumn>
+
+		<addColumn tableName="sample">
+			<column name="remote_status" type="bigint(20)">
+				<constraints foreignKeyName="FK_SAMPLE_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sample_AUD">
+			<column name="remote_status" type="bigint(20)" />
+		</addColumn>
+
+		<addColumn tableName="sequencing_object">
+			<column name="remote_status" type="bigint(20)">
+				<constraints foreignKeyName="FK_SEQOBJECT_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sequencing_object_AUD">
+			<column name="remote_status" type="bigint(20)" />
+		</addColumn>
+
+		<addColumn tableName="sequence_file">
+			<column name="remote_status" type="bigint(20)">
+				<constraints foreignKeyName="FK_SEQUENCEFILE_REMOTE_STATUS"
+					referencedColumnNames="id" referencedTableName="remote_status" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sequence_file_AUD ">
+			<column name="remote_status" type="bigint(20)" />
+		</addColumn>
+
+	</changeSet>
+</databaseChangeLog>
