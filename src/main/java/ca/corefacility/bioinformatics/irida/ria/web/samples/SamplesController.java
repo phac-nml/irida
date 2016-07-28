@@ -218,8 +218,8 @@ public class SamplesController extends BaseController {
 	 *            a reference to the logged in user.
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}", "/samples/{sampleId}/sequenceFiles",
-			"/projects/{projectId}/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal) {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
@@ -240,6 +240,19 @@ public class SamplesController extends BaseController {
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
+	}
+
+	/**
+	 * Redirect user to the project sequenceFile page.
+	 *
+	 * @param request{@link
+	 * 		HttpServletRequest}
+	 *
+	 * @return {@link String} with the project sequence file URL
+	 */
+	@RequestMapping(value = { "/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}" })
+	public String getCorrectSampleFilesLink(HttpServletRequest request) {
+		return "redirect:" + request.getRequestURL() + "/sequenceFiles";
 	}
 
 	/************************************************************************************************
