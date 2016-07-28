@@ -45,15 +45,4 @@ public class ProjectSamplesTableExportTest {
 	public void shouldThrowAnErrorIfWrongFormat() throws ExportFormatException {
 		ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport("fred", "fred");
 	}
-
-	@Test
-	public void testProjectTableExport() throws ExportFormatException {
-
-		Sample sample = new Sample("fred");
-		sample.setId(10L);
-
-		List<Sample> samples = ImmutableList.of(sample);
-		ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(ReservedFormat.XLSX, "project2");
-		HtmlTable table = tableExport.generateHtmlTable(samples, request);
-	}
 }
