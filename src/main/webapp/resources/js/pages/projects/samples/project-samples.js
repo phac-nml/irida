@@ -188,8 +188,8 @@
       modalService.openLinkerModal(ids);
     };
 
-    ToolsController.prototype.exportToExcel = function () {
-      sampleService.exportToFile("xlsx");
+    ToolsController.prototype.exportToFile = function (type) {
+      sampleService.exportToFile(type);
     };
 
     return ToolsController;
