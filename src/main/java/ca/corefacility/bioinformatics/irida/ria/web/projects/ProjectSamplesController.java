@@ -55,6 +55,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ExportFormatException;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -876,20 +878,14 @@ public class ProjectSamplesController {
 			samples = new ArrayList<>();
 		}
 
-		ExportConf exportConf = new ExportConf.Builder(ReservedFormat.XLSX)
-				.header(true)
-				.exportClass(new XlsxExport())
-				.fileName(project.getName() + "_samples")
-				.build();
 
-		// Build an html table that can be exported into the required format.
-		HtmlTable table = new HtmlTableBuilder<Sample>()
-				.newBuilder("samples", samples, request, exportConf)
-				.column().fillWithProperty("id").title("ID")
-				.column().fillWithProperty("sampleName").title("Sample Name")
-				.build();
-
-		ExportUtils.renderExport(table, exportConf, response);
+		try {
+			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples");
+			ExportUtils.renderExport(tableExport.generateHtmlTable(samples, request), tableExport.getExportConf(), response);
+		} catch (ExportFormatException e) {
+			// Not much can be done for this since this is a file download.
+			logger.error(e.getMessage());
+		}
 	}
 
 	/**
