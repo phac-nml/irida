@@ -42,18 +42,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             {@link Project}.
 	 */
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
-
-	/**
-	 * Get a {@link List} of {@link Sample}s based on a list of {@link Sample} names that belong to a {@link Project}.
-	 *
-	 * @param project
-	 * 		the {@link Project} to get the {@link Sample}s for
-	 * @param sampleNames
-	 * 		{@link List} of {@link Sample} names
-	 *
-	 * @return the {@link List} of {@link Sample}
-	 */
-	public List<Sample> getSamplesForProjectBySampleNameList(Project project, List<String> sampleNames);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
