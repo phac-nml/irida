@@ -21,9 +21,9 @@
                 <div class="form-group">
                     <ul class="list-group">
                         <li class="list-group-item announcement-item" th:each="ann : ${readAnnouncements}">
-                            <marked class="announcement-content">
-                                <span th:text="${ann.getSubject().getMessage()}">_Announcement Content_</span>
-                            </marked>
+                            <div class="announcement-content">
+                                <marked th:inline="text">[[${ann.getSubject().getMessage()}]]</marked>
+                            </div>
                             <div th:with="dateFormat=#{locale.date.long}" >
                                 <div class="announcement-date">
                                     <p>

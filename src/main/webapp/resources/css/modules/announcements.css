@@ -1,0 +1,52 @@
+.announcement-item,.announcement-icon,.announcement-content,.announcement-date,.announcement-time{
+    display:-webkit-box;
+    display:-webkit-flex;
+    display:-ms-flexbox;
+    display:flex;
+    -webkit-box-align:center;
+    -webkit-align-items:center;
+    -ms-flex-align:center;
+    align-items:center
+}
+
+.announcement-content{
+    -webkit-box-align:center;
+    -webkit-align-items:center;
+    -ms-flex-align:center;
+    -ms-grid-row-align:center;
+    align-items:center
+}
+
+.announcement-icon .fa{
+    font-size:1.6em
+}
+
+.announcement-date{
+    -webkit-box-pack:end;
+    -webkit-justify-content:flex-end;
+    -ms-flex-pack:end;
+    justify-content:flex-end;
+    -webkit-box-flex:0;
+    -webkit-flex:0 0 190px;
+    -ms-flex:0 0 190px;
+    flex:0 0 190px;
+    color:#666;
+    font-size:.7em;
+    text-align:right
+}
+
+.announcement-time{
+    line-height:28px
+}
+
+.announcement-content{
+    -webkit-box-flex:1;
+    -webkit-flex-grow:1;
+    -ms-flex-positive:1;
+    flex-grow:1;
+    line-height:28px
+}
+
+.announcement-markread {
+    margin-left: 5px;
+}
