@@ -869,22 +869,45 @@ public class ProjectSamplesController {
 			HttpServletResponse response) {
 
 		Project project = projectService.read(projectId);
-		List<Sample> samples;
+		List<Project> projectList = new ArrayList<>();
+		List<Sample> samples = new ArrayList<>();
 
+		if (!associated.isEmpty()) {
+			projectList = (List<Project>) projectService.readMultiple(associated);
+		}
+		projectList.add(project);
+
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
+
+		final int MAX_EXPORT_LENGTH = 100000;
 		// Check to see if it is filtered by a list
+		Page<ProjectSampleJoin> page;
 		if (!sampleNames.isEmpty()) {
-			samples = sampleService.getSamplesForProjectBySampleNameList(project, sampleNames);
+			page = sampleService.findSampleByNameInProject(project, sampleNames, 0, MAX_EXPORT_LENGTH,
+					utils.getSortDirection(), utils.getSortProperty());
+		} else if(!Strings.isNullOrEmpty(utils.getSearch())) {
+			page = sampleService.getSearchedSamplesForProjects(
+					projectList,
+					utils.getSearch(),
+					0,
+					MAX_EXPORT_LENGTH,
+					utils.getSortDirection(),
+					utils.getSortProperty()
+			);
 		} else {
-			samples = new ArrayList<>();
+			page = sampleService
+					.getFilteredSamplesForProjects(projectList, utils.getName(), utils.getMinDate(), utils.getEndDate(), 0,
+							MAX_EXPORT_LENGTH, utils.getSortDirection(), utils.getSortProperty());
 		}
 
-
-		try {
-			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples");
-			ExportUtils.renderExport(tableExport.generateHtmlTable(samples, request), tableExport.getExportConf(), response);
-		} catch (ExportFormatException e) {
-			// Not much can be done for this since this is a file download.
-			logger.error(e.getMessage());
+		if (page != null) {
+			try {
+				ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples");
+				ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);
+			} catch (ExportFormatException e) {
+				// Not much can be done for this since this is a file download.
+				logger.error(e.getMessage());
+			}
 		}
 	}
 
