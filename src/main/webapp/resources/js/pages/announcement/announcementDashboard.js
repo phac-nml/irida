@@ -2,7 +2,7 @@
     'use strict';
 
     /**
-     *
+     * Service to get announcements DOM from server
      * @param $http
      * @returns {{getAnnouncements: getAnnouncements}}
      * @constructor
@@ -35,7 +35,7 @@
     }
 
     /**
-     *
+     * Announcements directive to replace DOM with list of announcements from server
      * @param svc
      * @param $compile
      * @returns {{template: string, scope: {url: string}, replace: boolean, controllerAs: string, controller: controller}}

@@ -1,0 +1,27 @@
+.announcement-item,.announcement-icon,.announcement-content,.announcement-date,.announcement-time{
+  display:flex;
+  align-items:center
+}
+.announcement-content{
+  align-items:center
+}
+.announcement-icon .fa{
+  font-size:1.6em
+}
+.announcement-date{
+  justify-content:flex-end;
+  flex:0 0 190px;
+  color:#666;
+  font-size:.7em;
+  text-align:right
+}
+.announcement-time{
+  line-height:28px
+}
+.announcement-content{
+  flex-grow:1;
+  line-height:28px
+}
+.announcement-markread {
+  margin-left: 5px;
+}
