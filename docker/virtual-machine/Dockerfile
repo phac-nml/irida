@@ -14,9 +14,6 @@ RUN sed -i -e 's/#admin_users = None/admin_users = admin@galaxy.org,workflowUser
 	sed -i -e 's/#allow_library_path_paste = False/allow_library_path_paste = True/' /etc/galaxy/galaxy.ini && \
 	sed -i -e 's/force_beta_workflow_scheduled_for_collections=True/force_beta_workflow_scheduled_for_collections=False/' /etc/galaxy/galaxy.ini
 
-RUN cpan App::cpanminus && rm -rf ~/.cpan
-RUN cpanm Time::Piece XML::Simple Data::Dumper http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz --force && rm -rf ~/.cpanm
-
 # Add spades and prokka to the image:
 RUN install-repository "-r 4287dd541327 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name flash" && \
 	install-repository "-r f9fc830fa47c --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name filter_spades_repeats" && \
