@@ -634,11 +634,18 @@ INSERT INTO `ncbi_export_submission_biosample` (ncbi_export_submission_id, bioSa
 INSERT INTO `ncbi_export_biosample_sequence_file_pair` (ncbi_export_biosample_id, pairs_id) VALUES ('SUB001XXX', 1);
 
 -- announcement
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (1, now(), "Welcome to IRIDA!", 4);
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (2, now(), "Here's another announcement!", 4);
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (1, now(), "Welcome **to IRIDA!**", 4);
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (2, now(), "Here's `another` announcement!", 4);
 INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (3, now(), "Oh man this is cool!", 4);
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (4, now(), "You are now ready to science.", 4);
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (4, now(), "Time to **analyze!**", 4);
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (5, now(), "You are **now** ready to try science.", 4);
+INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (6, now(), "**Don't** forget **your** *wallet*", 4);
 
 -- announcement_user
 INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (1, now(), 1, 4);
 INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (2, now(), 2, 4);
+INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (3, now(), 3, 4);
+INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (4, now(), 4, 4);
+INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (5, now(), 2, 1);
+INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (6, now(), 2, 2);
+INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (7, now(), 2, 3);

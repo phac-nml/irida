@@ -19,6 +19,6 @@ public class DashboardControllerTest {
 	@Test
 	public void indexPageNormal() {
 		Model model = new ExtendedModelMap();
-		assertEquals("index", controller.showIndex(model));
+		assertEquals("index", controller.showIndex());
 	}
 }
