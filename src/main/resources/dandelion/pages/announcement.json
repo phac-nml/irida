@@ -1,10 +1,22 @@
 {
-  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3", "select2-bootstrap", "livestampjs"],
+  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3", "jquery", "livestampjs", "angular", "marked", "angular-marked"],
   "assets": [
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/js/pages/announcement.js"
+        "webapp": "/resources/js/pages/announcement/announcementTable.js"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/pages/announcement/announcementDashboard.js"
+      }
+    },
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/modules/announcements.css"
       }
     }
   ]
