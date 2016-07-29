@@ -1,14 +1,38 @@
 package ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models;
 
+import java.util.List;
+
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Used for exporting the project samples table.  Prevents undefined from displaying in the table,
  * and adds the project name.
  */
 public class ProjectSampleModel {
+	/**
+	 * Attributes on the {@link Sample}
+	 */
+	public static List<String> attributes = ImmutableList.of(
+			"id",
+			"sampleName",
+			"projectName",
+			"createdDate",
+			"modifiedDate",
+			"description",
+			"organism",
+			"isolate",
+			"strain",
+			"collectedBy",
+			"collectionDate",
+			"geographicLocationName",
+			"isolationSource",
+			"latitude",
+			"longitude"
+	);
 	private Project project;
 	private Sample sample;
 
