@@ -8,20 +8,19 @@
 </head>
 
 <body>
-<div class="row" layout:fragment="page" ddl:includes="events">
+<div class="row" layout:fragment="page" ddl:bundle-includes="announcement" ddl:asset-css-excludes="jquery.datatables">
     <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
-        <form name="new_announcement" class="ng-cloak" th:action="@{/announcements/create}" method="post" role="form"
+        <form name="new_announcement" class="ng-cloak"
+              th:action="@{/announcements/create}" method="post" role="form"
               novalidate="novalidate">
             <section class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="panel-title" th:text="#{announcement.create.title}">Create a New Announcement</h2>
+                    <h2 class="panel-title" th:text="#{announcement.create.title}">_Create a New Announcement_</h2>
                 </div>
-
                 <div class="panel-body">
-                    <textarea class="form-control input-full" type="text" id="message" name="message"
-                           required="required"
-                           placeholder="Required"
-                           th:placeholder="#{announcement.create.form.placeholder}"/>
+                    <textarea class="form-control input-full announcement-input" id="message" name="message"
+                              required="required" placeholder="Required"
+                              th:placeholder="#{announcement.create.form.placeholder}"></textarea>
                 </div>
                 <div class="panel-footer text-right">
                     <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}"

@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -13,15 +12,12 @@ import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,10 +37,11 @@ public class AnnouncementsController extends BaseController{
 
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementsController.class);
 
-    private static final String ANNOUNCEMENT_PAGE = "announcements/announcements";
-    private static final String ANNOUNCEMENT_ADMIN_PAGE = "announcements/control";
-    private static final String ANNOUNCEMENT_CREATE_PAGE = "announcements/create";
-    private static final String ANNOUNCEMENT_DETAIL_PAGE = "announcements/details";
+    private static final String ANNOUNCEMENT_VIEW = "announcements/announcements";
+    private static final String ANNOUNCEMENT_VIEW_READ = "announcements/read";
+    private static final String ANNOUNCEMENT_ADMIN = "announcements/control";
+    private static final String ANNOUNCEMENT_CREATE = "announcements/create";
+    private static final String ANNOUNCEMENT_DETAILS = "announcements/details";
 
     private final UserService userService;
     private final AnnouncementService announcementService;
@@ -62,31 +59,62 @@ public class AnnouncementsController extends BaseController{
     /**
      * Gets a list of {@link Announcement}s for the current {@link User}
      *
-     * @param userId
-     *              ID of the user for which to get announcements
      * @param model
      *              Model for the view
      * @param principal
      *              The user fetching the announcements (usually the one currently logged in)
      * @return The announcement page containing announcement information for the user
      */
-    @RequestMapping(value = "/announcements", method = RequestMethod.GET)
-    public String getAllAnnouncementsAsUser(@PathVariable("userId") Long userId,
-                                            final Model model, Principal principal) {
+    @RequestMapping(value = "/user/read", method = RequestMethod.GET)
+    public String getReadAnnouncementsAsUser(final Model model, Principal principal) {
 
         User user = userService.getUserByUsername(principal.getName());
-        List<Join<Announcement, User>> joins = announcementService.getReadAnnouncementsForUser(user);
-        List<Announcement> announcements = new ArrayList<>();
+        List<AnnouncementUserJoin> readAnnouncements = announcementService.getReadAnnouncementsForUser(user);
 
-        for (Join<Announcement, User> j: joins) {
-            announcements.add(j.getSubject());
-        }
+        logger.trace("Announcements list size: " + readAnnouncements.size());
 
-        logger.trace("Announcements list size: " + announcements.size());
+        model.addAttribute("readAnnouncements", readAnnouncements);
 
-        model.addAttribute("announcements", announcements);
+        return ANNOUNCEMENT_VIEW_READ;
+    }
 
-        return ANNOUNCEMENT_PAGE;
+    /**
+     * Gets a list of Announcements that the current user hasn't read yet
+     *
+     * @param model
+     *              Model for the view
+     * @param principal
+     *              The current user
+     * @return the fragment for viewing announcements in the dashboard
+     */
+    @RequestMapping(value = "/user/unread")
+    public String getUnreadAnnouncementsForUser(final Model model, Principal principal) {
+        User user = userService.getUserByUsername(principal.getName());
+
+        List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
+
+        model.addAttribute("announcements", unreadAnnouncements);
+
+        return ANNOUNCEMENT_VIEW;
+    }
+
+    /**
+     *  Marks the announcement as read by the current user
+     *
+     * @param aID
+     *          ID of the {@link Announcement} to be marked
+     * @param principal
+     *          The current user
+     * @return
+     */
+    @RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
+    public String markAnnouncementRead(@PathVariable Long aID, Principal principal) {
+        User user = userService.getUserByUsername(principal.getName());
+        Announcement announcement = announcementService.read(aID);
+
+        announcementService.markAnnouncementAsReadByUser(announcement, user);
+
+        return ANNOUNCEMENT_VIEW;
     }
 
     /**
@@ -104,14 +132,14 @@ public class AnnouncementsController extends BaseController{
 
         model.addAttribute("announcements", announcements);
 
-        return ANNOUNCEMENT_ADMIN_PAGE;
+        return ANNOUNCEMENT_ADMIN;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getCreateAnnouncementPage(final Model model) {
 
-        return ANNOUNCEMENT_CREATE_PAGE;
+        return ANNOUNCEMENT_CREATE;
     }
 
     /**
@@ -212,13 +240,12 @@ public class AnnouncementsController extends BaseController{
                                              Model model,
                                              Principal principal) throws IOException {
         Announcement announcement = announcementService.read(announcementID);
-        User user = userService.getUserByUsername(principal.getName());
         logger.trace("Announcement " + announcement.getId() + ": " +
             announcement.getMessage());
 
         model.addAttribute("announcement", announcement);
 
-        return ANNOUNCEMENT_DETAIL_PAGE;
+        return ANNOUNCEMENT_DETAILS;
     }
 
     /**
@@ -226,15 +253,14 @@ public class AnnouncementsController extends BaseController{
      *
      * @param criteria
      *                  Criteria/options for the datatable when rendering table items/rows
-     * @param principal
-     *                  Currently logged in user (must be admin)
+     *
      * @return A map containing all of the data to be displayed in the datatables
      *
      */
     @RequestMapping(value = "/control/ajax/list", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public @ResponseBody DatatablesResponse<Announcement> getAnnouncementsAdmin(
-            final @DatatablesParams DatatablesCriterias criteria, final Principal principal) {
+            final @DatatablesParams DatatablesCriterias criteria) {
         final int currentPage = DatatablesUtils.getCurrentPage(criteria);
         final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
         final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
@@ -258,5 +284,105 @@ public class AnnouncementsController extends BaseController{
 
         logger.debug("Total number of announcements: " + announcementDataSet.getTotalRecords());
         return DatatablesResponse.build(announcementDataSet, criteria);
+    }
+
+    /**
+     * Get user read status for current announcement
+     *
+     * @param announcementID
+     *              The announcement we want read status/information about
+     * @param criterias
+     *              Criteria/options for the datatable when rendering
+     * @return A map of objects containing user and announcement read information
+     */
+    @RequestMapping(value = "/{announcementID}/details/ajax/list", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public @ResponseBody DatatablesResponse<AnnouncementUserDataTableResponse> getUserAnnouncementInfoTable(
+            @PathVariable Long announcementID,
+            final @DatatablesParams DatatablesCriterias criterias) {
+
+        final Announcement currentAnnouncement = announcementService.read(announcementID);
+
+        final int currentPage = DatatablesUtils.getCurrentPage(criterias);
+        final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criterias);
+        final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
+        String sortName = sortProperties.get("sort_string").toString();
+        sortName = sortName.replaceAll("announcement.", "");
+        if (sortName.equals("user")) {
+            sortName = "username";
+        }
+
+        final String searchString = criterias.getSearch();
+        final Page<User> users = userService.search(UserSpecification.searchUser(searchString), currentPage,
+                criterias.getLength(), direction, sortName);
+        final List<AnnouncementUserDataTableResponse> announcementUserDataTableResponses = users.getContent().stream()
+                .map(user -> new AnnouncementUserDataTableResponse(user.getUsername(), userHasRead(user, currentAnnouncement)))
+                .collect(Collectors.toList());
+
+        final DataSet<AnnouncementUserDataTableResponse> announcementUserDataSet = new DataSet<>(announcementUserDataTableResponses,
+                users.getTotalElements(), users.getTotalElements());
+
+        return DatatablesResponse.build(announcementUserDataSet, criterias);
+    }
+
+    /**
+     * Utility method for checking whether the {@link Announcement} has been read by the {@link User}
+     *
+     * @param user
+     *          The user we want to check
+     * @param announcement
+     *          The announcement we wanna check.
+     * @return
+     */
+    private AnnouncementUserJoin userHasRead(final User user, final Announcement announcement) {
+        final List<AnnouncementUserJoin> readUsers = announcementService.getReadUsersForAnnouncement(announcement);
+        final Optional<AnnouncementUserJoin> currentAnnouncement = readUsers.stream()
+                .filter(j -> j.getObject().equals(user)).findAny();
+        if (currentAnnouncement.isPresent()) {
+            return currentAnnouncement.get();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Utility/Container class for returning information about {@link Announcement}s and {@link User}s and their read statuses
+     */
+    private static final class AnnouncementUserDataTableResponse {
+        private final String username;
+        private final AnnouncementUserJoin join;
+        private final Date createdDate;
+        private final boolean hasRead;
+
+        public AnnouncementUserDataTableResponse(final String username, final AnnouncementUserJoin join) {
+            this.username = username;
+            this.join = join;
+            if (join != null) {
+                createdDate = join.getCreatedDate();
+                hasRead = true;
+            } else {
+                createdDate = null;
+                hasRead = false;
+            }
+        }
+
+        @SuppressWarnings("unused")
+        public String getUsername() {
+            return this.username;
+        }
+
+        @SuppressWarnings("unused")
+        public AnnouncementUserJoin getJoin() {
+            return this.join;
+        }
+
+        public Date getCreatedDate() {
+            return this.createdDate;
+        }
+
+        public boolean getHasRead() {
+            return this.hasRead;
+        }
+
     }
 }
