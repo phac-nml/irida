@@ -1,6 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.models;
-
-import java.util.Date;
+package ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;

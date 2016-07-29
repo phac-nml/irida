@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.models.ProjectSampleModel;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 
 import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
 import com.github.dandelion.datatables.core.html.HtmlTable;
