@@ -655,6 +655,7 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
 | `self` | A link to this sequence file record. |
 | `sample` | A link to the sample that contains this sequence file. |
 | `sample/sequenceFiles` | A link to the collection of sequence files for the parent sample. |
+| `sequencefile/qc` | A link to the FastQC data for this sequence file. |
 
 ##### Properties
 {:.no_toc}
@@ -686,6 +687,52 @@ Each sequence file corresponds to a single file (may be one of a pair for paired
   } ]
   }
 
+```
+
+#### FastQC Data
+{:.no_toc}
+
+Each sequence file may have FastQC data associated with it to display some basic quality metrics about the file.
+
+##### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to this sequence file QC record. |
+| `qc/sequencefile` | A back to the owning sequence file for this QC data. |
+
+##### Example FastQC Response
+{:.no_toc}
+
+```javascript
+{
+  "resource" : {
+    "createdDate" : 1469714441000,
+    "description" : "Analysis produced by FastQC",
+    "executionManagerAnalysisId" : "internal-fastqc",
+    "additionalProperties" : { },
+    "fileType" : "Conventional base calls",
+    "encoding" : "Sanger / Illumina 1.9",
+    "totalSequences" : 119960,
+    "filteredSequences" : 0,
+    "totalBases" : 29990000,
+    "minLength" : 250,
+    "maxLength" : 250,
+    "gcContent" : 38,
+    "overrepresentedSequences" : [ ],
+    "fastQCReport" : null,
+    "label" : "internal-fastqc",
+    "links" : [ {
+      "rel" : "qc/sequencefile",
+      "href" : "http://localhost:8080/api/samples/55/pairs/12/files/16"
+    }, {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/samples/55/pairs/12/files/16/qc"
+    } ],
+    "identifier" : "18"
+  }
+}
 ```
 
 #### Sequence File Pairs Collection
