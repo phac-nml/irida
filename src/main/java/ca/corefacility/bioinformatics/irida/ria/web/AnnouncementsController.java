@@ -240,10 +240,16 @@ public class AnnouncementsController extends BaseController{
                                              Model model,
                                              Principal principal) throws IOException {
         Announcement announcement = announcementService.read(announcementID);
+
+        long numberOfReads = announcementService.countReadsForOneAnnouncement(announcement);
+        long totalUsers = userService.count();
+
         logger.trace("Announcement " + announcement.getId() + ": " +
             announcement.getMessage());
 
         model.addAttribute("announcement", announcement);
+        model.addAttribute("numReads", numberOfReads);
+        model.addAttribute("numTotal", totalUsers);
 
         return ANNOUNCEMENT_DETAILS;
     }
@@ -319,6 +325,13 @@ public class AnnouncementsController extends BaseController{
                 .map(user -> new AnnouncementUserDataTableResponse(user.getUsername(), userHasRead(user, currentAnnouncement)))
                 .collect(Collectors.toList());
 
+        if (sortName.equals("createdDate")) {
+            Collections.sort(announcementUserDataTableResponses);
+            if (direction.equals(Sort.Direction.DESC)) {
+                Collections.reverse(announcementUserDataTableResponses);
+            }
+        }
+
         final DataSet<AnnouncementUserDataTableResponse> announcementUserDataSet = new DataSet<>(announcementUserDataTableResponses,
                 users.getTotalElements(), users.getTotalElements());
 
@@ -348,7 +361,7 @@ public class AnnouncementsController extends BaseController{
     /**
      * Utility/Container class for returning information about {@link Announcement}s and {@link User}s and their read statuses
      */
-    private static final class AnnouncementUserDataTableResponse {
+    private static final class AnnouncementUserDataTableResponse implements Comparable<AnnouncementUserDataTableResponse> {
         private final String username;
         private final AnnouncementUserJoin join;
         private final Date createdDate;
@@ -361,8 +374,27 @@ public class AnnouncementsController extends BaseController{
                 createdDate = join.getCreatedDate();
                 hasRead = true;
             } else {
-                createdDate = null;
+                createdDate = new Date(0);
                 hasRead = false;
+            }
+        }
+
+        /**
+         * Comparator method to compare dates for each read receipt
+         * @param response
+         *      The object to compare to
+         * @return
+         *      -1 if this object is newer than {@param response}
+         *      0 if they have the same date
+         *      1 if {@param repsonse} is newer than this object
+         */
+        public int compareTo(AnnouncementUserDataTableResponse response) {
+            if (this.createdDate.after(response.createdDate)) {
+                return -1;
+            } else if (this.createdDate.equals(response.createdDate)) {
+                return 0;
+            } else {
+                return 1;
             }
         }
 

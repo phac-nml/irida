@@ -18,17 +18,9 @@
                     <h2 class="panel-title" th:text="#{announcement.create.title}">_Create a New Announcement_</h2>
                 </div>
                 <div class="panel-body">
-                    <textarea ng-model="message" class="form-control input-full" type="text" id="message" name="message"
+                    <textarea ng-model="message" class="form-control input-full announcement-input" type="text" id="message" name="message"
                            required="required" placeholder="Required"
-                           th:placeholder="#{announcement.create.form.placeholder}"/>
-                </div>
-            </section>
-            <section class="panel panel-default">
-                <div class="panel-heading">
-                    <h2 class="panel-title" th:text="#{announcement.control.details.preview}"></h2>
-                </div>
-                <div class="panel-body">
-                    <div marked="message" compile="true"></div>
+                           th:placeholder="#{announcement.create.form.placeholder}"></textarea>
                 </div>
                 <div class="panel-footer text-right">
                     <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}"

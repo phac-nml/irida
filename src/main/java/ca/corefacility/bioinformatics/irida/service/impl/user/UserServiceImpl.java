@@ -158,6 +158,12 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		super.delete(id);
 	}
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public long count() {
+		return super.count();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
