@@ -11,10 +11,10 @@ var announcementTable = (function(page) {
     function renderDetailsButton(data, type, full) {
         return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.edit + "'>" +
             "<button type='button' class='btn btn-default btn-xs details-btn'><span class='fa fa-pencil'></span></div>";
-    };
+    }
 
     /**
-     * Renders status icon for a user and the current announcement, in the Announcement Details table
+     * Renders date that the announcement was read
      * @param data
      * @param type
      * @param full
@@ -28,6 +28,13 @@ var announcementTable = (function(page) {
         return "<div><span>" + date + "</span></div>";
     }
 
+    /**
+     * Render read status for user
+     * @param data
+     * @param type
+     * @param full
+     * @returns {string}
+     */
     function renderStatus(data, type, full) {
         var icon;
         if (full.join != null) {
@@ -38,24 +45,23 @@ var announcementTable = (function(page) {
         return "<div><span class='" + icon + "'></span></div>";
     }
 
-    function renderToggleStatusSwitch(data, type, full) {
-        return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.markRead + "'>" +
-            "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown'><span class='fa fa-check'></span></div>";
-    }
-
+    /**
+     * Initializes extras for each row of the data table
+     * @param row
+     * @param data
+     */
     function detailsCallback(row, data) {
         var row = $(row);
         row.find(".details-btn").click(function () {
             window.location.href = page.urls.link + data.identifier + page.urls.details;
         });
         row.find('[data-toggle="tooltip"]').tooltip();
-    };
+    }
 
     return {
         renderDetailsButton : renderDetailsButton,
         renderDate : renderDate,
         renderStatus : renderStatus,
-        renderToggleStatusSwitch : renderToggleStatusSwitch,
         detailsCallback : detailsCallback
     };
 })(window.PAGE);

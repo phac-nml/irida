@@ -56,9 +56,6 @@
             <h2 class="panel-title" th:text="#{announcement.control.details.title}"></h2>
         </div>
         <div class="panel-body">
-            <p>Number of users who have read this announcement: </p>
-        </div>
-        <div class="panel-body">
             <table id="announcementUserTable" dt:table="true" dt:url="@{/announcements/__${announcement.getId()}__/details/ajax/list}">
                 <thead>
                 <tr role="row">

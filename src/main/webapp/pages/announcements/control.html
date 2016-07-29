@@ -41,7 +41,7 @@
                     <th dt:property="message" dt:searchable="true" th:text="#{announcement.control.message}"></th>
                     <th width="150px" dt:property="user.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
                     <th width="150px" dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" dt:sortInitDirection="desc" th:text="#{announcement.control.createdDate}"></th>
-                    <th width="45px" dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderDetailsButton"/>
+                    <th width="10px" dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderDetailsButton"/>
                 </tr>
             </thead>
         </table>
