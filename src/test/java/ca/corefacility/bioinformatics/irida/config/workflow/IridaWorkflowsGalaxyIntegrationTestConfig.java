@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -31,9 +32,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 @Profile("test")
 @Import({ IridaApiPropertyPlaceholderConfig.class})
 public class IridaWorkflowsGalaxyIntegrationTestConfig {
-	
-	@Autowired
-	private Environment environment;
 
 	@Autowired
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
@@ -41,7 +39,8 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
 
-	private UUID snvPhylWorkflowId = UUID.fromString(environment.getProperty("irida.workflow.default.phylogenomics"));
+	@Value("${irida.workflow.default.phylogenomics}")
+	private String snvPhylWorkflowId;
 
 	/**
 	 * Registers a production SNVPhyl workflow for testing.
@@ -60,7 +59,7 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 				.loadAllWorkflowImplementations(snvPhylProductionPath);
 		iridaWorkflowsService.registerWorkflows(snvPhylWorkflows);
 
-		IridaWorkflow snvPhylWorkflow = iridaWorkflowsService.getIridaWorkflow(snvPhylWorkflowId);
+		IridaWorkflow snvPhylWorkflow = iridaWorkflowsService.getIridaWorkflow(UUID.fromString(snvPhylWorkflowId));
 
 		return snvPhylWorkflow;
 	}
