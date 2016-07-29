@@ -85,11 +85,11 @@
         <thead>
         <tr>
             <th dt:sortable="false" width="20px" dt:renderFunction="datatables-utils#datatable.formatCheckbox"></th>
-            <th dt:property="sample.sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
-            <th dt:property="project.name" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
-            <th width="120px" dt:property="sample.createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
+            <th dt:property="sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
+            <th dt:property="projectName" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
+            <th width="120px" dt:property="createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
                 dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-            <th width="120px" dt:property="sample.modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
+            <th width="120px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
                 dt:renderFunction="datatables-utils#datatable.formatDate"></th>
         </tr>
         </thead>

@@ -57,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ExportFormatException;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -370,7 +371,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getProjectSamples(@PathVariable Long projectId,
+	public DatatablesResponse<ProjectSampleModel> getProjectSamples(@PathVariable Long projectId,
 			@DatatablesParams DatatablesCriterias criterias,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
@@ -407,16 +408,10 @@ public class ProjectSamplesController {
 		}
 
 		// Create a more usable Map of the sample data.
-		List<Map<String, Object>> sampleMap = new ArrayList<>();
-		for (ProjectSampleJoin join : page.getContent()) {
-			Project project = join.getSubject();
-			SampleType type = projectId == project.getId() ? SampleType.LOCAL : SampleType.ASSOCIATED;
-			Map<String, Object> map = getSampleMap(join.getObject(), project, type,
-					join.getObject().getId());
-			sampleMap.add(map);
-		}
+		List<ProjectSampleModel> models = page.getContent().stream().map(ProjectSampleModel::new)
+				.collect(Collectors.toList());
 
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(sampleMap, page.getTotalElements(),
+		DataSet<ProjectSampleModel> dataSet = new DataSet<>(models, page.getTotalElements(),
 				page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
 	}

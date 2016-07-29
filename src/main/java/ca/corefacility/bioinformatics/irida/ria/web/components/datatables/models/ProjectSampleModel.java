@@ -17,12 +17,24 @@ public class ProjectSampleModel {
 		this.sample = psj.getObject();
 	}
 
+	public static String generateSortName(String name) {
+		if (name.equals("projectName")) {
+			return "project.label";
+		} else {
+			return "sample." + name;
+		}
+	}
+
 	public Long getId() {
 		return sample.getId();
 	}
 
 	public String getSampleName() {
 		return sample.getSampleName();
+	}
+
+	public Long getProjectId() {
+		return project.getId();
 	}
 
 	public String getProjectName() {

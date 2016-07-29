@@ -51,7 +51,7 @@ var RowClickHandler = (function (page) {
   function getRowId(row) {
     // Anchor tag expected to have a data attribute 'id'
     // Expected on first anchor in row.
-    var anchor = row.getElementsByTagName("a")[0],
+    var anchor = row.querySelector("a"),
         id;
     if (typeof anchor === "undefined") {
       throw new Error("No anchor tag found for sample name");
@@ -264,11 +264,11 @@ var datatable = (function(moment, tl, page) {
   }
 
   function formatSampleLink(data, type, full) {
-    if(typeof full.sample === 'undefined'){
+    if(typeof full.id === 'undefined'){
       return data;
     }
     else {
-      return "<a data-id='" + full.sample.identifier + "' class='btn btn-link sample-label' href='" + tl.BASE_URL + "projects/" + full.project.identifier + "/samples/" + full.sample.identifier + "/sequenceFiles'>" + data + "</a>";
+      return "<a data-id='" + full.id + "' class='btn btn-link sample-label' href='" + tl.BASE_URL + "projects/" + full.projectId + "/samples/" + full.id + "/sequenceFiles'>" + data + "</a>";
     }
   }
 
@@ -320,7 +320,7 @@ var datatable = (function(moment, tl, page) {
     div.appendChild(text);
 
     if (full.sampleType === 'ASSOCIATED') {
-      var colour = projectColourer.getColour(full.project.label);
+      var colour = projectColourer.getColour(full.projectName);
       div.style.borderColor = colour;
     }
 
@@ -362,7 +362,7 @@ var datatable = (function(moment, tl, page) {
   }
 
   function projectRowCreated(row, item) {
-    if (rowClickHandler.isRowSelected(item.sample.identifier)) {
+    if (rowClickHandler.isRowSelected(item.id)) {
       row.classList.add("selected");
       row.querySelector("input[type=checkbox]").checked = true;
     }
