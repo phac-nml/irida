@@ -190,6 +190,7 @@ public class IridaResourceSupport {
 	 * 
 	 * @return a {@link RemoteStatus}
 	 */
+	@JsonIgnore
 	public RemoteStatus getRemoteStatus() {
 		return null;
 	}

@@ -3,10 +3,19 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +31,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Lists;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Integration tests for testing out Announcements
@@ -191,7 +189,7 @@ public class AnnouncementServiceImplIT {
     @Test
     @WithMockUser (username = "admin", roles = "ADMIN")
     public void testGetReadUsersForAnnouncement() {
-        List<Join<Announcement, User>> list = announcementService.getReadUsersForAnnouncement(announcementService.read(1L));
+        List<AnnouncementUserJoin> list = announcementService.getReadUsersForAnnouncement(announcementService.read(1L));
         assertEquals("Number of read users was unexpected", 4, list.size());
     }
 
@@ -207,7 +205,7 @@ public class AnnouncementServiceImplIT {
     public void testGetReadAnnouncementsForUser() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userService.getUserByUsername(auth.getName());
-        List<Join<Announcement, User>> readList = announcementService.getReadAnnouncementsForUser(user);
+        List<AnnouncementUserJoin> readList = announcementService.getReadAnnouncementsForUser(user);
 
         assertEquals("Number of read announcements doesn't match expected value", 5, readList.size());
     }
