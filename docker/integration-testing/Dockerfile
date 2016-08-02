@@ -2,9 +2,9 @@
 #
 #
 
-FROM apetkau/snvphyl-galaxy-0.3
+FROM apetkau/snvphyl-galaxy-1.0
 
-MAINTAINER John Curatcha, jcuratcha_@live.com
+MAINTAINER Aaron Petkau, aaron.petkau@gmail.com
 
 ENV GALAXY_CONFIG_BRAND Irida Integration Testing
 
