@@ -373,9 +373,9 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public DatatablesResponse<ProjectSampleModel> getProjectSamples(@PathVariable Long projectId,
 			@DatatablesParams DatatablesCriterias criterias,
-			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
-			@RequestParam(required = false, defaultValue = "") List<Long> associated,
-			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false) List<String> sampleNames,
+			@RequestParam(required = false) List<Long> associated,
+			@RequestParam(required = false) String name,
 			@RequestParam(required = false) Long minDate,
 			@RequestParam(required = false) Long endDate) {
 		List<Project> projects = new ArrayList<>();
@@ -851,9 +851,9 @@ public class ProjectSamplesController {
 			@PathVariable Long projectId,
 			@RequestParam(value = "dtf") String type,
 			@DatatablesParams DatatablesCriterias criterias,
-			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
-			@RequestParam(required = false, defaultValue = "") List<Long> associated,
-			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false) List<String> sampleNames,
+			@RequestParam(required = false) List<Long> associated,
+			@RequestParam(required = false) String name,
 			@RequestParam(required = false) Long minDate,
 			@RequestParam(required = false) Long endDate,
 			HttpServletRequest request,

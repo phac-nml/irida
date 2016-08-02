@@ -30,18 +30,11 @@
   }());
 
   var AssociatedProjectsController = (function () {
-    var scope;
-    function AssociatedProjectsController($rootScope) {
-      this.visible = [];
+    var scope, sampleService, visible = [];
+    function AssociatedProjectsController($rootScope, SampleService) {
       scope = $rootScope;
+      sampleService = SampleService;
     }
-    AssociatedProjectsController.prototype.updateSamplesTable = function () {
-      var params = "";
-      this.visible.forEach(function (p) {
-        params += "&associated=" + p;
-      });
-      oTable_samplesTable.ajax.url(page.urls.samples.project + '/?' + params).load();
-    };
 
     /**
      * This method is used to display / hide an associated project in the table.
@@ -60,19 +53,18 @@
       $event.stopImmediatePropagation();
       var target   = $($event.currentTarget),
           id       = target.data("id"), // This is the id for the project.
-          index    = this.visible.indexOf(id), // Checking to see if the selected project is currently visible
+          index    = visible.indexOf(id), // Checking to see if the selected project is currently visible
           checkbox = $(target.find("input:checkbox")); // Find the checkbox so we can select it later.
       if (index > -1) {
-        this.visible.splice(index, 1);
+        visible.splice(index, 1);
         checkbox.prop('checked', false);
       }
       else {
-        this.visible.push(id);
+        visible.push(id);
         checkbox.prop('checked', true);
       }
-      this.updateSamplesTable();
-
-      scope.$broadcast('ASSOCIATED_PROJECTS_CHANGE', {count: this.visible.length});
+      sampleService.updateAssociatedProjects(visible);
+      scope.$broadcast('ASSOCIATED_PROJECTS_CHANGE', {count: visible.length});
     };
 
     return AssociatedProjectsController;
@@ -301,7 +293,7 @@
       .directive('filterByFile', ["$parse", filterByFile])
       .directive('samplesFilter', [samplesFilter])
       .directive('filteredTags', [filteredTags])
-    .controller('AssociatedProjectsController', ["$rootScope", AssociatedProjectsController])
+    .controller('AssociatedProjectsController', ["$rootScope", "SampleService", AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
   ;
 }(window.angular, window.PAGE));
