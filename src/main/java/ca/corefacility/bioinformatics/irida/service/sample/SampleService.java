@@ -94,52 +94,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 			Direction order, String... sortProperties);
 
 	/**
-	 * Search a {@link List} of {@link Project}s for samples that meet a filter criteria.
-	 *
-	 * @param projects
-	 * 		{@link List} of {@link Project}s
-	 * @param name
-	 * 		{@link String} to search for {@link Sample} that have the term in their name.
-	 * @param minDate
-	 * 		Minimum {@link Date} the project was modified.
-	 * @param maxDate
-	 * 		Maximum {@link Date} the project was modified.
-	 * @param currentPage
-	 * 		{@link Integer} the current page of the datatable.
-	 * @param pageSize
-	 * 		{@link Integer} the number of {@link Sample}s to display in datatable.
-	 * @param direction
-	 * 		{@link Sort.Direction} to sort the list.
-	 * @param sortProperty
-	 * 		{@link String} the property of the {@link Sample} to sort the list by.
-	 *
-	 * @return {@link Page} of {@link ProjectSampleJoin}
-	 */
-	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, String name, Date minDate,
-			Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
-
-	/**
-	 * Get the {@link Sample}s for a {@link List} of {@link Project}s filtered by generic search term
-	 *
-	 * @param projects
-	 * 		{@link List} of {@link Project}s
-	 * @param searchString
-	 * 		{@link String} to search the attribute of the {@link Sample}
-	 * @param currentPage
-	 * 		{@link Integer} the current page of the datatable.
-	 * @param pageSize
-	 * 		{@link Integer} the number of {@link Sample}s to display in datatable.
-	 * @param direction
-	 * 		{@link Sort.Direction} to sort the list.
-	 * @param sortProperty
-	 * 		{@link String} the property of the {@link Sample} to sort the list by.
-	 *
-	 * @return {@link Page} of {@link ProjectSampleJoin}
-	 */
-	public Page<ProjectSampleJoin> getSearchedSamplesForProjects(List<Project> projects, String searchString,
-			int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
-
-	/**
 	 * Get the {@link Sample} for the given ID
 	 * 
 	 * @param project
@@ -229,23 +183,29 @@ public interface SampleService extends CRUDService<Long, Sample> {
 			ReferenceFile referenceFile) throws SequenceFileAnalysisException;
 
 	/**
-	 * Get a {@link} {@link ProjectSampleJoin} that is filtered on a list of sample names
+	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering criteria.
 	 *
-	 * @param project
-	 * 		the {@link Project} containing the {@link Sample}s
+	 * @param projects
+	 * 		{@link List} of {@link Project} the {@link Sample}s must be found within.
 	 * @param sampleNames
-	 * 		{@link List} of {@link String} sample names to filter on.
+	 * 		{@link List} of {@link String} of Sample names to search
+	 * @param searchTerm
+	 * 		{@link String} search term to search for.
+	 * @param minDate
+	 * 		{@link Date} minimum date the sample was modified.
+	 * @param maxDate
+	 * 		{@link Date} maximum date the sample was modified.
 	 * @param currentPage
-	 * 		{@link Integer} the current page in the table
+	 * 		{@link Integer} the current page the table is on.
 	 * @param pageSize
-	 * 		{@link Integer} the size of the current page
+	 * 		{@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
 	 * @param direction
-	 * 		{@link Sort.Direction} direction the page is sorted
+	 * 		{@link Sort.Direction} the direction of the sort for the {@link Page}.
 	 * @param sortProperty
-	 * 		{@link String} the column the page is sorted on.
+	 * 		{@link String} the attribute of the {@link ProjectSampleJoin} to sort by.
 	 *
-	 * @return {@link Page} of {@link ProjectSampleJoin}
+	 * @return
 	 */
-	public Page<ProjectSampleJoin> findSampleByNameInProject(Project project, List<String> sampleNames, int currentPage,
-			int pageSize, Sort.Direction direction, String sortProperty);
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames, String searchTerm,
+			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
 }

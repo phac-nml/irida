@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.specification;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
@@ -19,68 +20,52 @@ import com.google.common.base.Strings;
  * Specification for searching and filtering {@link ProjectSampleJoin} properties
  */
 public class ProjectSampleSpecification {
+
 	/**
-	 * Search a {@link List} of {@link Project}s for {@link Sample}s that attributes contain the search term.
+	 * Search a {@link Project} and it's associated {@link Project}s for {@link Sample}s based on filtering criteria.
 	 *
 	 * @param projects
-	 * 		a {@link List} of {@link Project}s
+	 * 		{@link List} of {@link Project} the {@link Sample}s must be found within.
+	 * @param sampleNames
+	 * 		{@link List} of {@link String} of Sample names to search
 	 * @param searchTerm
-	 * 		{@link String} term to search the {@link Sample} attributes for
-	 *
-	 * @return
-	 */
-	public static Specification<ProjectSampleJoin> searchProjectSamples(List<Project> projects, String searchTerm) {
-		return (root, criteriaQuery, criteriaBuilder) -> {
-			List<Predicate> predicateList = new ArrayList<>();
-			Expression<Project> projectExpression = root.get("project");
-
-			// Check to see if the search term matches any of the appropriate attributes.
-			predicateList.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + searchTerm + "%"));
-
-			return criteriaBuilder.and(
-					// This is a check to see if the project is in the list of projects requested.
-					projectExpression.in(projects),
-					// Search the necessary fields.
-					criteriaBuilder.or(predicateList.toArray(new Predicate[predicateList.size()])
-					));
-		};
-	}
-
-	/**
-	 * Filter a {@link List} of {@link Project}s for {@link Sample}s whose attributes contain the filtered terms.
-	 * @param projects
-	 * 		{@link List} of {@link Project}s
-	 * @param name
-	 * 		{@link String} to search for {@link Sample} that have the term in their name.
+	 * 		{@link String} search term to search for.
 	 * @param minDate
-	 * 		Minimum {@link Date} the project was modified.
+	 * 		{@link Date} minimum date the sample was modified.
 	 * @param maxDate
-	 * 		Maximum {@link Date} the project was modified.
-	 * @return
+	 * 		{@link Date} maximum date the sample was modified.
+	 *
+	 * @return {@link Specification} of {@link ProjectSampleJoin} for criteria to search based on the filtered criteria.
 	 */
-	public static Specification<ProjectSampleJoin> filterProjectSamples(List<Project> projects, String name,
-			Date minDate, Date maxDate) {
+	public static Specification<ProjectSampleJoin> getSamples(List<Project> projects, List<String> sampleNames,
+			String searchTerm, Date minDate, Date maxDate) {
 		return (root, criteriaQuery, criteriaBuilder) -> {
-			List<Predicate> predicateList = new ArrayList<>();
-			Expression<Project> exp = root.get("project");
+			List<Predicate> predicates = new ArrayList<>();
 
-			// This is a check to see if the project is in the list of projects requested.
-			predicateList.add(exp.in(projects));
+			// Make sure the project is in the list of project requested;
+			Expression<Project> projectExpression = root.get("project");
+			predicates.add(projectExpression.in(projects));
 
-			if (!Strings.isNullOrEmpty(name)) {
-				predicateList
-						.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + name + "%"));
+			// Check to see if the sampleNames are in the samples
+			predicates.addAll(sampleNames.stream()
+					.map(name -> criteriaBuilder.equal(root.get("sample").get("sampleName"), name))
+					.collect(Collectors.toList()));
+
+			// Check for the table search
+			if (!Strings.isNullOrEmpty(searchTerm)) {
+				predicates.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + searchTerm + "%"));
 			}
+			// Check if there is a minimum search date
 			if (minDate != null) {
-				predicateList.add(criteriaBuilder.greaterThanOrEqualTo(
+				predicates.add(criteriaBuilder.greaterThanOrEqualTo(
 						root.get("sample").get("modifiedDate"), minDate));
 			}
 			if (maxDate != null) {
-				predicateList.add(criteriaBuilder
+				predicates.add(criteriaBuilder
 						.lessThanOrEqualTo(root.get("sample").get("modifiedDate"), maxDate));
 			}
-			if (predicateList.size() > 0) {
-				return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+			if (predicates.size() > 0) {
+				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
 			} else {
 				return null;
 			}

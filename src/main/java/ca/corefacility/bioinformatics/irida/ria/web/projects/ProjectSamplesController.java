@@ -389,23 +389,9 @@ public class ProjectSamplesController {
 		// Convert the criterias into a more usable format.
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
 
-		final Page<ProjectSampleJoin> page;
-		if (!sampleNames.isEmpty()) {
-			Project project = projectService.read(projectId);
-			page = sampleService
-					.findSampleByNameInProject(project, sampleNames, utils.getCurrentPage(), utils.getPageSize(),
-							utils.getSortDirection(), utils.getSortProperty());
-		} else if (!Strings.isNullOrEmpty(utils.getSearch())) {
-			// Generic search required.
-			page = sampleService.getSearchedSamplesForProjects(projects, utils.getSearch(), utils.getCurrentPage(),
-					utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
-		}
-		else{
-			// No search term, therefore filter on the attributes
-			page = sampleService
-					.getFilteredSamplesForProjects(projects, utils.getName(), utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(),
-							utils.getPageSize(), utils.getSortDirection(), utils.getSortProperty());
-		}
+		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, utils.getSearch(),
+				utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(),
+				utils.getSortDirection(), utils.getSortProperty());
 
 		// Create a more usable Map of the sample data.
 		List<ProjectSampleModel> models = page.getContent().stream().map(ProjectSampleModel::new)
@@ -464,7 +450,7 @@ public class ProjectSamplesController {
 	 * 		the sample identifiers to copy
 	 * @param newProjectId
 	 * 		The new project id
-	 * @param removeFromOriginal
+	 * @param remove
 	 * 		true/false whether to remove the samples from the original project
 	 * @param locale
 	 * 		the locale specified by the browser.
@@ -861,36 +847,19 @@ public class ProjectSamplesController {
 			Locale locale) {
 
 		Project project = projectService.read(projectId);
-		List<Project> projectList = new ArrayList<>();
+		List<Project> projects = new ArrayList<>();
 		List<Sample> samples = new ArrayList<>();
 
 		if (!associated.isEmpty()) {
-			projectList = (List<Project>) projectService.readMultiple(associated);
+			projects = (List<Project>) projectService.readMultiple(associated);
 		}
-		projectList.add(project);
+		projects.add(project);
 
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
 
-		final int MAX_EXPORT_LENGTH = Integer.MAX_VALUE;
-		// Check to see if it is filtered by a list
-		Page<ProjectSampleJoin> page;
-		if (!sampleNames.isEmpty()) {
-			page = sampleService.findSampleByNameInProject(project, sampleNames, 0, MAX_EXPORT_LENGTH,
-					utils.getSortDirection(), utils.getSortProperty());
-		} else if(!Strings.isNullOrEmpty(utils.getSearch())) {
-			page = sampleService.getSearchedSamplesForProjects(
-					projectList,
-					utils.getSearch(),
-					0,
-					MAX_EXPORT_LENGTH,
-					utils.getSortDirection(),
-					utils.getSortProperty()
-			);
-		} else {
-			page = sampleService
-					.getFilteredSamplesForProjects(projectList, utils.getName(), utils.getMinDate(), utils.getEndDate(), 0,
-							MAX_EXPORT_LENGTH, utils.getSortDirection(), utils.getSortProperty());
-		}
+		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, utils.getSearch(),
+				utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE,
+				utils.getSortDirection(), utils.getSortProperty());
 
 		if (page != null) {
 			try {
