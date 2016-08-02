@@ -373,11 +373,11 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public DatatablesResponse<ProjectSampleModel> getProjectSamples(@PathVariable Long projectId,
 			@DatatablesParams DatatablesCriterias criterias,
-			@RequestParam(required = false) List<String> sampleNames,
-			@RequestParam(required = false) List<Long> associated,
-			@RequestParam(required = false) String name,
-			@RequestParam(required = false) Long minDate,
-			@RequestParam(required = false) Long endDate) {
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") Long minDate,
+			@RequestParam(required = false, defaultValue = "") Long endDate) {
 		List<Project> projects = new ArrayList<>();
 		// Check to see if any associated projects need to be added to the query.
 		if (!associated.isEmpty()) {
@@ -837,11 +837,11 @@ public class ProjectSamplesController {
 			@PathVariable Long projectId,
 			@RequestParam(value = "dtf") String type,
 			@DatatablesParams DatatablesCriterias criterias,
-			@RequestParam(required = false) List<String> sampleNames,
-			@RequestParam(required = false) List<Long> associated,
-			@RequestParam(required = false) String name,
-			@RequestParam(required = false) Long minDate,
-			@RequestParam(required = false) Long endDate,
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") Long minDate,
+			@RequestParam(required = false, defaultValue = "") Long endDate,
 			HttpServletRequest request,
 			HttpServletResponse response,
 			Locale locale) {

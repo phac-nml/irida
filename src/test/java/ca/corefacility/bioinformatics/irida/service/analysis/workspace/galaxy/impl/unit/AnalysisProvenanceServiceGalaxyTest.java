@@ -202,6 +202,65 @@ public class AnalysisProvenanceServiceGalaxyTest {
 		final ToolExecution predecessor = toolExecution.getPreviousSteps().iterator().next();
 		assertTrue("predecessor step is input step.", predecessor.isInputTool());
 	}
+	
+	@Test
+	public void testBuildSingleStepToolExecutionListParameters() throws ExecutionManagerException {
+		final HistoryContents hc = new HistoryContents();
+		hc.setName(FILENAME);
+		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
+		hcp.setParameters(ImmutableMap.<String, Object>builder()
+				.put("akey", "[\"avalue\"]")
+				.put("akey2", Lists.newArrayList("avalue2"))
+				.put("akey3", "[]")
+				.put("akey4", Lists.newArrayList())
+				.put("akey5", "[\"avalue5.1\", \"avalue5.2\"]")
+				.put("akey6", Lists.newArrayList("avalue6.1", "avalue6.2")).build());
+		final JobDetails jd = new JobDetails();
+		jd.setCommandLine("");
+		when(galaxyHistoriesService.showHistoryContents(any(String.class))).thenReturn(Lists.newArrayList(hc));
+		when(galaxyHistoriesService.showProvenance(any(String.class), any(String.class))).thenReturn(hcp);
+		when(toolsClient.showTool(any(String.class))).thenReturn(new Tool());
+		when(jobsClient.showJob(any(String.class))).thenReturn(jd);
+		final ToolExecution toolExecution = provenanceService.buildToolExecutionForOutputFile(analysisSubmission(),
+				analysisOutputFile());
+		assertTrue("tool execution should have the specified parameter.", toolExecution.getExecutionTimeParameters()
+				.containsKey("akey"));
+		assertEquals("tool execution parameter should be specified value.", "[avalue]", toolExecution
+				.getExecutionTimeParameters().get("akey"));
+		assertTrue("tool execution should have the specified parameter.", toolExecution.getExecutionTimeParameters()
+				.containsKey("akey2"));
+		assertEquals("tool execution parameter should be specified value.", "[avalue2]", toolExecution
+				.getExecutionTimeParameters().get("akey2"));
+		assertEquals("tool execution parameter should be specified value.", "[]", toolExecution
+				.getExecutionTimeParameters().get("akey3"));
+		assertEquals("tool execution parameter should be specified value.", "[]", toolExecution
+				.getExecutionTimeParameters().get("akey4"));
+		assertEquals("tool execution parameter should be specified value.", "[avalue5.1, avalue5.2]", toolExecution
+				.getExecutionTimeParameters().get("akey5"));
+		assertEquals("tool execution parameter should be specified value.", "[avalue6.1, avalue6.2]", toolExecution
+				.getExecutionTimeParameters().get("akey6"));
+		assertTrue("Tool execution should be considered input step, no predecessors.", toolExecution.isInputTool());
+	}
+	
+	@Test
+	public void testBuildSingleStepToolExecutionStrangeDataStructureDoToString() throws ExecutionManagerException {
+		final HistoryContents hc = new HistoryContents();
+		hc.setName(FILENAME);
+		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
+		hcp.setParameters(ImmutableMap.of("akey", "[[\"avalue\"]]"));
+		final JobDetails jd = new JobDetails();
+		jd.setCommandLine("");
+		when(galaxyHistoriesService.showHistoryContents(any(String.class))).thenReturn(Lists.newArrayList(hc));
+		when(galaxyHistoriesService.showProvenance(any(String.class), any(String.class))).thenReturn(hcp);
+		when(toolsClient.showTool(any(String.class))).thenReturn(new Tool());
+		when(jobsClient.showJob(any(String.class))).thenReturn(jd);
+		final ToolExecution toolExecution = provenanceService.buildToolExecutionForOutputFile(analysisSubmission(),
+				analysisOutputFile());
+		assertTrue("tool execution should have the specified parameter.", toolExecution.getExecutionTimeParameters()
+				.containsKey("akey"));
+		assertEquals("tool execution parameter should be specified value.", "[[\"avalue\"]]", toolExecution
+				.getExecutionTimeParameters().get("akey"));
+	}
 
 	private String analysisSubmission() {
 		return UUID.randomUUID().toString();
