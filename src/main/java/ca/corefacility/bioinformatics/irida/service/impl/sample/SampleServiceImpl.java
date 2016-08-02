@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.service.impl.sample;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
