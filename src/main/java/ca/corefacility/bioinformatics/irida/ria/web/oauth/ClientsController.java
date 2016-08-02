@@ -31,17 +31,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 /**
  * Controller for all {@link IridaClientDetails} related views
@@ -68,8 +68,33 @@ public class ClientsController extends BaseController {
 
 	private final List<String> AVAILABLE_GRANTS = Lists.newArrayList("password", "authorization_code");
 
-	private final List<Integer> AVAILABLE_TOKEN_VALIDITY = Lists.newArrayList(1800, 3600, 7200, 21600, 43200, 86400,
-			172800, 604800);
+	private final List<Integer> AVAILABLE_TOKEN_VALIDITY = Lists.newArrayList(
+			// 30 minutes
+			1800,
+			// 1 hour
+			3600,
+			// 2 hours
+			7200,
+			// 6 hours
+			21600,
+			// 12 hours
+			43200,
+			// 1 day
+			86400,
+			// 2 days
+			172800,
+			// 7 days
+			604800);
+
+	private final List<Integer> AVAILABLE_REFRESH_TOKEN_VALIDITY = Lists.newArrayList(
+			// 7 days
+			604800,
+			// 1 month
+			2592000,
+			// 3 months
+			7776000,
+			// 6 months
+			15552000);
 
 	@Autowired
 	public ClientsController(IridaClientDetailsService clientDetailsService, MessageSource messageSource) {
@@ -162,6 +187,10 @@ public class ClientsController extends BaseController {
 			model.addAttribute("given_scope_auto_" + autoScope,true);
 		}
 		
+		if(client.getAuthorizedGrantTypes().contains("refresh_token")){
+			model.addAttribute("refresh", true);
+		}
+		
 		getAddClientPage(model);
 
 		return EDIT_CLIENT_PAGE;
@@ -201,6 +230,8 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String scope_write,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
+			@RequestParam(required = false, defaultValue = "") String refresh,
+			@RequestParam(required = false, defaultValue = "0") Integer refreshTokenValidity,
 			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
 		IridaClientDetails readClient = clientDetailsService.read(clientId);
 
@@ -208,7 +239,7 @@ public class ClientsController extends BaseController {
 			readClient.setAccessTokenValiditySeconds(accessTokenValiditySeconds);
 		}
 		if (!Strings.isNullOrEmpty(authorizedGrantTypes)) {
-			readClient.setAuthorizedGrantTypes(ImmutableSet.of(authorizedGrantTypes));
+			readClient.setAuthorizedGrantTypes(Sets.newHashSet(authorizedGrantTypes));
 		}
 
 		Set<String> scopes = new HashSet<>();
@@ -232,6 +263,16 @@ public class ClientsController extends BaseController {
 		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();;
 			readClient.setClientSecret(clientSecret);
+		}
+		
+		if (refresh.equals("refresh")) {
+			readClient.getAuthorizedGrantTypes().add("refresh_token");
+		} else {
+			readClient.getAuthorizedGrantTypes().remove("refresh_token");
+		}
+		
+		if(refreshTokenValidity != 0){
+			readClient.setRefreshTokenValiditySeconds(refreshTokenValidity);
 		}
 
 		String response;
@@ -263,11 +304,14 @@ public class ClientsController extends BaseController {
 		model.addAttribute("available_grants", AVAILABLE_GRANTS);
 
 		model.addAttribute("available_token_validity", AVAILABLE_TOKEN_VALIDITY);
+		model.addAttribute("available_refresh_token_validity", AVAILABLE_REFRESH_TOKEN_VALIDITY);
 
 		// set the default token validity
 		if (!model.containsAttribute("given_tokenValidity")) {
 			model.addAttribute("given_tokenValidity", IridaClientDetails.DEFAULT_TOKEN_VALIDITY);
 		}
+		
+		model.addAttribute("refresh_validity", IridaClientDetails.DEFAULT_REFRESH_TOKEN_VALIDITY);
 
 		return ADD_CLIENT_PAGE;
 	}
@@ -299,7 +343,8 @@ public class ClientsController extends BaseController {
 			@RequestParam(required = false, defaultValue = "") String scope_read,
 			@RequestParam(required = false, defaultValue = "") String scope_write,
 			@RequestParam(required = false, defaultValue = "") String scope_auto_read,
-			@RequestParam(required = false, defaultValue = "") String scope_auto_write,Model model, Locale locale) {
+			@RequestParam(required = false, defaultValue = "") String scope_auto_write,
+			@RequestParam(required = false, defaultValue = "") String refresh, Model model, Locale locale) {
 		client.setClientSecret(generateClientSecret());
 
 		Set<String> autoScopes = new HashSet<>();
@@ -317,9 +362,15 @@ public class ClientsController extends BaseController {
 				autoScopes.add("read");
 			}
 		}
+		
+		if(refresh.equals("refresh")){
+			client.getAuthorizedGrantTypes().add("refresh_token");
+		}
 
 		client.setScope(scopes);
 		client.setAutoApprovableScopes(autoScopes);
+		
+		
 
 		String responsePage = null;
 		try {

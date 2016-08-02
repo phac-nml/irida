@@ -38,14 +38,19 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 	public AnalysisOutputFile getPhylogeneticTreeStats() {
 		return getAnalysisOutputFile("tree-stats");
 	}
+	
+	@JsonIgnore
+	public AnalysisOutputFile getSnvAlign() {
+		return getAnalysisOutputFile("alignment");
+	}
 
 	@JsonIgnore
-	public AnalysisOutputFile getSnpMatrix() {
+	public AnalysisOutputFile getSnvMatrix() {
 		return getAnalysisOutputFile("matrix");
 	}
 
 	@JsonIgnore
-	public AnalysisOutputFile getSnpTable() {
+	public AnalysisOutputFile getSnvTable() {
 		return getAnalysisOutputFile("table");
 	}
 	

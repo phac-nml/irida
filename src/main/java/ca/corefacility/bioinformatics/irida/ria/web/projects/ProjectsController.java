@@ -58,16 +58,24 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
@@ -90,6 +98,7 @@ public class ProjectsController {
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
+	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
@@ -105,7 +114,9 @@ public class ProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
-
+	private final ProjectRemoteService projectRemoteService;
+	private RemoteAPIService remoteApiService;
+	
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 
@@ -128,15 +139,17 @@ public class ProjectsController {
 
 
 	@Autowired
-	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService, MessageSource messageSource) {
+	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService, ProjectRemoteService projectRemoteService,
+			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService, RemoteAPIService remoteApiService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
+		this.projectRemoteService = projectRemoteService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.messageSource = messageSource;
+		this.remoteApiService = remoteApiService;
 		this.fileSizeConverter = new FileSizeConverter();
 	}
 
@@ -222,11 +235,12 @@ public class ProjectsController {
 	 * @return name of the project settings page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings")
-	@PreAuthorize("hasPermission(#projectId, 'isProjectOwner')")
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public String getProjectSettingsPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project settings for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		return PROJECT_SETTINGS_PAGE;
@@ -244,13 +258,16 @@ public class ProjectsController {
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
-	@PreAuthorize("hasPermission(#projectId, 'isProjectOwner')")
 	@ResponseBody
 	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
 			final Model model, Locale locale) {
 		Project read = projectService.read(projectId);
-		read.setAssembleUploads(assemble);
-		projectService.update(read);
+		
+		Map<String,Object> updates = new HashMap<>();
+		updates.put("assembleUploads", assemble);
+		
+		projectService.updateProjectSettings(read, updates);
+		
 
 		String message = null;
 		if (assemble) {
@@ -262,6 +279,77 @@ public class ProjectsController {
 		}
 
 		return ImmutableMap.of("result", message);
+	}
+
+	/**
+	 * Update the project sync settings
+	 * 
+	 * @param projectId
+	 *            the project id to update
+	 * @param frequency
+	 *            the sync frequency to set
+	 * @param forceSync
+	 *            Set the project's sync status to MARKED
+	 * @param changeUser
+	 *            update the user on a remote project to the current logged in
+	 *            user
+	 * @param principal
+	 *            The current logged in user
+	 * @param locale
+	 *            user's locale
+	 * @return result message if successful
+	 */
+	@RequestMapping(value = "/projects/{projectId}/settings/sync", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> updateProjectSyncSettings(@PathVariable Long projectId,
+			@RequestParam(required = false) ProjectSyncFrequency frequency,
+			@RequestParam(required = false, defaultValue = "false") boolean forceSync,
+			@RequestParam(required = false, defaultValue = "false") boolean changeUser, Principal principal,
+			Locale locale) {
+		Project read = projectService.read(projectId);
+		RemoteStatus remoteStatus = read.getRemoteStatus();
+
+		Map<String, Object> updates = new HashMap<>();
+		
+		String message = null;
+		String error = null;
+
+		if (frequency != null) {
+			updates.put("syncFrequency", frequency);
+			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
+		}
+
+		if (forceSync) {
+			remoteStatus.setSyncStatus(SyncStatus.MARKED);
+			updates.put("remoteStatus", remoteStatus);
+			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
+		}
+
+		if (changeUser) {
+			// ensure the user can read the project
+			try{
+				projectRemoteService.read(remoteStatus.getURL());
+				
+				User user = userService.getUserByUsername(principal.getName());
+				remoteStatus.setReadBy(user);
+				updates.put("remoteStatus", remoteStatus);
+				message = messageSource.getMessage("project.settings.notifications.sync.userchange", new Object[] {}, locale);
+			}catch(Exception ex){
+				error = messageSource.getMessage("project.settings.notifications.sync.userchange.error", new Object[] {}, locale);
+			}
+		}
+
+		projectService.updateProjectSettings(read, updates);
+		
+		Map<String,String> response;
+		if(error == null){
+			response = ImmutableMap.of("result", message);
+		}
+		else{
+			response = ImmutableMap.of("error", error);
+		}
+
+		return response;
 	}
 
 	/**
@@ -278,6 +366,77 @@ public class ProjectsController {
 			model.addAttribute("errors", new HashMap<>());
 		}
 		return CREATE_NEW_PROJECT_PAGE;
+	}
+	
+	/**
+	 * Get the page to synchronize remote projects
+	 * 
+	 * @param model
+	 *            Model to render for view
+	 * @return Name of the project sync page
+	 */
+	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
+	public String getSynchronizeProjectPage(final Model model) {
+		
+		Iterable<RemoteAPI> apis = remoteApiService.findAll();
+		model.addAttribute("apis",apis);
+		model.addAttribute("frequencies", ProjectSyncFrequency.values());
+		model.addAttribute("defaultFrequency", ProjectSyncFrequency.WEEKLY);
+		
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<>());
+		}
+		
+		return SYNC_NEW_PROJECT_PAGE;
+	}
+
+	/**
+	 * Get a {@link Project} from a remote api and mark it to be synchronized in
+	 * this IRIDA installation
+	 * 
+	 * @param url
+	 *            the URL of the remote project
+	 * @return Redirect to the new project. If an oauth exception occurs it will
+	 *         be forwarded back to the creation page.
+	 */
+	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
+	public String syncProject(@RequestParam String url, @RequestParam ProjectSyncFrequency syncFrequency, Model model) {
+
+		try {
+			Project read = projectRemoteService.read(url);
+			read.setId(null);
+			read.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+			read.setSyncFrequency(syncFrequency);
+
+			read = projectService.create(read);
+
+			return "redirect:/projects/" + read.getId() + "/metadata";
+		} catch (IridaOAuthException ex) {
+			Map<String, String> errors = new HashMap<>();
+			errors.put("oauthError", ex.getMessage());
+			model.addAttribute("errors", errors);
+			return getSynchronizeProjectPage(model);
+		} catch (EntityNotFoundException ex) {
+			Map<String, String> errors = new HashMap<>();
+			errors.put("urlError", ex.getMessage());
+			model.addAttribute("errors", errors);
+			return getSynchronizeProjectPage(model);
+		}
+	}
+	
+	/**
+	 * List all the {@link Project}s that can be read for a user from a given
+	 * {@link RemoteAPI}
+	 * 
+	 * @param apiId
+	 *            the local ID of the {@link RemoteAPI}
+	 * @return a List of {@link Project}s
+	 */
+	@RequestMapping(value = "/projects/ajax/api/{apiId}")
+	@ResponseBody
+	public List<Project> ajaxGetProjectsForApi(@PathVariable Long apiId) {
+		RemoteAPI api = remoteApiService.read(apiId);
+		return projectRemoteService.listProjectsForAPI(api);
 	}
 
 	/**
@@ -662,6 +821,7 @@ public class ProjectsController {
 		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
 		map.put("createdDate", project.getCreatedDate());
 		map.put("modifiedDate", project.getModifiedDate());
+		map.put("remote", project.isRemote());
 
 		return map;
 	}

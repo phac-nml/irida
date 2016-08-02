@@ -11,6 +11,12 @@ Learn IRIDA
 
 The IRIDA platform is composed of several different applications. Most users of IRIDA will use the web interface for managing and organizing their sequencing data, and for launching analytical pipelines on their data. Some advanced users of IRIDA might want to export their data to a separate instance of Galaxy or directly to the Linux command-line for more in-depth analysis. Administrative users and laboratory technicians will run tools for adding data to IRIDA from sequencing instruments.
 
+#### Quick Links
+{:.no_toc}
+**[User Guide][user]**
+
+**[Administrator Guide][admin]**
+
 * TOC
 {:toc}
 

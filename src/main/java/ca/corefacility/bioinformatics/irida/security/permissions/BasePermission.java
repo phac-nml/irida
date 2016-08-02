@@ -108,6 +108,13 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 			throw new IllegalArgumentException("Parameter to " + getClass().getName() + " must be of type Long or "
 					+ domainObjectType.getName() + ".");
 		}
+		
+		/**
+		 * If it's allowed fast pass for administrators
+		 */
+		if(adminAccessAllowed(authentication, domainObject) && authentication.getAuthorities().stream().anyMatch(g -> g.getAuthority().equals(ADMIN_AUTHORITY))){
+			return true;
+		}
 
 		return customPermissionAllowed(authentication, domainObject);
 	}
@@ -144,11 +151,6 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 	 * @return true if the action is allowed, false otherwise.
 	 */
 	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
-		// fast pass for administrators -- administrators are allowed to access
-		// everything.
-		if (authentication.getAuthorities().stream().anyMatch(g -> g.getAuthority().equals(ADMIN_AUTHORITY))) {
-			return true;
-		}
 		
 		// fast fail on anonymous users:
 		if (authentication instanceof AnonymousAuthenticationToken) {
@@ -160,5 +162,19 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 		} else {
 			return customPermissionAllowedSingleObject(authentication, targetDomainObject);
 		}
+	}
+	
+	/**
+	 * Check whether admins should be quick-approved for this permission. This
+	 * may be overridden for special cases
+	 * 
+	 * @param authentication
+	 *            The authentication of the logged in user
+	 * @param targetDomainObject
+	 *            the object that is being acted on
+	 * @return true of the admin should be approved
+	 */
+	protected boolean adminAccessAllowed(Authentication authentication, Object targetDomainObject) {
+		return true;
 	}
 }

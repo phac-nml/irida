@@ -17,6 +17,7 @@ import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -278,6 +279,7 @@ public class AnalysisFastQC extends Analysis {
 	 * 
 	 * @return a PNG-formatted byte array for per-base quality score.
 	 */
+	@JsonIgnore
 	public byte[] getPerBaseQualityScoreChart() {
 		return perBaseQualityScoreChart;
 	}
@@ -288,6 +290,7 @@ public class AnalysisFastQC extends Analysis {
 	 * 
 	 * @return a PNG-formatted byte array for per-sequence quality score.
 	 */
+	@JsonIgnore
 	public byte[] getPerSequenceQualityScoreChart() {
 		return perSequenceQualityScoreChart;
 	}
@@ -298,6 +301,7 @@ public class AnalysisFastQC extends Analysis {
 	 * 
 	 * @return a PNG-formatted byte array for duplication levels.
 	 */
+	@JsonIgnore
 	public byte[] getDuplicationLevelChart() {
 		return duplicationLevelChart;
 	}

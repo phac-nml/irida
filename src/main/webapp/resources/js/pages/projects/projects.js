@@ -12,7 +12,11 @@ var projectsTable = (function (tl) {
    */
   function createItemButton(data, type, full) {
     if (tl && tl.BASE_URL) {
-      return '<a class="item-link" title="' + data + '" href="' + tl.BASE_URL + 'projects/' + full.id + '"><span class="cell-width-200">' + data + '</span></a>';
+      var html = '<a class="item-link" title="' + data + '" href="' + tl.BASE_URL + 'projects/' + full.id + '"><span class="cell-width-200">' + data + '</span></a>';
+      if(full.remote == true){
+        html = html + '&nbsp;<i class="fa fa-exchange" aria-hidden="true"></i>';
+      }
+      return html;
     } else {
       return data;
     }

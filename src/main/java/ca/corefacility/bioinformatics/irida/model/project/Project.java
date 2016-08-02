@@ -8,12 +8,16 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,6 +36,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 
 /**
@@ -42,7 +48,8 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 @Table(name = "project")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Project extends IridaResourceSupport implements MutableIridaThing, IridaProject, Comparable<Project> {
+public class Project extends IridaResourceSupport
+		implements MutableIridaThing, IridaProject, Comparable<Project>, RemoteSynchronizable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -91,6 +98,14 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 	private List<RemoteRelatedProject> remoteRelatedProjects;
 
 	private String organism;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "remote_status")
+	private RemoteStatus remoteStatus;
+	
+	@Column(name = "sync_frequency")
+	@Enumerated(EnumType.STRING)
+	private ProjectSyncFrequency syncFrequency;
 
 	public Project() {
 		assembleUploads = false;
@@ -198,5 +213,21 @@ public class Project extends IridaResourceSupport implements MutableIridaThing, 
 		return assembleUploads;
 	}
 	
+	@Override
+	public RemoteStatus getRemoteStatus() {
+		return remoteStatus;
+	}
 	
+	@Override
+	public void setRemoteStatus(RemoteStatus remoteStatus) {
+		this.remoteStatus = remoteStatus;
+	}
+	
+	public ProjectSyncFrequency getSyncFrequency() {
+		return syncFrequency;
+	}
+
+	public void setSyncFrequency(ProjectSyncFrequency syncFrequency) {
+		this.syncFrequency = syncFrequency;
+	}
 }
