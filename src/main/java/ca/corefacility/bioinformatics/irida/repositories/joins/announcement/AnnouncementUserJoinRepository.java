@@ -27,7 +27,7 @@ public interface AnnouncementUserJoinRepository extends PagingAndSortingReposito
      *         link between announcement and user
      */
     @Query("select j from AnnouncementUserJoin j where j.user = ?1")
-    public List<Join<Announcement, User>> getAnnouncementsReadByUser(User user);
+    public List<AnnouncementUserJoin> getAnnouncementsReadByUser(User user);
 
     /**
      * Gets a collection of {@link Announcement}s that have not been marked as read by
@@ -62,7 +62,7 @@ public interface AnnouncementUserJoinRepository extends PagingAndSortingReposito
      *         link between announcement and user
      */
     @Query("select j from AnnouncementUserJoin j where j.announcement = ?1")
-    public List<Join<Announcement, User>> getUsersByAnnouncementRead(Announcement announcement);
+    public List<AnnouncementUserJoin> getUsersByAnnouncementRead(Announcement announcement);
 
     /**
      * Get a collection of the {@link User}s that have not read an {@link Announcement}
