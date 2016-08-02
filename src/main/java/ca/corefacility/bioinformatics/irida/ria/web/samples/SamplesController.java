@@ -243,7 +243,8 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
-	 * Redirect user to the project sequenceFile page.
+	 * Redirect user to the project sequenceFile page.  This was added to support links that previously
+	 * existed and may be bookmarked. These url require the "/sequenceFiles" to prevent loading errors.
 	 *
 	 * @param request{@link
 	 * 		HttpServletRequest}
