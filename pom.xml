@@ -823,6 +823,44 @@
 				</dependencies>
 			</plugin>
 
+			<!-- Generate tools-list.yml file to include in package -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${maven.exec.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>exec-jekyll-build</id>
+						<phase>site</phase>
+						<configuration>
+							<executable>jekyll</executable>
+							<workingDirectory>doc/</workingDirectory>
+							<arguments>
+								<argument>build</argument>
+								<argument>--config</argument>
+								<argument>_build-config.yml</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>exec-tools-list-export</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>ca.corefacility.bioinformatics.irida.util.ToolsListExporter</mainClass>
+							<arguments>
+								<argument>${project.build.directory}/classes/tools-list.yml</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- Maven WAR plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -879,42 +917,6 @@
 						<goals>
 							<goal>stop</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>${maven.exec.plugin.version}</version>
-				<executions>
-					<execution>
-						<id>exec-jekyll-build</id>
-						<phase>site</phase>
-						<configuration>
-							<executable>jekyll</executable>
-							<workingDirectory>doc/</workingDirectory>
-							<arguments>
-								<argument>build</argument>
-								<argument>--config</argument>
-								<argument>_build-config.yml</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>exec-tools-list-export</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<mainClass>ca.corefacility.bioinformatics.irida.util.ToolsListExporter</mainClass>
-							<arguments>
-								<argument>${project.build.directory}/classes/tools-list.yml</argument>
-							</arguments>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
