@@ -1,5 +1,0 @@
-strain	SampleB	SampleC	SampleA	reference	
-SampleB	0	2	1	1	
-SampleC	2	0	1	1	
-SampleA	1	1	0	0	
-reference	1	1	0	0	
