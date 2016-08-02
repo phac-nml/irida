@@ -12,6 +12,7 @@ Changes
 * [Developer]: Paths in the database (for sequence files, output files, references, remote) are stored as relative paths instead of absolute. This will make it easier to migrate filesystems in the future.
 * [UI]: Implemented a project synchronization feature to pull remote samples and data from other IRIDA installations.
 * [Developer]: Added FastQC metrics to the REST API
+* [Workflow]: Upgraded SNVPhyl from 0.3 to 1.0.
 
 1.0.0 to 0.11.0
 ---------------

@@ -80,9 +80,9 @@ public class AnalysisServiceImplIT {
 		assertFalse("file was stored in the wrong directory.",
 				pipeline.getPhylogeneticTree().getFile().startsWith(outputFileBaseDirectory));
 		assertFalse("file was stored in the wrong directory.",
-				pipeline.getSnpMatrix().getFile().startsWith(outputFileBaseDirectory));
+				pipeline.getSnvMatrix().getFile().startsWith(outputFileBaseDirectory));
 		assertFalse("file was stored in the wrong directory.",
-				pipeline.getSnpTable().getFile().startsWith(outputFileBaseDirectory));
+				pipeline.getSnvTable().getFile().startsWith(outputFileBaseDirectory));
 
 		Analysis analysis = analysisService.create(pipeline);
 
@@ -93,8 +93,8 @@ public class AnalysisServiceImplIT {
 		assertTrue("file was stored in the wrong directory.",
 				saved.getPhylogeneticTree().getFile().startsWith(outputFileBaseDirectory));
 		assertTrue("file was stored in the wrong directory.",
-				saved.getSnpMatrix().getFile().startsWith(outputFileBaseDirectory));
+				saved.getSnvMatrix().getFile().startsWith(outputFileBaseDirectory));
 		assertTrue("file was stored in the wrong directory.",
-				saved.getSnpTable().getFile().startsWith(outputFileBaseDirectory));
+				saved.getSnvTable().getFile().startsWith(outputFileBaseDirectory));
 	}
 }

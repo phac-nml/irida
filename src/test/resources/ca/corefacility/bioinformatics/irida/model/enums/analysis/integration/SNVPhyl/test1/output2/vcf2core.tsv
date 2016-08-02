@@ -1,0 +1,3 @@
+#Reference name	Total length	Total invalid and excluded positions	Total valid and included positions	Total valid and included positions in core genome	Percentage of valid and included positions in core genome	Percentage of all positions that are valid, included, and part of the core genome
+reference	700	N/A	700	50	7.14	7.14
+all	700	0	700	50	7.14	7.14
