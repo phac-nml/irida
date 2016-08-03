@@ -187,13 +187,9 @@ All sample modification actions require that samples be selected. You can select
 
 You can also select multiple samples at once by selecting a sample, pressing the shift key, and than selecting the last sample that you want selected.
 
-The select button will always indicate the total number of selected samples in the project as a numeral with a gray background.
+You can always see how many samples are selected at the top left of the samples table.
 
-When you click on the select button, you have the option to select samples by:
-
-* Page (selects all of the samples visible on your screen)
-* All (selects **all** samples in the project)
-* None (delesects all samples)
+![Selected sample counts.](images/selected-sample-count.png)
 
 ### Copying samples between projects
 
