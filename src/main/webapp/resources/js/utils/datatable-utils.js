@@ -64,11 +64,13 @@ var RowClickHandler = (function (page) {
   }
 
   function selectRow(row) {
-    var id = getRowId(row);
+    var id = getRowId(row),
+        cb = row.querySelector('input[type=checkbox]');
     // Check to make sure the row is not already selected.
     // Can occur during multi-select
     if (selected.indexOf(id) === -1) {
       row.classList.add("selected");
+      cb.checked = true;
       selected.push(id);
     }
   }
