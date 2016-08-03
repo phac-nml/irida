@@ -166,38 +166,26 @@ Example.  If my file contained and additional sample name `12-4598_a`  which doe
 Viewing associated samples
 --------------------------
 
-You can quickly create an aggregated view of all of the samples in this project with all of the samples from both local and remote associated projects. To view associated samples, click the "Display" button and select which samples you would also like to see in the view by clicking on "Associated Project Samples" or "Remote Project Samples". Project managers may choose which samples will appear here by [adding or removing associated projects](../../user/project/#associated-projects).
+You can quickly create an aggregated view of all of the samples in this project with all of the samples from both local and remote associated projects. To view associated samples, click the "Associated Projects" button.  All projects associated with the current project will be displayed here.  Select the projects you would also like to see in the view. Project managers may choose which samples will appear here by [adding or removing associated projects](../../user/project/#associated-projects).
 
 ![Sample type selector](images/display-sample-type.png)
-
-Select which sources should be displayed in the table.
-
-* <img src="images/local-color.png" class="inline"/> (Project Name) Samples - Samples belonging to the project.  Displayed in dark blue.
-* <img src="images/associated-color.png" class="inline"/> Associated Project Samples - Samples from associated projects on the local IRIDA installation.  Displayed in green.
-* <img src="images/remote-color.png" class="inline"/> Remote Project Samples - Samples from associated projects on remote IRIDA installations.  Displayed in gold.
 
 Associated samples will be displayed in the project samples table designated with the same colours.
 
 ![Sample table with associated and remote samples](images/associated-display.png)
 
-If a remote API connection is required, a warning box will be displayed to help connect you to the required API.
-
-![Warning to connect to API](images/remote-warning.png)
-
 Modifying samples
 -----------------
 
-Only user accounts that have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project can modify the samples in a project.
+Only user accounts that have the **Manager** role on a project can modify the samples in a project.
 
 ### Selecting samples
 
-All sample modification actions require that samples be selected. You can select individual samples by clicking on the checkbox beside the sample:
+All sample modification actions require that samples be selected. You can select individual samples by clicking anywhere on the row (except on the sample name itself):
 
 ![Selected sample.](images/selected-sample.png)
 
-You may also select many samples using the "Select" drop-down that appears above the samples list on the right-hand side:
-
-![Select button.](images/select-button.png)
+You can also select multiple samples at once by selecting a sample, pressing the shift key, and than selecting the last sample that you want selected.
 
 The select button will always indicate the total number of selected samples in the project as a numeral with a gray background.
 
