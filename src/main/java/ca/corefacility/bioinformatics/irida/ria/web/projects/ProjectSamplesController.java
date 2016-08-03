@@ -904,6 +904,7 @@ public class ProjectSamplesController {
 			} catch (ExportFormatException e) {
 				// Not much can be done for this since this is a file download.
 				logger.error(e.getMessage());
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		}
 	}
