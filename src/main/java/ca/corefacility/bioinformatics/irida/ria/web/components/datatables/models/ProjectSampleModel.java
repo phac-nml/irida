@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableList;
  * Used for exporting the project samples table.  Prevents undefined from displaying in the table,
  * and adds the project name.
  */
-public class ProjectSampleModel {
+public class ProjectSampleModel extends AbstractExportModel {
 	/**
 	 * Attributes on the {@link Sample}
 	 */
@@ -41,59 +41,59 @@ public class ProjectSampleModel {
 		this.sample = psj.getObject();
 	}
 
-	public Long getId() {
-		return sample.getId();
+	public String getId() {
+		return checkNullId(sample.getId());
 	}
 
 	public String getSampleName() {
-		return sample.getSampleName();
+		return checkNullStrings(sample.getSampleName());
 	}
 
 	public String getProjectName() {
-		return project.getName();
+		return checkNullStrings(project.getName());
 	}
 
 	public String getCreatedDate() {
-		return sample.getCreatedDate() != null ? sample.getCreatedDate().toString() : "";
+		return checkNullDate(sample.getCreatedDate());
 	}
 
 	public String getModifiedDate() {
-		return sample.getModifiedDate() != null ? sample.getModifiedDate().toString() : "";
+		return checkNullDate(sample.getModifiedDate());
 	}
 
 	public String getDescription() {
-		return sample.getDescription() != null ? sample.getDescription() : "";
+		return checkNullStrings(sample.getDescription());
 	}
 
 	public String getOrganism() {
-		return sample.getOrganism() != null ? sample.getOrganism() : "";
+		return checkNullStrings(sample.getOrganism());
 	}
 
 	public String getIsolate() {
-		return sample.getIsolate() != null ?  sample.getIsolate() : "";
+		return checkNullStrings(sample.getIsolate());
 	}
 
 	public String getCollectedBy() {
-		return sample.getCollectedBy() != null ? sample.getCollectedBy() : "";
+		return checkNullStrings(sample.getCollectedBy());
 	}
 
 	public String getCollectionDate() {
-		return sample.getCollectionDate() != null ? sample.getCollectionDate().toString() : "";
+		return checkNullDate(sample.getCollectionDate());
 	}
 
 	public String getGeographicLocationName() {
-		return sample.getGeographicLocationName() != null ? sample.getGeographicLocationName() : "";
+		return checkNullStrings(sample.getGeographicLocationName());
 	}
 
 	public String getIsolationSource() {
-		return sample.getIsolationSource() != null ? sample.getIsolationSource() : "";
+		return checkNullStrings(sample.getIsolationSource());
 	}
 
 	public String getLatitude() {
-		return sample.getLatitude() != null ? sample.getLatitude() : "";
+		return checkNullStrings(sample.getLatitude());
 	}
 
 	public String getLongitude() {
-		return sample.getLongitude() != null ? sample.getLongitude() : "";
+		return checkNullStrings(sample.getLongitude());
 	}
 }
