@@ -267,11 +267,32 @@ Uploading Data to IRIDA
 =======================
 IRIDA comes with a tool for uploading data from an Illumina MiSeq instrument to IRIDA using the REST API. Please see the [uploading data guide](uploader-tool/) for more information on how to upload data.
 
-Displaying IRIDA Platform Updates
-=================================
-To display updates on the dashboard page, add an `updates.md` markdown file in the `/etc/irida/` directory.  The location of the updates file can be configured in the `/etc/irida/web.conf` file by uncommenting the `updates.file` key and setting the path to your markdown file.
+Displaying IRIDA Platform Updates/Announcements
+===============================================
+Announcements and updates can be displayed to users after they log in:
 
-![IRIDA Platform Updates](images/updates.png)
+![Announcements panel display](images/announcements-display-to-user.png)
+
+Administrators can create new announcements or view existing ones by going into the Admin menu and clicking `Announcements`:
+
+![Announcements administrator menu option](images/announcements-display-to-user.png)
+
+This will bring you into the Announcement Control Centre:
+
+![Announcements control centre page](images/announcements-control-centre.png)
+
+New Announcements can be created by clicking on the `Create New Announcement` button at the top-left. These announcements are rendered as markdown. Saving the new announcement will allow users to see this on the front page of IRIDA.
+
+![Announcements create a new announcement page](images/announcements-create-new.png)
+
+To edit an announcement, or to see who has read the announcement, you can click on the `View Details or Edit Announcement` button: 
+
+![Announcements view details or edit announcement button](images/announcements-view-details-button.png)
+
+The announcement can be edited and saved, or deleted from this page. You can also view a list of users who have marked this particular announcement as read, as well as see when they did so:
+
+![Announcements edit or view details page](images/announcements-edit-details.png)
+
 
 Viewing All Project Exports
 ===========================
