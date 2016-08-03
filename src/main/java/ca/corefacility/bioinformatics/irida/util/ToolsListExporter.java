@@ -51,6 +51,22 @@ public class ToolsListExporter {
 	private static final String toolsSectionName = "tools-section";
 	private static final Pattern regexPattern = Pattern.compile("- " + toolsSectionName + ": \"([^\"]+)\"");
 
+	private static final String defaultToolPanelId = "irida";
+
+	// @formatter:off
+	private static final Map<String, String> toolNameToPanelId = ImmutableMap.<String, String>builder()
+			.put("flash", "ngs_qc")
+			.put("filter_spades_repeats", "ngs_assembly")
+			.put("assemblystats", "ngs_assembly")
+			.put("combine_assembly_stats", "ngs_assembly")
+			.put("spades", "ngs_assembly")
+			.put("prokka", "ngs_annotation")
+			.put("regex_find_replace", "textutil")
+			.put("bundle_collections", "group")
+			.put("suite_snvphyl_1_0_0", "snvphyl")
+			.build();
+	// @formatter:on
+
 	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
@@ -134,9 +150,11 @@ public class ToolsListExporter {
 			tools.add(ImmutableMap.of(toolsSectionName,
 					"### Tools for " + workflowName + " v" + workflowVersion + " ###"));
 
-			String toolPanelSectionId = workflowName.toLowerCase() + "-" + workflowVersion.toLowerCase();
-
 			for (IridaWorkflowToolRepository toolRepository : workflow.getWorkflowDescription().getToolRepositories()) {
+
+				String toolName = toolRepository.getName();
+				String toolPanelSectionId = (toolNameToPanelId.containsKey(toolName)) ? toolNameToPanelId.get(toolName)
+						: defaultToolPanelId;
 
 				// Append trailing '/' to URL, so it becomes for example
 				// http://example.com/galaxy-shed/
@@ -154,12 +172,14 @@ public class ToolsListExporter {
 				} else {
 					uniqueToolRepositories.add(toolRepository);
 
+					// @formatter:off
 					tools.add(ImmutableMap.<String, String>builder()
 							.put("name", toolRepository.getName())
 							.put("owner", toolRepository.getOwner())
 							.put("tool_shed_url", toolRepositoryURLString)
 							.put("revision", toolRepository.getRevision())
 							.put("tool_panel_section_id", toolPanelSectionId).build());
+					// @formatter:on
 				}
 			}
 		}
