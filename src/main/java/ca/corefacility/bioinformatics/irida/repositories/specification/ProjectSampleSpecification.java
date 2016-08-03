@@ -47,9 +47,10 @@ public class ProjectSampleSpecification {
 			predicates.add(projectExpression.in(projects));
 
 			// Check to see if the sampleNames are in the samples
-			predicates.addAll(sampleNames.stream()
-					.map(name -> criteriaBuilder.equal(root.get("sample").get("sampleName"), name))
-					.collect(Collectors.toList()));
+			if (sampleNames.size() > 0) {
+				Expression<String> sampleNameExpression = root.get("sample").get("sampleName");
+				predicates.add(sampleNameExpression.in(sampleNames));
+			}
 
 			// Check to see if there is a specific sample name
 			if (!Strings.isNullOrEmpty(sampleName)) {
