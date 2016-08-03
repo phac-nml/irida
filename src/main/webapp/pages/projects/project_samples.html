@@ -20,7 +20,8 @@
                     remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal',
                     merge: /*[[@{/projects/templates/merge-modal}]]*/ '/projects/templates/merge-modal',
                     copy: /*[[@{/projects/templates/copy-modal(projectId=${project.getId()})}]]*/ '/projects/templates/copy-modal',
-                    move: /*[[@{/projects/templates/move-modal(projectId=${project.getId()})}]]*/ '/projects/templates/move-modal'
+                    move: /*[[@{/projects/templates/move-modal(projectId=${project.getId()})}]]*/ '/projects/templates/move-modal',
+                    galaxy: /*[[@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}]]*/ '/cart/template/galaxy/project/1'
                 },
                 projects: {
                   available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
@@ -34,7 +35,8 @@
                     download: /*[[@{/projects/{id}/download/files(id=${project.getId()})}]]*/ '/projects/1/download/files',
                     ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
                     linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker',
-                    export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export'
+                    export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
+                    idList: /*[[@{/samples/idList}]]*/ "/samples/idList"
                 },
                 fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
             },
@@ -176,6 +178,12 @@
                                 <a href="#" ng-click="toolsCtrl.download()"><fa:icon type="download" />&nbsp;<th:block th:text="#{project.samples.export.download}"/></a></li>
                             <li th:if="${linkerAvailable}" role="menuitem">
                                 <a href="#" ng-click="toolsCtrl.linker()"><fa:icon type="terminal" />&nbsp;<th:block th:text="#{project.samples.export.linker}"/></a>
+                            </li>
+                            <li role="menuitem" th:if="${galaxyCallback}">
+                                <a href="#" ng-click="toolsCtrl.galaxy(); cart.show=false">
+                                    <fa:icon type="cloud" fixed="true"/>
+                                    <span th:text="#{project.samples.export.galaxy}"></span>
+                                </a>
                             </li>
                             <li role="menuitem" ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
                                 <a href="#" ng-click="toolsCtrl.ncbiExport()"><fa:icon type="upload" />&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/></a>

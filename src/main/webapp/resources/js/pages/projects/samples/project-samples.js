@@ -180,6 +180,14 @@
       modalService.openLinkerModal(ids);
     };
 
+    /**
+     * Export to galaxy
+     */
+    ToolsController.prototype.galaxy = function () {
+      var ids = datatable.getSelectedIds();
+      modalService.openGalaxyModal(ids);
+    };
+
     ToolsController.prototype.exportToFile = function (type) {
       sampleService.exportToFile(type);
     };

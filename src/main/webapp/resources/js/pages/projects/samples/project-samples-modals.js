@@ -145,6 +145,25 @@
       return modal.result;
     }
 
+    function openGalaxyModal(ids) {
+      return $uibModal.open({
+        templateUrl: page.urls.modals.galaxy,
+        controllerAs: "gCtrl",
+        controller: "GalaxyDialogCtrl",
+        resolve    : {
+          sampleIds: function () {
+            return ids;
+          },
+          openedByCart: function () {
+            return false;
+          },
+          multiProject: function () {
+            return false;
+          }
+        }
+      });
+    }
+
     return {
       openFilterModal            : openFilterModal,
       openMoveModal              : openMoveModal,
@@ -152,7 +171,8 @@
       openRemoveModal            : openRemoveModal,
       openMergeModal             : openMergeModal,
       openAssociatedProjectsModal: openAssociatedProjectsModal,
-      openLinkerModal            : openLinkerModal
+      openLinkerModal            : openLinkerModal,
+      openGalaxyModal            : openGalaxyModal
     };
   }
 

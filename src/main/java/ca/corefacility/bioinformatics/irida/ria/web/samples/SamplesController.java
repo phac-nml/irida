@@ -331,8 +331,21 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
+	 * Utility method to get a l{@link List} of {@link Sample}s based on their ids.
+	 *
+	 * @param sampleIds
+	 * 		{@link List} of {@link Sample} ids
+	 *
+	 * @return {@link List} {@link Sample}s
+	 */
+	@RequestMapping("/samples/idList")
+	public List<Sample> getSampleListByIdList(@RequestParam(value = "sampledIds[]") List<Long> sampleIds) {
+		return (List<Sample>) sampleService.readMultiple(sampleIds);
+	}
+
+	/**
 	 * Create a {@link SequenceFile} and add it to a {@link Sample}
-	 * 
+	 *
 	 * @param file
 	 *            {@link MultipartFile}
 	 * @param sample
