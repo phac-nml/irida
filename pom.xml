@@ -849,7 +849,7 @@
 						<configuration>
 							<mainClass>ca.corefacility.bioinformatics.irida.util.ToolsListExporter</mainClass>
 							<arguments>
-								<argument>${project.build.directory}/classes/tools-list.yml</argument>
+								<argument>${project.build.directory}/tools-list.yml</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -865,6 +865,26 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<packagingExcludes>node_modules/**/*</packagingExcludes>
 				</configuration>
+			</plugin>
+
+			<!-- Build irida.zip distribution -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven.assembly.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>zip-distributable</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptor>src/assembly/bin.xml</descriptor>
+							<finalName>irida-${project.version}</finalName>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- Jetty plugin -->
@@ -1052,6 +1072,7 @@
 		<maven.war.plugin.version>2.5</maven.war.plugin.version>
 		<maven.jetty.plugin.version>9.2.1.v20140609</maven.jetty.plugin.version>
 		<maven.exec.plugin.version>1.3.2</maven.exec.plugin.version>
+		<maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
 		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
