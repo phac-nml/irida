@@ -115,7 +115,7 @@ public class ProjectSynchronizationService {
 	 * Find projects which should be synchronized and launch a synchornization
 	 * task.
 	 */
-	public void findMarkedProjectsToSync() {
+	public synchronized void findMarkedProjectsToSync() {
 		// mark any projects which should be synched first
 		findProjectsToMark();
 

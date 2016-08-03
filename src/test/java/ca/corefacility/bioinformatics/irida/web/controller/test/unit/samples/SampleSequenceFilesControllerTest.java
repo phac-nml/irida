@@ -26,6 +26,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
+import com.google.common.collect.Lists;
+import com.google.common.net.HttpHeaders;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -33,6 +36,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -43,9 +48,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
-import com.google.common.collect.Lists;
-import com.google.common.net.HttpHeaders;
-
 /**
  * Unit tests for {@link RESTSampleSequenceFilesController}.
  */
@@ -54,14 +56,16 @@ public class SampleSequenceFilesControllerTest {
 	private SampleService sampleService;
 	private SequencingRunService miseqRunService;
 	private SequencingObjectService sequencingObjectService;
+	private AnalysisService analysisService;
 
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		miseqRunService = mock(SequencingRunService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
+		analysisService = mock(AnalysisService.class);
 
-		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService);
+		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService);
 	}
 
 	@Test
@@ -171,6 +175,35 @@ public class SampleSequenceFilesControllerTest {
 		assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
 		assertNotNull(sample);
 		assertEquals(sampleLocation, sample.getHref());
+	}
+	
+	@Test
+	public void testGetQcForFile() throws IOException {
+		Sample s = TestDataFactory.constructSample();
+		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
+
+		AnalysisFastQC analysisFastQC = new AnalysisFastQC(AnalysisFastQC.builder());
+
+		when(sampleService.read(s.getId())).thenReturn(s);
+		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
+		when(analysisService.getFastQCAnalysisForSequenceFile(so, so.getSequenceFile().getId()))
+				.thenReturn(analysisFastQC);
+
+		ModelMap readQCForSequenceFile = controller.readQCForSequenceFile(s.getId(),
+				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(),
+				so.getSequenceFile().getId());
+
+		verify(sampleService).read(s.getId());
+		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
+		verify(analysisService).getFastQCAnalysisForSequenceFile(so, so.getSequenceFile().getId());
+
+		assertTrue(readQCForSequenceFile.containsKey(RESTGenericController.RESOURCE_NAME));
+		Object object = readQCForSequenceFile.get(RESTGenericController.RESOURCE_NAME);
+		assertTrue(object instanceof AnalysisFastQC);
+
+		AnalysisFastQC qc = (AnalysisFastQC) object;
+
+		assertNotNull(qc.getLink(RESTSampleSequenceFilesController.REL_QC_SEQFILE));
 	}
 
 	@Test(expected = EntityNotFoundException.class)

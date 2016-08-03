@@ -117,6 +117,11 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	public String getLabel() {
 		return toString();
 	}
+	
+	@Override
+	public String toString() {
+		return sequence;
+	}
 
 	@Override
 	public Date getCreatedDate() {

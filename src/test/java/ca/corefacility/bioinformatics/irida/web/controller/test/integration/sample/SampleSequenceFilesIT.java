@@ -55,14 +55,14 @@ public class SampleSequenceFilesIT {
 	private static final byte[] FASTQ_FILE_CONTENTS = "@testread\nACGTACGT\n+\n????????".getBytes();
 
 	@Test
-	public void testAddSequenceFileToSample() throws IOException {
+	public void testAddSequenceFileToSample() throws IOException, InterruptedException {
 		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
-		String sequenceFileUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
-		String unpairedUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == 'sample/sequenceFiles/unpaired'}.href");
+		String sequenceFileUri = from(sampleBody)
+				.getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
+		String unpairedUri = from(sampleBody)
+				.getString("resource.links.find{it.rel == 'sample/sequenceFiles/unpaired'}.href");
 
 		// prepare a file for sending to the server
 		Path sequenceFile = Files.createTempFile(null, null);
@@ -85,7 +85,14 @@ public class SampleSequenceFilesIT {
 		asUser().expect().body("resource.resources.fileName", hasItem(sequenceFile.getFileName().toString())).and()
 				.body("resource.resources.links[0].rel", hasItems("self")).when().get(sequenceFileUri);
 
-		asUser().expect().statusCode(HttpStatus.OK.value()).when().get(location);
+		String qcPath = asUser().expect().statusCode(HttpStatus.OK.value()).and()
+				.body("resource.links.rel", hasItems("sequencefile/qc")).when().get(location).andReturn().jsonPath()
+				.getString("resource.links.find{it.rel == 'sequencefile/qc'}.href");
+
+		// Wait for FASTQC to finish
+		Thread.sleep(5000);
+
+		asUser().expect().statusCode(HttpStatus.OK.value()).when().get(qcPath);
 
 		// clean up
 		Files.delete(sequenceFile);
