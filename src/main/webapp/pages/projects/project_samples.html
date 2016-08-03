@@ -163,7 +163,10 @@
                         </li>
                         <li role="separator" class="divider"></li>
                         <li>
-                            <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}" th:text="#{project.samples.nav.new}">Create New Sample</a></li>
+                            <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
+                                <fa:icon type="create" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.samples.nav.new}"/>
+                            </a></li>
                     </ul>
                     </div>
                     <div style="display: inline-block;" uib-dropdown="">
