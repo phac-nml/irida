@@ -38,7 +38,7 @@ public class ProjectSampleSpecification {
 	 * @return {@link Specification} of {@link ProjectSampleJoin} for criteria to search based on the filtered criteria.
 	 */
 	public static Specification<ProjectSampleJoin> getSamples(List<Project> projects, List<String> sampleNames,
-			String searchTerm, Date minDate, Date maxDate) {
+			String sampleName, String searchTerm, Date minDate, Date maxDate) {
 		return (root, criteriaQuery, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
@@ -51,6 +51,10 @@ public class ProjectSampleSpecification {
 					.map(name -> criteriaBuilder.equal(root.get("sample").get("sampleName"), name))
 					.collect(Collectors.toList()));
 
+			// Check to see if there is a specific sample name
+			if (!Strings.isNullOrEmpty(sampleName)) {
+				predicates.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + sampleName + "%"));
+			}
 			// Check for the table search
 			if (!Strings.isNullOrEmpty(searchTerm)) {
 				predicates.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + searchTerm + "%"));
