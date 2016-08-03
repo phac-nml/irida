@@ -203,6 +203,4 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.clearFilter();
 		assertEquals("Should have 21 samples displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
-
-	// TODO: (Josh - 2016-02-05) Create tests for cart functionality.
 }
