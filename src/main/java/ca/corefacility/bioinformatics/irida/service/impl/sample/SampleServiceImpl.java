@@ -357,10 +357,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames, String searchTerm,
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames, String sampleName, String searchTerm,
 			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty) {
 		return psjRepository
-				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, searchTerm, minDate, maxDate),
+				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, minDate, maxDate),
 						new PageRequest(currentPage, pageSize, direction, sortProperty));
 	}
 

@@ -389,7 +389,7 @@ public class ProjectSamplesController {
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
 
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, utils.getSearch(),
-				utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(),
+				name, utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(),
 				utils.getSortDirection(), utils.getSortProperty());
 
 		// Create a more usable Map of the sample data.
@@ -856,7 +856,7 @@ public class ProjectSamplesController {
 
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
 
-		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, utils.getSearch(),
+		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(),
 				utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE,
 				utils.getSortDirection(), utils.getSortProperty());
 
