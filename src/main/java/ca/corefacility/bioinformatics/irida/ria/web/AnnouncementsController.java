@@ -103,7 +103,7 @@ public class AnnouncementsController extends BaseController{
      *          ID of the {@link Announcement} to be marked
      * @param principal
      *          The current user
-     * @return
+     * @return The fragment for viewing announcements in the dashboard
      */
     @RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
     public String markAnnouncementRead(@PathVariable Long aID, Principal principal) {
@@ -227,8 +227,6 @@ public class AnnouncementsController extends BaseController{
      *                  The announcement whose data will be displayed
      * @param model
      *                  The model for the view
-     * @param principal
-     *                  The currently logged in user (must be an admin)
      * @return Returns the detail page for the announcement
      * @throws IOException
      */
@@ -340,8 +338,9 @@ public class AnnouncementsController extends BaseController{
      * @param user
      *          The user we want to check
      * @param announcement
-     *          The announcement we wanna check.
-     * @return
+     *          The announcement we want to check.
+     * @return {@link AnnouncementUserJoin} representing that the user has read the announcement, or null
+     *              if the user hasn't read the announcement.
      */
     private AnnouncementUserJoin userHasRead(final User user, final Announcement announcement) {
         final List<AnnouncementUserJoin> readUsers = announcementService.getReadUsersForAnnouncement(announcement);
@@ -398,10 +397,12 @@ public class AnnouncementsController extends BaseController{
             return this.join;
         }
 
+        @SuppressWarnings("unused")
         public Date getCreatedDate() {
             return this.createdDate;
         }
 
+        @SuppressWarnings("unused")
         public boolean getHasRead() {
             return this.hasRead;
         }
