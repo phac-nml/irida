@@ -104,7 +104,7 @@ Clicking the filter button <span class="fa fa-filter fa-fw"></span> opens a dial
 
 ![Samples advanced filter dialogue.](images/advanced-filter-dialogue.png)
 
-Filtering by sample name is exact matching, therefore the name must exactly match the sample name.
+Filtering by sample name will match the same as the search field, so the filter name will match *anywhere* in the sample name.
 
 ![Samples advanced filter dialogue daterange.](images/advanced-filter-dialogue-daterange.png)
 
@@ -120,7 +120,15 @@ Or you can enter a custom date range by selecting the dates in the calendar.
 
 To apply the selected filters click the 'Filter' button.
 
-To remove a filter from your view, either click the <img src="images/clear-filter-button.png" class="inline" alt="Clear filter button."> icon, or delete the text in your filter.
+![Samples advanced filter applied state.](images/advanced-filter-applied-state.png)
+
+Once the filter is applied, the samples table will be updated with the filtered samples.  When an advanced filter is applied, a tag is created below the filter button to allow the user to know what filters are currently applied.  To remove a specific filter click on the tag itself.
+
+### Clearing Filters
+
+![Samples clear filters button.](images/advanced-filter-clear.png)
+
+To clear all currently applied filters and search, click on the clear button to the right of the filter area.
 
 Filtering and Selecting by File
 -------------------------------
@@ -134,12 +142,12 @@ As projects become larger, it becomes unwieldy to select a large subset of sampl
 Example (`project_5_filter.txt`):
 
 <pre>
-Sample 50
-Sample 43
-Sample 41
+03-3333
+10-6966
+15-7569
 </pre>
 
-* On the project samples page, select the 'Filter & Select by File' button from the filter menu.
+* On the project samples page, click the <span class="fa fa-file-o fa-fw"></span> button from the filter menu.
 
 ![Filter by File Button](images/filter_by_file_btn.png)
 
