@@ -85,13 +85,14 @@ Once the pipeline is complete, you will see the generated phylogenetic tree with
 
 A number of files are provided within the download package.  These are described below:
 
-1. `phylogeneticTree.newick`:  This contains the constructed phylogenetic tree in newick format.
+1. `vcf2core.tsv`:  This defines the number of core positions evaluated for constructing the phylogeny.
 2. `phylogeneticTreeStats.txt`:  This contains additional information about the constructed tree.
-3. `snpMatrix.tsv`:  This contains a pair-wise SNV distance matrix.
-4. `vcf2core.tsv`:  This defines the number of core positions evaluated for constructing the phylogeny.
-5. `snpTable.tsv`:  This is a table of the individual variants detected.
-6. `mappingQuality.txt`:  This defines the percent of the reference covered by each genome.
-7. `filterStats.txt`:  This defines information about the SNVs removed due to poor quality.
+3. `phylogeneticTree.newick`:  This contains the constructed phylogenetic tree in newick format.
+4. `mappingQuality.txt`:  This defines the percent of the reference covered by each genome.
+5. `snvAlignment.phy`:  This defines a multiple sequence alignment of SNVs used to generate the phylogeny.
+6. `snvMatrix.tsv`:  This contains a pair-wise SNV distance matrix.
+7. `snvTable.tsv`:  This is a table of the individual variants detected.
+8. `filterStats.txt`:  This defines information about the SNVs removed due to poor quality.
 
 More information about interpreting these files can be found in the [SNVPhyl Output Guide][].
 
@@ -104,7 +105,7 @@ To view the pipeline provenance information, please select the **Provenance** ta
 
 This will display the individual steps of this pipeline and the parameters used at each step.  For more details on the pipeline please see the [SNVPhyl][] documentation.
 
-[SNVPhyl]: http://snvphyl.readthedocs.org/
+[SNVPhyl]: http://snvphyl.readthedocs.io/
 [snvphyl-pipeline-page.png]: images/snvphyl-pipeline-page.png
 [snvphyl-parameters.png]: images/snvphyl-parameters.png
 [ready-to-launch-button.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/ready-to-launch-button.png
@@ -113,6 +114,6 @@ This will display the individual steps of this pipeline and the parameters used 
 [your-analyses-page.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/your-analyses-page.png
 [snvphyl-analysis-status.png]: images/snvphyl-analysis-status.png
 [snvphyl-analysis-status-details.png]: images/snvphyl-analysis-status-details.png
-[SNVPhyl Output Guide]: http://snvphyl.readthedocs.org/en/latest/user/output/
+[SNVPhyl Output Guide]: http://snvphyl.readthedocs.io/en/latest/user/output/
 [snvphyl-results.png]: images/snvphyl-results.png
 [snvphyl-provenance.png]: images/snvphyl-provenance.png

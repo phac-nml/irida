@@ -91,7 +91,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	
 	private static final float DELTA = 0.000001f;
 
-	private static final String CMD_LINE_PATTERN = "echo \"csv\" > (/.*?)+; echo \"output_tree\" > (/.*?)+; echo \"positions\" > (/.*?)+";
+	private static final String CMD_LINE_PATTERN = "echo \"csv,1[^\"]+\" > (/.*?)+; echo \"output_tree\" > (/.*?)+; echo \"positions\" > (/.*?)+";
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyIT.class);
 
@@ -536,8 +536,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals(3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnpMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnpTable();
+		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
+		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
 
 		assertTrue("phylogenetic trees should be equal",
 				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
@@ -565,8 +565,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(analysisResultsPhylogenomics.getId(), savedPhylogenomics.getId());
 		assertEquals(analysisResultsPhylogenomics.getPhylogeneticTree().getFile(), savedPhylogenomics
 				.getPhylogeneticTree().getFile());
-		assertEquals(analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
-		assertEquals(analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
+		assertEquals(analysisResultsPhylogenomics.getSnvMatrix().getFile(), savedPhylogenomics.getSnvMatrix().getFile());
+		assertEquals(analysisResultsPhylogenomics.getSnvTable().getFile(), savedPhylogenomics.getSnvTable().getFile());
 	}
 	
 	/**
@@ -620,14 +620,16 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnpMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnpTable();
+		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
+		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
 
 		assertTrue("phylogenetic trees should be equal",
 				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
 		assertEquals("invalid file name for snp tree", expectedTree.getFileName(), phylogeneticTree.getFile()
 				.getFileName());
-		assertTrue("command line should match the defined pattern (phylogenetic tree).", 
+		assertTrue(
+				"command line (" + phylogeneticTree.getCreatedByTool().getCommandLine()
+						+ ") should match the defined pattern (" + CMD_LINE_PATTERN + ") (phylogenetic tree).",
 				phylogeneticTree.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN));
 		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
@@ -641,7 +643,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 				com.google.common.io.Files.equal(expectedSnpMatrix.toFile(), snpMatrix.getFile().toFile()));
 		assertEquals("invalid file name for snp matrix", expectedSnpMatrix.getFileName(), snpMatrix.getFile()
 				.getFileName());
-		assertTrue("command line should match the defined pattern (snp matrix).", 
+		assertTrue(
+				"command line (" + snpMatrix.getCreatedByTool().getCommandLine()
+						+ ") should match the defined pattern (" + CMD_LINE_PATTERN + ") (snp matrix).",
 				snpMatrix.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN));
 		final ToolExecution snpMatrixCoreInputs = snpMatrix.getCreatedByTool();
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
@@ -655,7 +659,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()));
 		assertEquals("invalid file name for snp table", expectedSnpTable.getFileName(), snpTable.getFile()
 				.getFileName());
-		assertTrue("command line should match the defined pattern (snp table).", 
+		assertTrue(
+				"command line (" + snpTable.getCreatedByTool().getCommandLine() + ") should match the defined pattern ("
+						+ CMD_LINE_PATTERN + ") (snp table).",
 				snpTable.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN));
 		final ToolExecution snpTableCoreInputs = snpTable.getCreatedByTool();
 		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
@@ -683,9 +689,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResultsPhylogenomics.getPhylogeneticTree().getFile(), savedPhylogenomics.getPhylogeneticTree()
 						.getFile());
 		assertEquals("analysis results from database and from submission should have correct matrix output file",
-				analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
+				analysisResultsPhylogenomics.getSnvMatrix().getFile(), savedPhylogenomics.getSnvMatrix().getFile());
 		assertEquals("analysis results from database and from submission should have correct table output file",
-				analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
+				analysisResultsPhylogenomics.getSnvTable().getFile(), savedPhylogenomics.getSnvTable().getFile());
 	}
 	
 	/**
@@ -740,8 +746,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnpMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnpTable();
+		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
+		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
 
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
@@ -878,8 +884,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnpMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnpTable();
+		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
+		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
 
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
@@ -1019,8 +1025,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnpMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnpTable();
+		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
+		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
 
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
