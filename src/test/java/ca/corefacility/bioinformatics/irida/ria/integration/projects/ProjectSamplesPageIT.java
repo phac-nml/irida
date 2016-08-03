@@ -171,8 +171,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
 	}
 
-	// TODO: (Josh - 2016-02-05) Create test for export linker
-
 	@Test
 	public void testFilteringSamplesByProperties() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
