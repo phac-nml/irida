@@ -45,7 +45,6 @@ public class AnnouncementsController extends BaseController{
 
     private final UserService userService;
     private final AnnouncementService announcementService;
-    private final MessageSource messageSource;
 
     @Autowired
     public AnnouncementsController(UserService userService,
@@ -53,7 +52,6 @@ public class AnnouncementsController extends BaseController{
                                    MessageSource messageSource) {
         this.userService = userService;
         this.announcementService = announcementService;
-        this.messageSource = messageSource;
     }
 
     /**
@@ -137,7 +135,7 @@ public class AnnouncementsController extends BaseController{
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getCreateAnnouncementPage(final Model model) {
+    public String getCreateAnnouncementPage() {
 
         return ANNOUNCEMENT_CREATE;
     }
@@ -236,9 +234,7 @@ public class AnnouncementsController extends BaseController{
      */
     @RequestMapping(value = "/{announcementID}/details", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getAnnouncementDetailsPage(@PathVariable long announcementID,
-                                             Model model,
-                                             Principal principal) throws IOException {
+    public String getAnnouncementDetailsPage(@PathVariable long announcementID, Model model) throws IOException {
         Announcement announcement = announcementService.read(announcementID);
 
         long numberOfReads = announcementService.countReadsForOneAnnouncement(announcement);
@@ -389,13 +385,7 @@ public class AnnouncementsController extends BaseController{
          *      1 if {@param repsonse} is newer than this object
          */
         public int compareTo(AnnouncementUserDataTableResponse response) {
-            if (this.createdDate.after(response.createdDate)) {
-                return -1;
-            } else if (this.createdDate.equals(response.createdDate)) {
-                return 0;
-            } else {
-                return 1;
-            }
+            return this.createdDate.compareTo(response.createdDate);
         }
 
         @SuppressWarnings("unused")

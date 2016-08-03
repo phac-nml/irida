@@ -639,10 +639,23 @@ INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (5,
 INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (6, now(), "**Don't** forget **your** *wallet*", 4);
 
 -- announcement_user
-INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (1, now(), 1, 4);
-INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (2, now(), 2, 4);
-INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (3, now(), 3, 4);
-INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (4, now(), 4, 4);
-INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (5, now(), 2, 1);
-INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (6, now(), 2, 2);
-INSERT INTO `announcement_user` (id, created_date, message, created_by_id) VALUES (7, now(), 2, 3);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (1, now(), 1, 4);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (2, now(), 2, 4);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (3, now(), 3, 4);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (4, now(), 4, 4);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (5, now(), 5, 4);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (6, now(), 6, 4);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (7, now(), 2, 1);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (8, now(), 2, 2);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (9, now(), 2, 3);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (10, now(), 2, 5);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (11, now(), 2, 6);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (12, now(), 4, 1);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (13, now(), 4, 2);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (14, now(), 4, 3);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (15, now(), 4, 5);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (16, now(), 4, 6);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (17, now(), 6, 1);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (18, now(), 6, 2);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (19, now(), 6, 3);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (20, now(), 6, 5);
