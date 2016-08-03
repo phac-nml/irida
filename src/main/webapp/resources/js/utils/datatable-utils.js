@@ -12,7 +12,7 @@ var ProjectColourer = (function () {
       // These colours are intense colours pick from
       // https://www.google.com/design/spec/style/color.html#color-color-palette A better solution might be to allow
       // project managers to set custom colours for projects and store in project settings.
-      colours  = ["#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE", "#2962FF", "#0091EA", "#00B8D4", "#00BFA5", "#00C853", "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00"],
+      colours  = ["#ECEFF1", "#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE", "#2962FF", "#0091EA", "#00B8D4", "#00BFA5", "#00C853", "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00"],
       // JSON to store already chosen project colours.
       projects = {};
 
@@ -319,10 +319,8 @@ var datatable = (function(moment, tl, page) {
     var text = document.createTextNode(data);
     div.appendChild(text);
 
-    if (full.sampleType === 'ASSOCIATED') {
-      var colour = projectColourer.getColour(full.projectName);
-      div.style.borderColor = colour;
-    }
+    var colour = projectColourer.getColour(full.projectName);
+    div.style.borderColor = colour;
 
     outer.appendChild(div);
     return outer.innerHTML;
