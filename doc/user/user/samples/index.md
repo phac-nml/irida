@@ -82,15 +82,43 @@ Adding a new sample
 Searching and filtering samples
 -------------------------------
 
-You can search and filter samples in a project in IRIDA by sample name and organism using the filter fields in the bottom, left-hand side of the [samples list](#viewing-samples-in-a-project):
+You can search and filter samples in a project in IRIDA by sample name, organism, and/or date range using the filters at the top of the [samples list](#viewing-samples-in-a-project):
 
 ![Samples filter area.](images/sample-filter-area.png)
 
-The filters work by only showing samples that have the search string *anywhere* in the name or organism field. So, for example, if you're searching for a sample that has the numeral 2 in its name, enter `2` into the sample name filter, and you would find samples with names like:
+### Search Field
+
+![Samples search input.](images/search-input.png)
+
+You can perform a general search on sample names using the search field.  This will filter samples that have the search string *anywhere* in the name or organism field.  So, for example, if you're searching for a sample that has the numeral 2 in its name, enter `2` into the search input, and you would find samples with names like:
 
 * Sample_2
 * Sample_293
-* 2nd_Sample
+* 02-2222
+
+### Advanced Filtering
+
+![Samples advanced filters.](images/advanced-filter.png)
+
+Clicking the filter button <span class="fa fa-filter fa-fw"></span> opens a dialog where you can filter by sample name and / or  date modified.
+
+![Samples advanced filter dialogue.](images/advanced-filter-dialogue.png)
+
+Filtering by sample name is exact matching, therefore the name must exactly match the sample name.
+
+![Samples advanced filter dialogue daterange.](images/advanced-filter-dialogue-daterange.png)
+
+To search sample by a date range, click on the date range field.  I drop down will be displayed with pre-determine ranges:
+
+* Last 30 Days
+* Last 60 Days
+* Last 120 Days
+
+Or you can enter a custom date range by selecting the dates in the calendar.
+
+![Samples advanced filter dialogue apply.](images/advanced-filter-dialogue-apply.png)
+
+To apply the selected filters click the 'Filter' button.
 
 To remove a filter from your view, either click the <img src="images/clear-filter-button.png" class="inline" alt="Clear filter button."> icon, or delete the text in your filter.
 
