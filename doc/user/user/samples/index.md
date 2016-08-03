@@ -151,10 +151,17 @@ Example (`project_5_filter.txt`):
 
 ![Filter by File Button](images/filter_by_file_btn.png)
 
-* Select the file you created.  This will clear all previous filters, then filter and select the samples that have matching names to those in your list.
+* Select the file you created.  The samples will be filtered by these names.
 
-![Filter by File Button](images/filter_by_file_selected.png)
+If all sample names are found, a green success notification will appear in the upper right corner of the window.  THis notification will disappear after 2 seconds.
 
+![Filter by File all found](images/filter_by_file_allfound.png)
+
+If sample names are not found, the samples will be filtered by the available names and a notification will appear telling you which samples could not be found.  This notification will bot go away until it is clicked.
+
+Example.  If my file contained and additional sample name `12-4598_a`  which does not exist the following will be displayed.
+
+![Filter by File missing samples](images/filter_by_file_missing.png)
 
 Viewing associated samples
 --------------------------
