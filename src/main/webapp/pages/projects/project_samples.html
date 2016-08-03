@@ -33,7 +33,8 @@
                     copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
                     download: /*[[@{/projects/{id}/download/files(id=${project.getId()})}]]*/ '/projects/1/download/files',
                     ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
-                    linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker'
+                    linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker',
+                    export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export'
                 },
                 fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
             },
@@ -179,6 +180,15 @@
                             <li role="menuitem" ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
                                 <a href="#" ng-click="toolsCtrl.ncbiExport()"><fa:icon type="upload" />&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/></a>
                             </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a href="#" ng-click="toolsCtrl.exportToFile('xlsx')">
+                                    <fa:icon type="excel" />&nbsp;<th:block th:text="#{project.samples.export-to-excel}"/>
+                                </a></li>
+                            <li>
+                                <a href="#" ng-click="toolsCtrl.exportToFile('csv')">
+                                    <fa:icon type="file" />&nbsp;<th:block th:text="#{project.samples.export-to-csv}"/>
+                                </a></li>
                         </ul>
                     </div>
                     <button id="cart-add-btn" class="btn btn-primary btn-sm" ng-click="toolsCtrl.addToCart()">

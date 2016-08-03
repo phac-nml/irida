@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
@@ -43,6 +44,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -54,17 +64,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesFilterCriteria;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 @Controller
 public class ProjectSamplesController {
@@ -368,11 +371,11 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public DatatablesResponse<Map<String, Object>> getProjectSamples(@PathVariable Long projectId,
 			@DatatablesParams DatatablesCriterias criterias,
-			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
-			@RequestParam(required = false) Long minDate,
-			@RequestParam(required = false) Long endDate) {
+			@RequestParam(required = false, defaultValue = "") Long minDate,
+			@RequestParam(required = false, defaultValue = "") Long endDate) {
 		List<Project> projects = new ArrayList<>();
 		// Check to see if any associated projects need to be added to the query.
 		if (!associated.isEmpty()) {
@@ -821,6 +824,82 @@ public class ProjectSamplesController {
 		}
 
 		return responseBody;
+	}
+
+	/**
+	 * Export {@link Sample} from a {@link Project} as either Excel or CSV formatted.
+	 *
+	 * @param projectId
+	 * 		the id for the {@link Project} the current project.
+	 * @param type
+	 * 		Type of file to export, must be from {@link ReservedFormat}
+	 * @param criterias
+	 * 		{@link DatatablesCriterias}
+	 * @param sampleNames
+	 * 		{@link List} of {@link Sample} names to export. Not required.
+	 * @param associated
+	 * 		{@link List} of ids for associated {@link Project}. Not Required.
+	 * @param name
+	 * 		Filter value for filtering on the name of a {@link Sample}. Not Required.
+	 * @param minDate
+	 * 		Filter value for the minimum date the {@link Sample} was modified.  Not Required.
+	 * @param endDate
+	 * 		Filter value for the maximum date the {@link Sample} was modified.  Not Required.
+	 * @param request
+	 * 		{@link HttpServletRequest}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples/export")
+	public void exportProjectSamplesTable(
+			@PathVariable Long projectId,
+			@RequestParam(value = "dtf") String type,
+			@DatatablesParams DatatablesCriterias criterias,
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") Long minDate,
+			@RequestParam(required = false, defaultValue = "") Long endDate,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			Locale locale) {
+
+		Project project = projectService.read(projectId);
+		List<Project> projectList = new ArrayList<>();
+		List<Sample> samples = new ArrayList<>();
+
+		if (!associated.isEmpty()) {
+			projectList = (List<Project>) projectService.readMultiple(associated);
+		}
+		projectList.add(project);
+
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
+
+		final int MAX_EXPORT_LENGTH = Integer.MAX_VALUE;
+		// Check to see if it is filtered by a list
+		Page<ProjectSampleJoin> page;
+		if (!sampleNames.isEmpty()) {
+			page = sampleService.findSampleByNameInProject(project, sampleNames, 0, MAX_EXPORT_LENGTH,
+					utils.getSortDirection(), utils.getSortProperty());
+		} else if(!Strings.isNullOrEmpty(utils.getSearch())) {
+			page = sampleService.getSearchedSamplesForProjects(
+					projectList,
+					utils.getSearch(),
+					0,
+					MAX_EXPORT_LENGTH,
+					utils.getSortDirection(),
+					utils.getSortProperty()
+			);
+		} else {
+			page = sampleService
+					.getFilteredSamplesForProjects(projectList, utils.getName(), utils.getMinDate(), utils.getEndDate(), 0,
+							MAX_EXPORT_LENGTH, utils.getSortDirection(), utils.getSortProperty());
+		}
+
+		if (page != null) {
+			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
+			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);	
+		}
 	}
 
 	/**

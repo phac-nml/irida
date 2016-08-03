@@ -6,17 +6,7 @@
     var location;
     var scope;
 
-    function _clearFileFilteredURL() {
-      var url = oTable_samplesTable.ajax.url(),
-          index = url.indexOf("?");
-      if(index > -1) {
-        url = url.substring(0, url.indexOf("?"));
-      }
-      oTable_samplesTable.ajax.url(url);
-    }
-
     function _reloadTable() {
-      _clearFileFilteredURL();
       page.ajaxParam = {date:{}};
       oTable_samplesTable.search("");
       oTable_samplesTable.ajax.reload();
@@ -33,7 +23,7 @@
        */
       scope.$on('FILTER_CLEARED', function (event, args) {
         if (args.type === "file") {
-          _clearFileFilteredURL();
+          delete page.ajaxParam.sampleNames;
         } else {
           delete page.ajaxParam[args.type]
         }
@@ -106,7 +96,7 @@
           notifications.show({type: data.result, msg: data.message})
         });
     };
-    
+
     SampleService.prototype.download = function (ids) {
       var url = page.urls.samples.download + "?" + $.param({ids: ids});
       var iframe = document.querySelector("#download-iframe");
@@ -124,22 +114,42 @@
     };
 
     SampleService.prototype.filterBySampleNames = function(sampleNames) {
-      oTable_samplesTable.ajax.url(page.urls.samples.project + "/?" + $.param({sampleNames: sampleNames})).load(function (result) {
-        var difference = sampleNames.length - result.recordsTotal;
-        if (difference === 0) {
-          notifications.show({type: "success", msg: page.i18n.fileFilter.success});
-        } else {
-          post(page.urls.fileMissingSamples, {sampleNames: sampleNames}).then(function (response) {
-            var msg = "<strong>" + response.data.message + "</strong><ul>";
-            response.data.missingNames.forEach(function(name) {
-              msg += "<li>" + name + "</li>"
+      // Store the sample names so datatables can add them to the url
+      // This is done in sample-ajax-params.js
+      page.ajaxParam.sampleNames = sampleNames;
+      oTable_samplesTable.ajax.reload(function (result) {
+          var difference = sampleNames.length - result.recordsTotal;
+          if (difference === 0) {
+            notifications.show({type: "success", msg: page.i18n.fileFilter.success});
+          } else {
+            post(page.urls.fileMissingSamples, {sampleNames: sampleNames}).then(function (response) {
+              var msg = "<strong>" + response.data.message + "</strong><ul>";
+              response.data.missingNames.forEach(function(name) {
+                msg += "<li>" + name + "</li>"
+              });
+              msg += "</ul>";
+              notifications.show({type: "warning", msg: msg, timeout: false});
             });
-            msg += "</ul>";
-            notifications.show({type: "warning", msg: msg, timeout: false});
-          });
-        }
-        scope.$broadcast("FILE_FILTER");
+          }
+          scope.$broadcast("FILE_FILTER");
       });
+    };
+
+    SampleService.prototype.exportToFile = function (type) {
+      // Need the parameters from the datatable so that we know the correct filters.
+      var tableParams = oTable_samplesTable.ajax.params();
+      tableParams.dtf = type; // This is an important parameter name for exporting the correct format.
+
+      // Need an iframe here since it is a document download not just an ajax request.
+      var iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = page.urls.samples.export + "?" + $.param(tableParams);
+      document.body.appendChild(iframe);
+    };
+
+    SampleService.prototype.updateAssociatedProjects = function (projectsIds) {
+      page.ajaxParam.associated = projectsIds;
+      oTable_samplesTable.ajax.reload();
     };
 
     return SampleService;
