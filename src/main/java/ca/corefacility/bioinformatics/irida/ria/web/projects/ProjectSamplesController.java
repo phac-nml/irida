@@ -44,6 +44,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -55,21 +64,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ExportFormatException;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 @Controller
 public class ProjectSamplesController {
@@ -862,14 +861,8 @@ public class ProjectSamplesController {
 				utils.getSortDirection(), utils.getSortProperty());
 
 		if (page != null) {
-			try {
-				ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
-				ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);
-			} catch (ExportFormatException e) {
-				// Not much can be done for this since this is a file download.
-				logger.error(e.getMessage());
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			}
+			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
+			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);	
 		}
 	}
 
