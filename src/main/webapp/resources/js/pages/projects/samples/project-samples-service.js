@@ -119,7 +119,6 @@
       // This is done in sample-ajax-params.js
       page.ajaxParam.sampleNames = sampleNames;
       oTable_samplesTable.ajax.reload(function (result) {
-        console.log(result)
           var difference = sampleNames.length - result.recordsTotal;
           if (difference === 0) {
             notifications.show({type: "success", msg: page.i18n.fileFilter.success});
