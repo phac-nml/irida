@@ -880,7 +880,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptor>src/assembly/zip-distributable.xml</descriptor>
+							<descriptor>${basedir}/packaging/assembly/zip-distributable.xml</descriptor>
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>

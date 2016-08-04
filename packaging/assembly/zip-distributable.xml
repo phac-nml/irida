@@ -7,7 +7,7 @@
 	<fileSets>
 		<fileSet>
 			<directory>${project.build.directory}</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>${file.separator}</outputDirectory>
 			<includes>
 				<include>*.war</include>
 			</includes>
@@ -15,7 +15,7 @@
 	</fileSets>
 	<files>
 		<file>
-			<source>README.md</source>
+			<source>${basedir}/packaging/README.md</source>
 			<destName>README.md</destName>
 		</file>
 		<file>
@@ -23,9 +23,13 @@
 			<destName>CHANGELOG.md</destName>
 		</file>
 		<file>
+			<source>LICENSE</source>
+			<destName>LICENSE</destName>
+		</file>
+		<file>
 			<outputDirectory>.</outputDirectory>
 			<source>${project.build.directory}/tools-list.yml</source>
-			<destName>/tools-list.yml</destName>
+			<destName>tools-list.yml</destName>
 		</file>
 	</files>
 </assembly>
