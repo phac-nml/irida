@@ -13,6 +13,7 @@ Changes
 * [UI]: Implemented a project synchronization feature to pull remote samples and data from other IRIDA installations.
 * [Developer]: Added FastQC metrics to the REST API
 * [Workflow]: Upgraded SNVPhyl from 0.3 to 1.0.
+* [Developer]: Added ability to build IRIDA package `.zip` file and `tools-list.yml` for distribution and easy installation of tools in Galaxy.
 
 1.0.0 to 0.11.0
 ---------------
