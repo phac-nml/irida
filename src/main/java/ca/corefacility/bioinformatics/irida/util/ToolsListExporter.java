@@ -53,6 +53,7 @@ public class ToolsListExporter {
 
 	private static final String defaultToolPanelId = "irida";
 
+	// maps tools to default tool panel ids in Galaxy
 	// @formatter:off
 	private static final Map<String, String> toolNameToPanelId = ImmutableMap.<String, String>builder()
 			.put("flash", "ngs_qc")
