@@ -1,6 +1,6 @@
 (function (angular, $, tl) {
     angular
-        .module('irida.session', ['irida.utilities'])
+        .module('irida.session', [])
         .run(['SessionFactory', runSessionFactory])
         .config(['$httpProvider', httpProviderConfig])
         .factory('SessionFactory', ['$timeout', '$interval', '$window', '$uibModal', SessionFactory])
