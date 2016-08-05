@@ -593,7 +593,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>IRIDA ${project.version}</finalName>
+		<finalName>irida-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources/dandelion</directory>
