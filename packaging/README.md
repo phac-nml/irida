@@ -19,10 +19,14 @@ The following is a list of files within this package.
 Installation
 ============
 
-Updating Galaxy Tools
----------------------
+Installing Galaxy Tools
+-----------------------
 
-To install any required Galaxy tools by this IRIDA instance please run the following:
+This directory includes files to quickly install all necessary tools within an existing Galaxy instance for IRIDA.  Please see <https://irida.corefacility.ca/documentation/administrator/galaxy/> for details on how to set up an IRIDA Galaxy instance.
+
+### Automated Process/Upgrading
+
+To install any required Galaxy tools for this IRIDA version please run the following:
 
 ```bash
 pip install -r install-tools-requirements.txt # Installs dependency modules for script
@@ -31,4 +35,17 @@ python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://ur
 ```
 Where **[http://url-to-galaxy]** is the URL to your Galaxy instance for IRIDA and **[api key]** is the API key for your IRIDA Galaxy instance.
 
-Please refer to the [Documentation](https://irida.corefacility.ca/documentation/) for more details.
+### Manual Process
+
+If the automated installation process does not work, or to test out the tools, please see the online documentation at <https://irida.corefacility.ca/documentation/administrator/galaxy/>.
+
+Installing IRIDA
+----------------
+
+### New Installation
+
+For details on installation of IRIDA from scratch, please refer to the online documentation at <https://irida.corefacility.ca/documentation/>.
+
+### Upgrading IRIDA
+
+Please refer to the `UPGRADING.md` file for details on upgrading between IRIDA versions as well as the online documentation at <//irida.corefacility.ca/documentation/>.  For the most part, upgrading will involve copying over and re-deploying the `*.war` file included in this distribution.
