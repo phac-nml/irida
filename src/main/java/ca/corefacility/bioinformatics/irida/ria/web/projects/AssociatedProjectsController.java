@@ -32,12 +32,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -327,40 +325,6 @@ public class AssociatedProjectsController {
 		remoteRelatedProjectService.delete(remoteRelatedProjectForProjectAndURI.getId());
 
 		return ImmutableMap.of("result", "success");
-	}
-
-	/**
-	 * Get the associated {@link Sample}s for a given {@link Project}
-	 * 
-	 * @param projectId
-	 *            the ID of the local project
-	 * @return {@code Map<String, Object>} containing samples: list of samples
-	 */
-	@RequestMapping(value = "/{projectId}/associated/samples")
-	@ResponseBody
-	public Map<String, Object> getAssociatedSamplesForProject(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-
-		List<RelatedProjectJoin> authorizedRelatedProjectsForUser = projectService.getRelatedProjects(project);
-
-		List<Map<String, Object>> sampleList = new ArrayList<>();
-		// for each project
-		for (RelatedProjectJoin rp : authorizedRelatedProjectsForUser) {
-			Project object = rp.getObject();
-			// get the samples in the project
-			List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(object);
-
-			// get the sample map marking the sample type as ASSOCIATED
-			List<Map<String, Object>> collect = samplesForProject
-					.stream()
-					.map((j) -> ProjectSamplesController.getSampleMap(j.getObject(), j.getSubject(),
-							ProjectSamplesController.SampleType.ASSOCIATED, j.getObject().getId()))
-					.collect(Collectors.toList());
-
-			sampleList.addAll(collect);
-		}
-
-		return ImmutableMap.of("samples", sampleList);
 	}
 
 
