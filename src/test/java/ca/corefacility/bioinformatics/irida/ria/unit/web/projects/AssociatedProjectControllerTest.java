@@ -25,11 +25,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
@@ -342,40 +340,6 @@ public class AssociatedProjectControllerTest {
 		controller.removeRemoteAssociatedProject(projectId, projectLink);
 
 		verify(remoteRelatedProjectService).delete(rrp.getId());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetSamplesForAssociatedProject() {
-		Long projectId = 1L;
-		Project project = new Project();
-
-		Project allowedProject = new Project("allowed");
-		allowedProject.setId(2L);
-		Project notAllowedProject = new Project("not allowed");
-		notAllowedProject.setId(3L);
-
-		when(projectService.read(projectId)).thenReturn(project);
-
-		when(projectService.getRelatedProjects(project)).thenReturn(
-				Lists.newArrayList(new RelatedProjectJoin(project, allowedProject), new RelatedProjectJoin(project,
-						notAllowedProject)));
-
-		Sample sample = new Sample("test");
-		sample.setId(1L);
-		when(sampleService.getSamplesForProject(allowedProject)).thenReturn(
-				Lists.newArrayList(new ProjectSampleJoin(allowedProject, sample)));
-
-		Map<String, Object> associatedSamplesForProject = controller.getAssociatedSamplesForProject(projectId);
-
-		assertTrue("should have samples", associatedSamplesForProject.containsKey("samples"));
-
-		List<Object> object = (List<Object>) associatedSamplesForProject.get("samples");
-		assertEquals("should have 1 sample", 1, object.size());
-
-		Map<String, Object> sampleMap = (Map<String, Object>) object.iterator().next();
-		assertEquals("sample should be equal", sample, sampleMap.get("sample"));
-		assertEquals("project should be equal", allowedProject, sampleMap.get("project"));
 	}
 
 }
