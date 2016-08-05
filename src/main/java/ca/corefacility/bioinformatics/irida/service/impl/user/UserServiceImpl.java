@@ -160,6 +160,15 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 
 	/**
 	 * {@inheritDoc}
+     */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public long count() {
+		return super.count();
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
