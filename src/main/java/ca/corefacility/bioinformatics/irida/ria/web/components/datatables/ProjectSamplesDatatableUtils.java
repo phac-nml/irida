@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.springframework.data.domain.Sort;
 
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
+
 import com.github.dandelion.datatables.core.ajax.ColumnDef;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.google.common.base.Strings;
@@ -35,7 +37,7 @@ public class ProjectSamplesDatatableUtils extends DatatablesUtils {
 
 		ColumnDef sortedColumn = criterias.getSortedColumnDefs().get(0);
 		this.sortDirection = generateSortDirection(sortedColumn);
-		this.sortName = sortedColumn.getName();
+		this.sortName = ProjectSampleModel.generateSortName(sortedColumn.getName());
 	}
 
 	public int getCurrentPage() {

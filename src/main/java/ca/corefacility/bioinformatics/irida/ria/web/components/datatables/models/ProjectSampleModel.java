@@ -41,12 +41,24 @@ public class ProjectSampleModel extends AbstractExportModel {
 		this.sample = psj.getObject();
 	}
 
+	public static String generateSortName(String name) {
+		if (name.equals("projectName")) {
+			return "project.label";
+		} else {
+			return "sample." + name;
+		}
+	}
+
 	public String getId() {
 		return checkNullId(sample.getId());
 	}
 
 	public String getSampleName() {
 		return checkNullStrings(sample.getSampleName());
+	}
+
+	public Long getProjectId() {
+		return project.getId();
 	}
 
 	public String getProjectName() {

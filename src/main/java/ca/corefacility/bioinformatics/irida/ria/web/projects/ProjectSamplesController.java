@@ -44,15 +44,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -65,9 +56,19 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 public class ProjectSamplesController {
@@ -369,7 +370,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getProjectSamples(@PathVariable Long projectId,
+	public DatatablesResponse<ProjectSampleModel> getProjectSamples(@PathVariable Long projectId,
 			@DatatablesParams DatatablesCriterias criterias,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
@@ -406,16 +407,10 @@ public class ProjectSamplesController {
 		}
 
 		// Create a more usable Map of the sample data.
-		List<Map<String, Object>> sampleMap = new ArrayList<>();
-		for (ProjectSampleJoin join : page.getContent()) {
-			Project project = join.getSubject();
-			SampleType type = projectId == project.getId() ? SampleType.LOCAL : SampleType.ASSOCIATED;
-			Map<String, Object> map = getSampleMap(join.getObject(), project, type,
-					join.getObject().getId());
-			sampleMap.add(map);
-		}
+		List<ProjectSampleModel> models = page.getContent().stream().map(ProjectSampleModel::new)
+				.collect(Collectors.toList());
 
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(sampleMap, page.getTotalElements(),
+		DataSet<ProjectSampleModel> dataSet = new DataSet<>(models, page.getTotalElements(),
 				page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
 	}
@@ -900,29 +895,6 @@ public class ProjectSamplesController {
 			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
 			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);	
 		}
-	}
-
-	/**
-	 * Get the Map format of {@link Sample}s to return for the project/samples page
-	 *
-	 * @param sample
-	 * 		The sample to display
-	 * @param project
-	 * 		The originating project
-	 * @param type
-	 * 		The {@link SampleType} of the sample (LOCAL, ASSOCIATED)
-	 * @param identifier
-	 * 		Object to identify the {@link Sample}. Local samples will be the sample id, remote may be a URL
-	 *
-	 * @return a formatted map of {@link Sample} objects.
-	 */
-	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Object identifier) {
-		Map<String, Object> sampleMap = new HashMap<>();
-		sampleMap.put("sample", sample);
-		sampleMap.put("project", project);
-		sampleMap.put("sampleType", type);
-		sampleMap.put("identifier", identifier);
-		return sampleMap;
 	}
 
 	/**

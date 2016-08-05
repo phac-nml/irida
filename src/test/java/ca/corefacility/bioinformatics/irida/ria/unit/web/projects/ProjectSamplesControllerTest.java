@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -310,7 +311,7 @@ public class ProjectSamplesControllerTest {
 	}
 
 	@Test
-	public void testGetAjaxProjectSamplesMap() {
+	public void testGetAjaxProjectSampleModels() {
 		Sample sample = TestDataFactory.constructSample();
 		when(projectService.read(anyLong())).thenReturn(project);
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(ImmutableList.of(
@@ -329,11 +330,11 @@ public class ProjectSamplesControllerTest {
 		columnDef.setName("sample.sampleName");
 		when(criterias.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
 
-		DatatablesResponse<Map<String, Object>> response = controller
+		DatatablesResponse<ProjectSampleModel> response = controller
 				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of(), null, null, null);
-		List<Map<String, Object>> data = response.getData();
+		List<ProjectSampleModel> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
-		Sample sampleData = (Sample) data.get(0).get("sample");
+		ProjectSampleModel sampleData = data.get(0);
 		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
 
 	}
