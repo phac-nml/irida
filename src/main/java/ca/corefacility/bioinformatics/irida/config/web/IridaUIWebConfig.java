@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConf
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GravatarInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
 
@@ -121,6 +122,11 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public BreadCrumbInterceptor breadCrumbInterceptor() {
 		return new BreadCrumbInterceptor(messageSource);
+	}
+
+	@Bean
+	public GravatarInterceptor gravatarInterceptor() {
+		return new GravatarInterceptor();
 	}
 
 	@Override
@@ -205,6 +211,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
+		registry.addInterceptor(gravatarInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
 	}
 

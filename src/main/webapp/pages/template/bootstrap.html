@@ -195,8 +195,7 @@
 				<li>
 					<a class="nav-gravatar" href="#" th:href="@{/users/current}" th:with="email=${#httpSession.getAttribute('CURRENT_USER_DETAILS') != null} ? ${#httpSession.getAttribute('CURRENT_USER_DETAILS').email} : 'anonymous@anonymous.ca'"
 					   data:uib-tooltip="#{nav.main.account}" tooltip-placement="bottom">
-						<img class="gravatar" data:gravatar-src-once="'\'' + ${email} + '\''"
-						     gravatar-size="28"/>
+						<img class="gravatar" th:src="${session.gravatar}"/>
 					</a>
 				</li>
 				<li>
