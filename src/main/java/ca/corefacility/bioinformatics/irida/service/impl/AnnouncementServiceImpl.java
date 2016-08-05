@@ -97,6 +97,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
         return super.read(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     @PreAuthorize("hasAnyRole('ROLE_USER')")
@@ -104,6 +107,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
                                      Sort.Direction order, String... sortProperties) {
         return super.search(specification, page, size, order, sortProperties);
     }
+
     /**
      *  {@inheritDoc}
      */
