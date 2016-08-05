@@ -48,8 +48,7 @@ public class AnnouncementsController extends BaseController{
 
     @Autowired
     public AnnouncementsController(UserService userService,
-                                   AnnouncementService announcementService,
-                                   MessageSource messageSource) {
+                                   AnnouncementService announcementService) {
         this.userService = userService;
         this.announcementService = announcementService;
     }
