@@ -25,7 +25,11 @@ import com.timgroup.jgravatar.GravatarRating;
 public class GravatarInterceptor extends HandlerInterceptorAdapter {
 	private static final String GRAVATAR_ATTRIBUTE = "gravatar";
 
-	@Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		super.postHandle(request, response, handler, modelAndView);
 		HttpSession session = request.getSession();
