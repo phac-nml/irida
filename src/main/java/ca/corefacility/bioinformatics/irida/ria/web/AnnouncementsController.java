@@ -281,7 +281,7 @@ public class AnnouncementsController extends BaseController{
         final DataSet<Announcement> announcementDataSet = new DataSet<>(announcementDataTableResponseList,
                 announcements.getTotalElements(), announcements.getTotalElements());
 
-        logger.debug("Total number of announcements: " + announcementDataSet.getTotalRecords());
+        logger.trace("Total number of announcements: " + announcementDataSet.getTotalRecords());
         return DatatablesResponse.build(announcementDataSet, criteria);
     }
 

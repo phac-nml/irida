@@ -11,6 +11,7 @@ import java.util.List;
  * Page object to represent the Announcements Dashboard page
  */
 public class AnnouncementDashboardPage extends AbstractPage {
+
     public AnnouncementDashboardPage(WebDriver driver) {
         super(driver);
     }
@@ -31,6 +32,6 @@ public class AnnouncementDashboardPage extends AbstractPage {
     public void markTopAnnouncementAsRead() {
         WebElement markReadButton = driver.findElement(By.cssSelector("div.announcement-markread>span"));
         markReadButton.click();
-        waitForTime(1);
+        waitForTime(DEFAULT_WAIT);
     }
 }

@@ -42,13 +42,13 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
     }
 
     @Test
-    public void confirmTablePopulatedByAnnouncements() throws InterruptedException {
+    public void testConfirmTablePopulatedByAnnouncements() {
         controlPage.goTo();
         assertEquals("Announcement table should be populated by 7 announcements", 7, controlPage.announcementTableSize());
     }
 
     @Test
-    public void sortAnnouncementsByContent() {
+    public void testSortAnnouncementsByContent() {
         controlPage.goTo();
         controlPage.clickMessageHeader();
 
@@ -64,7 +64,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
     }
 
     @Test
-    public void submitNewAnnouncement() {
+    public void testSubmitNewAnnouncement() {
         String message = "This is a great announcement";
 
         controlPage.goTo();
@@ -84,12 +84,67 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
     }
 
     @Test
-    public void checkDetailsPage() {
+    public void testCheckDetailsPage() {
+        controlPage.goTo();
 
+        List<WebElement> content = controlPage.getVisibleAnnouncementsContent();
+
+        String announcement1 = content.get(1).getText();
+        String announcement2 = content.get(2).getText();
+        String announcement3 = content.get(3).getText();
+
+        controlPage.clickDetailsButton(1);
+        assertTrue("Announcement content doesn't match expected", announcement1.equals(detailPage.getInputText()));
+
+        detailPage.clickCancelButton();
+
+        controlPage.clickDetailsButton(2);
+        assertTrue("Announcement content doesn't match expected", announcement2.equals(detailPage.getInputText()));
+
+        detailPage.clickCancelButton();
+
+        controlPage.clickDetailsButton(3);
+        assertTrue("Announcement content doesn't match expected", announcement3.equals(detailPage.getInputText()));
     }
 
     @Test
-    public void markAnnouncementAsRead() throws InterruptedException {
+    public void testUpdateAnnouncement() {
+        String newMessage = "Updated!!!";
+
+        controlPage.goTo();
+        controlPage.clickDetailsButton(4);
+        detailPage.enterMessage(newMessage);
+
+        List<WebElement> content = controlPage.getVisibleAnnouncementsContent();
+        String announcement = content.get(4).getText();
+        assertTrue("Unexpected message content", announcement.equals(newMessage));
+    }
+
+    @Test
+    public void testDeleteAnnouncement() {
+        controlPage.goTo();
+
+        List<WebElement> content = controlPage.getVisibleAnnouncementsContent();
+
+        String announcement = content.get(2).getText();
+
+        controlPage.clickDetailsButton(2);
+        assertTrue("Announcement content doesn't match expected", announcement.equals(detailPage.getInputText()));
+
+        detailPage.clickDeleteButton();
+
+        assertEquals("Unexpected number of announcements", content.size() - 1, controlPage.getVisibleAnnouncementsContent().size());
+    }
+
+    @Test
+    public void testDetailsTablePopulated() {
+        controlPage.goTo();
+        controlPage.clickDetailsButton(0);
+        assertEquals("Unexpected number of user information rows in table", 6, detailPage.getTableDataSize());
+    }
+
+    @Test
+    public void testMarkAnnouncementAsRead() {
         List<WebElement> announcements = dashboardPage.getCurrentUnreadAnnouncements();
         assertEquals("Unexpected number of announcements", 5, announcements.size());
 

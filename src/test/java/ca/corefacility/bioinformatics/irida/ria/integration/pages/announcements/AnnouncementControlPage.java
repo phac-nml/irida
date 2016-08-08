@@ -23,9 +23,22 @@ public class AnnouncementControlPage extends AbstractPage {
         waitForAjax();
     }
 
+    /**
+     * Get the size of the announcement table currently visible on the control page
+     * @return size of the table
+     */
     public int announcementTableSize() {
         WebElement element = driver.findElement(By.id("announcementTable"));
         return element.findElements(By.tagName("tr")).size();
+    }
+
+    /**
+     * Get a list of {@link WebElement}s describing currently visible announcements on the page
+     * @return list of web elements
+     */
+    public List<WebElement> getVisibleAnnouncementsContent() {
+        WebElement table = driver.findElement(By.id("announcementTable"));
+        return table.findElements(By.cssSelector("tbody>tr>td:first-of-type"));
     }
 
     public void clickMessageHeader() {
@@ -34,14 +47,19 @@ public class AnnouncementControlPage extends AbstractPage {
         waitForAjax();
     }
 
-    public List<WebElement> getVisibleAnnouncementsContent() {
-        WebElement table = driver.findElement(By.id("announcementTable"));
-        return table.findElements(By.cssSelector("tbody>tr>td:first-of-type"));
-    }
-
     public void clickCreateNewAnnouncementButton() {
         WebElement createButton = driver.findElement(By.id("create-new-button"));
         createButton.click();
+    }
+
+    public void clickDetailsButton(int index) {
+        List<WebElement> buttons = driver.findElements(By.cssSelector("div>button.details-btn"));
+        if (index < buttons.size()) {
+            buttons.get(index).click();
+            waitForTime(DEFAULT_WAIT);
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
     private void waitForAjax() {
