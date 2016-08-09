@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.ImagingOpException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -169,10 +170,18 @@ public class SequenceFileController {
 				throw new EntityNotFoundException("Image not found");
 			}
 			if (thumb) {
-				BufferedImage image = ImageIO.read(new ByteArrayInputStream(chart));
-				BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, 160,
-						Scalr.OP_ANTIALIAS);
-				ImageIO.write(thumbnail, "png", response.getOutputStream());
+				try {
+					BufferedImage image = ImageIO.read(new ByteArrayInputStream(chart));
+					BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, 160,
+							Scalr.OP_ANTIALIAS);
+					ImageIO.write(thumbnail, "png", response.getOutputStream());
+				} catch (IOException e) {
+					logger.error("Error reading file", e);
+				} catch (IllegalArgumentException e) {
+					logger.error("Error creating thumbnail for sequence file", e);
+				} catch (ImagingOpException e) {
+					logger.error("Error creating thumbnail for sequence file", e);
+				}
 			} else {
 				response.getOutputStream().write(chart);
 			}
