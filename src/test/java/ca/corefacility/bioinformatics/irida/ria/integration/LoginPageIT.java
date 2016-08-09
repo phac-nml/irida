@@ -38,7 +38,7 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testGoodLogin() throws Exception {
 		LoginPage.login(driver(), LoginPage.MANAGER_USERNAME, LoginPage.GOOD_PASSWORD);
-		assertTrue("The 'test' user is logged in and redirected.", driver().getCurrentUrl().contains("dashboard"));
+		assertTrue("The 'test' user is logged in and redirected.", driver().getTitle().contains("dashboard"));
 	}
 
 	@Test
@@ -61,6 +61,6 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		AbstractPage.logout(driver());
 		page = LoginPage.to(driver());
 		page.login(EXPIRED_USERNAME, newPassword);
-		assertTrue("The user is logged in and redirected.", driver().getCurrentUrl().contains("dashboard"));
+		assertTrue("The user is logged in and redirected.", driver().getTitle().contains("dashboard"));
 	}
 }
