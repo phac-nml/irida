@@ -32,7 +32,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		User user = (User) authentication.getPrincipal();
 
 		// Add gravatar url as to the session for use in thymeleaf templates.
-		Gravatar gravatar = new Gravatar(30, GravatarRating.GENERAL_AUDIENCES, GravatarDefaultImage.MONSTERID);
+		Gravatar gravatar = new Gravatar(30, GravatarRating.GENERAL_AUDIENCES, GravatarDefaultImage.IDENTICON);
 		String gravatarUrl = gravatar.getUrl(user.getEmail());
 		session.setAttribute(GRAVATAR_ATTRIBUTE, gravatarUrl);
 	}
