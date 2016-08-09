@@ -191,17 +191,11 @@ public class SequenceFileController {
 	 */
 	private void createDefaultPageInfo(Long sequencingObjectId, Long sequenceFileId, Model model) {
 		SequencingObject seqObject = sequencingObjectService.read(sequencingObjectId);
-		try {
-			SequenceFile file = seqObject.getFileWithId(sequenceFileId);
-			AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(seqObject, file.getId());
-			model.addAttribute("sequencingObject", seqObject);
-			model.addAttribute("file", file);
-			model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
-			model.addAttribute("fastQC", fastQC);
-		} catch (EntityNotFoundException e) {
-			// Catching this error to prevent stack trace thrown during testing
-			// The interface already displays that the file could not be found
-			logger.debug("Cannot find sequence file with id: ", sequenceFileId);
-		}
+		SequenceFile file = seqObject.getFileWithId(sequenceFileId);
+		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(seqObject, file.getId());
+		model.addAttribute("sequencingObject", seqObject);
+		model.addAttribute("file", file);
+		model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
+		model.addAttribute("fastQC", fastQC);
 	}
 }
