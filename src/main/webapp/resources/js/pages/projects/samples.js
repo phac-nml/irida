@@ -1,8 +1,5 @@
 /*globals FileReader:true, fileFilterForm:true*/
 (function (angular, $, _, tl, page, project) {
-  function setRootVariable($rootScope) {
-    $rootScope.cgPromise = null;
-  }
 
   function Select2Service($timeout) {
     'use strict';
@@ -915,8 +912,7 @@
     }
   }
 
-  angular.module('Samples', ['cgBusy', 'irida.cart'])
-    .run(['$rootScope', setRootVariable])
+  angular.module('Samples', [, 'irida.cart'])
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', [StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
