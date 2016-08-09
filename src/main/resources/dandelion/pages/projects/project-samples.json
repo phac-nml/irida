@@ -1,8 +1,7 @@
 {
   "dependencies": [
     "select2-bootstrap",
-    "bootstrap_dropdowns_enhancement",
-    "angular-busy"
+    "bootstrap_dropdowns_enhancement"
   ],
   "assets": [
     {
