@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
@@ -225,7 +226,9 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		String size = "N/A";
 		try {
 			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
-		} catch (IOException e) {
+		} catch (NoSuchFileException e) {
+			logger.error("Could file find file ", file.getFileName());
+		} catch(IOException e) {
 			logger.error("Could not calculate file size: ", e);
 		}
 		return size;
