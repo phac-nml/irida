@@ -4,6 +4,7 @@ Changes
 0.11.0 to 0.12.0
 ----------------
 * [UI] Remove bower dependency for AngularJS-toaster.
+* [UI]: Remove bower dependency for 'MagnificPopup'.
 * [UI]: Fix issue with Dandelion filters throwing `nullpointerexception`s (0.11.4)
 * [Developer]: Added `FetchMode.SELECT` to `SequenceFilePair.files` as Hibernate was including the children multiple times in the result set. (0.11.1)
 * [Developer]: Packer now waits for tomcat to start during the build so that the database is fully deployed before distribution.
