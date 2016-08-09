@@ -76,7 +76,7 @@
 						</td>
 					</tr>
 					</thead>
-					<tbody cg-busy="filterPromise">
+					<tbody>
 					<tr class="associated-project-row" ng-repeat="project in associated">
 						<td class="project-id">{{project.id}}</td>
 						<td class="project-name">{{project.name}}</td>
@@ -151,7 +151,7 @@
     						<th th:text="#{project.associated.table.associated}"></th>
     					</tr>
 					</thead>
-					<tbody cg-busy="filterPromise">
+					<tbody>
 					<tr class="associated-project-row" ng-repeat="project in remoteAssociated | filter:filterCriteria">
 						<td class="project-id">{{project.id}}</td>
 						<td class="project-name">{{project.name}}</td>
