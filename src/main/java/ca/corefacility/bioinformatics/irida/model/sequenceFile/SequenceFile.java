@@ -227,7 +227,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		try {
 			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
 		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + file.getFileName());
+			logger.error("Could not find file " + file);
 		} catch(IOException e) {
 			logger.error("Could not calculate file size: ", e);
 		}

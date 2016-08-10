@@ -53,8 +53,10 @@
   </table>
   <span class="hidden unauthorized-project-display" id="unauthorized-project-display">
           <span th:text="#{project.associated.remote.unavailable}">_Unavailable projects: _</span>
-  <span class="unauthorized-count"></span>
-  <i class="glyphicon glyphicon-question-sign"></i>
+    <span class="unauthorized-count"></span>
+  <fa:icon type="question-circle" style="cursor: help;"
+           data:uib-tooltip="#{project.associated.remote.unavailable.description}"
+           tooltip-placement="right"/>
   </span>
 </div>
 <div th:unless="${#maps.isEmpty(remoteProjectsByApi)}">
@@ -96,16 +98,6 @@
     			//display the projects if the GET is successful
     			$(".remote-project-view-"+apiId).removeClass("hidden");
     		});
-    		
-    		$(".unauthorized-project-display").qtip({
-    	        content: {
-    	            text: /*[[#{project.associated.remote.unavailable.description}]]*/ 'Projects unavailable'
-    	        },
-    	        position: {
-    	            at: 'right center',
-    	            my: 'left, center',
-    	        }
-    	    });
     	});
     	
     	//get the remote project names

@@ -3,6 +3,7 @@ Changes
 
 0.11.0 to 0.12.0
 ----------------
+* [UI]: Removed qTip2 dependency. 
 * [UI]: Removed bower dependency for `bootstrap-sass-official`.
 * [UI]: Remove bower dependency for 'MagnificPopup'.
 * [UI]: Removed client side dependency on `angular-gravatar` and replace with server gravatar url creation.
