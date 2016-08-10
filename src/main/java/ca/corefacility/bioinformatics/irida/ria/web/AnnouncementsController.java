@@ -164,7 +164,7 @@ public class AnnouncementsController extends BaseController{
             model.addAttribute("errors", "Announcement was not created successfully");
         }
 
-        return getControlCentreAdminPage(model);
+        return "redirect:/announcements/admin";
     }
 
     /**
