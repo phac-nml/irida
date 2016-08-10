@@ -95,7 +95,7 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			public void processRow(ResultSet rs) throws SQLException {
 				Long id = rs.getLong(1);
 				Path path = Paths.get(rs.getString(2));
-				if (!path.startsWith(sequenceFileDirectory)) {
+				if (!path.startsWith(referenceFileDirectory)) {
 					validationErrors.addError("Reference file with id [" + id + "] with path [" + path
 							+ "] is not under path specified in /etc/irida/irida.conf ["
 							+ referenceFileDirectory.toString()
@@ -109,7 +109,7 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			public void processRow(ResultSet rs) throws SQLException {
 				Long id = rs.getLong(1);
 				Path path = Paths.get(rs.getString(2));
-				if (!path.startsWith(sequenceFileDirectory)) {
+				if (!path.startsWith(outputFileDirectory)) {
 					validationErrors.addError("Output file with id [" + id + "] with path [" + path
 							+ "] is not under path specified in /etc/irida/irida.conf ["
 							+ outputFileDirectory.toString()
@@ -123,7 +123,7 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			public void processRow(ResultSet rs) throws SQLException {
 				Long id = rs.getLong(1);
 				Path path = Paths.get(rs.getString(2));
-				if (!path.startsWith(sequenceFileDirectory)) {
+				if (!path.startsWith(snapshotFileDirectory)) {
 					validationErrors.addError("Sequence file snapshot with id [" + id + "] with path [" + path
 							+ "] is not under path specified in /etc/irida/irida.conf ["
 							+ snapshotFileDirectory.toString()
