@@ -146,7 +146,7 @@ public class AbstractPage {
 	}
 
 	public int getCartCount() {
-		return Integer.parseInt(driver.findElement(By.cssSelector("#cart-count-notification .angular-notifications-icon div")).getText());
+		return Integer.parseInt(driver.findElement(By.id("cart-count")).getText());
 	}
 
 	public void showCart() {
