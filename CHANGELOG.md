@@ -6,6 +6,7 @@ Changes
 * [UI]: Removed qTip2 dependency. 
 * [UI]: Removed bower dependency for `bootstrap-sass-official`.
 * [UI]: Remove bower dependency for 'MagnificPopup'.
+* [UI]: Removed client side dependency on `angular-gravatar` and replace with server gravatar url creation.
 * [UI]: Fix issue with Dandelion filters throwing `nullpointerexception`s (0.11.4)
 * [Developer]: Added `FetchMode.SELECT` to `SequenceFilePair.files` as Hibernate was including the children multiple times in the result set. (0.11.1)
 * [Developer]: Packer now waits for tomcat to start during the build so that the database is fully deployed before distribution.
