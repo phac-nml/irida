@@ -24,15 +24,17 @@
 <div layout:fragment="page" ddl:bundle-includes="announcement" ddl:asset-css-excludes="jquery.datatables">
     <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
         <form name="update_announcement" class="ng-cloak"
-              th:action="@{/announcements/{aID}/details(aID=${announcement.getId()})}" method="post" role="form"
+              th:action="@{/announcements/{aID}/details(aID=${announcement.getId()})}"
+              method="post" role="form"
               novalidate="novalidate">
             <section class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="panel-title" th:text="#{announcement.control.details.edit}">_Edit Current Announcement_</h2>
+                    <h2 class="panel-title" th:text="#{announcement.control.details.edit}"></h2>
                 </div>
                 <div class="panel-body">
-                    <textarea class="form-control input-full announcement-input" id="message" name="message"
-                              required="required" placeholder="Required"
+                    <textarea class="form-control input-full announcement-input" type="text" id="message" name="message"
+                              required="required"
+                              placeholder="Required"
                               th:text="${announcement.getMessage()}"
                               th:placeholder="#{announcement.create.form.placeholder}"></textarea>
                 </div>
@@ -48,6 +50,34 @@
             </section>
         </form>
     </div>
+
+    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
+        <section class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title" th:text="#{announcement.control.details.title}"></h2>
+            </div>
+            <div class="panel-body">
+                <div dt:conf="announcementUserTable">
+                    <div dt:confType="extrahtml" dt:uid="0">
+                        <p><span th:text="#{announcement.details.numusers}"></span>: <span th:text="${numReads}"></span>/<span th:text="${numTotal}"></span> </p>
+                    </div>
+                </div>
+                <table id="announcementUserTable" dt:table="true"
+                       dt:url="@{/announcements/__${announcement.getId()}__/details/ajax/list}"
+                       dt:dom="0frtlip">
+                    <thead>
+                    <tr role="row">
+                        <th dt:property="username" dt:searchable="true" th:text="#{announcement.control.details.username}"></th>
+                        <th width="45px" dt:sortable="false" dt:renderFunction="announcement#announcementTable.renderStatus">Status</th>
+                        <th width="100px" dt:property="createdDate" dt:renderFunction="announcement#announcementTable.renderDate"
+                            dt:sortInitDirection="desc" th:text="#{announcement.control.details.dateRead}"></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </section>
+    </div>
+
 </div>
 </body>
 </html>

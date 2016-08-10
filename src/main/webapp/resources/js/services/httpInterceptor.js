@@ -1,11 +1,20 @@
 (function (angular, $, tl) {
     angular
-        .module('irida.session', ['irida.utilities'])
+        .module('irida.session', [])
         .run(['SessionFactory', runSessionFactory])
         .config(['$httpProvider', httpProviderConfig])
         .factory('SessionFactory', ['$timeout', '$interval', '$window', '$uibModal', SessionFactory])
         .factory('HttpInterceptor', ['$injector', HttpInterceptor])
+        .filter('countdown', countdownFilter)
     ;
+
+    function countdownFilter () {
+        return function(timeleft) {
+            if($.isNumeric(timeleft)){
+                return moment.duration(timeleft, "milliseconds").humanize();
+            }
+        };
+    }
 
     function runSessionFactory(session) {
         session.start();
