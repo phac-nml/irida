@@ -42,6 +42,7 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 	@Override
 	public void setUp() throws SetupException {
 		logger.info("Setting up absolute to relative paths changeset.");
+
 	}
 
 	@Override
@@ -72,6 +73,10 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 
 	@Override
 	public ValidationErrors validate(Database database) {
+		return null;
+	}
+
+	public ValidationErrors testRelativePaths() {
 		final ValidationErrors validationErrors = new ValidationErrors();
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -139,6 +144,17 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
 		// for each type of directory and file-class, go through and strip out
 		// the prefix in the database.
+
+		// First check if the database paths match the configured paths
+		ValidationErrors testRelativePaths = testRelativePaths();
+
+		if (testRelativePaths.hasErrors()) {
+			for (String error : testRelativePaths.getErrorMessages()) {
+				logger.error(error);
+			}
+
+			throw new CustomChangeException("File locations did not validate.  Change cannot be applied.");
+		}
 
 		final String sequenceFileDirectoryPath = appendPathSeparator(this.sequenceFileDirectory.toString());
 		final String referenceFileDirectoryPath = appendPathSeparator(this.referenceFileDirectory.toString());
