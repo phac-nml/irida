@@ -3,6 +3,7 @@ Changes
 
 0.11.0 to 0.12.0
 ----------------
+* [UI]: Removed qTip2 dependency. 
 * [UI]: Removed bower dependency for `bootstrap-sass-official`.
 * [UI]: Remove bower dependency for 'MagnificPopup'.
 * [UI]: Fix issue with Dandelion filters throwing `nullpointerexception`s (0.11.4)
