@@ -7,7 +7,6 @@
     "**/*.txt"
   ],
   "dependencies": {
-    "qtip2": "2.2.0",
     "livestampjs": "1.1.2",
     "select2": "3.5.0",
     "jquery": "2.1.1",
