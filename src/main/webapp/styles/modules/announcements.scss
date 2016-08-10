@@ -18,11 +18,16 @@
 .announcement-content{
   flex-grow:1;
   line-height:28px;
-  align-content: stretch;
+  align-content: stretch
 }
 .announcement-markread {
-  margin-left: 5px;
+  margin-left: 5px
 }
 textarea.announcement-input {
-  height: 20em;
+  height: 20em
+}
+
+.tooltip-inner {
+  white-space: nowrap;
+  max-width: none
 }

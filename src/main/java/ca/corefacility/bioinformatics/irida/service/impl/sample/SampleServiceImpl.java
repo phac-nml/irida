@@ -356,7 +356,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames, String sampleName, String searchTerm,
 			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty) {
 		return psjRepository
