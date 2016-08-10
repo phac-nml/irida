@@ -184,7 +184,10 @@
 					</ul>
 				</li>
 				<li>
-					<notification-icon ng-click="cart.show=!cart.show" class="navbar-notification" animation="shake" id="cart-count-notification" count="cart.count"><button id="cart-show-btn" class="btn btn-link navbar-btn"><span style="font-size: 20px" class="fa fa-fw fa-shopping-cart"></span></button></notification-icon>
+					<button id="cart-show-btn" class="btn btn-link navbar-btn" ng-click="cart.show=!cart.show">
+						<span style="font-size: 20px" class="fa fa-fw fa-shopping-cart"></span>
+						<span ng-hide="cart.count === 0" class="btn__badge" ng-bind="cart.count"></span>
+					</button>
 				</li>
 				<li>
 					<a href="#" th:href="@{/remote_api}" data:uib-tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">
