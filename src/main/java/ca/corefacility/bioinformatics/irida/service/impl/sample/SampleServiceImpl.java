@@ -279,30 +279,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
-	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, String name, Date minDate,
-			Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty) {
-
-		return psjRepository.findAll(ProjectSampleSpecification.filterProjectSamples(projects, name, minDate, maxDate),
-				new PageRequest(currentPage, pageSize, direction, sortProperty));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
-	public Page<ProjectSampleJoin> getSearchedSamplesForProjects(List<Project> projects, String searchString,
-			int currentPage, int pageSize, Sort.Direction direction, String sortProperty) {
-
-		return psjRepository.findAll(ProjectSampleSpecification.searchProjectSamples(projects, searchString),
-				new PageRequest(currentPage, pageSize, direction, sortProperty));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
@@ -380,11 +356,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public Page<ProjectSampleJoin> findSampleByNameInProject(Project project, List<String> sampleNames, int currentPage,
-			int pageSize, Sort.Direction direction, String sortProperty) {
-		return sampleRepository.findSampleByNameInProject(project, sampleNames,
-				new PageRequest(currentPage, pageSize, direction, sortProperty));
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames, String sampleName, String searchTerm,
+			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty) {
+		return psjRepository
+				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, minDate, maxDate),
+						new PageRequest(currentPage, pageSize, direction, sortProperty));
 	}
 
 	/**

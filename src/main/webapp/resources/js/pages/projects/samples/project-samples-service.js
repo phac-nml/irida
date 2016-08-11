@@ -7,7 +7,8 @@
     var scope;
 
     function _reloadTable() {
-      page.ajaxParam = {date:{}};
+      // Need to keep the associated proejcts
+      page.ajaxParam = {date:{}, associated: page.ajaxParam.associated};
       oTable_samplesTable.search("");
       oTable_samplesTable.ajax.reload();
     }
