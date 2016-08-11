@@ -76,8 +76,10 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	}
 
 	public void clickConnect() {
+		logger.debug("REMOTE UTILITES: finding oauth-connect-link button");
 		WebElement connectButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
 				.className("oauth-connect-link ")));
+		logger.debug("REMOTE UTILITES: oauth-connect-link found");
 		connectButton.click();
 
 		waitForAjax();
