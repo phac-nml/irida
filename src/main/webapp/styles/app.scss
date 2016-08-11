@@ -112,3 +112,17 @@ input[type="search"] {
   font-size: 1.4em;
   padding-bottom: 10px;
 }
+
+// Display a number next above and to the right
+// of a button. Ex. Cart icon in navbar.
+.btn__badge {
+  background-color: RGB(54, 147, 206);
+  border-radius: 2px;
+  color: white;
+
+  padding: 1px 5px;
+  font-size: 0.8em;
+  position: absolute;
+  top: 5px;
+  right: 0;
+}
