@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
@@ -10,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -19,8 +21,12 @@ import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -103,6 +109,33 @@ public class AnnouncementServiceImplIT {
 
     @Test
     @WithMockUser(username = "admin", roles = "ADMIN")
+    public void testUpdateAnnouncementAsAdminSuccess() {
+        Announcement announcement = announcementService.read(1L);
+        final String newMessage = "A new message";
+        announcement.setMessage(newMessage);
+        announcement = announcementService.update(announcement);
+
+        assertEquals("Message content doesn't match", newMessage, announcement.getMessage());
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    @WithMockUser(username = "user", roles = "USER")
+    public void testUpdateAnnouncementAsUserFail() {
+        final Announcement a = announcementService.read(1L);
+        announcementService.update(a);
+    }
+
+    @Test (expected = InvalidDataAccessApiUsageException.class)
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    public void testUpdateAnnouncementNotExists() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        final Announcement a = new Announcement("Doesn't exist", user);
+        announcementService.update(a);
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
     public void testGetSingleAnnouncementById() {
         Announcement a = announcementService.read(3L);
         Long idExpected = 3L;
@@ -116,6 +149,35 @@ public class AnnouncementServiceImplIT {
     @WithMockUser(username = "admin", roles = "ADMIN")
     public void testGetAnnouncementNotExist() {
         announcementService.read(800L);
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    public void testSearchReturnsExistingAnnouncement() {
+        String searchString = "Downtime";
+        Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
+                0, 10, Sort.Direction.ASC, "id");
+        assertEquals("Unexpected number of announcements returned", 2, searchAnnouncement.getContent().size());
+        for(Announcement a : searchAnnouncement) {
+            assertTrue(a.getMessage().contains(searchString));
+        }
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    public void testSearchReturnsNoResults() {
+        String searchString = "ThisShouldn'tMatchAnything!!";
+        Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
+                0, 10, Sort.Direction.ASC, "id");
+        assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    public void testSearchNullSearchString() {
+        Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(null),
+                0, 10, Sort.Direction.ASC, "id");
+        assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
     }
 
     @Test
