@@ -39,12 +39,12 @@
                               th:placeholder="#{announcement.create.form.placeholder}"></textarea>
                 </div>
                 <div class="panel-footer text-right">
-                    <a class="btn btn-default" id="cancelBtn" th:href="${#httpServletRequest.getHeader('referer')}"
+                    <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}"
                        th:text="#{announcement.control.details.cancel}">__Cancel__</a>
                     <button id="submitBtn" type="submit" class="btn btn-primary">
                         <span th:text="#{announcement.control.details.save}">__Save__</span>
                     </button>
-                    <a class="btn btn-danger" id="deleteBtn" th:text="#{announcement.control.details.delete}"
+                    <a class="btn btn-danger" th:text="#{announcement.control.details.delete}"
                         th:href="@{/announcements/{aID}/delete(aID=${announcement.getId()})}">__Delete__</a>
                 </div>
             </section>

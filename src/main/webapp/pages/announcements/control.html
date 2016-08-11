@@ -30,7 +30,7 @@
             <div dt:confType="callback" dt:type="createdRow" dt:function="announcement#announcementTable.detailsCallback" />
             <div dt:confType="extrahtml" dt:uid="2">
                 <div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
-                    <a class="btn btn-default" id="create-new-button" th:text="#{announcement.create.title}"
+                    <a class="btn btn-default" th:text="#{announcement.create.title}"
                        th:href="@{create}">_Create NEW_</a>
                 </div>
             </div>
@@ -38,7 +38,7 @@
         <table id="announcementTable" dt:table="true" dt:url="@{/announcements/control/ajax/list}">
             <thead>
                 <tr role="row">
-                    <th id="message-header" dt:property="message" dt:searchable="true" th:text="#{announcement.control.message}"></th>
+                    <th dt:property="message" dt:searchable="true" th:text="#{announcement.control.message}"></th>
                     <th width="150px" dt:property="user.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
                     <th width="150px" dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" dt:sortInitDirection="desc" th:text="#{announcement.control.createdDate}"></th>
                     <th width="10px" dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderDetailsButton"/>

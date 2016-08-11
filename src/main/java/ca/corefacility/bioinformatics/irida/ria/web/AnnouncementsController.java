@@ -48,7 +48,8 @@ public class AnnouncementsController extends BaseController{
 
     @Autowired
     public AnnouncementsController(UserService userService,
-                                   AnnouncementService announcementService) {
+                                   AnnouncementService announcementService,
+                                   MessageSource messageSource) {
         this.userService = userService;
         this.announcementService = announcementService;
     }
@@ -164,7 +165,7 @@ public class AnnouncementsController extends BaseController{
             model.addAttribute("errors", "Announcement was not created successfully");
         }
 
-        return "redirect:/announcements/admin";
+        return getControlCentreAdminPage(model);
     }
 
     /**
@@ -281,7 +282,7 @@ public class AnnouncementsController extends BaseController{
         final DataSet<Announcement> announcementDataSet = new DataSet<>(announcementDataTableResponseList,
                 announcements.getTotalElements(), announcements.getTotalElements());
 
-        logger.trace("Total number of announcements: " + announcementDataSet.getTotalRecords());
+        logger.debug("Total number of announcements: " + announcementDataSet.getTotalRecords());
         return DatatablesResponse.build(announcementDataSet, criteria);
     }
 
