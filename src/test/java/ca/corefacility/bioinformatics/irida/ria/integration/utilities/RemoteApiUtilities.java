@@ -20,6 +20,7 @@ public class RemoteApiUtilities {
 		String applicationPort = page.getApplicationPort();
 		String url = "http://localhost:" + applicationPort + "/api";
 
+		logger.debug("ABOUT TO CREATE REMOTE API WITH DETAILS");
 		page.createRemoteAPIWithDetails("new name", url, "testClient", "testClientSecret");
 		assertTrue("client should have been created", page.checkSuccess());
 
