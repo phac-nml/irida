@@ -270,7 +270,7 @@
         if (openedByCart) {
           GalaxyExportService.exportFromCart({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}).then(sendSampleForm);
         } else {
-          sendSampleForm(GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}, sampleIds, projectId));
+          GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}, sampleIds, projectId).then(sendSampleForm);
         }
       }
     });
