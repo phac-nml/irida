@@ -81,6 +81,7 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
+		// check sequence files
 		jdbcTemplate.query("select id, file_path from sequence_file", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -95,6 +96,22 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			}
 		});
 
+		// check the audit tables for sequence files
+		jdbcTemplate.query("select id, file_path from sequence_file_AUD", new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				Long id = rs.getLong(1);
+				Path path = Paths.get(rs.getString(2));
+				if (!path.startsWith(sequenceFileDirectory)) {
+					validationErrors.addError("Sequence file audit record with id [" + id + "] with path [" + path
+							+ "] is not under path specified in /etc/irida/irida.conf ["
+							+ sequenceFileDirectory.toString()
+							+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				}
+			}
+		});
+
+		// check reference files
 		jdbcTemplate.query("select id, filePath from reference_file", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -109,6 +126,22 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			}
 		});
 
+		// check ref file audit records
+		jdbcTemplate.query("select id, filePath from reference_file_AUD", new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				Long id = rs.getLong(1);
+				Path path = Paths.get(rs.getString(2));
+				if (!path.startsWith(referenceFileDirectory)) {
+					validationErrors.addError("Reference file audit record with id [" + id + "] with path [" + path
+							+ "] is not under path specified in /etc/irida/irida.conf ["
+							+ referenceFileDirectory.toString()
+							+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				}
+			}
+		});
+
+		// check analysis output files
 		jdbcTemplate.query("select id, file_path from analysis_output_file", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -123,7 +156,25 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			}
 		});
 
+		// No AUD table for analysis_output_file as they're immutable
+
+		// check remote sequence files
 		jdbcTemplate.query("select id, file_path from remote_sequence_file", new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				Long id = rs.getLong(1);
+				Path path = Paths.get(rs.getString(2));
+				if (!path.startsWith(snapshotFileDirectory)) {
+					validationErrors.addError("Sequence file snapshot with id [" + id + "] with path [" + path
+							+ "] is not under path specified in /etc/irida/irida.conf ["
+							+ snapshotFileDirectory.toString()
+							+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
+				}
+			}
+		});
+
+		// check remote sequence file audit records
+		jdbcTemplate.query("select id, file_path from remote_sequence_file_AUD", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				Long id = rs.getLong(1);
@@ -164,13 +215,22 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 		return new SqlStatement[] {
 				new RawSqlStatement(String.format("update sequence_file set file_path = replace(file_path, '%s', '')",
 						sequenceFileDirectoryPath)),
+				new RawSqlStatement(
+						String.format("update sequence_file_AUD set file_path = replace(file_path, '%s', '')",
+								sequenceFileDirectoryPath)),
 				new RawSqlStatement(String.format("update reference_file set filePath = replace(filePath, '%s', '')",
 						referenceFileDirectoryPath)),
+				new RawSqlStatement(
+						String.format("update reference_file_AUD set filePath = replace(filePath, '%s', '')",
+								referenceFileDirectoryPath)),
 				new RawSqlStatement(
 						String.format("update analysis_output_file set file_path = replace(file_path, '%s', '')",
 								outputFileDirectoryPath)),
 				new RawSqlStatement(
 						String.format("update remote_sequence_file set file_path = replace(file_path, '%s', '')",
+								snapshotFileDirectoryPath)),
+				new RawSqlStatement(
+						String.format("update remote_sequence_file_AUD set file_path = replace(file_path, '%s', '')",
 								snapshotFileDirectoryPath)) };
 	}
 
