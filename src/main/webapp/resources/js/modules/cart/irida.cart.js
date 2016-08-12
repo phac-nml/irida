@@ -86,6 +86,12 @@
                 },
                 multiProject: function () {
                   return (data.length > 1);
+                },
+                sampleIds: function () {
+                  return false;
+                },
+                projectId: function () {
+                  return false;
                 }
               }
             });
