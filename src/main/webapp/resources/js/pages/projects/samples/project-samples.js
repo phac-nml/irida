@@ -185,7 +185,7 @@
      */
     ToolsController.prototype.galaxy = function () {
       var ids = datatable.getSelectedIds();
-      modalService.openGalaxyModal(ids);
+      modalService.openGalaxyModal(ids, page.project.id);
     };
 
     ToolsController.prototype.exportToFile = function (type) {
