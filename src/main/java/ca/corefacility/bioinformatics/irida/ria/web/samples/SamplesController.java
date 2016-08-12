@@ -339,7 +339,7 @@ public class SamplesController extends BaseController {
 	 * @return {@link List} {@link Sample}s
 	 */
 	@RequestMapping("/samples/idList")
-	public List<Sample> getSampleListByIdList(@RequestParam(value = "sampledIds[]") List<Long> sampleIds) {
+	public List<Sample> getSampleListByIdList(@RequestParam(value = "sampleIds[]") List<Long> sampleIds) {
 		return (List<Sample>) sampleService.readMultiple(sampleIds);
 	}
 
