@@ -212,7 +212,7 @@
 
     svc.exportFromProjSampPage = function (args, ids) {
       // Need to get an actual list of samples from the server from their ids.
-      return $http.get(PAGE.urls.samples.idList + "?" + $.param({sampleIds: ids}))
+      return $http.get(PAGE.urls.samples.idList + "?" + $.param({"sampleIds[]": ids}))
         .then(function (result) {
           _.each(samples, function (sample) {
               addSampleFile(sample.sample.label, sample.href);
