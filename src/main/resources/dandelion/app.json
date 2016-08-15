@@ -8,12 +8,10 @@
     "angular-aria",
     "angular-bootstrap",
     "angular-animate",
-    "angular-notification-icons",
     "font-awesome",
     "animate.css",
     "utilities",
     "cart",
-    "angular-gravatar",
     "notifications"
   ],
   "assets": [
@@ -23,14 +21,6 @@
       "type": "js",
       "locations": {
         "webapp": "/resources/js/services/httpInterceptor.js"
-      }
-    },
-    {
-      "name": "irida-utilities",
-      "version": "0.0.1",
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/modules/utilities/irida.utilities.js"
       }
     },
     {

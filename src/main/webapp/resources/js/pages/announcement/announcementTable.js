@@ -11,48 +11,57 @@ var announcementTable = (function(page) {
     function renderDetailsButton(data, type, full) {
         return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.edit + "'>" +
             "<button type='button' class='btn btn-default btn-xs details-btn'><span class='fa fa-pencil'></span></div>";
-    };
+    }
 
     /**
-     * Renders status icon for a user and the current announcement, in the Announcement Details table
+     * Renders date that the announcement was read
      * @param data
      * @param type
      * @param full
      * @returns {string}
      */
-    function renderDateAndStatus(data, type, full) {
-        var iconClass;
-        var date;
+    function renderDate(data, type, full) {
+        var date = "";
         if (full.join != null) {
-            iconClass = "fa fa-check";
             date = " " + datatable.formatDate(full.createdDate);
-        } else {
-            iconClass = "fa fa-times";
-            date = "";
         }
-
-        return "<div><span class='" + iconClass + "'></span><span>" + date + "</span></div>";
+        return "<div><span>" + date + "</span></div>";
     }
 
-    function renderToggleStatusButtons(data, type, full) {
-        return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.markRead + "'>" +
-            "<button type='button' class='btn btn-default btn-xs toggle-read'><span class='fa fa-check'></span></div>" +
-            "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.markUnread + "'>" +
-            "<button type='button' class='btn btn-default btn-xs toggle-unread'><span class='fa fa-times'></span></div>";
+    /**
+     * Render read status for user
+     * @param data
+     * @param type
+     * @param full
+     * @returns {string}
+     */
+    function renderStatus(data, type, full) {
+        var icon;
+        if (full.join != null) {
+            icon = "fa fa-check";
+        } else {
+            icon = "fa fa-times";
+        }
+        return "<div><span class='" + icon + "'></span></div>";
     }
 
+    /**
+     * Initializes extras for each row of the data table
+     * @param row
+     * @param data
+     */
     function detailsCallback(row, data) {
         var row = $(row);
         row.find(".details-btn").click(function () {
             window.location.href = page.urls.link + data.identifier + page.urls.details;
         });
         row.find('[data-toggle="tooltip"]').tooltip();
-    };
+    }
 
     return {
         renderDetailsButton : renderDetailsButton,
-        renderDateAndStatus : renderDateAndStatus,
-        renderToggleStatusButtons : renderToggleStatusButtons,
+        renderDate : renderDate,
+        renderStatus : renderStatus,
         detailsCallback : detailsCallback
     };
 })(window.PAGE);
