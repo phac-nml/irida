@@ -1,5 +1,5 @@
 {
-  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3", "jquery", "livestampjs", "angular", "marked", "angular-marked"],
+  "dependencies": ["livestampjs", "angular", "marked", "angular-marked"],
   "assets": [
     {
       "type": "js",

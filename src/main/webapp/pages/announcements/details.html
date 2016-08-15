@@ -21,7 +21,7 @@
 </head>
 
 <body>
-<div layout:fragment="page" ddl:bundle-includes="announcement" ddl:asset-css-excludes="jquery.datatables">
+<div layout:fragment="page" ddl:bundle-includes="announcements-table" ddl:asset-css-excludes="jquery.datatables">
     <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
         <form name="update_announcement" class="ng-cloak"
               th:action="@{/announcements/{aID}/details(aID=${announcement.getId()})}"
