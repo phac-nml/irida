@@ -20,15 +20,5 @@
         }
         return $.param(data);
       };
-    })
-    .run(function(uibPaginationConfig) {
-      uibPaginationConfig.firstText = TL.lang.page.first;
-      uibPaginationConfig.previousText = TL.lang.page.prev;
-      uibPaginationConfig.nextText = TL.lang.page.next;
-      uibPaginationConfig.lastText = TL.lang.page.last;
-      uibPaginationConfig.boundaryLinks = true;
-      uibPaginationConfig.directionLinks = true;
-      uibPaginationConfig.maxSize = 8;
-      uibPaginationConfig.rotate = false;
     });
 })(window.angular, window.$, window._, window.TL);
