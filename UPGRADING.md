@@ -7,7 +7,8 @@ upgrading IRIDA that cannot be automated.
 0.11.0 to 0.12.0
 ----------------
 * Make sure that the path prefixes in `/etc/irida/irida.conf` match what's in the database so that the relative path transformation works correctly.
-* No other special upgrade modifications required, just deploy the new `war` file.
+* A new version of SNVPhyl should be installed in Galaxy (version 1.0).  You must install the repository `suite_snvphyl_1_0_0` with revision `4e41de612a14` from the [IRIDA Main Toolshed](https://irida.corefacility.ca/galaxy-shed/view/nml/suite_snvphyl_1_0_0/4e41de612a14).  Please see <https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/#irida-whole-genome-phylogenomics> for more information.
+* Deploy the new `war` file.
 
 1.0.0 to 0.11.0
 ---------------
