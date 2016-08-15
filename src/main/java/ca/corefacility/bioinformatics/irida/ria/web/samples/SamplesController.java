@@ -341,6 +341,7 @@ public class SamplesController extends BaseController {
 	 *
 	 * @param sampleIds
 	 * 		{@link List} of {@link Sample} ids
+	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 *
 	 * @return {@link List} 
 	 */
