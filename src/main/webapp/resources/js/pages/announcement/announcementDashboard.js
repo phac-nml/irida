@@ -85,8 +85,4 @@
             }
         ]);
 
-    $('body').tooltip({
-        selector: '[data-toggle="tooltip"]'
-    })
-
 })(window.angular);
