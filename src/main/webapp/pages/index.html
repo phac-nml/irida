@@ -1,18 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
-
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ddl="http://www.thymeleaf.org/dandelion"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.springframework.org/security/tags"
+      layout:decorator="template/page">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
   <script th:inline="javascript">
     var PAGE = {
       updates: /*[[${updates}]]*/ '## Nothing Here!'
     };
-    window.dependencies = ['irida.dashboard'];
+    window.dependencies = ['irida.events', 'irida.announcements'];
   </script>
 </head>
 
 <body>
-<div class="row" layout:fragment="page" ddl:bundle-includes="dashboard">
+<div class="row" layout:fragment="page" ddl:bundle-includes="announcement, events">
   <div class="col-md-6 col-sm-12">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
