@@ -4,6 +4,7 @@ Changes
 0.11.0 to 0.12.0
 ----------------
 * [Developer]: Updated node to v6.3.1.
+* [UI]: Removed bootstrap tooltip and extra script from dashboard page.
 * [UI]: Remove bower dependency for angular-notification-icons.
 * [UI]: Remove bower dependency for AngularJS-toaster.
 * [UI]: Removed qTip2 dependency. 
