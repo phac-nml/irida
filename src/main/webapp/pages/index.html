@@ -1,19 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
-
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ddl="http://www.thymeleaf.org/dandelion"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.springframework.org/security/tags"
+      layout:decorator="template/page">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
   <script th:inline="javascript">
     var PAGE = {
       updates: /*[[${updates}]]*/ '## Nothing Here!'
     };
-    window.dependencies = ['irida.dashboard'];
+    window.dependencies = ['irida.events', 'irida.announcements'];
   </script>
 </head>
 
 <body>
-<div class="row" layout:fragment="page" ddl:bundle-includes="dashboard">
-  <div class="col-md-6 col-sm-12">
+<div class="row" layout:fragment="page">
+  <div class="col-md-6 col-sm-12" ddl:bundle-includes="events">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
@@ -32,12 +35,12 @@
     </section>
 
   </div>
-  <div  class="col-md-6 col-sm-12">
+  <div  class="col-md-6 col-sm-12" ddl:bundle-includes="announcement">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{announcement.title}">_New Announcements_</h4>
         <div class="btn-group pull-right">
-          <a class="btn btn-primary btn-sm" th:text="#{announcement.view-read}"
+          <a id="view-read-announcements" class="btn btn-primary btn-sm" th:text="#{announcement.view-read}"
               th:href="@{/announcements/user/read}">_All Announcements_</a>
         </div>
       </div>
