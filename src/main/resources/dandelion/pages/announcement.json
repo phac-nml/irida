@@ -1,12 +1,6 @@
 {
-  "dependencies": ["datatables", "ddl-dt-theme-bootstrap3", "jquery", "livestampjs", "angular", "marked", "angular-marked"],
+  "dependencies": ["livestampjs", "angular", "marked", "angular-marked"],
   "assets": [
-    {
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/pages/announcement/announcementTable.js"
-      }
-    },
     {
       "type": "js",
       "locations": {

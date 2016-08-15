@@ -45,6 +45,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
 import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomOAuth2ExceptionTranslator;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
 
@@ -175,6 +176,11 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Configuration
 	@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 	protected static class UISecurityConfig extends WebSecurityConfigurerAdapter {
+		@Bean
+		public LoginSuccessHandler getLoginSuccessHandler() {
+			return  new LoginSuccessHandler();
+		}
+
 		@Autowired
 		CredentialsExpriredAuthenticationFailureHandler authFailureHandler;
 
@@ -201,7 +207,9 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			// See https://jira.springsource.org/browse/SPR-11496
 			// This is for SockJS and Web Sockets
 			.headers().frameOptions().disable()
-			.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureHandler(authFailureHandler).permitAll()
+			.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login")
+					.successHandler(getLoginSuccessHandler())
+					.failureHandler(authFailureHandler).permitAll()
 			.and()
 			.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll()
 			.and()
