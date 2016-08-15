@@ -4,12 +4,6 @@
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/js/pages/announcement/announcementTable.js"
-      }
-    },
-    {
-      "type": "js",
-      "locations": {
         "webapp": "/resources/js/pages/announcement/announcementDashboard.js"
       }
     },
