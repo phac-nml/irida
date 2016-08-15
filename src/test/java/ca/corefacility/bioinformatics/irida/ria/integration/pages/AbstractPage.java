@@ -37,6 +37,8 @@ public class AbstractPage {
 	protected static final String BASE_URL = "http://localhost:" + APPLICATION_PORT + "/";
 	protected static final Long TIME_OUT_IN_SECONDS = 10L;
 
+	protected final int DEFAULT_WAIT = 500;
+
 	@FindBy(className = "error")
 	private WebElement errors;
 
