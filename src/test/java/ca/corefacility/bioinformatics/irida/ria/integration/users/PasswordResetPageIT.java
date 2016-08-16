@@ -69,7 +69,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		AbstractPage.logout(driver());
 		// try new password
 		LoginPage.login(driver(), RESET_USER, password);
-		assertTrue("The user is logged in and redirected.", driver().getCurrentUrl().contains("dashboard"));
+		assertTrue("The user is logged in and redirected.", driver().getTitle().contains("Dashboard"));
 		LoginPage.logout(driver());
 	}
 }

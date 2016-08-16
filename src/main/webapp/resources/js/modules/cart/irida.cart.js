@@ -86,6 +86,12 @@
                 },
                 multiProject: function () {
                   return (data.length > 1);
+                },
+                sampleIds: function () {
+                  return false;
+                },
+                projectId: function () {
+                  return false;
                 }
               }
             });
@@ -210,12 +216,12 @@
       }];
     }
 
-    svc.exportFromProjSampPage = function (args, ids) {
+    svc.exportFromProjSampPage = function (args, ids, projectId) {
       // Need to get an actual list of samples from the server from their ids.
-      return $http.get(PAGE.urls.samples.idList + "?" + $.param({sampleIds: ids}))
+      return $http.get(PAGE.urls.samples.idList + "?" + $.param({sampleIds: ids, projectId: projectId}))
         .then(function (result) {
-          _.each(samples, function (sample) {
-              addSampleFile(sample.sample.label, sample.href);
+          _.each(result.data.mapList, function (sample) {
+              addSampleFile(sample.label, sample.href);
           });
           return getSampleFormEntities(args);
         });
@@ -236,7 +242,7 @@
     };
   }
 
-  function GalaxyDialogCtrl($uibModalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject, sampleIds) {
+  function GalaxyDialogCtrl($uibModalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject, sampleIds, projectId) {
     var vm = this;
     vm.addtohistory=true;
     vm.makepairedcollection=true;
@@ -270,7 +276,7 @@
         if (openedByCart) {
           GalaxyExportService.exportFromCart({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}).then(sendSampleForm);
         } else {
-          sendSampleForm(GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}, sampleIds));
+          GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}, sampleIds, projectId).then(sendSampleForm);
         }
       }
     });
@@ -350,7 +356,7 @@
     .module('irida.cart', ["irida.notifications"])
     .service('CartService', ['$rootScope', '$http', "notifications", CartService])
     .controller('CartSliderController', ['CartService', '$uibModal', CartSliderController])
-    .controller('GalaxyDialogCtrl', ['$uibModalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', 'sampleIds', GalaxyDialogCtrl])
+    .controller('GalaxyDialogCtrl', ['$uibModalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', 'sampleIds', 'projectId', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', '$http', GalaxyExportService])
     .directive('cart', [CartDirective])
     .filter('cartFilter', [CartFilter])

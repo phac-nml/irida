@@ -45,15 +45,12 @@ public class AnnouncementsController extends BaseController{
 
     private final UserService userService;
     private final AnnouncementService announcementService;
-    private final MessageSource messageSource;
 
     @Autowired
     public AnnouncementsController(UserService userService,
-                                   AnnouncementService announcementService,
-                                   MessageSource messageSource) {
+                                   AnnouncementService announcementService) {
         this.userService = userService;
         this.announcementService = announcementService;
-        this.messageSource = messageSource;
     }
 
     /**
@@ -105,7 +102,7 @@ public class AnnouncementsController extends BaseController{
      *          ID of the {@link Announcement} to be marked
      * @param principal
      *          The current user
-     * @return
+     * @return The fragment for viewing announcements in the dashboard
      */
     @RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
     public String markAnnouncementRead(@PathVariable Long aID, Principal principal) {
@@ -137,7 +134,7 @@ public class AnnouncementsController extends BaseController{
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getCreateAnnouncementPage(final Model model) {
+    public String getCreateAnnouncementPage() {
 
         return ANNOUNCEMENT_CREATE;
     }
@@ -167,7 +164,7 @@ public class AnnouncementsController extends BaseController{
             model.addAttribute("errors", "Announcement was not created successfully");
         }
 
-        return getControlCentreAdminPage(model);
+        return "redirect:/announcements/admin";
     }
 
     /**
@@ -229,21 +226,23 @@ public class AnnouncementsController extends BaseController{
      *                  The announcement whose data will be displayed
      * @param model
      *                  The model for the view
-     * @param principal
-     *                  The currently logged in user (must be an admin)
      * @return Returns the detail page for the announcement
      * @throws IOException
      */
     @RequestMapping(value = "/{announcementID}/details", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getAnnouncementDetailsPage(@PathVariable long announcementID,
-                                             Model model,
-                                             Principal principal) throws IOException {
+    public String getAnnouncementDetailsPage(@PathVariable long announcementID, Model model) throws IOException {
         Announcement announcement = announcementService.read(announcementID);
+
+        long numberOfReads = announcementService.countReadsForOneAnnouncement(announcement);
+        long totalUsers = userService.count();
+
         logger.trace("Announcement " + announcement.getId() + ": " +
             announcement.getMessage());
 
         model.addAttribute("announcement", announcement);
+        model.addAttribute("numReads", numberOfReads);
+        model.addAttribute("numTotal", totalUsers);
 
         return ANNOUNCEMENT_DETAILS;
     }
@@ -257,7 +256,7 @@ public class AnnouncementsController extends BaseController{
      * @return A map containing all of the data to be displayed in the datatables
      *
      */
-    @RequestMapping(value = "/control/ajax/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/control/ajax/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public @ResponseBody DatatablesResponse<Announcement> getAnnouncementsAdmin(
             final @DatatablesParams DatatablesCriterias criteria) {
@@ -282,7 +281,7 @@ public class AnnouncementsController extends BaseController{
         final DataSet<Announcement> announcementDataSet = new DataSet<>(announcementDataTableResponseList,
                 announcements.getTotalElements(), announcements.getTotalElements());
 
-        logger.debug("Total number of announcements: " + announcementDataSet.getTotalRecords());
+        logger.trace("Total number of announcements: " + announcementDataSet.getTotalRecords());
         return DatatablesResponse.build(announcementDataSet, criteria);
     }
 
@@ -319,6 +318,13 @@ public class AnnouncementsController extends BaseController{
                 .map(user -> new AnnouncementUserDataTableResponse(user.getUsername(), userHasRead(user, currentAnnouncement)))
                 .collect(Collectors.toList());
 
+        if (sortName.equals("createdDate")) {
+            Collections.sort(announcementUserDataTableResponses);
+            if (direction.equals(Sort.Direction.DESC)) {
+                Collections.reverse(announcementUserDataTableResponses);
+            }
+        }
+
         final DataSet<AnnouncementUserDataTableResponse> announcementUserDataSet = new DataSet<>(announcementUserDataTableResponses,
                 users.getTotalElements(), users.getTotalElements());
 
@@ -331,8 +337,9 @@ public class AnnouncementsController extends BaseController{
      * @param user
      *          The user we want to check
      * @param announcement
-     *          The announcement we wanna check.
-     * @return
+     *          The announcement we want to check.
+     * @return {@link AnnouncementUserJoin} representing that the user has read the announcement, or null
+     *              if the user hasn't read the announcement.
      */
     private AnnouncementUserJoin userHasRead(final User user, final Announcement announcement) {
         final List<AnnouncementUserJoin> readUsers = announcementService.getReadUsersForAnnouncement(announcement);
@@ -348,7 +355,7 @@ public class AnnouncementsController extends BaseController{
     /**
      * Utility/Container class for returning information about {@link Announcement}s and {@link User}s and their read statuses
      */
-    private static final class AnnouncementUserDataTableResponse {
+    private static final class AnnouncementUserDataTableResponse implements Comparable<AnnouncementUserDataTableResponse> {
         private final String username;
         private final AnnouncementUserJoin join;
         private final Date createdDate;
@@ -361,9 +368,22 @@ public class AnnouncementsController extends BaseController{
                 createdDate = join.getCreatedDate();
                 hasRead = true;
             } else {
-                createdDate = null;
+                createdDate = new Date(0);
                 hasRead = false;
             }
+        }
+
+        /**
+         * Comparator method to compare dates for each read receipt
+         * @param response
+         *      The object to compare to
+         * @return
+         *      -1 if this object is newer than {@param response}
+         *      0 if they have the same date
+         *      1 if {@param repsonse} is newer than this object
+         */
+        public int compareTo(AnnouncementUserDataTableResponse response) {
+            return this.createdDate.compareTo(response.createdDate);
         }
 
         @SuppressWarnings("unused")
@@ -376,10 +396,12 @@ public class AnnouncementsController extends BaseController{
             return this.join;
         }
 
+        @SuppressWarnings("unused")
         public Date getCreatedDate() {
             return this.createdDate;
         }
 
+        @SuppressWarnings("unused")
         public boolean getHasRead() {
             return this.hasRead;
         }

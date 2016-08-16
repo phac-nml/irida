@@ -367,6 +367,11 @@
 			<artifactId>attoparser</artifactId>
 			<version>${attoparser.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.timgroup</groupId>
+			<artifactId>jgravatar</artifactId>
+			<version>${jgravatar.version}</version>
+		</dependency>
 
 		<!-- Mail -->
 		<dependency>
@@ -1037,6 +1042,7 @@
 		<frontend-maven-plugin.version>0.0.27</frontend-maven-plugin.version>
 		<node.version>v5.1.1</node.version>
 		<npm.version>3.3.12</npm.version>
+		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

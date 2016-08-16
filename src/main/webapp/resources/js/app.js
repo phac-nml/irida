@@ -3,9 +3,7 @@
   var deps = _.union(window.dependencies || [], [
     'ngAria',
     'ngAnimate',
-    "angular-notification-icons",
     'ui.bootstrap',
-    'ui.gravatar',
     'irida.session',
     'irida.notifications',
     'irida.cart'
@@ -23,13 +21,6 @@
         return $.param(data);
       };
     })
-    .config([
-      'gravatarServiceProvider', function(gravatarServiceProvider) {
-        gravatarServiceProvider.defaults = {
-          "default": 'mm'  // Mystery man as default for missing avatars
-        };
-      }
-    ])
     .run(function(uibPaginationConfig) {
       uibPaginationConfig.firstText = TL.lang.page.first;
       uibPaginationConfig.previousText = TL.lang.page.prev;

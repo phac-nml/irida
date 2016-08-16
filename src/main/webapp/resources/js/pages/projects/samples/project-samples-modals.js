@@ -145,7 +145,7 @@
       return modal.result;
     }
 
-    function openGalaxyModal(ids) {
+    function openGalaxyModal(ids, projectId) {
       return $uibModal.open({
         templateUrl: page.urls.modals.galaxy,
         controllerAs: "gCtrl",
@@ -159,6 +159,9 @@
           },
           multiProject: function () {
             return false;
+          },
+          projectId: function () {
+            return projectId;
           }
         }
       });
