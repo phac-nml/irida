@@ -17,7 +17,6 @@ function uploadMetadataFile() {
   formData.append('file', file);
   xhr.open("POST", window.location.href);
   xhr.onload = function(e) {
-    // xhr.send(e.target.result);
     console.log(e)
   };
   xhr.send(formData);

@@ -1,6 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -8,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -20,6 +26,13 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.jena.atlas.iterator.Iter;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -541,9 +554,40 @@ public class ProjectsController {
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
 	public String createProjectSampleMetadata(final Model model, @PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) {
-		if (!file.isEmpty()) {
-			logger.debug(file.getOriginalFilename());
+		if (file.isEmpty()) {
+			logger.debug("There was not file to be found!");
 		}
+
+		try {
+			String filename = file.getOriginalFilename();
+			byte [] byteArr= file.getBytes();
+			InputStream fis = new ByteArrayInputStream(byteArr);
+
+			Workbook workbook = null;
+			if(filename.toLowerCase().endsWith("xlsx")){
+				workbook = new XSSFWorkbook(fis);
+			}else if(filename.toLowerCase().endsWith("xls")){
+				workbook = new HSSFWorkbook(fis);
+			}
+
+			Sheet sheet = workbook.getSheetAt(0);
+			Iterator<Row> rowIterator = sheet.iterator();
+			while (rowIterator.hasNext()) {
+				Row row = rowIterator.next();
+				Iterator<Cell> cellIterator = row.cellIterator();
+				while (cellIterator.hasNext()) {
+					Cell cell = cellIterator.next();
+					logger.debug(cell.getStringCellValue());
+
+				}
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return PROJECTS_DIR + "project_samples_metadata";
 	}
 
