@@ -24,7 +24,7 @@ The main IRIDA dashboard has several different areas:
 * The [user settings](#user-settings) menu,
 * The [logout](#logout) button,
 * The [recent activities](#recent-activities) section, and
-* The [updates](#updates) section.
+* The [updates](#updates-announcements) section.
 
 ![The main IRIDA dashboard.](images/dashboard.png)
 
@@ -130,17 +130,29 @@ The recent activities section will show you things like:
 
 All activities in the recent activities section will link to the project or user account that has been modified by the activity.
 
-Updates
-----------------------
+Updates-Announcements
+---------------------
 
-Updates to the IRIDA Platform will be announced on the right panel the dashboard.
+Updates to the IRIDA Platform will be announced on the right side of the dashboard.
 
-![Platform Update section.](images/platform-updates.png)
+![Platform Update/Announcement section.](images/announcements-display-to-user.png)
 
-The platform updates section will show you things like:
+The platform announcements section will show you things like:
 
 * When scheduled downtime will happen.
 * Recently added features or bug fixes.
 * Other platform announcements.
+
+To dismiss an announcements/mark it as read, click the check mark button to the right of the announcement:
+
+![Mark As Read button](images/announcements-mark-as-read-user.png)
+
+If you accidentally marked an announcement as read and want to see it again, or if you would like to view *all* announcements you have marked, click the `View Read Announcements` button:
+
+![View Read Announcements button](images/announcements-view-read-announcements.png)
+
+This will bring you to the `Read Announcements` page, which will show you all announcements you have marked as read. 
+
+![View Read Announcements button](images/announcements-view-read-announcements-page.png)
 
 <a href="../login/">Previous: Logging in</a><a href="../user-groups/" style="float: right;">Next: Managing user groups</a>

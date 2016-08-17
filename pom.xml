@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>0.12.0-SNAPSHOT</version>
+	<version>0.13.0-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -371,6 +371,11 @@
 			<groupId>org.attoparser</groupId>
 			<artifactId>attoparser</artifactId>
 			<version>${attoparser.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.timgroup</groupId>
+			<artifactId>jgravatar</artifactId>
+			<version>${jgravatar.version}</version>
 		</dependency>
 
 		<!-- Mail -->
@@ -1078,6 +1083,7 @@
 		<frontend-maven-plugin.version>0.0.27</frontend-maven-plugin.version>
 		<node.version>v5.1.1</node.version>
 		<npm.version>3.3.12</npm.version>
+		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

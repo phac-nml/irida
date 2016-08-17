@@ -1,8 +1,22 @@
+
 Changes
 =======
 
+0.12.0 to 0.13.0
+----------------
+* [UI]: Fixed bug where sample edit button wouldn't show up when users had permission (0.12.1)
+* [UI]: Fixed bug where announcements couldn't be marked as read (0.12.1)
+* [UI]: Changed the user icon in recent events to a basic icon instead of a gravatar (0.12.1)
+
 0.11.0 to 0.12.0
 ----------------
+* [UI]: Removed bootstrap tooltip and extra script from dashboard page.
+* [UI]: Remove bower dependency for angular-notification-icons.
+* [UI]: Remove bower dependency for AngularJS-toaster.
+* [UI]: Removed qTip2 dependency. 
+* [UI]: Removed bower dependency for `bootstrap-sass-official`.
+* [UI]: Remove bower dependency for 'MagnificPopup'.
+* [UI]: Removed client side dependency on `angular-gravatar` and replace with server gravatar url creation.
 * [UI]: Fix issue with Dandelion filters throwing `nullpointerexception`s (0.11.4)
 * [Developer]: Added `FetchMode.SELECT` to `SequenceFilePair.files` as Hibernate was including the children multiple times in the result set. (0.11.1)
 * [Developer]: Packer now waits for tomcat to start during the build so that the database is fully deployed before distribution.

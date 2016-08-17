@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -16,10 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.EncodedResource;
-import org.springframework.jdbc.datasource.init.ScriptException;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -95,8 +89,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		final String hbm2ddlAuto = environment.getProperty(HIBERNATE_HBM2DDL_AUTO);
 		Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
 
-
-
 		if (!StringUtils.isEmpty(importFiles) || !StringUtils.isEmpty(hbm2ddlAuto)) {
 			logger.debug("Running hibernate -> not importing SQL file or running Liquibase.");
 			if (liquibaseShouldRun) {
@@ -112,48 +104,11 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 			}
 			liquibaseShouldRun = Boolean.FALSE;
 		}
-		else {
-			try (Connection conn = dataSource.getConnection()){
-				// query the database for the existence of DATABASECHANGELOG
-				Statement statement = conn.createStatement();
-				logger.debug("Checking if DATABASECHANGELOG exists.");
-				boolean isEmpty = false;
-
-				//A not so pretty way to check for the existence of `DATABASECHANGELOG` in irida_test
-				try {
-					statement.executeQuery("SELECT * FROM DATABASECHANGELOG WHERE 1");
-				}
-				catch (SQLException se) {
-					isEmpty = true;
-				}
-
-				if (isEmpty) {
-					logger.debug("Database is empty -> importing SQL file and running Liquibase.");
-					setupDatabaseFromSql(conn);
-				}
-			}
-		}
 
 		springLiquibase.setShouldRun(liquibaseShouldRun);
 		springLiquibase.setIgnoreClasspathPrefix(true);
 
 		return springLiquibase;
-	}
-
-	/**
-	 * Initialize the database using a SQL file containing a snapshot of the latest
-	 * database state (as defined by the Liquibase changesets)
-	 *
-	 * @param conn
-	 * 			connection to the database
-	 * @throws ScriptException
-     */
-	private void setupDatabaseFromSql(Connection conn) throws ScriptException {
-		logger.debug("Finding sql file to import into database.");
-		EncodedResource sqlfile = new EncodedResource( new ClassPathResource("ca/corefacility/bioinformatics/irida/database/all-changes.sql"));
-		logger.debug("File found, executing SQL statements to restore database initial state...");
-		ScriptUtils.executeSqlScript(conn, sqlfile, false, false, "--", ";", "/*", "*/");
-		logger.debug("Database restoration complete.");
 	}
 
 	@Bean

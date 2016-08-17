@@ -80,6 +80,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
         super.delete(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")

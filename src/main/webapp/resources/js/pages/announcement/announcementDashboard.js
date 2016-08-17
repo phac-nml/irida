@@ -1,4 +1,4 @@
-(function (angular) {
+var announcementDashboard = (function (angular, page) {
     'use strict';
 
     /**
@@ -65,10 +65,10 @@
         .controller('AnnouncementItemCtrl', ['$window', '$scope', 'AnnouncementsService',
             function($window, $scope, AnnouncementsService) {
                 $scope.markRead = function markRead(aID, event) {
-                    var url = "/announcements/read/" + aID;
+                    var url = page.urls.link + "/read/" + aID;
                     AnnouncementsService.markAnnouncementRead(url);
 
-                    var target = angular.element(event.target).parent().parent(); //get the list item to hide it
+                    var target = angular.element(event.target).parentsUntil(".list-group", ".list-group-item"); //get the list item to hide it
                     var listElement = target.parent(); //the list containing all the items
                     target.hide(400, function() {
                         target.remove();
@@ -85,8 +85,4 @@
             }
         ]);
 
-    $('body').tooltip({
-        selector: '[data-toggle="tooltip"]'
-    })
-
-})(window.angular);
+})(window.angular, window.PAGE);
