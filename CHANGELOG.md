@@ -4,6 +4,9 @@ Changes
 
 0.12.0 to 0.13.0
 ----------------
+* [UI]: Fixed bug where sample edit button wouldn't show up when users had permission (0.12.1)
+* [UI]: Fixed bug where announcements couldn't be marked as read (0.12.1)
+* [UI]: Changed the user icon in recent events to a basic icon instead of a gravatar (0.12.1)
 
 0.11.0 to 0.12.0
 ----------------
