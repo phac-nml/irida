@@ -221,7 +221,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		addToCartBtn.click();
 		// Make sure the item were added to the cart.
 		waitForElementVisible(
-				By.cssSelector("#cart-count-notification .angular-notifications-icon div"));
+				By.cssSelector("#cart-count"));
 	}
 
 	public void mergeSamplesWithOriginalName() {
