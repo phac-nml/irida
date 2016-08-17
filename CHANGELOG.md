@@ -2,6 +2,9 @@
 Changes
 =======
 
+0.12.0 to 0.13.0
+----------------
+
 0.11.0 to 0.12.0
 ----------------
 * [UI]: Removed bootstrap tooltip and extra script from dashboard page.
