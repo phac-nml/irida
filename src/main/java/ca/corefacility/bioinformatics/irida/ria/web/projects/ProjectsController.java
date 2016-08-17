@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
@@ -529,6 +530,21 @@ public class ProjectsController {
 		} else {
 			throw new AccessDeniedException("Do not have permissions to modify this project.");
 		}
+	}
+
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.GET)
+	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId) {
+		model.addAttribute("projectId", projectId);
+		return PROJECTS_DIR + "project_samples_metadata";
+	}
+
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
+	public String createProjectSampleMetadata(final Model model, @PathVariable long projectId,
+			@RequestParam("file") MultipartFile file) {
+		if (!file.isEmpty()) {
+			logger.debug(file.getOriginalFilename());
+		}
+		return PROJECTS_DIR + "project_samples_metadata";
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/referenceFiles", method = RequestMethod.GET)
