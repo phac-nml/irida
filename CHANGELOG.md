@@ -3,10 +3,10 @@ Changes
 
 0.12.0 to 0.13.0
 ----------------
+* [Developer]: Updated node to v6.4.0.
 
 0.11.0 to 0.12.0
 ----------------
-* [Developer]: Updated node to v6.4.0.
 * [UI]: Removed bootstrap tooltip and extra script from dashboard page.
 * [UI]: Remove bower dependency for angular-notification-icons.
 * [UI]: Remove bower dependency for AngularJS-toaster.
