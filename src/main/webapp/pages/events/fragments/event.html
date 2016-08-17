@@ -11,7 +11,7 @@ can be internationalized.
 */-->
 
 <th:block class="event-text" th:fragment="user-role-event (event)">
-    <div class="event-icon"><img class="gravatar" data:gravatar-src-once="'\'' + ${event.user.email} + '\''" gravatar-size="28" /></div>
+    <div class="event-icon"><fa:icon type="user" /></div>
     <div class="event-content user-role-event"
         th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
         userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
@@ -21,7 +21,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="user-removed-event (event)">
-    <div class="event-icon"><img class="gravatar" data:gravatar-src-once="'\'' + ${event.user.email} + '\''" gravatar-size="28" /></div>
+    <div class="event-icon"><fa:icon type="user" /></div>
     <div class="event-content user-removed-event"
             th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
             userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
