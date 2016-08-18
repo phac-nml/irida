@@ -197,6 +197,21 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>com.github.fakemongo</groupId>
+			<artifactId>fongo</artifactId>
+			<version>${fongo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lordofthejars</groupId>
+			<artifactId>nosqlunit-mongodb</artifactId>
+			<version>${nosqlunit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>${mongo.driver.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
 			<version>${commons.dbcp.version}</version>
@@ -212,6 +227,11 @@
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
 			<version>${javax.interceptor-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<version>${spring.mongodb.version}</version>
 		</dependency>
 
 		<!-- RDF Database -->
@@ -975,12 +995,16 @@
 		<guava.version>17.0</guava.version>
 		<spring.version>4.2.3.RELEASE</spring.version>
 		<spring.security.version>4.0.0.M1</spring.security.version>
-		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
+		<spring.data.jpa.version>1.8.2.RELEASE</spring.data.jpa.version>
+		<spring.mongodb.version>1.7.2.RELEASE</spring.mongodb.version>
 		<spring.security.oauth.version>2.0.4.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>2.2.0.RELEASE</spring.ws.test.version>
 		<mockito.version>1.10.19</mockito.version>
 		<mysql.connector.version>5.1.31</mysql.connector.version>
+		<fongo.version>1.6.2</fongo.version>
+		<mongo.driver.version>2.13.3</mongo.driver.version>
+		<nosqlunit.version>0.8.1</nosqlunit.version>
 		<hibernate.version>4.3.6.Final</hibernate.version>
 		<h2.version>1.4.180</h2.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
