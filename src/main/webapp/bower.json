@@ -33,7 +33,7 @@
     "noty": "2.3.7",
     "datatables-bootstrap3-plugin": "~0.4.0",
     "angular-bootstrap-lightbox": "0.10.0",
-    "ng-file-upload": "12.0.4"
+    "dropzone": "4.3.0"
   },
   "devDependencies": {},
   "resolutions": {

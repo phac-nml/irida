@@ -82,6 +82,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
@@ -553,14 +554,17 @@ public class ProjectsController {
 
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
 	@ResponseBody
-	public List<Map<String, String>> createProjectSampleMetadata(final Model model, @PathVariable long projectId,
+	public Map<String, Object> createProjectSampleMetadata(final Model model, @PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) {
 		if (file.isEmpty()) {
 			logger.debug("There was not file to be found!");
 		}
 
+		Map<String, Object> response = new HashMap<>();
+		Project project = projectService.read(projectId);
 		List<Map<String, String>> tableList = new ArrayList<>();
 		List<String> headers = new ArrayList<>();
+
 		try {
 			String filename = file.getOriginalFilename();
 			byte [] byteArr= file.getBytes();
@@ -597,21 +601,31 @@ public class ProjectsController {
 				while (cellIterator.hasNext() && headerCounter < headers.size()) {
 					Cell cell = cellIterator.next();
 					String cellValue = cell.getStringCellValue().trim();
-					logger.debug(headers.get(headerCounter) + " ==> " + cellValue);
+					String header = headers.get(headerCounter);
+					if (header.equalsIgnoreCase("NLEP #")) {
+						try {
+							Sample sample = sampleService.getSampleBySampleName(project, cellValue);
+							rowMap.put("sampleId", sample.getId().toString());
+						} catch (EntityNotFoundException e) {
+							rowMap.put("sampleId", "");
+						}
+					}
 					rowMap.put(headers.get(headerCounter), cellValue);
 					headerCounter += 1;
 				}
 				tableList.add(rowMap);
 			}
 			fis.close();
-
+			headers.add("sampleId");
+			response.put("headers", headers);
+			response.put("metadata", tableList);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		return tableList;
+		return response;
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/referenceFiles", method = RequestMethod.GET)
