@@ -4,13 +4,19 @@
 	<meta charset="UTF-8"/>
 	<title>Title</title>
 	<link rel="stylesheet" href="/resources/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="/resources/bower_components/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="/resources/bower_components/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.min.css"/>
 </head>
 <body ng-app="irida.metadata">
-<div class="container-fluid" ng-controller="FileController as ctrl">
+<div class="container" ng-controller="FileController as ctrl">
 	<h1>Project Samples Metadata Page</h1>
 	<div class="btn btn-default" ngf-select="ctrl.upload($file)">Upload Metadata File</div>
+	<table class="table table-bordered nowrap" id="metadata-table" cellspacing="0"></table>
 </div>
 
+<script src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="/resources/bower_components/datatables-bootstrap3-plugin/media/js/datatables-bootstrap3.min.js"></script>
 <script src="/resources/bower_components/angular/angular.min.js"></script>
 <script src="/resources/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
 <script src="/resources/js/pages/projects/project-samples-metadata.js"></script>

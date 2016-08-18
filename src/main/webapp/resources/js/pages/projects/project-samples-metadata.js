@@ -40,6 +40,21 @@
 // }, false);
 // fileUploader.addEventListener('change', uploadMetadataFile, false);
 
+var tableCreator = (function() {
+  return function createTable(data) {
+    var keys = Object.keys(data[0]);
+    var columns = keys.map(function(key) {
+      return {title: key, data: key}
+    });
+    console.log(columns);
+    $("#metadata-table").DataTable({
+      scrollX: true,
+      data: data,
+      columns: columns
+    });
+  };
+}());
+
 (function(ng) {
   function FileController(Upload, $window) {
     var vm = this;
@@ -51,7 +66,7 @@
           file: $file
         }
       }).then(function(result) {
-        console.log(result)
+        tableCreator(result.data);
       });
     };
   }
