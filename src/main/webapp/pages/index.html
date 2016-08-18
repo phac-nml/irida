@@ -8,7 +8,9 @@
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
   <script th:inline="javascript">
     var PAGE = {
-      updates: /*[[${updates}]]*/ '## Nothing Here!'
+      urls: {
+        link:    /*[[@{/announcements/}]]*/ '/announcements'
+      }
     };
     window.dependencies = ['irida.events', 'irida.announcements'];
   </script>
