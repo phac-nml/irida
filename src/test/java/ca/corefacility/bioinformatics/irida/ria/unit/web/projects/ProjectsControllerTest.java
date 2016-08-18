@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -401,6 +402,11 @@ public class ProjectsControllerTest {
 			@Override public Iterator<Project> iterator() {
 				return null;
 			}
+
+			@Override
+			public <S> Page<S> map(Converter<? super Project, ? extends S> converter) {
+				return null;
+			}
 		};
 	}
 
@@ -467,6 +473,11 @@ public class ProjectsControllerTest {
 			}
 
 			@Override public Iterator<Project> iterator() {
+				return null;
+			}
+
+			@Override
+			public <S> Page<S> map(Converter<? super Project, ? extends S> converter) {
 				return null;
 			}
 		};
