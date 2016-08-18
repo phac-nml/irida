@@ -36,7 +36,8 @@
                     ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
                     linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker',
                     export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
-                    idList: /*[[@{/samples/idList}]]*/ "/samples/idList"
+                    idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
+                    sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
                 },
                 fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
             },
@@ -86,7 +87,30 @@
     <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
         <thead>
         <tr>
-            <th dt:sortable="false" width="20px" dt:renderFunction="datatables-utils#datatable.formatCheckbox"></th>
+            <th dt:sortable="false" width="70px" dt:renderFunction="datatables-utils#datatable.formatCheckbox">
+                <div class="btn-group btn-group-sm" uib-dropdown="" ng-controller="SelectionController as selectCtrl">
+                    <button class="btn btn-default" ng-click="selectCtrl.selectAllCB()">
+                        <input type="checkbox" ng-model="selectCtrl.allSelected"/>
+                    </button>
+                    <button class="btn btn-default" uib-dropdown-toggle="">
+                        <span class="caret"/>
+                    </button>
+                    <ul class="dropdown-menu" uib-dropdown-menu="" role="menu">
+                        <li role="menuitem">
+                            <a href="#" ng-click="selectCtrl.selectAll()">Select All</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#" ng-click="selectCtrl.selectNone()">Select None</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#" ng-click="selectCtrl.selectPage()">Select Page</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#" ng-click="selectCtrl.deselectPage()">Deselect Page</a>
+                        </li>
+                    </ul>
+                </div>
+            </th>
             <th dt:property="sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
             <th dt:property="projectName" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
             <th width="120px" dt:property="createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"

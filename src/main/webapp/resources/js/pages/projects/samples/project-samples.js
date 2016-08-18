@@ -297,11 +297,58 @@
     return filteredTags;
   }());
 
+  var SelectionController = (function() {
+    var $window, service, vm;
+
+    function SelectionController($scope, window, sampleService) {
+      vm = this;
+      $window = window;
+      service = sampleService;
+
+      $scope.$on("SAMPLE_SELECTION_EVENT", function(event, args) {
+        vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
+      });
+    }
+
+    SelectionController.prototype.selectAllCB = function() {
+      if(!vm.allSelected) {
+        service.getAllIds()
+          .then(function(result) {
+            $window.datatable.selectAll(result.data);
+          });
+      } else {
+        $window.datatable.clearSelected();
+      }
+    };
+
+    SelectionController.prototype.selectAll = function() {
+      vm.allSelected = true;
+      console.error("IMPLEMENT SELECT ALL");
+    };
+
+    SelectionController.prototype.selectNone = function() {
+      vm.allSelected = false;
+      $window.datatable.clearSelected();
+    };
+
+    SelectionController.prototype.selectPage = function() {
+      console.error("IMPLEMENT SELECT PAGE");
+    };
+
+    SelectionController.prototype.deselectPage = function() {
+      vm.allSelected = false;
+      console.error("IMPLEMENT DESELECT PAGE");
+    };
+
+    return SelectionController;
+  }());
+
     ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
       .directive('filterByFile', ["$parse", filterByFile])
       .directive('samplesFilter', [samplesFilter])
       .directive('filteredTags', [filteredTags])
     .controller('AssociatedProjectsController', ["$rootScope", "SampleService", AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
+      .controller('SelectionController', ['$scope', '$window', "SampleService", SelectionController])
   ;
 }(window.angular, window.PAGE));

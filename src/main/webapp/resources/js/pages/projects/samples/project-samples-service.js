@@ -153,6 +153,13 @@
       oTable_samplesTable.ajax.reload();
     };
 
+    SampleService.prototype.getAllIds = function() {
+      return get(page.urls.samples.sampleIds)
+        .success(function(result) {
+          return result;
+        });
+    };
+
     return SampleService;
   }());
 

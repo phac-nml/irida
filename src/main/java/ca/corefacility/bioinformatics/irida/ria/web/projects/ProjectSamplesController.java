@@ -402,6 +402,26 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Get a list of all the sample ids in a {@link Project}
+	 *
+	 * @param projectId
+	 * 		The identifier for a {@link Project}
+	 *
+	 * @return {@link List} of {@link Sample} ids
+	 */
+	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
+	@ResponseBody
+	public List<Long> getAllProjectSampleIds(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+		List<Join<Project, Sample>> samples = sampleService.getSamplesForProject(project);
+		List<Long> ids = new ArrayList<>();
+		for (Join<Project, Sample> join : samples) {
+			ids.add(join.getObject().getId());
+		}
+		return ids;
+	}
+
+	/**
 	 * Search for projects available for a user to copy samples to. If the user is an admin it will show all projects.
 	 *
 	 * @param term

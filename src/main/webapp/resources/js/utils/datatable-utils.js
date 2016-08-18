@@ -217,6 +217,18 @@ var RowClickHandler = (function (page) {
     updateSelectionCounts(0);
   };
 
+  RowSelection.prototype.selectAll = function(ids) {
+    selected = ids.map(function(i) {
+      return i + "";
+    });
+    var rows = document.querySelectorAll("tbody tr");
+    [].forEach.call(rows, function(row) {
+      row.classList.add("selected");
+      row.querySelector('input[type=checkbox]').checked = true;
+    });
+    updateSelectionCounts(ids.length);
+  };
+
   return RowSelection;
 }(window.PAGE));
 
@@ -406,6 +418,10 @@ var datatable = (function(moment, tl, page) {
     return wrapper.innerHTML;
   }
 
+  function selectAll(ids) {
+    rowClickHandler.selectAll(ids);
+  }
+
   return {
     formatDate                    : formatDate,
     formatDateWithTime            : formatDateWithTime,
@@ -419,6 +435,7 @@ var datatable = (function(moment, tl, page) {
     tbodyClickEvent               : tbodyClickEvent,
     getSelectedIds                : getSelectedIds,
     clearSelected                 : clearSelected,
-    formatCheckbox                : formatCheckbox
+    formatCheckbox: formatCheckbox,
+    selectAll: selectAll
   };
 })(window.moment, window.TL, window.PAGE);
