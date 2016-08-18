@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -37,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleMetadataRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
@@ -68,6 +70,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private final AnalysisRepository analysisRepository;
 
+	private final SampleMetadataRepository sampleDataRepository;
+
 	/**
 	 * Constructor.
 	 * 
@@ -85,12 +89,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			Validator validator) {
+			SampleMetadataRepository sampleDataRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.analysisRepository = analysisRepository;
 		this.ssoRepository = ssoRepository;
+		this.sampleDataRepository = sampleDataRepository;
 	}
 	
 	/**
@@ -366,5 +371,33 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 
 		return sortProperties;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	// TODO: Add investigation permission
+	@PreAuthorize("permitAll()")
+	@Override
+	public SampleMetadata getMetadataForSample(Sample s) {
+		return sampleDataRepository.findMetadataForSample(s.getId());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public SampleMetadata saveSampleMetadaForSample(Sample sample, SampleMetadata metadata) {
+		SampleMetadata original = sampleDataRepository.findMetadataForSample(sample.getId());
+		if (original != null) {
+			original.setMetadata(metadata.getMetadata());
+			// TODO: Save original to backup repo
+			metadata = original;
+		} else {
+			metadata.setSampleId(sample.getId());
+		}
+
+		return sampleDataRepository.save(metadata);
 	}
 }
