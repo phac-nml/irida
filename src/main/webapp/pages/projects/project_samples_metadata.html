@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8" />
+	<meta charset="UTF-8"/>
 	<title>Title</title>
+	<link rel="stylesheet" href="/resources/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
 </head>
-<body>
-<h1>Project Samples Metadata Page</h1>
-	<input style="display: none;" id="file-uploader" type="file" name="file"/>
-	<button type="submit" id="file-uploader-btn">Upload Files</button>
+<body ng-app="irida.metadata">
+<div class="container-fluid" ng-controller="FileController as ctrl">
+	<h1>Project Samples Metadata Page</h1>
+	<div class="btn btn-default" ngf-select="ctrl.upload($file)">Upload Metadata File</div>
+</div>
 
+<script src="/resources/bower_components/angular/angular.min.js"></script>
+<script src="/resources/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
 <script src="/resources/js/pages/projects/project-samples-metadata.js"></script>
 </body>
 </html>

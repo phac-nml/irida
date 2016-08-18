@@ -552,12 +552,15 @@ public class ProjectsController {
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
-	public String createProjectSampleMetadata(final Model model, @PathVariable long projectId,
+	@ResponseBody
+	public List<Map<String, String>> createProjectSampleMetadata(final Model model, @PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) {
 		if (file.isEmpty()) {
 			logger.debug("There was not file to be found!");
 		}
 
+		List<Map<String, String>> tableList = new ArrayList<>();
+		List<String> headers = new ArrayList<>();
 		try {
 			String filename = file.getOriginalFilename();
 			byte [] byteArr= file.getBytes();
@@ -572,15 +575,35 @@ public class ProjectsController {
 
 			Sheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
-			while (rowIterator.hasNext()) {
-				Row row = rowIterator.next();
-				Iterator<Cell> cellIterator = row.cellIterator();
-				while (cellIterator.hasNext()) {
-					Cell cell = cellIterator.next();
-					logger.debug(cell.getStringCellValue());
 
+			// Get the column headers
+			Row headerRow = rowIterator.next();
+			Iterator<Cell> headerIterator = headerRow.cellIterator();
+			while (headerIterator.hasNext()) {
+				Cell headerCell = headerIterator.next();
+				String headerValue = headerCell.getStringCellValue().trim();
+
+				// Don't want empty header values.
+				if (!Strings.isNullOrEmpty(headerValue)) {
+					headers.add(headerValue);
 				}
 			}
+
+			while (rowIterator.hasNext()) {
+				int headerCounter = 0;
+				Map<String, String> rowMap = new HashMap<>();
+				Row row = rowIterator.next();
+				Iterator<Cell> cellIterator = row.cellIterator();
+				while (cellIterator.hasNext() && headerCounter < headers.size()) {
+					Cell cell = cellIterator.next();
+					String cellValue = cell.getStringCellValue().trim();
+					logger.debug(headers.get(headerCounter) + " ==> " + cellValue);
+					rowMap.put(headers.get(headerCounter), cellValue);
+					headerCounter += 1;
+				}
+				tableList.add(rowMap);
+			}
+			fis.close();
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -588,7 +611,7 @@ public class ProjectsController {
 			e.printStackTrace();
 		}
 
-		return PROJECTS_DIR + "project_samples_metadata";
+		return tableList;
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/referenceFiles", method = RequestMethod.GET)
