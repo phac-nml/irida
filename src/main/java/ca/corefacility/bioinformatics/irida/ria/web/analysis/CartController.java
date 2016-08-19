@@ -173,10 +173,13 @@ public class CartController {
 
 		String message;
 		if (sampleIds.size() == 1) {
-			message = messageSource.getMessage("cart.one-sample-added", new Object[] {}, locale);
+			message = messageSource.getMessage("cart.one-sample-added", new Object[] {
+				project.getLabel()
+			}, locale);
 		} else {
 			message = messageSource.getMessage("cart.many-samples-added", new Object[] {
-					sampleIds.size()
+					sampleIds.size(),
+					project.getLabel()
 			}, locale);
 		}
 		return ImmutableMap.of("message", message);
