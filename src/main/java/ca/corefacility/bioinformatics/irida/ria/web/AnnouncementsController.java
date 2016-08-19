@@ -15,7 +15,6 @@ import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -320,7 +319,7 @@ public class AnnouncementsController extends BaseController{
 
         if (sortName.equals("createdDate")) {
             Collections.sort(announcementUserDataTableResponses);
-            if (direction.equals(Sort.Direction.DESC)) {
+            if (direction.equals(Sort.Direction.ASC)) {
                 Collections.reverse(announcementUserDataTableResponses);
             }
         }
