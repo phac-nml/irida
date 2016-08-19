@@ -316,35 +316,42 @@
         console.log("FROM SELECTION CONTROLLER ", args);
       });
     }
+    
+    function selectAllSamples() {
+      _sampleService.getAllIds()
+        .then(function(result) {
+          $window.datatable.selectAll(result.data);
+        });
+    }
+    
+    function deselectAllSamples() {
+      $window.datatable.clearSelected();
+    }
 
     SelectionController.prototype.selectAllCB = function() {
       if(!vm.allSelected) {
-        _sampleService.getAllIds()
-          .then(function(result) {
-            $window.datatable.selectAll(result.data);
-          });
+        selectAllSamples()
       } else {
-        $window.datatable.clearSelected();
+        deselectAllSamples();
       }
     };
 
     SelectionController.prototype.selectAll = function() {
       vm.allSelected = true;
-      console.error("IMPLEMENT SELECT ALL");
+      selectAllSamples()
     };
 
     SelectionController.prototype.selectNone = function() {
       vm.allSelected = false;
-      $window.datatable.clearSelected();
+      deselectAllSamples();
     };
 
     SelectionController.prototype.selectPage = function() {
-      console.error("IMPLEMENT SELECT PAGE");
+      $window.datatable.selectPage();
     };
 
     SelectionController.prototype.deselectPage = function() {
-      vm.allSelected = false;
-      console.error("IMPLEMENT DESELECT PAGE");
+      $window.datatable.deselectPage()
     };
 
     return SelectionController;

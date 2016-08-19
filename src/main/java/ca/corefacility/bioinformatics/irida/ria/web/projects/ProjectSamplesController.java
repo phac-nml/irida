@@ -411,7 +411,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
 	@ResponseBody
-	public List<Long> getAllProjectSampleIds(@PathVariable Long projectId,
+	public Map<String, List> getAllProjectSampleIds(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
@@ -419,7 +419,8 @@ public class ProjectSamplesController {
 			@RequestParam(required = false, defaultValue = "") String minDate,
 			@RequestParam(required = false, defaultValue = "") String endDate) {
 		List<Project> projects = new ArrayList<>();
-		projects.add(projectService.read(projectId));
+		// Add the current project to the associated list.
+		associated.add(projectId);
 		if (!associated.isEmpty()) {
 			projects.addAll((Collection<? extends Project>) projectService.readMultiple(associated));
 		}
@@ -437,11 +438,20 @@ public class ProjectSamplesController {
 				.getFilteredSamplesForProjects(projects, sampleNames, name,
 						search, firstDate, lastDate, 0, Integer.MAX_VALUE,
 						Direction.ASC, "id");
-		List<Long> ids = new ArrayList<>();
-		for (ProjectSampleJoin join : page.getContent()) {
-			ids.add(join.getObject().getId());
+
+		// Converting everything to a string for consumption by the UI.
+		Map<String, List> result = new HashMap<>();
+		for (Long id : associated) {
+			result.put(id.toString(), new ArrayList());
 		}
-		return ids;
+		for (ProjectSampleJoin join : page) {
+			String pId = join.getSubject().getId().toString();
+			if (result.containsKey(pId)) {
+				result.get(pId).add(join.getObject().getId().toString());
+			}
+		}
+
+		return result;
 	}
 
 	/**

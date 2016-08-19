@@ -198,6 +198,25 @@ var RowClickHandler = (function (page) {
   }
 
   /**
+   * Select the currently displayed page.
+   */
+  function selectCurrentPage() {
+    var rows = document.querySelectorAll("tbody tr");
+    [].forEach.call(rows, selectRow);
+    updateSelectionCounts(getSelectedCount());
+  }
+
+  /**
+   * Clear the currently selected items.
+   */
+  function clearSelectedOnPage() {
+    var rows = document.querySelectorAll(".selected");
+    [].forEach.call(rows, function (row) {
+      deselectRow(row);
+    });
+  }
+
+  /**
    * Table body click event
    * @param row
    * @param isMultiple
@@ -238,24 +257,35 @@ var RowClickHandler = (function (page) {
    */
   RowSelection.prototype.clearSelected = function () {
     // Need to clear the class from the table:
-    var rows = document.querySelectorAll(".selected");
-    [].forEach.call(rows, function (row) {
-      deselectRow(row);
-    });
+    clearSelectedOnPage();
     selected = [];
     updateSelectionCounts(0);
   };
 
+  /**
+   * Select all the items in the table
+   * @param ids
+   */
   RowSelection.prototype.selectAll = function(ids) {
-    selected = ids.map(function(i) {
-      return i + "";
-    });
-    var rows = document.querySelectorAll("tbody tr");
-    [].forEach.call(rows, function(row) {
-      row.classList.add("selected");
-      row.querySelector('input[type=checkbox]').checked = true;
-    });
-    updateSelectionCounts(ids.length);
+    selectCurrentPage();
+    selected = ids;
+    updateSelectionCounts(getSelectedCount());
+  };
+
+  /**
+   * Select the current page in the table.
+   */
+  RowSelection.prototype.selectPage = function() {
+    selectCurrentPage();
+    updateSelectionCounts(getSelectedCount());
+  };
+
+  /**
+   * Clear all the selected items in the current table.
+   */
+  RowSelection.prototype.deselectPage = function() {
+    clearSelectedOnPage();
+    updateSelectionCounts(getSelectedCount());
   };
 
   return RowSelection;
@@ -451,6 +481,14 @@ var datatable = (function(moment, tl, page) {
     rowClickHandler.selectAll(ids);
   }
 
+  function selectPage() {
+    rowClickHandler.selectPage();
+  }
+
+  function deselectPage() {
+    rowClickHandler.deselectPage();
+  }
+
   return {
     formatDate                    : formatDate,
     formatDateWithTime            : formatDateWithTime,
@@ -465,6 +503,8 @@ var datatable = (function(moment, tl, page) {
     getSelectedIds                : getSelectedIds,
     clearSelected                 : clearSelected,
     formatCheckbox: formatCheckbox,
-    selectAll: selectAll
+    selectAll: selectAll,
+    selectPage: selectPage,
+    deselectPage: deselectPage
   };
 })(window.moment, window.TL, window.PAGE);
