@@ -411,11 +411,34 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
 	@ResponseBody
-	public List<Long> getAllProjectSampleIds(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> samples = sampleService.getSamplesForProject(project);
+	public List<Long> getAllProjectSampleIds(@PathVariable Long projectId,
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") String search,
+			@RequestParam(required = false, defaultValue = "") String minDate,
+			@RequestParam(required = false, defaultValue = "") String endDate) {
+		List<Project> projects = new ArrayList<>();
+		projects.add(projectService.read(projectId));
+		if (!associated.isEmpty()) {
+			projects.addAll((Collection<? extends Project>) projectService.readMultiple(associated));
+		}
+
+		Date firstDate = null;
+		if (!Strings.isNullOrEmpty(minDate)) {
+			firstDate = new Date(Long.parseLong(minDate));
+		}
+		Date lastDate = null;
+		if (!Strings.isNullOrEmpty(endDate)) {
+			lastDate = new Date(Long.parseLong(endDate));
+		}
+
+		final Page<ProjectSampleJoin> page = sampleService
+				.getFilteredSamplesForProjects(projects, sampleNames, name,
+						search, firstDate, lastDate, 0, Integer.MAX_VALUE,
+						Direction.ASC, "id");
 		List<Long> ids = new ArrayList<>();
-		for (Join<Project, Sample> join : samples) {
+		for (ProjectSampleJoin join : page.getContent()) {
 			ids.add(join.getObject().getId());
 		}
 		return ids;

@@ -298,21 +298,25 @@
   }());
 
   var SelectionController = (function() {
-    var $window, service, vm;
+    var $window, _sampleService, vm;
 
     function SelectionController($scope, window, sampleService) {
       vm = this;
       $window = window;
-      service = sampleService;
+      _sampleService = sampleService;
 
       $scope.$on("SAMPLE_SELECTION_EVENT", function(event, args) {
         vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
+      });
+
+      $scope.$on("FILTER_TABLE", function (event, args) {
+        console.log("FROM SELECTION CONTROLLER ", args);
       });
     }
 
     SelectionController.prototype.selectAllCB = function() {
       if(!vm.allSelected) {
-        service.getAllIds()
+        _sampleService.getAllIds()
           .then(function(result) {
             $window.datatable.selectAll(result.data);
           });
