@@ -15,7 +15,6 @@ import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFacto
 
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 
-import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 
 @Configuration
@@ -33,12 +32,6 @@ public class MongoDatasourceConfig {
 	@Bean
 	public MongoDbFactory mongoDbFactory(MongoClient mongo) throws UnknownHostException {
 		return new SimpleMongoDbFactory(mongo, mongoDatabaseName);
-	}
-
-	@Bean
-	@Profile({ "test" })
-	public MongoClient testMongoClient() {
-		return new Fongo(mongoDatabaseName).getMongo();
 	}
 
 	@Bean
