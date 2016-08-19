@@ -89,6 +89,9 @@ public class AnnouncementsController extends BaseController{
 
         List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
 
+        Collections.sort(unreadAnnouncements);
+        Collections.reverse(unreadAnnouncements);
+
         model.addAttribute("announcements", unreadAnnouncements);
 
         return ANNOUNCEMENT_VIEW;
