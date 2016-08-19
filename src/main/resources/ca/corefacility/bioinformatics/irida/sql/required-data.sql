@@ -11,6 +11,12 @@ INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'test@nowhere.ca', 'Test', 'User', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'test', 1, 'ROLE_USER', 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'disabled-guy@nowhere.ca', 'Disabled', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'disabledguy', 0, 'ROLE_USER', 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'manager@nowhere.ca', 'Mr.', 'Manager', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'manager', 1, 'ROLE_MANAGER', 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , '1-guy@nowhere.ca', '11t', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', '11t', 0, 'ROLE_USER', 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , '2-guy@nowhere.ca', 'Heh', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'moon', 0, 'ROLE_USER', 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , '3-guy@nowhere.ca', 'What', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'what', 0, 'ROLE_USER', 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , '4-guy@nowhere.ca', 'Awesome', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'awesomeMan', 0, 'ROLE_USER', 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , '5-guy@nowhere.ca', 'Super', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'superguy', 0, 'ROLE_USER', 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , '6-guy@nowhere.ca', 'Not', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'notsuperguy', 0, 'ROLE_USER', 1);
 
 insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 1', 'description 1');
 insert into user_group(created_date, modified_date, name, description) values (now(), now(), 'group 2', 'description 2');
@@ -658,4 +664,11 @@ INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VAL
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (17, '2016-08-14 08:05:53', 6, 1);
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (18, '2016-08-15 08:05:53', 6, 2);
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (19, '2016-08-16 08:05:53', 6, 3);
-INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (20, '2016-08-17 08:05:53', 6, 5);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (20, '2016-08-01 08:05:53', 6, 5);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (21, '2016-08-18 08:05:53', 6, 6);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (22, '2016-08-02 08:05:53', 6, 7);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (23, '2016-08-17 08:05:53', 6, 8);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (24, '2016-08-03 08:05:53', 6, 9);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (25, '2016-08-16 08:05:53', 6, 10);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (26, '2016-08-04 08:05:53', 6, 11);
+INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (27, '2016-08-15 08:05:53', 6, 13);
