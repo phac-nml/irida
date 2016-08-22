@@ -310,6 +310,7 @@
 
       $scope.$on("SAMPLE_SELECTION_EVENT", function(event, args) {
         vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
+        vm.allSelectedCB = vm.allSelected;
       });
 
       $scope.$on("FILTER_TABLE", function (event, args) {
@@ -328,7 +329,7 @@
       $window.datatable.clearSelected();
     }
 
-    SelectionController.prototype.selectAllCB = function() {
+    SelectionController.prototype.selectAllBtn = function() {
       if(!vm.allSelected) {
         selectAllSamples()
       } else {
