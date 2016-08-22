@@ -35,7 +35,6 @@ public class MongoDatasourceConfig {
 	}
 
 	@Bean
-	@Profile({ "dev", "prod", "it" })
 	public MongoClient mongoClient() throws UnknownHostException {
 		return new MongoClient(mongoHost);
 	}
