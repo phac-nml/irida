@@ -45,52 +45,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project ID 1"));
 		assertEquals("Should display 10 projects initially.", 10, page.getNumberProjectsDisplayed());
-
-		// TODO (JOSH - 2016-04-18): Test all buttons
-//		// Test the status of all buttons.
-//		assertFalse("Merge Button should be disabled", page.isMergeBtnEnabled());
-//		assertFalse("Copy Button should be disabled", page.isCopyBtnEnabled());
-//		assertFalse("Move Button should be disabled", page.isMoveBtnEnabled());
-//		assertFalse("Remove Button should be disabled", page.isRemoveBtnEnabled());
-//
-//		// Test toolbar when changes selected sample count to 1.
-//		page.selectSample(0);
-//		assertFalse("Merge Button should be disabled", page.isMergeBtnEnabled());
-//		assertTrue("Copy Button should be enabled", page.isCopyBtnEnabled());
-//		assertTrue("Move Button should be enabled", page.isMoveBtnEnabled());
-//		assertTrue("Remove Button should be enabled", page.isRemoveBtnEnabled());
-//
-//		// Test toolbar when changes selected sample count to 2.
-//		page.selectSample(1);
-//		assertTrue("Merge Button should be enabled", page.isMergeBtnEnabled());
-//		assertTrue("Copy Button should be enabled", page.isCopyBtnEnabled());
-//		assertTrue("Move Button should be enabled", page.isMoveBtnEnabled());
-//		assertTrue("Remove Button should be enabled", page.isRemoveBtnEnabled());
-//
-//		// Need to ensure they return to there default state when unchecked
-//		page.selectSample(1);
-//		assertFalse("Merge Button should be disabled", page.isMergeBtnEnabled());
-//		assertTrue("Copy Button should be enabled", page.isCopyBtnEnabled());
-//		assertTrue("Move Button should be enabled", page.isMoveBtnEnabled());
-//		assertTrue("Remove Button should be enabled", page.isRemoveBtnEnabled());
-//		page.selectSample(0);
-//		assertFalse("Merge Button should be disabled", page.isMergeBtnEnabled());
-//		assertFalse("Copy Button should be disabled", page.isCopyBtnEnabled());
-//		assertFalse("Move Button should be disabled", page.isMoveBtnEnabled());
-//		assertFalse("Remove Button should be disabled", page.isRemoveBtnEnabled());
-//
-//		// Test select all/none
-//		page.selectAllOrNone();
-//		assertTrue("Merge Button should be enabled", page.isMergeBtnEnabled());
-//		assertTrue("Copy Button should be enabled", page.isCopyBtnEnabled());
-//		assertTrue("Move Button should be enabled", page.isMoveBtnEnabled());
-//		assertTrue("Remove Button should be enabled", page.isRemoveBtnEnabled());
-//		page.selectAllOrNone();
-//		assertFalse("Merge Button should be disabled", page.isMergeBtnEnabled());
-//		assertFalse("Copy Button should be disabled", page.isCopyBtnEnabled());
-//		assertFalse("Move Button should be disabled", page.isMoveBtnEnabled());
-//		assertFalse("Remove Button should be disabled", page.isRemoveBtnEnabled());
-
 	}
 
 	@Test
@@ -122,6 +76,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.selectSampleWithShift(4);
 		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
+
+		page.selectAllSamples();
+		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
 	}
 
 	@Test

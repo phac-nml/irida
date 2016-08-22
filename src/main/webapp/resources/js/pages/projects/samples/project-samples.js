@@ -77,19 +77,22 @@
 
     function ToolsController($scope, ModalService, SampleService, CartService) {
       var vm = this;
+      vm.disabled = {};
       modalService = ModalService;
       sampleService = SampleService;
       cartService = CartService;
 
       function setButtonState(count) {
-        vm.disabled = {
-          lessThanOne: count < 1,
-          lessThanTwo: count < 2
-        };
+        vm.disabled.lessThanOne = count < 1;
+        vm.disabled.lessThanTwo = count < 2;
       }
 
       $scope.$on("SAMPLE_SELECTION_EVENT", function (event, args) {
         setButtonState(args.count);
+      });
+
+      $scope.$on("ASSOCIATED_PROJECTS_CHANGE", function(event, args) {
+        vm.disabled.hasAssociated = args.count > 0;
       });
 
       setButtonState(0);
@@ -155,29 +158,29 @@
     };
 
     ToolsController.prototype.addToCart = function () {
-      cartService.add(page.project.id, datatable.getSelectedIds())
+      cartService.add(datatable.getSelectedIds())
           .then(function () {
             datatable.clearSelected();
           });
     };
 
     ToolsController.prototype.download = function () {
-      var ids = datatable.getSelectedIds();
-      if (ids.length > 0) {
-        sampleService.download(ids);
+      var selected = datatable.getSelectedIds();
+      if (selected[page.project.id] && selected[page.project.id].length > 0) {
+        sampleService.download(selected[page.project.id]);
       }
     };
 
     ToolsController.prototype.ncbiExport = function () {
-      var ids = datatable.getSelectedIds();
-      if (ids.length > 0) {
-        sampleService.ncbiExport(ids);
+      var selected = datatable.getSelectedIds();
+      if (selected[page.project.id] && selected[page.project.id].length > 0) {
+        sampleService.ncbiExport(selected[page.project.id]);
       }
     };
 
     ToolsController.prototype.linker = function () {
-      var ids = datatable.getSelectedIds();
-      modalService.openLinkerModal(ids);
+      var selected = datatable.getSelectedIds();
+      modalService.openLinkerModal(selected[page.project.id]);
     };
 
     /**
@@ -297,11 +300,70 @@
     return filteredTags;
   }());
 
+  var SelectionController = (function() {
+    var $window, _sampleService, vm;
+
+    function SelectionController($scope, window, sampleService) {
+      vm = this;
+      $window = window;
+      _sampleService = sampleService;
+
+      $scope.$on("SAMPLE_SELECTION_EVENT", function(event, args) {
+        vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
+        vm.allSelectedCB = vm.allSelected;
+      });
+
+      $scope.$on("FILTER_TABLE", function (event, args) {
+        console.log("FROM SELECTION CONTROLLER ", args);
+      });
+    }
+    
+    function selectAllSamples() {
+      _sampleService.getAllIds()
+        .then(function(result) {
+          $window.datatable.selectAll(result.data);
+        });
+    }
+    
+    function deselectAllSamples() {
+      $window.datatable.clearSelected();
+    }
+
+    SelectionController.prototype.selectAllBtn = function() {
+      if(!vm.allSelected) {
+        selectAllSamples()
+      } else {
+        deselectAllSamples();
+      }
+    };
+
+    SelectionController.prototype.selectAll = function() {
+      vm.allSelected = true;
+      selectAllSamples()
+    };
+
+    SelectionController.prototype.selectNone = function() {
+      vm.allSelected = false;
+      deselectAllSamples();
+    };
+
+    SelectionController.prototype.selectPage = function() {
+      $window.datatable.selectPage();
+    };
+
+    SelectionController.prototype.deselectPage = function() {
+      $window.datatable.deselectPage()
+    };
+
+    return SelectionController;
+  }());
+
     ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
       .directive('filterByFile', ["$parse", filterByFile])
       .directive('samplesFilter', [samplesFilter])
       .directive('filteredTags', [filteredTags])
     .controller('AssociatedProjectsController', ["$rootScope", "SampleService", AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
+      .controller('SelectionController', ['$scope', '$window', "SampleService", SelectionController])
   ;
 }(window.angular, window.PAGE));

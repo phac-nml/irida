@@ -110,7 +110,7 @@
     };
   }
 
-  function CartService(scope, $http, notifications) {
+  function CartService(scope, $http, $q, notifications) {
     var svc = this,
       urls = {
         all: TL.BASE_URL + 'cart',
@@ -131,12 +131,26 @@
         });
     };
 
-    svc.add = function (projectId, samples) {
-      return $http.post(urls.add, {projectId: projectId, sampleIds: samples})
+    svc.add = function(items) {
+      var ids = Object.keys(items);
+      var defer = $q.defer;
+      var promises = [];
+      var resultMsg = [];
+
+      ids.forEach(function(id) {
+        var promise = $http.post(urls.add, {projectId: id, sampleIds: items[id]})
           .then(function(result) {
-            scope.$emit('cart.update');
-            notifications.show({msg: result.data.message});
+            resultMsg.push(result.data.message);
           });
+        promises.push(promise);
+      });
+
+      return $q.all(promises).then(function() {
+        scope.$emit('cart.update');
+        resultMsg.forEach(function(msg) {
+          notifications.show({msg: msg});
+        });
+      });
     };
 
     svc.clear = function () {
@@ -354,7 +368,7 @@
 
   angular
     .module('irida.cart', ["irida.notifications"])
-    .service('CartService', ['$rootScope', '$http', "notifications", CartService])
+    .service('CartService', ['$rootScope', '$http', '$q', "notifications", CartService])
     .controller('CartSliderController', ['CartService', '$uibModal', CartSliderController])
     .controller('GalaxyDialogCtrl', ['$uibModalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', 'sampleIds', 'projectId', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', '$http', GalaxyExportService])
