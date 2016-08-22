@@ -141,10 +141,27 @@ var RowClickHandler = (function (page) {
           return getRowId(r);
         });
 
+    /**
+     * Find the index of the id in the rows
+     * @param rows List of row ids
+     * @param id Id the find the index of
+     * @returns index of id or undefined.
+     */
+    function findRowIndex(rowIds, id) {
+      var index;
+      for (var i = 0; i < rowIds.length; i++) {
+        if (rowIds[i].projectId === id.projectId && rowIds[i].sampleId === id.sampleId) {
+          index = i;
+          break;
+        }
+      }
+      return index;
+    }
+
     // Make sure that both ids are present in the list
-    var currIndex = ids.indexOf(currRowId),
-        prevIndex = ids.indexOf(lastSelectedId);
-    if (currIndex === -1 || prevIndex === -1) {
+    var currIndex = findRowIndex(ids, currRowId),
+      prevIndex = findRowIndex(ids, lastSelectedId);
+    if (typeof currIndex === 'undefined' || typeof prevIndex === 'undefined') {
       throw new Error("Last selected row and current selected row are not on this page!");
     }
 
