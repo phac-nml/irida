@@ -98,12 +98,18 @@
       setButtonState(0);
     }
 
+    function getProjectSelectedIds() {
+      var allIds = datatable.getSelectedIds();
+      // Only want this projects
+      return allIds[page.project.id];
+    }
+
       /**
        * Merge Samples
        */
     ToolsController.prototype.merge = function () {
       if (!this.disabled.lessThanTwo) {
-        var ids = datatable.getSelectedIds();
+        var ids = getProjectSelectedIds();
         modalService.openMergeModal(ids).then(function(result) {
           sampleService.merge(result).then(function() {
             datatable.clearSelected();
@@ -118,7 +124,7 @@
        */
     ToolsController.prototype.copy = function () {
       if(!this.disabled.lessThanOne) {
-          var ids = datatable.getSelectedIds();
+          var ids = getProjectSelectedIds();
           modalService.openCopyModal(ids).then(function (result) {
               sampleService.copy(result)
                   .then(function () {
@@ -133,7 +139,7 @@
        */
     ToolsController.prototype.move = function () {
       if(!this.disabled.lessThanOne) {
-          var ids = datatable.getSelectedIds();
+          var ids = getProjectSelectedIds();
           modalService.openMoveModal(ids).then(function (result) {
               sampleService.move(result)
                   .then(function () {
@@ -146,7 +152,7 @@
 
     ToolsController.prototype.remove = function () {
       if(!this.disabled.lessThanOne) {
-        var ids = datatable.getSelectedIds();
+        var ids = getProjectSelectedIds();
         modalService.openRemoveModal(ids).then(function () {
           sampleService.remove(ids)
             .then(function () {
