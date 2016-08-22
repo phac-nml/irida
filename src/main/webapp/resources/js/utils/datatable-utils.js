@@ -179,9 +179,9 @@ var RowClickHandler = (function (page) {
    */
   function displaySelectionCounts(count) {
     var selectDiv = document.querySelector(".selected-counts");
-    if(selected.length === 0 ) {
+    if(count === 0 ) {
       selectDiv.innerHTML = page.i18n.selectedCounts.none;
-    } else if (selected.length === 1) {
+    } else if (count === 1) {
       selectDiv.innerHTML = page.i18n.selectedCounts.one;
     } else {
       selectDiv.innerHTML = page.i18n.selectedCounts.other.replace("{count}", count);
