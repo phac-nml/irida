@@ -18,7 +18,6 @@
       Object.assign(filters, page.ajaxParam);
       var searchTerm = document.querySelector(".dataTables_filter input").value;
       filters.search = searchTerm;
-      console.log(filters);
       return filters;
     }
 

@@ -318,10 +318,6 @@
         vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
         vm.allSelectedCB = vm.allSelected;
       });
-
-      $scope.$on("FILTER_TABLE", function (event, args) {
-        console.log("FROM SELECTION CONTROLLER ", args);
-      });
     }
     
     function selectAllSamples() {

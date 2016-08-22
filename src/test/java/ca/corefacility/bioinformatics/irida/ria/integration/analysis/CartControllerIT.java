@@ -78,7 +78,7 @@ public class CartControllerIT {
 		Project project = projectService.read(projectId);
 		Set<Long> sampleIds = Sets.newHashSet(4L);
 		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, sampleIds, Locale.US);
-		assertEquals("Should be 1 sample in the cart", "1 sample was added to the cart.",  addProjectSample.get("message"));
+		assertEquals("Should be 1 sample in the cart", "1 sample was added to the cart from project2.",  addProjectSample.get("message"));
 
 		Set<Sample> selectedSamplesForProject = controller.getSelected().get(project);
 		for (Sample s : selectedSamplesForProject) {
