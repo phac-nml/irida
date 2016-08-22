@@ -69,10 +69,8 @@ public class CartControllerTest {
 	@Test
 	public void testAddProjectSample() {
 		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
-		when(messageSource.getMessage("cart.one-sample-added", new Object[] {}, Locale.US)).thenReturn("1 sample was added to the cart.");
+		when(messageSource.getMessage("cart.one-sample-added", new Object[] { "project"}, Locale.US)).thenReturn("1 sample was added to the cart from project.");
 		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, subIds, Locale.US);
-
-		assertEquals("Should be one sample in the cart", "1 sample was added to the cart.", (String) addProjectSample.get("message"));
 
 		verify(projectService).read(projectId);
 		for (Long id : subIds) {
