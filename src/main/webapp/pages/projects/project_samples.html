@@ -160,12 +160,6 @@
                         </li>
                     </ul>
                 </div>
-                <a th:if="${#lists.isEmpty(associatedProjects) &amp;&amp; (isAdmin || isOwner)}"
-                   th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default btn-sm">
-                    <fa:icon type="create"/>
-                    &nbsp;
-                    <th:block th:text="#{project.samples.nav.associated-create}"></th:block>
-                </a>
                 <div style="display: inline-block;" ng-controller="ToolsController as toolsCtrl">
                     <div style="display: inline-block;" uib-dropdown="" >
                         <button id="sample-tools" class="btn btn-default btn-sm" uib-dropdown-toggle="" type="button">
