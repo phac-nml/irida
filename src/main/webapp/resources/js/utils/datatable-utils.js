@@ -42,25 +42,54 @@ var ProjectColourer = (function () {
 
 var RowClickHandler = (function (page) {
   "use strict";
-  var selected = [], // List of ids for currently selected items
+  var selected = {}, // List of ids for currently selected items
       lastSelectedId; // Id of the last selected item, for multiple selections
 
   function RowSelection() {
+  }
+
+  function addItemToSelection(item) {
+    if(!Array.isArray(selected[item.projectId])) {
+      selected[item.projectId] = [];
+    }
+    selected[item.projectId].push(item.sampleId);
+  }
+
+  function removeItemFromSelection(item) {
+    var projectArray = selected[item.projectId];
+    projectArray.splice(projectArray.indexOf(item.sampleId), 1);
+  }
+
+  function isItemInSelection(item) {
+    if(!Array.isArray(selected[item.projectId])) {
+      return false;
+    }
+    return selected[item.projectId].indexOf(item.sampleId) > -1;
+  }
+
+  function getSelectedCount() {
+    var keys = Object.keys(selected);
+    var count = 0;
+    keys.forEach(function(key) {
+      count += selected[key].length;
+    });
+    return count;
   }
 
   function getRowId(row) {
     // Anchor tag expected to have a data attribute 'id'
     // Expected on first anchor in row.
     var anchor = row.querySelector("a"),
-        id;
+        sampleId, projectId;
     if (typeof anchor === "undefined") {
       throw new Error("No anchor tag found for sample name");
     }
-    id = anchor.dataset.id;
-    if(typeof id === "undefined") {
+    sampleId = anchor.dataset.sampleid;
+    projectId = anchor.dataset.projectid;
+    if(typeof sampleId === "undefined" || typeof projectId === "undefined") {
       throw new Error("Expected anchor tag for sample to contain sample identifier");
     }
-    return id;
+    return {projectId: projectId, sampleId: sampleId};
   }
 
   function selectRow(row) {
@@ -68,22 +97,21 @@ var RowClickHandler = (function (page) {
         cb = row.querySelector('input[type=checkbox]');
     // Check to make sure the row is not already selected.
     // Can occur during multi-select
-    if (selected.indexOf(id) === -1) {
+    if (!isItemInSelection(id)) {
       row.classList.add("selected");
       cb.checked = true;
-      selected.push(id);
+      addItemToSelection(id);
     }
   }
 
   function deselectRow(row) {
     var id = getRowId(row),
-        cb = row.querySelector('input[type=checkbox]'),
-        index = selected.indexOf(id);
+        cb = row.querySelector('input[type=checkbox]');
     // Make sure the row is selected
-    if (index > -1) {
+    if (isItemInSelection(id)) {
       row.classList.remove("selected");
       cb.checked = false;
-      selected.splice(index, 1);
+      removeItemFromSelection(id);
     }
   }
 
@@ -113,10 +141,27 @@ var RowClickHandler = (function (page) {
           return getRowId(r);
         });
 
+    /**
+     * Find the index of the id in the rows
+     * @param rows List of row ids
+     * @param id Id the find the index of
+     * @returns index of id or undefined.
+     */
+    function findRowIndex(rowIds, id) {
+      var index;
+      for (var i = 0; i < rowIds.length; i++) {
+        if (rowIds[i].projectId === id.projectId && rowIds[i].sampleId === id.sampleId) {
+          index = i;
+          break;
+        }
+      }
+      return index;
+    }
+
     // Make sure that both ids are present in the list
-    var currIndex = ids.indexOf(currRowId),
-        prevIndex = ids.indexOf(lastSelectedId);
-    if (currIndex === -1 || prevIndex === -1) {
+    var currIndex = findRowIndex(ids, currRowId),
+      prevIndex = findRowIndex(ids, lastSelectedId);
+    if (typeof currIndex === 'undefined' || typeof prevIndex === 'undefined') {
       throw new Error("Last selected row and current selected row are not on this page!");
     }
 
@@ -151,9 +196,9 @@ var RowClickHandler = (function (page) {
    */
   function displaySelectionCounts(count) {
     var selectDiv = document.querySelector(".selected-counts");
-    if(selected.length === 0 ) {
+    if(count === 0 ) {
       selectDiv.innerHTML = page.i18n.selectedCounts.none;
-    } else if (selected.length === 1) {
+    } else if (count === 1) {
       selectDiv.innerHTML = page.i18n.selectedCounts.one;
     } else {
       selectDiv.innerHTML = page.i18n.selectedCounts.other.replace("{count}", count);
@@ -185,7 +230,7 @@ var RowClickHandler = (function (page) {
     }
 
     // Update the selected counts
-    updateSelectionCounts(selected.length);
+    updateSelectionCounts(getSelectedCount());
   };
 
   /**
@@ -194,13 +239,14 @@ var RowClickHandler = (function (page) {
    * @returns {boolean}
    */
   RowSelection.prototype.isRowSelected = function (id) {
-    return selected.indexOf(id) > -1;
+    return isItemInSelection(id);
   };
 
   /**
    * Get List of all selected ids.
    * @returns {Array}
-   */RowSelection.prototype.getSelectedIds = function () {
+   */
+  RowSelection.prototype.getSelectedIds = function () {
     return selected;
   };
 
@@ -270,7 +316,7 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
     else {
-      return "<a data-id='" + full.id + "' class='btn btn-link sample-label' href='" + tl.BASE_URL + "projects/" + full.projectId + "/samples/" + full.id + "/sequenceFiles'>" + data + "</a>";
+      return "<a data-sampleId='" + full.id + "' data-projectId='" + full.projectId + "' class='btn btn-link sample-label' href='" + tl.BASE_URL + "projects/" + full.projectId + "/samples/" + full.id + "/sequenceFiles'>" + data + "</a>";
     }
   }
 
@@ -364,7 +410,7 @@ var datatable = (function(moment, tl, page) {
   }
 
   function projectRowCreated(row, item) {
-    if (rowClickHandler.isRowSelected(item.id)) {
+    if (rowClickHandler.isRowSelected({sampleId:item.id, projectId:item.projectId})) {
       row.classList.add("selected");
       row.querySelector("input[type=checkbox]").checked = true;
     }

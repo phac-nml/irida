@@ -110,7 +110,7 @@
     };
   }
 
-  function CartService(scope, $http, notifications) {
+  function CartService(scope, $http, $q, notifications) {
     var svc = this,
       urls = {
         all: TL.BASE_URL + 'cart',
@@ -131,12 +131,35 @@
         });
     };
 
-    svc.add = function (projectId, samples) {
-      return $http.post(urls.add, {projectId: projectId, sampleIds: samples})
+    /**
+     * Add samples to the global cart
+     * @param {object} projectSamples
+     *    {projectId: [sampleIds]}
+     * @returns {*|Promise.<TResult>}
+     */
+    svc.add = function(projectSamples) {
+      var projectIds = Object.keys(projectSamples);
+      var promises = [];
+      var resultMsg = [];
+
+      // Add each project's samples to the global cart.
+      projectIds.forEach(function(id) {
+        var promise = $http.post(urls.add, {projectId: id, sampleIds: projectSamples[id]})
           .then(function(result) {
-            scope.$emit('cart.update');
-            notifications.show({msg: result.data.message});
+            resultMsg.push(result.data.message);
           });
+        promises.push(promise);
+      });
+
+      // Return the resolution of all the results from adding the samples to the cart
+      return $q.all(promises).then(function() {
+        // Let everyone know that the cart has been updates
+        scope.$emit('cart.update');
+        // Show notifications for each project and their samples that were added to the cart.
+        resultMsg.forEach(function(msg) {
+          notifications.show({msg: msg});
+        });
+      });
     };
 
     svc.clear = function () {
@@ -354,7 +377,7 @@
 
   angular
     .module('irida.cart', ["irida.notifications"])
-    .service('CartService', ['$rootScope', '$http', "notifications", CartService])
+    .service('CartService', ['$rootScope', '$http', '$q', "notifications", CartService])
     .controller('CartSliderController', ['CartService', '$uibModal', CartSliderController])
     .controller('GalaxyDialogCtrl', ['$uibModalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', 'sampleIds', 'projectId', GalaxyDialogCtrl])
     .service('GalaxyExportService', ['CartService', '$http', GalaxyExportService])
