@@ -53,21 +53,6 @@ public class ToolsListExporter {
 
 	private static final String defaultToolPanelId = "irida";
 
-	// maps tools to default tool panel ids in Galaxy
-	// @formatter:off
-	private static final Map<String, String> toolNameToPanelId = ImmutableMap.<String, String>builder()
-			.put("flash", "ngs_qc")
-			.put("filter_spades_repeats", "ngs_assembly")
-			.put("assemblystats", "ngs_assembly")
-			.put("combine_assembly_stats", "ngs_assembly")
-			.put("spades", "ngs_assembly")
-			.put("prokka", "ngs_annotation")
-			.put("regex_find_replace", "textutil")
-			.put("bundle_collections", "group")
-			.put("suite_snvphyl_1_0_0", "snvphyl")
-			.build();
-	// @formatter:on
-
 	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
@@ -153,10 +138,6 @@ public class ToolsListExporter {
 
 			for (IridaWorkflowToolRepository toolRepository : workflow.getWorkflowDescription().getToolRepositories()) {
 
-				String toolName = toolRepository.getName();
-				String toolPanelSectionId = (toolNameToPanelId.containsKey(toolName)) ? toolNameToPanelId.get(toolName)
-						: defaultToolPanelId;
-
 				// Append trailing '/' to URL, so it becomes for example
 				// http://example.com/galaxy-shed/
 				// This is because other software (e.g. bioblend) assume a
@@ -179,7 +160,7 @@ public class ToolsListExporter {
 							.put("owner", toolRepository.getOwner())
 							.put("tool_shed_url", toolRepositoryURLString)
 							.put("revision", toolRepository.getRevision())
-							.put("tool_panel_section_id", toolPanelSectionId).build());
+							.put("tool_panel_section_id", defaultToolPanelId).build());
 					// @formatter:on
 				}
 			}
