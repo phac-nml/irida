@@ -4,6 +4,7 @@ import Dropzone from 'dropzone';
 
 /**
  * Create a table from the metadata return after parsing the excel docs.
+ * @param {array} data from the datatable
  */
 const tableCreator = data => {
   const nameCol = data.headers.indexOf('NLEP #');
@@ -42,7 +43,7 @@ const tableCreator = data => {
       }
     ]
   });
-}
+};
 
 // Configuration for dropzone.js allowing for user to
 // upload their excel files.

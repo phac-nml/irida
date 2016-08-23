@@ -563,7 +563,7 @@ public class ProjectsController {
 
 		Map<String, Object> response = new HashMap<>();
 		Project project = projectService.read(projectId);
-		List<Map<String, String>> tableList = new ArrayList<>();
+		List<Map<String, Object>> tableList = new ArrayList<>();
 		List<String> headers = new ArrayList<>();
 
 		try {
@@ -613,16 +613,16 @@ public class ProjectsController {
 						}
 					}
 					rowMap.put(headers.get(headerCounter), cellValue);
-
-					// Add the data to its sample (if possible)
-					if (sample != null) {
-						SampleMetadata metadata = new SampleMetadata();
-						metadata.setMetadata(rowMap);
-						sampleService.saveSampleMetadaForSample(sample, metadata);
-					}
-					// TODO (Josh | 2016-08-23): How to handle if no sample exits.
 					headerCounter += 1;
 				}
+
+				// Add the data to its sample (if possible)
+				if (sample != null) {
+					SampleMetadata metadata = new SampleMetadata();
+					metadata.setMetadata(rowMap);
+					sampleService.saveSampleMetadaForSample(sample, metadata);
+				}
+				// TODO (Josh | 2016-08-23): How to handle if no sample exits.
 				tableList.add(rowMap);
 			}
 			fis.close();
