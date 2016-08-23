@@ -107,8 +107,9 @@ gulp.task('serve', function() {
 gulp.task('watch', function () {
 	gulp.watch(scss.files, ['sass']);
 	gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
+	gulp.watch("./resources/js/dev/**/*.js", ['webpack']).on('change', browserSync.reload)
 });
 
-gulp.task('start', ['sass:prod']);
+gulp.task('start', ['sass:prod', 'webpack']);
 
 gulp.task('default', ['serve', 'watch']);

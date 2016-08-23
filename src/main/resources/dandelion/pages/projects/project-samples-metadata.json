@@ -1,0 +1,17 @@
+{
+  "dependencies": ["app", "datatables", "ddl-dt-theme-bootstrap3"],
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/node_modules/dropzone/dist/min/dropzone.min.css"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/build/samples-metadata-import.bundle.js"
+      }
+    }
+  ]
+}

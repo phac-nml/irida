@@ -1,23 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template/page">
 <head>
 	<meta charset="UTF-8"/>
 	<title>Title</title>
-	<link rel="stylesheet" href="/resources/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
-	<link rel="stylesheet" href="/resources/bower_components/dropzone/dist/min/dropzone.min.css"/>
-	<link rel="stylesheet" href="/resources/bower_components/font-awesome/css/font-awesome.min.css"/>
-	<link rel="stylesheet" href="/resources/bower_components/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.min.css"/>
 </head>
 <body>
-<div class="container-fluid">
+<div layout:fragment="page"
+     ddl:bundle-includes="project-samples-metadata"
+     ddl:asset-css-excludes="jquery.datatables">
 	<h1>Project Samples Metadata Page</h1>
 	<form th:action="@{/projects/{id}/sample-metadata(id=${projectId})}" id="metadataDropzone" class="dropzone"></form>
 	<table class="table table-bordered nowrap" id="metadata-table" cellspacing="0"></table>
 </div>
-
-<script src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
-<script src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-<script src="/resources/bower_components/datatables-bootstrap3-plugin/media/js/datatables-bootstrap3.min.js"></script>
-<script src="/resources/js/build/samples-metadata-import.bundle.js"></script>
 </body>
 </html>

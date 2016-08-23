@@ -1,5 +1,5 @@
 /* eslint new-cap: ["error", { "properties": false }] */
-var $ = require("jquery");
+var $ = require('jquery');
 import Dropzone from 'dropzone';
 
 /**
