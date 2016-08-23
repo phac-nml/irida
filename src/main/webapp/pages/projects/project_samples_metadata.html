@@ -12,14 +12,12 @@
 <div class="container-fluid">
 	<h1>Project Samples Metadata Page</h1>
 	<form th:action="@{/projects/{id}/sample-metadata(id=${projectId})}" id="metadataDropzone" class="dropzone"></form>
-	<!--<div class="btn btn-default" ngf-select="ctrl.upload($file)">Upload Metadata File</div>-->
 	<table class="table table-bordered nowrap" id="metadata-table" cellspacing="0"></table>
 </div>
 
 <script src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
-<script src="/resources/bower_components/dropzone/dist/min/dropzone.min.js"></script>
 <script src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/resources/bower_components/datatables-bootstrap3-plugin/media/js/datatables-bootstrap3.min.js"></script>
-<script src="/resources/js/pages/projects/project-samples-metadata.js"></script>
+<script src="/resources/js/build/samples-metadata-import.bundle.js"></script>
 </body>
 </html>

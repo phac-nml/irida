@@ -6,6 +6,8 @@ var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var browserSync = require('browser-sync').create();
+var named = require('vinyl-named');
+var webpack = require('webpack-stream');
 
 
 var scss = {
@@ -36,6 +38,41 @@ gulp.task('lint', function () {
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.failOnError());
+});
+
+gulp.task('webpack', function() {
+	return gulp
+		.src("./resources/js/dev/*.js")
+		.pipe(webpack({
+			entry: {
+				"samples-metadata-import": "./resources/js/dev/samples-metadata-import.js"
+			},
+			module: {
+				loaders: [
+					{
+						test: /.js?$/,
+						loader: 'babel-loader',
+						exclude: /node_modules/,
+						query: {
+							presets: ['es2015', 'stage-0']
+						}
+					},
+					{test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/}
+					]
+			},
+			externals: {
+				// require("jquery") is external and available
+				//  on the global var jQuery
+				"jquery": "jQuery"
+			},
+			eslint: {
+				configFile: "./.eslintrc.json"
+			},
+			output: {
+				filename: '[name].bundle.js'
+			}
+		}))
+		.pipe(gulp.dest('./resources/js/build/'));
 });
 
 gulp.task('sass', function () {
