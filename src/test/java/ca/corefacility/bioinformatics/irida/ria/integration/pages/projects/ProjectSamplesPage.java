@@ -344,7 +344,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-all")));
 		selectionAll.click();
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("fa-check-square-o")));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-all")));
 	}
 
 	private void enterSelect2Value(String value) {
