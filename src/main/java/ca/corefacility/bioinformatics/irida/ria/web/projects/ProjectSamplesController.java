@@ -442,7 +442,7 @@ public class ProjectSamplesController {
 		// Converting everything to a string for consumption by the UI.
 		Map<String, List<String>> result = new HashMap<>();
 		for (Long id : associated) {
-			result.put(id.toString(), new ArrayList());
+			result.put(id.toString(), new ArrayList<String>());
 		}
 		for (ProjectSampleJoin join : page) {
 			String pId = join.getSubject().getId().toString();
