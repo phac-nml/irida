@@ -411,7 +411,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
 	@ResponseBody
-	public Map<String, List> getAllProjectSampleIds(@PathVariable Long projectId,
+	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
@@ -440,7 +440,7 @@ public class ProjectSamplesController {
 						Direction.ASC, "id");
 
 		// Converting everything to a string for consumption by the UI.
-		Map<String, List> result = new HashMap<>();
+		Map<String, List<String>> result = new HashMap<>();
 		for (Long id : associated) {
 			result.put(id.toString(), new ArrayList());
 		}
