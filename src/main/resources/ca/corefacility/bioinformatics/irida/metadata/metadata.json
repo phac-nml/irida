@@ -1,0 +1,193 @@
+[{
+    "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
+    "sampleId": 51,
+    "metadata": {
+      "demographic": {
+        "firstName": "Jon",
+        "lastName": "Doe",
+        "city": "Winnipeg",
+        "healthAuthority": {
+          "abbr": "WRHA",
+          "label": "Winnipeg Regional Health Authority",
+          "uri": "http://irida.ca/whatever"
+        },
+        "birthDate": "1987-11-28",
+        "age": "28"
+      },
+      "clinical": {
+        "firstSymptom": {
+          "label": "Coughing",
+          "uri": "http://irida.ca/coughing"
+        },
+        "onsetDate": "2015-10-15T10:16:42+00:00"
+      },
+      "labTest": {
+        "species": {
+          "label": "Salmonella",
+          "uri": "http://somewhere/salmonella"
+        },
+        "serotype": "XXX",
+        "primaryPfge": "ABC123",
+        "secondaryPfge": "DEF456",
+        "phageType": "5"
+      },
+      "epidemiology":{
+        "exposures": [
+          {
+            "exposureDate": "2015-07-19T00:00:00+00:00",
+            "exposureSource": {
+              "label": "swimming",
+              "uri": "..."
+            },
+            "exposureLocation": {
+              "label": "lake",
+              "uri": "..."
+            },
+            "sampleMaterial": {
+              "label": "tissue",
+              "uri": "..."
+            },
+            "tranmissionMode": {
+              "label": "contact",
+              "uri": "..."
+            }
+          },
+          {
+            "exposureDate": "2015-07-21T00:00:00+00:00",
+            "exposureSource": {
+              "label": "party",
+              "uri": "..."
+            },
+            "exposureLocation": {
+              "label": "cabin",
+              "uri": "..."
+            },
+            "sampleMaterial": {
+              "label": "sputum",
+              "uri": "..."
+            },
+            "tranmissionMode": {
+              "label": "cough",
+              "uri": "..."
+            }
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
+    "sampleId": 52,
+    "metadata": {
+      "demographic": {
+        "firstName": "Damion",
+        "lastName": "Dooley",
+        "city": "Vancouver",
+        "healthAuthority": {
+          "abbr": "FHA",
+          "label": "BC Fraser Health Authority",
+          "uri": "IRIDA_0001281"
+        },
+        "birthDate": "1966-01-13",
+        "age": "49"
+      },
+      "clinical": {
+        "firstSymptom": {
+          "label": "Blurred vision",
+          "uri": "HP_0000622"
+        },
+        "onsetDate": "2015-02-11T10:16:42+00:00"
+      },
+      "labTest": {
+        "species": {
+          "label": "Salmonella enterica",
+          "uri": "NCBITaxon_28901"
+        },
+        "serotype": "SENXAI.0001",
+        "primaryPfge": "SENBNI.0017",
+        "secondaryPfge": "DEF456",
+        "phageType": "DT4b"
+      },
+      "epidemiology": {
+        "exposures": [{
+          "exposureDate": "2015-07-18T00:00:00+00:00",
+          "exposureSource": {
+            "label": "Food-related",
+            "uri": "IRIDA_0001037"
+          },
+          "exposureLocation": {
+            "label": "bakery",
+            "uri": "ENVO_00003864"
+          },
+          "sampleMaterial": {
+            "label": "feces",
+            "uri": "UBERON_0001988"
+          },
+          "tranmissionMode": {
+            "label": "ingestion (food, water)",
+            "uri": "TRANS_0000012"
+          }
+        }]
+      }
+    }
+
+  },
+
+  {
+    "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
+    "sampleId": 53,
+    "metadata": {
+      "demographic": {
+        "firstName": "Foo",
+        "lastName": "Bar",
+        "city": "Comox",
+        "healthAuthority": {
+          "abbr": "VHA",
+          "label": "BC Vancouver Island Health Authority",
+          "uri": "IRIDA_0001285"
+        },
+        "birthDate": "1986-02-28",
+        "age": "29"
+      },
+      "clinical": {
+        "firstSymptom": {
+          "label": "Diarrhea",
+          "uri": "SYMP_0000570"
+        },
+        "onsetDate": "2015-06-04T10:16:42+00:00"
+      },
+      "labTest": {
+        "species": {
+          "label": "Salmonella enterica",
+          "uri": "NCBITaxon_57436"
+        },
+        "serotype": "",
+        "primaryPfge": "SENXAI.0038",
+        "secondaryPfge": "SENBNI.0016",
+        "phageType": "DT13"
+      },
+      "epidemiology": {
+        "exposures": [{
+          "exposureDate": "2015-07-16T00:00:00+00:00",
+          "exposureSource": {
+            "label": "Water-related",
+            "uri": "IRIDA_0001044"
+          },
+          "exposureLocation": {
+            "label": "grocery",
+            "uri": "ENVO_00002222"
+          },
+          "sampleMaterial": {
+            "label": "feces",
+            "uri": "UBERON_0001988"
+          },
+          "tranmissionMode": {
+            "label": "inhalation",
+            "uri": "ExO_0000057"
+          }
+        }]
+      }
+    }
+  }
+]
