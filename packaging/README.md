@@ -22,7 +22,16 @@ Installation
 Installing Galaxy Tools
 -----------------------
 
-This directory includes files to quickly install all necessary tools within an existing Galaxy instance for IRIDA.  Please see <https://irida.corefacility.ca/documentation/administrator/galaxy/> for details on how to set up an IRIDA Galaxy instance.  In particular, if this is a new Galaxy installation, the [IRIDA Toolshed](https://irida.corefacility.ca/galaxy-shed/) will need to be added to Galaxy along with some specific Galaxy configuration settings.
+This directory includes files to quickly install all necessary tools within an existing Galaxy instance for IRIDA.  Please see <https://irida.corefacility.ca/documentation/administrator/galaxy/> for details on how to set up an IRIDA Galaxy instance.  In particular, if this is a new Galaxy installation, the [IRIDA Toolshed](https://irida.corefacility.ca/galaxy-shed/) will need to be added to the Galaxy `config/tool_sheds_conf.xml` file along with some specific Galaxy configuration settings, listed at <https://irida.corefacility.ca/documentation/administrator/galaxy/#step-3-modify-configuration-file>.
+
+Some additional dependencies will need to be installed outside of Galaxy in order to get all tools to build.  These include:
+
+* [Perl 5](https://www.perl.org/)
+* Perl modules - `Readonly Time::Piece XML::Simple Data::Dumper Bio::Perl`
+* [Java](https://java.com/) 1.6+
+* [Gnuplot](http://www.gnuplot.info/)
+
+More information can be found at <https://irida.corefacility.ca/documentation/administrator/galaxy/#galaxy-tools-installation>.
 
 ### Automated Process/Upgrading
 
