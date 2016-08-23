@@ -618,9 +618,9 @@ def install_tools(options):
                               (tool['name'], tool['revision']))
                 else:
                     if e.message == "Unexpected response from galaxy: 504":
-                        log.debug("Timeout during install of %s, extending wait to 1h"
+                        log.debug("Timeout during install of %s, extending wait to 2h"
                                   % ((tool['name'])))
-                        success = wait_for_install(tool=tool, tsc=tsc, timeout=3600)
+                        success = wait_for_install(tool=tool, tsc=tsc, timeout=7200)
                         if success:
                             log_tool_install_success(tool=tool, start=start, end=end,
                                                      installed_tools=installed_tools)

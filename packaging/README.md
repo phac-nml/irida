@@ -10,7 +10,7 @@ The following is a list of files within this package.
 
 * `*.war`:  The IRIDA Java WAR file.
 * `tools-list.yml`:  A list of tools required to exist within a [Galaxy](https://galaxyproject.org/) instance before IRIDA can be deployed.
-* `install_tool_shed_tools.py`: A script for installing tools in a Galaxy instance.  Originally from <https://github.com/galaxyproject/ansible-galaxy-tools/blob/7787f210c37963bf09a83f757487770e8fa2df32/files/install_tool_shed_tools.py>.
+* `install_tool_shed_tools.py`: A script for installing tools in a Galaxy instance.  Originally from <https://github.com/galaxyproject/ansible-galaxy-tools/blob/7787f210c37963bf09a83f757487770e8fa2df32/files/install_tool_shed_tools.py> with a few small modifications.
 * `LICENSE.install_tool_shed_tools`: License for tool installation script.
 * `CHANGELOG.md`:  The log of most recent changes.
 * `UPGRADING.md`: A list of specific instructions for upgrading between IRIDA versions.
