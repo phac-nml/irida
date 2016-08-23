@@ -83,6 +83,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
@@ -595,8 +596,9 @@ public class ProjectsController {
 
 			while (rowIterator.hasNext()) {
 				int headerCounter = 0;
-				Map<String, String> rowMap = new HashMap<>();
+				Map<String, Object> rowMap = new HashMap<>();
 				Row row = rowIterator.next();
+				Sample sample = null;
 				Iterator<Cell> cellIterator = row.cellIterator();
 				while (cellIterator.hasNext() && headerCounter < headers.size()) {
 					Cell cell = cellIterator.next();
@@ -604,13 +606,21 @@ public class ProjectsController {
 					String header = headers.get(headerCounter);
 					if (header.equalsIgnoreCase("NLEP #")) {
 						try {
-							Sample sample = sampleService.getSampleBySampleName(project, cellValue);
+							sample = sampleService.getSampleBySampleName(project, cellValue);
 							rowMap.put("sampleId", sample.getId().toString());
 						} catch (EntityNotFoundException e) {
 							rowMap.put("sampleId", "");
 						}
 					}
 					rowMap.put(headers.get(headerCounter), cellValue);
+
+					// Add the data to its sample (if possible)
+					if (sample != null) {
+						SampleMetadata metadata = new SampleMetadata();
+						metadata.setMetadata(rowMap);
+						sampleService.saveSampleMetadaForSample(sample, metadata);
+					}
+					// TODO (Josh | 2016-08-23): How to handle if no sample exits.
 					headerCounter += 1;
 				}
 				tableList.add(rowMap);
@@ -620,8 +630,10 @@ public class ProjectsController {
 			response.put("headers", headers);
 			response.put("metadata", tableList);
 		} catch (FileNotFoundException e) {
+			// TODO (Josh | 2016-08-23):  Handle this error
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO (Josh | 2016-08-23): Handle this error
 			e.printStackTrace();
 		}
 
