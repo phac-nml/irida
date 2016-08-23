@@ -151,6 +151,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "selection-page-none")
 	private WebElement selectionPageNone;
 
+	@FindBy(id = "export-samples-btn")
+	private WebElement exportSamplesDropdownBtn;
+
+	@FindBy(id = "download-btn")
+	private WebElement downloadBtn;
+
+	@FindBy(id = "ncbi-btn")
+	private WebElement ncbiBtn;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -174,6 +183,26 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public int getNumberProjectsDisplayed() {
 		return tableRows.size();
+	}
+
+	public void openToolsDropDown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		toolsDropdownBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("mergeBtn")));
+	}
+
+	public void openExportDropdown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		exportSamplesDropdownBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
+	}
+
+	public boolean isDownloadBtnEnabled() {
+		return downloadBtn.isEnabled();
+	}
+
+	public boolean isNcbiBtnEnabled() {
+		return ncbiBtn.isEnabled();
 	}
 
 	public boolean isMergeBtnEnabled() {
@@ -245,13 +274,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
 
-	private WebDriverWait openToolsDropdown() {
+	private WebDriverWait openToolsDropdownAndWait() {
 		toolsDropdownBtn.click();
 		return new WebDriverWait(driver, 10);
 	}
 
 	public void removeSamples() {
-		WebDriverWait wait = openToolsDropdown();
+		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.elementToBeClickable(removeBtn));
 		removeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(removeModal));
@@ -260,7 +289,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void mergeSamplesWithNewName(String newName) {
-		WebDriverWait wait = openToolsDropdown();
+		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
 		mergeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
@@ -273,14 +302,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void copySamples(String project) {
-		WebDriverWait wait = openToolsDropdown();
+		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		copyBtn.click();
 		copyMoveSamples(project);
 	}
 
 	public void moveSamples(String projectNum) {
-		WebDriverWait wait = openToolsDropdown();
+		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
 		copyMoveSamples(projectNum);
