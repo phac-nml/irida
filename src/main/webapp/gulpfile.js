@@ -63,7 +63,8 @@ gulp.task('webpack', function() {
 			externals: {
 				// require("jquery") is external and available
 				//  on the global var jQuery
-				"jquery": "jQuery"
+				"jquery": "jQuery",
+				"angular": "angular"
 			},
 			eslint: {
 				configFile: "./.eslintrc.json"
