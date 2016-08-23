@@ -185,11 +185,25 @@ All sample modification actions require that samples be selected. You can select
 
 ![Selected sample.](images/selected-sample.png)
 
+#### Multiple Sample Selection
+
 You can also select multiple samples at once by selecting a sample, pressing the shift key, and than selecting the last sample that you want selected.
 
 You can always see how many samples are selected at the top left of the samples table.
 
 ![Selected sample counts.](images/selected-sample-count.png)
+
+#### Selecting Groupings of Samples
+
+All samples in the project can be selected at once using the checkbox in the table header.
+
+![Select All Checkbox](images/samples-select-cb-empty.png)
+
+![Selected sample counts.](images/samples-select-cb-complete.png)
+
+Alternatively, there is a dropdown next to the select all checkbox that allows you to select/deselect samples in the entire project, or on the current page of the sample table.
+
+![Selected sample counts.](images/samples-select-cb-dropdown.png)
 
 ### Copying samples between projects
 

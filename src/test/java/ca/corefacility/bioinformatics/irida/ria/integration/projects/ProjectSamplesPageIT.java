@@ -45,7 +45,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project ID 1"));
 		assertEquals("Should display 10 projects initially.", 10, page.getNumberProjectsDisplayed());
-
 	}
 
 	@Test
@@ -77,6 +76,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.selectSampleWithShift(4);
 		assertEquals("Should be 5 selected samples", "5 samples selected", page.getSelectedInfoText());
+
+		page.selectAllSamples();
+		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
 	}
 
 	@Test

@@ -13,6 +13,14 @@
       oTable_samplesTable.ajax.reload();
     }
 
+    function getFilterState() {
+      var filters = {};
+      Object.assign(filters, page.ajaxParam);
+      var searchTerm = document.querySelector(".dataTables_filter input").value;
+      filters.search = searchTerm;
+      return filters;
+    }
+
     function SampleService ($http, $window, $rootScope) {
       post = $http.post;
       get = $http.get;
@@ -151,6 +159,13 @@
     SampleService.prototype.updateAssociatedProjects = function (projectsIds) {
       page.ajaxParam.associated = projectsIds;
       oTable_samplesTable.ajax.reload();
+    };
+
+    SampleService.prototype.getAllIds = function() {
+      return get(page.urls.samples.sampleIds + "?" + $.param(getFilterState()))
+        .success(function(result) {
+          return result;
+        });
     };
 
     return SampleService;

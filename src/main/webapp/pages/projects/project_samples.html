@@ -36,7 +36,8 @@
                     ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
                     linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker',
                     export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
-                    idList: /*[[@{/samples/idList}]]*/ "/samples/idList"
+                    idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
+                    sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
                 },
                 fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
             },
@@ -74,6 +75,16 @@
             position: absolute;
             z-index: -1;
         }
+        .tooltip-ul {
+            text-align: left;
+            padding-left: 14px;
+            margin-left: 0;
+        }
+
+        .dataTable thead th {
+            vertical-align: middle !important;
+            line-height: 40px;
+        }
     </style>
 </head>
 <body>
@@ -86,7 +97,30 @@
     <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
         <thead>
         <tr>
-            <th dt:sortable="false" width="20px" dt:renderFunction="datatables-utils#datatable.formatCheckbox"></th>
+            <th dt:sortable="false" width="70px" dt:renderFunction="datatables-utils#datatable.formatCheckbox">
+                <div class="btn-group btn-group-sm ng-cloak" uib-dropdown="" ng-controller="SelectionController as selectCtrl">
+                    <button id="selection-main" class="btn btn-default" ng-click="selectCtrl.selectAllBtn()">
+                        <input type="checkbox" ng-model="selectCtrl.allSelectedCB" />
+                    </button>
+                    <button id="selection-toggle" class="btn btn-default" uib-dropdown-toggle="">
+                        <span class="caret"/>
+                    </button>
+                    <ul class="dropdown-menu" uib-dropdown-menu="" role="menu">
+                        <li role="menuitem">
+                            <a id="selection-all" href="#" ng-click="selectCtrl.selectAll()">Select All</a>
+                        </li>
+                        <li role="menuitem">
+                            <a id="selection-none" href="#" ng-click="selectCtrl.selectNone()">Select None</a>
+                        </li>
+                        <li role="menuitem">
+                            <a id="selection-page-all" href="#" ng-click="selectCtrl.selectPage()">Select Page</a>
+                        </li>
+                        <li role="menuitem">
+                            <a id="selection-page.none" href="#" ng-click="selectCtrl.deselectPage()">Deselect Page</a>
+                        </li>
+                    </ul>
+                </div>
+            </th>
             <th dt:property="sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
             <th dt:property="projectName" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
             <th width="120px" dt:property="createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
@@ -139,25 +173,33 @@
                         <fa:icon type="caret-down" fixed="fixed"/>
                     </button>
                     <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanTwo}">
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"
+                            tooltip-enable="toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated"
+                            uib-tooltip-template="'merge.msg.tmpl'">
                             <a id="mergeBtn" href="#" ng-click="toolsCtrl.merge()">
                                 <fa:icon type="merge" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
                             </a>
                         </li>
-                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                            tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
+                            uib-tooltip-template="'copy.msg.tmpl'">
                             <a id="copyBtn" href="#" ng-click="toolsCtrl.copy()">
                                 <fa:icon type="copy" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
                             </a>
                         </li>
-                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                            tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
+                            uib-tooltip-template="'move.msg.tmpl'">
                             <a id="moveBtn" href="#" ng-click="toolsCtrl.move()">
                                 <fa:icon type="move" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
                             </a>
                         </li>
-                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
+                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                            tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
+                            uib-tooltip-template="'remove.msg.tmpl'">
                             <a id="removeBtn" href="#" ng-click="toolsCtrl.remove()">
                                 <fa:icon type="delete" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
@@ -177,19 +219,37 @@
                             <fa:icon type="caret-down" fixed="fixed"/>
                         </button>
                         <ul class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="export-samples-btn">
-                            <li role="menuitem" ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
-                                <a href="#" ng-click="toolsCtrl.download()"><fa:icon type="download" />&nbsp;<th:block th:text="#{project.samples.export.download}"/></a></li>
-                            <li th:if="${linkerAvailable}" role="menuitem">
-                                <a href="#" ng-click="toolsCtrl.linker()"><fa:icon type="terminal" />&nbsp;<th:block th:text="#{project.samples.export.linker}"/></a>
+                            <li role="menuitem"
+                                ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                                tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
+                                uib-tooltip-template="'download.msg.tmpl'">
+                                <a href="#" ng-click="toolsCtrl.download()">
+                                    <fa:icon type="download" />&nbsp;<th:block th:text="#{project.samples.export.download}"/>
+                                </a>
                             </li>
-                            <li role="menuitem" th:if="${galaxyCallback}">
+                            <li th:if="${linkerAvailable}" role="menuitem"
+                                ng-class="{disabled: toolsCtrl.disabled.hasAssociated}"
+                                tooltip-enable="toolsCtrl.disabled.hasAssociated"
+                                uib-tooltip-template="'linker.msg.tmpl'">
+                                <a href="#" ng-click="toolsCtrl.linker()">
+                                    <fa:icon type="terminal" />&nbsp;<th:block th:text="#{project.samples.export.linker}"/>
+                                </a>
+                            </li>
+                            <li role="menuitem"
+                                th:if="${galaxyCallback}"
+                                ng-class="{disabled: toolsCtrl.disabled.hasAssociated}">
                                 <a href="#" ng-click="toolsCtrl.galaxy(); cart.show=false">
                                     <fa:icon type="cloud" fixed="true"/>
                                     <span th:text="#{project.samples.export.galaxy}"></span>
                                 </a>
                             </li>
-                            <li role="menuitem" ng-class="{disabled: toolsCtrl.disabled.lessThanOne}">
-                                <a href="#" ng-click="toolsCtrl.ncbiExport()"><fa:icon type="upload" />&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/></a>
+                            <li role="menuitem"
+                                ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                                tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
+                                uib-tooltip-template="'ncbi.msg.tmpl'">
+                                <a href="#" ng-click="toolsCtrl.ncbiExport()">
+                                    <fa:icon type="upload" />&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/>
+                                </a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
@@ -325,6 +385,54 @@
             <span class="label label-default" ng-show="tags.tag.minDate" ng-click="tags.close('minDate')"><th:block th:text="#{project.samples.filter.by-minDate}"/> : {{tags.tag.minDate | date: 'mediumDate'}}</span>
             <span class="label label-default" ng-show="tags.tag.endDate" ng-click="tags.close('endDate')"><th:block th:text="#{project.samples.filter.by-endDate}"/> : {{tags.tag.endDate | date: 'mediumDate'}}</span>
         </div>
+    </script>
+
+    <script type="text/ng-template" id="merge.msg.tmpl">
+        <ul class="tooltip-ul">
+            <li ng-show="toolsCtrl.disabled.lessThanTwo" th:text="#{project.samples.tooltip.merge.requires-more-than-one}">Needs to be more than one</li>
+            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
+        </ul>
+    </script>
+
+    <script type="text/ng-template" id="copy.msg.tmpl">
+        <ul class="tooltip-ul">
+            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.copy.requires-more-than-one}">Needs to be more than one</li>
+            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
+        </ul>
+    </script>
+
+    <script type="text/ng-template" id="move.msg.tmpl">
+        <ul class="tooltip-ul">
+            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.move.requires-more-than-one}">Needs to be more than one</li>
+            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
+        </ul>
+    </script>
+
+    <script type="text/ng-template" id="remove.msg.tmpl">
+        <ul class="tooltip-ul">
+            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.remove.requires-more-than-one}">Needs to be more than one</li>
+            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
+        </ul>
+    </script>
+
+    <script type="text/ng-template" id="download.msg.tmpl">
+        <ul class="tooltip-ul">
+            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.download.requires-more-than-one}">Needs to be more than one</li>
+            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
+        </ul>
+    </script>
+
+    <script type="text/ng-template" id="linker.msg.tmpl">
+        <ul class="tooltip-ul">
+            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
+        </ul>
+    </script>
+
+    <script type="text/ng-template" id="ncbi.msg.tmpl">
+        <ul class="tooltip-ul">
+            <li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.ncbi.requires-more-than-one}">Needs to be more than one</li>
+            <li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>
+        </ul>
     </script>
 </th:block>
 </html>

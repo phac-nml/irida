@@ -41,9 +41,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "associated-cb")
 	private List<WebElement> associatedCbs;
 
-	@FindBy(id = "selectAllBtn")
-	private WebElement selectAll;
-
 	@FindBy(className = "selected-counts")
 	private WebElement selectedCountInfo;
 
@@ -136,6 +133,24 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".range_inputs .applyBtn")
 	private WebElement applyDateRangeBtn;
 
+	@FindBy(id = "selection-main")
+	private WebElement selectionMain;
+
+	@FindBy(id = "selection-toggle")
+	private WebElement selectionToggle;
+
+	@FindBy(id = "selection-all")
+	private WebElement selectionAll;
+
+	@FindBy(id = "selection-none")
+	private WebElement selectionNone;
+
+	@FindBy(id = "selection-page-all")
+	private WebElement selectionPageAll;
+
+	@FindBy(id = "selection-page-none")
+	private WebElement selectionPageNone;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -211,10 +226,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void selectSampleWithShift(int row) {
 		Actions actions = new Actions(driver);
 		actions.keyDown(Keys.SHIFT).click(tableRows.get(row)).perform();
-	}
-
-	public void selectAllOrNone() {
-		selectAll.click();
 	}
 
 	public void addSelectedSamplesToCart() {
@@ -326,6 +337,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(associatedDropdown));
 		associatedCbs.get(0).click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("processingIndicator")));
+	}
+
+	public void selectAllSamples() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-all")));
+		selectionAll.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-all")));
 	}
 
 	private void enterSelect2Value(String value) {
