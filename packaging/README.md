@@ -46,6 +46,16 @@ python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://ur
 ```
 Where `[http://url-to-galaxy]` is the URL to your Galaxy instance for IRIDA and `[api key]` is the API key for your IRIDA Galaxy instance.
 
+Following installation/upgrade of tools, some small updates to software may need to be applied.  In particular the software `tbl2asn`, used by Prokka, needs to be kept up to date with the latest copy at least once per year.  If `tbl2asn` is not kept up to date, eventually a Prokka run will report an error message when running tbl2asn that it has expired.
+
+The most recently updated version is available at <http://www.ncbi.nlm.nih.gov/genbank/tbl2asn2/>.  To update, please log into the Galaxy server and run:
+
+```bash
+find tool_dependencies/ -wholename '*tbl2asn'
+```
+
+Where **tool_dependencies/** is the Galaxy directory storing tool dependencies.  This will list all the `tbl2asn` binaries currently installed.  To enable these to run they must be updated to the latest version from NCBI.  More information can be found at <https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/#step-2-install-galaxy-tools>.
+
 ### Manual Process
 
 If the automated installation process does not work, or to test out the tools, please see the online documentation at <https://irida.corefacility.ca/documentation/administrator/galaxy/>.
