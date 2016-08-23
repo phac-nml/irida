@@ -131,22 +131,31 @@
         });
     };
 
-    svc.add = function(items) {
-      var ids = Object.keys(items);
-      var defer = $q.defer;
+    /**
+     * Add samples to the global cart
+     * @param {object} projectSamples
+     *    {projectId: [sampleIds]}
+     * @returns {*|Promise.<TResult>}
+     */
+    svc.add = function(projectSamples) {
+      var projectIds = Object.keys(projectSamples);
       var promises = [];
       var resultMsg = [];
 
-      ids.forEach(function(id) {
-        var promise = $http.post(urls.add, {projectId: id, sampleIds: items[id]})
+      // Add each project's samples to the global cart.
+      projectIds.forEach(function(id) {
+        var promise = $http.post(urls.add, {projectId: id, sampleIds: projectSamples[id]})
           .then(function(result) {
             resultMsg.push(result.data.message);
           });
         promises.push(promise);
       });
 
+      // Return the resolution of all the results from adding the samples to the cart
       return $q.all(promises).then(function() {
+        // Let everyone know that the cart has been updates
         scope.$emit('cart.update');
+        // Show notifications for each project and their samples that were added to the cart.
         resultMsg.forEach(function(msg) {
           notifications.show({msg: msg});
         });
