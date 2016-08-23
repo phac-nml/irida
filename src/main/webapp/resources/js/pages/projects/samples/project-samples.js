@@ -376,6 +376,9 @@
     return filteredTags;
   }());
 
+  /**
+   * Angular controller to handle selecting samples by page or entire project
+   */
   var SelectionController = (function() {
     var $window, _sampleService, vm;
 
@@ -389,40 +392,66 @@
         vm.allSelectedCB = vm.allSelected;
       });
     }
-    
-    function selectAllSamples() {
+
+    /**
+     * Select all the samples in the datatable;
+     * @private
+     */
+    function _selectAllSamples() {
       _sampleService.getAllIds()
         .then(function(result) {
           $window.datatable.selectAll(result.data);
         });
     }
-    
-    function deselectAllSamples() {
+
+    /**
+     * Deselect all the samples in the datatable.
+     * @private
+     */
+    function _deselectAllSamples() {
       $window.datatable.clearSelected();
     }
 
+    /**
+     * Event handler for clicking on the select all samples button.
+     */
     SelectionController.prototype.selectAllBtn = function() {
       if(!vm.allSelected) {
-        selectAllSamples()
+        _selectAllSamples()
       } else {
-        deselectAllSamples();
+        _deselectAllSamples();
       }
     };
 
+    /**
+     * Event handler for clicking on the select all samples in the dropdown menu
+     */
     SelectionController.prototype.selectAll = function() {
       vm.allSelected = true;
-      selectAllSamples()
+      _selectAllSamples()
     };
 
+    /**
+     * Event handler for clicking on the select none button in the dropdown menu.
+     * Deselects all samples in the project.
+     */
     SelectionController.prototype.selectNone = function() {
       vm.allSelected = false;
-      deselectAllSamples();
+      _deselectAllSamples();
     };
 
+    /**
+     * Event handler for clicking on the select page button in the dropdown menu.
+     * Selects all samples on the current page in the datatable.
+     */
     SelectionController.prototype.selectPage = function() {
       $window.datatable.selectPage();
     };
 
+    /**
+     * Event handler for clicking on the deselect page button in the dropdown menu.
+     * All samples on the current page will be deselected.
+     */
     SelectionController.prototype.deselectPage = function() {
       $window.datatable.deselectPage()
     };
