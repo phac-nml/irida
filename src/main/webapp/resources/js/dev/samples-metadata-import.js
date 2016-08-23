@@ -4,9 +4,11 @@ import Dropzone from 'dropzone';
 
 /**
  * Create a table from the metadata return after parsing the excel docs.
- * @return {object} datatable creation method
  */
-const tableCreator = (function() {
+const tableCreator = data => {
+  const nameCol = data.headers.indexOf('NLEP #');
+  const headers = transformHeaders(data.headers);
+
   /**
    * Create an object of the headers title and text.
    * @param {array} headers list of table headers
@@ -18,38 +20,32 @@ const tableCreator = (function() {
     });
   }
 
-  /**
-   * Crate the datatable
-   * @param {array} data for the table
-   */
-  return function createTable(data) {
-    var nameCol = data.headers.indexOf('NLEP #');
-    var headers = transformHeaders(data.headers);
-    $('#metadata-table').DataTable({
-      scrollX: true,
-      data: data.metadata,
-      columns: headers,
-      createdRow: function(row, data) {
-        if (data.sampleId === '') {
-          $(row).addClass('bg-danger');
-        }
-      },
-      columnDefs: [
-        {
-          targets: nameCol,
-          render: function(data, type, row) {
-            var id = row.sampleId;
-            if (id === '') {
-              return data;
-            }
-            return `<a href="/samples/${id}">${data}</a>`;
+  $('#metadata-table').DataTable({
+    scrollX: true,
+    data: data.metadata,
+    columns: headers,
+    createdRow: function(row, data) {
+      if (data.sampleId === '') {
+        $(row).addClass('bg-danger');
+      }
+    },
+    columnDefs: [
+      {
+        targets: nameCol,
+        render: function(data, type, row) {
+          var id = row.sampleId;
+          if (id === '') {
+            return data;
           }
+          return `<a href="/samples/${id}">${data}</a>`;
         }
-      ]
-    });
-  };
-})();
+      }
+    ]
+  });
+}
 
+// Configuration for dropzone.js allowing for user to
+// upload their excel files.
 Dropzone.options.metadataDropzone = {
   paramName: 'file',
   acceptedFiles: '.xlx,.xlsx',
