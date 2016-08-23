@@ -79,6 +79,19 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.selectAllSamples();
 		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
+
+		page.deselectAllSamples();
+		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
+
+		page.selectPage();
+		assertEquals("Should be 10 selected samples", "10 samples selected", page.getSelectedInfoText());
+
+		page.selectAllSamples();
+		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
+
+		page.deselectPage();
+		assertEquals("Should have all samples selected", "11 samples selected", page.getSelectedInfoText());
+
 	}
 
 	@Test

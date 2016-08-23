@@ -347,6 +347,30 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-all")));
 	}
 
+	public void deselectAllSamples() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-none")));
+		selectionNone.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-none")));
+	}
+
+	public void selectPage() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-all")));
+		selectionPageAll.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-all")));
+	}
+
+	public void deselectPage() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-none")));
+		selectionPageNone.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-none")));
+	}
+
 	private void enterSelect2Value(String value) {
 		select2Opener.click();
 		select2Input.sendKeys(value);
