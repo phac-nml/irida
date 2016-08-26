@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataAudit;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 
 @Repository
@@ -16,7 +17,8 @@ public class SampleMetadataRepositoryImpl implements SampleMetadataRepositoryCus
 	}
 
 	public SampleMetadata save(SampleMetadata metadata) {
-		System.out.println("DO IT MYSELF");
+		MetadataAudit metadataAudit = new MetadataAudit(metadata);
+		mongoTemplate.save(metadataAudit);
 		mongoTemplate.save(metadata);
 		return metadata;
 	}
