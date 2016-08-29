@@ -9,6 +9,12 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import ca.corefacility.bioinformatics.irida.model.user.User;
+
+/**
+ * Stores an auditing record for a given {@link SampleMetadata}. This will save
+ * the creation date and {@link User} that created the object.
+ */
 @Document
 public class MetadataAudit {
 
@@ -34,5 +40,13 @@ public class MetadataAudit {
 
 	public SampleMetadata getSampleMetadata() {
 		return sampleMetadata;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public Long getUser() {
+		return user;
 	}
 }

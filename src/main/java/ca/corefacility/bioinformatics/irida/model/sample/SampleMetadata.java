@@ -8,6 +8,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+/**
+ * Stores unstructured metadata for a given {@link Sample}.
+ */
 @Document
 public class SampleMetadata {
 
