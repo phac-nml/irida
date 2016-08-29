@@ -89,8 +89,7 @@ public class AnnouncementsController extends BaseController{
 
         List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
 
-        Collections.sort(unreadAnnouncements);
-        Collections.reverse(unreadAnnouncements);
+        Collections.sort(unreadAnnouncements,Collections.reverseOrder());
 
         model.addAttribute("announcements", unreadAnnouncements);
 
@@ -319,13 +318,6 @@ public class AnnouncementsController extends BaseController{
         final List<AnnouncementUserDataTableResponse> announcementUserDataTableResponses = users.getContent().stream()
                 .map(user -> new AnnouncementUserDataTableResponse(user.getUsername(), userHasRead(user, currentAnnouncement)))
                 .collect(Collectors.toList());
-
-        if (sortName.equals("createdDate")) {
-            Collections.sort(announcementUserDataTableResponses);
-            if (direction.equals(Sort.Direction.ASC)) {
-                Collections.reverse(announcementUserDataTableResponses);
-            }
-        }
 
         final DataSet<AnnouncementUserDataTableResponse> announcementUserDataSet = new DataSet<>(announcementUserDataTableResponses,
                 users.getTotalElements(), users.getTotalElements());
