@@ -35,7 +35,7 @@ import java.util.List;
 @Table(name = "announcement")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Announcement implements IridaThing {
+public class Announcement implements IridaThing, Comparable<Announcement> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -77,6 +77,10 @@ public class Announcement implements IridaThing {
         this();
         this.message = message;
         this.user = user;
+    }
+
+    public int compareTo(Announcement other) {
+        return this.createdDate.compareTo(other.getCreatedDate());
     }
 
     public Long getId() {
