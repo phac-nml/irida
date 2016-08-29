@@ -17,7 +17,8 @@ public class IridaUserAuditorAware implements AuditorAware<Long> {
 	public Long getCurrentAuditor() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		if (authentication == null || !authentication.isAuthenticated()) {
+		if (authentication == null || !authentication.isAuthenticated()
+				|| !(authentication.getPrincipal() instanceof User)) {
 			return null;
 		}
 
