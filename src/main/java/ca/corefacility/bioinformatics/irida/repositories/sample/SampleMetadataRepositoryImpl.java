@@ -28,9 +28,23 @@ public class SampleMetadataRepositoryImpl implements SampleMetadataRepositoryCus
 	 * @return the persisted {@link SampleMetadata}
 	 */
 	public SampleMetadata save(SampleMetadata metadata) {
+		mongoTemplate.save(metadata);
 		MetadataAudit metadataAudit = new MetadataAudit(metadata);
 		mongoTemplate.save(metadataAudit);
-		mongoTemplate.save(metadata);
 		return metadata;
+	}
+
+	/**
+	 * This delete method will persist a {@link MetadataAudit} for the deletion,
+	 * then delete the {@link SampleMetadata} object.
+	 * 
+	 * @param metadata
+	 *            the {@link SampleMetadata} object to delete
+	 */
+	public void delete(SampleMetadata metadata) {
+		metadata.setMetadata(null);
+		MetadataAudit metadataAudit = new MetadataAudit(metadata);
+		mongoTemplate.save(metadataAudit);
+		mongoTemplate.remove(metadata);
 	}
 }

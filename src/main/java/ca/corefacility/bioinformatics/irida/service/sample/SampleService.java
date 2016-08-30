@@ -200,4 +200,12 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return The newly saved {@link SampleMetadata}
 	 */
 	public SampleMetadata saveSampleMetadaForSample(Sample sample, SampleMetadata metadata);
+	
+	/**
+	 * Delete the {@link SampleMetadata} for a given {@link Sample}
+	 * 
+	 * @param sample
+	 *            The {@link Sample} to delete metadata for
+	 */
+	public void deleteSampleMetadaForSample(Sample sample);
 }
