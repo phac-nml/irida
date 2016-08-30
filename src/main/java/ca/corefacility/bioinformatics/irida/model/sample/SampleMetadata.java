@@ -14,21 +14,14 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document
 public class SampleMetadata {
 
-	@Id
-	String id;
-
 	@Field(value = "metadata")
 	Map<String, Object> metadata;
 
-	@Indexed(unique = true)
+	@Id
 	Long sampleId;
 
 	public SampleMetadata() {
 		metadata = new HashMap<>();
-	}
-
-	public String getId() {
-		return id;
 	}
 
 	public Map<String, Object> getMetadata() {
