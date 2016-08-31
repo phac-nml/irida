@@ -63,6 +63,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test with one sample selected
 		page.selectSample(0);
+		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
 		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
 		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
@@ -73,6 +74,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test with two samples selected
 		page.selectSample(1);
+		page.openToolsDropDown();
 		assertTrue("Merge option should be enabled", page.isMergeBtnEnabled());
 		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
 		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
