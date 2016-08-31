@@ -6,9 +6,8 @@ var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var browserSync = require('browser-sync').create();
-var named = require('vinyl-named');
 var webpack = require('webpack-stream');
-
+var webpackDevConfig = require('./configs/webpack.dev.config.js');
 
 var scss = {
 	files : "./styles/**/*.scss",
@@ -43,36 +42,7 @@ gulp.task('lint', function () {
 gulp.task('webpack', function() {
 	return gulp
 		.src("./resources/js/dev/*.js")
-		.pipe(webpack({
-			entry: {
-				"samples-metadata-import": "./resources/js/dev/samples-metadata-import.js"
-			},
-			module: {
-				loaders: [
-					{
-						test: /.js?$/,
-						loader: 'babel-loader',
-						exclude: /node_modules/,
-						query: {
-							presets: ['es2015', 'stage-0']
-						}
-					},
-					{test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/}
-					]
-			},
-			externals: {
-				// require("jquery") is external and available
-				//  on the global var jQuery
-				"jquery": "jQuery",
-				"angular": "angular"
-			},
-			eslint: {
-				configFile: "./.eslintrc.json"
-			},
-			output: {
-				filename: '[name].bundle.js'
-			}
-		}))
+		.pipe(webpack(webpackDevConfig))
 		.pipe(gulp.dest('./resources/js/build/'));
 });
 
@@ -104,10 +74,11 @@ gulp.task('serve', function() {
 	});
 });
 
-gulp.task('watch', function () {
-	gulp.watch(scss.files, ['sass']);
-	gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
-	gulp.watch("./resources/js/dev/**/*.js", ['webpack']).on('change', browserSync.reload)
+gulp.task('watch', function() {
+  gulp.watch(scss.files, ['sass']);
+  gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
+  gulp.watch("./resources/js/dev/**/*.js", ['webpack'])
+    .on('change', browserSync.reload);
 });
 
 gulp.task('start', ['sass:prod', 'webpack']);
