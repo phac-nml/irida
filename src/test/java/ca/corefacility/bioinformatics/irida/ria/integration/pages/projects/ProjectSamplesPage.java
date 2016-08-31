@@ -198,27 +198,27 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isDownloadBtnEnabled() {
-		return downloadBtn.getAttribute("class").contains("disabled");
+		return !downloadBtn.getAttribute("class").contains("disabled");
 	}
 
 	public boolean isNcbiBtnEnabled() {
-		return ncbiBtn.getAttribute("class").contains("disabled");
+		return !ncbiBtn.getAttribute("class").contains("disabled");
 	}
 
 	public boolean isMergeBtnEnabled() {
-		return mergeBtn.getAttribute("class").contains("disabled");
+		return !mergeBtn.getAttribute("class").contains("disabled");
 	}
 
 	public boolean isCopyBtnEnabled() {
-		return copyBtn.getAttribute("class").contains("disabled");
+		return !copyBtn.getAttribute("class").contains("disabled");
 	}
 
 	public boolean isMoveBtnEnabled() {
-		return moveBtn.getAttribute("class").contains("disabled");
+		return !moveBtn.getAttribute("class").contains("disabled");
 	}
 
 	public boolean isRemoveBtnEnabled() {
-		return moveBtn.getAttribute("class").contains("disabled");
+		return !moveBtn.getAttribute("class").contains("disabled");
 	}
 
 	// PAGINATION
