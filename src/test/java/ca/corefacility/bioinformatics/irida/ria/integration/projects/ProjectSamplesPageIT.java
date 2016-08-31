@@ -152,8 +152,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.selectSample(1);
 		assertEquals("Should be 2 selected samples", "2 samples selected", page.getSelectedInfoText());
-		page.openToolsDropDown();
-		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 
 		// Merge these samples with the original name
 		List<String> originalNames = page.getSampleNamesOnPage().subList(0, 2); // Only need the first two
@@ -165,8 +163,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Merge with a new name
 		page.selectSample(0);
 		page.selectSample(1);
-		page.openToolsDropDown();
-		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 		String newSampleName = "MY_NEW_SAMPLE_NAME";
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);
