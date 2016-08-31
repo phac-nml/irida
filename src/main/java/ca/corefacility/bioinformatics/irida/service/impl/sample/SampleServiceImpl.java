@@ -409,6 +409,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		SampleMetadata original = sampleDataRepository.findMetadataForSample(sample.getId());
 		if (original != null) {
 			sampleDataRepository.delete(original);
+		} else {
+			throw new EntityNotFoundException("No metadata foud for sample " + sample.getId());
 		}
 	}
 }
