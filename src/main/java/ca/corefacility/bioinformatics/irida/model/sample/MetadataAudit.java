@@ -19,12 +19,14 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public class MetadataAudit {
 
 	@Id
-	String id;
+	Long id;
 
 	@LastModifiedBy
-	private Long user;
+	@Field("user_id")
+	private Long userId;
 
 	@LastModifiedDate
+	@Field("timestamp")
 	private Date timestamp;
 
 	@Field
@@ -34,7 +36,7 @@ public class MetadataAudit {
 		this.sampleMetadata = sampleMetadata;
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -46,7 +48,7 @@ public class MetadataAudit {
 		return timestamp;
 	}
 
-	public Long getUser() {
-		return user;
+	public Long getUserId() {
+		return userId;
 	}
 }

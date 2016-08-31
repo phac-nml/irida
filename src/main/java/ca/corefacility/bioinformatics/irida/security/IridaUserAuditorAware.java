@@ -7,12 +7,19 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+/**
+ * {@link AuditorAware} implementation for getting the user id of the logged in
+ * {@link User}
+ */
 @Component
 public class IridaUserAuditorAware implements AuditorAware<Long> {
 
 	public IridaUserAuditorAware() {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long getCurrentAuditor() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
