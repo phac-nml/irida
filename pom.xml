@@ -301,6 +301,11 @@
 			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>${jackson.dataformat.yaml.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>${commons.fileupload.version}</version>
@@ -593,7 +598,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>IRIDA ${project.version}</finalName>
+		<finalName>irida-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources/dandelion</directory>
@@ -829,6 +834,26 @@
 				</configuration>
 			</plugin>
 
+			<!-- Build irida.zip distribution -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven.assembly.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>zip-distributable</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptor>${basedir}/packaging/assembly/zip-distributable.xml</descriptor>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- Jetty plugin -->
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
@@ -897,6 +922,20 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
+					</execution>
+					<!-- Generate tools-list.yml file to include in package -->
+					<execution>
+						<id>exec-tools-list-export</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>ca.corefacility.bioinformatics.irida.util.ToolsListExporter</mainClass>
+							<arguments>
+								<argument>${project.build.directory}/tools-list.yml</argument>
+							</arguments>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -1024,6 +1063,7 @@
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>
 		<imgscalr.version>4.2</imgscalr.version>
+		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
@@ -1036,6 +1076,7 @@
 		<maven.war.plugin.version>2.5</maven.war.plugin.version>
 		<maven.jetty.plugin.version>9.2.1.v20140609</maven.jetty.plugin.version>
 		<maven.exec.plugin.version>1.3.2</maven.exec.plugin.version>
+		<maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
 		<maven.build.helper.plugin.version>1.9.1</maven.build.helper.plugin.version>
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
