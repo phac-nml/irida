@@ -53,6 +53,7 @@ public class SampleServiceImplMetadataIT {
 	 * NoSQLUnit requirement to wire in ApplicationContext. Really not sure why
 	 * but it doesn't work if you don't.
 	 */
+	@SuppressWarnings("unused")
 	@Autowired
 	private ApplicationContext applicationContext;
 
