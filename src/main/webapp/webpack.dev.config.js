@@ -1,7 +1,7 @@
+let entries = require("./configs/es6-entries.js");
+
 module.exports = {
-  entry: {
-    "samples-metadata-import": "./resources/js/dev/samples-metadata-import.js"
-  },
+  entry: entries,
   module: {
     loaders: [
       {
