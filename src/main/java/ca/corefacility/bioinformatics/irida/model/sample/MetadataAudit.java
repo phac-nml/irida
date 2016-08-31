@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public class MetadataAudit {
 
 	@Id
-	Long id;
+	private String id;
 
 	@LastModifiedBy
 	@Field("user_id")
@@ -36,7 +36,7 @@ public class MetadataAudit {
 		this.sampleMetadata = sampleMetadata;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
