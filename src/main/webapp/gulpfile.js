@@ -7,7 +7,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var browserSync = require('browser-sync').create();
 var webpack = require('webpack-stream');
-var webpackDevConfig = require('./configs/webpack.dev.config.js');
+var webpackDevConfig = require('./webpack.dev.config.js');
 
 var scss = {
 	files : "./styles/**/*.scss",
@@ -40,10 +40,10 @@ gulp.task('lint', function () {
 });
 
 gulp.task('webpack', function() {
-	return gulp
-		.src("./resources/js/dev/*.js")
-		.pipe(webpack(webpackDevConfig))
-		.pipe(gulp.dest('./resources/js/build/'));
+  return gulp
+    .src("./resources/js/dev/*.js")
+    .pipe(webpack(webpackDevConfig))
+    .pipe(gulp.dest('./resources/js/build/'));
 });
 
 gulp.task('sass', function () {
