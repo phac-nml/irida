@@ -392,12 +392,25 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		SampleMetadata original = sampleDataRepository.findMetadataForSample(sample.getId());
 		if (original != null) {
 			original.setMetadata(metadata.getMetadata());
-			// TODO: Save original to backup repo
 			metadata = original;
 		} else {
 			metadata.setSampleId(sample.getId());
 		}
 
 		return sampleDataRepository.save(metadata);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public void deleteSampleMetadaForSample(Sample sample) {
+		SampleMetadata original = sampleDataRepository.findMetadataForSample(sample.getId());
+		if (original != null) {
+			sampleDataRepository.delete(original);
+		} else {
+			throw new EntityNotFoundException("No metadata foud for sample " + sample.getId());
+		}
 	}
 }

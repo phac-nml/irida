@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -42,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 		IridaApiFilesystemRepositoryConfig.class, MongoDatasourceConfig.class })
 @EnableJpaAuditing
 @EnableMongoRepositories(basePackages="ca.corefacility.bioinformatics.irida.repositories")
+@EnableMongoAuditing
 public class IridaApiRepositoriesConfig {
 
 	/**
