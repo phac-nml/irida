@@ -17,16 +17,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleMetadataRepository;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -34,6 +24,13 @@ import com.google.common.collect.ImmutableList;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.core.LoadStrategyEnum;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
+
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleMetadataRepository;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("it")
@@ -56,6 +53,7 @@ public class SampleServiceImplMetadataIT {
 	 * NoSQLUnit requirement to wire in ApplicationContext. Really not sure why
 	 * but it doesn't work if you don't.
 	 */
+	@SuppressWarnings("unused")
 	@Autowired
 	private ApplicationContext applicationContext;
 
