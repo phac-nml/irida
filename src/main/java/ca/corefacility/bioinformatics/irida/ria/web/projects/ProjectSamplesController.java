@@ -413,17 +413,17 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
-			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(value = "associatedProjectIds[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
 			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String search,
 			@RequestParam(required = false, defaultValue = "") String minDate,
 			@RequestParam(required = false, defaultValue = "") String endDate) {
+		// Add the current project to the associatedProjectIds list.
+		associatedProjectIds.add(projectId);
+
+		// Get the actual projects.
 		List<Project> projects = new ArrayList<>();
-		// Add the current project to the associated list.
-		associated.add(projectId);
-		if (!associated.isEmpty()) {
-			projects.addAll((Collection<? extends Project>) projectService.readMultiple(associated));
-		}
+		projects.addAll((Collection<? extends Project>) projectService.readMultiple(associatedProjectIds));
 
 		Date firstDate = null;
 		if (!Strings.isNullOrEmpty(minDate)) {
@@ -441,14 +441,15 @@ public class ProjectSamplesController {
 
 		// Converting everything to a string for consumption by the UI.
 		Map<String, List<String>> result = new HashMap<>();
-		for (Long id : associated) {
+		for (Long id : associatedProjectIds) {
 			result.put(id.toString(), new ArrayList<String>());
 		}
 		for (ProjectSampleJoin join : page) {
 			String pId = join.getSubject().getId().toString();
-			if (result.containsKey(pId)) {
-				result.get(pId).add(join.getObject().getId().toString());
+			if (!result.containsKey(pId)) {
+				result.put(pId, new ArrayList<String>());
 			}
+			result.get(pId).add(join.getObject().getId().toString());
 		}
 
 		return result;
