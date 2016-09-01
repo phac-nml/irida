@@ -108,7 +108,7 @@ Filtering by sample name will match the same as the search field, so the filter 
 
 ![Samples advanced filter dialogue daterange.](images/advanced-filter-dialogue-daterange.png)
 
-To search sample by a date range, click on the date range field.  I drop down will be displayed with pre-determine ranges:
+To search sample by a date range, click on the date range field.  A drop down will be displayed with pre-determine ranges:
 
 * Last 30 Days
 * Last 60 Days
