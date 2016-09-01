@@ -2,18 +2,25 @@
   "name": "irida-ui",
   "version": "1.0.0",
   "description": "Need to set this",
-  "dependencies": {},
+  "dependencies": {
+    "install": "^0.8.1",
+    "lodash": "^4.15.0",
+    "npm": "^3.10.6"
+  },
   "devDependencies": {
     "bower": "^1.7.7",
     "browser-sync": "^2.11.1",
     "chromedriver": "^2.21.2",
+    "eslint": "^3.4.0",
+    "eslint-config-google": "^0.6.0",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-cached": "^1.1.0",
     "gulp-eslint": "^3.0.1",
     "gulp-notify": "^2.2.0",
     "gulp-sass": "^2.1.1",
-    "gulp-sourcemaps": "^1.6.0"
+    "gulp-sourcemaps": "^1.6.0",
+    "webpack-stream": "^3.2.0"
   },
   "engines": {
     "node": ">=0.10.0"
