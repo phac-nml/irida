@@ -48,6 +48,44 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testToolbarButtons() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		// Test set up with no sample selected
+		page.openToolsDropDown();
+		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
+		assertFalse("Copy option should not be enabled", page.isCopyBtnEnabled());
+		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
+		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
+		page.openExportDropdown();
+		assertFalse("Download option should not be enabled", page.isDownloadBtnEnabled());
+		assertFalse("NCBI Export option should not be enabled", page.isNcbiBtnEnabled());
+
+		// Test with one sample selected
+		page.selectSample(0);
+		page.openToolsDropDown();
+		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
+		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
+		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
+		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
+		page.openExportDropdown();
+		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
+		assertTrue("NCBI Export option should be enabled", page.isNcbiBtnEnabled());
+
+		// Test with two samples selected
+		page.selectSample(1);
+		page.openToolsDropDown();
+		assertTrue("Merge option should be enabled", page.isMergeBtnEnabled());
+		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
+		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
+		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
+		page.openExportDropdown();
+		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
+		assertTrue("NCBI Export option should be enabled", page.isNcbiBtnEnabled());
+
+	}
+
+	@Test
 	public void testPaging() {
 		logger.info("Testing paging for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -79,6 +117,19 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.selectAllSamples();
 		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
+
+		page.deselectAllSamples();
+		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
+
+		page.selectPage();
+		assertEquals("Should be 10 selected samples", "10 samples selected", page.getSelectedInfoText());
+
+		page.selectAllSamples();
+		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
+
+		page.deselectPage();
+		assertEquals("Should have all samples selected", "11 samples selected", page.getSelectedInfoText());
+
 	}
 
 	@Test
@@ -101,7 +152,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.selectSample(1);
 		assertEquals("Should be 2 selected samples", "2 samples selected", page.getSelectedInfoText());
-		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 
 		// Merge these samples with the original name
 		List<String> originalNames = page.getSampleNamesOnPage().subList(0, 2); // Only need the first two
@@ -113,7 +163,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Merge with a new name
 		page.selectSample(0);
 		page.selectSample(1);
-		assertTrue("Merge button should be enabled since 2 samples selected", page.isMergeBtnEnabled());
 		String newSampleName = "MY_NEW_SAMPLE_NAME";
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);

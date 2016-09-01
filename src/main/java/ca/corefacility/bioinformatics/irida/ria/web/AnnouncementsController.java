@@ -15,7 +15,6 @@ import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -89,6 +88,8 @@ public class AnnouncementsController extends BaseController{
         User user = userService.getUserByUsername(principal.getName());
 
         List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
+
+        Collections.sort(unreadAnnouncements,Collections.reverseOrder());
 
         model.addAttribute("announcements", unreadAnnouncements);
 
@@ -317,13 +318,6 @@ public class AnnouncementsController extends BaseController{
         final List<AnnouncementUserDataTableResponse> announcementUserDataTableResponses = users.getContent().stream()
                 .map(user -> new AnnouncementUserDataTableResponse(user.getUsername(), userHasRead(user, currentAnnouncement)))
                 .collect(Collectors.toList());
-
-        if (sortName.equals("createdDate")) {
-            Collections.sort(announcementUserDataTableResponses);
-            if (direction.equals(Sort.Direction.DESC)) {
-                Collections.reverse(announcementUserDataTableResponses);
-            }
-        }
 
         final DataSet<AnnouncementUserDataTableResponse> announcementUserDataSet = new DataSet<>(announcementUserDataTableResponses,
                 users.getTotalElements(), users.getTotalElements());

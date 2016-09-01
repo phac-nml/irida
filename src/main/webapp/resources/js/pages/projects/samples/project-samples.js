@@ -2,8 +2,12 @@
 (function (ng, page) {
   "use strict";
 
+  /**
+   * Directive to read in a file to filter the projects sample name by.
+   * Usage: <input type="file" name="file" id="filter-file-input" class="inputfile"
+   *               filter-by-file="filterCtrl.filterByFile($fileContent)"/>
+   */
   var filterByFile = (function () {
-
     function filterByFile($parse) {
       return {
         restrict: 'A',
@@ -55,6 +59,8 @@
           id       = target.data("id"), // This is the id for the project.
           index    = visible.indexOf(id), // Checking to see if the selected project is currently visible
           checkbox = $(target.find("input:checkbox")); // Find the checkbox so we can select it later.
+
+      // Check to see if the project is already on the page,
       if (index > -1) {
         visible.splice(index, 1);
         checkbox.prop('checked', false);
@@ -70,6 +76,9 @@
     return AssociatedProjectsController;
   }());
 
+  /**
+   * Controller to handle all function in the table menu.
+   */
   var ToolsController = (function () {
     var modalService;
     var sampleService;
@@ -82,15 +91,27 @@
       sampleService = SampleService;
       cartService = CartService;
 
+      /**
+       * Responsible for setting the boolean enabled conditions
+       * for the menu items.
+       * @param {number} count The number of items in the selected.
+       */
       function setButtonState(count) {
         vm.disabled.lessThanOne = count < 1;
         vm.disabled.lessThanTwo = count < 2;
       }
 
+      /**
+       * When a sample is selected the state of the menu needs to be set.
+       */
       $scope.$on("SAMPLE_SELECTION_EVENT", function (event, args) {
         setButtonState(args.count);
       });
 
+      /**
+       * When the number of associated project changes, this changes the state
+       * of the menu options.
+       */
       $scope.$on("ASSOCIATED_PROJECTS_CHANGE", function(event, args) {
         vm.disabled.hasAssociated = args.count > 0;
       });
@@ -98,20 +119,28 @@
       setButtonState(0);
     }
 
+    /**
+     * Helper function to get the selected its for this project only
+     * Since associated projects might also be in the list.
+     * @returns {*}
+     */
     function getProjectSelectedIds() {
       var allIds = datatable.getSelectedIds();
       // Only want this projects
       return allIds[page.project.id];
     }
 
-      /**
-       * Merge Samples
-       */
+    /**
+     * Merge Samples
+     */
     ToolsController.prototype.merge = function () {
       if (!this.disabled.lessThanTwo) {
         var ids = getProjectSelectedIds();
         modalService.openMergeModal(ids).then(function(result) {
+          // This happens when the user click merge in the modal window.
           sampleService.merge(result).then(function() {
+            // Once samples are merged, clear the table selections
+            // and reload the table.
             datatable.clearSelected();
             oTable_samplesTable.ajax.reload(null, false);
           });
@@ -119,9 +148,9 @@
       }
     };
 
-      /**
-       * Copy Samples
-       */
+    /**
+     * Copy Samples
+     */
     ToolsController.prototype.copy = function () {
       if(!this.disabled.lessThanOne) {
           var ids = getProjectSelectedIds();
@@ -134,15 +163,17 @@
       }
     };
 
-      /**
-       * Move Samples
-       */
+    /**
+     * Move Samples
+     */
     ToolsController.prototype.move = function () {
       if(!this.disabled.lessThanOne) {
           var ids = getProjectSelectedIds();
           modalService.openMoveModal(ids).then(function (result) {
               sampleService.move(result)
                   .then(function () {
+                    // Once samples are moved, clear the table selections
+                    // and reload the table.
                       datatable.clearSelected();
                       oTable_samplesTable.ajax.reload(null, false);
                   })
@@ -150,12 +181,17 @@
       }
     };
 
+    /**
+     * Remove samples from the current project.
+     */
     ToolsController.prototype.remove = function () {
       if(!this.disabled.lessThanOne) {
         var ids = getProjectSelectedIds();
         modalService.openRemoveModal(ids).then(function () {
           sampleService.remove(ids)
             .then(function () {
+              // Once samples are removed, clear the table selections
+              // and reload the table.
               datatable.clearSelected();
               oTable_samplesTable.ajax.reload(null, false);
             })
@@ -163,13 +199,20 @@
       }
     };
 
+    /**
+     * Add samples to the global cart
+     */
     ToolsController.prototype.addToCart = function () {
       cartService.add(datatable.getSelectedIds())
           .then(function () {
+            // Once added to the cart, clear the selected samples.
             datatable.clearSelected();
           });
     };
 
+    /**
+     * Download the selected samples.
+     */
     ToolsController.prototype.download = function () {
       var selected = datatable.getSelectedIds();
       if (selected[page.project.id] && selected[page.project.id].length > 0) {
@@ -177,6 +220,9 @@
       }
     };
 
+    /**
+     * Export selected samples using the NCBI Export Tool
+     */
     ToolsController.prototype.ncbiExport = function () {
       var selected = datatable.getSelectedIds();
       if (selected[page.project.id] && selected[page.project.id].length > 0) {
@@ -184,6 +230,9 @@
       }
     };
 
+    /**
+     * Display modal for command line linker
+     */
     ToolsController.prototype.linker = function () {
       var selected = datatable.getSelectedIds();
       modalService.openLinkerModal(selected[page.project.id]);
@@ -197,6 +246,10 @@
       modalService.openGalaxyModal(ids, page.project.id);
     };
 
+    /**
+     * Export table to excel or csv.
+     * @param type
+     */
     ToolsController.prototype.exportToFile = function (type) {
       sampleService.exportToFile(type);
     };
@@ -204,6 +257,9 @@
     return ToolsController;
   }());
 
+  /**
+   * Controller for handling the filtering of the datatable.
+   */
   var FilterController = (function () {
     var service, scope;
     function FilterController(sampleService, $scope, modalService) {
@@ -212,22 +268,30 @@
       service = sampleService;
       scope = $scope;
       this.modalService = modalService;
-
-      scope.$on("ASSOCIATED_PROJECTS_CHANGE", function (event, args) {
-        vm.fileFilterDisabled = args.count > 0;
-      });
     }
 
+    /**
+     * Filter the table via a text file.
+     * This uses the filterByFile direective.
+     * @param $fileContent
+     */
     FilterController.prototype.filterByFile = function ($fileContent) {
       var samplesNames = $fileContent.match(/[^\r\n]+/g);
       service.filterBySampleNames(samplesNames);
+      // Clear the file name when complete.
       document.querySelector("#filter-file-input").value = "";
     };
 
+    /**
+     * Handles the clicking of the clear button.
+     */
     FilterController.prototype.clearAll = function() {
       scope.$emit("CLEAR_FILTERS");
     };
 
+    /**
+     * Open the advance filter modal.
+     */
     FilterController.prototype.openFilterModal = function() {
       this.modalService.openFilterModal();
     };
@@ -235,6 +299,9 @@
     return FilterController;
   }());
 
+  /**
+   * Directive for adding the filter buttons to the table.
+   */
   var samplesFilter = (function () {
     function samplesFilter() {
       return {
@@ -248,6 +315,9 @@
     return samplesFilter;
   }());
 
+  /**
+   * Directive to handle the filter tags.
+   */
   var filteredTags = (function () {
     function filteredTags() {
       return {
@@ -306,6 +376,9 @@
     return filteredTags;
   }());
 
+  /**
+   * Angular controller to handle selecting samples by page or entire project
+   */
   var SelectionController = (function() {
     var $window, _sampleService, vm;
 
@@ -313,46 +386,78 @@
       vm = this;
       $window = window;
       _sampleService = sampleService;
+      var allSelectedCB = document.querySelector("#allSelectedCB");
 
       $scope.$on("SAMPLE_SELECTION_EVENT", function(event, args) {
         vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
-        vm.allSelectedCB = vm.allSelected;
+        allSelectedCB.indeterminate = false;
+        if (vm.allSelected || args.count === 0) {
+          allSelectedCB.checked = vm.allSelected;
+        } else {
+          allSelectedCB.indeterminate = true;
+        }
       });
     }
-    
-    function selectAllSamples() {
+
+    /**
+     * Select all the samples in the datatable;
+     * @private
+     */
+    function _selectAllSamples() {
       _sampleService.getAllIds()
         .then(function(result) {
           $window.datatable.selectAll(result.data);
         });
     }
-    
-    function deselectAllSamples() {
+
+    /**
+     * Deselect all the samples in the datatable.
+     * @private
+     */
+    function _deselectAllSamples() {
       $window.datatable.clearSelected();
     }
 
+    /**
+     * Event handler for clicking on the select all samples button.
+     */
     SelectionController.prototype.selectAllBtn = function() {
       if(!vm.allSelected) {
-        selectAllSamples()
+        _selectAllSamples()
       } else {
-        deselectAllSamples();
+        _deselectAllSamples();
       }
     };
 
+    /**
+     * Event handler for clicking on the select all samples in the dropdown menu
+     */
     SelectionController.prototype.selectAll = function() {
       vm.allSelected = true;
-      selectAllSamples()
+      _selectAllSamples()
     };
 
+    /**
+     * Event handler for clicking on the select none button in the dropdown menu.
+     * Deselects all samples in the project.
+     */
     SelectionController.prototype.selectNone = function() {
       vm.allSelected = false;
-      deselectAllSamples();
+      _deselectAllSamples();
     };
 
+    /**
+     * Event handler for clicking on the select page button in the dropdown menu.
+     * Selects all samples on the current page in the datatable.
+     */
     SelectionController.prototype.selectPage = function() {
       $window.datatable.selectPage();
     };
 
+    /**
+     * Event handler for clicking on the deselect page button in the dropdown menu.
+     * All samples on the current page will be deselected.
+     */
     SelectionController.prototype.deselectPage = function() {
       $window.datatable.deselectPage()
     };

@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
+
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
@@ -27,13 +30,13 @@ public enum AnalysisType {
 	 */
 	@XmlEnumValue("phylogenomics")
 	PHYLOGENOMICS("phylogenomics", AnalysisPhylogenomicsPipeline.class),
-	
+
 	/**
 	 * An assembly and annotation analysis type on a single sample.
 	 */
 	@XmlEnumValue("assembly-annotation")
 	ASSEMBLY_ANNOTATION("assembly-annotation", AnalysisAssemblyAnnotation.class),
-	
+
 	/**
 	 * An assembly and annotation analysis type on a collection of samples.
 	 */
@@ -59,7 +62,7 @@ public enum AnalysisType {
 
 		return typeMap.get(type);
 	}
-	
+
 	private static Map<String, AnalysisType> typeMap = new HashMap<>();
 
 	private String type;
@@ -78,13 +81,28 @@ public enum AnalysisType {
 		this.type = type;
 		this.analysisClass = analysisClass;
 	}
-	
+
 	/**
 	 * Gets the particular {@link Analysis} class corresponding to this type.
-	 * @return  An {@link Analysis} class for this type.
+	 * 
+	 * @return An {@link Analysis} class for this type.
 	 */
 	public Class<? extends Analysis> getAnalysisClass() {
 		return analysisClass;
+	}
+
+	/**
+	 * Generates an array of all {@link AnalysisType}s minus the
+	 * {@link AnalysisType.DEFAULT}.
+	 * 
+	 * @return An array of all {@link AnalysisType}s minus the
+	 *         {@link AnalysisType.DEFAULT}
+	 */
+	public static AnalysisType[] valuesMinusDefault() {
+		AnalysisType[] values = AnalysisType.values();
+		Set<AnalysisType> valuesSet = Sets.newHashSet(values);
+		valuesSet.remove(AnalysisType.DEFAULT);
+		return valuesSet.toArray(new AnalysisType[values.length - 1]);
 	}
 
 	/**

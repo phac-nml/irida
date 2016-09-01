@@ -12,7 +12,7 @@ var ProjectColourer = (function () {
       // These colours are intense colours pick from
       // https://www.google.com/design/spec/style/color.html#color-color-palette A better solution might be to allow
       // project managers to set custom colours for projects and store in project settings.
-      colours  = ["#ECEFF1", "#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE", "#2962FF", "#0091EA", "#00B8D4", "#00BFA5", "#00C853", "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00"],
+      colours  = ["RGB(176, 190, 197)", "#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE", "#2962FF", "#0091EA", "#00B8D4", "#00BFA5", "#00C853", "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00"],
       // JSON to store already chosen project colours.
       projects = {};
 

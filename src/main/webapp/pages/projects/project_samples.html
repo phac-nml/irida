@@ -100,7 +100,7 @@
             <th dt:sortable="false" width="70px" dt:renderFunction="datatables-utils#datatable.formatCheckbox">
                 <div class="btn-group btn-group-sm ng-cloak" uib-dropdown="" ng-controller="SelectionController as selectCtrl">
                     <button id="selection-main" class="btn btn-default" ng-click="selectCtrl.selectAllBtn()">
-                        <input type="checkbox" ng-model="selectCtrl.allSelectedCB" />
+                        <input id="allSelectedCB" type="checkbox" />
                     </button>
                     <button id="selection-toggle" class="btn btn-default" uib-dropdown-toggle="">
                         <span class="caret"/>
@@ -116,7 +116,7 @@
                             <a id="selection-page-all" href="#" ng-click="selectCtrl.selectPage()">Select Page</a>
                         </li>
                         <li role="menuitem">
-                            <a id="selection-page.none" href="#" ng-click="selectCtrl.deselectPage()">Deselect Page</a>
+                            <a id="selection-page-none" href="#" ng-click="selectCtrl.deselectPage()">Deselect Page</a>
                         </li>
                     </ul>
                 </div>
@@ -160,12 +160,6 @@
                         </li>
                     </ul>
                 </div>
-                <a th:if="${#lists.isEmpty(associatedProjects)}"
-                   th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" class="btn btn-default btn-sm">
-                    <fa:icon type="create"/>
-                    &nbsp;
-                    <th:block th:text="#{project.samples.nav.associated-create}"></th:block>
-                </a>
                 <div style="display: inline-block;" ng-controller="ToolsController as toolsCtrl">
                     <div style="display: inline-block;" uib-dropdown="" >
                         <button id="sample-tools" class="btn btn-default btn-sm" uib-dropdown-toggle="" type="button">
@@ -173,34 +167,34 @@
                         <fa:icon type="caret-down" fixed="fixed"/>
                     </button>
                     <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"
+                        <li id="mergeBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"
                             tooltip-enable="toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated"
                             uib-tooltip-template="'merge.msg.tmpl'">
-                            <a id="mergeBtn" href="#" ng-click="toolsCtrl.merge()">
+                            <a href="#" ng-click="toolsCtrl.merge()">
                                 <fa:icon type="merge" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
                             </a>
                         </li>
-                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                        <li id="copyBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
                             tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                             uib-tooltip-template="'copy.msg.tmpl'">
-                            <a id="copyBtn" href="#" ng-click="toolsCtrl.copy()">
+                            <a href="#" ng-click="toolsCtrl.copy()">
                                 <fa:icon type="copy" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
                             </a>
                         </li>
-                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                        <li id="moveBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
                             tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                             uib-tooltip-template="'move.msg.tmpl'">
-                            <a id="moveBtn" href="#" ng-click="toolsCtrl.move()">
+                            <a href="#" ng-click="toolsCtrl.move()">
                                 <fa:icon type="move" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
                             </a>
                         </li>
-                        <li ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                        <li id="removeBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
                             tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                             uib-tooltip-template="'remove.msg.tmpl'">
-                            <a id="removeBtn" href="#" ng-click="toolsCtrl.remove()">
+                            <a href="#" ng-click="toolsCtrl.remove()">
                                 <fa:icon type="delete" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
                             </a>
@@ -219,7 +213,7 @@
                             <fa:icon type="caret-down" fixed="fixed"/>
                         </button>
                         <ul class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="export-samples-btn">
-                            <li role="menuitem"
+                            <li id="download-btn" role="menuitem"
                                 ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
                                 tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                                 uib-tooltip-template="'download.msg.tmpl'">
@@ -227,7 +221,7 @@
                                     <fa:icon type="download" />&nbsp;<th:block th:text="#{project.samples.export.download}"/>
                                 </a>
                             </li>
-                            <li th:if="${linkerAvailable}" role="menuitem"
+                            <li id="linker-btn" th:if="${linkerAvailable}" role="menuitem"
                                 ng-class="{disabled: toolsCtrl.disabled.hasAssociated}"
                                 tooltip-enable="toolsCtrl.disabled.hasAssociated"
                                 uib-tooltip-template="'linker.msg.tmpl'">
@@ -243,7 +237,7 @@
                                     <span th:text="#{project.samples.export.galaxy}"></span>
                                 </a>
                             </li>
-                            <li role="menuitem"
+                            <li id="ncbi-btn" role="menuitem"
                                 ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
                                 tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                                 uib-tooltip-template="'ncbi.msg.tmpl'">
