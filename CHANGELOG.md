@@ -7,6 +7,7 @@ Changes
 * [UI]: Fixed bug where sample edit button wouldn't show up when users had permission (0.12.1)
 * [UI]: Fixed bug where announcements couldn't be marked as read (0.12.1)
 * [UI]: Changed the user icon in recent events to a basic icon instead of a gravatar (0.12.1)
+* [Developer]: Added ability to build IRIDA package `.zip` file and `tools-list.yml` for distribution and easy installation of tools in Galaxy.
 
 0.11.0 to 0.12.0
 ----------------

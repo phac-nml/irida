@@ -43,7 +43,7 @@ public class ProjectSampleModel extends AbstractExportModel {
 
 	public static String generateSortName(String name) {
 		if (name.equals("projectName")) {
-			return "project.label";
+			return "project.name";
 		} else {
 			return "sample." + name;
 		}

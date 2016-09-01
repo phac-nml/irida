@@ -1,19 +1,32 @@
-(function (ng, $, page) {
+(function(ng, $, page) {
   "use strict";
 
-  var SampleService = (function () {
+  /**
+   * Angular service for handling server interactions with samples.
+   */
+  var SampleService = (function() {
     var post, get;
     var location;
     var scope;
 
+    /**
+     * Internal function to reload the datatable.
+     * @private
+     */
     function _reloadTable() {
-      // Need to keep the associated proejcts
-      page.ajaxParam = {date:{}, associated: page.ajaxParam.associated};
+      // Need to keep the associated projects
+      page.ajaxParam = {date: {}, associated: page.ajaxParam.associated};
+      // Clear the search field if needed.
       oTable_samplesTable.search("");
       oTable_samplesTable.ajax.reload();
     }
 
-    function getFilterState() {
+    /**
+     * Get the current state of the datatable filters.
+     * @returns {{}}
+     * @private
+     */
+    function _getFilterState() {
       var filters = {};
       Object.assign(filters, page.ajaxParam);
       var searchTerm = document.querySelector(".dataTables_filter input").value;
@@ -21,7 +34,7 @@
       return filters;
     }
 
-    function SampleService ($http, $window, $rootScope) {
+    function SampleService($http, $window, $rootScope) {
       post = $http.post;
       get = $http.get;
       location = $window.location;
@@ -30,7 +43,7 @@
       /**
        * Clear specific filters applied to the samples table.
        */
-      scope.$on('FILTER_CLEARED', function (event, args) {
+      scope.$on('FILTER_CLEARED', function(event, args) {
         if (args.type === "file") {
           delete page.ajaxParam.sampleNames;
         } else {
@@ -47,7 +60,7 @@
       /**
        * Filter the project samples table based on the filter modal.
        */
-      scope.$on("FILTER_TABLE", function (event, args) {
+      scope.$on("FILTER_TABLE", function(event, args) {
         // Setting the page object, since dandelion datatables establishes the custom
         // params dynamically.  We add to them in the sample-ajax-params.js file.
         ng.extend(page.ajaxParam, args.filter);
@@ -59,7 +72,7 @@
     /**
      * Show all success and error messages for samples being copied.
      * @param result
-       */
+     */
     function showCopyRemoveErrors(result) {
       if (result.message) {
         notifications.show({type: "success", msg: result.message});
@@ -71,14 +84,25 @@
       }
     }
 
-    function copyMoveSamples(params) {
+    /**
+     * Copy or move the samples.
+     * @param params
+     * @returns {*}
+     * @private
+     */
+    function _copyMoveSamples(params) {
       return post(page.urls.samples.copy, params)
-          .success(function (result) {
-            showCopyRemoveErrors(result);
-          });
+        .success(function(result) {
+          showCopyRemoveErrors(result);
+        });
     }
 
-    SampleService.prototype.merge = function (data) {
+    /**
+     * Merge samples
+     * @param {object} data of sample ids and where to merge them.
+     * @returns {*}
+     */
+    SampleService.prototype.merge = function(data) {
       var params = {
         sampleIds: data.ids,
         mergeSampleId: data.mergeSampleId,
@@ -90,24 +114,44 @@
         });
     };
 
-    SampleService.prototype.copy = function (params) {
-      return copyMoveSamples(params);
+    /**
+     * Copy samples to another project
+     * @param params
+     * @returns {*}
+     */
+    SampleService.prototype.copy = function(params) {
+      return _copyMoveSamples(params);
     };
 
-    SampleService.prototype.move = function (params) {
+    /**
+     * Move samples to another project
+     * @param params
+     * @returns {*}
+     */
+    SampleService.prototype.move = function(params) {
       params.remove = true;
-      return copyMoveSamples(params);
+      return _copyMoveSamples(params);
     };
 
-    SampleService.prototype.remove = function (ids) {
+    /**
+     * Remove samples from this project.
+     * @param ids
+     * @returns {*}
+     */
+    SampleService.prototype.remove = function(ids) {
       return post(page.urls.samples.remove, {sampleIds: ids})
-        .success(function (data) {
+        .success(function(data) {
           notifications.show({type: data.result, msg: data.message})
         });
     };
 
-    SampleService.prototype.download = function (ids) {
+    /**
+     * Download a samples by sample id.
+     * @param ids
+     */
+    SampleService.prototype.download = function(ids) {
       var url = page.urls.samples.download + "?" + $.param({ids: ids});
+      // Need an iframe so it does not load into the current window.
       var iframe = document.querySelector("#download-iframe");
       if (iframe === null) {
         iframe = document.createElement("iframe");
@@ -118,33 +162,45 @@
       document.body.appendChild(iframe);
     };
 
-    SampleService.prototype.ncbiExport = function (ids) {
+    /**
+     * Load the NCBI export page based on selected samples.
+     * @param ids
+     */
+    SampleService.prototype.ncbiExport = function(ids) {
       location.href = page.urls.samples.ncbi + "?" + $.param({ids: ids});
     };
 
+    /**
+     * Filter the datatable based on a set of sample names.
+     * @param {array} sampleNames
+     */
     SampleService.prototype.filterBySampleNames = function(sampleNames) {
       // Store the sample names so datatables can add them to the url
       // This is done in sample-ajax-params.js
       page.ajaxParam.sampleNames = sampleNames;
-      oTable_samplesTable.ajax.reload(function (result) {
-          var difference = sampleNames.length - result.recordsTotal;
-          if (difference === 0) {
-            notifications.show({type: "success", msg: page.i18n.fileFilter.success});
-          } else {
-            post(page.urls.fileMissingSamples, {sampleNames: sampleNames}).then(function (response) {
-              var msg = "<strong>" + response.data.message + "</strong><ul>";
-              response.data.missingNames.forEach(function(name) {
-                msg += "<li>" + name + "</li>"
-              });
-              msg += "</ul>";
-              notifications.show({type: "warning", msg: msg, timeout: false});
+      oTable_samplesTable.ajax.reload(function(result) {
+        var difference = sampleNames.length - result.recordsTotal;
+        if (difference === 0) {
+          notifications.show({type: "success", msg: page.i18n.fileFilter.success});
+        } else {
+          post(page.urls.fileMissingSamples, {sampleNames: sampleNames}).then(function(response) {
+            var msg = "<strong>" + response.data.message + "</strong><ul>";
+            response.data.missingNames.forEach(function(name) {
+              msg += "<li>" + name + "</li>"
             });
-          }
-          scope.$broadcast("FILE_FILTER");
+            msg += "</ul>";
+            notifications.show({type: "warning", msg: msg, timeout: false});
+          });
+        }
+        scope.$broadcast("FILE_FILTER");
       });
     };
 
-    SampleService.prototype.exportToFile = function (type) {
+    /**
+     * Export the datatable to a file.
+     * @param {string} type either 'xlsx' or 'csv'
+     */
+    SampleService.prototype.exportToFile = function(type) {
       // Need the parameters from the datatable so that we know the correct filters.
       var tableParams = oTable_samplesTable.ajax.params();
       tableParams.dtf = type; // This is an important parameter name for exporting the correct format.
@@ -156,13 +212,21 @@
       document.body.appendChild(iframe);
     };
 
-    SampleService.prototype.updateAssociatedProjects = function (projectsIds) {
+    /**
+     * Update the table to display any associated projects.
+     * @param {array} projectsIds - list of project ids for associated projects.
+     */
+    SampleService.prototype.updateAssociatedProjects = function(projectsIds) {
       page.ajaxParam.associated = projectsIds;
       oTable_samplesTable.ajax.reload();
     };
 
+    /**
+     * Get all the ids for the samples currently displayed in the datatable.
+     * @returns {*}
+     */
     SampleService.prototype.getAllIds = function() {
-      return get(page.urls.samples.sampleIds + "?" + $.param(getFilterState()))
+      return get(page.urls.samples.sampleIds + "?" + $.param(_getFilterState()))
         .success(function(result) {
           return result;
         });
