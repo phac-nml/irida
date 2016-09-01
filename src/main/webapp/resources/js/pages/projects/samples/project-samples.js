@@ -386,10 +386,16 @@
       vm = this;
       $window = window;
       _sampleService = sampleService;
+      var allSelectedCB = document.querySelector("#allSelectedCB");
 
       $scope.$on("SAMPLE_SELECTION_EVENT", function(event, args) {
         vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
-        vm.allSelectedCB = vm.allSelected;
+        if (vm.allSelected || args.count === 0) {
+          allSelectedCB.indeterminate = false;
+          vm.allSelectedCB = vm.allSelected;
+        } else {
+          allSelectedCB.indeterminate = true;
+        }
       });
     }
 
