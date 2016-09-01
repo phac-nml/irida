@@ -153,11 +153,11 @@ Example (`project_5_filter.txt`):
 
 * Select the file you created.  The samples will be filtered by these names.
 
-If all sample names are found, a green success notification will appear in the upper right corner of the window.  THis notification will disappear after 2 seconds.
+If all sample names are found, a green success notification will appear in the upper right corner of the window.  This notification will disappear after 2 seconds.
 
 ![Filter by File all found](images/filter_by_file_allfound.png)
 
-If sample names are not found, the samples will be filtered by the available names and a notification will appear telling you which samples could not be found.  This notification will bot go away until it is clicked.
+If sample names are not found, the samples will be filtered by the available names and a notification will appear telling you which samples could not be found.  This notification will not go away until it is clicked.
 
 Example.  If my file contained and additional sample name `12-4598_a`  which does not exist the following will be displayed.
 
