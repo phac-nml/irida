@@ -376,11 +376,101 @@
     return filteredTags;
   }());
 
+  /**
+   * Angular controller to handle selecting samples by page or entire project
+   */
+  var SelectionController = (function() {
+    var $window, _sampleService, vm;
+
+    function SelectionController($scope, window, sampleService) {
+      vm = this;
+      $window = window;
+      _sampleService = sampleService;
+      var allSelectedCB = document.querySelector("#allSelectedCB");
+
+      $scope.$on("SAMPLE_SELECTION_EVENT", function(event, args) {
+        vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
+        allSelectedCB.indeterminate = false;
+        if (vm.allSelected || args.count === 0) {
+          allSelectedCB.checked = vm.allSelected;
+        } else {
+          allSelectedCB.indeterminate = true;
+        }
+      });
+    }
+
+    /**
+     * Select all the samples in the datatable;
+     * @private
+     */
+    function _selectAllSamples() {
+      _sampleService.getAllIds()
+        .then(function(result) {
+          $window.datatable.selectAll(result.data);
+        });
+    }
+
+    /**
+     * Deselect all the samples in the datatable.
+     * @private
+     */
+    function _deselectAllSamples() {
+      $window.datatable.clearSelected();
+    }
+
+    /**
+     * Event handler for clicking on the select all samples button.
+     */
+    SelectionController.prototype.selectAllBtn = function() {
+      if(!vm.allSelected) {
+        _selectAllSamples()
+      } else {
+        _deselectAllSamples();
+      }
+    };
+
+    /**
+     * Event handler for clicking on the select all samples in the dropdown menu
+     */
+    SelectionController.prototype.selectAll = function() {
+      vm.allSelected = true;
+      _selectAllSamples()
+    };
+
+    /**
+     * Event handler for clicking on the select none button in the dropdown menu.
+     * Deselects all samples in the project.
+     */
+    SelectionController.prototype.selectNone = function() {
+      vm.allSelected = false;
+      _deselectAllSamples();
+    };
+
+    /**
+     * Event handler for clicking on the select page button in the dropdown menu.
+     * Selects all samples on the current page in the datatable.
+     */
+    SelectionController.prototype.selectPage = function() {
+      $window.datatable.selectPage();
+    };
+
+    /**
+     * Event handler for clicking on the deselect page button in the dropdown menu.
+     * All samples on the current page will be deselected.
+     */
+    SelectionController.prototype.deselectPage = function() {
+      $window.datatable.deselectPage()
+    };
+
+    return SelectionController;
+  }());
+
     ng.module("irida.projects.samples.controller", ["irida.projects.samples.modals", "irida.projects.samples.service"])
       .directive('filterByFile', ["$parse", filterByFile])
       .directive('samplesFilter', [samplesFilter])
       .directive('filteredTags', [filteredTags])
     .controller('AssociatedProjectsController', ["$rootScope", "SampleService", AssociatedProjectsController])
     .controller('ToolsController', ["$scope", "modalService", "SampleService", "CartService", ToolsController])
+      .controller('SelectionController', ['$scope', '$window', "SampleService", SelectionController])
   ;
 }(window.angular, window.PAGE));

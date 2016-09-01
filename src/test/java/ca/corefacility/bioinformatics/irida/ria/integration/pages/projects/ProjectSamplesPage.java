@@ -41,9 +41,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "associated-cb")
 	private List<WebElement> associatedCbs;
 
-	@FindBy(id = "selectAllBtn")
-	private WebElement selectAll;
-
 	@FindBy(className = "selected-counts")
 	private WebElement selectedCountInfo;
 
@@ -136,6 +133,33 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".range_inputs .applyBtn")
 	private WebElement applyDateRangeBtn;
 
+	@FindBy(id = "selection-main")
+	private WebElement selectionMain;
+
+	@FindBy(id = "selection-toggle")
+	private WebElement selectionToggle;
+
+	@FindBy(id = "selection-all")
+	private WebElement selectionAll;
+
+	@FindBy(id = "selection-none")
+	private WebElement selectionNone;
+
+	@FindBy(id = "selection-page-all")
+	private WebElement selectionPageAll;
+
+	@FindBy(id = "selection-page-none")
+	private WebElement selectionPageNone;
+
+	@FindBy(id = "export-samples-btn")
+	private WebElement exportSamplesDropdownBtn;
+
+	@FindBy(id = "download-btn")
+	private WebElement downloadBtn;
+
+	@FindBy(id = "ncbi-btn")
+	private WebElement ncbiBtn;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -161,20 +185,40 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return tableRows.size();
 	}
 
+	public void openToolsDropDown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		toolsDropdownBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("mergeBtn")));
+	}
+
+	public void openExportDropdown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		exportSamplesDropdownBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
+	}
+
+	public boolean isDownloadBtnEnabled() {
+		return !downloadBtn.getAttribute("class").contains("disabled");
+	}
+
+	public boolean isNcbiBtnEnabled() {
+		return !ncbiBtn.getAttribute("class").contains("disabled");
+	}
+
 	public boolean isMergeBtnEnabled() {
-		return mergeBtn.isEnabled();
+		return !mergeBtn.getAttribute("class").contains("disabled");
 	}
 
 	public boolean isCopyBtnEnabled() {
-		return copyBtn.isEnabled();
+		return !copyBtn.getAttribute("class").contains("disabled");
 	}
 
 	public boolean isMoveBtnEnabled() {
-		return moveBtn.isEnabled();
+		return !moveBtn.getAttribute("class").contains("disabled");
 	}
 
 	public boolean isRemoveBtnEnabled() {
-		return moveBtn.isEnabled();
+		return !moveBtn.getAttribute("class").contains("disabled");
 	}
 
 	// PAGINATION
@@ -213,10 +257,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		actions.keyDown(Keys.SHIFT).click(tableRows.get(row)).perform();
 	}
 
-	public void selectAllOrNone() {
-		selectAll.click();
-	}
-
 	public void addSelectedSamplesToCart() {
 		addToCartBtn.click();
 		// Make sure the item were added to the cart.
@@ -234,13 +274,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
 
-	private WebDriverWait openToolsDropdown() {
+	private WebDriverWait openToolsDropdownAndWait() {
 		toolsDropdownBtn.click();
 		return new WebDriverWait(driver, 10);
 	}
 
 	public void removeSamples() {
-		WebDriverWait wait = openToolsDropdown();
+		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.elementToBeClickable(removeBtn));
 		removeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(removeModal));
@@ -249,7 +289,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void mergeSamplesWithNewName(String newName) {
-		WebDriverWait wait = openToolsDropdown();
+		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
 		mergeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
@@ -262,14 +302,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void copySamples(String project) {
-		WebDriverWait wait = openToolsDropdown();
+		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		copyBtn.click();
 		copyMoveSamples(project);
 	}
 
 	public void moveSamples(String projectNum) {
-		WebDriverWait wait = openToolsDropdown();
+		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
 		copyMoveSamples(projectNum);
@@ -326,6 +366,38 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(associatedDropdown));
 		associatedCbs.get(0).click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("processingIndicator")));
+	}
+
+	public void selectAllSamples() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-all")));
+		selectionAll.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-all")));
+	}
+
+	public void deselectAllSamples() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-none")));
+		selectionNone.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-none")));
+	}
+
+	public void selectPage() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-all")));
+		selectionPageAll.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-all")));
+	}
+
+	public void deselectPage() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-none")));
+		selectionPageNone.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-none")));
 	}
 
 	private void enterSelect2Value(String value) {

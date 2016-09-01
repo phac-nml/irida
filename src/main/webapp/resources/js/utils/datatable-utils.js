@@ -12,7 +12,7 @@ var ProjectColourer = (function () {
       // These colours are intense colours pick from
       // https://www.google.com/design/spec/style/color.html#color-color-palette A better solution might be to allow
       // project managers to set custom colours for projects and store in project settings.
-      colours  = ["#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE", "#2962FF", "#0091EA", "#00B8D4", "#00BFA5", "#00C853", "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00"],
+      colours  = ["RGB(176, 190, 197)", "#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE", "#2962FF", "#0091EA", "#00B8D4", "#00BFA5", "#00C853", "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00"],
       // JSON to store already chosen project colours.
       projects = {};
 
@@ -215,6 +215,25 @@ var RowClickHandler = (function (page) {
   }
 
   /**
+   * Select the currently displayed page.
+   */
+  function selectCurrentPage() {
+    var rows = document.querySelectorAll("tbody tr");
+    [].forEach.call(rows, selectRow);
+    updateSelectionCounts(getSelectedCount());
+  }
+
+  /**
+   * Clear the currently selected items.
+   */
+  function clearSelectedOnPage() {
+    var rows = document.querySelectorAll(".selected");
+    [].forEach.call(rows, function (row) {
+      deselectRow(row);
+    });
+  }
+
+  /**
    * Table body click event
    * @param row
    * @param isMultiple
@@ -255,12 +274,35 @@ var RowClickHandler = (function (page) {
    */
   RowSelection.prototype.clearSelected = function () {
     // Need to clear the class from the table:
-    var rows = document.querySelectorAll(".selected");
-    [].forEach.call(rows, function (row) {
-      deselectRow(row);
-    });
+    clearSelectedOnPage();
     selected = [];
     updateSelectionCounts(0);
+  };
+
+  /**
+   * Select all the items in the table
+   * @param ids
+   */
+  RowSelection.prototype.selectAll = function(ids) {
+    selectCurrentPage();
+    selected = ids;
+    updateSelectionCounts(getSelectedCount());
+  };
+
+  /**
+   * Select the current page in the table.
+   */
+  RowSelection.prototype.selectPage = function() {
+    selectCurrentPage();
+    updateSelectionCounts(getSelectedCount());
+  };
+
+  /**
+   * Clear all the selected items in the current table.
+   */
+  RowSelection.prototype.deselectPage = function() {
+    clearSelectedOnPage();
+    updateSelectionCounts(getSelectedCount());
   };
 
   return RowSelection;
@@ -367,10 +409,8 @@ var datatable = (function(moment, tl, page) {
     var text = document.createTextNode(data);
     div.appendChild(text);
 
-    if (full.sampleType === 'ASSOCIATED') {
-      var colour = projectColourer.getColour(full.projectName);
-      div.style.borderColor = colour;
-    }
+    var colour = projectColourer.getColour(full.projectName);
+    div.style.borderColor = colour;
 
     outer.appendChild(div);
     return outer.innerHTML;
@@ -452,6 +492,18 @@ var datatable = (function(moment, tl, page) {
     return wrapper.innerHTML;
   }
 
+  function selectAll(ids) {
+    rowClickHandler.selectAll(ids);
+  }
+
+  function selectPage() {
+    rowClickHandler.selectPage();
+  }
+
+  function deselectPage() {
+    rowClickHandler.deselectPage();
+  }
+
   return {
     formatDate                    : formatDate,
     formatDateWithTime            : formatDateWithTime,
@@ -465,6 +517,9 @@ var datatable = (function(moment, tl, page) {
     tbodyClickEvent               : tbodyClickEvent,
     getSelectedIds                : getSelectedIds,
     clearSelected                 : clearSelected,
-    formatCheckbox                : formatCheckbox
+    formatCheckbox: formatCheckbox,
+    selectAll: selectAll,
+    selectPage: selectPage,
+    deselectPage: deselectPage
   };
 })(window.moment, window.TL, window.PAGE);

@@ -402,6 +402,57 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Get a list of all the sample ids in a {@link Project}
+	 *
+	 * @param projectId
+	 * 		The identifier for a {@link Project}
+	 *
+	 * @return {@link List} of {@link Sample} ids
+	 */
+	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
+	@ResponseBody
+	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(value = "associatedProjectIds[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") String search,
+			@RequestParam(required = false, defaultValue = "") String minDate,
+			@RequestParam(required = false, defaultValue = "") String endDate) {
+		// Add the current project to the associatedProjectIds list.
+		associatedProjectIds.add(projectId);
+
+		// Get the actual projects.
+		List<Project> projects = new ArrayList<>();
+		projects.addAll((Collection<? extends Project>) projectService.readMultiple(associatedProjectIds));
+
+		Date firstDate = null;
+		if (!Strings.isNullOrEmpty(minDate)) {
+			firstDate = new Date(Long.parseLong(minDate));
+		}
+		Date lastDate = null;
+		if (!Strings.isNullOrEmpty(endDate)) {
+			lastDate = new Date(Long.parseLong(endDate));
+		}
+
+		final Page<ProjectSampleJoin> page = sampleService
+				.getFilteredSamplesForProjects(projects, sampleNames, name,
+						search, firstDate, lastDate, 0, Integer.MAX_VALUE,
+						Direction.ASC, "id");
+
+		// Converting everything to a string for consumption by the UI.
+		Map<String, List<String>> result = new HashMap<>();
+		for (ProjectSampleJoin join : page) {
+			String pId = join.getSubject().getId().toString();
+			if (!result.containsKey(pId)) {
+				result.put(pId, new ArrayList<String>());
+			}
+			result.get(pId).add(join.getObject().getId().toString());
+		}
+
+		return result;
+	}
+
+	/**
 	 * Search for projects available for a user to copy samples to. If the user is an admin it will show all projects.
 	 *
 	 * @param term
