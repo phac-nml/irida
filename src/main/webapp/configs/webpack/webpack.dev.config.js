@@ -22,7 +22,7 @@ module.exports = {
     angular: 'angular'
   },
   eslint: {
-    configFile: './configs/.eslintrc.json'
+    configFile: './.eslintrc.json'
   },
   output: {
     filename: '[name].bundle.js'
