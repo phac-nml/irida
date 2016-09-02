@@ -20,7 +20,7 @@ const app = angular.module('irida', deps)
 
     // Make sure that all ajax form data is sent in the correct format.
     $httpProvider.defaults.transformRequest = data => {
-      if (data === undefined) {
+      if (typeof data === 'undefined') {
         return data;
       }
       return $.param(data);
