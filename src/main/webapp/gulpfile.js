@@ -6,8 +6,10 @@ var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var browserSync = require('browser-sync').create();
-var webpack = require('webpack-stream');
-var webpackDevConfig = require('./webpack.dev.config.js');
+
+// WEBPACK
+let webpack = require('webpack-stream');
+let webpackDevConfig = require('./configs/webpack/webpack.dev.config.js');
 
 var scss = {
 	files : "./styles/**/*.scss",
@@ -41,9 +43,9 @@ gulp.task('lint', function () {
 
 gulp.task('webpack', function() {
   return gulp
-    .src("./resources/js/dev/*.js")
-    .pipe(webpack(webpackDevConfig))
-    .pipe(gulp.dest('./resources/js/build/'));
+		.src("./resources/js/dev/*.js")
+		.pipe(webpack(webpackDevConfig))
+		.pipe(gulp.dest('./resources/js/build/'));
 });
 
 gulp.task('sass', function () {
@@ -75,10 +77,9 @@ gulp.task('serve', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(scss.files, ['sass']);
-  gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
-  gulp.watch("./resources/js/dev/**/*.js", ['webpack'])
-    .on('change', browserSync.reload);
+	gulp.watch(scss.files, ['sass']);
+	gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
+	gulp.watch('./resource/js/dev/**/*.js', ['webpack']).on('change', browserSync.reload);
 });
 
 gulp.task('start', ['sass:prod', 'webpack']);
