@@ -166,9 +166,11 @@ To enable eslinting (JavaScript linting) in IntelliJ, open the preferences panel
 ### Visual Studio Code Setup
 
 To enable eslinting (JavaScript linting) in VS Code:
- * Open the quick open panel.
+
+ * Open the quick open panel `Ctrl+P`.
  * Copy and paste: `ext install vscode-eslint` and press enter.
- * Restart.
+ * Select `ESLint` and click "Install".
+ * Click "Enable" and allow VS Code to restart.
 
 <video controls="controls" style="width: 960px">
     <source src="images/vs-code-eslint.mp4" type="video/mp4" />
