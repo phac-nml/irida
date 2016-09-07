@@ -17,15 +17,12 @@
 	<script type="text/ng-template" id="upload.tmpl.html">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h2 class="panel-title">Select an Excel File Containing the Sample Metadata</h2>
+				<h2 class="panel-title">Step 1: Select an Excel File Containing the Sample Metadata</h2>
 			</div>
 			<div class="panel-body">
-				<form action=""
-				      th:action="@{/projects/{id}/sample-metadata(id=${projectId})}"
-				      id="metadataDropzone"
-				      class="dropzone"
-				      on-success="dzCtrl.onSuccess"
-					  on-complete="dzCtrl.onComplete"/>
+				<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
+				          on-success="uploaderCtrl.onSuccess"
+				          on-complete="uploaderCtrl.onComplete" />
 			</div>
 		</div>
 	</script>

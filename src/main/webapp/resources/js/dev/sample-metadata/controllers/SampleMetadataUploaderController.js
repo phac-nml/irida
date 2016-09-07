@@ -2,7 +2,7 @@
  * Angular Controller for handling metadata file dropping
  * @constructor
  */
-export default function DropzoneController() {
+export default function SampleMetadataUploaderController() {
   const vm = this;
 
   vm.onSuccess = (file, result) => {
