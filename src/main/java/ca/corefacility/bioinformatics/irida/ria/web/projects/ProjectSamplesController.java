@@ -3,7 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -13,6 +16,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +30,12 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +55,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
@@ -595,6 +607,99 @@ public class ProjectSamplesController {
 		}
 
 		return responseBody;
+	}
+
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.GET)
+	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId) {
+		model.addAttribute("projectId", projectId);
+		return PROJECTS_DIR + "project_samples_metadata";
+	}
+
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> createProjectSampleMetadata(final Model model, @PathVariable long projectId,
+			@RequestParam("file") MultipartFile file) {
+		if (file.isEmpty()) {
+			logger.debug("There was not file to be found!");
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		Project project = projectService.read(projectId);
+		List<Map<String, Object>> tableList = new ArrayList<>();
+		List<String> headers = new ArrayList<>();
+
+		try {
+			String filename = file.getOriginalFilename();
+			byte [] byteArr= file.getBytes();
+			InputStream fis = new ByteArrayInputStream(byteArr);
+
+			Workbook workbook = null;
+			if(filename.toLowerCase().endsWith("xlsx")){
+				workbook = new XSSFWorkbook(fis);
+			}else if(filename.toLowerCase().endsWith("xls")){
+				workbook = new HSSFWorkbook(fis);
+			}
+
+			Sheet sheet = workbook.getSheetAt(0);
+			Iterator<Row> rowIterator = sheet.iterator();
+
+			// Get the column headers
+			Row headerRow = rowIterator.next();
+			Iterator<Cell> headerIterator = headerRow.cellIterator();
+			while (headerIterator.hasNext()) {
+				Cell headerCell = headerIterator.next();
+				String headerValue = headerCell.getStringCellValue().trim();
+
+				// Don't want empty header values.
+				if (!Strings.isNullOrEmpty(headerValue)) {
+					headers.add(headerValue);
+				}
+			}
+
+			while (rowIterator.hasNext()) {
+				int headerCounter = 0;
+				Map<String, Object> rowMap = new HashMap<>();
+				Row row = rowIterator.next();
+				Sample sample = null;
+				Iterator<Cell> cellIterator = row.cellIterator();
+				while (cellIterator.hasNext() && headerCounter < headers.size()) {
+					Cell cell = cellIterator.next();
+					String cellValue = cell.getStringCellValue().trim();
+					String header = headers.get(headerCounter);
+					if (header.equalsIgnoreCase("NLEP #")) {
+						try {
+							sample = sampleService.getSampleBySampleName(project, cellValue);
+							rowMap.put("sampleId", sample.getId().toString());
+						} catch (EntityNotFoundException e) {
+							rowMap.put("sampleId", "");
+						}
+					}
+					rowMap.put(headers.get(headerCounter), cellValue);
+					headerCounter += 1;
+				}
+
+				// Add the data to its sample (if possible)
+				if (sample != null) {
+					SampleMetadata metadata = new SampleMetadata();
+					metadata.setMetadata(rowMap);
+					sampleService.saveSampleMetadaForSample(sample, metadata);
+				}
+				// TODO (Josh | 2016-08-23): How to handle if no sample exits.
+				tableList.add(rowMap);
+			}
+			fis.close();
+			headers.add("sampleId");
+			response.put("headers", headers);
+			response.put("metadata", tableList);
+		} catch (FileNotFoundException e) {
+			// TODO (Josh | 2016-08-23):  Handle this error
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO (Josh | 2016-08-23): Handle this error
+			e.printStackTrace();
+		}
+
+		return response;
 	}
 
 	/**
