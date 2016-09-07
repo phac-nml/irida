@@ -434,9 +434,11 @@ public class ProjectsController {
 	 */
 	@RequestMapping(value = "/projects/ajax/api/{apiId}")
 	@ResponseBody
-	public List<Project> ajaxGetProjectsForApi(@PathVariable Long apiId) {
+	public List<ProjectByApiResponse> ajaxGetProjectsForApi(@PathVariable Long apiId) {
 		RemoteAPI api = remoteApiService.read(apiId);
-		return projectRemoteService.listProjectsForAPI(api);
+		List<Project> listProjectsForAPI = projectRemoteService.listProjectsForAPI(api);
+
+		return listProjectsForAPI.stream().map(ProjectByApiResponse::new).collect(Collectors.toList());
 	}
 
 	/**
@@ -824,5 +826,26 @@ public class ProjectsController {
 		map.put("remote", project.isRemote());
 
 		return map;
+	}
+	
+	/**
+	 * Response class for a {@link Project} and its {@link RemoteStatus}
+	 */
+	public class ProjectByApiResponse {
+		private RemoteStatus remoteStatus;
+		private Project project;
+
+		public ProjectByApiResponse(Project project) {
+			this.project = project;
+			this.remoteStatus = project.getRemoteStatus();
+		}
+
+		public Project getProject() {
+			return project;
+		}
+
+		public RemoteStatus getRemoteStatus() {
+			return remoteStatus;
+		}
 	}
 }
