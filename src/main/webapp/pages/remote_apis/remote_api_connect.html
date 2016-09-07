@@ -1,9 +1,5 @@
 <!DOCTYPE html>
-    <script th:src="@{/resources/bower_components/mustache/mustache.js}" 
-        src="/resources/bower_components/mustache/mustache.js"></script>
-    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
-        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script type="x-tmpl-mustache" id="connection-template">
+    <script type="text/html" id="connection-template">
 		<section class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title" th:text="#{remoteapi.connect.title}">_Connect to Remote API_</h3>
@@ -12,7 +8,7 @@
 		<div class="panel-body">
 			<p th:text="#{remoteapi.connect.info}">_The content below is from another website_</p>
 			<hr/>
-			<iframe id="oauth-connect-frame" class="remote-api-frame" src="{{url}}"></iframe>
+			<iframe id="oauth-connect-frame" class="remote-api-frame" src=""></iframe>
 		</div>
 	</script>
     
@@ -29,13 +25,12 @@
 			var connectUrl = urlBase + apiId;
 			
 			var template = $("#connection-template").html();
-			var content = Mustache.render(template, {url: connectUrl});
-			
+
 			connectNoty = noty({
 				modal: true,
 				layout: "top",
                 type: 'default',
-				template: content,
+				template: template,
 				buttons:[
                     {
                         addClass: 'btn btn-default btn-sm',
@@ -46,6 +41,10 @@
                     }
 		         ],
 		         callback: {
+			         onShow: function() {
+				         var iframe = document.querySelector("#oauth-connect-frame");
+				         iframe.src = connectUrl;
+			         },
 		        	 afterClose: function(){
 		        		 if(connectSuccess){
 		        			 window.location.reload();
