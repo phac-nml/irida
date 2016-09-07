@@ -15,6 +15,8 @@
 	<sequence_file_properties />
 	<system_role />
 	<user />
+	<remote_api />
+	<remote_status />
 	<project />
 	<related_project />
 
@@ -41,7 +43,7 @@
 	<analysis_submission_parameters />
 
 	<password_reset />
-	<remote_api />
+	
 	<remote_api_token />
 	<remote_related_project />
 	<project_user />
@@ -127,4 +129,5 @@
 	<user_group_project_AUD/>
 	<announcement_AUD />
 	<announcement_user_AUD />
+	<remote_status_AUD />
 </dataset>
