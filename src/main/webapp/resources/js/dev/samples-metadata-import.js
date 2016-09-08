@@ -2,12 +2,14 @@ const angular = require('angular');
 import uiRouter from 'angular-ui-router';
 import {states} from "./sample-metadata/router/config";
 import dropzone from "./directives/dropzone";
+import {sampleMetadataService} from "./factories/metadataImportService";
 
 const app = angular.module('irida');
 app.requires.push(uiRouter);
 app
   .config(states)
-  .directive("dropzone", dropzone);
+  .directive("dropzone", dropzone)
+  .service("sampleMetadataService", sampleMetadataService);
 
 // /* eslint new-cap: ["error", { "properties": false }] */
 // var $ = require('jquery');
