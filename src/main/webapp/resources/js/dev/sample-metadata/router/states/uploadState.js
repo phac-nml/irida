@@ -9,7 +9,8 @@ function SampleMetadataUploaderController($state) {
   const vm = this;
   let headers = [];
   vm.onSuccess = (file, result) => {
-    headers = result.headers;
+    console.log(result);
+    headers = result;
   };
 
   vm.onComplete = () => {

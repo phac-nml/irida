@@ -21,16 +21,23 @@
 			<div class="panel-body">
 				<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
 				          on-success="uploaderCtrl.onSuccess"
-				          on-complete="uploaderCtrl.onComplete"/>
+				          on-complete="uploaderCtrl.onComplete"
+				          max-files="1"
+				          accepted-files=".xlsx,.xlx"
+				          data:message="#{metadata.dropzone.message}"></dropzone>
 			</div>
 		</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<div>
-			<ul>
-				<li ng-repeat="header in sampleIdCtrl.headers" ng-bind="header"></li>
-			</ul>
+		<div class="radio" ng-repeat="header in sampleIdCtrl.headers">
+			<label>
+				<input type="radio"
+				       ng-model="sampleIdCtrl.selectedColumn"
+				       ng-value="header"/>
+				{{ header }}
+			</label>
 		</div>
+		<button class="btn btn-primary" ng-click="sampleIdCtrl.complete()">Next</button>
 	</script>
 </div>
 </body>

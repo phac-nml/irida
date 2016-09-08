@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
@@ -62,7 +63,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
@@ -617,14 +617,15 @@ public class ProjectSamplesController {
 
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> createProjectSampleMetadata(final Model model, @PathVariable long projectId,
+	public List<String> createProjectSampleMetadata(
+			final Model model,
+			HttpServletRequest request,
+			@PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) {
 		if (file.isEmpty()) {
 			logger.debug("There was not file to be found!");
 		}
 
-		Map<String, Object> response = new HashMap<>();
-		Project project = projectService.read(projectId);
 		List<Map<String, Object>> tableList = new ArrayList<>();
 		List<String> headers = new ArrayList<>();
 
@@ -666,31 +667,22 @@ public class ProjectSamplesController {
 					Cell cell = cellIterator.next();
 					String cellValue = cell.getStringCellValue().trim();
 					String header = headers.get(headerCounter);
-					if (header.equalsIgnoreCase("NLEP #")) {
-						try {
-							sample = sampleService.getSampleBySampleName(project, cellValue);
-							rowMap.put("sampleId", sample.getId().toString());
-						} catch (EntityNotFoundException e) {
-							rowMap.put("sampleId", "");
-						}
-					}
 					rowMap.put(headers.get(headerCounter), cellValue);
 					headerCounter += 1;
 				}
 
 				// Add the data to its sample (if possible)
-				if (sample != null) {
-					SampleMetadata metadata = new SampleMetadata();
-					metadata.setMetadata(rowMap);
-					sampleService.saveSampleMetadaForSample(sample, metadata);
-				}
-				// TODO (Josh | 2016-08-23): How to handle if no sample exits.
+//				if (sample != null) {
+//					SampleMetadata metadata = new SampleMetadata();
+//					metadata.setMetadata(rowMap);
+//					sampleService.saveSampleMetadaForSample(sample, metadata);
+//				}
 				tableList.add(rowMap);
 			}
+			// Store the table temporarily in the session
+			HttpSession session = request.getSession();
+			session.setAttribute("metadata-" + projectId, tableList);
 			fis.close();
-			headers.add("sampleId");
-			response.put("headers", headers);
-			response.put("metadata", tableList);
 		} catch (FileNotFoundException e) {
 			// TODO (Josh | 2016-08-23):  Handle this error
 			e.printStackTrace();
@@ -699,7 +691,7 @@ public class ProjectSamplesController {
 			e.printStackTrace();
 		}
 
-		return response;
+		return headers;
 	}
 
 	/**

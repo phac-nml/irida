@@ -11,7 +11,10 @@ Dropzone.autoDiscover = false;
 const link = (scope, element) => {
   // Initialize the dropzone.
   const dz = new Dropzone(element[0], {
-    url: scope.url
+    url: scope.url,
+    maxFiles: scope.maxFiles,
+    acceptedFiles: scope.acceptedFiles,
+    dictDefaultMessage: scope.message
   });
 
   // Update event handlers
@@ -36,9 +39,12 @@ const link = (scope, element) => {
  */
 const scope = {
   url: "@",
-  onSuccess: "&",
-  onComplete: "&",
-  onError: "&"
+  message: "@",
+  onSuccess: "&?",
+  onComplete: "&?",
+  onError: "&?",
+  maxFiles: "@?",
+  acceptedFiles: "@?"
 };
 
 /**

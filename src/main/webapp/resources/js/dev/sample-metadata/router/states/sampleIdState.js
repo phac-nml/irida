@@ -9,6 +9,10 @@ function SampleMetadataSampleIdController($stateParams) {
   const vm = this;
 
   vm.headers = $stateParams.headers;
+
+  vm.complete = function () {
+    
+  };
 }
 
 const sampleIdState = {
