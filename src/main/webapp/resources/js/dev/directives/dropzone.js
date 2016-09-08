@@ -9,19 +9,25 @@ Dropzone.autoDiscover = false;
  * @param {array} element - element directive is attached to
  */
 const link = (scope, element) => {
-  // Unwraps the function and is needed to passed parameters later;
-  scope.onSuccess = scope.onSuccess();
-  scope.onComplete = scope.onComplete();
-  scope.onError = scope.onError();
-
   // Initialize the dropzone.
   const dz = new Dropzone(element[0], {
     url: scope.url
   });
+
   // Update event handlers
-  dz.on('success', scope.onSuccess);
-  dz.on('complete', scope.onComplete);
-  dz.on('error', scope.onError);
+  // Unwraps the function as it is needed to be passed parameters later;
+  if (typeof scope.onSuccess === "function") {
+    const sFn = scope.onSuccess();
+    dz.on('success', sFn);
+  }
+  if (typeof scope.onComplete === "function") {
+    const cFn = scope.onComplete();
+    dz.on('complete', cFn);
+  }
+  if (typeof scope.onError === "function") {
+    const eFn = scope.onError();
+    dz.on('error', eFn);
+  }
 };
 
 /**
@@ -39,7 +45,7 @@ const scope = {
  * Angular directive for Dropzone.js allowing a drag and drop interface for uploading
  * files to the server.
  *  Example:
- *    <dropzone th:url="@{url}"
+ *    <dropzone data:url="@{url}"
  *          on-success="successCallback"
  *          on-complete="completionCallback" />
  * @return {object} {{restrict: string, scope: {url: string}, link: (function(*, *, *))}}
