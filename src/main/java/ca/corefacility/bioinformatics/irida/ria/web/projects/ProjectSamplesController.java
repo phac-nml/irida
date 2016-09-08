@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.format.Formatter;
@@ -63,6 +64,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
@@ -75,6 +77,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
+@Scope("session")
 public class ProjectSamplesController {
 	// From configuration.properties
 	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
@@ -618,7 +621,6 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
 	@ResponseBody
 	public List<String> createProjectSampleMetadata(
-			final Model model,
 			HttpServletRequest request,
 			@PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) {
@@ -657,31 +659,10 @@ public class ProjectSamplesController {
 				}
 			}
 
-			while (rowIterator.hasNext()) {
-				int headerCounter = 0;
-				Map<String, Object> rowMap = new HashMap<>();
-				Row row = rowIterator.next();
-				Sample sample = null;
-				Iterator<Cell> cellIterator = row.cellIterator();
-				while (cellIterator.hasNext() && headerCounter < headers.size()) {
-					Cell cell = cellIterator.next();
-					String cellValue = cell.getStringCellValue().trim();
-					String header = headers.get(headerCounter);
-					rowMap.put(headers.get(headerCounter), cellValue);
-					headerCounter += 1;
-				}
-
-				// Add the data to its sample (if possible)
-//				if (sample != null) {
-//					SampleMetadata metadata = new SampleMetadata();
-//					metadata.setMetadata(rowMap);
-//					sampleService.saveSampleMetadaForSample(sample, metadata);
-//				}
-				tableList.add(rowMap);
-			}
-			// Store the table temporarily in the session
+			// Store the workbook temporarily in the session
 			HttpSession session = request.getSession();
-			session.setAttribute("metadata-" + projectId, tableList);
+			session.setAttribute("metadata-" + projectId, workbook);
+
 			fis.close();
 		} catch (FileNotFoundException e) {
 			// TODO (Josh | 2016-08-23):  Handle this error
@@ -692,6 +673,74 @@ public class ProjectSamplesController {
 		}
 
 		return headers;
+	}
+
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.PUT)
+	@ResponseBody
+	public Map<String, Object> setProjectSampleMetadataSampleId(
+			HttpServletRequest request,
+			@PathVariable long projectId,
+			@RequestParam String sampleIdColumn) {
+		List<Map<String, Object>> tableList = new ArrayList<>();
+		List<String> headers = new ArrayList<>();
+
+		// Attempt to get the metadata from the sessions
+		HttpSession session = request.getSession();
+		String sessionMetadataAttr = "metadata-" + projectId;
+		Workbook workbook = (Workbook) session.getAttribute(sessionMetadataAttr + "-workbook");
+		session.removeAttribute(sessionMetadataAttr);
+
+		if (workbook != null) {
+			Project project = projectService.read(projectId);
+			Sheet sheet = workbook.getSheetAt(0);
+			Iterator<Row> rowIterator = sheet.iterator();
+
+			// Get the column headers
+			Row headerRow = rowIterator.next();
+			Iterator<Cell> headerIterator = headerRow.cellIterator();
+			while (headerIterator.hasNext()) {
+				Cell headerCell = headerIterator.next();
+				String headerValue = headerCell.getStringCellValue().trim();
+
+				// Don't want empty header values.
+				if (!Strings.isNullOrEmpty(headerValue)) {
+					headers.add(headerValue);
+				}
+			}
+
+			while (rowIterator.hasNext()) {
+				int headerCounter = 0;
+				Map<String, Object> rowMap = new HashMap<>();
+				Row row = rowIterator.next();
+				Sample sample = null;
+				Iterator<Cell> cellIterator = row.cellIterator();
+				while (cellIterator.hasNext() && headerCounter < headers.size()) {
+					Cell cell = cellIterator.next();
+					String cellValue = cell.getStringCellValue().trim();
+					String header = headers.get(headerCounter).trim();
+
+					if (header.equals(sampleIdColumn)) {
+						sample = sampleService.getSampleBySampleName(project, cellValue);
+					}
+
+					rowMap.put(header, cellValue);
+					headerCounter += 1;
+				}
+
+				// Add the data to its sample (if possible)
+				if (sample != null) {
+					SampleMetadata metadata = new SampleMetadata();
+					metadata.setMetadata(rowMap);
+					sampleService.saveSampleMetadaForSample(sample, metadata);
+				}
+				tableList.add(rowMap);
+			}
+		}
+
+		return ImmutableMap.of(
+				"table", tableList,
+				"headers", headers
+		);
 	}
 
 	/**

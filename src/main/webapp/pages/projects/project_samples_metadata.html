@@ -29,15 +29,14 @@
 		</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<div class="radio" ng-repeat="header in sampleIdCtrl.headers">
-			<label>
-				<input type="radio"
-				       ng-model="sampleIdCtrl.selectedColumn"
-				       ng-value="header"/>
-				{{ header }}
-			</label>
+		<div set-sample-id="" data:url="@{/projects/{id}/sample-metadata(id=${projectId})}">
+			<div class="radio" ng-repeat="header in setCtrl.headers">
+				<label> <input type="radio"
+				               ng-model="setCtrl.selectedColumn"
+				               ng-value="header"/> {{ header }} </label>
+			</div>
+			<button class="btn btn-primary" ng-click="setCtrl.complete()">Next</button>
 		</div>
-		<button class="btn btn-primary" ng-click="sampleIdCtrl.complete()">Next</button>
 	</script>
 </div>
 </body>

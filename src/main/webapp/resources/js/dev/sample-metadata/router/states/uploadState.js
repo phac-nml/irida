@@ -9,12 +9,14 @@ function SampleMetadataUploaderController($state) {
   const vm = this;
   let headers = [];
   vm.onSuccess = (file, result) => {
-    console.log(result);
     headers = result;
   };
 
+  /**
+   * Once the file is uploaded successfully, we need to
+   * transition to selecting the sample id column.
+   */
   vm.onComplete = () => {
-    console.log("COMPLETE");
     $state.go("sampleId", {headers: headers});
   };
 }
