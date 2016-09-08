@@ -1,6 +1,6 @@
 const angular = require('angular');
 import uiRouter from 'angular-ui-router';
-import {states} from "./sample-metadata/config";
+import {states} from "./sample-metadata/router/config";
 import dropzone from "./directives/dropzone";
 
 const app = angular.module('irida');

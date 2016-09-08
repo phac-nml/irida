@@ -1,9 +1,11 @@
+import {STATE_URLS} from "../../constants";
+
 /**
  * Angular Controller for handling metadata file dropping
  * @param {object} $state ui.router state object.
  * @constructor
  */
-export default function SampleMetadataUploaderController($state) {
+function SampleMetadataUploaderController($state) {
   const vm = this;
   let headers = [];
   vm.onSuccess = (file, result) => {
@@ -15,3 +17,12 @@ export default function SampleMetadataUploaderController($state) {
     $state.go("sampleId", {headers: headers});
   };
 }
+
+const uploadState = {
+  url: STATE_URLS.upload,
+  templateUrl: "upload.tmpl.html",
+  controllerAs: "uploaderCtrl",
+  controller: ["$state", SampleMetadataUploaderController]
+};
+
+export default uploadState;
