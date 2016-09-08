@@ -47,42 +47,4 @@ public class AssociatedProjectsPageIT extends AbstractIridaUIITChromeDriver {
 			assertTrue("Contains projects with authorization (" + project + ")", projectsWithRights.contains(project));
 		}
 	}
-
-	@Test
-	public void testRemoteAssociatedProject() {
-		LoginPage.loginAsAdmin(driver());
-		// add the api
-		RemoteApiUtilities.addRemoteApi(driver());
-
-		// associate a project from that api
-		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
-		apEditPage.goTo(projectId);
-		apEditPage.viewRemoteTab();
-		apEditPage.clickAssociatedButton(2L);
-		apEditPage.checkNotyStatus("success");
-
-		page.getPage(projectId);
-		List<String> remoteAssociatedProjects = page.getRemoteAssociatedProjects();
-		assertEquals("should be 1 remote associated project", 1, remoteAssociatedProjects.size());
-	}
-
-	@Test
-	@Ignore
-	public void testRemoteAssociatedProjectNoLocal() {
-		Long otherProject = 3L;
-		LoginPage.loginAsAdmin(driver());
-		// add the api
-		RemoteApiUtilities.addRemoteApi(driver());
-
-		// associate a project from that api
-		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
-		apEditPage.goTo(otherProject);
-		apEditPage.viewRemoteTab();
-		apEditPage.clickAssociatedButton(2L);
-		apEditPage.checkNotyStatus("success");
-
-		page.getPage(otherProject);
-		List<String> remoteAssociatedProjects = page.getRemoteAssociatedProjects();
-		assertEquals("should be 1 remote associated project", 1, remoteAssociatedProjects.size());
-	}
 }
