@@ -5,13 +5,13 @@
  */
 export default function SampleMetadataUploaderController($state) {
   const vm = this;
-
+  let headers = [];
   vm.onSuccess = (file, result) => {
-    console.log("SUCCESS", result);
+    headers = result.headers;
   };
 
   vm.onComplete = () => {
     console.log("COMPLETE");
-    $state.go("sampleId");
+    $state.go("sampleId", {headers: headers});
   };
 }

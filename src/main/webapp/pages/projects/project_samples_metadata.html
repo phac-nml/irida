@@ -11,7 +11,6 @@
      ddl:bundle-includes="project-samples-metadata"
      ddl:asset-css-excludes="jquery.datatables">
 	<h1>Project Samples Metadata Page</h1>
-	<table class="table table-bordered nowrap" id="metadata-table" cellspacing="0"></table>
 	<section ui-view=""></section>
 
 	<script type="text/ng-template" id="upload.tmpl.html">
@@ -22,12 +21,16 @@
 			<div class="panel-body">
 				<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
 				          on-success="uploaderCtrl.onSuccess"
-				          on-complete="uploaderCtrl.onComplete" />
+				          on-complete="uploaderCtrl.onComplete"/>
 			</div>
 		</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<div>Hello There</div>
+		<div>
+			<ul>
+				<li ng-repeat="header in sampleIdCtrl.headers" ng-bind="header"></li>
+			</ul>
+		</div>
 	</script>
 </div>
 </body>
