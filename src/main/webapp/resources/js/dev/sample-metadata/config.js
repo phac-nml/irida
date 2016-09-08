@@ -7,7 +7,11 @@ export const states = ($stateProvider, $urlRouterProvider) => {
       url: "/start",
       templateUrl: "upload.tmpl.html",
       controllerAs: "uploaderCtrl",
-      controller: SampleMetadataUploaderController
+      controller: ["$state", SampleMetadataUploaderController]
+    })
+    .state('sampleId', {
+      url: "/sampleId",
+      templateUrl: "sampleId.tmpl.html"
     });
   $urlRouterProvider.otherwise('/start');
 };
