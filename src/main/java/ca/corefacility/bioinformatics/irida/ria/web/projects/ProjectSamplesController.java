@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.format.Formatter;
@@ -678,12 +677,13 @@ public class ProjectSamplesController {
 			HttpSession session,
 			@PathVariable long projectId,
 			@RequestParam String sampleIdColumn) {
-		List<Map<String, Object>> tableList = new ArrayList<>();
+		List<Map<String, Object>> samplesFountList = new ArrayList<>();
+		List<Map<String, Object>> samplesNotFoundList = new ArrayList<>();
 		List<String> headers = new ArrayList<>();
 
 		// Attempt to get the metadata from the sessions
 		String sessionMetadataAttr = "metadata-" + projectId;
-		Workbook workbook = (Workbook) session.getAttribute(sessionMetadataAttr + "-workbook");
+		Workbook workbook = (Workbook) session.getAttribute(sessionMetadataAttr);
 		session.removeAttribute(sessionMetadataAttr);
 
 		if (workbook != null) {
@@ -716,7 +716,12 @@ public class ProjectSamplesController {
 					String header = headers.get(headerCounter).trim();
 
 					if (header.equals(sampleIdColumn)) {
-						sample = sampleService.getSampleBySampleName(project, cellValue);
+						try {
+							sample = sampleService.getSampleBySampleName(project, cellValue);
+						} catch (EntityNotFoundException e) {
+							logger.info("ADDING METADATA TO SAMPLE: Cannot find sample id [" + cellValue
+									+ "] in project id [" + projectId + "]");
+						}
 					}
 
 					rowMap.put(header, cellValue);
@@ -725,17 +730,23 @@ public class ProjectSamplesController {
 
 				// Add the data to its sample (if possible)
 				if (sample != null) {
+					// Add metadata to return value to display to user.
+					samplesFountList.add(rowMap);
+
+					// Add metadata to the sample for storage.
 					SampleMetadata metadata = new SampleMetadata();
 					metadata.setMetadata(rowMap);
 					sampleService.saveSampleMetadaForSample(sample, metadata);
+				} else {
+					samplesNotFoundList.add(rowMap);
 				}
-				tableList.add(rowMap);
 			}
 		}
 
 		return ImmutableMap.of(
-				"table", tableList,
-				"headers", headers
+				"table", samplesFountList,
+				"headers", headers,
+				"notFound", samplesNotFoundList
 		);
 	}
 
