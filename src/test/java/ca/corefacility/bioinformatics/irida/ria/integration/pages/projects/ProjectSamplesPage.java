@@ -431,6 +431,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		linkerBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(linkerCmd));
-		return linkerCmd.getText();
+		return linkerCmd.getAttribute("value");
 	}
 }
