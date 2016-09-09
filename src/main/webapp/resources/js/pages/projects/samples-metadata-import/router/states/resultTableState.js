@@ -1,3 +1,6 @@
+/**
+ * @file ui.router state for displaying the result of uploading sample metadata.
+ */
 import {STATE_URLS} from "../../constants";
 
 /**

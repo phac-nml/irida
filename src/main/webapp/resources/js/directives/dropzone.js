@@ -1,4 +1,7 @@
-import Dropzone from 'dropzone';
+/**
+ * @file AngularJS Directive for interacting with the Dropzone library.
+ */
+import Dropzone from "dropzone";
 
 // Prevent Dropzone to auto-magically finding itself in before it is needed.
 Dropzone.autoDiscover = false;

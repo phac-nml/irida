@@ -1,3 +1,7 @@
+/**
+ * @file AngularJS Directive for setting the column header that
+ * corresponds to a sample identifier.
+ */
 const bindToController = {
   url: "@",
   heading: "@"

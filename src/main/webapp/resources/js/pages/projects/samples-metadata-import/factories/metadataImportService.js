@@ -1,3 +1,7 @@
+/**
+ * @file AngularJS Service for handling server interactions for uploading
+ * sample metadata.
+ */
 const $ = require('jquery');
 
 export const sampleMetadataService = $http => {
