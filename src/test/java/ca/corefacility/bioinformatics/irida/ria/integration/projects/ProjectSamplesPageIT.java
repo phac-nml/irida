@@ -254,4 +254,36 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.clearFilter();
 		assertEquals("Should have 21 samples displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
+
+	@Test
+	public void testCartFunctionality() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		// Select some samples
+		page.selectSample(0);
+		page.selectSample(1);
+
+		// Add them to the cart
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be two items in the cart", 2, page.getCartCount());
+
+		page.selectSample(5);
+		assertEquals("Should be three items in the cart", 3, page.getCartCount());
+	}
+
+	@Test
+	public void testLinkerFunctionality() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		assertEquals("Should display the correct linker for entire project", "ngsArchive.pl -p 1",
+				page.getLinkerText());
+		page.hideModal();
+
+		// Select some samples
+		page.selectSample(0);
+		page.selectSample(1);
+
+		// Open the linker modal
+		assertEquals("Should display the correct linker command", "ngsArchive.pl -p 1 -s 1 -s 2", page.getLinkerText());
+	}
 }

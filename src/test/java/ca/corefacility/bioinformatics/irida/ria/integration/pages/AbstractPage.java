@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -178,6 +179,10 @@ public class AbstractPage {
 
 	public int getCartProjectCount() {
 		return driver.findElements(By.cssSelector("#cart-project-list > li.local-project")).size();
+	}
+
+	public void hideModal() {
+		driver.findElement(By.tagName("body")).sendKeys(Keys.ESCAPE);
 	}
 
 	/**

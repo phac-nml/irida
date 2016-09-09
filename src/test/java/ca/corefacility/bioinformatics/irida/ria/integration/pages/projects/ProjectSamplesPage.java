@@ -160,6 +160,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "ncbi-btn")
 	private WebElement ncbiBtn;
 
+	@FindBy(css = "#linker-btn a")
+	private WebElement linkerBtn;
+
+	@FindBy(id = "linker-cmd")
+	private WebElement linkerCmd;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -418,5 +424,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
 		copyModalConfirmBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+	}
+
+	public String getLinkerText() {
+		openExportDropdown();
+		linkerBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(linkerCmd));
+		return linkerCmd.getText();
 	}
 }
