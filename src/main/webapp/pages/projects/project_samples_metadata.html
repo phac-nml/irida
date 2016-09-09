@@ -29,14 +29,8 @@
 		</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<div set-sample-id="" data:url="@{/projects/{id}/sample-metadata(id=${projectId})}">
-			<div class="radio" ng-repeat="header in setCtrl.headers">
-				<label> <input type="radio"
-				               ng-model="setCtrl.selectedColumn"
-				               ng-value="header"/> {{ header }} </label>
-			</div>
-			<button class="btn btn-primary" ng-click="setCtrl.complete()">Next</button>
-		</div>
+		<set-sample-id heading="Select Column Header Corresponding to the Sample Identifier"
+		               data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"></set-sample-id>
 	</script>
 	<script type="text/ng-template" id="result.tmpl.html">
 		<div ng-show="resultCtrl.table.length > 0" class="panel panel-default">

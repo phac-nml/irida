@@ -1,6 +1,28 @@
 const bindToController = {
-  url: "@"
+  url: "@",
+  heading: "@"
 };
+
+const template = `
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title" ng-bind="setCtrl.heading"></h2>
+  </div>
+  <div class="panel-body">
+    <div class="radio" ng-repeat="header in setCtrl.headers">
+      <label>
+        <input type="radio"
+               ng-model="setCtrl.selectedColumn"
+               ng-value="header"/> {{ header }} 
+      </label>
+    </div>
+  </div>
+  <div class="panel-footer">
+    <button class="btn btn-primary" 
+            ng-click="setCtrl.complete()">Next</button>
+  </div>
+</div>
+`;
 
 /**
  * Controller for setting the sample id.
@@ -31,7 +53,9 @@ function SetSampleIdController($state, $stateParams, sampleMetadataService) {
 const setSampleId = () => {
   return {
     bindToController,
-    restrict: "A",
+    template,
+    replace: true,
+    restrict: "E",
     controllerAs: "setCtrl",
     controller: ["$state", "$stateParams", "sampleMetadataService",
       SetSampleIdController]
