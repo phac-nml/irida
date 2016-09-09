@@ -439,11 +439,4 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(linkerModal));
 		return linkerCmd.getAttribute("value");
 	}
-
-	public void closeLinkerModal() {
-		linkerCloseBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("linker-modal")));
-
-	}
 }

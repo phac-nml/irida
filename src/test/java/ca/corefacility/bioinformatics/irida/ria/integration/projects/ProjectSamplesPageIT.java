@@ -273,11 +273,16 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testLinkerFunctionality() {
+	public void testLinkerFunctionalityForProject() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		assertEquals("Should display the correct linker for entire project", "ngsArchive.pl -p 1",
 				page.getLinkerText());
+	}
+
+	@Test
+	public void testLinkerFunctionalityForSamples() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// Select some samples
 		page.selectSample(0);
