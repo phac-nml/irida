@@ -222,8 +222,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
 	}
 
-	// TODO: (Josh - 2016-02-05) Create test for export linker
-
 	@Test
 	public void testFilteringSamplesByProperties() {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -257,5 +255,41 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 21 samples displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
 
-	// TODO: (Josh - 2016-02-05) Create tests for cart functionality.
+	@Test
+	public void testCartFunctionality() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		// Select some samples
+		page.selectSample(0);
+		page.selectSample(1);
+
+		// Add them to the cart
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be two items in the cart", 2, page.getCartCount());
+
+		page.selectSample(5);
+		page.addSelectedSamplesToCart();
+		assertEquals("Should be three items in the cart", 3, page.getCartCount());
+	}
+
+	@Test
+	public void testLinkerFunctionalityForProject() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		assertEquals("Should display the correct linker for entire project", "ngsArchive.pl -p 1",
+				page.getLinkerText());
+	}
+
+	@Test
+	public void testLinkerFunctionalityForSamples() {
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		// Select some samples
+		page.selectSample(0);
+		page.selectSample(1);
+
+		// Open the linker modal
+		assertEquals("Should display the correct linker command", "ngsArchive.pl -p 1 -s 21 -s 20",
+				page.getLinkerText());
+	}
 }
