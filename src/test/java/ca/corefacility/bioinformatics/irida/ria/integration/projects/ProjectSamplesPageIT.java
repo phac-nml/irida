@@ -289,6 +289,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(1);
 
 		// Open the linker modal
-		assertEquals("Should display the correct linker command", "ngsArchive.pl -p 1 -s 1 -s 2", page.getLinkerText());
+		assertEquals("Should display the correct linker command", "ngsArchive.pl -p 1 -s 21 -s 20",
+				page.getLinkerText());
 	}
 }
