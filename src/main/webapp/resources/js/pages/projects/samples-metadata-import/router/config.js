@@ -1,4 +1,4 @@
-import {STATE_URLS} from "./../constants";
+import {STATE_URLS} from "../constants";
 import uploadState from "./states/uploadState";
 import sampleIdState from "./states/sampleIdState";
 import resultTableState from "./states/resultTableState";
