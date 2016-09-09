@@ -130,6 +130,7 @@
     function openLinkerModal(ids) {
       var modal = $uibModal.open({
         templateUrl: page.urls.samples.linker + "?" + $.param({projectId: page.project.id, ids: ids}),
+        openedClass: 'linker-modal',
         controllerAs: "lCtrl",
         controller: ["$uibModalInstance", function ($uibModalInstance) {
           var vm = this;

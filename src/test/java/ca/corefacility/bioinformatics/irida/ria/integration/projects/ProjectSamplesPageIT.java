@@ -278,7 +278,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("Should display the correct linker for entire project", "ngsArchive.pl -p 1",
 				page.getLinkerText());
-		page.hideModal();
 
 		// Select some samples
 		page.selectSample(0);
