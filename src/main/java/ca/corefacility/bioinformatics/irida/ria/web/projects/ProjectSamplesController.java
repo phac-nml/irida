@@ -609,37 +609,64 @@ public class ProjectSamplesController {
 		return responseBody;
 	}
 
+	/**
+	 * Handle the page request to upload {@link Sample} metadata
+	 *
+	 * @param model
+	 * 		{@link Model}
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 *
+	 * @return {@link String} the path to the metadata import page
+	 */
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.GET)
 	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId) {
 		model.addAttribute("projectId", projectId);
 		return PROJECTS_DIR + "project_samples_metadata";
 	}
 
+	/**
+	 * Upload Excel file containing sample metadata and extract the headers.  The file is stored in the session until
+	 * the column that corresponds to a {@link Sample} identifier has been sent.
+	 *
+	 * @param session
+	 * 		{@link HttpSession}
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param file
+	 * 		{@link MultipartFile} The excel file containing the metadata.
+	 *
+	 * @return {@link List} of headers from the excel file for the user to select the header corresponding the {@link
+	 * Sample} identifier.
+	 */
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
 	@ResponseBody
 	public List<String> createProjectSampleMetadata(
 			HttpSession session,
 			@PathVariable long projectId,
-			@RequestParam("file") MultipartFile file) {
-		if (file.isEmpty()) {
-			logger.debug("There was not file to be found!");
-		}
-
-		List<Map<String, Object>> tableList = new ArrayList<>();
+			@RequestParam("file") MultipartFile file) throws FileTypNotSupportedError {
+		// We want to return a list of the table headers back to the UI.
 		List<String> headers = new ArrayList<>();
 
 		try {
+			// Need an input stream
 			String filename = file.getOriginalFilename();
 			byte [] byteArr= file.getBytes();
 			InputStream fis = new ByteArrayInputStream(byteArr);
 
 			Workbook workbook = null;
-			if(filename.toLowerCase().endsWith("xlsx")){
+			String[] splitFile = filename.split("\\.(?=[^\\.]+$)");
+			String extension = splitFile[splitFile.length - 1];
+			if (extension.equals("xlsx")) {
 				workbook = new XSSFWorkbook(fis);
-			}else if(filename.toLowerCase().endsWith("xls")){
+			} else if (extension.equals("xls")) {
 				workbook = new HSSFWorkbook(fis);
+			} else {
+				// Should never reach here as the uploader limits to .xlsx and .xlx files.
+				throw new FileTypNotSupportedError(extension);
 			}
 
+			// Only look at the first sheet in the workbook as this should be the file we want.
 			Sheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
 
@@ -661,16 +688,25 @@ public class ProjectSamplesController {
 
 			fis.close();
 		} catch (FileNotFoundException e) {
-			// TODO (Josh | 2016-08-23):  Handle this error
-			e.printStackTrace();
+			logger.debug("No file found for uploading and excel file of metadata.");
 		} catch (IOException e) {
-			// TODO (Josh | 2016-08-23): Handle this error
-			e.printStackTrace();
+			logger.error("Error opening file" + file.getOriginalFilename());
 		}
-
 		return headers;
 	}
 
+	/**
+	 * Add the metadata to specific {@link Sample} based on the selected column to correspond to the {@link Sample} id.
+	 *
+	 * @param session
+	 * 		{@link HttpSession}.
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}.
+	 * @param sampleIdColumn
+	 * 		{@link String} the header to used to represent the {@link Sample} identifier.
+	 *
+	 * @return {@link Map} containing
+	 */
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.PUT)
 	@ResponseBody
 	public Map<String, Object> setProjectSampleMetadataSampleId(
@@ -704,6 +740,7 @@ public class ProjectSamplesController {
 				}
 			}
 
+			// Get the metadata out of the table.
 			while (rowIterator.hasNext()) {
 				int headerCounter = 0;
 				Map<String, Object> rowMap = new HashMap<>();
@@ -745,7 +782,6 @@ public class ProjectSamplesController {
 
 		return ImmutableMap.of(
 				"table", samplesFountList,
-				"headers", headers,
 				"notFound", samplesNotFoundList
 		);
 	}
@@ -812,5 +848,11 @@ public class ProjectSamplesController {
 		// samples in remote projects
 		REMOTE;
 
+	}
+
+	private class FileTypNotSupportedError extends Exception {
+		public FileTypNotSupportedError(String extension) {
+			super("Importing metadata does not support: [" + extension + "] file type.");
+		}
 	}
 }

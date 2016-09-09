@@ -22,6 +22,7 @@ function SetSampleIdController($state, $stateParams, sampleMetadataService) {
   vm.complete = () => {
     sampleMetadataService.setSampleIdColumn(vm.url, vm.selectedColumn)
       .then(result => {
+        result.headers = vm.headers;
         $state.go("results", result);
       });
   };
