@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsGalaxyIntegrationTestConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
@@ -32,6 +34,18 @@ import com.google.common.util.concurrent.MoreExecutors;
 		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class, IridaWorkflowsGalaxyIntegrationTestConfig.class })
 @Profile("test")
 public class IridaApiGalaxyTestConfig {
+	
+	/**
+	 * Sets up an {@link Unmarshaller} for workflow objects.
+	 * 
+	 * @return An {@link Unmarshaller} for workflow objects.
+	 */
+	@Bean
+	public Unmarshaller workflowDescriptionUnmarshaller() {
+		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
+		jaxb2marshaller.setPackagesToScan(new String[] { "ca.corefacility.bioinformatics.irida.model.workflow" });
+		return jaxb2marshaller;
+	}
 
 	/**
 	 * @return An ExecutorService executing code in the same thread for testing

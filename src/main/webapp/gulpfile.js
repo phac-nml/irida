@@ -7,6 +7,9 @@ var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var browserSync = require('browser-sync').create();
 
+// WEBPACK
+let webpack = require('webpack-stream');
+let webpackDevConfig = require('./configs/webpack/webpack.dev.config.js');
 
 var scss = {
 	files : "./styles/**/*.scss",
@@ -38,6 +41,13 @@ gulp.task('lint', function () {
 		.pipe(eslint.failOnError());
 });
 
+gulp.task('webpack', function() {
+  return gulp
+		.src("./resources/js/dev/*.js")
+		.pipe(webpack(webpackDevConfig))
+		.pipe(gulp.dest('./resources/js/build/'));
+});
+
 gulp.task('sass', function () {
 	return gulp
 		.src(scss.files)
@@ -66,11 +76,12 @@ gulp.task('serve', function() {
 	});
 });
 
-gulp.task('watch', function () {
+gulp.task('watch', function() {
 	gulp.watch(scss.files, ['sass']);
 	gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
+	gulp.watch('./resource/js/dev/**/*.js', ['webpack']).on('change', browserSync.reload);
 });
 
-gulp.task('start', ['sass:prod']);
+gulp.task('start', ['sass:prod', 'webpack']);
 
 gulp.task('default', ['serve', 'watch']);
