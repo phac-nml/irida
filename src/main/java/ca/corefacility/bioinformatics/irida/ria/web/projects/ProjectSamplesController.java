@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
@@ -77,7 +76,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
-@Scope("session")
 public class ProjectSamplesController {
 	// From configuration.properties
 	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
@@ -621,7 +619,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
 	@ResponseBody
 	public List<String> createProjectSampleMetadata(
-			HttpServletRequest request,
+			HttpSession session,
 			@PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) {
 		if (file.isEmpty()) {
@@ -660,7 +658,6 @@ public class ProjectSamplesController {
 			}
 
 			// Store the workbook temporarily in the session
-			HttpSession session = request.getSession();
 			session.setAttribute("metadata-" + projectId, workbook);
 
 			fis.close();
@@ -678,14 +675,13 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.PUT)
 	@ResponseBody
 	public Map<String, Object> setProjectSampleMetadataSampleId(
-			HttpServletRequest request,
+			HttpSession session,
 			@PathVariable long projectId,
 			@RequestParam String sampleIdColumn) {
 		List<Map<String, Object>> tableList = new ArrayList<>();
 		List<String> headers = new ArrayList<>();
 
 		// Attempt to get the metadata from the sessions
-		HttpSession session = request.getSession();
 		String sessionMetadataAttr = "metadata-" + projectId;
 		Workbook workbook = (Workbook) session.getAttribute(sessionMetadataAttr + "-workbook");
 		session.removeAttribute(sessionMetadataAttr);
