@@ -4,5 +4,5 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  app: './resources/js/dev/app.js'
+  app: './resources/js/app.js'
 };
