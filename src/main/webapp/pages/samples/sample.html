@@ -92,6 +92,21 @@
                     </div>
                 </div>
             </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <b class="panel-title">_Other Metadata_</b>
+                </div>
+                <div class="panel-body">
+                    
+                    <div th:each="entry,iterStat : ${metadata.metadata}" class="col-md-6">
+                    <dl>
+                        <dt th:text="${entry.key}"></dt>
+                        <dd th:if="${entry.value}" th:text="${entry.value}"></dd>
+                        <dd th:if="${#strings.isEmpty(entry.value)}">_Not entered_</dd>
+                    </dl>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
