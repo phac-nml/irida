@@ -644,7 +644,7 @@ public class ProjectSamplesController {
 	public List<String> createProjectSampleMetadata(
 			HttpSession session,
 			@PathVariable long projectId,
-			@RequestParam("file") MultipartFile file) throws FileTypNotSupportedError {
+			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
 		// We want to return a list of the table headers back to the UI.
 		List<String> headers = new ArrayList<>();
 
@@ -663,7 +663,7 @@ public class ProjectSamplesController {
 				workbook = new HSSFWorkbook(fis);
 			} else {
 				// Should never reach here as the uploader limits to .xlsx and .xlx files.
-				throw new FileTypNotSupportedError(extension);
+				throw new MetadataImportFileTypeNotSupportedError(extension);
 			}
 
 			// Only look at the first sheet in the workbook as this should be the file we want.
@@ -850,8 +850,11 @@ public class ProjectSamplesController {
 
 	}
 
-	private class FileTypNotSupportedError extends Exception {
-		public FileTypNotSupportedError(String extension) {
+	/**
+	 *
+	 */
+	private class MetadataImportFileTypeNotSupportedError extends Exception {
+		public MetadataImportFileTypeNotSupportedError(String extension) {
 			super("Importing metadata does not support: [" + extension + "] file type.");
 		}
 	}
