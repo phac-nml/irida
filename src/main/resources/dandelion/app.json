@@ -32,7 +32,7 @@
     {
       "type": "js",
       "locations": {
-        "webapp": "/resources/js/app.js"
+        "webapp": "/resources/js/build/app.bundle.js"
       }
     }
   ]

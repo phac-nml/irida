@@ -41,8 +41,10 @@ function getApiProjects(apiId){
         success: function(vals){
             $(".project-option").remove();
             
-            $.each(vals, function (i, project) {
-                var projectUrl = project.remoteStatus.url;
+            $.each(vals, function (i, response) {
+                var project = response.project;
+                var status = response.remoteStatus;
+                var projectUrl = status.url;
                 projectSelect.append('<option class="project-option" value="'+projectUrl+'">'+project.label+'</option>');
             });
             projectSelect.prop("disabled", false);

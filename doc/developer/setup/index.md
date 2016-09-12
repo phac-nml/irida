@@ -149,3 +149,29 @@ Other gulp tasks:
 * `gulp lint` - [eslint](http://eslint.org) all JavaScript files in the project.
 * `gulp sass` - compile all `.scss` files into `.css` files, with sourcemaps.
 * `gulp` - Runs [browser-sync](https://www.browsersync.io).  Automatically lints and compiles JavaScript and SCSS files when they change, and injects them into the browser.
+
+### IntelliJ IDEA Setup
+
+To enable eslinting (JavaScript linting) in IntelliJ, open the preferences panel > Languages & Frameworks > JavaScript > Code Quality Tools > ESLint
+
+* Check the "Enable" checkbox.
+* Node interpreter should be you system node by default.
+* ESLint package is the `eslint` within the projects `node_modules` directory.
+* Configuration file is the `src/main/webapp/.eslintrc.json`. 
+
+<video controls="controls" style="width: 960px">
+    <source src="images/intellij-eslint.mp4" type="video/mp4" />
+</video>   
+ 
+### Visual Studio Code Setup
+
+To enable eslinting (JavaScript linting) in VS Code:
+
+ * Open the quick open panel `Ctrl+P`.
+ * Copy and paste: `ext install vscode-eslint` and press enter.
+ * Select `ESLint` and click "Install".
+ * Click "Enable" and allow VS Code to restart.
+
+<video controls="controls" style="width: 960px">
+    <source src="images/vs-code-eslint.mp4" type="video/mp4" />
+</video>   

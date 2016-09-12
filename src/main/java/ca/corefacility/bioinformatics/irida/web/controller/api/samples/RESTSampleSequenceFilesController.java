@@ -288,7 +288,7 @@ public class RESTSampleSequenceFilesController {
 				objectId);
 
 		Optional<SequenceFile> findFirst = readSequenceFilePairForSample.getFiles().stream()
-				.filter(f -> f.getId() == fileId).findFirst();
+				.filter(f -> f.getId().equals(fileId)).findFirst();
 
 		if (!findFirst.isPresent()) {
 			throw new EntityNotFoundException("File with id " + fileId
