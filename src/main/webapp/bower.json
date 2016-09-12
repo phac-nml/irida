@@ -20,7 +20,6 @@
     "angular-messages": "1.5.0",
     "ng-table": "0.5.2",
     "angular-ui-router": "0.2.13",
-    "moment": "2.14.1",
     "datatables": "1.10.10",
     "angular-bootstrap-switch": "0.4.0",
     "font-awesome": "4.3.0",
@@ -33,7 +32,7 @@
     "noty": "2.3.7",
     "datatables-bootstrap3-plugin": "~0.4.0",
     "angular-bootstrap-lightbox": "0.10.0",
-    "dropzone": "4.3.0"
+    "moment": "2.15.0"
   },
   "devDependencies": {},
   "resolutions": {
