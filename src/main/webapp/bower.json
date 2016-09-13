@@ -33,7 +33,8 @@
     "angular-bootstrap-lightbox": "0.10.0",
     "angular-daterangepicker-enhanced": "^0.1.24",
     "lodash": "4.6.1",
-    "clipboard": "^1.5.12"
+    "clipboard": "^1.5.12",
+    "moment": "^2.15.0"
   },
   "devDependencies": {},
   "resolutions": {
