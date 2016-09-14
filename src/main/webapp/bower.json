@@ -11,7 +11,6 @@
     "select2": "3.5.0",
     "jquery": "2.1.1",
     "bootstrap": "3.3.1",
-    "lodash": "3.10.1",
     "bower": "*",
     "angular": "1.5.0",
     "angular-animate": "1.5.0",
@@ -31,12 +30,17 @@
     "select2-bootstrap-css": "select2-bootstrap3-css#1.4.6",
     "noty": "2.3.7",
     "datatables-bootstrap3-plugin": "~0.4.0",
+    "angular-datatables": "~0.5.2",
     "angular-bootstrap-lightbox": "0.10.0",
-    "moment": "2.15.0"
+    "angular-daterangepicker-enhanced": "^0.1.24",
+    "lodash": "4.6.1",
+    "clipboard": "^1.5.12",
+    "moment": "^2.15.0"
   },
   "devDependencies": {},
   "resolutions": {
     "angular": "1.5.0",
-    "angular-animate": "1.5.0"
+    "angular-animate": "1.5.0",
+    "moment": "^2.15.0"
   }
 }

@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -48,12 +49,16 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -306,27 +311,32 @@ public class ProjectSamplesControllerTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
-	public void testGetAjaxProjectSamplesMap() {
-		Project project = TestDataFactory.constructProject();
+	public void testGetAjaxProjectSampleModels() {
 		Sample sample = TestDataFactory.constructSample();
-
 		when(projectService.read(anyLong())).thenReturn(project);
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(ImmutableList.of(
 				new ProjectSampleJoin(project, sample)
 		));
 
-		Map<String, Object> response = controller.getProjectSamples(1L);
+		when(sampleService
+				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
+						any(Integer.class), any(Integer.class), any(
+								Sort.Direction.class), any(String.class)))
+				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
+		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
 
-		// Make sure it has the expected keys:
-		assertTrue("Has a list of samples", response.containsKey("samples"));
+		ColumnDef columnDef = new ColumnDef();
+		columnDef.setSortDirection(ColumnDef.SortDirection.ASC);
+		columnDef.setName("sample.sampleName");
+		when(criterias.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
 
-		// Check out the samples
-		Object listObject = response.get("samples");
-		assertTrue("Samples list really is a list", listObject instanceof List);
-		List<HashMap<String, Object>> samplesList = (List<HashMap<String, Object>>) listObject;
+		DatatablesResponse<ProjectSampleModel> response = controller
+				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of(), null, null, null);
+		List<ProjectSampleModel> data = response.getData();
+		assertEquals("Has the correct number of samples", 1, data.size());
+		ProjectSampleModel sampleData = data.get(0);
+		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
 
-		assertEquals("Has the correct number of samples", 1, samplesList.size());
 	}
 
 	@Test

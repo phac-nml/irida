@@ -9,11 +9,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
@@ -60,15 +62,17 @@ public class CartController {
 	private final SequencingObjectService sequencingObjectService;
 	
 	private final SampleRemoteService sampleRemoteService;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, SampleRemoteService sampleRemoteService) {
+			SequencingObjectService sequencingObjectService, SampleRemoteService sampleRemoteService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.userService = userService;
 		this.sampleRemoteService = sampleRemoteService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.messageSource = messageSource;
 		selected = new HashMap<>();
 		remoteSelected = new HashMap<>();
 	}
@@ -161,13 +165,24 @@ public class CartController {
 	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> addProjectSample(@RequestParam Long projectId,
-			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds) {
+			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
 		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
 
 		getSelectedSamplesForProject(project).addAll(samples);
 
-		return ImmutableMap.of("success", true);
+		String message;
+		if (sampleIds.size() == 1) {
+			message = messageSource.getMessage("cart.one-sample-added", new Object[] {
+				project.getLabel()
+			}, locale);
+		} else {
+			message = messageSource.getMessage("cart.many-samples-added", new Object[] {
+					sampleIds.size(),
+					project.getLabel()
+			}, locale);
+		}
+		return ImmutableMap.of("message", message);
 	}
 	
 	/**
