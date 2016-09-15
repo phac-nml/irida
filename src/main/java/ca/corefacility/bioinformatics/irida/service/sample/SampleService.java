@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -203,15 +202,15 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param pageSize
 	 * 		{@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
 	 * @param direction
-	 * 		{@link Sort.Direction} the direction of the sort for the {@link Page}.
+	 * 		{@link Direction} the direction of the sort for the {@link Page}.
 	 * @param sortProperty
 	 * 		{@link String} the attribute of the {@link ProjectSampleJoin} to sort by.
 	 *
 	 * @return
 	 */
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
-			String sampleName, String searchTerm,
-			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
+			String sampleName, String searchTerm, Date minDate, Date maxDate, int currentPage, int pageSize,
+			Direction direction, String sortProperty);
 	/**
 	 * Get the {@link SampleMetadata} object for a given {@link Sample}
 	 *
