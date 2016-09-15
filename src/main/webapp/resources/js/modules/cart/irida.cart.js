@@ -1,4 +1,4 @@
-(function (angular, _, TL) {
+(function (angular, _, $, TL) {
   'use strict';
 
   function CartController($scope, $timeout, cart) {
@@ -86,6 +86,12 @@
                 },
                 multiProject: function () {
                   return (data.length > 1);
+                },
+                sampleIds: function () {
+                  return false;
+                },
+                projectId: function () {
+                  return false;
                 }
               }
             });
@@ -104,7 +110,7 @@
     };
   }
 
-  function CartService(scope, $http, $q) {
+  function CartService(scope, $http, $q, notifications) {
     var svc = this,
       urls = {
         all: TL.BASE_URL + 'cart',
@@ -125,19 +131,34 @@
         });
     };
 
-    svc.add = function (samples) {
+    /**
+     * Add samples to the global cart
+     * @param {object} projectSamples
+     *    {projectId: [sampleIds]}
+     * @returns {*|Promise.<TResult>}
+     */
+    svc.add = function(projectSamples) {
+      var projectIds = Object.keys(projectSamples);
       var promises = [];
+      var resultMsg = [];
 
-      _.forEach(samples, function (s) {
-        if (s.type === 'LOCAL' || s.type === 'ASSOCIATED') {
-          promises.push($http.post(urls.add, {projectId: s.project, sampleIds: [s.sample]}));
-        } else if (s.type === 'REMOTE') {
-          promises.push($http.post(urls.addRemote, {sampleURL: s.sample}));
-        }
+      // Add each project's samples to the global cart.
+      projectIds.forEach(function(id) {
+        var promise = $http.post(urls.add, {projectId: id, sampleIds: projectSamples[id]})
+          .then(function(result) {
+            resultMsg.push(result.data.message);
+          });
+        promises.push(promise);
       });
 
-      $q.all(promises).then(function () {
-        scope.$broadcast('cart.update', {});
+      // Return the resolution of all the results from adding the samples to the cart
+      return $q.all(promises).then(function() {
+        // Let everyone know that the cart has been updates
+        scope.$emit('cart.update');
+        // Show notifications for each project and their samples that were added to the cart.
+        resultMsg.forEach(function(msg) {
+          notifications.show({msg: msg});
+        });
       });
     };
 
@@ -174,7 +195,7 @@
 
   }
 
-  function GalaxyExportService(CartService, StorageService) {
+  function GalaxyExportService(CartService, $http) {
     var svc = this,
       samples = [];
 
@@ -182,7 +203,7 @@
       var sample = _.find(samples, function (sampleItr) {
         return (sampleItr.name === sampleName);
       });
-      if (sample === undefined) {
+      if (typeof sample === 'undefined') {
         sample = {
           'name': sampleName,
           '_links': {'self': {'href': ''}}, //expected by the tool
@@ -218,13 +239,15 @@
       }];
     }
 
-    svc.exportFromProjSampPage = function (args) {
-
-      var samples = StorageService.getSamples();
-      _.each(samples, function (sample) {
-          addSampleFile(sample.sample.label, sample.href);
-      });
-      return getSampleFormEntities(args);
+    svc.exportFromProjSampPage = function (args, ids, projectId) {
+      // Need to get an actual list of samples from the server from their ids.
+      return $http.get(PAGE.urls.samples.idList + "?" + $.param({sampleIds: ids, projectId: projectId}))
+        .then(function (result) {
+          _.each(result.data.mapList, function (sample) {
+              addSampleFile(sample.label, sample.href);
+          });
+          return getSampleFormEntities(args);
+        });
     };
 
     svc.exportFromCart = function (args) {
@@ -242,7 +265,7 @@
     };
   }
 
-  function GalaxyDialogCtrl($uibModalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
+  function GalaxyDialogCtrl($uibModalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject, sampleIds, projectId) {
     var vm = this;
     vm.addtohistory=true;
     vm.makepairedcollection=true;
@@ -276,7 +299,7 @@
         if (openedByCart) {
           GalaxyExportService.exportFromCart({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}).then(sendSampleForm);
         } else {
-          sendSampleForm(GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}));
+          GalaxyExportService.exportFromProjSampPage({name: vm.name, email: vm.email, addtohistory: vm.addtohistory, makepairedcollection: vm.makepairedcollection, authToken: authToken, redirectURI: vm.redirectURI}, sampleIds, projectId).then(sendSampleForm);
         }
       }
     });
@@ -353,12 +376,12 @@
   }
 
   angular
-    .module('irida.cart', [])
-    .service('CartService', ['$rootScope', '$http', '$q', CartService])
+    .module('irida.cart', ["irida.notifications"])
+    .service('CartService', ['$rootScope', '$http', '$q', "notifications", CartService])
     .controller('CartSliderController', ['CartService', '$uibModal', CartSliderController])
-    .controller('GalaxyDialogCtrl', ['$uibModalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyDialogCtrl])
-    .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
+    .controller('GalaxyDialogCtrl', ['$uibModalInstance', '$timeout', '$scope', 'CartService', 'GalaxyExportService', 'openedByCart', 'multiProject', 'sampleIds', 'projectId', GalaxyDialogCtrl])
+    .service('GalaxyExportService', ['CartService', '$http', GalaxyExportService])
     .directive('cart', [CartDirective])
     .filter('cartFilter', [CartFilter])
   ;
-})(window.angular, window._, window.TL);
+})(window.angular, window._, window.jQuery, window.TL);

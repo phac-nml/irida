@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,20 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
@@ -49,28 +38,33 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
@@ -130,13 +124,13 @@ public class ProjectSamplesController {
 	 * Get the samples for a given project
 	 *
 	 * @param model
-	 *            A model for the sample list view
+	 * 		A model for the sample list view
 	 * @param principal
-	 *            The user reading the project
+	 * 		The user reading the project
 	 * @param projectId
-	 *            The ID of the project
+	 * 		The ID of the project
 	 * @param httpSession
-	 *            The user's session
+	 * 		The user's session
 	 *
 	 * @return Name of the project samples list view
 	 */
@@ -150,9 +144,16 @@ public class ProjectSamplesController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
-		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME) != null);
+		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME)
+				!= null);
 		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
 		model.addAttribute("galaxyCallback", haveGalaxyCallbackURL);
+
+		// Add the associated projects
+		List<RelatedProjectJoin> associatedJoin = projectService.getRelatedProjects(project);
+		List<Project> associated = associatedJoin.stream().map(RelatedProjectJoin::getObject)
+				.collect(Collectors.toList());
+		model.addAttribute("associatedProjects", associated);
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
 		return PROJECT_SAMPLES_PAGE;
@@ -160,11 +161,12 @@ public class ProjectSamplesController {
 
 	/**
 	 * Get the create new sample page.
-	 * 
+	 *
 	 * @param projectId
-	 *            Id for the {@link Project} the sample will belong to.
+	 * 		Id for the {@link Project} the sample will belong to.
 	 * @param model
-	 *            {@link Model}
+	 * 		{@link Model}
+	 *
 	 * @return Name of the add sample page.
 	 */
 	@RequestMapping("/projects/{projectId}/samples/new")
@@ -175,70 +177,305 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Special method to add the correct linker script name to the modal
-	 * template
+	 * Special method to add the correct linker script name to the modal template
 	 *
 	 * @param model
-	 *            {@link Model}
+	 * 		{@link Model}
 	 *
 	 * @return Location of the modal template
 	 */
-	@RequestMapping("/projects/templates/samples/linker")
-	public String getLinkerModal(Model model) {
-		model.addAttribute("scriptName", LINKER_SCRIPT);
+	@RequestMapping("/projects/template/samples/linker")
+	public String getLinkerModal(@RequestParam Long projectId,
+			@RequestParam(name = "ids[]", required = false) List<Long> ids,
+			Model model) {
+		StringBuilder cmdStringBuilder = new StringBuilder();
+		cmdStringBuilder.append(LINKER_SCRIPT);
+		cmdStringBuilder.append(" -p ").append(projectId);
+		if (ids != null && ids.size() > 0) {
+			for (Long id : ids) {
+				cmdStringBuilder.append(" -s ").append(id);
+			}
+		}
+		model.addAttribute("cmd", cmdStringBuilder.toString());
 		return PROJECT_TEMPLATE_DIR + "linker.tmpl";
+	}
+
+	/**
+	 * Creates the modal to remove samples from a project.
+	 *
+	 * @param ids
+	 * 		{@link List} of sample names to remove.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
+	@RequestMapping("/projects/templates/remove-modal")
+	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
+		List<Sample> samplesThatAreInOne = new ArrayList<>();
+		List<Sample> extraMultiple = new ArrayList<>();
+		List<Sample> extraSingle = new ArrayList<>();
+
+		for (Long id : ids) {
+			Sample sample = sampleService.read(id);
+			List<Join<Project, Sample>> join = projectService.getProjectsForSample(sample);
+
+			if (join.size() > 1) {
+				if (samplesThatAreInMultiple.size() < 10) {
+					samplesThatAreInMultiple.add(sample);
+				} else {
+					extraMultiple.add(sample);
+				}
+			} else {
+				if (samplesThatAreInOne.size() < 10) {
+					samplesThatAreInOne.add(sample);
+				} else {
+					extraSingle.add(sample);
+				}
+			}
+		}
+
+		model.addAttribute("samplesThatAreInMultiple", samplesThatAreInMultiple);
+		model.addAttribute("samplesThatAreInOne", samplesThatAreInOne);
+		model.addAttribute("extraMultiple", extraMultiple);
+		model.addAttribute("extraSingle", extraSingle);
+		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
+	}
+
+	/**
+	 * Create a modal dialog to merge samples in a project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
+	@RequestMapping("/projects/templates/merge-modal")
+	public String getMergeSamplesInProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+		model.addAttribute("samples", samples);
+		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
+	}
+
+	/**
+	 * Create a modal dialog to copy samples to another project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
+	@RequestMapping("/projects/templates/copy-modal")
+	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
+			Model model) {
+		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		model.addAttribute("projectId", projectId);
+		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
+	}
+
+	/**
+	 * Create a modal dialog to move samples to another project.
+	 *
+	 * @param ids
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return
+	 */
+	@RequestMapping("/projects/templates/move-modal")
+	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
+			Model model) {
+		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		model.addAttribute("projectId", projectId);
+		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
+	}
+
+	/**
+	 * Generate a {@link Map} of {@link Sample} to move or copy.
+	 *
+	 * @param ids
+	 * 		{@link Long} of ids for {@link Sample}
+	 *
+	 * @return
+	 */
+	public Map<String, List<Sample>> generateCopyMoveSamplesContent(List<Long> ids) {
+		Map<String, List<Sample>> model = new HashMap<>();
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+		List<Sample> extraSamples = new ArrayList<>();
+
+		// Only initially need to display the first 10 samples.
+		int end = samples.size();
+		if (end > 9) {
+			end = 9;
+			extraSamples = samples.subList(end, samples.size());
+		}
+
+		model.put("samples", samples.subList(0, end));
+		model.put("extraSamples", extraSamples);
+		return model;
+	}
+
+	/**
+	 * Get a listing of sample names not found in the current project based on a list.
+	 *
+	 * @param projectId
+	 * 		{@link Project} identifier for project
+	 * @param sampleNames
+	 * 		{@link List} of sample names
+	 * @param locale
+	 * 		{@link Locale} local of current user
+	 *
+	 * @return
+	 */
+	@RequestMapping("/projects/{projectId}/ajax/samples/missing")
+	@ResponseBody
+	public Map<String, Object> getSampleNamesNotInProject(@PathVariable Long projectId,
+			@RequestParam(value = "sampleNames[]") List<String> sampleNames, Locale locale) {
+		Project project = projectService.read(projectId);
+		List<String> missingNames = new ArrayList<>();
+
+		for (String name : sampleNames) {
+			try {
+				sampleService.getSampleBySampleName(project, name);
+			} catch (EntityNotFoundException ex) {
+				missingNames.add(name);
+			}
+		}
+
+		Map<String, Object> result = new HashMap<>();
+		result.put("missingNames", missingNames);
+		result.put("message", messageSource.getMessage("project.sample.filterByFile.error", new Object[] {
+				sampleNames.size() - missingNames.size(),
+				sampleNames.size()
+		}, locale));
+
+		return result;
 	}
 
 	/**
 	 * Get a list of all samples within the project
 	 *
 	 * @param projectId
-	 *            The id for the current {@link Project}
+	 * 		The id for the current {@link Project}
 	 *
 	 * @return A list of {@link Sample} in the current project
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId) {
-		Map<String, Object> result = new HashMap<>();
-		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
-		List<Map<String, Object>> samples = new ArrayList<>(joinList.size());
-
-		for (Join<Project, Sample> join : joinList) {
-			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join
-					.getObject().getId());
-			samples.add(sampleMap);
+	@ResponseBody
+	public DatatablesResponse<ProjectSampleModel> getProjectSamples(@PathVariable Long projectId,
+			@DatatablesParams DatatablesCriterias criterias,
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") Long minDate,
+			@RequestParam(required = false, defaultValue = "") Long endDate) {
+		List<Project> projects = new ArrayList<>();
+		// Check to see if any associated projects need to be added to the query.
+		if (!associated.isEmpty()) {
+			projects = (List<Project>) projectService.readMultiple(associated);
 		}
-		result.put("samples", samples);
+		// This project is always in the query.
+		projects.add(projectService.read(projectId));
+
+		// Convert the criterias into a more usable format.
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
+
+		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, utils.getSearch(),
+				name, utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(),
+				utils.getSortDirection(), utils.getSortProperty());
+
+		// Create a more usable Map of the sample data.
+		List<ProjectSampleModel> models = page.getContent().stream().map(ProjectSampleModel::new)
+				.collect(Collectors.toList());
+
+		DataSet<ProjectSampleModel> dataSet = new DataSet<>(models, page.getTotalElements(),
+				page.getTotalElements());
+		return DatatablesResponse.build(dataSet, criterias);
+	}
+
+	/**
+	 * Get a list of all the sample ids in a {@link Project}
+	 *
+	 * @param projectId
+	 * 		The identifier for a {@link Project}
+	 *
+	 * @return {@link List} of {@link Sample} ids
+	 */
+	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
+	@ResponseBody
+	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(value = "associatedProjectIds[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") String search,
+			@RequestParam(required = false, defaultValue = "") String minDate,
+			@RequestParam(required = false, defaultValue = "") String endDate) {
+		// Add the current project to the associatedProjectIds list.
+		associatedProjectIds.add(projectId);
+
+		// Get the actual projects.
+		List<Project> projects = new ArrayList<>();
+		projects.addAll((Collection<? extends Project>) projectService.readMultiple(associatedProjectIds));
+
+		Date firstDate = null;
+		if (!Strings.isNullOrEmpty(minDate)) {
+			firstDate = new Date(Long.parseLong(minDate));
+		}
+		Date lastDate = null;
+		if (!Strings.isNullOrEmpty(endDate)) {
+			lastDate = new Date(Long.parseLong(endDate));
+		}
+
+		final Page<ProjectSampleJoin> page = sampleService
+				.getFilteredSamplesForProjects(projects, sampleNames, name,
+						search, firstDate, lastDate, 0, Integer.MAX_VALUE,
+						Direction.ASC, "id");
+
+		// Converting everything to a string for consumption by the UI.
+		Map<String, List<String>> result = new HashMap<>();
+		for (ProjectSampleJoin join : page) {
+			String pId = join.getSubject().getId().toString();
+			if (!result.containsKey(pId)) {
+				result.put(pId, new ArrayList<String>());
+			}
+			result.get(pId).add(join.getObject().getId().toString());
+		}
+
 		return result;
 	}
 
 	/**
-	 * Search for projects available for a user to copy samples to. If the user
-	 * is an admin it will show all projects.
+	 * Search for projects available for a user to copy samples to. If the user is an admin it will show all projects.
 	 *
 	 * @param term
-	 *            A search term
+	 * 		A search term
 	 * @param pageSize
-	 *            The size of the page requests
+	 * 		The size of the page requests
 	 * @param page
-	 *            The page number (0 based)
+	 * 		The page number (0 based)
 	 * @param principal
-	 *            The logged in user.
+	 * 		The logged in user.
 	 *
-	 * @return a {@code Map<String,Object>} containing: total: total number of
-	 *         elements results: A {@code Map<Long,String>} of project IDs and
-	 *         project names.
+	 * @return a {@code Map<String,Object>} containing: total: total number of elements results: A {@code
+	 * Map<Long,String>} of project IDs and project names.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/available_projects")
 	@ResponseBody
-	public Map<String, Object> getProjectsAvailableToCopySamples(final @PathVariable Long projectId, @RequestParam String term, @RequestParam int pageSize,
+	public Map<String, Object> getProjectsAvailableToCopySamples(final @PathVariable Long projectId,
+			@RequestParam String term, @RequestParam int pageSize,
 			@RequestParam int page, Principal principal) {
 		final Project projectToExclude = projectService.read(projectId);
 		List<Map<String, String>> projectMap = new ArrayList<>();
 		Map<String, Object> response = new HashMap<>();
-		final Page<Project> projects = projectService.getUnassociatedProjects(projectToExclude, term, page, pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
-		
+		final Page<Project> projects = projectService
+				.getUnassociatedProjects(projectToExclude, term, page, pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
+
 		for (Project p : projects) {
 			Map<String, String> map = new HashMap<>();
 			map.put("identifier", p.getId().toString());
@@ -246,7 +483,6 @@ public class ProjectSamplesController {
 			projectMap.add(map);
 		}
 		response.put("total", projects.getTotalElements());
-	
 
 		response.put("projects", projectMap);
 
@@ -257,16 +493,15 @@ public class ProjectSamplesController {
 	 * Copy or move samples from one project to another
 	 *
 	 * @param projectId
-	 *            The original project id
+	 * 		The original project id
 	 * @param sampleIds
-	 *            the sample identifiers to copy
+	 * 		the sample identifiers to copy
 	 * @param newProjectId
-	 *            The new project id
-	 * @param removeFromOriginal
-	 *            true/false whether to remove the samples from the original
-	 *            project
+	 * 		The new project id
+	 * @param remove
+	 * 		true/false whether to remove the samples from the original project
 	 * @param locale
-	 *            the locale specified by the browser.
+	 * 		the locale specified by the browser.
 	 *
 	 * @return A list of warnings
 	 */
@@ -274,7 +509,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long newProjectId,
-			@RequestParam boolean removeFromOriginal, Locale locale) {
+			@RequestParam(required = false) boolean remove, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
 
@@ -286,7 +521,7 @@ public class ProjectSamplesController {
 			Sample sample = sampleService.read(sampleId);
 			try {
 
-				if (removeFromOriginal) {
+				if (remove) {
 					projectService.moveSampleBetweenProjects(originalProject, newProject, sample);
 				} else {
 					projectService.addSampleToProject(newProject, sample);
@@ -297,8 +532,8 @@ public class ProjectSamplesController {
 			} catch (EntityExistsException ex) {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
 						+ " where it already exists.");
-
-				warnings.add(messageSource.getMessage("project.samples.copy-error-message",
+				String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
+				warnings.add(messageSource.getMessage(msg,
 						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
 			}
 		}
@@ -312,7 +547,7 @@ public class ProjectSamplesController {
 		// 1. Only one sample copied
 		// 2. Only one sample moved
 		if (successful.size() == 1) {
-			if (removeFromOriginal) {
+			if (remove) {
 				response.put(
 						"message",
 						messageSource.getMessage("project.samples.move-single-success-message", new Object[] {
@@ -327,7 +562,7 @@ public class ProjectSamplesController {
 		// 3. Multiple samples copied
 		// 4. Multiple samples moved
 		else if (successful.size() > 1) {
-			if (removeFromOriginal) {
+			if (remove) {
 				response.put(
 						"message",
 						messageSource.getMessage("project.samples.move-multiple-success-message", new Object[] {
@@ -349,11 +584,11 @@ public class ProjectSamplesController {
 	 * Remove a list of samples from a a Project.
 	 *
 	 * @param projectId
-	 *            Id of the project to remove the samples from
+	 * 		Id of the project to remove the samples from
 	 * @param sampleIds
-	 *            An array of samples to remove from a project
+	 * 		An array of samples to remove from a project
 	 * @param locale
-	 *            The locale of the web browser.
+	 * 		The locale of the web browser.
 	 *
 	 * @return Map containing either success or errors.
 	 */
@@ -361,7 +596,21 @@ public class ProjectSamplesController {
 	public @ResponseBody Map<String, Object> deleteProjectSamples(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
+
+		// Creating the message before removing the samples so that if the sample is only in one project it does not get removed
+		// before its name can be used to create the message.
 		Map<String, Object> result = new HashMap<>();
+		if (sampleIds.size() == 1) {
+			Sample sample = sampleService.read(sampleIds.get(0));
+			result.put("message",
+					messageSource.getMessage("project.samples.remove-success-singular",
+							new Object[] { sample.getSampleName(), project.getLabel() }, locale));
+		} else {
+			result.put("message",
+					messageSource.getMessage("project.samples.remove-success-plural",
+							new Object[] { sampleIds.size(), project.getLabel() }, locale));
+		}
+
 		for (Long id : sampleIds) {
 			try {
 				Sample sample = sampleService.read(id);
@@ -371,30 +620,27 @@ public class ProjectSamplesController {
 			}
 
 		}
-		result.put("message",
-				messageSource.getMessage("project.samples.remove-success", new Object[] { sampleIds.size() }, locale));
 
 		result.put("result", "success");
 		return result;
 	}
 
 	/**
-	 * Merges a list of samples into either the first sample in the list with a
-	 * new name if provided, or into the selected sample based on the id.
+	 * Merges a list of samples into either the first sample in the list with a new name if provided, or into the
+	 * selected sample based on the id.
 	 *
 	 * @param projectId
-	 *            The id for the current {@link Project}
+	 * 		The id for the current {@link Project}
 	 * @param mergeSampleId
-	 *            An id for a {@link Sample} to merge the other samples into.
+	 * 		An id for a {@link Sample} to merge the other samples into.
 	 * @param sampleIds
-	 *            A list of ids for {@link Sample} to merge together.
+	 * 		A list of ids for {@link Sample} to merge together.
 	 * @param newName
-	 *            An optional new name for the {@link Sample}.
+	 * 		An optional new name for the {@link Sample}.
 	 * @param locale
-	 *            The {@link Locale} of the current user.
+	 * 		The {@link Locale} of the current user.
 	 *
-	 * @return a map of {@link Sample} properties representing the merged
-	 *         sample.
+	 * @return a map of {@link Sample} properties representing the merged sample.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
@@ -440,11 +686,11 @@ public class ProjectSamplesController {
 	 * Remove the given {@link Sample}s from the given {@link Project}
 	 *
 	 * @param projectId
-	 *            ID of the project to remove from
+	 * 		ID of the project to remove from
 	 * @param samples
-	 *            {@link Sample} ids to remove
+	 * 		{@link Sample} ids to remove
 	 * @param locale
-	 *            User's locale
+	 * 		User's locale
 	 *
 	 * @return Map with success message
 	 */
@@ -477,17 +723,18 @@ public class ProjectSamplesController {
 	 * Download a set of sequence files from selected samples within a project
 	 *
 	 * @param projectId
-	 *            Id for a {@link Project}
+	 * 		Id for a {@link Project}
 	 * @param ids
-	 *            List of ids ofr {@link Sample} within the project
+	 * 		List of ids ofr {@link Sample} within the project
 	 * @param response
-	 *            {@link HttpServletResponse}
+	 * 		{@link HttpServletResponse}
 	 *
 	 * @throws IOException
-	 *             if we fail to read a file from the filesystem.
+	 * 		if we fail to read a file from the filesystem.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/download/files")
-	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids, HttpServletResponse response)
+	public void downloadSamples(@PathVariable Long projectId, @RequestParam(value = "ids[]") List<Long> ids,
+			HttpServletResponse response)
 			throws IOException {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
@@ -547,16 +794,16 @@ public class ProjectSamplesController {
 			response.getOutputStream().close();
 		}
 	}
-	
+
 	/**
-	 * Rename a filename {@code original} and ensure it doesn't exist in
-	 * {@code usedNames}. Uses the windows style of renaming file.ext to file
-	 * (1).ext
-	 * 
+	 * Rename a filename {@code original} and ensure it doesn't exist in {@code usedNames}. Uses the windows style of
+	 * renaming file.ext to file (1).ext
+	 *
 	 * @param original
-	 *            original file name
+	 * 		original file name
 	 * @param usedNames
-	 *            names that original must not conflict with
+	 * 		names that original must not conflict with
+	 *
 	 * @return modified name
 	 */
 	private String handleDuplicate(String original, Set<String> usedNames) {
@@ -576,11 +823,11 @@ public class ProjectSamplesController {
 	 * Create a new {@link Sample} in a {@link Project}
 	 *
 	 * @param projectId
-	 *            the ID of the {@link Project} to add to
+	 * 		the ID of the {@link Project} to add to
 	 * @param sample
-	 *            The {@link Sample} to create
+	 * 		The {@link Sample} to create
 	 * @param response
-	 *            {@link HttpServletResponse}
+	 * 		{@link HttpServletResponse}
 	 *
 	 * @return Success status and id if successful, errors if not
 	 */
@@ -787,42 +1034,69 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get the Map format of {@link Sample}s to return for the project/samples
-	 * page
+	 * Export {@link Sample} from a {@link Project} as either Excel or CSV formatted.
 	 *
-	 * @param sample
-	 *            The sample to display
-	 * @param project
-	 *            The originating project
+	 * @param projectId
+	 * 		the id for the {@link Project} the current project.
 	 * @param type
-	 *            The {@link SampleType} of the sample (LOCAL, ASSOCIATED)
-	 * @param identifier
-	 *            Object to identify the {@link Sample}. Local samples will be
-	 *            the sample id, remote may be a URL
-	 * @return a formatted map of {@link Sample} objects.
+	 * 		Type of file to export, must be from {@link ReservedFormat}
+	 * @param criterias
+	 * 		{@link DatatablesCriterias}
+	 * @param sampleNames
+	 * 		{@link List} of {@link Sample} names to export. Not required.
+	 * @param associated
+	 * 		{@link List} of ids for associated {@link Project}. Not Required.
+	 * @param name
+	 * 		Filter value for filtering on the name of a {@link Sample}. Not Required.
+	 * @param minDate
+	 * 		Filter value for the minimum date the {@link Sample} was modified.  Not Required.
+	 * @param endDate
+	 * 		Filter value for the maximum date the {@link Sample} was modified.  Not Required.
+	 * @param request
+	 * 		{@link HttpServletRequest}
+	 * @param response
+	 * 		{@link HttpServletResponse}
 	 */
-	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Object identifier) {
-		Map<String, Object> sampleMap = new HashMap<>();
-		sampleMap.put("sample", sample);
-		sampleMap.put("project", project);
-		sampleMap.put("sampleType", type);
-		sampleMap.put("identifier", identifier);
-		String href = linkTo(
-			methodOn(RESTProjectSamplesController.class).getProjectSample(
-					project.getId(), sample.getId()
-				)
-			).withSelfRel().getHref();
+	@RequestMapping(value = "/projects/{projectId}/samples/export")
+	public void exportProjectSamplesTable(
+			@PathVariable Long projectId,
+			@RequestParam(value = "dtf") String type,
+			@DatatablesParams DatatablesCriterias criterias,
+			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(required = false, defaultValue = "") List<Long> associated,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") Long minDate,
+			@RequestParam(required = false, defaultValue = "") Long endDate,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			Locale locale) {
 
-		sampleMap.put("href", href);
-		return sampleMap;
+		Project project = projectService.read(projectId);
+		List<Project> projects = new ArrayList<>();
+		List<Sample> samples = new ArrayList<>();
+
+		if (!associated.isEmpty()) {
+			projects = (List<Project>) projectService.readMultiple(associated);
+		}
+		projects.add(project);
+
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
+
+		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(),
+				utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE,
+				utils.getSortDirection(), utils.getSortProperty());
+
+		if (page != null) {
+			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
+			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);
+		}
 	}
 
 	/**
-	 * Changes a {@link ConstraintViolationException} to a usable map of strings
-	 * for displaing in the UI.
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
 	 *
 	 * @param e
-	 *            {@link ConstraintViolationException} for the form submitted.
+	 * 		{@link ConstraintViolationException} for the form submitted.
 	 *
 	 * @return Map of string {fieldName, error}
 	 */
@@ -837,16 +1111,14 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Type of sample being displayed in the project/samples page. This will be
-	 * used to determine how to link to resources and add them to the cart.
+	 * Type of sample being displayed in the project/samples page. This will be used to determine how to link to
+	 * resources and add them to the cart.
 	 */
 	public enum SampleType {
 		// samples in the local project
 		LOCAL,
 		// samples in associated projects
-		ASSOCIATED,
-		// samples in remote projects
-		REMOTE;
+		ASSOCIATED
 
 	}
 

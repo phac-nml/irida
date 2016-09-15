@@ -78,6 +78,8 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * A specialized service layer for projects.
  * 
@@ -87,7 +89,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 	// settings that can be updated locally for a remote project
 	public List<String> VALID_LOCAL_SETTINGS = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus");
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
 	private final ProjectUserJoinRepository pujRepository;
@@ -116,6 +118,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.ugpjRepository = ugpjRepository;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadProject')")
+	public Iterable<Project> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
 	}
 
 	/**
@@ -198,8 +210,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#object, 'isProjectOwner')")
 	public Project update(Project object) {
 		return super.update(object);
-	}	
-	
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -612,7 +624,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public List<Project> getProjectsWithRemoteSyncStatus(SyncStatus syncStatus) {
 		return projectRepository.getProjectsWithRemoteSyncStatus(syncStatus);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -621,7 +633,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public List<Project> getRemoteProjects(){
 		return projectRepository.getRemoteProjects();
 	}
-	
+
 	/**
 	 * If the sort properties are empty, sort by default on the CREATED_DATE
 	 * property.

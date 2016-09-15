@@ -7,7 +7,18 @@
 	</div>
 	<div class="modal-body">
 		<p th:text="#{ngs.linker.details}"></p>
-		<pre id="linkerCmd"><span th:text="${scriptName}"></span> -p {{lCtrl.projectId}}<span ng-if="!lCtrl.areAllSelected()"><span ng-repeat="s in lCtrl.samples"> -s {{s.identifier}}</span></span></pre>
+		<div class="input-group">
+			<input id="linker-cmd" class="form-control" type="text" th:value="${cmd}"/>
+			<span class="input-group-btn">
+		        <button class="btn btn-default clipboard-btn"
+		                type="button"
+		                data-clipboard-target="#linker-cmd"
+		                data:uib-tooltip="#{form.clipboard}"
+		                tooltip-placement="bottom">
+			        <fa:icon type="clipboard" fixed="fixed" />
+		        </button>
+		      </span>
+		</div>
 	</div>
 	<div class="modal-footer">
 		<button id="linkerCloseBtn" class="btn btn-primary" ng-click="lCtrl.close()" th:text="#{form.btn.close}">Close</button>

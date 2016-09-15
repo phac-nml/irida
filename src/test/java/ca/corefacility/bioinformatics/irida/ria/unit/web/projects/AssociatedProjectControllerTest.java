@@ -18,29 +18,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
@@ -48,6 +39,9 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 public class AssociatedProjectControllerTest {
 	private static final String USER_NAME = "testme";
@@ -348,85 +342,4 @@ public class AssociatedProjectControllerTest {
 		verify(remoteRelatedProjectService).delete(rrp.getId());
 	}
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetSamplesForAssociatedProject() {
-		Long projectId = 1L;
-		Project project = new Project();
-
-		Project allowedProject = new Project("allowed");
-		allowedProject.setId(2L);
-		Project notAllowedProject = new Project("not allowed");
-		notAllowedProject.setId(3L);
-
-		when(projectService.read(projectId)).thenReturn(project);
-
-		when(projectService.getRelatedProjects(project)).thenReturn(
-				Lists.newArrayList(new RelatedProjectJoin(project, allowedProject), new RelatedProjectJoin(project,
-						notAllowedProject)));
-
-		Sample sample = new Sample("test");
-		sample.setId(1L);
-		when(sampleService.getSamplesForProject(allowedProject)).thenReturn(
-				Lists.newArrayList(new ProjectSampleJoin(allowedProject, sample)));
-
-		Map<String, Object> associatedSamplesForProject = controller.getAssociatedSamplesForProject(projectId);
-
-		assertTrue("should have samples", associatedSamplesForProject.containsKey("samples"));
-
-		List<Object> object = (List<Object>) associatedSamplesForProject.get("samples");
-		assertEquals("should have 1 sample", 1, object.size());
-
-		Map<String, Object> sampleMap = (Map<String, Object>) object.iterator().next();
-		assertEquals("sample should be equal", sample, sampleMap.get("sample"));
-		assertEquals("project should be equal", allowedProject, sampleMap.get("project"));
-	}
-
-	@Test
-	public void testGetRemoteAssociatedSamplesForProject() {
-		Long projectId = 1L;
-		Project project = new Project();
-
-		RemoteRelatedProject goodProject = new RemoteRelatedProject(project, null, "http://good");
-		RemoteRelatedProject noTokenProject = new RemoteRelatedProject(project, null, "http://notoken");
-		RemoteRelatedProject forbiddenProject = new RemoteRelatedProject(project, null, "http://forbidden");
-		List<RemoteRelatedProject> remoteRelatedProjects = Lists.newArrayList(goodProject, noTokenProject,
-				forbiddenProject);
-
-		Sample sample1 = new Sample("sample1");
-		sample1.add(new Link("http://sample1",Link.REL_SELF));
-		sample1.setId(1L);
-		Sample sample2 = new Sample("sample2");
-		sample2.add(new Link("http://sample2",Link.REL_SELF));
-		sample2.setId(2L);
-		List<Sample> samples = Lists.newArrayList(sample1, sample2);
-
-		Project remoteProject = new Project("remote project");
-		remoteProject.setId(1L);
-
-		when(projectService.read(projectId)).thenReturn(project);
-
-		when(remoteRelatedProjectService.getRemoteProjectsForProject(project)).thenReturn(remoteRelatedProjects);
-
-		when(projectRemoteService.read(goodProject)).thenReturn(remoteProject);
-		when(projectRemoteService.read(noTokenProject)).thenThrow(new IridaOAuthException("bad token", null));
-		when(projectRemoteService.read(forbiddenProject)).thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN));
-
-		when(sampleRemoteService.getSamplesForProject(remoteProject)).thenReturn(samples);
-		
-		Map<String, Object> remoteAssociatedSamplesForProject = controller
-				.getRemoteAssociatedSamplesForProject(projectId);
-
-		assertTrue(remoteAssociatedSamplesForProject.containsKey("samples"));
-
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> sampleMap = (List<Map<String, Object>>) remoteAssociatedSamplesForProject
-				.get("samples");
-
-		for (Map<String, Object> sample : sampleMap) {
-			assertEquals(ProjectSamplesController.SampleType.REMOTE, sample.get("sampleType"));
-			assertEquals(remoteProject, sample.get("project"));
-		}
-
-	}
 }
