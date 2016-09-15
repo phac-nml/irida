@@ -19,6 +19,11 @@ public class FontAwesome {
 	 */
 	private static final String ICON_BASE = "fa fa-";
 	/*
+	Attribute for adding items to the caart
+	 */
+	private static final String CART_ADD_ATTRIBUTE = "cart-plus";
+	private static final String CART_ADD_ICON = "cart-plus";
+	/*
 	Attribute to remove an item from a list.
 	 */
 	private static final String REMOVE_ATTRIBUTE = "remove";
@@ -43,6 +48,11 @@ public class FontAwesome {
 	 */
 	private static final String COPY_ATTRIBUTE = "copy";
 	private static final String COPY_ICON = "copy";
+	/*
+	Attribute to be used when the move action is required
+	 */
+	private static final String MOVE_ATTRIBUTE = "move";
+	private static final String MOVE_ICON = "truck";
 	/*
 	Attribute to be used in a warning message.
 	 */
@@ -83,13 +93,13 @@ public class FontAwesome {
 	 */
 	private static final String PIPELINE_TYPE_ATTRIBUTE = "pipelineType";
 	private static final String PIPELINE_TYPE_ICON = "cogs";
-	
+
 	/*
 	Attribute for pipeline types
 	 */
 	private static final String PIPELINE_VERSION_ATTRIBUTE = "pipelineVersion";
 	private static final String PIPELINE_VERSION_ICON = "code-fork";
-	
+
 	/*
 	Attribute for pipeline state
 	 */
@@ -100,10 +110,10 @@ public class FontAwesome {
 	 */
 	private static final String FILE_ATTRIBUTE = "file";
 	private static final String FILE_ICON = "file-o";
-	
+
 	private static final String PROJECT_ATTRIBUTE = "project";
 	private static final String PROJECT_ICON = "folder";
-	
+
 	/*
 	Attribute to display terminal icon
 	 */
@@ -128,7 +138,7 @@ public class FontAwesome {
 	 */
 	private static final String USER_ATTRIBUTE = "user";
 	private static final String USER_ICON = "user";
-	
+
 	/*
 	 * Attribute for a group icon
 	 */
@@ -158,18 +168,36 @@ public class FontAwesome {
 	 */
 	public static final String EXTERNAL_LINK_ATTRIBUTE = "external-link";
 	public static final String EXTERNAL_LINK_ICON = "external-link";
-	
+
 	public static final String ALIGN_ATTRIBUTE = "align";
 	public static final String ALIGN_ICON = "align-right";
-	
+
 	/*
 	 * Attribute to apply to all
 	 */
 	public static final String APPLY_ALL_ATTRIBUTE = "apply-all";
 	public static final String APPLY_ALL_ICON = "sort";
-	
+
 	public static final String REMOTE_ATTRIBUTE = "remote";
 	public static final String REMOTE_ICON = "exchange";
+
+	/*
+	 * Attribute for cloud upload
+	 */
+	private static final String CLOUD_ATTRIBUTE = "cloud";
+	private static final String CLOUD_ICON = "cloud";
+
+	/*
+	 * Attribute for an dropdown carets
+	 */
+	private static final String CARET_DOWN_ATTRIBUTE = "caret-down";
+	private static final String CARET_DOWN_ICON = "caret-down";
+
+	/*
+	 * Attribute for creating a new item
+	 */
+	private static final String CREATE_ATTRIBUTE = "create";
+	private static final String CREATE_ICON = "plus";
 
 	/*
 	 * Attribute for next and previous buttons.
@@ -178,6 +206,18 @@ public class FontAwesome {
 	public static final String NEXT_ICON = "chevron-circle-right";
 	public static final String PREVIOUS_ATTRIBUTE = "prev";
 	public static final String PREVIOUS_ICON = "chevron-circle-left";
+
+	/**
+	 * Attribute for copying to clipboard
+	 */
+	public static final String CLIPBOARD_ATTRIBUTE = "clipboard";
+	public static final String CLIPBOARD_ICON = "clipboard";
+
+	/**
+	 * Attribute for exporting to excel
+	 */
+	public static final String EXCEL_ATTRIBUTE = "excel";
+	public static final String EXCEL_ICON = "file-excel-o";
 
 	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
@@ -190,6 +230,7 @@ public class FontAwesome {
 	 */
 	// @formatter:off
 	private static final Map<String, String> FA_ATTRIBUTE_TO_CLASS_MAP = new ImmutableMap.Builder<String, String>()
+			.put(CART_ADD_ATTRIBUTE, CART_ADD_ICON)
 			.put(REMOVE_ATTRIBUTE, REMOVE_ICON)
 			.put(DELETE_ATTRIBUTE, DELETE_ICON)
 			.put(SAVE_ATTRIBUTE, SAVE_ICON)
@@ -206,6 +247,7 @@ public class FontAwesome {
 			.put(PIPELINE_STATE_ATTRIBUTE, PIPELINE_STATE_ICON)
 			.put(FILE_ATTRIBUTE, FILE_ICON)
 			.put(COPY_ATTRIBUTE, COPY_ICON)
+			.put(MOVE_ATTRIBUTE, MOVE_ICON)
 			.put(TERMINAL_ATTRIBUTE, TERMINAL_ICON)
 			.put(COLLAPSE_SHOW_ATTRIBUTE, COLLAPSE_SHOW_ICON)
 			.put(COLLAPSE_CLOSE_ATTRIBUTE, COLLAPSE_CLOSE_ICON)
@@ -216,12 +258,17 @@ public class FontAwesome {
 			.put(EMAIL_ATTRIBUTE, EMAIL_ICON)
 			.put(EXTERNAL_LINK_ATTRIBUTE, EXTERNAL_LINK_ICON)
 			.put(PROJECT_ATTRIBUTE,PROJECT_ICON)
+			.put(CLOUD_ATTRIBUTE, CLOUD_ICON)
+			.put(CARET_DOWN_ATTRIBUTE, CARET_DOWN_ICON)
 			.put(NEXT_ATTRIBUTE, NEXT_ICON)
 			.put(PREVIOUS_ATTRIBUTE, PREVIOUS_ICON)
 			.put(GROUP_ATTRIBUTE, GROUP_ICON)
 			.put(ALIGN_ATTRIBUTE, ALIGN_ICON)
+			.put(CREATE_ATTRIBUTE, CREATE_ICON)
 			.put(APPLY_ALL_ATTRIBUTE, APPLY_ALL_ICON)
+			.put(CLIPBOARD_ATTRIBUTE, CLIPBOARD_ICON)
 			.put(REMOTE_ATTRIBUTE, REMOTE_ICON)
+			.put(EXCEL_ATTRIBUTE, EXCEL_ICON)
 			.build();
 	// @formatter:on
 

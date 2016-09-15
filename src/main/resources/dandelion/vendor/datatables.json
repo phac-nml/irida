@@ -15,6 +15,13 @@
       "locations": {
         "webapp": "/resources/bower_components/datatables/media/css/jquery.dataTables.css"
       }
+    },
+    {
+      "name": "irida.datatables.custom",
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/components/datatables-custom.css"
+      }
     }
   ]
 }

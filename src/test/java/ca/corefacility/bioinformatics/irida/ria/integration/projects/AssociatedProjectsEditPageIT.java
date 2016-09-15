@@ -74,17 +74,6 @@ public class AssociatedProjectsEditPageIT extends AbstractIridaUIITChromeDriver 
 		assertFalse("Project should not be associated", isProjectAssociated(2L));
 	}
 
-	@Test
-	public void testAddRemoteAssociatedProject() {
-		RemoteApiUtilities.addRemoteApi(driver());
-		page.goTo(projectId);
-		page.viewRemoteTab();
-		page.clickAssociatedButton(4L);
-		page.checkNotyStatus("success");
-		assertTrue("Project should be associated", isProjectAssociated(4L));
-
-	}
-
 	private boolean isProjectAssociated(Long projectId) {
 		List<String> projectsDiv = page.getAssociatedProjects();
 

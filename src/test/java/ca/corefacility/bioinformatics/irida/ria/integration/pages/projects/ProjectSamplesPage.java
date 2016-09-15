@@ -1,23 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
-import com.google.common.collect.Ordering;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -25,361 +20,423 @@ import java.util.stream.Collectors;
  * </p>
  *
  */
-public class ProjectSamplesPage extends AbstractPage {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPage.class);
-	private static final String RELATIVE_URL = "projects/1";
-	private static final String ALT_RELATIVE_URL = "projects/id";
-	private PageUtilities pageUtilities;
+public class ProjectSamplesPage extends ProjectPageBase {
+	private static final String RELATIVE_URL = "projects/";
+
+	@FindBy(tagName = "h1")
+	private WebElement pageHeader;
+
+	@FindBy(id = "samplesTable")
+	private WebElement samplesTable;
+
+	@FindBy(id = "processingIndicator")
+	private WebElement tableProcessingIndicator;
+
+	@FindBy(id = "associated-btn")
+	private WebElement associatedProjectMenuBtn;
+
+	@FindBy(css = "#associated-dropdown")
+	private WebElement associatedDropdown;
+
+	@FindBy(className = "associated-cb")
+	private List<WebElement> associatedCbs;
+
+	@FindBy(className = "selected-counts")
+	private WebElement selectedCountInfo;
+
+	@FindBy(id = "samplesTable_info")
+	private WebElement samplesTableInfo;
+
+	@FindBy(css = "tbody tr")
+	private List<WebElement> tableRows;
+
+	@FindBy(id = "sample-tools")
+	private WebElement toolsDropdownBtn;
+
+	@FindBy(id = "mergeBtn")
+	private WebElement mergeBtn;
+
+	@FindBy(id = "copyBtn")
+	private WebElement copyBtn;
+
+	@FindBy(id = "moveBtn")
+	private WebElement moveBtn;
+
+	@FindBy(id = "removeBtn")
+	private WebElement removeBtn;
+
+	@FindBy(id = "cart-add-btn")
+	private WebElement addToCartBtn;
+
+	@FindBy(id = "remove-samples-modal")
+	private WebElement removeModal;
+
+	@FindBy(id = "removeBtnOk")
+	private WebElement removeBtnOK;
+
+	@FindBy(className = "merge-modal")
+	private WebElement mergeModal;
+
+	@FindBy(id = "confirmMergeBtn")
+	private WebElement mergeBtnOK;
+
+	@FindBy(id = "newName")
+	private WebElement newMergeNameInput;
+
+	@FindBy(id = "copy-samples-modal")
+	private WebElement copySamplesModal;
+
+	@FindBy(id = "confirm-copy-samples")
+	private WebElement copyModalConfirmBtn;
+
+	@FindBy(id = "projectsSelect")
+	private WebElement projectsSelectInput;
+
+	@FindBy(id = "confirm-copy-samples")
+	private WebElement copyOkBtn;
+
+	@FindBy(className = "select2-chosen")
+	private WebElement select2Opener;
+
+	@FindBy(className = "select2-input")
+	private WebElement select2Input;
+
+	@FindBy(className = "select2-results")
+	private WebElement select2Results;
+
+	@FindBy(id = "filterByPropertyBtn")
+	private WebElement filterByPropertyBtn;
+
+	@FindBy(className = "filter-modal")
+	private WebElement filterModal;
+
+	@FindBy(id = "clearFilterBtn")
+	private WebElement clearFilterBtn;
+
+	// This will be 'Previous', 1, 2, ..., 'Next'
+	@FindBy(css = ".pagination li")
+	private List<WebElement> pagination;
+
+	// Samples filter date range picker
+	@FindBy(id = "daterange")
+	private WebElement dateRangeInput;
+
+	@FindBy(name = "daterangepicker_start")
+	private WebElement daterangepickerStart;
+
+	@FindBy(name = "daterangepicker_end")
+	private WebElement daterangepickerEnd;
+
+	@FindBy(css = "div.ranges li")
+	private List<WebElement> dateRanges;
+
+	@FindBy(css = ".range_inputs .applyBtn")
+	private WebElement applyDateRangeBtn;
+
+	@FindBy(id = "selection-main")
+	private WebElement selectionMain;
+
+	@FindBy(id = "selection-toggle")
+	private WebElement selectionToggle;
+
+	@FindBy(id = "selection-all")
+	private WebElement selectionAll;
+
+	@FindBy(id = "selection-none")
+	private WebElement selectionNone;
+
+	@FindBy(id = "selection-page-all")
+	private WebElement selectionPageAll;
+
+	@FindBy(id = "selection-page-none")
+	private WebElement selectionPageNone;
+
+	@FindBy(id = "export-samples-btn")
+	private WebElement exportSamplesDropdownBtn;
+
+	@FindBy(id = "download-btn")
+	private WebElement downloadBtn;
+
+	@FindBy(id = "ncbi-btn")
+	private WebElement ncbiBtn;
+
+	@FindBy(css = "#linker-btn a")
+	private WebElement linkerBtn;
+
+	@FindBy(className = "linker-modal")
+	private WebElement linkerModal;
+
+	@FindBy(id = "linker-cmd")
+	private WebElement linkerCmd;
+
+	@FindBy(id = "linkerCloseBtn")
+	private WebElement linkerCloseBtn;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
-		this.pageUtilities = new PageUtilities(driver);
 	}
 
-	public void goToPage() {
-		get(driver, RELATIVE_URL);
-		waitForElementVisible(By.cssSelector("#samplesTable tbody"));
+	public static ProjectSamplesPage initPage(WebDriver driver) {
+		return PageFactory.initElements(driver, ProjectSamplesPage.class);
 	}
 
-	public void goToPage(String projectId) {
-		get(driver, ALT_RELATIVE_URL.replace("id", projectId));
+	public static ProjectSamplesPage gotToPage(WebDriver driver, int projectId) {
+		get(driver, RELATIVE_URL + projectId);
+		return PageFactory.initElements(driver, ProjectSamplesPage.class);
 	}
 
-	/**
-	 * The the h1 heading for the page
-	 *
-	 * @return String value from within the h1 tag
-	 */
 	public String getTitle() {
-		return driver.findElement(By.tagName("h1")).getText();
+		return pageHeader.getText();
 	}
 
-	public String getActivePage() {
-		return driver.findElement(By.cssSelector(".nav-tabs li.active a")).getText();
+	public String getTableInfo() {
+		return samplesTableInfo.getText();
 	}
 
-	public int getNumberOfSamplesDisplayed() {
-		return driver.findElements(By.className("sample-row")).size();
+	public int getNumberProjectsDisplayed() {
+		return tableRows.size();
 	}
 
-	public int getNumberOfRemoteSamplesDisplayed() {
-		return driver.findElements(By.cssSelector(".sample-row.remote-sample")).size();
+	public void openToolsDropDown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		toolsDropdownBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("mergeBtn")));
 	}
 
-	public int getGetSelectedPageNumber() {
-		return Integer.parseInt(driver.findElement(By.cssSelector(".pagination > .active > a")).getText());
+	public void openExportDropdown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		exportSamplesDropdownBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
 	}
 
-	public void selectPage(int pageNum) {
-		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
-		// Remove directions links if there are any
-		for (WebElement link : links) {
-			if (link.findElement(By.tagName("a")).getText().equals("1")) {
-				break;
-			} else {
-				pageNum++;
-			}
-		}
-		// Since paging has an offset of 1
-		pageNum--;
-		clickAndWait(links.get(pageNum));
-	}
-	
-
-	/**
-	 * Convenience method to make sure that we wait until something has finished
-	 * happening after clicking before proceeding to the next step.
-	 * 
-	 * @param el
-	 *            the element to click.
-	 */
-	public void clickAndWait(final WebElement el) {
-		el.findElement(By.tagName("a")).click();
-
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver input) {
-				return el.getAttribute("class").contains("active");
-			}
-		});
-	}
-	
-	private void clickNavigationButton(final String buttonText) {
-		final WebElement currentlyActive = driver.findElement(By.cssSelector(".pagination-page.active"));
-		final List<WebElement> navigationButtons = driver.findElements(By.cssSelector(".pagination li a"));
-		
-		for (final WebElement el : navigationButtons) {
-			if (el.getText().equals(buttonText)) {
-				el.click();
-				break;
-			}
-		}
-		
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver input) {
-				return !currentlyActive.getAttribute("class").contains("active");
-			}
-		});
+	public boolean isDownloadBtnEnabled() {
+		return !downloadBtn.getAttribute("class").contains("disabled");
 	}
 
-	public void clickPreviousPageButton() {
-		clickNavigationButton("Previous");
-	}
-	
-	public void clickFirstPageButton() {
-		clickNavigationButton("First");
+	public boolean isNcbiBtnEnabled() {
+		return !ncbiBtn.getAttribute("class").contains("disabled");
 	}
 
-	public void clickNextPageButton() {
-		clickNavigationButton("Next");
+	public boolean isMergeBtnEnabled() {
+		return !mergeBtn.getAttribute("class").contains("disabled");
 	}
 
-	public void clickLastPageButton() {
-		clickNavigationButton("Last");
+	public boolean isCopyBtnEnabled() {
+		return !copyBtn.getAttribute("class").contains("disabled");
 	}
 
-	public boolean isPreviousButtonEnabled() {
-		return !driver.findElements(By.cssSelector(".pagination li")).get(1).getAttribute("class").contains("disabled");
+	public boolean isMoveBtnEnabled() {
+		return !moveBtn.getAttribute("class").contains("disabled");
 	}
 
-	public boolean isFirstButtonEnabled() {
-		return !driver.findElements(By.cssSelector(".pagination li")).get(0).getAttribute("class").contains("disabled");
+	public boolean isRemoveBtnEnabled() {
+		return !moveBtn.getAttribute("class").contains("disabled");
 	}
 
-	public boolean isNextButtonEnabled() {
-		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
-		return !links.get(links.size() - 2).getAttribute("class").contains("disabled");
+	// PAGINATION
+	public boolean isPreviousBtnEnabled() {
+		return !pagination.get(0).getAttribute("class").contains("disabled");
 	}
 
-	public boolean isLastButtonEnabled() {
-		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
-		return !links.get(links.size() - 1).getAttribute("class").contains("disabled");
+	public boolean isNextBtnEnabled() {
+		return !pagination.get(pagination.size() - 1).getAttribute("class").contains("disabled");
 	}
 
-	public int getNumberOfSamplesSelected() {
-		return driver.findElements(By.cssSelector(".sample-select:checked")).size();
+	public int getPaginationCount() {
+		// -2 because we ignore the previous and next buttons
+		return pagination.size() - 2;
 	}
 
-	public int getTotalNumberOfSamplesSelected() {
-		return Integer.parseInt(driver.findElement(By.id("selected-count")).getText());
+	public String getSelectedInfoText() {
+		return selectedCountInfo.getText();
 	}
 
-	public void selectSampleByRow(int row) {
-		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
-		inputs.get(row).click();
+	// Actions
+	public void selectPaginationPage(int page) {
+		pagination.get(page).findElement(By.cssSelector("a")).click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".dataTables_processing")));
 	}
-	
-	public void selectSampleByClass(String sampleClass){
-		List<WebElement> findElements = driver.findElements(By.cssSelector(".sample-row."+sampleClass));
-		WebElement checkbox = findElements.iterator().next().findElement((By.className("sample-select")));
+
+	public void selectSample(int row) {
+		// Need to get the anything but the first column as that is a link to the sample!
+		WebElement checkbox = tableRows.get(row).findElements(By.cssSelector("td")).get(2);
 		checkbox.click();
 	}
 
-	public boolean isRowSelected(int row) {
-		List<WebElement> rows = driver.findElements(By.className("sample-row"));
-		return rows.get(row).getAttribute("class").contains("selected");
+	public void selectSampleWithShift(int row) {
+		Actions actions = new Actions(driver);
+		actions.keyDown(Keys.SHIFT).click(tableRows.get(row)).perform();
 	}
 
-	public void openFilesView(int row) {
-		WebElement sampleRow = driver.findElements(By.className("sample-row")).get(row);
-		sampleRow.findElement(By.className("view-files")).click();
-		pageUtilities.waitForElementVisible(By.className("details-row"));
+	public void addSelectedSamplesToCart() {
+		addToCartBtn.click();
+		// Make sure the item were added to the cart.
+		waitForElementVisible(
+				By.cssSelector("#cart-count"));
 	}
 
-	public int getNumberOfFiles() {
-		return driver.findElements(By.className("file-item")).size();
+	public void mergeSamplesWithOriginalName() {
+		toolsDropdownBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
+		mergeBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(mergeModal));
+		mergeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
 
-	public boolean isSampleIndeterminate(int row) {
-		try {
-			List<WebElement> inputs = driver.findElements(By.className("sample-select"));
-			inputs.get(row).getAttribute("indeterminate");
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
+	private WebDriverWait openToolsDropdownAndWait() {
+		toolsDropdownBtn.click();
+		return new WebDriverWait(driver, 10);
 	}
 
-	public boolean isBtnEnabled(String id) {
-		return driver.findElement(By.id(id)).isEnabled();
+	public void removeSamples() {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.elementToBeClickable(removeBtn));
+		removeBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(removeModal));
+		removeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-modal")));
 	}
 
-	public void clickBtn(String id) {
-		driver.findElement(By.id(id)).click();
-		waitForTime(700);
+	public void mergeSamplesWithNewName(String newName) {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
+		mergeBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(mergeModal));
+		newMergeNameInput.sendKeys(newName);
+		// This wait is for 350 ms because there is a debounce of 300 ms on the input field in which
+		// time the AngularJS model on the input does not update - prevents flickering of input error warnings.
+		waitForTime(350);
+		mergeBtnOK.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
 
-	public boolean isItemVisible(String id) {
-		try {
-			return driver.findElement(By.id(id)).isDisplayed();
-		} catch (Exception e) {
-			logger.info("No element with id of: " + id);
-			return false;
-		}
+	public void copySamples(String project) {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.visibilityOf(copyBtn));
+		copyBtn.click();
+		copyMoveSamples(project);
 	}
 
-	public boolean checkSuccessNotification() {
-		return pageUtilities.checkSuccessNotification();
-	}
-
-	public boolean checkWarningNotification() {
-		return pageUtilities.checkWarningNotification();
-	}
-	
-	public int getTotalSelectedSamplesCount() {
-		return Integer.parseInt(driver.findElement(By.id("selected-count")).getText());
-	}
-
-	public void enterNewMergeSampleName(String name) {
-		WebElement input = driver.findElement(By.id("newName"));
-		input.clear();
-		input.sendKeys(name);
-		waitForTime(700);
-	}
-
-	public String getSampleNameByRow(int row) {
-		List<WebElement> rows = driver.findElements(By.className("sample-row"));
-		return rows.get(row).findElement(By.className("sample-name")).getText();
-	}
-
-	public void selectProjectByName(String name, String submitBtn) {
-		WebElement input = openSelect2List(driver);
-		input.sendKeys(name);
-		waitForTime(600);
-		input.sendKeys(Keys.ENTER);
-	}
-
-	public String getLinkerScriptText() {
-		return driver.findElement(By.id("linkerCmd")).getText();
-	}
-
-	// Table sorting
-	public void sortTableByName() {
-		driver.findElement(By.cssSelector("#sortName a")).click();
-	}
-
-	public void sortTableByCreatedDate() {
-		driver.findElement(By.cssSelector("#sortCreatedDate a")).click();
-	}
-
-	public boolean isTableSortedAscByCreationDate() {
-		List<WebElement> elms = driver.findElements(By.className("createdDate"));
-		List<String> dates = elms.stream().map(element -> element.getAttribute("data-date"))
-				.collect(Collectors.toList());
-		return Ordering.natural().isOrdered(dates);
-	}
-
-	public boolean isTableSortedAscBySampleName() {
-		List<WebElement> elms = driver.findElements(By.cssSelector(".sample-name a"));
-		List<String> names = elms.stream().map(WebElement::getText).collect(Collectors.toList());
-		return Ordering.natural().isOrdered(names);
-	}
-
-	public boolean isTableSortedDescByCreationDate() {
-		List<WebElement> elms = driver.findElements(By.className("createdDate"));
-		List<String> dates = elms.stream().map(element -> element.getAttribute("data-date"))
-				.collect(Collectors.toList());
-		return Ordering.natural().reverse().isOrdered(dates);
-	}
-
-	public boolean isTableSortedDescBySampleName() {
-		List<WebElement> elms = driver.findElements(By.className("sample-name"));
-		List<String> names = elms.stream().map(element -> element.getText()).collect(Collectors.toList());
-		return Ordering.natural().reverse().isOrdered(names);
-	}
-
-	public void enableAssociatedProjects() throws InterruptedException {
-		driver.findElement(By.id("displayBtn")).click();
-		driver.findElement(By.id("displayAssociated")).click();
-		waitForTime(500);
-	}
-
-	public void enableRemoteProjects() throws InterruptedException {
-		driver.findElement(By.id("displayBtn")).click();
-		driver.findElement(By.id("displayRemote")).click();
-		waitForTime(500);
-	}
-
-	// Filtering
-	public int getTotalSampleCount() {
-		Select select = new Select(driver.findElement(By.id("count")));
-		select.selectByValue("All");
-		return driver.findElements(By.cssSelector("tbody tr")).size();
-	}
-
-	public int getFilteredSampleCount() {
-		return Integer.parseInt(driver.findElement(By.id("samples-filtered")).getText());
+	public void moveSamples(String projectNum) {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.visibilityOf(moveBtn));
+		moveBtn.click();
+		copyMoveSamples(projectNum);
 	}
 
 	public void filterByName(String name) {
-		WebElement input = driver.findElement(By.id("sample-name-filter"));
-		input.clear();
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until(ExpectedConditions.invisibilityOfElementLocated(By.id("samples-filtered")));
-		input.sendKeys(name);
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until(ExpectedConditions.visibilityOfElementLocated(By.id("samples-filtered")));
-	}
-	
-	public void clearFilterByName() {
-		WebElement input = driver.findElement(By.id("sample-name-filter"));
-		input.clear();
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until(ExpectedConditions.invisibilityOfElementLocated(By.id("samples-filtered")));
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		filterByPropertyBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(filterModal));
+		WebElement nameInput = filterModal.findElement(By.id("name"));
+		nameInput.clear();
+		nameInput.sendKeys(name);
+		filterModal.findElement(By.id("doFilterBtn")).click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
 	}
 
-	public void filterByOrganism(String organism) {
-		WebElement input = driver.findElement(By.id("sample-organism-filter"));
-		input.clear();
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until(ExpectedConditions.invisibilityOfElementLocated(By.id("samples-filtered")));
-		input.sendKeys(organism);
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until(ExpectedConditions.visibilityOfElementLocated(By.id("samples-filtered")));
+	public void filterByDateRange(String start, String end) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		filterByPropertyBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(filterModal));
+		dateRangeInput.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".daterangepicker.show-calendar")));
+
+		Actions builder = new Actions(driver);
+		builder.moveToElement(daterangepickerStart, 100, 0).click().build().perform();
+
+		daterangepickerStart.clear();
+		daterangepickerStart.sendKeys(start);
+
+		builder.moveToElement(daterangepickerEnd, 100, 10).click().build().perform();
+		daterangepickerEnd.clear();
+		daterangepickerEnd.sendKeys(end);
+		applyDateRangeBtn.click();
+
+		filterModal.findElement(By.id("doFilterBtn")).click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
 	}
 
-	public void selectPageSize(String count) {
-		List<WebElement> options = driver.findElements(By.cssSelector("#count option"));
-		for (WebElement el : options) {
-			if (el.getAttribute("value").equals(count)) {
-				el.click();
-				break;
-			}
-		}
+	public void clearFilter() {
+		clearFilterBtn.click();
 	}
 
-	public void filterByFile() {
-		WebElement uploadBtn = driver.findElement(By.id("fileFilter"));
-		Path path = Paths.get("src/test/resources/files/sampleNamesForFilter.txt");
-		uploadBtn.sendKeys(path.toAbsolutePath().toString());
-		waitForTime(100);
+	public List<String> getSampleNamesOnPage() {
+		List<WebElement> sampleTDs = driver.findElements(By.className("sample-label"));
+		List<String> names = new ArrayList<>();
+		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
+		return names;
 	}
 
-	// Cart
-	public void addSamplesToGlobalCart() {
-		driver.findElement(By.id("cart-add-btn")).click();
+	public void displayAssociatedProject() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+
+		associatedProjectMenuBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(associatedDropdown));
+		associatedCbs.get(0).click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("processingIndicator")));
+	}
+
+	public void selectAllSamples() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-all")));
+		selectionAll.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-all")));
+	}
+
+	public void deselectAllSamples() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-none")));
+		selectionNone.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-none")));
+	}
+
+	public void selectPage() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-all")));
+		selectionPageAll.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-all")));
+	}
+
+	public void deselectPage() {
+		selectionToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-none")));
+		selectionPageNone.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-none")));
+	}
+
+	private void enterSelect2Value(String value) {
+		select2Opener.click();
+		select2Input.sendKeys(value);
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		// Wait needed to allow select2 to populate.
 		waitForTime(500);
+		select2Input.sendKeys(Keys.RETURN);
+
+		wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOf(select2Results)));
 	}
 
-	// Sample buttons
-	public void showSamplesDropdownMenu() {
-		driver.findElement(By.id("samplesOptionsBtn")).click();
+	private void copyMoveSamples(String project) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
+		enterSelect2Value(project);
+		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
+		copyModalConfirmBtn.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
 	}
 
-	public boolean isSampleMergeOptionEnabled() {
-		return !driver.findElement(By.id("merge-li")).getAttribute("class").contains("disabled");
-	}
-
-	public boolean isSampleCopyOptionEnabled() {
-		return !driver.findElement(By.id("copy-li")).getAttribute("class").contains("disabled");
-	}
-
-	public boolean isSampleMoveOptionEnabled() {
-		return !driver.findElement(By.id("move-li")).getAttribute("class").contains("disabled");
-	}
-
-	public boolean isSampleRemoveOptionEnabled() {
-		return !driver.findElement(By.id("remove-li")).getAttribute("class").contains("disabled");
+	public String getLinkerText() {
+		openExportDropdown();
+		linkerBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(linkerModal));
+		return linkerCmd.getAttribute("value");
 	}
 }

@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -180,6 +182,36 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Double estimateCoverageForSample(Sample sample,
 			ReferenceFile referenceFile) throws SequenceFileAnalysisException;
+
+	/**
+	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering criteria.
+	 *
+	 * @param projects
+	 * 		{@link List} of {@link Project} the {@link Sample}s must be found within.
+	 * @param sampleNames
+	 * 		{@link List} of {@link String} of Sample names to search
+	 * @param sampleName
+	 * 	    {@link String} exact name of a specific {@link Sample}
+	 * @param searchTerm
+	 * 		{@link String} search term to search for.
+	 * @param minDate
+	 * 		{@link Date} minimum date the sample was modified.
+	 * @param maxDate
+	 * 		{@link Date} maximum date the sample was modified.
+	 * @param currentPage
+	 * 		{@link Integer} the current page the table is on.
+	 * @param pageSize
+	 * 		{@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
+	 * @param direction
+	 * 		{@link Sort.Direction} the direction of the sort for the {@link Page}.
+	 * @param sortProperty
+	 * 		{@link String} the attribute of the {@link ProjectSampleJoin} to sort by.
+	 *
+	 * @return
+	 */
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
+			String sampleName, String searchTerm,
+			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
 	/**
 	 * Get the {@link SampleMetadata} object for a given {@link Sample}
 	 *
@@ -188,7 +220,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a {@link SampleMetadata} object
 	 */
 	public SampleMetadata getMetadataForSample(Sample s);
-       
+
        /**
 	 * Save a {@link SampleMetadata} object for a given {@link Sample}. If an
 	 * existing {@link SampleMetadata} object exists, this will overwrite it.
@@ -200,10 +232,10 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return The newly saved {@link SampleMetadata}
 	 */
 	public SampleMetadata saveSampleMetadaForSample(Sample sample, SampleMetadata metadata);
-	
+
 	/**
 	 * Delete the {@link SampleMetadata} for a given {@link Sample}
-	 * 
+	 *
 	 * @param sample
 	 *            The {@link Sample} to delete metadata for
 	 */
