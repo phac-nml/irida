@@ -154,7 +154,7 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 				.getAnalysisState());
 		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(9L)
 				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(11L)
+		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_DOWNLOADING, analysisSubmissionRepository.findOne(11L)
 				.getAnalysisState());
 	}
 	
