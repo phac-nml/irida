@@ -32,8 +32,8 @@ public class AnalysisSubmissionCleanupServiceImpl implements AnalysisSubmissionC
 	 * one of these states, would need to be switched to an
 	 * {@link AnalysisSubmission.ERROR} state.
 	 */
-	private static final Set<AnalysisState> inconsistentStates = ImmutableSet.of(AnalysisState.PREPARING,
-			AnalysisState.SUBMITTING, AnalysisState.COMPLETING);
+	private static final Set<AnalysisState> inconsistentStates = ImmutableSet.of(AnalysisState.DOWNLOADING,
+			AnalysisState.PREPARING, AnalysisState.SUBMITTING, AnalysisState.COMPLETING);
 	
 	private static boolean ranSwitchInconsistentSubmissionsToError = false;
 	
