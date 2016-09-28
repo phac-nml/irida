@@ -1,22 +1,51 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  xmlns:th="http://www.thymeleaf.org"
       layout:decorator="template/page">
 <head>
-	<meta charset="UTF-8"/>
-	<title>Title</title>
+	<title th:text="#{metadata.page-title}"></title>
+	<link rel="stylesheet" href="/resources/css/components/steps.css" />
+	<style>
+		.row-hover {
+			background-color: #00b3ee;
+			cursor: pointer;
+		}
+	</style>
 </head>
 <body>
 <div layout:fragment="page"
      ddl:bundle-includes="project-samples-metadata"
      ddl:asset-css-excludes="jquery.datatables">
-	<h1>Project Samples Metadata Page</h1>
+	<h1 th:text="#{metadata.page-header(${project.getLabel()})}">Project Samples Metadata Page</h1>
 	<section ui-view=""></section>
 
 	<script type="text/ng-template" id="upload.tmpl.html">
 		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h2 class="panel-title">Step 1: Select an Excel File Containing the Sample Metadata</h2>
+			<div class="steps">
+				<div class="step">
+					<div class="step-title">
+						Step 1
+					</div>
+					<div class="step-label">
+						Upload Metadata File
+					</div>
+				</div>
+				<div class="step active">
+					<div class="step-title">
+						Step 2
+					</div>
+					<div class="step-label">
+						Select Sample Id From Headers
+					</div>
+				</div>
+				<div class="step">
+					<div class="step-title">
+						Step 3
+					</div>
+					<div class="step-label">
+						Preview Uploaded Metadata
+					</div>
+				</div>
 			</div>
 			<div class="panel-body">
 				<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
@@ -29,8 +58,18 @@
 		</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<set-sample-id data:heading="#{metadata.set-sample-id.title}"
-		               data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"></set-sample-id>
+		<div style="border: 1px solid red; overflow-x: scroll;"><table class="table table-bordered">
+			<thead>
+			<tr>
+				<th ng-repeat="header in sampleIdCtrl.headers" ng-bind="header"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="row in sampleIdCtrl.rows">
+				<td  ng-repeat="header in sampleIdCtrl.headers" ng-bind="row[header]"></td>
+			</tr>
+			</tbody>
+		</table></div>
 	</script>
 	<script type="text/ng-template" id="result.tmpl.html">
 		<div ng-show="resultCtrl.table.length > 0">

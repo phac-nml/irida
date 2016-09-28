@@ -868,7 +868,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.GET)
 	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId) {
-		model.addAttribute("projectId", projectId);
+		model.addAttribute("project", projectService.read(projectId));
 		return PROJECTS_DIR + "project_samples_metadata";
 	}
 
@@ -883,17 +883,17 @@ public class ProjectSamplesController {
 	 * @param file
 	 * 		{@link MultipartFile} The excel file containing the metadata.
 	 *
-	 * @return {@link List} of headers from the excel file for the user to select the header corresponding the {@link
+	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the {@link
 	 * Sample} identifier.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
-	@ResponseBody
-	public List<String> createProjectSampleMetadata(
+	@ResponseBody public Map<String, Object> createProjectSampleMetadata(
 			HttpSession session,
 			@PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
 		// We want to return a list of the table headers back to the UI.
 		List<String> headers = new ArrayList<>();
+		List<Map<String, String>> rows = new ArrayList<>();
 
 		try {
 			// Need an input stream
@@ -930,8 +930,22 @@ public class ProjectSamplesController {
 				}
 			}
 
-			// Store the workbook temporarily in the session
-			session.setAttribute("metadata-" + projectId, workbook);
+			// Get the metadata out of the table.
+			while (rowIterator.hasNext()) {
+				int headerCounter = 0;
+				Map<String, String> rowMap = new HashMap<>();
+				Row row = rowIterator.next();
+				Iterator<Cell> cellIterator = row.cellIterator();
+				while (cellIterator.hasNext() && headerCounter < headers.size()) {
+					Cell cell = cellIterator.next();
+					String cellValue = cell.getStringCellValue().trim();
+					String header = headers.get(headerCounter).trim();
+
+					rowMap.put(header, cellValue);
+					headerCounter += 1;
+				}
+				rows.add(rowMap);
+			}
 
 			fis.close();
 		} catch (FileNotFoundException e) {
@@ -939,7 +953,11 @@ public class ProjectSamplesController {
 		} catch (IOException e) {
 			logger.error("Error opening file" + file.getOriginalFilename());
 		}
-		return headers;
+		Map<String, Object> result = ImmutableMap.of("headers", headers, "rows", rows);
+
+		// Store the workbook temporarily in the session
+		session.setAttribute("metadata-" + projectId, result);
+		return result;
 	}
 
 	/**

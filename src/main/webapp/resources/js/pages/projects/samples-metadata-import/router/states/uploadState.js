@@ -12,8 +12,10 @@ import {STATE_URLS} from "../../constants";
 function SampleMetadataUploaderController($state) {
   const vm = this;
   let headers = [];
+  let rows = [];
   vm.onSuccess = (file, result) => {
-    headers = result;
+    headers = result.headers;
+    rows = result.rows;
   };
 
   /**
@@ -21,7 +23,7 @@ function SampleMetadataUploaderController($state) {
    * transition to selecting the sample id column.
    */
   vm.onComplete = () => {
-    $state.go("sampleId", {headers: headers});
+    $state.go("sampleId", {headers, rows});
   };
 }
 
