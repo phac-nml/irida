@@ -33,35 +33,27 @@
 		               data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"></set-sample-id>
 	</script>
 	<script type="text/ng-template" id="result.tmpl.html">
-		<div ng-show="resultCtrl.table.length > 0" class="panel panel-default">
-			<div class="panel-heading">
-				<h2 class="panel-title" th:text="#{metadata.results.success.title}"></h2>
-			</div>
-			<div class="panel-body">
-				<table class="table">
-					<tr>
-						<th ng-repeat="header in resultCtrl.headers" ng-bind="header"></th>
-					</tr>
-					<tr ng-repeat="row in resultCtrl.table">
-						<td ng-repeat="header in resultCtrl.headers" ng-bind="row[header]"></td>
-					</tr>
-				</table>
-			</div>
+		<div ng-show="resultCtrl.table.length > 0">
+			<h2 class="panel-title" th:text="#{metadata.results.success.title}"></h2>
+			<table class="table">
+				<tr>
+					<th ng-repeat="header in resultCtrl.headers" ng-bind="header"></th>
+				</tr>
+				<tr ng-repeat="row in resultCtrl.table">
+					<td ng-repeat="header in resultCtrl.headers" ng-bind="row[header]"></td>
+				</tr>
+			</table>
 		</div>
-		<div ng-show="resultCtrl.notFound.length > 0" class="panel panel-default">
-			<div class="panel-heading">
-				<h2 class="panel-title" th:text="#{metadata.results.no-found.title}"></h2>
-			</div>
-			<div class="panel-body">
-				<table class="table">
-					<tr>
-						<th ng-repeat="header in resultCtrl.headers" ng-bind="header"></th>
-					</tr>
-					<tr ng-repeat="row in resultCtrl.notFound">
-						<td ng-repeat="header in resultCtrl.headers" ng-bind="row[header]"></td>
-					</tr>
-				</table>
-			</div>
+		<div ng-show="resultCtrl.notFound.length > 0">
+			<h2 class="panel-title" th:text="#{metadata.results.no-found.title}"></h2>
+			<table class="table">
+				<tr>
+					<th ng-repeat="header in resultCtrl.headers" ng-bind="header"></th>
+				</tr>
+				<tr ng-repeat="row in resultCtrl.notFound">
+					<td ng-repeat="header in resultCtrl.headers" ng-bind="row[header]"></td>
+				</tr>
+			</table>
 		</div>
 </script>
 </div>
