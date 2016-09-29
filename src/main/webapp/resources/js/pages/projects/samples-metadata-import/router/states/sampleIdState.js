@@ -1,8 +1,19 @@
+/* eslint new-cap: [2, {"capIsNewExceptions": ["DataTable"]}] */
 /**
  * @file ui.router state for setting the column header associated with the
  * sample identifier.
  */
 import {STATE_URLS} from "../../constants";
+const $ = require('jquery');
+// require('datatables.net');
+// require('datatables.net-bs');
+
+const createDataTable = (columns, data) => {
+  $('#metadata-table').DataTable({
+    columns,
+    data
+  });
+};
 
 /**
  * Controller for setting the sample id for the table.
@@ -15,14 +26,16 @@ function SetSampleIdController($state, $stateParams) {
 
   if ($stateParams.headers.length === 0) {
     $state.go('upload');
+  } else {
+    const columns = $stateParams.headers.map(data => {
+      return {data};
+    });
+    createDataTable(columns, $stateParams.rows);
+
+    vm.setHeader = header => {
+      console.log(header);
+    };
   }
-
-  vm.headers = $stateParams.headers;
-  vm.rows = $stateParams.rows;
-
-  vm.setHeader = header => {
-    console.log(header);
-  };
 }
 
 const sampleIdState = {

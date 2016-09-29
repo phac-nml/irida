@@ -58,18 +58,9 @@
 		</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<div style="border: 1px solid red; overflow-x: scroll;"><table class="table table-bordered">
-			<thead>
-			<tr>
-				<th ng-repeat="header in sampleIdCtrl.headers" ng-bind="header"></th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr ng-repeat="row in sampleIdCtrl.rows">
-				<td  ng-repeat="header in sampleIdCtrl.headers" ng-bind="row[header]"></td>
-			</tr>
-			</tbody>
-		</table></div>
+		<div style="border: 1px solid red; overflow-x: scroll;">
+			<table id="metadata-table" class="display" width="100%"></table>
+		</div>
 	</script>
 	<script type="text/ng-template" id="result.tmpl.html">
 		<div ng-show="resultCtrl.table.length > 0">
