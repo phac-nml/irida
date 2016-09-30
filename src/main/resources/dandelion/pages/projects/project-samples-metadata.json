@@ -1,5 +1,5 @@
 {
-  "dependencies": ["app", "datatables", "ddl-dt-theme-bootstrap3"],
+  "dependencies": ["app"],
   "assets": [
     {
       "type": "css",

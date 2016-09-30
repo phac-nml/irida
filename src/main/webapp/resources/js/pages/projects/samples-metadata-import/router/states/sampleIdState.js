@@ -5,11 +5,12 @@
  */
 import {STATE_URLS} from "../../constants";
 const $ = require('jquery');
-// require('datatables.net');
-// require('datatables.net-bs');
+require('datatables.net');
+require('datatables.net-bs');
 
 const createDataTable = (columns, data) => {
   $('#metadata-table').DataTable({
+    scrollX: true,
     columns,
     data
   });
