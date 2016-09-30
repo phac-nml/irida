@@ -1,17 +1,16 @@
 /**
  * @file Configuration file for ui.router.
  */
-import {STATE_URLS} from "../constants";
 import uploadState from "./states/uploadState";
-import sampleIdState from "./states/sampleIdState";
-import resultTableState from "./states/resultTableState";
+// import sampleIdState from "./states/sampleIdState";
+// import resultTableState from "./states/resultTableState";
 
 export const states = ($stateProvider, $urlRouterProvider) => {
   $stateProvider
-    .state("upload", uploadState)
-    .state("sampleId", sampleIdState)
-    .state("results", resultTableState);
+    .state(uploadState);
+    // .state(sampleIdState)
+    // .state(resultTableState);
 
   // Set the initial view as the upload view
-  $urlRouterProvider.otherwise(STATE_URLS.upload);
+  $urlRouterProvider.otherwise("/upload");
 };

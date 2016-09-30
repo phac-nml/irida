@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
 	  xmlns:th="http://www.thymeleaf.org"
-      layout:decorator="template/page">
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="projects/_base">
 <head>
 	<title th:text="#{metadata.page-title}"></title>
 	<link rel="stylesheet" href="/resources/css/components/steps.css" />
@@ -13,54 +14,22 @@
 	</style>
 </head>
 <body>
-<div layout:fragment="page"
-     ddl:bundle-includes="project-samples-metadata"
-     ddl:asset-css-excludes="jquery.datatables">
-	<h1 th:text="#{metadata.page-header(${project.getLabel()})}">Project Samples Metadata Page</h1>
+<div layout:fragment="main"
+	 ddl:bundle-includes="project-samples-metadata"
+	 ddl:asset-css-excludes="jquery.datatables">
 	<section ui-view=""></section>
-
 	<script type="text/ng-template" id="upload.tmpl.html">
-		<div class="panel panel-default">
-			<div class="steps">
-				<div class="step">
-					<div class="step-title">
-						Step 1
-					</div>
-					<div class="step-label">
-						Upload Metadata File
-					</div>
-				</div>
-				<div class="step active">
-					<div class="step-title">
-						Step 2
-					</div>
-					<div class="step-label">
-						Select Sample Id From Headers
-					</div>
-				</div>
-				<div class="step">
-					<div class="step-title">
-						Step 3
-					</div>
-					<div class="step-label">
-						Preview Uploaded Metadata
-					</div>
-				</div>
-			</div>
-			<div class="panel-body">
-				<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
-				          on-success="uploaderCtrl.onSuccess"
-				          on-complete="uploaderCtrl.onComplete"
+		<div class="alert alert-info">
+			<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
+				          on-success="$ctrl.onSuccess"
+				          on-complete="$ctrl.onComplete"
 				          max-files="1"
 				          accepted-files=".xlsx,.xlx"
-				          data:message="#{metadata.dropzone.message}"></dropzone>
+				          data:message="#{metadata.dropzone.message}"/>
 			</div>
-		</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<table id="metadata-table" class="table table-bordered" width="100%"></table>
-		<div style="border: 1px solid red; overflow-x: scroll;">
-		</div>
+		<pre ng-bind="sampleIdCtrl.headers | json"></pre>
 	</script>
 	<script type="text/ng-template" id="result.tmpl.html">
 		<div ng-show="resultCtrl.table.length > 0">

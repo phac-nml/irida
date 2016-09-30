@@ -953,11 +953,10 @@ public class ProjectSamplesController {
 		} catch (IOException e) {
 			logger.error("Error opening file" + file.getOriginalFilename());
 		}
-		Map<String, Object> result = ImmutableMap.of("headers", headers, "rows", rows);
 
 		// Store the workbook temporarily in the session
-		session.setAttribute("metadata-" + projectId, result);
-		return result;
+		session.setAttribute("metadata-" + projectId, ImmutableMap.of("headers", headers, "rows", rows));
+		return ImmutableMap.of("headers", headers);
 	}
 
 	/**

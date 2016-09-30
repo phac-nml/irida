@@ -1,7 +1,7 @@
 /**
  * @file ui.router state for displaying the result of uploading sample metadata.
  */
-import {STATE_URLS} from "../../constants";
+import {STATE_NAME} from "../../constants";
 
 /**
  * Controller for displaying the result of uploading metadata.
@@ -21,7 +21,8 @@ function ResultsController($state, $stateParams) {
 }
 
 const resultTableState = {
-  url: STATE_URLS.resultTable,
+  name: "result",
+  url: "/results",
   params: {
     headers: [],
     notFound: [],
