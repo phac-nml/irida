@@ -25,7 +25,8 @@
 
 const sampleIdState = {
   name: "sampleId",
-  url: "/sampleId"
+  url: "/sampleId",
+  component: "setSampleId"
 };
 
 export default sampleIdState;
