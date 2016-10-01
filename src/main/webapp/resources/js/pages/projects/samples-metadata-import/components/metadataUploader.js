@@ -10,7 +10,6 @@ const metadataUploader = {
     };
 
     this.onComplete = () => {
-      console.log(sampleMetadataService.getHeaders());
       $state.go("sampleId");
     };
   }
