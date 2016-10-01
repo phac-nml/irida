@@ -16,10 +16,10 @@ export const sampleMetadataService = $http => {
    */
   const getHeaders = () => {
     const stored = JSON.parse(sessionStorage.getItem("pm-" + project.id));
-    if (stored.hasOwnProperty('headers')) {
+    if (stored !== null && stored.hasOwnProperty('headers')) {
       return stored.headers;
     }
-    return [];
+    return null;
   };
 
   /**
