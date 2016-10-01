@@ -29,7 +29,16 @@
 			</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<pre ng-bind="$ctrl.headers | json"></pre>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="header in $ctrl.headers">
+				<div class="radio">
+					<label>
+						<input type="radio" name="idColumn" ng-value="header" ng-model="$ctrl.idColumn"/>
+						{{ header }}
+					</label>
+				</div>
+			</li>
+		</ul>
 	</script>
 	<script type="text/ng-template" id="result.tmpl.html">
 		<div ng-show="resultCtrl.table.length > 0">

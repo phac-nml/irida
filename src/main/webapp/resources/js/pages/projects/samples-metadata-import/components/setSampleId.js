@@ -7,6 +7,7 @@ const setSampleId = {
     }
 
     this.headers = headers;
+    this.idColumn = this.headers[0];
   }
 };
 
