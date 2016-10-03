@@ -69,7 +69,7 @@ The main configuration parameters you will need to change are:
 2. **Threads used for file processing (FastQC, GZip, etc):**
   * `file.processing.core.size=4` - The initial number of threads available for file processing.
   * `file.processing.max.size=8` - The maximum number of available threads for file processing.  This number should not exceed the configured maximum number of JDBC threads.
-  * `file.processing.queue.capacity=256` - The maximum number of file processing jobs that can be queued.
+  * `file.processing.queue.capacity=512` - The maximum number of file processing jobs that can be queued.
 2. **Database connection information:**
   * `jdbc.url=jdbc:mysql://localhost:3306/irida_test`
   * `jdbc.username=test`
