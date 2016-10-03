@@ -10,7 +10,7 @@ upgrading IRIDA that cannot be automated.
 
         file.processing.core.size=4
         file.processing.max.size=8
-        file.processing.queue.capacity=256
+        file.processing.queue.capacity=512
 * Deploy the new `war` file.
 
 0.11.0 to 0.12.0
