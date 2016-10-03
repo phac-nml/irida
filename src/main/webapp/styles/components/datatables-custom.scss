@@ -12,6 +12,10 @@
   margin-bottom: 5px!important;
 }
 
+.table-selectable tbody tr {
+  cursor: pointer;
+}
+
 .datatables-active-filters {
   margin-bottom: 10px;
   .label {
@@ -24,10 +28,62 @@
   }
 }
 
-table th {
-  vertical-align: top !important;
+.dataTables_paginate {
+  display: flex;
+  justify-content: center;
 }
 
-table td {
-  padding: 5px 18px!important;
+.table-wrapper {
+  overflow: auto;
 }
+
+.dataTable {
+  border: 1px solid #DDDDDD;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+
+  th {
+    vertical-align: top !important;
+  }
+
+  td {
+    padding: 5px 18px !important;
+  }
+
+  tr a {
+    background-color: transparent !important;
+  }
+
+  tr {
+    background-color: white;
+    transition: all 0.3s ease;
+  }
+}
+
+
+table.selectable tbody tr:hover {
+  cursor: pointer;
+}
+
+
+table.selectable tbody tr.selected td {
+  background-color: #d9edf7!important;
+}
+
+.dataTables_wrapper .selected-counts {
+  height: 2em;
+  line-height: 2em;
+}
+
+// Prevents table from overflowing the panel box that wraps it.
+//.dataTables_wrapper {
+//  .panel {
+//    overflow: hidden;
+//  }
+//}
+
+//@media (max-width: 1200px) {
+//  .dataTables_wrapper .table-wrapper {
+//    overflow: auto;
+//  }
+//}
+

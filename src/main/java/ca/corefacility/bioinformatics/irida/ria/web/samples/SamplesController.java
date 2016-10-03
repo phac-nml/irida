@@ -1,9 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,9 +52,11 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all sample related views
@@ -221,8 +227,8 @@ public class SamplesController extends BaseController {
 	 *            a reference to the logged in user.
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}", "/samples/{sampleId}/sequenceFiles",
-			"/projects/{projectId}/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal) {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
@@ -243,6 +249,20 @@ public class SamplesController extends BaseController {
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
+	}
+
+	/**
+	 * Redirect user to the project sequenceFile page.  This was added to support links that previously
+	 * existed and may be bookmarked. These url require the "/sequenceFiles" to prevent loading errors.
+	 *
+	 * @param request{@link
+	 * 		HttpServletRequest}
+	 *
+	 * @return {@link String} with the project sequence file URL
+	 */
+	@RequestMapping(value = { "/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}" })
+	public String getCorrectSampleFilesLink(HttpServletRequest request) {
+		return "redirect:" + request.getRequestURL() + "/sequenceFiles";
 	}
 
 	/************************************************************************************************
@@ -320,8 +340,35 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
+	 * Utility method to get a l{@link List} of {@link Sample}s based on their ids.
+	 *
+	 * @param sampleIds
+	 * 		{@link List} of {@link Sample} ids
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 *
+	 * @return {@link List} 
+	 */
+	@RequestMapping("/samples/idList")
+	public List<Map<String, String>> getSampleListByIdList(@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long projectId) {
+		List<Sample> list = (List<Sample>) sampleService.readMultiple(sampleIds);
+		List<Map<String, String>> result = new ArrayList<>();
+		for (Sample sample : list) {
+			result.add(ImmutableMap.of(
+					"label", sample.getSampleName(),
+					"href", linkTo(
+							methodOn(RESTProjectSamplesController.class).getProjectSample(
+									projectId, sample.getId()
+							)
+					).withSelfRel().getHref()
+			));
+		}
+
+		return result;
+	}
+
+	/**
 	 * Create a {@link SequenceFile} and add it to a {@link Sample}
-	 * 
+	 *
 	 * @param file
 	 *            {@link MultipartFile}
 	 * @param sample

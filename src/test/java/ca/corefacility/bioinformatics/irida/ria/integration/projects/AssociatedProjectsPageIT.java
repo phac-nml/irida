@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiU
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,42 +46,5 @@ public class AssociatedProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		for (String project : ASSOCIATED_PROJECTS_WITH_RIGHTS) {
 			assertTrue("Contains projects with authorization (" + project + ")", projectsWithRights.contains(project));
 		}
-	}
-
-	@Test
-	public void testRemoteAssociatedProject() {
-		LoginPage.loginAsAdmin(driver());
-		// add the api
-		RemoteApiUtilities.addRemoteApi(driver());
-
-		// associate a project from that api
-		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
-		apEditPage.goTo(projectId);
-		apEditPage.viewRemoteTab();
-		apEditPage.clickAssociatedButton(2L);
-		apEditPage.checkNotyStatus("success");
-
-		page.getPage(projectId);
-		List<String> remoteAssociatedProjects = page.getRemoteAssociatedProjects();
-		assertEquals("should be 1 remote associated project", 1, remoteAssociatedProjects.size());
-	}
-
-	@Test
-	public void testRemoteAssociatedProjectNoLocal() {
-		Long otherProject = 3L;
-		LoginPage.loginAsAdmin(driver());
-		// add the api
-		RemoteApiUtilities.addRemoteApi(driver());
-
-		// associate a project from that api
-		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
-		apEditPage.goTo(otherProject);
-		apEditPage.viewRemoteTab();
-		apEditPage.clickAssociatedButton(2L);
-		apEditPage.checkNotyStatus("success");
-
-		page.getPage(otherProject);
-		List<String> remoteAssociatedProjects = page.getRemoteAssociatedProjects();
-		assertEquals("should be 1 remote associated project", 1, remoteAssociatedProjects.size());
 	}
 }

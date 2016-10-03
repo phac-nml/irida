@@ -1,25 +1,16 @@
 {
   "dependencies": [
     "select2-bootstrap",
-    "bootstrap_dropdowns_enhancement"
+    "bootstrap-daterangepicker",
+    "angular-daterangepicker-enhanced",
+    "angular-messages",
+    "clipboard"
   ],
   "assets": [
-    {
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/directives/datatables/irida-datatable.js"
-      }
-    },
     {
       "type": "css",
       "locations": {
         "webapp": "/resources/css/pages/project_samples.css"
-      }
-    },
-    {
-      "type": "js",
-      "locations": {
-        "webapp": "/resources/js/pages/projects/samples.js"
       }
     }
   ]

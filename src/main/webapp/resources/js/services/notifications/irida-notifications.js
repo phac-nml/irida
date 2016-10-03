@@ -61,5 +61,22 @@
       svc.show = function (o) {
         window.notifications.show(o);
       };
+    }])
+    .service('compiledNotification', ["$rootScope", "$compile", "$timeout", "$templateCache", function($rootScope, $compile, $timeout, $templateCache){
+      function show(items, templateId, options) {
+        var message = $templateCache.get(templateId),
+            elm = angular.element(message),
+            scope = $rootScope.$new();
+        scope.items = items;
+        $compile(elm)(scope);
+        // Need a digest loop
+        $timeout(function() {
+          window.notifications.show({msg: elm, type: options.type});
+        });
+      }
+
+      return {
+        show: show
+      };
     }]);
 })(window.angular, window.noty);

@@ -101,7 +101,7 @@ public class ProjectExportController {
 	 * @return Name of the NCBI export page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("s") List<Long> sampleIds, Model model) {
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("ids[]") List<Long> sampleIds, Model model) {
 		Project project = projectService.read(projectId);
 
 		logger.trace("Reading " + sampleIds.size() + " samples");
