@@ -6,7 +6,11 @@ upgrading IRIDA that cannot be automated.
 
 0.12.0 to 0.13.0
 ----------------
-* No special upgrade steps required, just deploy the new `war` file.
+* You may now configure the number of threads to be used for file processing on the web server.  These threads perform tasks such as unzipping files and running FastQC.  The following configuration keys can be set in `/etc/irida/irida.conf` (default values displayed):
+        file.processing.core.size=4
+        file.processing.max.size=8
+        file.processing.queue.capacity=256
+* Deploy the new `war` file.
 
 0.11.0 to 0.12.0
 ----------------
