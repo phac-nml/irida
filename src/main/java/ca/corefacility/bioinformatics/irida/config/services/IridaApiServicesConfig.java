@@ -112,6 +112,15 @@ public class IridaApiServicesConfig {
 	@Value("${irida.version}")
 	private String iridaVersion;
 	
+	@Value("${file.processing.core.size}")
+	private int fpCoreSize;
+	
+	@Value("${file.processing.max.size}")
+	private int fpMaxSize;
+	
+	@Value("${file.processing.queue.capacity}")
+	private int fpQueueCapacity;
+	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
 		return new ForbidJpqlUpdateDeletePostProcessor();
@@ -169,9 +178,9 @@ public class IridaApiServicesConfig {
 	@Profile({ "dev", "prod" })
 	public TaskExecutor fileProcessingChainExecutor() {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-		taskExecutor.setCorePoolSize(16);
-		taskExecutor.setMaxPoolSize(48);
-		taskExecutor.setQueueCapacity(100);
+		taskExecutor.setCorePoolSize(fpCoreSize);
+		taskExecutor.setMaxPoolSize(fpMaxSize);
+		taskExecutor.setQueueCapacity(fpQueueCapacity);
 		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
 		return taskExecutor;
 	}

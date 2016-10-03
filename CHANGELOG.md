@@ -10,6 +10,7 @@ Changes
 * [API]: Fixed a bug with the sequencingObject/sequence file REST endpoint that was throwing 404s when it should read a file. (0.12.2)
 * [Developer]: Added ability to build IRIDA package `.zip` file and `tools-list.yml` for distribution and easy installation of tools in Galaxy.
 * [UI]: Major update to the Project > Samples page.
+* [Administation]: Added configurable values for the number of threads to use for file processing.
 
 0.11.0 to 0.12.0
 ----------------
