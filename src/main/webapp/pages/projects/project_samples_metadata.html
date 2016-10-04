@@ -7,9 +7,16 @@
 	<title th:text="#{metadata.page-title}"></title>
 	<link rel="stylesheet" href="/resources/css/components/steps.css" />
 	<style>
-		.row-hover {
-			background-color: #00b3ee;
-			cursor: pointer;
+		label > input[type="radio"] {
+			margin-top: 0 !important;
+		}
+
+		.dataTables_scrollHeadInner .table {
+			margin-bottom: 0;
+		}
+
+		th {
+			white-space: nowrap;
 		}
 	</style>
 </head>
@@ -19,50 +26,49 @@
 	 ddl:asset-css-excludes="jquery.datatables">
 	<section ui-view=""></section>
 	<script type="text/ng-template" id="upload.tmpl.html">
-		<div class="alert alert-info">
-			<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
-				          on-success="$ctrl.onSuccess"
-				          on-complete="$ctrl.onComplete"
-				          max-files="1"
-				          accepted-files=".xlsx,.xlx"
-				          data:message="#{metadata.dropzone.message}"/>
+		<div ng-if="$ctrl.hasHeaders">
+			<div class="alert alert-warning">
+				<strong>An excel file has already been uploaded</strong>
 			</div>
+		</div>
+		<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
+				  on-success="$ctrl.onSuccess"
+				  on-complete="$ctrl.onComplete"
+				  max-files="1"
+				  accepted-files=".xlsx,.xlx"
+				  data:message="#{metadata.dropzone.message}"></dropzone>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
+		<div class="row">
+			<div class="col-md-12 clearfix">
+				<a ui-sref="upload" class="btn btn-default" style="margin-bottom: 1rem;">
+					<span class="fa fa-arrow-left"></span>&nbsp;Select new Excel File
+				</a>
+				<button class="btn btn-default pull-right" style="margin-bottom: 1rem;"
+						ng-click="$ctrl.displayMetadata()">
+					Preview Metedata&nbsp;<span class="fa fa-arrow-right"></span>
+				</button>
+			</div>
+		</div>
 		<ul class="list-group">
 			<li class="list-group-item" ng-repeat="header in $ctrl.headers">
-				<div class="radio">
-					<label>
-						<input type="radio" name="idColumn" ng-value="header" ng-model="$ctrl.idColumn"/>
-						{{ header }}
-					</label>
-				</div>
+				<header-item header="header"></header-item>
 			</li>
 		</ul>
 	</script>
-	<script type="text/ng-template" id="result.tmpl.html">
-		<div ng-show="resultCtrl.table.length > 0">
-			<h2 class="panel-title" th:text="#{metadata.results.success.title}"></h2>
-			<table class="table">
-				<tr>
-					<th ng-repeat="header in resultCtrl.headers" ng-bind="header"></th>
-				</tr>
-				<tr ng-repeat="row in resultCtrl.table">
-					<td ng-repeat="header in resultCtrl.headers" ng-bind="row[header]"></td>
-				</tr>
-			</table>
+	<script type="text/ng-template" id="resultsTable.tmpl.html">
+		<div class="row" style="margin-bottom: 1rem;">
+			<div class="col-md-12 clearfix">
+				<button class="btn btn-default">
+					<span class="fa fa-arrow-left"></span>&nbsp;Pick Different Sample Name Column</button>
+				<button class="btn btn-primary pull-right">
+					<span class="fa fa-floppy-o"></span>&nbsp;Save Metadata</button>
+			</div>
 		</div>
-		<div ng-show="resultCtrl.notFound.length > 0">
-			<h2 class="panel-title" th:text="#{metadata.results.no-found.title}"></h2>
-			<table class="table">
-				<tr>
-					<th ng-repeat="header in resultCtrl.headers" ng-bind="header"></th>
-				</tr>
-				<tr ng-repeat="row in resultCtrl.notFound">
-					<td ng-repeat="header in resultCtrl.headers" ng-bind="row[header]"></td>
-				</tr>
-			</table>
+		<div ng-if="$ctrl.missing" class="alert alert-danger">
+			<strong>{{ $ctrl.missing }} entries do not match samples in this project.</strong>
 		</div>
+		<table id="results-table" class="table table-bordered"></table>
 </script>
 </div>
 </body>

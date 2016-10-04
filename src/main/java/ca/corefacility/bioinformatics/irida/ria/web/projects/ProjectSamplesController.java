@@ -893,7 +893,6 @@ public class ProjectSamplesController {
 			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
 		// We want to return a list of the table headers back to the UI.
 		List<String> headers = new ArrayList<>();
-		List<Map<String, String>> rows = new ArrayList<>();
 
 		try {
 			// Need an input stream
@@ -917,35 +916,10 @@ public class ProjectSamplesController {
 			Sheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
 
-			// Get the column headers
-			Row headerRow = rowIterator.next();
-			Iterator<Cell> headerIterator = headerRow.cellIterator();
-			while (headerIterator.hasNext()) {
-				Cell headerCell = headerIterator.next();
-				String headerValue = headerCell.getStringCellValue().trim();
+			headers = getWorkbookHeaders(rowIterator.next());
 
-				// Don't want empty header values.
-				if (!Strings.isNullOrEmpty(headerValue)) {
-					headers.add(headerValue);
-				}
-			}
-
-			// Get the metadata out of the table.
-			while (rowIterator.hasNext()) {
-				int headerCounter = 0;
-				Map<String, String> rowMap = new HashMap<>();
-				Row row = rowIterator.next();
-				Iterator<Cell> cellIterator = row.cellIterator();
-				while (cellIterator.hasNext() && headerCounter < headers.size()) {
-					Cell cell = cellIterator.next();
-					String cellValue = cell.getStringCellValue().trim();
-					String header = headers.get(headerCounter).trim();
-
-					rowMap.put(header, cellValue);
-					headerCounter += 1;
-				}
-				rows.add(rowMap);
-			}
+			// Store the workbook temporarily in the session
+			session.setAttribute("metadata-" + projectId, workbook);
 
 			fis.close();
 		} catch (FileNotFoundException e) {
@@ -954,9 +928,25 @@ public class ProjectSamplesController {
 			logger.error("Error opening file" + file.getOriginalFilename());
 		}
 
-		// Store the workbook temporarily in the session
-		session.setAttribute("metadata-" + projectId, ImmutableMap.of("headers", headers, "rows", rows));
 		return ImmutableMap.of("headers", headers);
+	}
+
+	private List<String> getWorkbookHeaders(Row row) {
+		// We want to return a list of the table headers back to the UI.
+		List<String> headers = new ArrayList<>();
+
+		// Get the column headers
+		Iterator<Cell> headerIterator = row.cellIterator();
+		while (headerIterator.hasNext()) {
+			Cell headerCell = headerIterator.next();
+			String headerValue = headerCell.getStringCellValue().trim();
+
+			// Don't want empty header values.
+			if (!Strings.isNullOrEmpty(headerValue)) {
+				headers.add(headerValue);
+			}
+		}
+		return headers;
 	}
 
 	/**
@@ -977,9 +967,8 @@ public class ProjectSamplesController {
 			HttpSession session,
 			@PathVariable long projectId,
 			@RequestParam String sampleIdColumn) {
-		List<Map<String, Object>> samplesFountList = new ArrayList<>();
-		List<Map<String, Object>> samplesNotFoundList = new ArrayList<>();
-		List<String> headers = new ArrayList<>();
+		List<Map<String, Object>> rows = new ArrayList<>();
+		List<String> headers;
 
 		// Attempt to get the metadata from the sessions
 		String sessionMetadataAttr = "metadata-" + projectId;
@@ -991,25 +980,13 @@ public class ProjectSamplesController {
 			Sheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
 
-			// Get the column headers
-			Row headerRow = rowIterator.next();
-			Iterator<Cell> headerIterator = headerRow.cellIterator();
-			while (headerIterator.hasNext()) {
-				Cell headerCell = headerIterator.next();
-				String headerValue = headerCell.getStringCellValue().trim();
-
-				// Don't want empty header values.
-				if (!Strings.isNullOrEmpty(headerValue)) {
-					headers.add(headerValue);
-				}
-			}
+			headers = getWorkbookHeaders(rowIterator.next());
 
 			// Get the metadata out of the table.
 			while (rowIterator.hasNext()) {
 				int headerCounter = 0;
 				Map<String, Object> rowMap = new HashMap<>();
 				Row row = rowIterator.next();
-				Sample sample = null;
 				Iterator<Cell> cellIterator = row.cellIterator();
 				while (cellIterator.hasNext() && headerCounter < headers.size()) {
 					Cell cell = cellIterator.next();
@@ -1018,36 +995,52 @@ public class ProjectSamplesController {
 
 					if (header.equals(sampleIdColumn)) {
 						try {
-							sample = sampleService.getSampleBySampleName(project, cellValue);
+							Sample sample = sampleService.getSampleBySampleName(project, cellValue);
+							rowMap.put("identifier", sample.getId());
 						} catch (EntityNotFoundException e) {
-							logger.info("ADDING METADATA TO SAMPLE: Cannot find sample id [" + cellValue
-									+ "] in project id [" + projectId + "]");
+							rowMap.put("identifier", "");
 						}
 					}
 
 					rowMap.put(header, cellValue);
 					headerCounter += 1;
 				}
+				rows.add(rowMap);
+			}
 
-				// Add the data to its sample (if possible)
-				if (sample != null) {
-					// Add metadata to return value to display to user.
-					samplesFountList.add(rowMap);
+			session.setAttribute(sessionMetadataAttr + "-rows", rows);
+		}
 
-					// Add metadata to the sample for storage.
-					SampleMetadata metadata = new SampleMetadata();
-					metadata.setMetadata(rowMap);
-					sampleService.saveSampleMetadaForSample(sample, metadata);
-				} else {
-					samplesNotFoundList.add(rowMap);
+		return ImmutableMap.of("table", rows);
+	}
+
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/save", method = RequestMethod.PUT)
+	@ResponseBody public List<Map<String, Object>> saveProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId) {
+		String sessionMetadataAttr = "metadata-" + projectId + "-rows";
+		List rows = (List<ArrayList>) session.getAttribute(sessionMetadataAttr);
+		List<Map<String, Object>> result = new ArrayList<>();
+		if (rows != null) {
+			for (Object rowObject : rows) {
+				Map<String, String> row = (HashMap<String, String>) rowObject;
+				String idString = row.get("identifier");
+				if (!Strings.isNullOrEmpty(idString)) {
+					Sample sample = sampleService.read(Long.parseLong(idString));
+					SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+					Map<String, Object> metadata = sampleMetadata.getMetadata();
+
+					// Need to overwrite duplicate keys
+					for (String key : row.keySet()) {
+						metadata.put(key, row.get(key));
+					}
+
+					// Save metadata back to the sample
+					sampleMetadata.setMetadata(metadata);
+					result.add(metadata);
 				}
 			}
 		}
-
-		return ImmutableMap.of(
-				"table", samplesFountList,
-				"notFound", samplesNotFoundList
-		);
+		return result;
 	}
 
 	/**

@@ -4,8 +4,8 @@
  */
 
 const uploadState = {
-  name: "upload",
-  url: "/upload",
+  name: 'upload',
+  url: '/upload',
   component: 'metadataUploader'
 };
 
