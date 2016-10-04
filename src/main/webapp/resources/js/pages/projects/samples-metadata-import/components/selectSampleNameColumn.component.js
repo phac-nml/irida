@@ -1,6 +1,6 @@
-const displayColumnHeaders = {
+const selectSampleNameColumnComponent = {
   templateUrl: 'sampleId.tmpl.html',
-  controller(sampleMetadataService, $state, $window) {
+  controller(sampleMetadataService, $state) {
     const details = sampleMetadataService.getProjectData();
 
     // If there are no headers than no file has been uploaded,
@@ -19,12 +19,17 @@ const displayColumnHeaders = {
 
     this.displayMetadata = () => {
       sampleMetadataService
-        .setSampleIdColumn($window.location.pathname, this.idColumn)
+        .setSampleIdColumn(this.idColumn)
         .then(() => {
           $state.go('results');
         });
     };
+
+    this.selectNewFile = () => {
+      sampleMetadataService.clearProject();
+      $state.go('upload');
+    };
   }
 };
 
-export default displayColumnHeaders;
+export default selectSampleNameColumnComponent;

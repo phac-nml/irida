@@ -17,7 +17,7 @@ const headerItem = {
     idColumn: '='
   },
   require: {
-    parent: '^displayColumnHeaders'
+    parent: '^selectSampleNameColumnComponent'
   },
   template
 };

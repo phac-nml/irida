@@ -5,7 +5,7 @@
  */
 const $ = require('jquery');
 
-export const sampleMetadataService = $http => {
+export const sampleMetadataService = ($http, $window) => {
   // 'project.id' is set in the `project/_bse.html` file
   const PROJECT_KEY = `pm-${project.id}`;
 
@@ -33,19 +33,21 @@ export const sampleMetadataService = $http => {
 
   /**
    * Set the name of the column that contains the sample id.
-   * @param {string} url Url to put the data to.
    * @param {string} idColumn Name of the column to set as
    * the sample id.
    * @return {object} ajax promise
    */
-  const setSampleIdColumn = (url, idColumn) => {
+  const setSampleIdColumn = idColumn => {
     const data = $.param({sampleIdColumn: idColumn});
-    return $http.put(url + '?' + data)
+    return $http.put($window.location.pathname + '?' + data)
       .then(response => {
-        const table = response.data.table;
+        const goodRows = response.data.goodRows;
+        const badRows = response.data.badRows;
+
+        const tables = {goodRows, badRows};
 
         // Store it into session storage
-        storeProjectData({idColumn, table});
+        storeProjectData({idColumn, tables});
 
         return response;
       });
@@ -53,17 +55,21 @@ export const sampleMetadataService = $http => {
 
   /**
    * Save the metadata back to the samples.
-   * @param {string} url the url for saving the metadta.
    * @return {object} ajax promise
    */
-  const saveMetadata = url => {
-    return $http.put(url);
+  const saveMetadata = () => {
+    return $http.put($window.location.pathname + '/save');
+  };
+
+  const clearProject = () => {
+    sessionStorage.clear();
   };
 
   return {
     storeProjectData,
     getProjectData,
     setSampleIdColumn,
-    saveMetadata
+    saveMetadata,
+    clearProject
   };
 };

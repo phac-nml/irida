@@ -5,7 +5,7 @@
 const sampleIdState = {
   name: 'sampleId',
   url: '/sampleId',
-  component: 'displayColumnHeaders'
+  component: 'selectSampleNameColumnComponent'
 };
 
 export default sampleIdState;

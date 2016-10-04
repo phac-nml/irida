@@ -3,7 +3,7 @@ import uiRouter from 'angular-ui-router';
 import {states} from './router/router.config';
 import dropzone from '../../../directives/dropzone';
 import metadataUploader from './components/metadataUploader';
-import displayColumnHeaders from './components/displayColumnHeaders';
+import selectSampleNameColumnComponent from './components/selectSampleNameColumn.component';
 import headerItem from './components/headerItem';
 import resultsTable from './components/resultsTable';
 import {sampleMetadataService} from './factories/metadataImport.service';
@@ -15,6 +15,6 @@ app
   .service('sampleMetadataService', sampleMetadataService)
   .directive('dropzone', dropzone)
   .component('metadataUploader', metadataUploader)
-  .component('displayColumnHeaders', displayColumnHeaders)
+  .component('selectSampleNameColumnComponent', selectSampleNameColumnComponent)
   .component('headerItem', headerItem)
   .component('resultsTable', resultsTable);

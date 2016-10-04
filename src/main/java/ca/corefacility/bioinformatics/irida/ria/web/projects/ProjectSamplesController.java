@@ -967,13 +967,13 @@ public class ProjectSamplesController {
 			HttpSession session,
 			@PathVariable long projectId,
 			@RequestParam String sampleIdColumn) {
-		List<Map<String, Object>> rows = new ArrayList<>();
+		List<Map<String, Object>> goodRows = new ArrayList<>();
+		List<Map<String, Object>> badRows = new ArrayList<>();
 		List<String> headers;
 
 		// Attempt to get the metadata from the sessions
 		String sessionMetadataAttr = "metadata-" + projectId;
 		Workbook workbook = (Workbook) session.getAttribute(sessionMetadataAttr);
-		session.removeAttribute(sessionMetadataAttr);
 
 		if (workbook != null) {
 			Project project = projectService.read(projectId);
@@ -986,6 +986,7 @@ public class ProjectSamplesController {
 			while (rowIterator.hasNext()) {
 				int headerCounter = 0;
 				Map<String, Object> rowMap = new HashMap<>();
+				Sample sample = null;
 				Row row = rowIterator.next();
 				Iterator<Cell> cellIterator = row.cellIterator();
 				while (cellIterator.hasNext() && headerCounter < headers.size()) {
@@ -995,7 +996,7 @@ public class ProjectSamplesController {
 
 					if (header.equals(sampleIdColumn)) {
 						try {
-							Sample sample = sampleService.getSampleBySampleName(project, cellValue);
+							sample = sampleService.getSampleBySampleName(project, cellValue);
 							rowMap.put("identifier", sample.getId());
 						} catch (EntityNotFoundException e) {
 							rowMap.put("identifier", "");
@@ -1005,13 +1006,17 @@ public class ProjectSamplesController {
 					rowMap.put(header, cellValue);
 					headerCounter += 1;
 				}
-				rows.add(rowMap);
+				if (sample != null) {
+					goodRows.add(rowMap);
+				} else {
+					badRows.add(rowMap);
+				}
 			}
 
-			session.setAttribute(sessionMetadataAttr + "-rows", rows);
+			session.setAttribute(sessionMetadataAttr + "-rows", goodRows);
 		}
 
-		return ImmutableMap.of("table", rows);
+		return ImmutableMap.of("goodRows", goodRows, "badRows", badRows);
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata/save", method = RequestMethod.PUT)
@@ -1022,11 +1027,14 @@ public class ProjectSamplesController {
 		List<Map<String, Object>> result = new ArrayList<>();
 		if (rows != null) {
 			for (Object rowObject : rows) {
-				Map<String, String> row = (HashMap<String, String>) rowObject;
-				String idString = row.get("identifier");
-				if (!Strings.isNullOrEmpty(idString)) {
-					Sample sample = sampleService.read(Long.parseLong(idString));
+				try {
+					Map<String, Object> row = (HashMap) rowObject;
+					Long id = (Long) row.get("identifier");
+					Sample sample = sampleService.read(id);
 					SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+					if (sampleMetadata == null) {
+						sampleMetadata = new SampleMetadata();
+					}
 					Map<String, Object> metadata = sampleMetadata.getMetadata();
 
 					// Need to overwrite duplicate keys
@@ -1036,7 +1044,10 @@ public class ProjectSamplesController {
 
 					// Save metadata back to the sample
 					sampleMetadata.setMetadata(metadata);
+					sampleService.saveSampleMetadaForSample(sample, sampleMetadata);
 					result.add(metadata);
+				} catch (EntityNotFoundException e) {
+					e.printStackTrace();
 				}
 			}
 		}

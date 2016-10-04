@@ -15,6 +15,11 @@
 			margin-bottom: 0;
 		}
 
+		.dataTables_scroll {
+			border: 1px solid #DDDDDD;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+		}
+
 		th {
 			white-space: nowrap;
 		}
@@ -26,24 +31,29 @@
 	 ddl:asset-css-excludes="jquery.datatables">
 	<section ui-view=""></section>
 	<script type="text/ng-template" id="upload.tmpl.html">
-		<div ng-if="$ctrl.hasHeaders">
-			<div class="alert alert-warning">
+		<div ng-show="$ctrl.hasHeaders">
+			<div class="alert alert-warning clearfix">
 				<strong>An excel file has already been uploaded</strong>
+				<a class="pull-right" ui-sref="sampleId">Select the column header from this file? <span class="fa fa-arrow-right"></span></a>
 			</div>
 		</div>
-		<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
-				  on-success="$ctrl.onSuccess"
-				  on-complete="$ctrl.onComplete"
-				  max-files="1"
-				  accepted-files=".xlsx,.xlx"
-				  data:message="#{metadata.dropzone.message}"></dropzone>
+		<div class="alert alert-info">
+			<p class="lead" style="margin-bottom: 1rem;">Hey! So you want to upload metadata for samples in this
+			project?</p>
+			<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
+					  on-success="$ctrl.onSuccess"
+					  on-complete="$ctrl.onComplete"
+					  max-files="1"
+					  accepted-files=".xlsx,.xlx"
+					  data:message="#{metadata.dropzone.message}"></dropzone>
+		</div>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
 		<div class="row">
 			<div class="col-md-12 clearfix">
-				<a ui-sref="upload" class="btn btn-default" style="margin-bottom: 1rem;">
+				<button class="btn btn-default" style="margin-bottom: 1rem;" ng-click="$ctrl.selectNewFile()">
 					<span class="fa fa-arrow-left"></span>&nbsp;Select new Excel File
-				</a>
+				</button>
 				<button class="btn btn-default pull-right" style="margin-bottom: 1rem;"
 						ng-click="$ctrl.displayMetadata()">
 					Preview Metedata&nbsp;<span class="fa fa-arrow-right"></span>
@@ -59,16 +69,25 @@
 	<script type="text/ng-template" id="resultsTable.tmpl.html">
 		<div class="row" style="margin-bottom: 1rem;">
 			<div class="col-md-12 clearfix">
-				<button class="btn btn-default">
-					<span class="fa fa-arrow-left"></span>&nbsp;Pick Different Sample Name Column</button>
-				<button class="btn btn-primary pull-right">
-					<span class="fa fa-floppy-o"></span>&nbsp;Save Metadata</button>
+				<a ui-sref="sampleId" class="btn btn-default">
+					<span class="fa fa-arrow-left"></span>&nbsp;Pick Different Sample Name Column</a>
 			</div>
 		</div>
-		<div ng-if="$ctrl.missing" class="alert alert-danger">
+		<div ng-show="$ctrl.missing" class="alert alert-danger">
 			<strong>{{ $ctrl.missing }} entries do not match samples in this project.</strong>
 		</div>
-		<table id="results-table" class="table table-bordered"></table>
+		<div ng-show="$ctrl.found">
+			<h3>Matched Entries
+				<button class="btn btn-primary pull-right" ng-click="$ctrl.saveMetadata()">
+					<span class="fa fa-floppy-o"></span>&nbsp;Save Metadata
+				</button>
+			</h3>
+			<table id="results-table" class="table table-striped"></table>
+		</div>
+		<div ng-show="$ctrl.missing">
+			<h3 class="clearfix">Unmatched Entries</h3>
+			<table id="ignored-table" class="table table-striped"></table>
+		</div>
 </script>
 </div>
 </body>
