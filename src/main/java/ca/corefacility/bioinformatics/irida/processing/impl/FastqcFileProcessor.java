@@ -14,8 +14,11 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import uk.ac.babraham.FastQC.Graphs.LineGraph;
 import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
@@ -47,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
  * 
  * 
  */
+@Component
 public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 
@@ -68,6 +72,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 *            {@link SequencingObjectRepository} to read
 	 *            {@link SequencingObject}s
 	 */
+	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
 			final SequencingObjectRepository objectRepository) {
 		this.messageSource = messageSource;
@@ -79,6 +84,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public void process(final Long sequencingObjectId) throws FileProcessorException {
 		SequencingObject seqObj = objectRepository.findOne(sequencingObjectId);
 

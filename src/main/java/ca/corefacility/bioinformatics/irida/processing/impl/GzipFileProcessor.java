@@ -12,6 +12,8 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -30,19 +32,31 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
  * 
  * 
  */
+@Component
 public class GzipFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(GzipFileProcessor.class);
 	private static final String GZIP_EXTENSION = ".gz";
 
 	private final SequenceFileRepository sequenceFileRepository;
 	private final SequencingObjectRepository objectRepository;
-	private final Boolean removeCompressedFile;
+	private Boolean removeCompressedFile;
 
+	@Autowired
 	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
-			final SequencingObjectRepository objectRepository, final Boolean removeCompressedFile) {
+			final SequencingObjectRepository objectRepository) {
 		this.sequenceFileRepository = sequenceFileService;
-		this.removeCompressedFile = removeCompressedFile;
 		this.objectRepository = objectRepository;
+	}
+	
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
+			final SequencingObjectRepository objectRepository, Boolean removeCompressedFiles) {
+		this.sequenceFileRepository = sequenceFileService;
+		this.objectRepository = objectRepository;
+		this.removeCompressedFile = removeCompressedFiles;
+	}
+	
+	public void setRemoveCompressedFiles(boolean removeCompressedFile){
+		this.removeCompressedFile = removeCompressedFile;
 	}
 
 	/**
