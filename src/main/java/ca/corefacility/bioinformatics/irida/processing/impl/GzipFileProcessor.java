@@ -39,23 +39,32 @@ public class GzipFileProcessor implements FileProcessor {
 
 	private final SequenceFileRepository sequenceFileRepository;
 	private final SequencingObjectRepository objectRepository;
-	private Boolean removeCompressedFile;
+	private boolean removeCompressedFile;
 
 	@Autowired
 	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
 			final SequencingObjectRepository objectRepository) {
 		this.sequenceFileRepository = sequenceFileService;
 		this.objectRepository = objectRepository;
+		removeCompressedFile = false;
 	}
-	
+
 	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
 			final SequencingObjectRepository objectRepository, Boolean removeCompressedFiles) {
 		this.sequenceFileRepository = sequenceFileService;
 		this.objectRepository = objectRepository;
 		this.removeCompressedFile = removeCompressedFiles;
 	}
-	
-	public void setRemoveCompressedFiles(boolean removeCompressedFile){
+
+	/**
+	 * Decide whether or not to delete the original compressed files that are
+	 * uploaded once they're unzipped. If <code>false</code> they will be kept
+	 * in their revision directories.
+	 * 
+	 * @param removeCompressedFile
+	 *            Whether or not to delete original compressed files.
+	 */
+	public void setRemoveCompressedFiles(boolean removeCompressedFile) {
 		this.removeCompressedFile = removeCompressedFile;
 	}
 
@@ -108,7 +117,8 @@ public class GzipFileProcessor implements FileProcessor {
 					sequenceFile = sequenceFileRepository.save(sequenceFile);
 
 					if (removeCompressedFile) {
-						logger.debug("Removing original compressed files [file.processing.decompress.remove.compressed.file=true]");
+						logger.debug(
+								"Removing original compressed files [file.processing.decompress.remove.compressed.file=true]");
 						try {
 							Files.delete(file);
 						} catch (final Exception e) {
@@ -170,7 +180,8 @@ public class GzipFileProcessor implements FileProcessor {
 		try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
 			byte[] bytes = new byte[2];
 			is.read(bytes);
-			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
 	}
 }
