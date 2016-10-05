@@ -241,13 +241,18 @@
 
     svc.exportFromProjSampPage = function (args, ids, projectId) {
       // Need to get an actual list of samples from the server from their ids.
-      return $http.get(PAGE.urls.samples.idList + "?" + $.param({sampleIds: ids, projectId: projectId}))
-        .then(function (result) {
-          _.each(result.data.mapList, function (sample) {
-              addSampleFile(sample.label, sample.href);
+      var promises = [];
+      Object.keys(ids).map(function(id) {
+        promises.push($http.get(PAGE.urls.samples.idList + "?" + $.params({sampleids: ids[id], projectId: id}))
+        .then(function(result) {
+          result.data.mapList.forEach(function(sample) {
+            addSampleFile(sample.label, sample.href);
           });
-          return getSampleFormEntities(args);
-        });
+        }));
+      });
+      return $q.all(promises).then(function() {
+        return getSampleFormEntities(args);
+      });
     };
 
     svc.exportFromCart = function (args) {

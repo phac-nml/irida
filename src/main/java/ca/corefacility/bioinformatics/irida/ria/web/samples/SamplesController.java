@@ -1,10 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +35,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -43,13 +56,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all sample related views
@@ -340,7 +346,7 @@ public class SamplesController extends BaseController {
 	 * @return {@link List} 
 	 */
 	@RequestMapping("/samples/idList")
-	public List<Map<String, String>> getSampleListByIdList(@RequestParam(value = "sampleIds") List<Long> sampleIds, @RequestParam Long projectId) {
+	public List<Map<String, String>> getSampleListByIdList(@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long projectId) {
 		List<Sample> list = (List<Sample>) sampleService.readMultiple(sampleIds);
 		List<Map<String, String>> result = new ArrayList<>();
 		for (Sample sample : list) {
