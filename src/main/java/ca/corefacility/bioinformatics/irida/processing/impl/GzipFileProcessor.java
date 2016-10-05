@@ -8,10 +8,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.zip.GZIPInputStream;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -30,19 +31,40 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
  * 
  * 
  */
+@Component
 public class GzipFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(GzipFileProcessor.class);
 	private static final String GZIP_EXTENSION = ".gz";
 
 	private final SequenceFileRepository sequenceFileRepository;
 	private final SequencingObjectRepository objectRepository;
-	private final Boolean removeCompressedFile;
+	private boolean removeCompressedFile;
+
+	@Autowired
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
+			final SequencingObjectRepository objectRepository) {
+		this.sequenceFileRepository = sequenceFileService;
+		this.objectRepository = objectRepository;
+		removeCompressedFile = false;
+	}
 
 	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
-			final SequencingObjectRepository objectRepository, final Boolean removeCompressedFile) {
+			final SequencingObjectRepository objectRepository, Boolean removeCompressedFiles) {
 		this.sequenceFileRepository = sequenceFileService;
-		this.removeCompressedFile = removeCompressedFile;
 		this.objectRepository = objectRepository;
+		this.removeCompressedFile = removeCompressedFiles;
+	}
+
+	/**
+	 * Decide whether or not to delete the original compressed files that are
+	 * uploaded once they're unzipped. If <code>false</code> they will be kept
+	 * in their revision directories.
+	 * 
+	 * @param removeCompressedFile
+	 *            Whether or not to delete original compressed files.
+	 */
+	public void setRemoveCompressedFiles(boolean removeCompressedFile) {
+		this.removeCompressedFile = removeCompressedFile;
 	}
 
 	/**
@@ -94,7 +116,8 @@ public class GzipFileProcessor implements FileProcessor {
 					sequenceFile = sequenceFileRepository.save(sequenceFile);
 
 					if (removeCompressedFile) {
-						logger.debug("Removing original compressed files [file.processing.decompress.remove.compressed.file=true]");
+						logger.debug(
+								"Removing original compressed files [file.processing.decompress.remove.compressed.file=true]");
 						try {
 							Files.delete(file);
 						} catch (final Exception e) {
@@ -156,7 +179,8 @@ public class GzipFileProcessor implements FileProcessor {
 		try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
 			byte[] bytes = new byte[2];
 			is.read(bytes);
-			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
 	}
 }
