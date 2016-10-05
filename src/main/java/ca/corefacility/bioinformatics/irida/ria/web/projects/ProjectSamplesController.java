@@ -872,6 +872,13 @@ public class ProjectSamplesController {
 		return PROJECTS_DIR + "project_samples_metadata";
 	}
 
+	@RequestMapping("/projects/{projectId}/sample-metadata/{key}")
+	@ResponseBody
+	public Map getProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId, @PathVariable String key) {
+		return (Map) session.getAttribute(key);
+	}
+
 	/**
 	 * Upload Excel file containing sample metadata and extract the headers.  The file is stored in the session until
 	 * the column that corresponds to a {@link Sample} identifier has been sent.
@@ -886,13 +893,14 @@ public class ProjectSamplesController {
 	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the {@link
 	 * Sample} identifier.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.POST)
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}", method = RequestMethod.POST)
 	@ResponseBody public Map<String, Object> createProjectSampleMetadata(
 			HttpSession session,
 			@PathVariable long projectId,
+			@PathVariable String key,
 			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
 		// We want to return a list of the table headers back to the UI.
-		List<String> headers = new ArrayList<>();
+		Map<String, Object> result = new HashMap<>();
 
 		try {
 			// Need an input stream
@@ -900,14 +908,19 @@ public class ProjectSamplesController {
 			byte [] byteArr= file.getBytes();
 			InputStream fis = new ByteArrayInputStream(byteArr);
 
-			Workbook workbook = null;
+			Workbook workbook;
 			String[] splitFile = filename.split("\\.(?=[^\\.]+$)");
 			String extension = splitFile[splitFile.length - 1];
-			if (extension.equals("xlsx")) {
+
+			// Check the type of workbook
+			switch (extension) {
+			case "xlsx":
 				workbook = new XSSFWorkbook(fis);
-			} else if (extension.equals("xls")) {
+				break;
+			case "xls":
 				workbook = new HSSFWorkbook(fis);
-			} else {
+				break;
+			default:
 				// Should never reach here as the uploader limits to .xlsx and .xlx files.
 				throw new MetadataImportFileTypeNotSupportedError(extension);
 			}
@@ -916,10 +929,26 @@ public class ProjectSamplesController {
 			Sheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
 
-			headers = getWorkbookHeaders(rowIterator.next());
+			List<String> headers = getWorkbookHeaders(rowIterator.next());
+			result.put("headers", headers);
 
-			// Store the workbook temporarily in the session
-			session.setAttribute("metadata-" + projectId, workbook);
+			// Get the metadata out of the table.
+			List<Map<String, String>> rows = new ArrayList<>();
+			while (rowIterator.hasNext()) {
+				int headerCounter = 0;
+				Map<String, String> rowMap = new HashMap<>();
+				Row row = rowIterator.next();
+				Iterator<Cell> cellIterator = row.cellIterator();
+				while (cellIterator.hasNext() && headerCounter < headers.size()) {
+					Cell cell = cellIterator.next();
+					String cellValue = cell.getStringCellValue().trim();
+					String header = headers.get(headerCounter).trim();
+					rowMap.put(header, cellValue);
+					headerCounter += 1;
+				}
+				rows.add(rowMap);
+			}
+			result.put("rows", rows);
 
 			fis.close();
 		} catch (FileNotFoundException e) {
@@ -928,9 +957,16 @@ public class ProjectSamplesController {
 			logger.error("Error opening file" + file.getOriginalFilename());
 		}
 
-		return ImmutableMap.of("headers", headers);
+		session.setAttribute(key, result);
+		return result;
 	}
 
+	/**
+	 * Extract the headers from an excel file.
+	 *
+	 * @param row {@link Row} First row from the excel file.
+	 * @return {@link List} of {@link String} header values.
+	 */
 	private List<String> getWorkbookHeaders(Row row) {
 		// We want to return a list of the table headers back to the UI.
 		List<String> headers = new ArrayList<>();
@@ -961,97 +997,98 @@ public class ProjectSamplesController {
 	 *
 	 * @return {@link Map} containing
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.PUT)
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}", method = RequestMethod.PUT)
 	@ResponseBody
 	public Map<String, Object> setProjectSampleMetadataSampleId(
 			HttpSession session,
 			@PathVariable long projectId,
-			@RequestParam String sampleIdColumn) {
-		List<Map<String, Object>> goodRows = new ArrayList<>();
-		List<Map<String, Object>> badRows = new ArrayList<>();
-		List<String> headers;
-
+			@PathVariable String key,
+			@RequestParam String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
-		String sessionMetadataAttr = "metadata-" + projectId;
-		Workbook workbook = (Workbook) session.getAttribute(sessionMetadataAttr);
+		Map<String, Object> stored = (Map<String, Object>) session.getAttribute(key);
 
-		if (workbook != null) {
+		if (stored != null) {
 			Project project = projectService.read(projectId);
-			Sheet sheet = workbook.getSheetAt(0);
-			Iterator<Row> rowIterator = sheet.iterator();
+			List<Map<String, String>> rows = (List<Map<String, String>>) stored.get("rows");
 
-			headers = getWorkbookHeaders(rowIterator.next());
+			// Remove 'rows' since they are now going to be sorted into found and not found.
+			stored.remove("rows");
+
+			List<String> headers = (List<String>) stored.get("headers");
+
+			List<Map<String, String>> found = new ArrayList<>();
+			List<Map<String, String>> missing = new ArrayList<>();
 
 			// Get the metadata out of the table.
-			while (rowIterator.hasNext()) {
-				int headerCounter = 0;
-				Map<String, Object> rowMap = new HashMap<>();
-				Sample sample = null;
-				Row row = rowIterator.next();
-				Iterator<Cell> cellIterator = row.cellIterator();
-				while (cellIterator.hasNext() && headerCounter < headers.size()) {
-					Cell cell = cellIterator.next();
-					String cellValue = cell.getStringCellValue().trim();
-					String header = headers.get(headerCounter).trim();
-
-					if (header.equals(sampleIdColumn)) {
-						try {
-							sample = sampleService.getSampleBySampleName(project, cellValue);
-							rowMap.put("identifier", sample.getId());
-						} catch (EntityNotFoundException e) {
-							rowMap.put("identifier", "");
-						}
-					}
-
-					rowMap.put(header, cellValue);
-					headerCounter += 1;
-				}
-				if (sample != null) {
-					goodRows.add(rowMap);
-				} else {
-					badRows.add(rowMap);
+			for (Map<String, String> row : rows) {
+				// Lets try to get a sample
+				String sampleName = row.get(sampleNameColumn);
+				try {
+					Sample sample = sampleService.getSampleBySampleName(project, sampleName);
+					row.put("identifier", String.valueOf(sample.getId()));
+					found.add(row);
+				} catch (EntityNotFoundException e) {
+					missing.add(row);
 				}
 			}
 
-			session.setAttribute(sessionMetadataAttr + "-rows", goodRows);
+			stored.put("found", found);
+			stored.put("missing", missing);
 		}
 
-		return ImmutableMap.of("goodRows", goodRows, "badRows", badRows);
+		return ImmutableMap.of("result", "complete");
 	}
 
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/save", method = RequestMethod.PUT)
-	@ResponseBody public List<Map<String, Object>> saveProjectSampleMetadata(
-			HttpSession session, @PathVariable long projectId) {
-		String sessionMetadataAttr = "metadata-" + projectId + "-rows";
-		List rows = (List<ArrayList>) session.getAttribute(sessionMetadataAttr);
-		List<Map<String, Object>> result = new ArrayList<>();
-		if (rows != null) {
-			for (Object rowObject : rows) {
-				try {
-					Map<String, Object> row = (HashMap) rowObject;
-					Long id = (Long) row.get("identifier");
-					Sample sample = sampleService.read(id);
-					SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-					if (sampleMetadata == null) {
-						sampleMetadata = new SampleMetadata();
-					}
-					Map<String, Object> metadata = sampleMetadata.getMetadata();
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}/save", method = RequestMethod.PUT)
+	@ResponseBody public Map<String, Object> saveProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId,
+			@PathVariable String key) {
+		Map<String, Object> errors = new HashMap<>();
 
-					// Need to overwrite duplicate keys
-					for (String key : row.keySet()) {
-						metadata.put(key, row.get(key));
-					}
+		Object sessionObject = session.getAttribute(key);
+		Map<String, Object> stored = null;
+		if (sessionObject != null && sessionObject instanceof Map) {
+			stored = (Map<String, Object>) session.getAttribute(key);
+		} else {
+			errors.put("stored-error", true);
+		}
 
-					// Save metadata back to the sample
-					sampleMetadata.setMetadata(metadata);
-					sampleService.saveSampleMetadaForSample(sample, sampleMetadata);
-					result.add(metadata);
-				} catch (EntityNotFoundException e) {
-					e.printStackTrace();
+		if (stored.containsKey("found")) {
+			Object foundObject = stored.get("found");
+			if (foundObject instanceof List) {
+				List<Map<String, String>> found = (List<Map<String, String>>) stored.get("found");
+				List<Map<String, String>> errorList = new ArrayList<>();
+				for (Map<String, String> row: found) {
+					try {
+						Long id = Long.valueOf(row.get("identifier"));
+						Sample sample = sampleService.read(id);
+						SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+						if (sampleMetadata == null) {
+							sampleMetadata = new SampleMetadata();
+						}
+						Map<String, Object> metadata = sampleMetadata.getMetadata();
+
+						// Need to overwrite duplicate keys
+						for (String item : row.keySet()) {
+							metadata.put(item, row.get(item));
+						}
+
+						// Save metadata back to the sample
+						sampleMetadata.setMetadata(metadata);
+						sampleService.saveSampleMetadaForSample(sample, sampleMetadata);
+					} catch (EntityNotFoundException e) {
+						errorList.add(row);
+					}
 				}
+				if (errorList.size() != 0) {
+					errors.put("save-errors", errorList);
+				}
+			} else {
+				errors.put("found-error", true);
 			}
 		}
-		return result;
+		return errors;
 	}
 
 	/**

@@ -7,50 +7,29 @@ const $ = require('jquery');
 
 export const sampleMetadataService = ($http, $window) => {
   // 'project.id' is set in the `project/_bse.html` file
-  const PROJECT_KEY = `pm-${project.id}`;
+  const URL = `${$window.location.pathname}/pm-${project.id}`;
 
   /**
    * Get any metadata stored for the current project.
    * @return {object} the metadata stored for this project.
    */
   const getProjectData = () => {
-    const stored = sessionStorage.getItem(PROJECT_KEY);
-    if (stored === null) {
-      return {};
-    }
-    return JSON.parse(stored);
-  };
-
-  /**
-   * Store the new data into the session.
-   * @param {object} data the data to store into the session.
-   */
-  const storeProjectData = data => {
-    const json = getProjectData();
-    Object.assign(json, data);
-    sessionStorage.setItem(PROJECT_KEY, JSON.stringify(json));
+    return $http.get(URL)
+      .then(result => {
+        return result.data;
+      });
   };
 
   /**
    * Set the name of the column that contains the sample id.
-   * @param {string} idColumn Name of the column to set as
+   * @param {string} sampleNameColumn Name of the column to set as
    * the sample id.
    * @return {object} ajax promise
    */
-  const setSampleIdColumn = idColumn => {
-    const data = $.param({sampleIdColumn: idColumn});
-    return $http.put($window.location.pathname + '?' + data)
-      .then(response => {
-        const goodRows = response.data.goodRows;
-        const badRows = response.data.badRows;
-
-        const tables = {goodRows, badRows};
-
-        // Store it into session storage
-        storeProjectData({idColumn, tables});
-
-        return response;
-      });
+  const setSampleIdColumn = sampleNameColumn => {
+    const data = $.param({sampleNameColumn});
+    return $http.put(`${URL}?${data}`)
+      .then(response => response);
   };
 
   /**
@@ -58,7 +37,7 @@ export const sampleMetadataService = ($http, $window) => {
    * @return {object} ajax promise
    */
   const saveMetadata = () => {
-    return $http.put($window.location.pathname + '/save');
+    return $http.put(`${URL}/save`);
   };
 
   const clearProject = () => {
@@ -66,7 +45,6 @@ export const sampleMetadataService = ($http, $window) => {
   };
 
   return {
-    storeProjectData,
     getProjectData,
     setSampleIdColumn,
     saveMetadata,

@@ -23,8 +23,6 @@ const link = (scope, element) => {
     dictDefaultMessage: scope.message
   });
 
-  console.log('hello');
-
   // Update event handlers
   // Unwraps the function as it is needed to be passed parameters later;
   if (typeof scope.onSuccess === 'function') {

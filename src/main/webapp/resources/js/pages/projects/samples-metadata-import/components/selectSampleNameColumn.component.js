@@ -1,21 +1,23 @@
 const selectSampleNameColumnComponent = {
   templateUrl: 'sampleId.tmpl.html',
   controller(sampleMetadataService, $state) {
-    const details = sampleMetadataService.getProjectData();
+    sampleMetadataService
+      .getProjectData()
+      .then(data => {
+        // If there are no headers than no file has been uploaded,
+        // therefore we need to go to the upload page.
+        if (!data.hasOwnProperty('headers')) {
+          $state.go('upload');
+        }
 
-    // If there are no headers than no file has been uploaded,
-    // therefore we need to go to the upload page.
-    if (!details.hasOwnProperty('headers')) {
-      $state.go('upload');
-    }
-
-    // Check to see if an 'idColumn' has already been set.
-    if (details.hasOwnProperty('idColumn')) {
-      this.idColumn = details.idColumn;
-    } else {
-      this.idColumn = details.headers[0];
-    }
-    this.headers = details.headers;
+        // Check to see if an 'idColumn' has already been set.
+        if (data.hasOwnProperty('idColumn')) {
+          this.idColumn = data.idColumn;
+        } else {
+          this.idColumn = data.headers[0];
+        }
+        this.headers = data.headers;
+      });
 
     this.displayMetadata = () => {
       sampleMetadataService

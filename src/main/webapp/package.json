@@ -7,8 +7,12 @@
     "angular-ui-router": "1.0.0-alpha.4",
     "datatables-bootstrap3-plugin": "^0.5.0",
     "datatables.net": "^1.10.12",
+    "datatables.net-bs": "^1.10.12",
+    "datatables.net-buttons": "^1.2.2",
+    "datatables.net-buttons-bs": "^1.2.2",
     "dropzone": "^4.3.0",
     "install": "^0.8.1",
+    "jszip": "^3.1.2",
     "lodash": "^4.15.0",
     "npm": "^3.10.6"
   },

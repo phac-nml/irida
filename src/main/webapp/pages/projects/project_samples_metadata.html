@@ -15,13 +15,57 @@
 			margin-bottom: 0;
 		}
 
+		.pill-content {
+			padding-top: 1rem!important;
+		}
+
+		table.dataTable tbody th,
+		table.dataTable tbody td {
+			white-space: nowrap;
+		}
+
 		.dataTables_scroll {
 			border: 1px solid #DDDDDD;
 			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 		}
 
+		.dataTables_paginate {
+			display: flex;
+			justify-content: center;
+		}
+
+		li.active .badge {
+			background-color: white!important;
+			color: RGB(55, 123, 181)!important;
+		}
+
 		th {
 			white-space: nowrap;
+		}
+
+		.nav-pills > li#danger.active > a, .nav-pills > li#danger.active > a:hover {
+			background-color: rgb(244, 67, 54)!important;
+			color: white;
+		}
+
+		.nav-pills > li#danger.active .badge {
+			background-color: white;
+			color: rgb(244, 67, 54)!important;
+		}
+
+		.nav-pills > li#danger > a {
+			color: rgb(244, 67, 54);
+			border: 1px solid rgba(244, 67, 54, .2);
+		}
+
+		.nav-pills > li#danger > a:hover {
+			background-color: rgba(244, 67, 54, .2)!important;
+			border: 1px solid rgb(244, 67, 54);;
+			color: rgb(244, 67, 54);
+		}
+
+		.nav-pills > li#danger .badge {
+			background-color: rgb(244, 67, 54);
 		}
 	</style>
 </head>
@@ -40,8 +84,7 @@
 		<div class="alert alert-info">
 			<p class="lead" style="margin-bottom: 1rem;">Hey! So you want to upload metadata for samples in this
 			project?</p>
-			<dropzone data:url="@{/projects/{id}/sample-metadata(id=${projectId})}"
-					  on-success="$ctrl.onSuccess"
+			<dropzone data:url="@{/projects/{id}/sample-metadata/pm-{id}(id=${projectId})}"
 					  on-complete="$ctrl.onComplete"
 					  max-files="1"
 					  accepted-files=".xlsx,.xlx"
@@ -71,23 +114,33 @@
 			<div class="col-md-12 clearfix">
 				<a ui-sref="sampleId" class="btn btn-default">
 					<span class="fa fa-arrow-left"></span>&nbsp;Pick Different Sample Name Column</a>
+				<button class="btn btn-success pull-right" ng-click="$ctrl.saveMetadata()">
+					<span class="fa fa-floppy-o"></span>&nbsp;Save Valid Metadata
+				</button>
 			</div>
 		</div>
-		<div ng-show="$ctrl.missing" class="alert alert-danger">
-			<strong>{{ $ctrl.missing }} entries do not match samples in this project.</strong>
-		</div>
-		<div ng-show="$ctrl.found">
-			<h3>Matched Entries
-				<button class="btn btn-primary pull-right" ng-click="$ctrl.saveMetadata()">
-					<span class="fa fa-floppy-o"></span>&nbsp;Save Metadata
-				</button>
-			</h3>
-			<table id="results-table" class="table table-striped"></table>
-		</div>
-		<div ng-show="$ctrl.missing">
-			<h3 class="clearfix">Unmatched Entries</h3>
-			<table id="ignored-table" class="table table-striped"></table>
-		</div>
+		<uib-tabset type="pills" justified="true">
+			<uib-tab select="$ctrl.loadGoodRows()">
+				<uib-tab-heading>
+					Rows matching samples&nbsp;<span class="badge">{{ $ctrl.found }}</span>
+				</uib-tab-heading>
+				<div class="pill-content">
+					<table id="results-table" class="table table-striped"></table>
+				</div>
+			</uib-tab>
+			<uib-tab id="danger" classes="btn-sm" select="$ctrl.loadBadRows()">
+				<uib-tab-heading>
+					<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;Rows not matching samples&nbsp;<span class="badge">{{ $ctrl.missing }}</span>
+				</uib-tab-heading>
+				<div class="pill-content">
+					<div class="alert alert-danger">
+						<strong style="font-size: 2rem;"><span class="fa fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;These entries will not be saved to the project</strong>
+						<p class="lead">These entries did not match any of the sample names in this project, and therefore cannot be saved.</p>
+					</div>
+					<table id="ignored-table" class="table table-striped"></table>
+				</div>
+			</uib-tab>
+		</uib-tabset>
 </script>
 </div>
 </body>
