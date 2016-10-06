@@ -4,7 +4,7 @@
     {
       "type": "css",
       "locations": {
-        "webapp": "/node_modules/dropzone/dist/min/dropzone.min.css"
+        "webapp": "/resources/css/pages/project_samples_metadata.css"
       }
     },
     {

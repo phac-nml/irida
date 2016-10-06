@@ -5,105 +5,37 @@
 	  layout:decorator="projects/_base">
 <head>
 	<title th:text="#{metadata.page-title}"></title>
-	<link rel="stylesheet" href="/resources/css/components/steps.css" />
-	<style>
-		label > input[type="radio"] {
-			margin-top: 0 !important;
-		}
-
-		.dataTables_scrollHeadInner .table {
-			margin-bottom: 0;
-		}
-
-		.dataTables_paginate {
-			margin-bottom: 2rem!important;
-		}
-
-		.pill-content {
-			padding-top: 1rem!important;
-		}
-
-		table.dataTable tbody th,
-		table.dataTable tbody td {
-			white-space: nowrap;
-		}
-
-		.dataTables_scroll {
-			border: 1px solid #DDDDDD;
-			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-		}
-
-		.dataTables_paginate {
-			display: flex;
-			justify-content: center;
-		}
-
-		li.active .badge {
-			background-color: white!important;
-			color: RGB(55, 123, 181)!important;
-		}
-
-		th {
-			white-space: nowrap;
-		}
-
-		.nav-pills > li#danger.active > a, .nav-pills > li#danger.active > a:hover {
-			background-color: rgb(244, 67, 54)!important;
-			color: white;
-		}
-
-		.nav-pills > li#danger.active .badge {
-			background-color: white;
-			color: rgb(244, 67, 54)!important;
-		}
-
-		.nav-pills > li#danger > a {
-			color: rgb(244, 67, 54);
-			border: 1px solid rgba(244, 67, 54, .2);
-		}
-
-		.nav-pills > li#danger > a:hover {
-			background-color: rgba(244, 67, 54, .2)!important;
-			border: 1px solid rgb(244, 67, 54);;
-			color: rgb(244, 67, 54);
-		}
-
-		.nav-pills > li#danger .badge {
-			background-color: rgb(244, 67, 54);
-		}
-	</style>
 </head>
 <body>
 <div layout:fragment="main"
 	 ddl:bundle-includes="project-samples-metadata"
 	 ddl:asset-css-excludes="jquery.datatables">
 	<section ui-view=""></section>
-	<script type="text/ng-template" id="upload.tmpl.html">
-		<div ng-show="$ctrl.hasHeaders">
-			<div class="alert alert-warning clearfix">
-				<strong>An excel file has already been uploaded</strong>
-				<a class="pull-right" ui-sref="sampleId">Select the column header from this file? <span class="fa fa-arrow-right"></span></a>
-			</div>
-		</div>
+	<script type="text/ng-template" id="upload.component.tmpl.html">
+		<h3 th:text="#{metadata.upload.component.title}"></h3>
+		<p class="lead" style="margin-bottom: 1rem;" th:text="#{metadata.upload.component.intro}"></p>
 		<div class="alert alert-info">
-			<p class="lead" style="margin-bottom: 1rem;">Hey! So you want to upload metadata for samples in this
-			project?</p>
-			<dropzone data:url="@{/projects/{id}/sample-metadata/pm-{id}(id=${projectId})}"
-					  on-complete="$ctrl.onComplete"
-					  max-files="1"
-					  accepted-files=".xlsx,.xlx"
-					  data:message="#{metadata.dropzone.message}"></dropzone>
+			<p th:utext="#{metadata.upload.component.text}"></p>
+			<br/>
+			<b th:text="#{metadata.upload.component.warning}"></b>
 		</div>
+		<dropzone data:url="@{/projects/{id}/sample-metadata/pm-{id}(id=${projectId})}"
+				  on-complete="$ctrl.onComplete"
+				  max-files="1"
+				  accepted-files=".xlsx,.xlx"
+				  data:message="#{metadata.dropzone.message}"></dropzone>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
 		<div class="row">
 			<div class="col-md-12 clearfix">
 				<button class="btn btn-default" style="margin-bottom: 1rem;" ng-click="$ctrl.selectNewFile()">
-					<span class="fa fa-arrow-left"></span>&nbsp;Select new Excel File
+					<fa:icon type="arrow-left"/>&nbsp;
+					<th:block th:text="#{metadata.header.component.prev-nav}"/>
 				</button>
 				<button class="btn btn-default pull-right" style="margin-bottom: 1rem;"
 						ng-click="$ctrl.displayMetadata()">
-					Preview Metedata&nbsp;<span class="fa fa-arrow-right"></span>
+					<th:block th:text="#{metadata.header.component.next-nav}"/>&nbsp;
+					<fa:icon type="arrow-right"/>
 				</button>
 			</div>
 		</div>
@@ -117,28 +49,39 @@
 		<div class="row" style="margin-bottom: 1rem;">
 			<div class="col-md-12 clearfix">
 				<a ui-sref="sampleId" class="btn btn-default">
-					<span class="fa fa-arrow-left"></span>&nbsp;Pick Different Sample Name Column</a>
-				<button class="btn btn-success pull-right" ng-click="$ctrl.saveMetadata()">
-					<span class="fa fa-floppy-o"></span>&nbsp;Save Valid Metadata
-				</button>
+					<fa:icon type="arrow-left"/>&nbsp;
+					<th:block th:text="#{metadata.results.component.prev-nav}" /></a>
 			</div>
 		</div>
-		<ul class="nav nav-pills nav-justified">
+		<ul class="nav nav-pills nav-justified" style="margin-bottom: 1rem;">
 			<li role="presentation" ui-sref-active="active">
-				<a ui-sref="results.found">Awesome Results <span class="badge" ng-bind="$ctrl.found"></span></a>
+				<a ui-sref="results.found"><th:block th:text="#{metadata.results.component.found-nav}" />&nbsp;<span class="badge" ng-bind="$ctrl.found"></span></a>
 			</li>
 			<li role="presentation" id="danger" ui-sref-active="active">
-				<a ui-sref="results.missing">These Suck! <span class="badge" ng-bind="$ctrl.missing"></span></a>
+				<a ui-sref="results.missing"><th:block th:text="#{metadata.results.component.missing-nav}"/>&nbsp;<span class="badge" ng-bind="$ctrl.missing"></span></a>
 			</li>
 		</ul>
 		<ui-view></ui-view>
 </script>
 	<script type="text/ng-template" id="results.found.component.tmpl.html">
-		<h3>These are awesome results!</h3>
+		<div class="alert alert-success">
+			<strong>
+				<fa:icon type="thumb-up" />&nbsp;
+				<th:block th:text="#{metadata.results.found.component.title}"/>
+			</strong>
+			<button class="btn btn-success pull-right" ng-click="$ctrl.saveMetadata()">
+				<fa:icon type="save" />&nbsp;<th:block th:text="#{metadata.results.found.component.save}" />
+			</button>
+		</div>
 		<table id="found-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
 	</script>
 	<script type="text/ng-template" id="results.missing.component.tmpl.html">
-		<h3>These are shitty results!</h3>
+		<div class="alert alert-danger">
+			<strong>
+				<fa:icon type="warning" />&nbsp;
+				<th:block th:text="#{metadata.results.missing.component.title}"/></strong>
+			<p class="lead" th:text="#{metadata.results.missing.component.message}"></p>
+		</div>
 		<table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
 	</script>
 </div>

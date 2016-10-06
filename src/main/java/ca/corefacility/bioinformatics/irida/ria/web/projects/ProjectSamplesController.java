@@ -1091,6 +1091,12 @@ public class ProjectSamplesController {
 		return errors;
 	}
 
+	@RequestMapping("/projects/{projectId}/sample-metadata/{key}/clear")
+	public void clearProjectSampleMetadata(HttpSession session,  @PathVariable long projectId,
+			@PathVariable String key) {
+		session.removeAttribute(key);
+	}
+
 	/**
 	 * Export {@link Sample} from a {@link Project} as either Excel or CSV formatted.
 	 *

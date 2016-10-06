@@ -41,7 +41,7 @@ export const sampleMetadataService = ($http, $window) => {
   };
 
   const clearProject = () => {
-    sessionStorage.clear();
+    return $http.get(`${URL}/clear`);
   };
 
   return {
