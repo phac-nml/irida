@@ -23,7 +23,7 @@ const selectSampleNameColumnComponent = {
       sampleMetadataService
         .setSampleIdColumn(this.idColumn)
         .then(() => {
-          $state.go('results');
+          $state.go('results.found');
         });
     };
 

@@ -4,7 +4,7 @@
 const resultsState = {
   name: 'results',
   url: '/results',
-  component: 'resultsTable',
+  component: 'resultsComponent',
   resolve: {
     data(sampleMetadataService) {
       return sampleMetadataService

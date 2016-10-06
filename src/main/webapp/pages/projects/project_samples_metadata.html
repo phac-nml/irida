@@ -15,6 +15,10 @@
 			margin-bottom: 0;
 		}
 
+		.dataTables_paginate {
+			margin-bottom: 2rem!important;
+		}
+
 		.pill-content {
 			padding-top: 1rem!important;
 		}
@@ -109,7 +113,7 @@
 			</li>
 		</ul>
 	</script>
-	<script type="text/ng-template" id="resultsTable.tmpl.html">
+	<script type="text/ng-template" id="results.component.tmpl.html">
 		<div class="row" style="margin-bottom: 1rem;">
 			<div class="col-md-12 clearfix">
 				<a ui-sref="sampleId" class="btn btn-default">
@@ -119,29 +123,24 @@
 				</button>
 			</div>
 		</div>
-		<uib-tabset type="pills" justified="true">
-			<uib-tab select="$ctrl.loadGoodRows()">
-				<uib-tab-heading>
-					Rows matching samples&nbsp;<span class="badge">{{ $ctrl.found }}</span>
-				</uib-tab-heading>
-				<div class="pill-content">
-					<table id="results-table" class="table table-striped"></table>
-				</div>
-			</uib-tab>
-			<uib-tab id="danger" classes="btn-sm" select="$ctrl.loadBadRows()">
-				<uib-tab-heading>
-					<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;Rows not matching samples&nbsp;<span class="badge">{{ $ctrl.missing }}</span>
-				</uib-tab-heading>
-				<div class="pill-content">
-					<div class="alert alert-danger">
-						<strong style="font-size: 2rem;"><span class="fa fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;These entries will not be saved to the project</strong>
-						<p class="lead">These entries did not match any of the sample names in this project, and therefore cannot be saved.</p>
-					</div>
-					<table id="ignored-table" class="table table-striped"></table>
-				</div>
-			</uib-tab>
-		</uib-tabset>
+		<ul class="nav nav-pills nav-justified">
+			<li role="presentation" ui-sref-active="active">
+				<a ui-sref="results.found">Awesome Results <span class="badge" ng-bind="$ctrl.found"></span></a>
+			</li>
+			<li role="presentation" id="danger" ui-sref-active="active">
+				<a ui-sref="results.missing">These Suck! <span class="badge" ng-bind="$ctrl.missing"></span></a>
+			</li>
+		</ul>
+		<ui-view></ui-view>
 </script>
+	<script type="text/ng-template" id="results.found.component.tmpl.html">
+		<h3>These are awesome results!</h3>
+		<table id="found-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
+	</script>
+	<script type="text/ng-template" id="results.missing.component.tmpl.html">
+		<h3>These are shitty results!</h3>
+		<table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
+	</script>
 </div>
 </body>
 </html>

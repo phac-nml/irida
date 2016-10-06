@@ -5,3 +5,9 @@ export const dom = `
 <'row'<'col-sm-12'i>>
 <'row'<'col-sm-12'p>>
 `;
+
+export const formatBasicHeaders = headers => {
+  return headers.map(title => {
+    return {title, data: title};
+  });
+};
