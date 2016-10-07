@@ -40,6 +40,10 @@ export const sampleMetadataService = ($http, $window) => {
     return $http.put(`${URL}/save`);
   };
 
+  /**
+   * Clear any metadata uploaded to the server.
+   * @return {object} ajax promise
+   */
   const clearProject = () => {
     return $http.get(`${URL}/clear`);
   };
