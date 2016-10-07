@@ -38,8 +38,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -52,21 +66,13 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.ria.web.components.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 @Controller
 public class ProjectSamplesController {
@@ -872,11 +878,18 @@ public class ProjectSamplesController {
 		return PROJECTS_DIR + "project_samples_metadata";
 	}
 
+	/**
+	 * Get the currently stored metadata.
+	 * @param session {@link HttpSession}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param key
+	 * 		{@link String} key for the {@link SampleMetadataStorage} in the {@link HttpSession}
+	 * @return
+	 */
 	@RequestMapping("/projects/{projectId}/sample-metadata/{key}")
-	@ResponseBody
-	public Map getProjectSampleMetadata(
+	@ResponseBody public SampleMetadataStorage getProjectSampleMetadata(
 			HttpSession session, @PathVariable long projectId, @PathVariable String key) {
-		return (Map) session.getAttribute(key);
+		return (SampleMetadataStorage) session.getAttribute(key);
 	}
 
 	/**
@@ -887,21 +900,21 @@ public class ProjectSamplesController {
 	 * 		{@link HttpSession}
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param key
+	 * 		{@link String} key for the {@link SampleMetadataStorage} in the {@link HttpSession}
 	 * @param file
 	 * 		{@link MultipartFile} The excel file containing the metadata.
 	 *
 	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the {@link
 	 * Sample} identifier.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}", method = RequestMethod.POST)
-	@ResponseBody public Map<String, Object> createProjectSampleMetadata(
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}", method = RequestMethod.POST) @ResponseBody public SampleMetadataStorage createProjectSampleMetadata(
 			HttpSession session,
 			@PathVariable long projectId,
 			@PathVariable String key,
 			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
 		// We want to return a list of the table headers back to the UI.
-		Map<String, Object> result = new HashMap<>();
-
+		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try {
 			// Need an input stream
 			String filename = file.getOriginalFilename();
@@ -930,7 +943,7 @@ public class ProjectSamplesController {
 			Iterator<Row> rowIterator = sheet.iterator();
 
 			List<String> headers = getWorkbookHeaders(rowIterator.next());
-			result.put("headers", headers);
+			storage.saveHeaders(headers);
 
 			// Get the metadata out of the table.
 			List<Map<String, String>> rows = new ArrayList<>();
@@ -948,7 +961,7 @@ public class ProjectSamplesController {
 				}
 				rows.add(rowMap);
 			}
-			result.put("rows", rows);
+			storage.saveRows(rows);
 
 			fis.close();
 		} catch (FileNotFoundException e) {
@@ -957,8 +970,8 @@ public class ProjectSamplesController {
 			logger.error("Error opening file" + file.getOriginalFilename());
 		}
 
-		session.setAttribute(key, result);
-		return result;
+		session.setAttribute(key, storage);
+		return storage;
 	}
 
 	/**
@@ -992,7 +1005,9 @@ public class ProjectSamplesController {
 	 * 		{@link HttpSession}.
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}.
-	 * @param sampleIdColumn
+	 * @param key
+	 * 		{@link String} key for the {@link SampleMetadataStorage} in the {@link HttpSession}
+	 * @param sampleNameColumn
 	 * 		{@link String} the header to used to represent the {@link Sample} identifier.
 	 *
 	 * @return {@link Map} containing
@@ -1005,17 +1020,15 @@ public class ProjectSamplesController {
 			@PathVariable String key,
 			@RequestParam String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
-		Map<String, Object> stored = (Map<String, Object>) session.getAttribute(key);
+		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute(key);
 
 		if (stored != null) {
+			stored.saveSampleNameColumn(sampleNameColumn);
 			Project project = projectService.read(projectId);
-			List<Map<String, String>> rows = (List<Map<String, String>>) stored.get("rows");
+			List<Map<String, String>> rows = stored.getRows();
 
 			// Remove 'rows' since they are now going to be sorted into found and not found.
-			stored.remove("rows");
-
-			List<String> headers = (List<String>) stored.get("headers");
-
+			stored.removeRows();
 			List<Map<String, String>> found = new ArrayList<>();
 			List<Map<String, String>> missing = new ArrayList<>();
 
@@ -1032,67 +1045,82 @@ public class ProjectSamplesController {
 				}
 			}
 
-			stored.put("found", found);
-			stored.put("missing", missing);
+			stored.saveFound(found);
+			stored.saveMissing(missing);
 		}
 
 		return ImmutableMap.of("result", "complete");
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Save uploaded metadata to the
+	 *
+	 * @param locale    {@link Locale} of the current user.
+	 * @param session   {@link HttpSession}
+	 * @param projectId {@link Long} identifier for the current project
+	 * @param key       {@link String} key for the {@link SampleMetadataStorage} in the {@link HttpSession}
+	 * @return {@link Map} of potential errors.
+	 */
 	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}/save", method = RequestMethod.PUT)
-	@ResponseBody public Map<String, Object> saveProjectSampleMetadata(
+	@ResponseBody public Map<String, Object> saveProjectSampleMetadata(Locale locale,
 			HttpSession session, @PathVariable long projectId,
 			@PathVariable String key) {
 		Map<String, Object> errors = new HashMap<>();
 
-		Object sessionObject = session.getAttribute(key);
-		Map<String, Object> stored = null;
-		if (sessionObject != null && sessionObject instanceof Map) {
-			stored = (Map<String, Object>) session.getAttribute(key);
-		} else {
+		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute(key);
+		if (stored == null) {
 			errors.put("stored-error", true);
 		}
 
-		if (stored.containsKey("found")) {
-			Object foundObject = stored.get("found");
-			if (foundObject instanceof List) {
-				List<Map<String, String>> found = (List<Map<String, String>>) stored.get("found");
-				List<Map<String, String>> errorList = new ArrayList<>();
-				for (Map<String, String> row: found) {
-					try {
-						Long id = Long.valueOf(row.get("identifier"));
-						Sample sample = sampleService.read(id);
-						SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-						if (sampleMetadata == null) {
-							sampleMetadata = new SampleMetadata();
-						}
-						Map<String, Object> metadata = sampleMetadata.getMetadata();
-
-						// Need to overwrite duplicate keys
-						for (String item : row.keySet()) {
-							metadata.put(item, row.get(item));
-						}
-
-						// Save metadata back to the sample
-						sampleMetadata.setMetadata(metadata);
-						sampleService.saveSampleMetadaForSample(sample, sampleMetadata);
-					} catch (EntityNotFoundException e) {
-						errorList.add(row);
+		List<Map<String, String>> found = stored.getFound();
+		if (found != null) {
+			List<String> errorList = new ArrayList<>();
+			for (Map<String, String> row : found) {
+				try {
+					Long id = Long.valueOf(row.get("identifier"));
+					Sample sample = sampleService.read(id);
+					SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+					if (sampleMetadata == null) {
+						sampleMetadata = new SampleMetadata();
 					}
+					Map<String, Object> metadata = sampleMetadata.getMetadata();
+
+					// Need to overwrite duplicate keys
+					for (String item : row.keySet()) {
+						metadata.put(item, row.get(item));
+					}
+
+					// Save metadata back to the sample
+					sampleMetadata.setMetadata(metadata);
+					sampleService.saveSampleMetadaForSample(sample, sampleMetadata);
+				} catch (EntityNotFoundException e) {
+					// This really should not happen, but hey, you never know!
+					errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",
+							new Object[] { row.get(stored.getSampleNameColumn()) }, locale));
 				}
-				if (errorList.size() != 0) {
-					errors.put("save-errors", errorList);
-				}
-			} else {
-				errors.put("found-error", true);
+			} if (errorList.size() > 0) {
+				errors.put("save-errors", errorList);
 			}
+		} else {
+			errors.put("found-error",
+					messageSource.getMessage("metadata.results.save.found-error", new Object[] {}, locale));
+		}
+		if (errors.size() == 0) {
+			return ImmutableMap.of("success",
+					messageSource.getMessage("metadata.results.save.success", new Object[] { found.size() }, locale));
 		}
 		return errors;
 	}
 
-	@RequestMapping("/projects/{projectId}/sample-metadata/{key}/clear")
-	public void clearProjectSampleMetadata(HttpSession session,  @PathVariable long projectId,
+	/**
+	 * Clear any uploaded sample metadata stored into the session.
+	 *
+	 * @param session   {@link HttpSession}
+	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
+	 * @param key       to {@link HttpSession} attribute.
+	 */
+	@RequestMapping("/projects/{projectId}/sample-metadata/{key}/clear") public void clearProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId,
 			@PathVariable String key) {
 		session.removeAttribute(key);
 	}
