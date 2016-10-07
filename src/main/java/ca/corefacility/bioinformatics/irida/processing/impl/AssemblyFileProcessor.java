@@ -5,6 +5,9 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -34,6 +37,7 @@ import com.google.common.collect.Sets;
  * on uploaded sequences. It will check with a sequence's associated project for
  * whether or not it should assemble.
  */
+@Component
 public class AssemblyFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(AssemblyFileProcessor.class);
 
@@ -44,6 +48,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 	private final UserRepository userRepository;
 	private final IridaWorkflowsService workflowsService;
 
+	@Autowired
 	public AssemblyFileProcessor(SequencingObjectRepository objectRepository,
 			AnalysisSubmissionRepository submissionRepository, IridaWorkflowsService workflowsService,
 			UserRepository userRepository, SampleSequencingObjectJoinRepository ssoRepository,
@@ -60,49 +65,47 @@ public class AssemblyFileProcessor implements FileProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public void process(Long sequenceFileId) throws FileProcessorException {
 		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
 
-		// Check if the object should be assembled
-		if (shouldAssemble(sequencingObject)) {
-			logger.debug("Setting up automated assembly for sequence " + sequencingObject.getId());
+		logger.debug("Setting up automated assembly for sequence " + sequencingObject.getId());
 
-			// assembly run by admin
-			User admin = userRepository.loadUserByUsername("admin");
+		// assembly run by admin
+		User admin = userRepository.loadUserByUsername("admin");
 
-			// Ensure it's a paired upload. Single end can't currently be
-			// assembled
-			if (sequencingObject instanceof SequenceFilePair) {
-				IridaWorkflow defaultWorkflowByType;
+		// Ensure it's a paired upload. Single end can't currently be
+		// assembled
+		if (sequencingObject instanceof SequenceFilePair) {
+			IridaWorkflow defaultWorkflowByType;
 
-				// get the workflow
-				try {
-					defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisType.ASSEMBLY_ANNOTATION);
-				} catch (IridaWorkflowNotFoundException e) {
-					throw new FileProcessorException("Cannot find assembly workflow", e);
-				}
-
-				UUID pipelineUUID = defaultWorkflowByType.getWorkflowIdentifier();
-
-				// build an AnalysisSubmission
-				Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
-				AnalysisSubmission submission = builder
-						.inputFilesPaired(Sets.newHashSet((SequenceFilePair) sequencingObject))
-						.name("Automated Assembly " + sequencingObject.toString()).build();
-				submission.setSubmitter(admin);
-
-				submission = submissionRepository.save(submission);
-
-				// Associate the submission with the seqobject
-				sequencingObject.setAutomatedAssembly(submission);
-
-				objectRepository.save(sequencingObject);
-
-				logger.debug("Automated assembly submission created for sequencing object " + sequencingObject.getId());
-			} else {
-				logger.warn("Could not assemble sequencing object " + sequencingObject.getId()
-						+ " because it's not paired end");
+			// get the workflow
+			try {
+				defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisType.ASSEMBLY_ANNOTATION);
+			} catch (IridaWorkflowNotFoundException e) {
+				throw new FileProcessorException("Cannot find assembly workflow", e);
 			}
+
+			UUID pipelineUUID = defaultWorkflowByType.getWorkflowIdentifier();
+
+			// build an AnalysisSubmission
+			Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
+			AnalysisSubmission submission = builder
+					.inputFilesPaired(Sets.newHashSet((SequenceFilePair) sequencingObject))
+					.name("Automated Assembly " + sequencingObject.toString()).build();
+			submission.setSubmitter(admin);
+
+			submission = submissionRepository.save(submission);
+
+			// Associate the submission with the seqobject
+			sequencingObject.setAutomatedAssembly(submission);
+
+			objectRepository.save(sequencingObject);
+
+			logger.debug("Automated assembly submission created for sequencing object " + sequencingObject.getId());
+		} else {
+			logger.warn("Could not assemble sequencing object " + sequencingObject.getId()
+					+ " because it's not paired end");
 		}
 	}
 
@@ -111,6 +114,22 @@ public class AssemblyFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public Boolean modifiesFile() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public boolean shouldProcessFile(Long sequencingObjectId) {
+		SequencingObject sequencingObject = objectRepository.findOne(sequencingObjectId);
+
+		// Check if the object should be assembled
+		if (shouldAssemble(sequencingObject)) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -132,8 +151,8 @@ public class AssemblyFileProcessor implements FileProcessor {
 		 * check with a warning
 		 */
 		if (sampleForSequencingObject != null) {
-			List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(sampleForSequencingObject
-					.getSubject());
+			List<Join<Project, Sample>> projectForSample = psjRepository
+					.getProjectForSample(sampleForSequencingObject.getSubject());
 
 			assemble = projectForSample.stream().anyMatch(j -> j.getSubject().getAssembleUploads());
 		} else {

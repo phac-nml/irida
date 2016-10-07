@@ -126,8 +126,8 @@
             <th dt:property="projectName" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
             <th width="120px" dt:property="createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
                 dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-            <th width="120px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
-                dt:renderFunction="datatables-utils#datatable.formatDate"></th>
+            <th width="160px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
+                dt:renderFunction="datatables-utils#datatable.formatDateWithTime"></th>
         </tr>
         </thead>
     </table>
