@@ -1,4 +1,8 @@
 /* eslint new-cap: [2, {"capIsNewExceptions": ["DataTable"]}] */
+/**
+ * @file AngularJS Component for display rows from the metadata file that do not match
+ * Sample names on the server.
+ */
 const $ = require('jquery');
 require('datatables.net');
 require('datatables-bootstrap3-plugin');

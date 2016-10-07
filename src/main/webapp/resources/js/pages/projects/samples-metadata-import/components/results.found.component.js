@@ -1,4 +1,8 @@
 /* eslint new-cap: [2, {"capIsNewExceptions": ["DataTable"]}] */
+/**
+ * @file AngularJS Component for display rows from the metadata file that match
+ * Sample names on the server.
+ */
 const $ = require('jquery');
 require('datatables.net');
 require('datatables-bootstrap3-plugin');
@@ -12,14 +16,16 @@ const resultsFoundComponent = {
     headers: '='
   },
   controller() {
-    const columns = formatBasicHeaders(this.headers);
-    $('#found-table').DataTable({
-      dom,
-      scrollX: true,
-      sScrollX: '100%',
-      data: this.rows,
-      columns
-    });
+    if (this.rows.length > 0) {
+      const columns = formatBasicHeaders(this.headers);
+      $('#found-table').DataTable({
+        dom,
+        scrollX: true,
+        sScrollX: '100%',
+        data: this.rows,
+        columns
+      });
+    }
   }
 };
 

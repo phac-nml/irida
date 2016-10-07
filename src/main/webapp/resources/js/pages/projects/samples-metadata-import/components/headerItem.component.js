@@ -1,3 +1,7 @@
+/**
+ * @file Angular component for displaying metadata headers with their selection input.
+ * This component expects to be underneath the  selectSampleNameColumnComponent`
+ */
 const template = `
 <div>
   <div class="radio">

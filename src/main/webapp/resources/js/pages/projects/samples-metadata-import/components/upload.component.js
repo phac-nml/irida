@@ -1,3 +1,7 @@
+/**
+ * @file AngularJS component displaying the capability of uploading an excel file
+ * (via dropzone).
+ */
 const metadataUploader = {
   templateUrl: 'upload.component.tmpl.html',
   controller($state) {
