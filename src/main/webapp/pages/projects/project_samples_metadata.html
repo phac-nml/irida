@@ -62,7 +62,7 @@
 		<ui-view></ui-view>
 </script>
 	<script type="text/ng-template" id="results.found.component.tmpl.html">
-		<div class="alert alert-success">
+		<div class="alert alert-success" ng-show="$ctrl.rows.length &gt; 0">
 			<strong>
 				<fa:icon type="thumb-up" />&nbsp;
 				<th:block th:text="#{metadata.results.found.component.title}"/>
@@ -72,14 +72,28 @@
 					data:label="#{metadata.results.found.component.save}">
 			</save-metadata>
 		</div>
+		<div class="alert alert-danger" ng-show="$ctrl.rows.length === 0">
+			<strong>
+				<fa:icon type="thumb-down" />&nbsp;
+				<th:block th:text="#{metadata.results.found.component.empty-title}"/>
+			</strong>
+			<p class="lead" th:text="#{metadata.results.found.component.empty-text}"></p>
+		</div>
 		<table id="found-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
 	</script>
 	<script type="text/ng-template" id="results.missing.component.tmpl.html">
-		<div class="alert alert-danger">
+		<div class="alert alert-danger" ng-show="$ctrl.rows.length &gt; 0">
 			<strong>
 				<fa:icon type="warning" />&nbsp;
 				<th:block th:text="#{metadata.results.missing.component.title}"/></strong>
 			<p class="lead" th:text="#{metadata.results.missing.component.message}"></p>
+		</div>
+		<div class="alert alert-success" ng-show="$ctrl.rows.length === 0">
+			<strong>
+				<fa:icon type="thumb-up" />
+				<th:block th:text="#{metadata.results.missing.none-title=}"/>
+			</strong>
+			<p class="lead" th:text="#{metadata.results.missing.none-text}"></p>
 		</div>
 		<table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
 	</script>
