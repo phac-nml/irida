@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.13.0 to 0.14.0
+----------------
+* [UI]: Fixed issue with missing settings tab when in export view within a Project.
+
 0.12.0 to 0.13.0
 ----------------
 * [Developer]: Updated node to v6.4.0.
