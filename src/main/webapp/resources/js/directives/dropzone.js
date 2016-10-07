@@ -1,8 +1,8 @@
 /**
  * @file AngularJS Directive for interacting with the Dropzone library.
  */
-require('style-loader!dropzone/dist/min/dropzone.min.css');
-require('style-loader!./../../css/components/dropzone.css');
+require('style!dropzone/dist/min/dropzone.min.css');
+require('style!./../../css/components/dropzone.css');
 import Dropzone from 'dropzone';
 
 // Prevent Dropzone to auto-magically finding itself in before it is needed.

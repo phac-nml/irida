@@ -20,7 +20,6 @@
     "bower": "^1.7.7",
     "browser-sync": "^2.11.1",
     "chromedriver": "^2.21.2",
-    "css-loader": "^0.25.0",
     "eslint": "^3.4.0",
     "eslint-config-google": "^0.6.0",
     "eslint-friendly-formatter": "^2.0.6",
@@ -32,6 +31,7 @@
     "gulp-notify": "^2.2.0",
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
+    "style-loader": "^0.13.1",
     "webpack-stream": "^3.2.0"
   },
   "engines": {
