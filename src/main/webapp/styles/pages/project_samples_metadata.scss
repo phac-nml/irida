@@ -52,6 +52,7 @@ th {
 
 // Bootstrap nav
 .nav-pills > li#danger.active > a, .nav-pills > li#danger.active > a:hover {
+  border: 1px solid $color-danger;
   background-color: rgb(244, 67, 54)!important;
   color: white;
 }
@@ -59,6 +60,10 @@ th {
 .nav-pills > li#danger.active .badge {
   background-color: white;
   color: $color-danger!important;
+}
+
+.nav-pills > li > a {
+  border: 1px solid lighten(rgb(176, 190, 197), 20%);
 }
 
 .nav-pills > li#danger > a {
