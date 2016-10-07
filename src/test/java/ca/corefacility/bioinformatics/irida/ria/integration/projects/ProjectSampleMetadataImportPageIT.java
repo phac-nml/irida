@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
@@ -24,5 +26,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	@Test
 	public void testGoodFileAndHeaders() {
 		page.uploadMetadataFile(GOOD_PATH);
+		page.selectSampleNameColumn();
+		assertEquals("Has incorrect amount of rows matching sample names", 5, page.getFoundCount());
 	}
 }

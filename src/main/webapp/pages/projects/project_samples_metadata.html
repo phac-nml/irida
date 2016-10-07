@@ -30,7 +30,7 @@
 					<fa:icon type="arrow-left"/>&nbsp;
 					<th:block th:text="#{metadata.header.component.prev-nav}"/>
 				</button>
-				<button class="btn btn-default pull-right" style="margin-bottom: 1rem;"
+				<button id="preview-btn" class="btn btn-default pull-right" style="margin-bottom: 1rem;"
 						ng-click="$ctrl.displayMetadata()">
 					<th:block th:text="#{metadata.header.component.next-nav}"/>&nbsp;
 					<fa:icon type="arrow-right"/>
@@ -53,10 +53,10 @@
 		</div>
 		<ul class="nav nav-pills nav-justified" style="margin-bottom: 1rem;">
 			<li role="presentation" ui-sref-active="active">
-				<a ui-sref="results.found"><th:block th:text="#{metadata.results.component.found-nav}" />&nbsp;<span class="badge" ng-bind="$ctrl.found"></span></a>
+				<a id="found-pill" ui-sref="results.found"><th:block th:text="#{metadata.results.component.found-nav}" />&nbsp;<span class="badge" ng-bind="$ctrl.found"></span></a>
 			</li>
 			<li role="presentation" id="danger" ui-sref-active="active">
-				<a ui-sref="results.missing"><th:block th:text="#{metadata.results.component.missing-nav}"/>&nbsp;<span class="badge" ng-bind="$ctrl.missing"></span></a>
+				<a id="midding-pill" ui-sref="results.missing"><th:block th:text="#{metadata.results.component.missing-nav}"/>&nbsp;<span class="badge" ng-bind="$ctrl.missing"></span></a>
 			</li>
 		</ul>
 		<ui-view></ui-view>
