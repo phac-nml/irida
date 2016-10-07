@@ -7,9 +7,7 @@
 	<title th:text="#{metadata.page-title}"></title>
 </head>
 <body>
-<div layout:fragment="main"
-	 ddl:bundle-includes="project-samples-metadata"
-	 ddl:asset-css-excludes="jquery.datatables">
+<div layout:fragment="main" ddl:bundle-includes="project-samples-metadata">
 	<section ui-view=""></section>
 	<script type="text/ng-template" id="upload.component.tmpl.html">
 		<h3 th:text="#{metadata.upload.component.title}"></h3>
@@ -69,9 +67,10 @@
 				<fa:icon type="thumb-up" />&nbsp;
 				<th:block th:text="#{metadata.results.found.component.title}"/>
 			</strong>
-			<button class="btn btn-success pull-right" ng-click="$ctrl.saveMetadata()">
-				<fa:icon type="save" />&nbsp;<th:block th:text="#{metadata.results.found.component.save}" />
-			</button>
+			<save-metadata
+					data:url="@{/projects/{id}/samples(id=${projectId})}"
+					data:label="#{metadata.results.found.component.save}">
+			</save-metadata>
 		</div>
 		<table id="found-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
 	</script>

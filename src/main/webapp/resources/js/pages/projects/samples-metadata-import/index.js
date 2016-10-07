@@ -6,6 +6,7 @@ import metadataUploader from './components/upload.component';
 import selectSampleNameColumnComponent from './components/selectSampleNameColumn.component';
 import headerItem from './components/headerItem.component';
 import resultsComponent from './components/results.component';
+import saveMetadata from './components/saveMetadata.component';
 import resultsFoundComponent from './components/results.found.component';
 import resultsMissingComponent from './components/results.missing.component';
 import {sampleMetadataService} from './factories/metadataImport.service';
@@ -22,5 +23,6 @@ app
   .component('selectSampleNameColumnComponent', selectSampleNameColumnComponent)
   .component('headerItem', headerItem)
   .component('resultsComponent', resultsComponent)
+  .component('saveMetadata', saveMetadata)
   .component('resultsFoundComponent', resultsFoundComponent)
   .component('resultsMissingComponent', resultsMissingComponent);
