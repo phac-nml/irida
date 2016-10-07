@@ -5,7 +5,12 @@
 const sampleIdState = {
   name: 'sampleId',
   url: '/sampleId',
-  component: 'selectSampleNameColumnComponent'
+  component: 'selectSampleNameColumnComponent',
+  resolve: {
+    data(sampleMetadataService) {
+      return sampleMetadataService.getProjectData();
+    }
+  }
 };
 
 export default sampleIdState;

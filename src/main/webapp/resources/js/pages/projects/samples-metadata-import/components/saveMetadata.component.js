@@ -17,13 +17,20 @@ const saveMetadata = {
     this.saveMetadata = () => {
       sampleMetadataService
         .saveMetadata()
-        .then(results => {
-          console.log(results);
-          notifications.show({
-            msg: 'Message still needs to be updated.'
-          });
-          // Redirection to the project samples page.
-          $window.location.href = this.url;
+        .then(response => {
+          const results = response.data;
+          if (results.success) {
+            notifications.show({
+              msg: results.success
+            });
+            // Redirection to the project samples page.
+            $window.location.href = this.url;
+          }
+          if (results['save-errors']) {
+            results['save-errors'].forEach(msg => {
+              notifications.show({msg, type: 'error'});
+            });
+          }
         });
     };
   }
