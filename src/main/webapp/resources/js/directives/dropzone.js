@@ -54,13 +54,7 @@ const scope = {
   acceptedFiles: '@?'
 };
 
-const template = `<form class="dropzone"></form>`;
-// const template = `
-//   <button class='btn btn-primary'>
-//     <span class='fa fa-upload'></span>&nbsp;
-//     Add New File
-//   </button>
-// `;
+const template = `<form id="dz-form" class="dropzone"></form>`;
 
 /**
  * Angular directive for Dropzone.js allowing a drag and drop interface for uploading

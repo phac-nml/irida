@@ -8,9 +8,9 @@
 </head>
 <body>
 <div layout:fragment="main" ddl:bundle-includes="project-samples-metadata">
+	<h3 th:text="#{metadata.upload.component.title}"></h3>
 	<section ui-view=""></section>
 	<script type="text/ng-template" id="upload.component.tmpl.html">
-		<h3 th:text="#{metadata.upload.component.title}"></h3>
 		<p class="lead" style="margin-bottom: 1rem;" th:text="#{metadata.upload.component.intro}"></p>
 		<div class="alert alert-info">
 			<p th:utext="#{metadata.upload.component.text}"></p>
@@ -26,7 +26,7 @@
 	<script type="text/ng-template" id="sampleId.tmpl.html">
 		<div class="row">
 			<div class="col-md-12 clearfix">
-				<button class="btn btn-default" style="margin-bottom: 1rem;" ng-click="$ctrl.selectNewFile()">
+				<button id="sampleId-previous" class="btn btn-default" style="margin-bottom: 1rem;" ng-click="$ctrl.selectNewFile()">
 					<fa:icon type="arrow-left"/>&nbsp;
 					<th:block th:text="#{metadata.header.component.prev-nav}"/>
 				</button>
