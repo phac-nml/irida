@@ -3,7 +3,8 @@ Changes
 
 0.13.0 to 0.14.0
 ----------------
-* [UI]: Fixed issue with missing settings tab when in export view within a Project.
+* [UI]: Fixed issue with missing settings tab when in export view within a Project. (0.13.2)
+* [UI]: Added ability to select or deselect viewing all associated projects. (0.13.1)
 
 0.12.0 to 0.13.0
 ----------------
@@ -22,7 +23,7 @@ Changes
 * [UI]: Removed bootstrap tooltip and extra script from dashboard page.
 * [UI]: Remove bower dependency for angular-notification-icons.
 * [UI]: Remove bower dependency for AngularJS-toaster.
-* [UI]: Removed qTip2 dependency. 
+* [UI]: Removed qTip2 dependency.
 * [UI]: Removed bower dependency for `bootstrap-sass-official`.
 * [UI]: Remove bower dependency for 'MagnificPopup'.
 * [UI]: Removed client side dependency on `angular-gravatar` and replace with server gravatar url creation.

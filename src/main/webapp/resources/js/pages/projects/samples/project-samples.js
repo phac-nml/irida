@@ -38,6 +38,29 @@
     function AssociatedProjectsController($rootScope, SampleService) {
       scope = $rootScope;
       sampleService = SampleService;
+
+      /**
+       * Things to do when there is a change to the number of
+       * associated projects to display.
+       */
+      scope.$on('ASSOCIATED_PROJECTS_CHANGE', function() {
+        // Update the table
+        sampleService.updateAssociatedProjects(visible);
+
+        // Update the select all checkbox
+        var select = $("#select-all-cb");
+
+        // Reset checkbox
+        select.prop('checked', false);
+        select.prop("indeterminate", false);
+
+        // Set new value on checkbox
+        if (visible.length === $(".associated-cb").length) {
+          select.prop('checked', true);
+        } else if (visible.length !== 0) {
+          select.prop("indeterminate", true);
+        }
+      });
     }
 
     /**
@@ -69,9 +92,52 @@
         visible.push(id);
         checkbox.prop('checked', true);
       }
-      sampleService.updateAssociatedProjects(visible);
       scope.$broadcast('ASSOCIATED_PROJECTS_CHANGE', {count: visible.length});
     };
+
+    /**
+     * Select all associated projects available to this project
+     */
+    AssociatedProjectsController.prototype.selectAllOrNone = function($event) {
+      // If the input is click we need to prevent the default since we will select it later and need
+      // to know the state of it before the click event.
+      // IMP: This is because selection is allowed by clicking anywhere on the dropdown associated with the checkbox
+      //      or the project name - giving a larger click area.
+      if (!$($event.target).is('input')) {
+        $event.preventDefault();
+      }
+      // Need to stop all propagation since this is an anchor tag.
+      $event.stopPropagation();
+      $event.stopImmediatePropagation();
+      var target = $($event.currentTarget),
+        id = target.data("id"), // This is the id for the project.
+        checkbox = $(target.find("input:checkbox")),
+        alinks = $(".associated-link"); // Find the checkbox so we can select it later.
+
+      // Get all the ids required
+      if (checkbox.prop('checked')) {
+        alinks
+          .each(function(index, item) {
+            var link = $(item);
+            link.find("input:checkbox").prop('checked', false);
+            visible = [];
+          });
+        checkbox.prop('checked', false);
+      } else {
+        alinks
+          .each(function(index, item) {
+            var link = $(item),
+              id = link.data('id');
+
+            if (visible.indexOf(id) < 0) {
+              link.find("input:checkbox").prop('checked', true);
+              visible.push(id);
+            }
+          });
+        checkbox.prop('checked', true);
+      }
+      scope.$broadcast('ASSOCIATED_PROJECTS_CHANGE', {count: visible.length});
+    }
 
     return AssociatedProjectsController;
   }());
