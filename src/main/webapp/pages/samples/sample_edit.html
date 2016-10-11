@@ -10,7 +10,7 @@
 <main layout:fragment="main">
     <div class="row">
         <div class="col-md-12 wb-frmvld">
-            <form role="form" action="edit" method="post">
+            <form id="edit-form" role="form" action="edit" method="post" ddl:bundle-includes="sample-edit">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <b class="panel-title" th:text="#{samples.edit.page-title(${sample.getLabel()})}">__TITLE__</b>
@@ -133,6 +133,16 @@
                                 </div>
                             </div>
                         </fieldset>
+                        <fieldset id="other-metadata">
+                            <legend>_Other Metadata_</legend>
+                            <div th:each="entry : ${metadata.metadata}" class="col-md-6">
+                                <div class="form-group metadata-entry">
+                                    <input type="text" class="metadata-key form-control" th:value="${entry.key}"/>
+                                    <input type="text" class="metadata-value form-control" th:value="${entry.value}"/>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <input class="hidden" type="text" id="metadata" name="metadata"/>
                     </div>
                     <div class="panel-footer text-right">
                         <a href="details" class="btn btn-default" th:text="#{form.btn.cancel}">Cancel</a>

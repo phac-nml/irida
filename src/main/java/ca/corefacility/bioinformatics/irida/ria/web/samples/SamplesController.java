@@ -54,6 +54,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -158,7 +160,9 @@ public class SamplesController extends BaseController {
 			model.addAttribute(MODEL_ERROR_ATTR, new HashMap<>());
 		}
 		Sample sample = sampleService.read(sampleId);
+		SampleMetadata metadataForSample = sampleService.getMetadataForSample(sample);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute("metadata", metadataForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS_EDIT);
 		return SAMPLE_EDIT_PAGE;
 	}
@@ -178,11 +182,15 @@ public class SamplesController extends BaseController {
 	 *            a reference to the current request.
 	 * @return The name of the details page.
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/samples/{sampleId}/edit",
+			"/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
-			@RequestParam Map<String, String> params, HttpServletRequest request) {
+			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
+			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
+
+		Sample s = sampleService.read(sampleId);
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
@@ -196,15 +204,38 @@ public class SamplesController extends BaseController {
 			updatedValues.put(COLLECTION_DATE, collectionDate);
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
+		
+		SampleMetadata metadataForSample = null;
+		/**
+		 * If there's sample metadata to add, add it here.
+		 */
+		if (!Strings.isNullOrEmpty(metadataString)) {
+			metadataForSample = sampleService.getMetadataForSample(s);
+
+			Map<String, Object> metadata = new HashMap<String, Object>();
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				metadata = mapper.readValue(metadataString, new TypeReference<Map<String, Object>>() {
+				});
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Could not map metadata to sample object", e);
+			}
+			metadataForSample.setMetadata(metadata);
+		}
 
 		if (updatedValues.size() > 0) {
 			try {
-				sampleService.update(sampleId, updatedValues);
+				sampleService.updateFields(sampleId, updatedValues);
 			} catch (ConstraintViolationException e) {
 				model.addAttribute(MODEL_ERROR_ATTR, getErrorsFromViolationException(e));
 				return getEditSampleSpecificPage(model, sampleId);
 			}
 		}
+
+		if(metadataForSample != null){
+			sampleService.saveSampleMetadaForSample(s, metadataForSample);
+		}
+		
 
 		// this used to read request.getURI(), but request.getURI() includes the
 		// context path. When issuing a redirect: return, the redirect: string
