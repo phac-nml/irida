@@ -85,6 +85,11 @@
             vertical-align: middle !important;
             line-height: 40px;
         }
+
+        #associated-dropdown {
+            max-height: 300px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -147,8 +152,13 @@
                     </button>
                     <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"
                         aria-labelledby="associated-btn">
-                        <li role="menuitem">
-                            <a href="" ng-click="apCtrl.selectAllOrNone()" th:text="#{project.samples.nav.associated-selectAll}">Select All Associated</a>
+                        <li role="menuitemcheckbox">
+                            <a style="display: block;" href="" ng-click="apCtrl.selectAllOrNone($event)">
+                                <div class="checkbox" style="display: block;">
+                                    <input id="select-all-cb" type="checkbox"/>&nbsp;
+                                    <th:block  th:text="#{project.samples.nav.associated-selectAll}" />
+                                </div>
+                            </a>
                         </li>
                         <li role="separator" class="divider"></li>
                         <li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">

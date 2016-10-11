@@ -52,11 +52,6 @@ img.gravatar {
 // Bootstrap override
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-.dropdown-menu {
-  max-height: 300px;
-  overflow-y: scroll;
-}
-
 .clickable {
   display: block;
   cursor: pointer;
