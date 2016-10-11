@@ -73,6 +73,25 @@
       scope.$broadcast('ASSOCIATED_PROJECTS_CHANGE', {count: visible.length});
     };
 
+    /**
+     * Select all associated projects available to this project
+     */
+    AssociatedProjectsController.prototype.selectAllOrNone = function() {
+      // Get all the ids required
+      $(".associated-link")
+        .each(function( index, item) {
+          var link = $(item),
+            id = link.data('id');
+
+          if(visible.indexOf(id) < 0) {
+            link.find("input:checkbox").prop('checked', true);
+            visible.push(id);
+          }
+        });
+      sampleService.updateAssociatedProjects(visible);
+      scope.$broadcast('ASSOCIATED_PROJECTS_CHANGE', {count: visible.length});
+    }
+
     return AssociatedProjectsController;
   }());
 
