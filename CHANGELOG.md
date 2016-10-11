@@ -3,6 +3,7 @@ Changes
 
 0.13.0 to 0.14.0
 ----------------
+* [UI]: Fixed bug preventing sample selection while filtered by file. (0.13.2)
 * [UI]: Added ability to select or deselect viewing all associated projects. (0.13.1)
 
 0.12.0 to 0.13.0
