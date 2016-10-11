@@ -14,4 +14,10 @@ $(document).ready(function(){
     $(".delete-metadata").on("click", function(){
         $(this).closest(".metadata-entry").remove();
     });
+
+    $("#add-metadata").on("click", function(){
+        var newMetadata = $("#metadata-template").clone(true);
+        newMetadata.removeAttr("id");
+        $("#metadata-fields").append(newMetadata);
+    });
 });
