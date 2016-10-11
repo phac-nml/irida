@@ -16,8 +16,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Created by josh on 2016-10-07.
  */
 public class ProjectSampleMetadataImportPage extends AbstractPage {
-	private WebDriver driver;
-
 	@FindBy(id = "dz-form") WebElement dzForm;
 	@FindBy(id = "sampleId-previous") WebElement sampleIdPrev;
 	@FindBy(css = "input[type=radio]") List<WebElement> headerRadios;
@@ -30,7 +28,6 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public static ProjectSampleMetadataImportPage goToPage(WebDriver driver) {
-		this.driver = driver;
 		get(driver, "projects/1/sample-metadata");
 		return PageFactory.initElements(driver, ProjectSampleMetadataImportPage.class);
 	}
