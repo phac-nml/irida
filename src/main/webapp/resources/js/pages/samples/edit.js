@@ -10,4 +10,8 @@ $(document).ready(function(){
 
         $("#metadata").val(JSON.stringify(metadata));
     });
+
+    $(".delete-metadata").on("click", function(){
+        $(this).closest(".metadata-entry").remove();
+    });
 });

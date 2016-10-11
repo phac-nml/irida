@@ -137,7 +137,14 @@
                             <legend>_Other Metadata_</legend>
                             <div th:each="entry : ${metadata.metadata}" class="col-md-6">
                                 <div class="form-group metadata-entry">
-                                    <input type="text" class="metadata-key form-control" th:value="${entry.key}"/>
+                                    <div class="input-group">
+                                        <input type="text" class="metadata-key form-control" th:value="${entry.key}"/>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default delete-metadata" type="button">
+                                                <fa:icon type="delete"/>
+                                            </button>
+                                        </span>
+                                    </div>
                                     <input type="text" class="metadata-value form-control" th:value="${entry.value}"/>
                                 </div>
                             </div>
