@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSampleMetadataView.xml")
 public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDriver {
 	private static final String GOOD_PATH = "src/test/resources/files/metadata-upload/good.xlsx";
-	ProjectSampleMetadataImportPage page;
+	private ProjectSampleMetadataImportPage page;
 
 	@Before
 	public void init() {
