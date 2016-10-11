@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.support.PageFactory;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -20,7 +19,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	@Before
 	public void init() {
 		LoginPage.loginAsManager(driver());
-		page = PageFactory.initElements(driver(), ProjectSampleMetadataImportPage.class);
+		page = ProjectSampleMetadataImportPage.goToPage(driver());
 	}
 
 	@Test
