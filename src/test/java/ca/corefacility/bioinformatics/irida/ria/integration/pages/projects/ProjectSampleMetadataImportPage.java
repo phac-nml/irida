@@ -27,8 +27,9 @@ public class ProjectSampleMetadataImportPage {
 	}
 
 	public void uploadMetadataFile(String path) {
-		dzForm.sendKeys(path);
 		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(dzForm));
+		dzForm.sendKeys(path);
 		wait.until(ExpectedConditions.visibilityOf(sampleIdPrev));
 	}
 
