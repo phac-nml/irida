@@ -6,11 +6,30 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Title</title>
+    <style>
+        table.dataTable th,
+        table.dataTable tbody td {
+            white-space: nowrap;
+        }
+
+    </style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundel-includes="app">
-<linelist-table data:url="@{/projects/{id}/linelist/metadata(id=${project.getId()})}"></linelist-table>
-    <!--<table id="linelist" dt:table="true" dt:url="@{/projects/{id}/linelist/metadata(id=${project.getId()})}"></table>-->
+        <table id="linelist" class="table table-striped">
+            <thead>
+            <tr>
+                <th>identifier</th>
+                <th>label</th>
+                <th th:each="header : ${headers}" th:text="${header}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="sampleData : ${metadata}">
+                <td th:each="data : ${sampleData}" th:text="${data}"></td>
+            </tr>
+            </tbody>
+        </table>
 </main>
 <th:block layout:fragment="scripts">
     <script th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>

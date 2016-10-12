@@ -1,9 +1,16 @@
-const angular = require('angular');
-import linelistService from './factories/linelist.service';
-import linelistTable from './components/linelistTable.component';
+/* eslint new-cap: [2, {"capIsNewExceptions": ["DataTable"]}] */
+const $ = require('jquery');
+require('datatables.net');
+require('datatables-bootstrap3-plugin');
+require('datatables.net-buttons');
+require('datatables.net-buttons-bs');
+require('datatables.net-buttons/js/buttons.colVis.js');
+require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
 
-const app = angular.module('irida');
-
-app
-  .factory('linelistService', ['$http', linelistService])
-  .component('linelistTable', linelistTable);
+$('#linelist').DataTable({
+  dom: 'Bfrtip',
+  buttons: [
+    'colvis'
+  ],
+  scrollX: true
+});
