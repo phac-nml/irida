@@ -121,7 +121,7 @@ public class ProjectSynchronizationService {
 
 		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
 
-		logger.debug("Checking for projects to sync");
+		logger.trace("Checking for projects to sync");
 
 		for (Project project : markedProjects) {
 			/*
