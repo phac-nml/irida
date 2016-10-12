@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Created by josh on 2016-10-07.
  */
 public class ProjectSampleMetadataImportPage extends AbstractPage {
-	@FindBy(className = "dropzone") WebElement dropzone;
+	@FindBy(id = "dz-form") WebElement dropzone;
 	@FindBy(id = "sampleId-previous") WebElement sampleIdPrev;
 	@FindBy(css = "input[type=radio]") List<WebElement> headerRadios;
 	@FindBy(id = "preview-btn") WebElement previewBtn;
