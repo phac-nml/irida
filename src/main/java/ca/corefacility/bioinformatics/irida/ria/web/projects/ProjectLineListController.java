@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -55,9 +56,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 		return "projects/project_linelist";
 	}
 
-	@RequestMapping("/samples")
+	@RequestMapping("/metadata")
 	@ResponseBody
-	public Map<String, Object> getListListData(@PathVariable Long projectId,
+	public DatatablesResponse<Map<String, Object>> getListListData(@PathVariable Long projectId,
 			@DatatablesParams DatatablesCriterias criterias) {
 		List<Project> projectList = ImmutableList.of(projectService.read(projectId));
 		ColumnDef sortedColumn = criterias.getSortedColumnDefs().get(0);
@@ -84,8 +85,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 		}
 
-		return ImmutableMap.of(
-				"metadata", pagedMetadata
-		);
+		DataSet<Map<String, Object>> dataSet = new DataSet<>(pagedMetadata, page.getTotalElements(),
+				page.getTotalElements());
+		return DatatablesResponse.build(dataSet, criterias);
 	}
 }
