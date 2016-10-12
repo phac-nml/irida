@@ -39,7 +39,7 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 		wait.until(ExpectedConditions.visibilityOf(dropzone));
 		Path path = Paths.get(filePath);
 		dropzone.sendKeys(path.toAbsolutePath().toString());
-		wait.until(ExpectedConditions.visibilityOf(sampleIdPrev));
+		waitForTime(500);
 	}
 
 	public void selectSampleNameColumn() {
