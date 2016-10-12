@@ -17,11 +17,15 @@
 			<br/>
 			<b th:text="#{metadata.upload.component.warning}"></b>
 		</div>
-		<dropzone data:url="@{/projects/{id}/sample-metadata/pm-{id}(id=${projectId})}"
-				  on-complete="$ctrl.onComplete"
-				  max-files="1"
-				  accepted-files=".xlsx,.xlx"
-				  data:text="#{metadata.dropzone.message}"></dropzone>
+		<!--<dropzone data:url="@{/projects/{id}/sample-metadata/pm-{id}(id=${projectId})}"-->
+				  <!--on-complete="$ctrl.onComplete"-->
+				  <!--max-files="1"-->
+				  <!--accepted-files=".xlsx,.xlx"-->
+				  <!--data:text="#{metadata.dropzone.message}"></dropzone>-->
+		<button class="btn btn-primary" ngf-select="$ctrl.uploadFiles($files)" ngf-drop="$ctrl.uploadFiles($files)" ngf-drag-over-class="'dragover'" >
+			<fa:icon type="upload" />&nbsp;
+			<th:block th:text="#{metadata.dropzone.message}" />
+		</button>
 	</script>
 	<script type="text/ng-template" id="sampleId.tmpl.html">
 		<div class="row">
