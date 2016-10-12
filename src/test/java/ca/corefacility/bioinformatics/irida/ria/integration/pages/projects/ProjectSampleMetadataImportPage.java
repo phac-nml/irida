@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -32,10 +34,11 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 		return PageFactory.initElements(driver, ProjectSampleMetadataImportPage.class);
 	}
 
-	public void uploadMetadataFile(String path) {
+	public void uploadMetadataFile(String filePath) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(dropzone));
-		dropzone.sendKeys(path);
+		Path path = Paths.get(filePath);
+		dropzone.sendKeys(path.toAbsolutePath().toString());
 		wait.until(ExpectedConditions.visibilityOf(sampleIdPrev));
 	}
 
