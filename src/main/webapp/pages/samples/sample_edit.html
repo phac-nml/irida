@@ -139,7 +139,7 @@
                                 <div th:each="entry : ${metadata.metadata}" class="col-md-6 metadata-entry">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <input type="text" class="metadata-key form-control" th:value="${entry.key}"/>
+                                            <input type="text" class="metadata-key form-control" required="required" th:value="${entry.key}"/>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default delete-metadata" type="button">
                                                     <fa:icon type="delete"/>
@@ -158,21 +158,7 @@
                                 </div>
                             </div>
                         </fieldset>
-                        <div class="hidden">
-                            <div id="metadata-template" class="col-md-6 metadata-entry">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <input type="text" class="metadata-key form-control"/>
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default delete-metadata" type="button">
-                                                    <fa:icon type="delete"/>
-                                                </button>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="metadata-value form-control"/>
-                                    </div>
-                                </div>
-                        </div>
+                        
                         <input class="hidden" type="text" id="metadata" name="metadata"/>
                     </div>
                     <div class="panel-footer text-right">
@@ -181,6 +167,21 @@
                     </div>
                 </div>
             </form>
+            <div class="hidden">
+                <div id="metadata-template" class="col-md-6 metadata-entry">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="metadata-key form-control" required="required"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default delete-metadata" type="button">
+                                    <fa:icon type="delete"/>
+                                </button>
+                            </span>
+                        </div>
+                        <input type="text" class="metadata-value form-control"/>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
