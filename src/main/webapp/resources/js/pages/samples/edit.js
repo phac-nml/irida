@@ -1,4 +1,7 @@
 $(document).ready(function(){
+    /**
+     * Serialize metadata to json for submission
+     */
     $("#edit-form").submit(function(){
         var metadata = {};
         $("#other-metadata").find(".metadata-entry").each(function(){
@@ -8,13 +11,20 @@ $(document).ready(function(){
             metadata[key] = value;
         });
 
+        // paste the json into a hidden text field for submission
         $("#metadata").val(JSON.stringify(metadata));
     });
 
+    /**
+     * Remove a metadata term
+     */
     $(".delete-metadata").on("click", function(){
         $(this).closest(".metadata-entry").remove();
     });
 
+    /**
+     * Add a metadata term from the template
+     */
     $("#add-metadata").on("click", function(){
         var newMetadata = $("#metadata-template").clone(true);
         newMetadata.removeAttr("id");
