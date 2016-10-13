@@ -71,6 +71,7 @@ public class ProjectExportController {
 	@Value("${ncbi.upload.namespace}")
 	private String namespace = "";
 
+	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final SequencingObjectService sequencingObjectService;
@@ -79,10 +80,12 @@ public class ProjectExportController {
 
 	@Autowired
 	public ProjectExportController(ProjectService projectService, SampleService sampleService,
+			ProjectControllerUtils projectControllerUtils,
 			SequencingObjectService sequencingObjectService, NcbiExportSubmissionService exportSubmissionService,
 			UserService userService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.projectControllerUtils = projectControllerUtils;
 		this.sequencingObjectService = sequencingObjectService;
 		this.exportSubmissionService = exportSubmissionService;
 		this.userService = userService;
@@ -267,8 +270,10 @@ public class ProjectExportController {
 	 * @return name of the exports list view
 	 */
 	@RequestMapping("/projects/{projectId}/export")
-	public String getExportsPage(@PathVariable Long projectId, Model model) {
+	public String getExportsPage(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
+		// Set up the template information
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("project", project);
 		model.addAttribute("activeNav", "export");
 		return EXPORT_LIST_VIEW;

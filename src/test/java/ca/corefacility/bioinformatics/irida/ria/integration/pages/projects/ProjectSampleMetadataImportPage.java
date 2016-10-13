@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Created by josh on 2016-10-07.
  */
 public class ProjectSampleMetadataImportPage extends AbstractPage {
-	@FindBy(id = "dropzone") WebElement dropzone;
+	@FindBy(id = "file-upload-button") WebElement dropzone;
 	@FindBy(id = "sampleId-previous") WebElement sampleIdPrev;
 	@FindBy(css = "input[type=radio]") List<WebElement> headerRadios;
 	@FindBy(id = "preview-btn") WebElement previewBtn;
@@ -36,10 +36,9 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 
 	public void uploadMetadataFile(String filePath) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(dropzone));
 		Path path = Paths.get(filePath);
 		dropzone.sendKeys(path.toAbsolutePath().toString());
-		waitForTime(500);
+		wait.until(ExpectedConditions.visibilityOf(sampleIdPrev));
 	}
 
 	public void selectSampleNameColumn() {
@@ -51,5 +50,9 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 
 	public int getFoundCount() {
 		return Integer.parseInt(foundPill.findElement(By.className("badge")).getText());
+	}
+
+	public int getMissingCount() {
+		return Integer.parseInt(missingPill.findElement(By.className("badge")).getText());
 	}
 }

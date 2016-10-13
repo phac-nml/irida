@@ -4,15 +4,10 @@
  */
 const metadataUploader = {
   templateUrl: 'upload.component.tmpl.html',
-  controller($state, Upload) {
+  controller($state, sampleMetadataService) {
     this.uploadFiles = function(files) {
-      Upload
-        .upload({
-          url: '/projects/4/sample-metadata/pm-4',
-          data: {file: files[0]}
-        })
-        .then(response => {
-          console.log(response);
+      sampleMetadataService.uploadMetadata(files[0])
+        .then(() => {
           $state.go('sampleId');
         });
     };

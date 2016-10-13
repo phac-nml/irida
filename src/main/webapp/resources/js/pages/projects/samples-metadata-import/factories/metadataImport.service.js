@@ -5,9 +5,22 @@
  */
 const $ = require('jquery');
 
-export const sampleMetadataService = ($http, $window) => {
+export const sampleMetadataService = ($http, $window, Upload) => {
   // 'project.id' is set in the `project/_bse.html` file
   const URL = `${$window.location.pathname}/pm-${project.id}`;
+
+  /**
+   * Upload the metadata file to the server for processing.
+   * @param {object} file to upload
+   * @return {object} ajax promise.
+   */
+  const uploadMetadata = file => {
+    return Upload
+      .upload({
+        url: URL,
+        data: {file: file}
+      });
+  };
 
   /**
    * Get any metadata stored for the current project.
@@ -49,6 +62,7 @@ export const sampleMetadataService = ($http, $window) => {
   };
 
   return {
+    uploadMetadata,
     getProjectData,
     setSampleIdColumn,
     saveMetadata,
