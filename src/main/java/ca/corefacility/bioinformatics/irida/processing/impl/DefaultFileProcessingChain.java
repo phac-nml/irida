@@ -69,7 +69,9 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		
 		for (FileProcessor fileProcessor : fileProcessors) {
 			try {
-				fileProcessor.process(sequencingObjectId);
+				if(fileProcessor.shouldProcessFile(sequencingObjectId)){
+					fileProcessor.process(sequencingObjectId);
+				}
 			} catch (FileProcessorException e) {
 				// if the file processor modifies the file, then just fast fail,
 				// we can't proceed with the remaining file processors. If the

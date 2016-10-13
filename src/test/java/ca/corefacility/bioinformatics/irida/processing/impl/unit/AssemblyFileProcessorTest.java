@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -82,6 +84,7 @@ public class AssemblyFileProcessorTest {
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList.of(new ProjectSampleJoin(project, sample)));
 
+		assertTrue("should want to assemble file", processor.shouldProcessFile(sequenceFileId));
 		processor.process(sequenceFileId);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
@@ -100,7 +103,7 @@ public class AssemblyFileProcessorTest {
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList.of(new ProjectSampleJoin(project, sample)));
 
-		processor.process(sequenceFileId);
+		assertFalse("processor should not want to assemble file", processor.shouldProcessFile(sequenceFileId));
 
 		verifyZeroInteractions(submissionRepository);
 	}

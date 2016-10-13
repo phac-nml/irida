@@ -59,17 +59,12 @@ import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessin
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
  * Configuration for the IRIDA platform.
@@ -80,7 +75,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
 		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
 		IridaWorkflowsConfig.class, WebEmailConfig.class })
-@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
+@ComponentScan(basePackages = {"ca.corefacility.bioinformatics.irida.service", "ca.corefacility.bioinformatics.irida.processing"})
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
 	
@@ -111,6 +106,15 @@ public class IridaApiServicesConfig {
 	
 	@Value("${irida.version}")
 	private String iridaVersion;
+	
+	@Value("${file.processing.core.size}")
+	private int fpCoreSize;
+	
+	@Value("${file.processing.max.size}")
+	private int fpMaxSize;
+	
+	@Value("${file.processing.queue.capacity}")
+	private int fpQueueCapacity;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -143,17 +147,12 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public FileProcessingChain fileProcessorChain(SequenceFileRepository fileRepository,
-			SequencingObjectRepository sequencingObjectRepository, AnalysisSubmissionRepository submissionRepository,
-			IridaWorkflowsService workflowsService, UserRepository userRepository,
-			SampleSequencingObjectJoinRepository ssoRepository, ProjectSampleJoinRepository psjRepository) {
-		final FileProcessor gzipFileProcessor = new GzipFileProcessor(fileRepository, sequencingObjectRepository,
-				removeCompressedFiles);
-		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(messageSource(), fileRepository,
-				sequencingObjectRepository);
+	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
+			GzipFileProcessor gzipFileProcessor, FastqcFileProcessor fastQcFileProcessor,
+			AssemblyFileProcessor assemblyFileProcessor) {
+		
+		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
-		final FileProcessor assemblyFileProcessor = new AssemblyFileProcessor(sequencingObjectRepository,
-				submissionRepository, workflowsService, userRepository, ssoRepository, psjRepository);
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor,
 				assemblyFileProcessor);
 
@@ -164,14 +163,14 @@ public class IridaApiServicesConfig {
 
 		return new DefaultFileProcessingChain(sequencingObjectRepository, fileProcessors);
 	}
-
+	
 	@Bean(name = "fileProcessingChainExecutor")
 	@Profile({ "dev", "prod" })
 	public TaskExecutor fileProcessingChainExecutor() {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-		taskExecutor.setCorePoolSize(16);
-		taskExecutor.setMaxPoolSize(48);
-		taskExecutor.setQueueCapacity(100);
+		taskExecutor.setCorePoolSize(fpCoreSize);
+		taskExecutor.setMaxPoolSize(fpMaxSize);
+		taskExecutor.setQueueCapacity(fpQueueCapacity);
 		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
 		return taskExecutor;
 	}

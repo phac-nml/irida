@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 /**
  * Responsible for processing a {@link SequenceFile} after the file has been
@@ -35,4 +36,16 @@ public interface FileProcessor {
 	 *         {@link SequenceFile}.
 	 */
 	public Boolean modifiesFile();
+
+	/**
+	 * This method asks the file processor whether it should act on this file.
+	 * The processor may have some settings that would not run on certain files.
+	 * 
+	 * @param sequencingObjectId
+	 *            the {@link SequencingObject} id to check
+	 * @return true if the processor should act on the file
+	 */
+	public default boolean shouldProcessFile(Long sequencingObjectId){
+		return true;
+	}
 }

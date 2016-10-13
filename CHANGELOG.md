@@ -1,6 +1,12 @@
 Changes
 =======
 
+0.13.0 to 0.14.0
+----------------
+* [UI]: Added ability to select or deselect viewing all associated projects. (0.13.1)
+* [UI]: Fixed issue with missing settings tab when in export view within a Project. (0.13.2)
+* [UI]: Fixed bug preventing sample selection while filtered by file. (0.13.2)
+
 0.12.0 to 0.13.0
 ----------------
 * [Developer]: Updated node to v6.4.0.
@@ -10,13 +16,15 @@ Changes
 * [API]: Fixed a bug with the sequencingObject/sequence file REST endpoint that was throwing 404s when it should read a file. (0.12.2)
 * [Developer]: Added ability to build IRIDA package `.zip` file and `tools-list.yml` for distribution and easy installation of tools in Galaxy.
 * [UI]: Major update to the Project > Samples page.
+* [Administation]: Added configurable values for the number of threads to use for file processing.
+* [Developer]: Creating the file processors as Spring beans and wrapping their processing methods in transactions.
 
 0.11.0 to 0.12.0
 ----------------
 * [UI]: Removed bootstrap tooltip and extra script from dashboard page.
 * [UI]: Remove bower dependency for angular-notification-icons.
 * [UI]: Remove bower dependency for AngularJS-toaster.
-* [UI]: Removed qTip2 dependency. 
+* [UI]: Removed qTip2 dependency.
 * [UI]: Removed bower dependency for `bootstrap-sass-official`.
 * [UI]: Remove bower dependency for 'MagnificPopup'.
 * [UI]: Removed client side dependency on `angular-gravatar` and replace with server gravatar url creation.
