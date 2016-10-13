@@ -22,7 +22,7 @@
 				  <!--max-files="1"-->
 				  <!--accepted-files=".xlsx,.xlx"-->
 				  <!--data:text="#{metadata.dropzone.message}"></dropzone>-->
-		<button class="btn btn-primary" ngf-select="$ctrl.uploadFiles($files)" ngf-drop="$ctrl.uploadFiles($files)" ngf-drag-over-class="'dragover'" >
+		<button id="dropzone" class="btn btn-primary" ngf-select="$ctrl.uploadFiles($files)" ngf-drop="$ctrl.uploadFiles($files)" ngf-drag-over-class="'dragover'" >
 			<fa:icon type="upload" />&nbsp;
 			<th:block th:text="#{metadata.dropzone.message}" />
 		</button>
