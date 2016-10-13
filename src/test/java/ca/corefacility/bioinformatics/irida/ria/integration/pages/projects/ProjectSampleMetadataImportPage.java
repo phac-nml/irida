@@ -51,4 +51,8 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	public int getFoundCount() {
 		return Integer.parseInt(foundPill.findElement(By.className("badge")).getText());
 	}
+
+	public int getMissingCount() {
+		return Integer.parseInt(missingPill.findElement(By.className("badge")).getText());
+	}
 }
