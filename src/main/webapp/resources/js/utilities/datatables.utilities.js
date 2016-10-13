@@ -7,6 +7,13 @@ export const dom = `
 <'row'<'col-sm-12'p>>
 `;
 
+export const domButtonsScroller = `
+<'row'<'col-sm-6'B><'col-sm-6'f>>
+<'row'<'col-sm-12'tr>>
+<'row'<'col-sm-12'i>>
+<'row'<'col-sm-12'p>>
+`;
+
 /**
  * Basic format need to display headers in a datatable
  *  title: the text to display in the table headers
