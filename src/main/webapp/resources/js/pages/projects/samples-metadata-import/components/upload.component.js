@@ -7,7 +7,7 @@ const metadataUploader = {
   controller($state, sampleMetadataService) {
     this.uploadFiles = function(files) {
       sampleMetadataService.uploadMetadata(files[0])
-        .then(response => {
+        .then(() => {
           $state.go('sampleId');
         });
     };

@@ -53,17 +53,7 @@
 			<br/>
 			<b th:text="#{metadata.upload.component.warning}"></b>
 		</div>
-		<!--<dropzone data:url="@{/projects/{id}/sample-metadata/pm-{id}(id=${projectId})}"-->
-				  <!--on-complete="$ctrl.onComplete"-->
-				  <!--max-files="1"-->
-				  <!--accepted-files=".xlsx,.xlx"-->
-				  <!--data:text="#{metadata.dropzone.message}"></dropzone>-->
-		<!--<button id="dropzone" class="btn btn-primary" ngf-select="$ctrl.uploadFiles($files)" ngf-drop="$ctrl.uploadFiles($files)" ngf-drag-over-class="'dragover'" >-->
-			<!--<fa:icon type="upload" />&nbsp;-->
-			<!--<th:block th:text="#{metadata.dropzone.message}" />-->
-		<!--</button>-->
 		<div class="">
-
 			<input type="file" id="file-upload-button" name="files" class="inputfile"
 				   ngf-change="$ctrl.uploadFiles($files)"
 				   ngf-accept="'*.xlsx'"
