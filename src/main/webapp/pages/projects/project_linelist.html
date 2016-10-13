@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html
-        xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorator="projects/_base">
 <head>
@@ -9,20 +8,7 @@
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
-        <table id="linelist" class="table table-striped" cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <th>identifier</th>
-                <th>label</th>
-                <th th:each="header : ${headers}" th:text="${header}"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="sampleData : ${metadata}">
-                <td th:each="data : ${sampleData}" th:text="${data}"></td>
-            </tr>
-            </tbody>
-        </table>
+<linelist></linelist>
 </main>
 </body>
 </html>

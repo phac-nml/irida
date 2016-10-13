@@ -14,8 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -24,10 +27,13 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-@Controller @RequestMapping("/projects/{projectId}/linelist") public class ProjectLineListController {
+@Controller @RequestMapping("/projects/{projectId}/linelist")
+public class ProjectLineListController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectLineListController.class);
 
 	private static final List<String> TEMPLATE = ImmutableList.of(
+			"identifier",
+			"label",
 			"PFGE-XbaI-pattern",
 			"PFGE-BlnI-pattern",
 			"NLEP #",
@@ -70,11 +76,31 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("activeNav", "linelist");
-		// THIS IS WHERE THE TEMPLATE WOULD BE APPLIED
-		model.addAttribute("headers", TEMPLATE);
+		return "projects/project_linelist";
+	}
 
+	@RequestMapping("/available-templates")
+	@ResponseBody
+	public Map<String, Object> getAvailableProjectTemplates(@PathVariable Long projectId) {
+		return ImmutableMap.of("templates", ImmutableList.of("default"));
+	}
+
+	@RequestMapping("/mt")
+	@ResponseBody
+	public Map<String, Object> getLinelistTemplate(@PathVariable Long projectId, @RequestParam(required = false, defaultValue = "default") String template) {
+		if (template.equals("default")) {
+			return ImmutableMap.of("template", TEMPLATE);
+		} else {
+			return ImmutableMap.of("template", ImmutableList.of());
+		}
+	}
+
+	@RequestMapping("/metadata")
+	@ResponseBody
+	public Map<String, Object> getLinelistMetadata(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
-		List<List<Object>> metadata = new ArrayList<>();
+		List<Map<String, Object>> metadata = new ArrayList<>();
 		for (Join<Project, Sample> join : projectSamples) {
 			Sample sample = join.getObject();
 			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
@@ -85,20 +111,19 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 			} else {
 				data = new HashMap();
 			}
-			List<Object> metalist = new ArrayList<>();
-			metalist.add(sample.getId());
-			metalist.add(sample.getLabel());
+			Map<String, Object> md = new HashMap<>();
+			md.put("identifier", sample.getId());
+			md.put("label", sample.getLabel());
 			for (String header : TEMPLATE) {
 				if (data.containsKey(header)) {
-					metalist.add(data.get(header));
+					md.put(header, data.get(header));
 				} else {
-					metalist.add("");
+					md.put(header, "");
 				}
 			}
-			metadata.add(metalist);
+			metadata.add(md);
 		}
-		model.addAttribute("metadata", metadata);
-		return "projects/project_linelist";
+		return ImmutableMap.of("metadata", metadata);
 	}
 //
 //	@RequestMapping("/metadata")

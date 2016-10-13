@@ -1,22 +1,11 @@
-/* eslint new-cap: [2, {"capIsNewExceptions": ["DataTable"]}] */
-const $ = require('jquery');
-require('datatables.net');
-require('datatables-bootstrap3-plugin');
-require('datatables.net-buttons');
-require('datatables.net-buttons-bs');
-require('datatables.net-buttons/js/buttons.colVis.js');
-require('datatables.net-scroller');
-require('style!datatables.net-scroller-bs/css/scroller.bootstrap.css');
-require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
-import {domButtonsScroller} from "../../../utilities/datatables.utilities";
+const angular = require('angular');
+import linelistService from './factories/linelist.service';
+import templateService from './factories/template.service';
+import linelist from './components/linelist.component';
 
-$('#linelist').DataTable({
-  dom: domButtonsScroller,
-  buttons: [
-    'colvis'
-  ],
-  scrollX: true,
-  scrollY: 600,
-  deferRender: true,
-  scroller: true
-});
+const app = angular.module('irida');
+
+app
+  .service('linelistService', linelistService)
+  .service('templateService', templateService)
+  .component('linelist', linelist);
