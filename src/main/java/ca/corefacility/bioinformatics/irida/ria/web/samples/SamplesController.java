@@ -207,13 +207,18 @@ public class SamplesController extends BaseController {
 			updatedValues.put(COLLECTION_DATE, collectionDate);
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
-		
+
 		SampleMetadata metadataForSample = null;
 		/**
 		 * If there's sample metadata to add, add it here.
 		 */
 		if (!Strings.isNullOrEmpty(metadataString)) {
 			metadataForSample = sampleService.getMetadataForSample(s);
+
+			// create a new SampleMetada if one doesn't exist for the sample
+			if (metadataForSample == null) {
+				metadataForSample = new SampleMetadata();
+			}
 
 			Map<String, Object> metadata = new HashMap<String, Object>();
 			ObjectMapper mapper = new ObjectMapper();
@@ -235,10 +240,14 @@ public class SamplesController extends BaseController {
 			}
 		}
 
-		if(metadataForSample != null){
-			sampleService.saveSampleMetadaForSample(s, metadataForSample);
+		if (metadataForSample != null) {
+			// if there's no metadata, delete. otherwise update
+			if (metadataForSample.getMetadata().isEmpty()) {
+				sampleService.deleteSampleMetadaForSample(s);
+			} else {
+				sampleService.saveSampleMetadaForSample(s, metadataForSample);
+			}
 		}
-		
 
 		// this used to read request.getURI(), but request.getURI() includes the
 		// context path. When issuing a redirect: return, the redirect: string
