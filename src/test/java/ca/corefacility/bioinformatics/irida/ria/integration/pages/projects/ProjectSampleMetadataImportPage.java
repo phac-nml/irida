@@ -36,10 +36,9 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 
 	public void uploadMetadataFile(String filePath) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(dropzone));
 		Path path = Paths.get(filePath);
 		dropzone.sendKeys(path.toAbsolutePath().toString());
-		waitForTime(500);
+		wait.until(ExpectedConditions.visibilityOf(sampleIdPrev));
 	}
 
 	public void selectSampleNameColumn() {
