@@ -136,17 +136,19 @@
                         <fieldset id="other-metadata">
                             <legend>_Other Metadata_</legend>
                             <div class="row" id="metadata-fields">
-                                <div th:each="entry : ${metadata.metadata}" class="col-md-6 metadata-entry">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <input type="text" class="metadata-key form-control" required="required" th:value="${entry.key}"/>
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default delete-metadata" type="button">
-                                                    <fa:icon type="delete"/>
-                                                </button>
-                                            </span>
+                                <div th:if="${metadata} != null">
+                                    <div th:each="entry : ${metadata.metadata}"  class="col-md-6 metadata-entry">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="text" class="metadata-key form-control" required="required" th:value="${entry.key}"/>
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default delete-metadata" type="button">
+                                                        <fa:icon type="delete"/>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="metadata-value form-control" th:value="${entry.value}"/>
                                         </div>
-                                        <input type="text" class="metadata-value form-control" th:value="${entry.value}"/>
                                     </div>
                                 </div>
                             </div>
