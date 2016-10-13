@@ -176,6 +176,9 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @param collectionDate
 	 *            Date the sample was collected (Optional)
+	 * @param metadataString
+	 *            A JSON string representation of the {@link SampleMetadata} to
+	 *            set on the sample
 	 * @param params
 	 *            Map of fields to update. See FIELDS.
 	 * @param request
