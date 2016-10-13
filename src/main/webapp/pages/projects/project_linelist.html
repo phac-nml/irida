@@ -6,16 +6,9 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Title</title>
-    <style>
-        table.dataTable th,
-        table.dataTable tbody td {
-            white-space: nowrap;
-        }
-
-    </style>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundel-includes="app">
+<main layout:fragment="main" ddl:bundle-includes="project-linelist">
         <table id="linelist" class="table table-striped" cellspacing="0" width="100%">
             <thead>
             <tr>
@@ -31,8 +24,5 @@
             </tbody>
         </table>
 </main>
-<th:block layout:fragment="scripts">
-    <script th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
-</th:block>
 </body>
 </html>

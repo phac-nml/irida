@@ -1,0 +1,16 @@
+{
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/components/datatables-custom.css"
+      }
+    },
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/build/project-linelist.bundle.js"
+      }
+    }
+  ]
+}
