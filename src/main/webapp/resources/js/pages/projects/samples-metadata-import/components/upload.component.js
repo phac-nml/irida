@@ -4,13 +4,17 @@
  */
 const metadataUploader = {
   templateUrl: 'upload.component.tmpl.html',
-  controller($state) {
-    this.onError = () => {
-      console.log('ERROR');
-    };
-
-    this.onComplete = () => {
-      $state.go('sampleId');
+  controller($state, Upload) {
+    this.uploadFiles = function(files) {
+      Upload
+        .upload({
+          url: '/projects/4/sample-metadata/pm-4',
+          data: {file: files[0]}
+        })
+        .then(response => {
+          console.log(response);
+          $state.go('sampleId');
+        });
     };
   }
 };

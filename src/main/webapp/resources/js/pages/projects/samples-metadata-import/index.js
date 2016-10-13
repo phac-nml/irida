@@ -1,7 +1,7 @@
 const angular = require('angular');
 import uiRouter from 'angular-ui-router';
+import ngFileUpload from 'ng-file-upload';
 import {states} from './router/router.config';
-import dropzone from '../../../directives/dropzone';
 import metadataUploader from './components/upload.component';
 import selectSampleNameColumnComponent from './components/selectSampleNameColumn.component';
 import headerItem from './components/headerItem.component';
@@ -15,10 +15,10 @@ const app = angular.module('irida');
 
 // ui.router is not on the loaded by default so we need to inject it into angular here.
 app.requires.push(uiRouter);
+app.requires.push(ngFileUpload);
 app
   .config(states)
   .service('sampleMetadataService', sampleMetadataService)
-  .directive('dropzone', dropzone)
   .component('metadataUploader', metadataUploader)
   .component('selectSampleNameColumnComponent', selectSampleNameColumnComponent)
   .component('headerItem', headerItem)

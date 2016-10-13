@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -16,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Created by josh on 2016-10-07.
  */
 public class ProjectSampleMetadataImportPage extends AbstractPage {
-	@FindBy(className = "dropzone") WebElement dropzone;
+	@FindBy(id = "dropzone") WebElement dropzone;
 	@FindBy(id = "sampleId-previous") WebElement sampleIdPrev;
 	@FindBy(css = "input[type=radio]") List<WebElement> headerRadios;
 	@FindBy(id = "preview-btn") WebElement previewBtn;
@@ -32,11 +34,12 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 		return PageFactory.initElements(driver, ProjectSampleMetadataImportPage.class);
 	}
 
-	public void uploadMetadataFile(String path) {
+	public void uploadMetadataFile(String filePath) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(dropzone));
-		dropzone.sendKeys(path);
-		wait.until(ExpectedConditions.visibilityOf(sampleIdPrev));
+		Path path = Paths.get(filePath);
+		dropzone.sendKeys(path.toAbsolutePath().toString());
+		waitForTime(500);
 	}
 
 	public void selectSampleNameColumn() {

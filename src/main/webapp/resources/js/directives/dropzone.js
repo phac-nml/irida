@@ -1,8 +1,6 @@
 /**
  * @file AngularJS Directive for interacting with the Dropzone library.
  */
-require('style!dropzone/dist/min/dropzone.min.css');
-require('style!./../../css/components/dropzone.css');
 import Dropzone from 'dropzone';
 
 // Prevent Dropzone to auto-magically finding itself in before it is needed.
@@ -46,7 +44,7 @@ const link = (scope, element) => {
  */
 const scope = {
   url: '@',
-  message: '@',
+  text: '@',
   onSuccess: '&?',
   onComplete: '&?',
   onError: '&?',
@@ -54,7 +52,12 @@ const scope = {
   acceptedFiles: '@?'
 };
 
-const template = `<form id="dz-form" class="dropzone"></form>`;
+const template = `
+<button id="dz-form" class="btn btn-primary">
+    <span class="fa fa-upload" aria-hidden="true"></span>&nbsp;
+    {{ text }}
+</button>
+`;
 
 /**
  * Angular directive for Dropzone.js allowing a drag and drop interface for uploading
