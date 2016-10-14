@@ -55,15 +55,6 @@ import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -74,8 +65,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.components.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
