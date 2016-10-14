@@ -884,9 +884,8 @@ public class ProjectSamplesController {
 	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @return
 	 */
-	@RequestMapping("/projects/{projectId}/sample-metadata/getMetadata")
-	@ResponseBody public SampleMetadataStorage getProjectSampleMetadata(HttpSession session,
-			@PathVariable long projectId) {
+	@RequestMapping("/projects/{projectId}/sample-metadata/getMetadata") @ResponseBody public SampleMetadataStorage getProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 	}
 
@@ -1005,7 +1004,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return {@link Map} containing
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/setSampleColumn", method = RequestMethod.PUT)
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/setSampleColumn", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> setProjectSampleMetadataSampleId(
 			HttpSession session,
@@ -1052,9 +1051,8 @@ public class ProjectSamplesController {
 	 * @param projectId {@link Long} identifier for the current project
 	 * @return {@link Map} of potential errors.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/save", method = RequestMethod.PUT)
-	@ResponseBody public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session,
-			@PathVariable long projectId) {
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/save", method = RequestMethod.POST) @ResponseBody public Map<String, Object> saveProjectSampleMetadata(
+			Locale locale, HttpSession session, @PathVariable long projectId) {
 		Map<String, Object> errors = new HashMap<>();
 
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);

@@ -2,7 +2,6 @@
  * @file AngularJS Service for handling server interactions for uploading
  * sample metadata.
  */
-const $ = require('jquery');
 
 export const sampleMetadataService = ($http, $window, Upload) => {
   // 'project.id' is set in the `project/_bse.html` file
@@ -39,8 +38,7 @@ export const sampleMetadataService = ($http, $window, Upload) => {
    * @return {object} ajax promise
    */
   const setSampleIdColumn = sampleNameColumn => {
-    const data = $.param({sampleNameColumn});
-    return $http.put(`${URL}/setSampleColumn?${data}`)
+    return $http.post(`${URL}/setSampleColumn`, {sampleNameColumn})
       .then(response => response);
   };
 
@@ -49,7 +47,7 @@ export const sampleMetadataService = ($http, $window, Upload) => {
    * @return {object} ajax promise
    */
   const saveMetadata = () => {
-    return $http.put(`${URL}/save`);
+    return $http.post(`${URL}/save`);
   };
 
   /**
