@@ -1,4 +1,3 @@
-/* global project:true */
 /**
  * @file AngularJS Service for handling server interactions for uploading
  * sample metadata.
@@ -7,7 +6,7 @@ const $ = require('jquery');
 
 export const sampleMetadataService = ($http, $window, Upload) => {
   // 'project.id' is set in the `project/_bse.html` file
-  const URL = `${$window.location.pathname}/pm-${project.id}`;
+  const URL = $window.location.pathname;
 
   /**
    * Upload the metadata file to the server for processing.
@@ -17,7 +16,7 @@ export const sampleMetadataService = ($http, $window, Upload) => {
   const uploadMetadata = file => {
     return Upload
       .upload({
-        url: URL,
+        url: `${URL}/uploadFile`,
         data: {file: file}
       });
   };
@@ -27,7 +26,7 @@ export const sampleMetadataService = ($http, $window, Upload) => {
    * @return {object} the metadata stored for this project.
    */
   const getProjectData = () => {
-    return $http.get(URL)
+    return $http.get(`${URL}/getMetadata`)
       .then(result => {
         return result.data;
       });
@@ -41,7 +40,7 @@ export const sampleMetadataService = ($http, $window, Upload) => {
    */
   const setSampleIdColumn = sampleNameColumn => {
     const data = $.param({sampleNameColumn});
-    return $http.put(`${URL}?${data}`)
+    return $http.put(`${URL}/setSampleColumn?${data}`)
       .then(response => response);
   };
 
