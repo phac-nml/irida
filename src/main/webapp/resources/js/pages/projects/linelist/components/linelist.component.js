@@ -1,4 +1,4 @@
-/* eslint new-cap: [2, {"capIsNewExceptions": ["DataTable"]}] */
+/* eslint new-cap: [2, {'capIsNewExceptions': ['DataTable']}] */
 const $ = require('jquery');
 require('datatables.net');
 require('datatables-bootstrap3-plugin');
@@ -12,6 +12,11 @@ import {domButtonsScroller, formatBasicHeaders} from '../../../../utilities/data
 
 const createTable = (template, data) => {
   const columns = formatBasicHeaders(template);
+
+  if ($.fn.DataTable.isDataTable('#linelist')) {
+    $('#linelist').DataTable().destroy();
+    $('#linelist').empty();
+  }
 
   $('#linelist').DataTable({
     data,
@@ -28,7 +33,6 @@ const createTable = (template, data) => {
 };
 
 const template = `
-<h2>Line List</h2>
 <table id='linelist' 
     class='table table-striped' 
     cellspacing='0' width='100%'>
@@ -37,18 +41,26 @@ const template = `
 
 const linelist = {
   template,
-  controller($q, templateService, linelistService) {
-    const promises = [];
-    promises.push(templateService.getTemplate());
-    promises.push(linelistService.getMetadata());
+  controller($q, $scope, templateService, linelistService) {
+    const generate = (templateName = 'default') => {
+      const promises = [];
+      promises.push(templateService.getTemplate(templateName));
+      promises.push(linelistService.getMetadata(templateName));
 
-    $q
-      .all(promises)
-      .then(results => {
-        const template = results[0].data.template;
-        const data = results[1].data.metadata;
-        createTable(template, data);
-      });
+      $q
+        .all(promises)
+        .then(results => {
+          const template = results[0].data.template;
+          const data = results[1].data.metadata;
+          createTable(template, data);
+        });
+    };
+
+    generate();
+
+    $scope.$on('LINELIST_TEMPLATE_CHANGE', (event, args) => {
+      generate(args.template);
+    });
   }
 };
 

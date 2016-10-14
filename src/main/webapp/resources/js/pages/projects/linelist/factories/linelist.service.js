@@ -1,8 +1,8 @@
 const linelistService = ($http, $window) => {
   const URL = $window.location.pathname;
 
-  const getMetadata = () => {
-    return $http.get(`${URL}/metadata`);
+  const getMetadata = template => {
+    return $http.get(`${URL}/metadata?template=${template}`);
   };
 
   return {

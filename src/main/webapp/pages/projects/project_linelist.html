@@ -8,7 +8,22 @@
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
-<linelist></linelist>
+    <div class="row">
+        <div class="col-md-12 spacing-bottom">
+            <h2>Line List</h2>
+            <div class="form-group">
+                <select class="form-control" id="template-select">
+                    <option th:each="template : ${templates}" th:value="${template}"
+                            th:text="${#strings.capitalizeWords(template)}"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <linelist></linelist>
+        </div>
+    </div>
 </main>
 </body>
 </html>
