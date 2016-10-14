@@ -421,7 +421,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
-			@RequestParam(value = "associatedProjectIds[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
+			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
 			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String search,
 			@RequestParam(required = false, defaultValue = "") String minDate,
