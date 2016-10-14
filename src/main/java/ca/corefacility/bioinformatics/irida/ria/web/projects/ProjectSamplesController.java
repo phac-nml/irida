@@ -57,6 +57,7 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
@@ -1198,14 +1199,5 @@ public class ProjectSamplesController {
 		// samples in associated projects
 		ASSOCIATED
 
-	}
-
-	/**
-	 *
-	 */
-	private class MetadataImportFileTypeNotSupportedError extends Exception {
-		public MetadataImportFileTypeNotSupportedError(String extension) {
-			super("Importing metadata does not support: [" + extension + "] file type.");
-		}
 	}
 }
