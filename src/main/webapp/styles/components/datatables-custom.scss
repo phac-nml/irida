@@ -43,6 +43,9 @@
 }
 
 .dataTable {
+  thead, th, tbody, td {
+    white-space: nowrap;
+  }
 
   th {
     vertical-align: top !important;

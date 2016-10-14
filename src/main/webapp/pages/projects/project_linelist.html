@@ -3,15 +3,19 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorator="projects/_base">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Title</title>
+    <title th:text="#{linelist.page-title=}">Title</title>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
+    <div class="row spaced-bottom">
+        <div class="col-md-12">
+            <a class="btn btn-default" th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}">Upload new metadata</a>
+        </div>
+    </div>
     <div class="row">
-        <div class="col-md-12 spacing-bottom">
-            <h2>Line List</h2>
+        <div class="col-md-12 spaced-bottom">
             <div class="form-group">
+                <label for="template-select" th:text="#{linelist.template-select.label}">Select Metadata Template</label>
                 <select class="form-control" id="template-select">
                     <option th:each="template : ${templates}" th:value="${template}"
                             th:text="${#strings.capitalizeWords(template)}"></option>
