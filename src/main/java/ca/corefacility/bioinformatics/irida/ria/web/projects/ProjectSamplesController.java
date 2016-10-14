@@ -55,17 +55,9 @@ import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
@@ -74,8 +66,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.components.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
@@ -889,14 +881,11 @@ public class ProjectSamplesController {
 	 * Get the currently stored metadata.
 	 * @param session {@link HttpSession}
 	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param key
-	 * 		{@link String} key for the {@link SampleMetadataStorage} in the {@link HttpSession}
 	 * @return
 	 */
-	@RequestMapping("/projects/{projectId}/sample-metadata/{key}")
-	@ResponseBody public SampleMetadataStorage getProjectSampleMetadata(
-			HttpSession session, @PathVariable long projectId, @PathVariable String key) {
-		return (SampleMetadataStorage) session.getAttribute(key);
+	@RequestMapping("/projects/{projectId}/sample-metadata/getMetadata") @ResponseBody public SampleMetadataStorage getProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId) {
+		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 	}
 
 	/**
@@ -907,18 +896,15 @@ public class ProjectSamplesController {
 	 * 		{@link HttpSession}
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param key
-	 * 		{@link String} key for the {@link SampleMetadataStorage} in the {@link HttpSession}
 	 * @param file
 	 * 		{@link MultipartFile} The excel file containing the metadata.
 	 *
 	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the {@link
 	 * Sample} identifier.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}", method = RequestMethod.POST) @ResponseBody public SampleMetadataStorage createProjectSampleMetadata(
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/uploadFile", method = RequestMethod.POST) @ResponseBody public SampleMetadataStorage createProjectSampleMetadata(
 			HttpSession session,
 			@PathVariable long projectId,
-			@PathVariable String key,
 			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
@@ -977,7 +963,7 @@ public class ProjectSamplesController {
 			logger.error("Error opening file" + file.getOriginalFilename());
 		}
 
-		session.setAttribute(key, storage);
+		session.setAttribute("pm-" + projectId, storage);
 		return storage;
 	}
 
@@ -1012,22 +998,19 @@ public class ProjectSamplesController {
 	 * 		{@link HttpSession}.
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}.
-	 * @param key
-	 * 		{@link String} key for the {@link SampleMetadataStorage} in the {@link HttpSession}
 	 * @param sampleNameColumn
 	 * 		{@link String} the header to used to represent the {@link Sample} identifier.
 	 *
 	 * @return {@link Map} containing
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/setSampleColumn", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> setProjectSampleMetadataSampleId(
 			HttpSession session,
 			@PathVariable long projectId,
-			@PathVariable String key,
 			@RequestParam String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
-		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute(key);
+		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 
 		if (stored != null) {
 			stored.saveSampleNameColumn(sampleNameColumn);
@@ -1065,16 +1048,13 @@ public class ProjectSamplesController {
 	 * @param locale    {@link Locale} of the current user.
 	 * @param session   {@link HttpSession}
 	 * @param projectId {@link Long} identifier for the current project
-	 * @param key       {@link String} key for the {@link SampleMetadataStorage} in the {@link HttpSession}
 	 * @return {@link Map} of potential errors.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/{key}/save", method = RequestMethod.PUT)
-	@ResponseBody public Map<String, Object> saveProjectSampleMetadata(Locale locale,
-			HttpSession session, @PathVariable long projectId,
-			@PathVariable String key) {
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/save", method = RequestMethod.POST) @ResponseBody public Map<String, Object> saveProjectSampleMetadata(
+			Locale locale, HttpSession session, @PathVariable long projectId) {
 		Map<String, Object> errors = new HashMap<>();
 
-		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute(key);
+		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 		if (stored == null) {
 			errors.put("stored-error", true);
 		}
@@ -1124,12 +1104,10 @@ public class ProjectSamplesController {
 	 *
 	 * @param session   {@link HttpSession}
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
-	 * @param key       to {@link HttpSession} attribute.
 	 */
-	@RequestMapping("/projects/{projectId}/sample-metadata/{key}/clear") public void clearProjectSampleMetadata(
-			HttpSession session, @PathVariable long projectId,
-			@PathVariable String key) {
-		session.removeAttribute(key);
+	@RequestMapping("/projects/{projectId}/sample-metadata/clear") public void clearProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId) {
+		session.removeAttribute("pm-" + projectId);
 	}
 
 	/**
@@ -1219,14 +1197,5 @@ public class ProjectSamplesController {
 		// samples in associated projects
 		ASSOCIATED
 
-	}
-
-	/**
-	 *
-	 */
-	private class MetadataImportFileTypeNotSupportedError extends Exception {
-		public MetadataImportFileTypeNotSupportedError(String extension) {
-			super("Importing metadata does not support: [" + extension + "] file type.");
-		}
 	}
 }

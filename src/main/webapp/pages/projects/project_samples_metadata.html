@@ -6,40 +6,7 @@
 <head>
 	<title th:text="#{metadata.page-title}"></title>
 	<style>
-		.inputfile {
-			width: 0.1px;
-			height: 0.1px;
-			opacity: 0;
-			overflow: hidden;
-			position: absolute;
-			z-index: -1;
-		}
 
-		.inputfile + label {
-			display: block;
-			width: 100%;
-			height: 200px;
-			text-align: center;
-			line-height: 200px;
-			font-size: 1.25em;
-			font-weight: 700;
-			color: #222222;
-			background-color: #fefefe;
-			display: inline-block;
-			border-radius: 4px;
-			border: 2px dashed rgb(2, 117, 216);
-			cursor: pointer;
-		}
-
-		.inputfile:focus + label,
-		.inputfile + label:hover {
-			background-color: rgb(236, 239, 241);
-		}
-
-		.inputfile:focus + label {
-			outline: 1px dotted #000;
-			outline: -webkit-focus-ring-color auto 5px;
-		}
 	</style>
 </head>
 <body>
@@ -47,14 +14,14 @@
 	<h3 th:text="#{metadata.upload.component.title}"></h3>
 	<section ui-view=""></section>
 	<script type="text/ng-template" id="upload.component.tmpl.html">
-		<p class="lead" style="margin-bottom: 1rem;" th:text="#{metadata.upload.component.intro}"></p>
+		<p class="lead spaced-bottom" th:text="#{metadata.upload.component.intro}"></p>
 		<div class="alert alert-info">
 			<p th:utext="#{metadata.upload.component.text}"></p>
 			<br/>
 			<b th:text="#{metadata.upload.component.warning}"></b>
 		</div>
 		<div class="">
-			<input type="file" id="file-upload-button" name="files" class="inputfile"
+			<input type="file" id="file-upload-button" name="files" class="inputfile blocked"
 				   ngf-change="$ctrl.uploadFiles($files)"
 				   ngf-accept="'*.xlsx'"
 				   ngf-select="" />
@@ -68,11 +35,11 @@
 	<script type="text/ng-template" id="sampleId.tmpl.html">
 		<div class="row">
 			<div class="col-md-12 clearfix">
-				<button id="sampleId-previous" class="btn btn-default" style="margin-bottom: 1rem;" ng-click="$ctrl.selectNewFile()">
+				<button id="sampleId-previous" class="btn btn-default spaced-bottom" ng-click="$ctrl.selectNewFile()">
 					<fa:icon type="arrow-left"/>&nbsp;
 					<th:block th:text="#{metadata.header.component.prev-nav}"/>
 				</button>
-				<button id="preview-btn" class="btn btn-default pull-right" style="margin-bottom: 1rem;"
+				<button id="preview-btn" class="btn btn-default pull-right spaced-bottom"
 						ng-click="$ctrl.displayMetadata()">
 					<th:block th:text="#{metadata.header.component.next-nav}"/>&nbsp;
 					<fa:icon type="arrow-right"/>
@@ -86,14 +53,14 @@
 		</ul>
 	</script>
 	<script type="text/ng-template" id="results.component.tmpl.html">
-		<div class="row" style="margin-bottom: 1rem;">
+		<div class="row spaced-bottom">
 			<div class="col-md-12 clearfix">
 				<a ui-sref="sampleId" class="btn btn-default">
 					<fa:icon type="arrow-left"/>&nbsp;
 					<th:block th:text="#{metadata.results.component.prev-nav}" /></a>
 			</div>
 		</div>
-		<ul class="nav nav-pills nav-justified" style="margin-bottom: 1rem;">
+		<ul class="nav nav-pills nav-justified spaced-bottom">
 			<li role="presentation" ui-sref-active="active">
 				<a id="found-pill" ui-sref="results.found"><th:block th:text="#{metadata.results.component.found-nav}" />&nbsp;<span class="badge" ng-bind="$ctrl.found"></span></a>
 			</li>

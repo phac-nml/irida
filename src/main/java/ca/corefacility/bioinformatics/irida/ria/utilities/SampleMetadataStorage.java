@@ -1,14 +1,11 @@
-package ca.corefacility.bioinformatics.irida.ria.web.components;
+package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Used to store information relating to sample metadata during upload.
  */
-@Component
 public class SampleMetadataStorage {
 	private String sampleNameColumn;
 	private List<String> headers;
