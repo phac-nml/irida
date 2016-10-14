@@ -345,7 +345,6 @@
       // Make sure the names are unique and no extra spaces before and after.
       var samplesNames = _.uniq($fileContent.match(/[^\r\n]+/g)
         .map(function(name) { return name.trim() }));
-      console.log(samplesNames);
       service.filterBySampleNames(samplesNames);
       // Clear the file name when complete.
       document.querySelector("#filter-file-input").value = "";
