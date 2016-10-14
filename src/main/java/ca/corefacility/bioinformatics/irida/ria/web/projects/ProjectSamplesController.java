@@ -337,21 +337,24 @@ public class ProjectSamplesController {
 		List<Join<Project, Sample>> samples = new ArrayList<>();
 
 		// Get a list of all samples for all projects
-		projects.add(projectId);
+		projects.add(0, projectId);
 		for (Long id : projects) {
-			samples.addAll((List) sampleService.getSamplesForProject(projectService.read(id)));
-		}
-
-		// See if the name is there
-		for (Join<Project, Sample> join : samples) {
-			Sample sample = join.getObject();
-			if (sampleNames.contains(sample.getLabel())) {
-				sampleNames.remove(sample.getLabel());
+			List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(projectService.read(id));
+			// See if the name is there
+			for (Join<Project, Sample> join : psj) {
+				Sample sample = join.getObject();
+				if (sampleNames.contains(sample.getLabel())) {
+					sampleNames.remove(sample.getLabel());
+				}
+				if (sampleNames.size() == 0) {
+					break;
+				}
 			}
 			if (sampleNames.size() == 0) {
 				break;
 			}
 		}
+
 
 		Map<String, Object> result = new HashMap<>();
 		if (sampleNames.size() > 0) {
