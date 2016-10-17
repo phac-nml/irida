@@ -13,6 +13,10 @@ function samplesAjaxParams() {
         var name = PAGE.ajaxParam.name;
         return typeof name === "string" ? name : "";
       },
+      organism: function() {
+        var organism = PAGE.ajaxParam.organism;
+        return typeof organism === "string" ? organism : "";
+      },
       minDate    : function () {
         var minDate = PAGE.ajaxParam.minDate;
         return typeof minDate === "number" ? minDate : "";

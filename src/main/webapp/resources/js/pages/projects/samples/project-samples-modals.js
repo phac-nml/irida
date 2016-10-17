@@ -278,6 +278,7 @@
     this.setState = function(s) {
       ng.copy(s, currState);
       $rootScope.$broadcast("FILTER_TABLE", {filter: {
+        organism: s.organism,
         name: s.name,
         minDate: !!s.date.startDate  ? s.date.startDate.valueOf() : "",
         endDate: !!s.date.endDate  ? s.date.endDate.valueOf() : ""
