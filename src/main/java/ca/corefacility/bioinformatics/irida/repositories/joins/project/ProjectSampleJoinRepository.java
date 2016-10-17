@@ -61,7 +61,7 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	 *            the {@link Project} to get sample organisms for
 	 * @return a list of sample organisms
 	 */
-	@Query("select j.sample.organism FROM ProjectSampleJoin j where j.project=?1")
+	@Query("select DISTINCT(j.sample.organism) FROM ProjectSampleJoin j where j.project=?1")
 	public List<String> getSampleOrganismsForProject(Project project);
 
 	/**
