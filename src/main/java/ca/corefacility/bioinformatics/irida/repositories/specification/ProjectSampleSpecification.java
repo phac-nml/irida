@@ -9,11 +9,11 @@ import javax.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.google.common.base.Strings;
+
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-
-import com.google.common.base.Strings;
 
 /**
  * Specification for searching and filtering {@link ProjectSampleJoin} properties
@@ -37,7 +37,7 @@ public class ProjectSampleSpecification {
 	 * @return {@link Specification} of {@link ProjectSampleJoin} for criteria to search based on the filtered criteria.
 	 */
 	public static Specification<ProjectSampleJoin> getSamples(List<Project> projects, List<String> sampleNames,
-			String sampleName, String searchTerm, Date minDate, Date maxDate) {
+			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate) {
 		return (root, criteriaQuery, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
@@ -59,6 +59,10 @@ public class ProjectSampleSpecification {
 			// This can be expanded in future to search any attribute on the sample (e.g. description)
 			if (!Strings.isNullOrEmpty(searchTerm)) {
 				predicates.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + searchTerm + "%"));
+			}
+			// Check for organism
+			if (!Strings.isNullOrEmpty(organism)) {
+				predicates.add(criteriaBuilder.like(root.get("sample").get("organism"), "%" + organism + "%"));
 			}
 			// Check if there is a minimum search date
 			if (minDate != null) {
