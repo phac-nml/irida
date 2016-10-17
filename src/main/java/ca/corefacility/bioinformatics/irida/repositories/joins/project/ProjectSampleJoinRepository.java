@@ -17,8 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * 
  * 
  */
-public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<ProjectSampleJoin, Long>,
-		JpaSpecificationExecutor<ProjectSampleJoin> {
+public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<ProjectSampleJoin, Long>, JpaSpecificationExecutor<ProjectSampleJoin> {
 	/**
 	 * Get a collection of the {@link Project}s related to a {@link Sample}
 	 * 
@@ -53,6 +52,17 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	 */
 	@Query("select j from ProjectSampleJoin j where j.project = ?1")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
+
+	/**
+	 * Get a list of the organism fields stored for all {@link Sample}s in a
+	 * {@link Project}
+	 * 
+	 * @param project
+	 *            the {@link Project} to get sample organisms for
+	 * @return a list of sample organisms
+	 */
+	@Query("select j.sample.organism FROM ProjectSampleJoin j where j.project=?1")
+	public List<String> getSampleOrganismsForProject(Project project);
 
 	/**
 	 * Count the number of {@link Sample}s in a given {@link Project}.
