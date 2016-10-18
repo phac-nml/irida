@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,6 +158,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		} else {
 			throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public List<String> getSampleOrganismsForProject(Project project) {
+		return psjRepository.getSampleOrganismsForProject(project);
 	}
 
 	/**
