@@ -457,10 +457,15 @@
       var allSelectedCB = document.querySelector("#allSelectedCB");
 
       $scope.$on("SAMPLE_SELECTION_EVENT", function(event, args) {
-        vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
         allSelectedCB.indeterminate = false;
-        if (vm.allSelected || args.count === 0) {
-          allSelectedCB.checked = vm.allSelected;
+        allSelectedCB.checked = false;
+        if(args.count === 0) {
+          vm.allSelected = false;
+          return;
+        }
+        vm.allSelected = $window.oTable_samplesTable.page.info().recordsTotal === args.count;
+        if (vm.allSelected) {
+          allSelectedCB.checked = true;
         } else {
           allSelectedCB.indeterminate = true;
         }
@@ -489,7 +494,11 @@
     /**
      * Event handler for clicking on the select all samples button.
      */
-    SelectionController.prototype.selectAllBtn = function() {
+    SelectionController.prototype.selectAllBtn = function($event) {
+      if($event.target.id === "allSelectedCB") {
+        $event.stopPropagation();
+      }
+
       if(!vm.allSelected) {
         _selectAllSamples()
       } else {

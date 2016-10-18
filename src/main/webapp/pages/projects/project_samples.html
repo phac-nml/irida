@@ -101,7 +101,7 @@
         <tr>
             <th dt:sortable="false" width="70px" dt:renderFunction="datatables-utils#datatable.formatCheckbox">
                 <div class="btn-group btn-group-sm ng-cloak" uib-dropdown="" dropdown-append-to-body="true" ng-controller="SelectionController as selectCtrl">
-                    <button id="selection-main" class="btn btn-default" ng-click="selectCtrl.selectAllBtn()">
+                    <button id="selection-main" class="btn btn-default" ng-click="selectCtrl.selectAllBtn($event)">
                         <input id="allSelectedCB" type="checkbox" />
                     </button>
                     <button id="selection-toggle" class="btn btn-default" uib-dropdown-toggle="">
