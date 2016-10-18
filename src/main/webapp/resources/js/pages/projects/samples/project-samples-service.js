@@ -178,20 +178,23 @@
       // Store the sample names so datatables can add them to the url
       // This is done in sample-ajax-params.js
       page.ajaxParam.sampleNames = sampleNames;
-      oTable_samplesTable.ajax.reload(function(result) {
-        var difference = sampleNames.length - result.recordsTotal;
-        if (difference === 0) {
-          notifications.show({type: "success", msg: page.i18n.fileFilter.success});
-        } else {
-          post(page.urls.fileMissingSamples, {sampleNames: sampleNames}).then(function(response) {
+      oTable_samplesTable.ajax.reload(function() {
+        // Need to see if anything is missing
+        post(page.urls.fileMissingSamples, {
+          sampleNames: sampleNames,
+          projects: page.ajaxParam.associated
+        }).then(function(response) {
+          if (response.data.missingNames) {
             var msg = "<strong>" + response.data.message + "</strong><ul>";
             response.data.missingNames.forEach(function(name) {
               msg += "<li>" + name + "</li>"
             });
             msg += "</ul>";
             notifications.show({type: "warning", msg: msg, timeout: false});
-          });
-        }
+          } else {
+            notifications.show({type: "success", msg: response.data.success})
+          }
+        });
         scope.$broadcast("FILE_FILTER");
       });
     };

@@ -6,6 +6,8 @@ Changes
 * [UI]: Added ability to select or deselect viewing all associated projects. (0.13.1)
 * [UI]: Fixed issue with missing settings tab when in export view within a Project. (0.13.2)
 * [UI]: Fixed bug preventing sample selection while filtered by file. (0.13.2)
+* [UI]: Fixed bug with selecting samples with associated projects. (0.13.3)
+* [UI]: Fixed bug when displaying samples names from associated projects when filtering by file. (0.13.3)
 
 0.12.0 to 0.13.0
 ----------------

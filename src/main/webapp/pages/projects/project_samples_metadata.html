@@ -1,111 +1,111 @@
 <!DOCTYPE html>
 <html lang="en"
-	  xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorator="projects/_base">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
 <head>
-	<title th:text="#{metadata.page-title}"></title>
-	<style>
+    <title th:text="#{metadata.page-title}"></title>
+    <style>
 
-	</style>
+    </style>
 </head>
 <body>
 <div layout:fragment="main" ddl:bundle-includes="project-samples-metadata">
-	<h3 th:text="#{metadata.upload.component.title}"></h3>
-	<section ui-view=""></section>
-	<script type="text/ng-template" id="upload.component.tmpl.html">
-		<p class="lead spaced-bottom" th:text="#{metadata.upload.component.intro}"></p>
-		<div class="alert alert-info">
-			<p th:utext="#{metadata.upload.component.text}"></p>
-			<br/>
-			<b th:text="#{metadata.upload.component.warning}"></b>
-		</div>
-		<div class="">
-			<input type="file" id="file-upload-button" name="files" class="inputfile blocked"
-				   ngf-change="$ctrl.uploadFiles($files)"
-				   ngf-accept="'*.xlsx'"
-				   ngf-select="" />
-			<label for="file-upload-button"
-				   ngf-drop="$ctrl.uploadFiles($files)">
-				<fa:icon type="upload"/>&nbsp;
-				<th:block th:text="#{metadata.dropzone.message}"></th:block>
-			</label>
-		</div>
-	</script>
-	<script type="text/ng-template" id="sampleId.tmpl.html">
-		<div class="row">
-			<div class="col-md-12 clearfix">
-				<button id="sampleId-previous" class="btn btn-default spaced-bottom" ng-click="$ctrl.selectNewFile()">
-					<fa:icon type="arrow-left"/>&nbsp;
-					<th:block th:text="#{metadata.header.component.prev-nav}"/>
-				</button>
-				<button id="preview-btn" class="btn btn-default pull-right spaced-bottom"
-						ng-click="$ctrl.displayMetadata()">
-					<th:block th:text="#{metadata.header.component.next-nav}"/>&nbsp;
-					<fa:icon type="arrow-right"/>
-				</button>
-			</div>
-		</div>
-		<ul class="list-group">
-			<li class="list-group-item" ng-repeat="header in $ctrl.headers">
-				<header-item header="header"></header-item>
-			</li>
-		</ul>
-	</script>
-	<script type="text/ng-template" id="results.component.tmpl.html">
-		<div class="row spaced-bottom">
-			<div class="col-md-12 clearfix">
-				<a ui-sref="sampleId" class="btn btn-default">
-					<fa:icon type="arrow-left"/>&nbsp;
-					<th:block th:text="#{metadata.results.component.prev-nav}" /></a>
-			</div>
-		</div>
-		<ul class="nav nav-pills nav-justified spaced-bottom">
-			<li role="presentation" ui-sref-active="active">
-				<a id="found-pill" ui-sref="results.found"><th:block th:text="#{metadata.results.component.found-nav}" />&nbsp;<span class="badge" ng-bind="$ctrl.found"></span></a>
-			</li>
-			<li role="presentation" id="danger" ui-sref-active="active">
-				<a id="missing-pill" ui-sref="results.missing"><th:block th:text="#{metadata.results.component.missing-nav}"/>&nbsp;<span class="badge" ng-bind="$ctrl.missing"></span></a>
-			</li>
-		</ul>
-		<ui-view></ui-view>
-</script>
-	<script type="text/ng-template" id="results.found.component.tmpl.html">
-		<div class="alert alert-success" ng-show="$ctrl.rows.length &gt; 0">
-			<strong>
-				<fa:icon type="thumb-up" />&nbsp;
-				<th:block th:text="#{metadata.results.found.component.title}"/>
-			</strong>
-			<save-metadata
-					data:url="@{/projects/{id}/linelist(id=${projectId})}"
-					data:label="#{metadata.results.found.component.save}">
-			</save-metadata>
-		</div>
-		<div class="alert alert-danger" ng-show="$ctrl.rows.length === 0">
-			<strong>
-				<fa:icon type="thumb-down" />&nbsp;
-				<th:block th:text="#{metadata.results.found.component.empty-title}"/>
-			</strong>
-			<p class="lead" th:text="#{metadata.results.found.component.empty-text}"></p>
-		</div>
-		<table id="found-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
-	</script>
-	<script type="text/ng-template" id="results.missing.component.tmpl.html">
-		<div class="alert alert-danger" ng-show="$ctrl.rows.length &gt; 0">
-			<strong>
-				<fa:icon type="warning" />&nbsp;
-				<th:block th:text="#{metadata.results.missing.component.title}"/></strong>
-			<p class="lead" th:text="#{metadata.results.missing.component.message}"></p>
-		</div>
-		<div class="alert alert-success" ng-show="$ctrl.rows.length === 0">
-			<strong>
-				<fa:icon type="thumb-up" />
-				<th:block th:text="#{metadata.results.missing.none-title=}"/>
-			</strong>
-			<p class="lead" th:text="#{metadata.results.missing.none-text}"></p>
-		</div>
-		<table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
-	</script>
+    <h3 th:text="#{metadata.upload.component.title}"></h3>
+    <section ui-view=""></section>
+    <script type="text/ng-template" id="upload.component.tmpl.html">
+        <p class="lead spaced-bottom" th:text="#{metadata.upload.component.intro}"></p>
+        <div class="alert alert-info">
+            <p th:utext="#{metadata.upload.component.text}"></p>
+            <br/>
+            <b th:text="#{metadata.upload.component.warning}"></b>
+        </div>
+        <div class="">
+            <input type="file" id="file-upload-button" name="files" class="inputfile blocked"
+                   ngf-change="$ctrl.uploadFiles($files)"
+                   ngf-accept="'*.xlsx'"
+                   ngf-select="" />
+            <label for="file-upload-button"
+                   ngf-drop="$ctrl.uploadFiles($files)">
+                <fa:icon type="upload"/>&nbsp;
+                <th:block th:text="#{metadata.dropzone.message}"></th:block>
+            </label>
+        </div>
+    </script>
+    <script type="text/ng-template" id="sampleId.tmpl.html">
+        <div class="row">
+            <div class="col-md-12 clearfix">
+                <button id="sampleId-previous" class="btn btn-default spaced-bottom" ng-click="$ctrl.selectNewFile()">
+                    <fa:icon type="arrow-left"/>&nbsp;
+                    <th:block th:text="#{metadata.header.component.prev-nav}"/>
+                </button>
+                <button id="preview-btn" class="btn btn-default pull-right spaced-bottom"
+                        ng-click="$ctrl.displayMetadata()">
+                    <th:block th:text="#{metadata.header.component.next-nav}"/>&nbsp;
+                    <fa:icon type="arrow-right"/>
+                </button>
+            </div>
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="header in $ctrl.headers">
+                <header-item header="header"></header-item>
+            </li>
+        </ul>
+    </script>
+    <script type="text/ng-template" id="results.component.tmpl.html">
+        <div class="row spaced-bottom">
+            <div class="col-md-12 clearfix">
+                <a ui-sref="sampleId" class="btn btn-default">
+                    <fa:icon type="arrow-left"/>&nbsp;
+                    <th:block th:text="#{metadata.results.component.prev-nav}" /></a>
+            </div>
+        </div>
+        <ul class="nav nav-pills nav-justified spaced-bottom">
+            <li role="presentation" ui-sref-active="active">
+                <a id="found-pill" ui-sref="results.found"><th:block th:text="#{metadata.results.component.found-nav}" />&nbsp;<span class="badge" ng-bind="$ctrl.found"></span></a>
+            </li>
+            <li role="presentation" id="danger" ui-sref-active="active">
+                <a id="missing-pill" ui-sref="results.missing"><th:block th:text="#{metadata.results.component.missing-nav}"/>&nbsp;<span class="badge" ng-bind="$ctrl.missing"></span></a>
+            </li>
+        </ul>
+        <ui-view></ui-view>
+    </script>
+    <script type="text/ng-template" id="results.found.component.tmpl.html">
+        <div class="alert alert-success" ng-show="$ctrl.rows.length &gt; 0">
+            <strong>
+                <fa:icon type="thumb-up" />&nbsp;
+                <th:block th:text="#{metadata.results.found.component.title}"/>
+            </strong>
+            <save-metadata
+                    data:url="@{/projects/{id}/samples(id=${projectId})}"
+                    data:label="#{metadata.results.found.component.save}">
+            </save-metadata>
+        </div>
+        <div class="alert alert-danger" ng-show="$ctrl.rows.length === 0">
+            <strong>
+                <fa:icon type="thumb-down" />&nbsp;
+                <th:block th:text="#{metadata.results.found.component.empty-title}"/>
+            </strong>
+            <p class="lead" th:text="#{metadata.results.found.component.empty-text}"></p>
+        </div>
+        <table id="found-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
+    </script>
+    <script type="text/ng-template" id="results.missing.component.tmpl.html">
+        <div class="alert alert-danger" ng-show="$ctrl.rows.length &gt; 0">
+            <strong>
+                <fa:icon type="warning" />&nbsp;
+                <th:block th:text="#{metadata.results.missing.component.title}"/></strong>
+            <p class="lead" th:text="#{metadata.results.missing.component.message}"></p>
+        </div>
+        <div class="alert alert-success" ng-show="$ctrl.rows.length === 0">
+            <strong>
+                <fa:icon type="thumb-up" />
+                <th:block th:text="#{metadata.results.missing.none-title=}"/>
+            </strong>
+            <p class="lead" th:text="#{metadata.results.missing.none-text}"></p>
+        </div>
+        <table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
+    </script>
 </div>
 </body>
 </html>
