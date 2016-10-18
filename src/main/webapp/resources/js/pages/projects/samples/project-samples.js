@@ -411,7 +411,10 @@
            */
           $scope.$on("FILTER_TABLE", function (event, args) {
             // Need to remove empty fields
-            vm.tag = _.pickBy(args.filter);
+            var tags = _.pickBy(args.filter);
+            vm.date = tags.date;
+            delete tags.date;
+            vm.tag = tags;
           });
 
           /**
@@ -435,7 +438,11 @@
            * @param type The filter to remove
            */
           vm.close = function (type) {
-            delete vm.tag[type];
+            if (vm.tag.hasOwnProperty(type)) {
+              delete vm.tag[type];
+            } else if(vm.date.hasOwnProperty(type)) {
+              delete vm.date[type]
+            }
             $scope.$broadcast('FILTER_CLEARED', {type: type});
           };
 

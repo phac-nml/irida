@@ -18,11 +18,11 @@ function samplesAjaxParams() {
         return typeof organism === "string" ? organism : "";
       },
       minDate    : function () {
-        var minDate = PAGE.ajaxParam.minDate;
+        var minDate = PAGE.ajaxParam.date.min;
         return typeof minDate === "number" ? minDate : "";
       },
       endDate    : function () {
-        var endDate = PAGE.ajaxParam.endDate;
+        var endDate = PAGE.ajaxParam.date.end;
         return typeof endDate === "number" ? endDate : "";
       }
     }

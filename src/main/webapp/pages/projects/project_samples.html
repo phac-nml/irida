@@ -11,7 +11,7 @@
             project: {
                 id: /*[[${project.getId()}]]*/ '4'
             },
-            ajaxParam: {},
+            ajaxParam: {date:{}},
             urls: {
                 associated: {
                     local: /*[[@{/projects/{id}/ajax/associated(id=${project.getId()})}]]*/ ''
@@ -368,10 +368,12 @@
     <script type="text/ng-template" id="filtered-tags.html">
         <div class="text-right">
             <span class="label label-default" ng-show="tags.file" th:text="#{project.sample.filter-by-file}" ng-click="tags.closeFile()"></span>
+            <span class="label label-default" ng-show="tags.date.min" ng-click="tags.close('min')"><th:block th:text="#{project.samples.filter.by-minDate}"/> : {{tags.date.min | date: 'mediumDate'}}</span>
+            <span class="label label-default" ng-show="tags.date.end" ng-click="tags.close('end')"><th:block th:text="#{project.samples.filter.by-endDate}"/> : {{tags.date.end | date: 'mediumDate'}}</span>
             <span ng-repeat="(tag, value) in tags.tag"
                   class="label label-default"
                   ng-click="tags.close(tag)">
-                {{ tag | uppercase }} : {{ value }}
+                {{ tag }} : {{ value }}
             </span>
         </div>
     </script>

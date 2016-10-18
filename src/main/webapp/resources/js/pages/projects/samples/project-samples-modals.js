@@ -282,8 +282,10 @@
       $rootScope.$broadcast("FILTER_TABLE", {filter: {
         organism: s.organism,
         name: s.name,
-        minDate: !!s.date.startDate  ? s.date.startDate.valueOf() : "",
-        endDate: !!s.date.endDate  ? s.date.endDate.valueOf() : ""
+        date: {
+          min: !!s.date.startDate  ? s.date.startDate.valueOf() : "",
+          end: !!s.date.endDate  ? s.date.endDate.valueOf() : ""
+        }
       }});
     };
 
@@ -291,13 +293,12 @@
       ng.copy(defaultState, currState);
     });
 
-    $rootScope.$on('CLEAR_FILTER_PROPERTY', function (event, args) {
-      if(currState[args.property] !== undefined && currState[args.property].length > 0) {
-        delete currState[args.property];
-      } else if(currState.date[args.property]){
-        currState.date[args.property] = null;
+    $rootScope.$on('FILTER_CLEARED', function (event, args) {
+      if(args.type === 'endDate' || args.type === 'endDate') {
+        delete currState.date[args.type];
+      } else if(currState.hasOwnProperty(args.type)) {
+        delete currState[args.type];
       }
-      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
     });
   }
 
