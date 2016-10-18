@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
@@ -317,6 +318,14 @@ public class SampleServiceImplIT {
 		Sample s = sampleService.read(sampleID);
 
 		sampleService.estimateCoverageForSample(s, 500);
+	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testGetSampleOrganismForProject(){
+		Project p = projectService.read(1L);
+		List<String> organisms = sampleService.getSampleOrganismsForProject(p);
+		assertEquals("should be 2 organisms", 2, organisms.size());
 	}
 
 	private void assertSampleNotFound(Long id) {
