@@ -273,6 +273,31 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Get the modal window for filtering project samples
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param associated
+	 * 		{@link List} of {@link Long} identifiers for visible associated {@link Project}
+	 * @param model
+	 * 		Spring {@link Model}
+	 *
+	 * @return {@link String} path to the modal template
+	 */
+	@RequestMapping("/projects/template/samples-filter-modal")
+	public String getProjectSamplesFilterModal(
+			@RequestParam(value = "projectIds[]", required = false, defaultValue = "") List<Long> projectIds,
+			Model model) {
+		Set<String> organisms = new HashSet<>();
+		for (Long id : projectIds) {
+			Project project = projectService.read(id);
+			organisms.addAll(sampleService.getSampleOrganismsForProject(project));
+		}
+		model.addAttribute("organisms", organisms);
+		return PROJECT_TEMPLATE_DIR + "sample-filter.modal";
+	}
+
+	/**
 	 * Create a modal dialog to move samples to another project.
 	 *
 	 * @param ids

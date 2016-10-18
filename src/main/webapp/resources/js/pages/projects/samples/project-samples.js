@@ -408,7 +408,8 @@
            * Request to display tags for all currently applied filters.
            */
           $scope.$on("FILTER_TABLE", function (event, args) {
-            ng.extend(vm.tag, args.filter);
+            // Need to remove empty fields
+            vm.tag = _.pickBy(args.filter);
           });
 
           /**
@@ -423,7 +424,7 @@
            */
           $scope.$on('FILE_FILTER', function () {
             $scope.$apply(function () {
-              vm.tag.file = true;
+              vm.file = true;
             });
           });
 
@@ -434,6 +435,11 @@
           vm.close = function (type) {
             delete vm.tag[type];
             $scope.$broadcast('FILTER_CLEARED', {type: type});
+          };
+
+          vm.closeFile = function() {
+            delete vm.file;
+            $scope.$broadcast('FILTER_CLEARED', {type: "file"});
           };
         }]
       };
