@@ -219,6 +219,19 @@ public class FontAwesome {
 	public static final String EXCEL_ATTRIBUTE = "excel";
 	public static final String EXCEL_ICON = "file-excel-o";
 
+	/**
+	 * Attribute for showing arrow directions
+	 */
+	public static final String ARROW_RIGHT_ATTRIBUTE = "arrow-right";
+	public static final String ARROW_RIGHT_ICON = "arrow-right";
+	public static final String ARROW_LEFT_ATTRIBUTE = "arrow-left";
+	public static final String ARROW_LEFT_ICON = "arrow-left";
+
+	public static final String THUMBS_UP_ATTRIBUTE = "thumb-up";
+	public static final String THUMBS_UP_ICON = "thumbs-o-up";
+	public static final String THUMBS_DOWN_ATTRIBUTE = "thumb-down";
+	public static final String THUMBS_DOWN_ICON = "thumbs-o-down";
+
 	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
     * attribute to append this class. This will line up the icons properly.
@@ -269,7 +282,12 @@ public class FontAwesome {
 			.put(CLIPBOARD_ATTRIBUTE, CLIPBOARD_ICON)
 			.put(REMOTE_ATTRIBUTE, REMOTE_ICON)
 			.put(EXCEL_ATTRIBUTE, EXCEL_ICON)
+			.put(ARROW_LEFT_ATTRIBUTE, ARROW_LEFT_ICON)
+			.put(ARROW_RIGHT_ATTRIBUTE, ARROW_RIGHT_ICON)
+			.put(THUMBS_UP_ATTRIBUTE, THUMBS_UP_ICON)
+			.put(THUMBS_DOWN_ATTRIBUTE, THUMBS_DOWN_ICON)
 			.build();
+
 	// @formatter:on
 
 	/*

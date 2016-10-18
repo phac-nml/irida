@@ -4,5 +4,6 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  app: './resources/js/app.js'
+  app: './resources/js/app.js',
+  "samples-metadata-import": "./resources/js/pages/projects/samples-metadata-import/index.js"
 };
