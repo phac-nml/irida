@@ -325,24 +325,43 @@ public class ProjectSamplesController {
 	@RequestMapping("/projects/{projectId}/ajax/samples/missing")
 	@ResponseBody
 	public Map<String, Object> getSampleNamesNotInProject(@PathVariable Long projectId,
+			@RequestParam(value = "projects[]", defaultValue = "") List<Long> projects,
 			@RequestParam(value = "sampleNames[]") List<String> sampleNames, Locale locale) {
-		Project project = projectService.read(projectId);
-		List<String> missingNames = new ArrayList<>();
+		// Need to keep the count for comparison after.
+		int originalCount = sampleNames.size();
+		List<Join<Project, Sample>> samples = new ArrayList<>();
 
-		for (String name : sampleNames) {
-			try {
-				sampleService.getSampleBySampleName(project, name);
-			} catch (EntityNotFoundException ex) {
-				missingNames.add(name);
+		// Get a list of all samples for all projects
+		projects.add(0, projectId);
+		for (Long id : projects) {
+			List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(projectService.read(id));
+			// See if the name is there
+			for (Join<Project, Sample> join : psj) {
+				Sample sample = join.getObject();
+				if (sampleNames.contains(sample.getLabel())) {
+					sampleNames.remove(sample.getLabel());
+				}
+				if (sampleNames.size() == 0) {
+					break;
+				}
+			}
+			if (sampleNames.size() == 0) {
+				break;
 			}
 		}
 
+
 		Map<String, Object> result = new HashMap<>();
-		result.put("missingNames", missingNames);
-		result.put("message", messageSource.getMessage("project.sample.filterByFile.error", new Object[] {
-				sampleNames.size() - missingNames.size(),
-				sampleNames.size()
-		}, locale));
+		if (sampleNames.size() > 0) {
+			result.put("missingNames", sampleNames);
+			result.put("message", messageSource.getMessage("project.sample.filterByFile.error", new Object[] {
+					originalCount - sampleNames.size(),
+					originalCount
+			}, locale));
+		} else {
+			result.put("success",
+					messageSource.getMessage("project.sample.filterByFile.success", new Object[] {}, locale));
+		}
 
 		return result;
 	}
@@ -400,7 +419,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
-			@RequestParam(value = "associatedProjectIds[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
+			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
 			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String search,
 			@RequestParam(required = false, defaultValue = "") String minDate,

@@ -63,6 +63,16 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 	
 	/**
+	 * Get a list of the organism fields stored for all {@link Sample}s in a
+	 * {@link Project}
+	 * 
+	 * @param project
+	 *            the {@link Project} to get sample organisms for
+	 * @return a list of sample organisms
+	 */
+	public List<String> getSampleOrganismsForProject(Project project);
+	
+	/**
 	 * Get the number of {@link Sample}s for a given {@link Project}. This
 	 * method will be faster than getSamplesForProject
 	 * 
