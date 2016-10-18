@@ -1,4 +1,4 @@
-let entries = require("./entries.js");
+let entries = require("./configs/es6-entries.js");
 
 module.exports = {
   entry: entries,
@@ -12,17 +12,18 @@ module.exports = {
           presets: ['es2015', 'stage-0']
         }
       },
-      {test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/}
+      { test: /\.css$/, loader: "style-loader!css-loader" }
+      {test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/}
     ]
   },
   externals: {
-    // require('jquery') is external and available
+    // require("jquery") is external and available
     //  on the global var jQuery
-    jquery: 'jQuery',
-    angular: 'angular'
+    jquery: "jQuery",
+    angular: "angular"
   },
   eslint: {
-    configFile: './.eslintrc.json'
+    configFile: "./.eslintrc.json"
   },
   output: {
     filename: '[name].bundle.js'
