@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -16,6 +19,12 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +38,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
@@ -42,13 +57,16 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
@@ -865,6 +883,255 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Handle the page request to upload {@link Sample} metadata
+	 *
+	 * @param model
+	 * 		{@link Model}
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 *
+	 * @return {@link String} the path to the metadata import page
+	 */
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata", method = RequestMethod.GET)
+	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId) {
+		model.addAttribute("project", projectService.read(projectId));
+		return PROJECTS_DIR + "project_samples_metadata";
+	}
+
+	/**
+	 * Get the currently stored metadata.
+	 * @param session {@link HttpSession}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @return
+	 */
+	@RequestMapping("/projects/{projectId}/sample-metadata/getMetadata") @ResponseBody public SampleMetadataStorage getProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId) {
+		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
+	}
+
+	/**
+	 * Upload Excel file containing sample metadata and extract the headers.  The file is stored in the session until
+	 * the column that corresponds to a {@link Sample} identifier has been sent.
+	 *
+	 * @param session
+	 * 		{@link HttpSession}
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param file
+	 * 		{@link MultipartFile} The excel file containing the metadata.
+	 *
+	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the {@link
+	 * Sample} identifier.
+	 */
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/uploadFile", method = RequestMethod.POST) @ResponseBody public SampleMetadataStorage createProjectSampleMetadata(
+			HttpSession session,
+			@PathVariable long projectId,
+			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
+		// We want to return a list of the table headers back to the UI.
+		SampleMetadataStorage storage = new SampleMetadataStorage();
+		try {
+			// Need an input stream
+			String filename = file.getOriginalFilename();
+			byte [] byteArr= file.getBytes();
+			InputStream fis = new ByteArrayInputStream(byteArr);
+
+			Workbook workbook;
+			String[] splitFile = filename.split("\\.(?=[^\\.]+$)");
+			String extension = splitFile[splitFile.length - 1];
+
+			// Check the type of workbook
+			switch (extension) {
+			case "xlsx":
+				workbook = new XSSFWorkbook(fis);
+				break;
+			case "xls":
+				workbook = new HSSFWorkbook(fis);
+				break;
+			default:
+				// Should never reach here as the uploader limits to .xlsx and .xlx files.
+				throw new MetadataImportFileTypeNotSupportedError(extension);
+			}
+
+			// Only look at the first sheet in the workbook as this should be the file we want.
+			Sheet sheet = workbook.getSheetAt(0);
+			Iterator<Row> rowIterator = sheet.iterator();
+
+			List<String> headers = getWorkbookHeaders(rowIterator.next());
+			storage.saveHeaders(headers);
+
+			// Get the metadata out of the table.
+			List<Map<String, String>> rows = new ArrayList<>();
+			while (rowIterator.hasNext()) {
+				int headerCounter = 0;
+				Map<String, String> rowMap = new HashMap<>();
+				Row row = rowIterator.next();
+				Iterator<Cell> cellIterator = row.cellIterator();
+				while (cellIterator.hasNext() && headerCounter < headers.size()) {
+					Cell cell = cellIterator.next();
+					String cellValue = cell.getStringCellValue().trim();
+					String header = headers.get(headerCounter).trim();
+					rowMap.put(header, cellValue);
+					headerCounter += 1;
+				}
+				rows.add(rowMap);
+			}
+			storage.saveRows(rows);
+
+			fis.close();
+		} catch (FileNotFoundException e) {
+			logger.debug("No file found for uploading and excel file of metadata.");
+		} catch (IOException e) {
+			logger.error("Error opening file" + file.getOriginalFilename());
+		}
+
+		session.setAttribute("pm-" + projectId, storage);
+		return storage;
+	}
+
+	/**
+	 * Extract the headers from an excel file.
+	 *
+	 * @param row {@link Row} First row from the excel file.
+	 * @return {@link List} of {@link String} header values.
+	 */
+	private List<String> getWorkbookHeaders(Row row) {
+		// We want to return a list of the table headers back to the UI.
+		List<String> headers = new ArrayList<>();
+
+		// Get the column headers
+		Iterator<Cell> headerIterator = row.cellIterator();
+		while (headerIterator.hasNext()) {
+			Cell headerCell = headerIterator.next();
+			String headerValue = headerCell.getStringCellValue().trim();
+
+			// Don't want empty header values.
+			if (!Strings.isNullOrEmpty(headerValue)) {
+				headers.add(headerValue);
+			}
+		}
+		return headers;
+	}
+
+	/**
+	 * Add the metadata to specific {@link Sample} based on the selected column to correspond to the {@link Sample} id.
+	 *
+	 * @param session
+	 * 		{@link HttpSession}.
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}.
+	 * @param sampleNameColumn
+	 * 		{@link String} the header to used to represent the {@link Sample} identifier.
+	 *
+	 * @return {@link Map} containing
+	 */
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/setSampleColumn", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> setProjectSampleMetadataSampleId(
+			HttpSession session,
+			@PathVariable long projectId,
+			@RequestParam String sampleNameColumn) {
+		// Attempt to get the metadata from the sessions
+		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
+
+		if (stored != null) {
+			stored.saveSampleNameColumn(sampleNameColumn);
+			Project project = projectService.read(projectId);
+			List<Map<String, String>> rows = stored.getRows();
+
+			// Remove 'rows' since they are now going to be sorted into found and not found.
+			stored.removeRows();
+			List<Map<String, String>> found = new ArrayList<>();
+			List<Map<String, String>> missing = new ArrayList<>();
+
+			// Get the metadata out of the table.
+			for (Map<String, String> row : rows) {
+				// Lets try to get a sample
+				String sampleName = row.get(sampleNameColumn);
+				try {
+					Sample sample = sampleService.getSampleBySampleName(project, sampleName);
+					row.put("identifier", String.valueOf(sample.getId()));
+					found.add(row);
+				} catch (EntityNotFoundException e) {
+					missing.add(row);
+				}
+			}
+
+			stored.saveFound(found);
+			stored.saveMissing(missing);
+		}
+
+		return ImmutableMap.of("result", "complete");
+	}
+
+	/**
+	 * Save uploaded metadata to the
+	 *
+	 * @param locale    {@link Locale} of the current user.
+	 * @param session   {@link HttpSession}
+	 * @param projectId {@link Long} identifier for the current project
+	 * @return {@link Map} of potential errors.
+	 */
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/save", method = RequestMethod.POST) @ResponseBody public Map<String, Object> saveProjectSampleMetadata(
+			Locale locale, HttpSession session, @PathVariable long projectId) {
+		Map<String, Object> errors = new HashMap<>();
+
+		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
+		if (stored == null) {
+			errors.put("stored-error", true);
+		}
+
+		List<Map<String, String>> found = stored.getFound();
+		if (found != null) {
+			List<String> errorList = new ArrayList<>();
+			for (Map<String, String> row : found) {
+				try {
+					Long id = Long.valueOf(row.get("identifier"));
+					Sample sample = sampleService.read(id);
+					SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+					if (sampleMetadata == null) {
+						sampleMetadata = new SampleMetadata();
+					}
+					Map<String, Object> metadata = sampleMetadata.getMetadata();
+
+					// Need to overwrite duplicate keys
+					for (String item : row.keySet()) {
+						metadata.put(item, row.get(item));
+					}
+
+					// Save metadata back to the sample
+					sampleMetadata.setMetadata(metadata);
+					sampleService.saveSampleMetadaForSample(sample, sampleMetadata);
+				} catch (EntityNotFoundException e) {
+					// This really should not happen, but hey, you never know!
+					errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",
+							new Object[] { row.get(stored.getSampleNameColumn()) }, locale));
+				}
+			} if (errorList.size() > 0) {
+				errors.put("save-errors", errorList);
+			}
+		} else {
+			errors.put("found-error",
+					messageSource.getMessage("metadata.results.save.found-error", new Object[] {}, locale));
+		}
+		if (errors.size() == 0) {
+			return ImmutableMap.of("success",
+					messageSource.getMessage("metadata.results.save.success", new Object[] { found.size() }, locale));
+		}
+		return errors;
+	}
+
+	/**
+	 * Clear any uploaded sample metadata stored into the session.
+	 *
+	 * @param session   {@link HttpSession}
+	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
+	 */
+	@RequestMapping("/projects/{projectId}/sample-metadata/clear") public void clearProjectSampleMetadata(
+			HttpSession session, @PathVariable long projectId) {
+		session.removeAttribute("pm-" + projectId);
+	}
+
+	/**
 	 * Export {@link Sample} from a {@link Project} as either Excel or CSV formatted.
 	 *
 	 * @param projectId
@@ -919,7 +1186,7 @@ public class ProjectSamplesController {
 
 		if (page != null) {
 			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
-			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);	
+			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);
 		}
 	}
 

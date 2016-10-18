@@ -213,6 +213,12 @@
                         </li>
                         <li role="separator" class="divider"></li>
                         <li>
+                            <a th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}">
+                                <fa:icon type="upload" fixed="true"/>&nbsp;
+                                <th:block th:text="#{project.nav.samples.import-metadata}"/>
+                            </a></li>
+                        <li role="separator" class="divider"></li>
+                        <li>
                             <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
                                 <fa:icon type="create" fixed="true"/>&nbsp;
                                 <th:block th:text="#{project.samples.nav.new}"/>
