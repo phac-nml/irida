@@ -35,14 +35,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -56,6 +53,12 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all sample related views
@@ -133,8 +136,10 @@ public class SamplesController extends BaseController {
 	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId, Principal principal) {
 		logger.debug("Getting sample page for sample [" + sampleId + "]");
 		Sample sample = sampleService.read(sampleId);
+		SampleMetadata metadataForSample = sampleService.getMetadataForSample(sample);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
+		model.addAttribute("metadata", metadataForSample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
 		return SAMPLE_PAGE;
 	}
@@ -155,7 +160,9 @@ public class SamplesController extends BaseController {
 			model.addAttribute(MODEL_ERROR_ATTR, new HashMap<>());
 		}
 		Sample sample = sampleService.read(sampleId);
+		SampleMetadata metadataForSample = sampleService.getMetadataForSample(sample);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute("metadata", metadataForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS_EDIT);
 		return SAMPLE_EDIT_PAGE;
 	}
@@ -169,17 +176,24 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @param collectionDate
 	 *            Date the sample was collected (Optional)
+	 * @param metadataString
+	 *            A JSON string representation of the {@link SampleMetadata} to
+	 *            set on the sample
 	 * @param params
 	 *            Map of fields to update. See FIELDS.
 	 * @param request
 	 *            a reference to the current request.
 	 * @return The name of the details page.
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/samples/{sampleId}/edit",
+			"/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
-			@RequestParam Map<String, String> params, HttpServletRequest request) {
+			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
+			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
+
+		Sample s = sampleService.read(sampleId);
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
@@ -194,12 +208,44 @@ public class SamplesController extends BaseController {
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
 
+		SampleMetadata metadataForSample = null;
+		/**
+		 * If there's sample metadata to add, add it here.
+		 */
+		if (!Strings.isNullOrEmpty(metadataString)) {
+			metadataForSample = sampleService.getMetadataForSample(s);
+
+			// create a new SampleMetada if one doesn't exist for the sample
+			if (metadataForSample == null) {
+				metadataForSample = new SampleMetadata();
+			}
+
+			Map<String, Object> metadata = new HashMap<String, Object>();
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				metadata = mapper.readValue(metadataString, new TypeReference<Map<String, Object>>() {
+				});
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Could not map metadata to sample object", e);
+			}
+			metadataForSample.setMetadata(metadata);
+		}
+
 		if (updatedValues.size() > 0) {
 			try {
-				sampleService.update(sampleId, updatedValues);
+				sampleService.updateFields(sampleId, updatedValues);
 			} catch (ConstraintViolationException e) {
 				model.addAttribute(MODEL_ERROR_ATTR, getErrorsFromViolationException(e));
 				return getEditSampleSpecificPage(model, sampleId);
+			}
+		}
+
+		if (metadataForSample != null) {
+			// if there's no metadata, delete. otherwise update
+			if (metadataForSample.getMetadata().isEmpty()) {
+				sampleService.deleteSampleMetadaForSample(s);
+			} else {
+				sampleService.saveSampleMetadaForSample(s, metadataForSample);
 			}
 		}
 
