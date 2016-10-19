@@ -3,17 +3,16 @@ const defaults = {type: 'text'};
 const metadataInput = {
   templateUrl: `templateInput.tmpl.html`,
   controller() {
-    this.list = [];
-    this.field = Object.assign({}, defaults);
+    this.list = [Object.assign({}, defaults)];
 
-    this.createField = () => {
-      console.log('Called');
-      if (this.list.indexOf(this.field) > -1) {
-        console.log('this already exists');
-      } else if (this.field) {
-        this.list.push(this.field);
-        this.field = Object.assign({}, defaults);
+    this.addField = index => {
+      if (this.list[index].label.length > 2) {
+        this.list.push(Object.assign({}, defaults));
       }
+    };
+
+    this.removeField = index => {
+      this.list.splice(index, 1);
     };
   }
 };

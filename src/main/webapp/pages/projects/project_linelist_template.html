@@ -26,34 +26,31 @@
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
     <h2>Create new Line List Template</h2>
-    <div class="form-group">
-        <label>Template Name</label>
+    <div class="row">
+        <div class="form-group col-md-8">
+        <h4>Template Name</h4>
         <input type="text" class="form-control"/>
+        </div>
     </div>
     <template-input/>
     <script type="text/ng-template" id="templateInput.tmpl.html">
-        <div class="row">
-            <form ng-submit="$ctrl.createField()">
+        <h4>Template Fields</h4>
+        <div class="row" ng-repeat="item in $ctrl.list">
                 <div class="form-group col-md-4">
-                    <label>Field Label</label>
-                    <input type="text" class="form-control" ng-model="$ctrl.field.label" placeholder="Field Name"/>
+                    <input type="text" class="form-control" ng-model="item.label" placeholder="Field Name"/>
                 </div>
                 <div class="form-group col-md-4">
-                    <label>Field Type</label>
-                    <select class="form-control" ng-model="$ctrl.field.type">
+                    <select class="form-control" ng-model="item.type">
                         <option value="text">Text</option>
                     </select>
                 </div>
-            </form>
-
+            <div class="col-md-4">
+                <button ng-show="item.label.length &gt; 2" class="btn btn-default" ng-click="$ctrl.addField($index)">Add</button>
+                <button ng-hide="$ctrl.list.length === 1" class="btn btn-default" ng-click="$ctrl.removeField($index)">
+                    Remove
+                </button>
+            </div>
         </div>
-        <button class="btn btn-default" ng-click="$ctrl.createField()">Add Field</button>
-        <ul class="metadata-list">
-            <li class="metadata-term" ng-repeat="item in $ctrl.list">
-                <strong>{{ item.label }}</strong><br/>
-                <small>{{ item.type }}</small>
-            </li>
-        </ul>
     </script>
 </main>
 </body>
