@@ -149,47 +149,4 @@ public class ProjectLineListController {
 		}
 		return ImmutableMap.of("metadata", metadata);
 	}
-//
-//	@RequestMapping("/metadata")
-//	@ResponseBody
-//	public DatatablesResponse<Map<String, Object>> getListListData(@PathVariable Long projectId,
-//			@DatatablesParams DatatablesCriterias criterias) {
-//		List<Project> projectList = ImmutableList.of(projectService.read(projectId));
-//		List<String> sampleNames = ImmutableList.of();
-//		ColumnDef sortedColumn = criterias.getSortedColumnDefs().get(0);
-//
-//		// Get the currently displayed page.
-//		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(
-//				projectList,
-//				sampleNames,
-//				"",
-//				criterias.getSearch(),
-//				null,
-//				null,
-//				DatatablesUtils.getCurrentPage(criterias),
-//				criterias.getLength(),
-//				DatatablesUtils.generateSortDirection(sortedColumn),
-//				"sample.id"
-//				);
-//
-//		List<Map<String, Object>> pagedMetadata = new ArrayList<>();
-//		for (ProjectSampleJoin join : page) {
-//			Sample sample = join.getObject();
-//			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-//			// TODO: This is where the project template should be applied.  For now return everything.
-//			Map<String, Object> metadata;
-//			if(sampleMetadata != null) {
-//				metadata = sampleMetadata.getMetadata();
-//			} else {
-//				metadata = new HashMap();
-//			}
-//			metadata.put("identifier", sample.getId());
-//			metadata.put("label", sample.getLabel());
-//			pagedMetadata.add(metadata);
-//		}
-//
-//		DataSet<Map<String, Object>> dataSet = new DataSet<>(pagedMetadata, page.getTotalElements(),
-//				page.getTotalElements());
-//		return DatatablesResponse.build(dataSet, criterias);
-//	}
 }
