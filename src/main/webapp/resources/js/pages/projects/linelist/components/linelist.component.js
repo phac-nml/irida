@@ -8,7 +8,8 @@ require('datatables.net-buttons/js/buttons.colVis.js');
 require('datatables.net-scroller');
 require('style!datatables.net-scroller-bs/css/scroller.bootstrap.css');
 require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
-import {domButtonsScroller, formatBasicHeaders} from '../../../../utilities/datatables.utilities';
+import {domButtonsScroller, formatBasicHeaders, getDefaultTable}
+  from '../../../../utilities/datatables.utilities';
 
 const createTable = (template, data) => {
   const columns = formatBasicHeaders(template);
@@ -32,15 +33,8 @@ const createTable = (template, data) => {
   });
 };
 
-const template = `
-<table id='linelist' 
-    class='table table-striped' 
-    cellspacing='0' width='100%'>
-</table>
-`;
-
 const linelist = {
-  template,
+  template: getDefaultTable('linelist'),
   controller($q, $scope, templateService, linelistService) {
     const generate = (templateName = 'default') => {
       const promises = [];
