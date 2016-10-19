@@ -2,10 +2,15 @@
   "bundle": "sample-edit",
   "assets": [
     {
-      "name": "sample-edit",
       "type": "js",
       "locations": {
         "webapp": "/resources/js/pages/samples/edit.js"
+      }
+    },
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/pages/sample_edit.css"
       }
     }
   ]
