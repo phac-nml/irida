@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
@@ -12,10 +14,10 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -357,6 +359,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a list of {@link Project}
 	 */
 	public List<Project> getRemoteProjects();
+	
+	/**
+	 * Get a Set of all {@link Project}s referred to by a collection of
+	 * {@link SequencingObject}s
+	 * 
+	 * @param sequences
+	 *            the {@link SequencingObject}s to get {@link Project}s for
+	 * @return a set of {@link Project}
+	 */
+	public Set<Project> getProjectsForSequencingObjects(Collection<SequencingObject> sequences);
 	
 	/**
 	 * Update select {@link Project} settings

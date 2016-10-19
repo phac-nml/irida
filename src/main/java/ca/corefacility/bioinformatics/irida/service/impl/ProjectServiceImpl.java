@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +39,6 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
@@ -59,10 +59,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -73,12 +74,11 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSa
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * A specialized service layer for projects.
@@ -100,6 +100,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final UserGroupProjectJoinRepository ugpjRepository;
+	private SampleSequencingObjectJoinRepository ssoRepository;
 	private final ProjectRepository projectRepository;
 
 	@Autowired
@@ -632,6 +633,21 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<Project> getRemoteProjects(){
 		return projectRepository.getRemoteProjects();
+	}
+	
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PostFilter("hasPermission(filterObject, 'canReadProject')")
+	public Set<Project> getProjectsForSequencingObjects(Collection<SequencingObject> sequences) {
+
+		Set<SampleSequencingObjectJoin> samples = sequences.stream()
+				.map(s -> ssoRepository.getSampleForSequencingObject(s)).collect(Collectors.toSet());
+
+		Set<Project> projects = new HashSet<>();
+		for (SampleSequencingObjectJoin s : samples) {
+			psjRepository.getProjectForSample(s.getSubject()).forEach(p -> projects.add(p.getSubject()));
+		}
+
+		return projects;
 	}
 
 	/**

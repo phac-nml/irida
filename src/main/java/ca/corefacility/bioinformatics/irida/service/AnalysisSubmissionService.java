@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
@@ -71,7 +72,8 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link List} of {@link SequenceFilePair} to run on the
 	 *            workflow
 	 * @param remoteFiles
-	 *            List of {@link SequenceFileSnapshot}s to be used in the workflow
+	 *            List of {@link SequenceFileSnapshot}s to be used in the
+	 *            workflow
 	 * @param remotePairs
 	 *            List of {@link SequenceFilePairSnapshot}s to be used in the
 	 *            workflow
@@ -82,14 +84,16 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param name
 	 *            {@link String} the name for the analysis
 	 * @param analysisDescription
-	 * 			  {@link String} the description of the analysis being submitted
+	 *            {@link String} the description of the analysis being submitted
+	 * @param projectsToShare
+	 *            A list of {@link Project}s to share analysis results with
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-		 	String analysisDescription);
+		 	String analysisDescription, List<Project> projectsToShare);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
@@ -105,7 +109,8 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link List} of {@link SequenceFilePair} to run on the
 	 *            workflow
 	 * @param remoteFiles
-	 *            List of {@link SequenceFileSnapshot}s to be used in the workflow
+	 *            List of {@link SequenceFileSnapshot}s to be used in the
+	 *            workflow
 	 * @param remotePairs
 	 *            List of {@link SequenceFilePairSnapshot}s to be used in the
 	 *            workflow
@@ -116,7 +121,9 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param name
 	 *            {@link String} the name for the analysis
 	 * @param analysisDescription
-	 * 			  {@link String} the description of the analysis being submitted
+	 *            {@link String} the description of the analysis being submitted
+	 *            * @param projectsToShare A list of {@link Project}s to share
+	 *            analysis results with
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
 	 *         the supplied files.
 	 */
@@ -124,7 +131,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-		    String analysisDescription);
+		    String analysisDescription, List<Project> projectsToShare);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage

@@ -3,14 +3,21 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -19,11 +26,16 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
  * {@link Join} connection between an {@link AnalysisSubmission} and
  * {@link Project}
  */
+@Entity
+@Table(name = "project_analysis_submission")
+@Audited
+@EntityListeners(AuditingEntityListener.class)
 public class ProjectAnalysisSubmissionJoin implements Join<Project, AnalysisSubmission> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 

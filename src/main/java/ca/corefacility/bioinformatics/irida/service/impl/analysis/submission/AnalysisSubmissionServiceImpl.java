@@ -29,6 +29,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
@@ -37,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -50,18 +55,16 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Implementation of an AnalysisSubmissionService.
@@ -97,6 +100,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final SequencingObjectService sequencingObjectService;
@@ -126,13 +130,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
 			final SequencingObjectService sequencingObjectService, final GalaxyHistoriesService galaxyHistoriesService,
-			Validator validator) {
+			ProjectAnalysisSubmissionJoinRepository pasRepository, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.pasRepository = pasRepository;
 	}
 	
 	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
@@ -356,7 +361,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
-			IridaWorkflowNamedParameters namedParameters, String name, String analysisDescription) {
+			IridaWorkflowNamedParameters namedParameters, String name, String analysisDescription, List<Project> projectsToShare) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -502,7 +507,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 			}
 		}
-
+		
+		// Share with the required projects
+		for (AnalysisSubmission submission : createdSubmissions) {
+			for (Project project : projectsToShare) {
+				pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
+			}
+		}
+		
 		return createdSubmissions;
 	}
 	
@@ -513,7 +525,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
-			IridaWorkflowNamedParameters namedParameters, String name, String newAnalysisDescription) {
+			IridaWorkflowNamedParameters namedParameters, String name, String newAnalysisDescription, List<Project> projectsToShare) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -566,7 +578,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		builder.analysisDescription(newAnalysisDescription);
 
 		// Create the submission
-		return create(builder.build());
+		AnalysisSubmission submission = create(builder.build());
+
+		// Share with the required projects
+		for (Project project : projectsToShare) {
+			pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
+		}
+
+		return submission;
 	}
 
 	/**

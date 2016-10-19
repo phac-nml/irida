@@ -65,6 +65,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -395,7 +396,8 @@ public class PipelineController extends BaseController {
 			@RequestParam(required = false) List<String> remoteSingle,
 			@RequestParam(required = false) List<String> remotePaired,
 			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
-			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription) {
+			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription,
+			@RequestParam(required = false) List<Long> sharedProjects) {
 		Map<String, Object> result = ImmutableMap.of("success", true);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
@@ -495,13 +497,15 @@ public class PipelineController extends BaseController {
 							.of("parameterError", messageSource.getMessage("pipeline.parameters.error", null, locale));
 				}
 			}
+			
+			List<Project> projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects));
 
 			if (description.getInputs().requiresSingleSample()) {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
-						params, namedParameters, name, analysisDescription);
+						params, namedParameters, name, analysisDescription, projectsToShare);
 			} else {
 				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
-						params, namedParameters, name, analysisDescription);
+						params, namedParameters, name, analysisDescription, projectsToShare);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
