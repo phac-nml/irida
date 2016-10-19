@@ -85,8 +85,19 @@ public class ProjectLineListController {
 		this.messageSource = messageSource;
 	}
 
-	@RequestMapping("")
-	public String getLineListPage(@PathVariable Long projectId, Model model, Principal principal) {
+	/**
+	 * Get the page to display the project samples linelist.
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param model
+	 * 		{@link Model}
+	 * @param principal
+	 * 		{@link Principal} currently logged in user.
+	 *
+	 * @return {@link String} path to the current page.
+	 */
+	@RequestMapping("") public String getLineListPage(@PathVariable Long projectId, Model model, Principal principal) {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
@@ -95,12 +106,16 @@ public class ProjectLineListController {
 		return "projects/project_linelist";
 	}
 
-	@RequestMapping("/available-templates")
-	@ResponseBody
-	public Map<String, Object> getAvailableProjectTemplates(@PathVariable Long projectId) {
-		return ImmutableMap.of("templates", TEMPLATES.keySet());
-	}
-
+	/**
+	 * Get the template the the line list table.  This becomes the table headers.
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}.
+	 * @param template
+	 * 		{@link String} name of the template to get.
+	 *
+	 * @return {@link Map} containing the template.
+	 */
 	@RequestMapping("/mt")
 	@ResponseBody
 	public Map<String, Object> getLinelistTemplate(@PathVariable Long projectId, @RequestParam(required = false, defaultValue = "default") String template) {
@@ -111,6 +126,16 @@ public class ProjectLineListController {
 		}
 	}
 
+	/**
+	 * Get the metadata for the table that matches the current template.
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}.
+	 * @param template
+	 * 		{@link String} name of the template to metadata for.
+	 *
+	 * @return {@link Map} of all the metadata.
+	 */
 	@RequestMapping("/metadata")
 	@ResponseBody
 	public Map<String, Object> getLinelistMetadata(@PathVariable Long projectId, @RequestParam(required = false, defaultValue = "default") String template) {
@@ -127,7 +152,7 @@ public class ProjectLineListController {
 		for (Join<Project, Sample> join : projectSamples) {
 			Sample sample = join.getObject();
 			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			// TODO: This is where the project template should be applied.  For now return everything.
+
 			Map<String, Object> data;
 			if(sampleMetadata != null) {
 				data = sampleMetadata.getMetadata();
