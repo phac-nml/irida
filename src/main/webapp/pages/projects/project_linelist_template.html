@@ -4,10 +4,57 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
+    <style>
+        .metadata-list {
+            list-style-type: none;
+            margin: 2rem 0;
+            padding: 0 0 0.5em 0 !important;
+            border: 1px solid #EFEFEF !important;
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        .metadata-term {
+            display: inline-block;
+            margin: 0.5em 0.5em 0 0.5em;
+            padding: .5em 1em;
+            background: darkorange;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
-    Hello There
+    <h2>Create new Line List Template</h2>
+    <div class="form-group">
+        <label>Template Name</label>
+        <input type="text" class="form-control"/>
+    </div>
+    <template-input/>
+    <script type="text/ng-template" id="templateInput.tmpl.html">
+        <div class="row">
+            <form ng-submit="$ctrl.createField()">
+                <div class="form-group col-md-4">
+                    <label>Field Label</label>
+                    <input type="text" class="form-control" ng-model="$ctrl.field.label" placeholder="Field Name"/>
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Field Type</label>
+                    <select class="form-control" ng-model="$ctrl.field.type">
+                        <option value="text">Text</option>
+                    </select>
+                </div>
+            </form>
+
+        </div>
+        <button class="btn btn-default" ng-click="$ctrl.createField()">Add Field</button>
+        <ul class="metadata-list">
+            <li class="metadata-term" ng-repeat="item in $ctrl.list">
+                <strong>{{ item.label }}</strong><br/>
+                <small>{{ item.type }}</small>
+            </li>
+        </ul>
+    </script>
 </main>
 </body>
 </html>
