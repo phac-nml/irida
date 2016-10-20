@@ -68,7 +68,10 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -100,7 +103,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final UserGroupProjectJoinRepository ugpjRepository;
-	private SampleSequencingObjectJoinRepository ssoRepository;
+	private final SampleSequencingObjectJoinRepository ssoRepository;
+	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ProjectRepository projectRepository;
 
 	@Autowired
@@ -108,7 +112,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			final UserGroupProjectJoinRepository ugpjRepository, Validator validator) {
+			final UserGroupProjectJoinRepository ugpjRepository, SampleSequencingObjectJoinRepository ssoRepository,
+			ProjectAnalysisSubmissionJoinRepository pasRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -119,6 +124,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.ugpjRepository = ugpjRepository;
+		this.ssoRepository = ssoRepository;
+		this.pasRepository = pasRepository;
 	}
 
 	/**
@@ -637,7 +644,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
-	public Set<Project> getProjectsForSequencingObjects(Collection<SequencingObject> sequences) {
+	public Set<Project> getProjectsForSequencingObjects(Collection<? extends SequencingObject> sequences) {
 
 		Set<SampleSequencingObjectJoin> samples = sequences.stream()
 				.map(s -> ssoRepository.getSampleForSequencingObject(s)).collect(Collectors.toSet());
@@ -648,6 +655,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 
 		return projects;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
+	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission) {
+		return pasRepository.getProjectsForSubmission(submission);
 	}
 
 	/**

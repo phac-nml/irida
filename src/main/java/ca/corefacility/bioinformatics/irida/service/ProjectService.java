@@ -21,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 
 /**
  * A specialized service layer for projects.
@@ -368,7 +370,17 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link SequencingObject}s to get {@link Project}s for
 	 * @return a set of {@link Project}
 	 */
-	public Set<Project> getProjectsForSequencingObjects(Collection<SequencingObject> sequences);
+	public Set<Project> getProjectsForSequencingObjects(Collection<? extends SequencingObject> sequences);
+	
+	/**
+	 * Get all {@link Project}s a given {@link AnalysisSubmission} is shared
+	 * with
+	 * 
+	 * @param submission
+	 *            the {@link AnalysisSubmission}
+	 * @return a list of {@link ProjectAnalysisSubmissionJoin}s
+	 */
+	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission);
 	
 	/**
 	 * Update select {@link Project} settings
