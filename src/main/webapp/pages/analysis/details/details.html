@@ -44,9 +44,14 @@
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
 				</th:block>
+				<sub-nav-item state="share" data:text="_Share_"></sub-nav-item>
 			</sub-nav>
 
 			<div ui-view=""></div>
+
+			<script type="text/ng-template" id="share.html">
+				<h2>_Share Results With Projects_</h2> 
+			</script>
 
 			<script type="text/ng-template" id="preview.html">
 				<div th:if="${isCompleted} and ${preview}" ng-controller="PreviewController as previewController">

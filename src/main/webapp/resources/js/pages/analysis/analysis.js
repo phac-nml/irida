@@ -108,6 +108,10 @@
           url        : "/provenance",
           templateUrl: "provenance.html"
         })
+        .state("share", {
+          url        : "/share",
+          templateUrl: "share.html"
+        })
       ;
     }])
     .service('AnalysisService', ['$http', AnalysisService])

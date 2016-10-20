@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -44,10 +45,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -80,14 +83,17 @@ public class AnalysisController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private UserService userService;
+	private ProjectService projectService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, ProjectService projectService,
+			MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
+		this.projectService = projectService;
 	}
 
 	// ************************************************************************************************
@@ -170,6 +176,20 @@ public class AnalysisController {
 		// - Remote
 		Set<SequenceFilePairSnapshot> remoteFilesPaired = submission.getRemoteFilesPaired();
 		model.addAttribute("remote_paired", remoteFilesPaired);
+		
+		// get projects already shared with submission
+		List<ProjectAnalysisSubmissionJoin> projectsForSubmission = projectService
+				.getProjectsForAnalysisSubmission(submission);
+		model.addAttribute("projectsShared", projectsForSubmission);
+
+		// get available projects
+		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
+
+		// Remove any projects already shared
+		projectsForSubmission.forEach(p -> projectsInAnalysis.remove(p.getSubject()));
+
+		model.addAttribute("projectsAvailable", projectsInAnalysis);
+		
 		
 		// Get the number of files currently being mirrored
 		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
