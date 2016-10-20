@@ -11,8 +11,16 @@ const metadataInput = {
       }
     };
 
+    this.getUpdatedTemplates = () => {
+
+    };
+
     this.removeField = index => {
       this.list.splice(index, 1);
+    };
+
+    this.saveTemplate = () => {
+      console.log(this.list);
     };
   }
 };

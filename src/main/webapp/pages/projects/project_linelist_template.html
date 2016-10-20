@@ -25,16 +25,29 @@
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
-    <h2>Create new Line List Template</h2>
-    <div class="row">
-        <div class="form-group col-md-8">
-        <h4>Template Name</h4>
-        <input type="text" class="form-control"/>
-        </div>
-    </div>
+    <h2>Modify or Create a New Line List Template</h2>
     <template-input/>
     <script type="text/ng-template" id="templateInput.tmpl.html">
-        <h4>Template Fields</h4>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <div class="form-group">
+                    <label for="template-name">Template Name</label>
+                    <input id="template-name" class="form-control" type="text" ng-model="$ctrl.template.name"/>
+                </div>
+                <div class="form-group">
+                    <label for="existing-templates">Add Existing Template</label>
+                    <select id="existing-templates"
+                            class="form-control spaced-bottom"
+                            multiple="multiple"
+                            select2-basic=""
+                            ng-change="$ctrl.getUpdatedTemplates()"
+                            ng-model="$ctrl.existing">
+                        <option th:each="template : ${templates}" th:text="${template}"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <label>Template Fields</label>
         <div class="row" ng-repeat="item in $ctrl.list">
                 <div class="form-group col-md-4">
                     <input type="text" class="form-control" ng-model="item.label" placeholder="Field Name"/>
@@ -51,6 +64,8 @@
                 </button>
             </div>
         </div>
+
+        <button class="btn btn-primary" ng-click="$ctrl.saveTemplate()">Save</button>
     </script>
 </main>
 </body>
