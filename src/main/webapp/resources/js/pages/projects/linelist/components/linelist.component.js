@@ -8,11 +8,11 @@ require('datatables.net-buttons/js/buttons.colVis.js');
 require('datatables.net-scroller');
 require('style!datatables.net-scroller-bs/css/scroller.bootstrap.css');
 require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
-import {domButtonsScroller, formatBasicHeaders, getDefaultTable}
-  from '../../../../utilities/datatables.utilities';
+import {domButtonsScroller, formatBasicHeaders, getDefaultTable} from '../../../../utilities/datatables.utilities';
 
 const createTable = (template, data) => {
-  const columns = formatBasicHeaders(template);
+  const headers = template.map(header => header.label);
+  const columns = formatBasicHeaders(headers);
 
   if ($.fn.DataTable.isDataTable('#linelist')) {
     $('#linelist').DataTable().destroy();
