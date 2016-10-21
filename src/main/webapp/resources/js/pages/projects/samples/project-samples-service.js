@@ -230,32 +230,41 @@
      * @returns {*}
      */
     SampleService.prototype.getAllIds = function() {
-      var promises = [];
       var filter = ng.copy(_getFilterState(), {});
       // Need to break this down into small calls for large files.
       var sampleNames = filter.sampleNames;
-      var sendCount = 100;
-      while (sampleNames.length) {
-        filter.sampleNames = sampleNames.splice(0, sendCount);
-        var data = $.param(filter);
-        promises.push(get(page.urls.samples.sampleIds + '?' + data));
+      if (typeof sampleNames !== 'undefined') {
+        var promises = [];
+        var sendCount = 100;
+        while (sampleNames.length) {
+          filter.sampleNames = sampleNames.splice(0, sendCount);
+          var data = $.param(filter);
+          promises.push(get(page.urls.samples.sampleIds + '?' + data));
+        }
+
+        // Extract the results from all the promises
+        var results = {};
+        return _$q.all(promises).then(function(values) {
+          values.forEach(function(i) {
+            var data = i.data;
+            var projectIds = Object.keys(data);
+            projectIds.forEach(function(id) {
+              if (typeof results[id] === 'undefined') {
+                results[id] = [];
+              }
+              results[id] = results[id].concat(data[id]);
+            });
+          });
+          console.log(results);
+          return results;
+        });
       }
 
-      // Extract the results from all the promises
-      var results = {};
-      return _$q.all(promises).then(function(values) {
-        values.forEach(function(i) {
-          var data = i.data;
-          var projectIds = Object.keys(data);
-          projectIds.forEach(function(id) {
-            if (typeof results[id] === 'undefined') {
-              results[id] = [];
-            }
-            results[id] = results[id].concat(data[id]);
-          });
+      return get(page.urls.samples.sampleIds + "?" + $.param(filter))
+        .success(function(result) {
+          console.log(result);
+          return result;
         });
-        return results;
-      });
     };
 
     return SampleService;
