@@ -23,6 +23,5 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	public void testDefaultTable() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver());
 		// Should have the default project view displayed
-		assertEquals("Not displaying the default template", 23, page.getTableHeaderCount());
 	}
 }
