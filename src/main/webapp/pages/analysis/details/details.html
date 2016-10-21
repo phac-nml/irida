@@ -50,7 +50,15 @@
 			<div ui-view=""></div>
 
 			<script type="text/ng-template" id="share.html">
-				<h2>_Share Results With Projects_</h2> 
+				<h2>_Share Results With Projects_</h2>
+				<div class="row">
+					<div class="col-md-6 checkbox" th:each="presp : ${projects}" th:with="project=${presp.project}">
+						<label>
+							<input type="checkbox" class="share-project" th:value="${project.id}" th:id="${'share-project' + project.id}" th:checked="${presp.shared}"/>
+							<span th:text="${project.name}"></span>
+						</label>
+					</div>
+				</div>
 			</script>
 
 			<script type="text/ng-template" id="preview.html">

@@ -23,6 +23,6 @@ public interface ProjectAnalysisSubmissionJoinRepository
 	 *            the {@link AnalysisSubmission}
 	 * @return a list of {@link ProjectAnalysisSubmissionJoin}s
 	 */
-	@Query("FROM ProjectAnalysisSubmissionJoin j WHERE j.project=?1")
+	@Query("FROM ProjectAnalysisSubmissionJoin j WHERE j.analysisSubmission=?1")
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForSubmission(AnalysisSubmission submission);
 }

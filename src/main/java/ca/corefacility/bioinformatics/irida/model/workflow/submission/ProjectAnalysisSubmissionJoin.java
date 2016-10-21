@@ -47,6 +47,9 @@ public class ProjectAnalysisSubmissionJoin implements Join<Project, AnalysisSubm
 	@JoinColumn(name = "analysis_submission_id")
 	private AnalysisSubmission analysisSubmission;
 
+	public ProjectAnalysisSubmissionJoin() {
+	}
+
 	public ProjectAnalysisSubmissionJoin(Project project, AnalysisSubmission analysisSubmission) {
 		this.project = project;
 		this.analysisSubmission = analysisSubmission;

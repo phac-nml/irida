@@ -178,17 +178,22 @@ public class AnalysisController {
 		model.addAttribute("remote_paired", remoteFilesPaired);
 		
 		// get projects already shared with submission
-		List<ProjectAnalysisSubmissionJoin> projectsForSubmission = projectService
-				.getProjectsForAnalysisSubmission(submission);
-		model.addAttribute("projectsShared", projectsForSubmission);
-
+		Set<Project> projectsShared = projectService
+				.getProjectsForAnalysisSubmission(submission).stream().map(ProjectAnalysisSubmissionJoin::getSubject).collect(Collectors.toSet());
+		
 		// get available projects
 		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
 
-		// Remove any projects already shared
-		projectsForSubmission.forEach(p -> projectsInAnalysis.remove(p.getSubject()));
+		// Create resposne for shared projects
+		List<SharedProjectResponse> projectResponses = projectsInAnalysis.stream().map(p -> {
+			if (projectsShared.contains(p)) {
+				return new SharedProjectResponse(p, true);
+			} else {
+				return new SharedProjectResponse(p, false);
+			}
+		}).collect(Collectors.toList());
 
-		model.addAttribute("projectsAvailable", projectsInAnalysis);
+		model.addAttribute("projects", projectResponses);
 		
 		
 		// Get the number of files currently being mirrored
@@ -217,6 +222,24 @@ public class AnalysisController {
 		} 
 
 		return viewName;
+	}
+	
+	private class SharedProjectResponse{
+		private Project project;
+		private boolean shared;
+		
+		public SharedProjectResponse(Project project, boolean shared){
+			this.project = project;
+			this.shared = shared;
+		}
+		
+		public Project getProject() {
+			return project;
+		}
+		
+		public boolean isShared() {
+			return shared;
+		}
 	}
 
 	
