@@ -5,7 +5,7 @@
    * Angular service for handling server interactions with samples.
    */
   var SampleService = (function() {
-    var post, get, _$q;
+    var post, get;
     var location;
     var scope;
 
@@ -34,12 +34,11 @@
       return filters;
     }
 
-    function SampleService($http, $window, $rootScope, $q) {
+    function SampleService($http, $window, $rootScope) {
       post = $http.post;
       get = $http.get;
       location = $window.location;
       scope = $rootScope;
-      _$q = $q;
 
       /**
        * Clear specific filters applied to the samples table.
@@ -230,39 +229,8 @@
      * @returns {*}
      */
     SampleService.prototype.getAllIds = function() {
-      var filter = ng.copy(_getFilterState(), {});
-      // Need to break this down into small calls for large files.
-      var sampleNames = filter.sampleNames;
-      if (typeof sampleNames !== 'undefined') {
-        var promises = [];
-        var sendCount = 100;
-        while (sampleNames.length) {
-          filter.sampleNames = sampleNames.splice(0, sendCount);
-          var data = $.param(filter);
-          promises.push(get(page.urls.samples.sampleIds + '?' + data));
-        }
-
-        // Extract the results from all the promises
-        var results = {};
-        return _$q.all(promises).then(function(values) {
-          values.forEach(function(i) {
-            var data = i.data;
-            var projectIds = Object.keys(data);
-            projectIds.forEach(function(id) {
-              if (typeof results[id] === 'undefined') {
-                results[id] = [];
-              }
-              results[id] = results[id].concat(data[id]);
-            });
-          });
-          console.log(results);
-          return results;
-        });
-      }
-
-      return get(page.urls.samples.sampleIds + "?" + $.param(filter))
+      return post(page.urls.samples.sampleIds, _getFilterState())
         .success(function(result) {
-          console.log(result);
           return result;
         });
     };
@@ -271,6 +239,6 @@
   }());
 
   ng.module("irida.projects.samples.service", ["irida.cart"])
-    .service('SampleService', ["$http", "$window", "$rootScope", "$q", SampleService])
+    .service('SampleService', ["$http", "$window", "$rootScope", SampleService])
   ;
 }(window.angular, window.jQuery, window.PAGE));
