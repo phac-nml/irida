@@ -51,11 +51,13 @@
 
 			<script type="text/ng-template" id="share.html">
 				<h2>_Share Results With Projects_</h2>
-				<div class="row">
+				<div class="row" ng-controller="ProjectShareController as shareController">
 					<div class="col-md-6" th:each="presp : ${projects}" th:with="project=${presp.project}">
 						<div class="checkbox">
 							<label>
-								<input type="checkbox" class="share-project" th:value="${project.id}" th:id="${'share-project' + project.id}" th:checked="${presp.shared}"/>
+								<input type="checkbox" class="share-project" 
+								data:ng-init="${'projects['+project.id+'] = ' + presp.shared}" data:ng-model="${'projects['+project.id+']'}" 
+								data:ng-change="${'shareController.updateShared(' + project.id + ', projects[' + project.id + '])'}"/>
 								<span th:text="${project.name}"></span>
 							</label>
 						</div>

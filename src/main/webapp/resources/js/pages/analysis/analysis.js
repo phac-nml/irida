@@ -42,6 +42,16 @@
     }
 
     /**
+     * Call the server to update the shared status of the current analysis.
+     */
+    function _updateProjectShare(project, shared) {
+      var data = {project: project, shared: shared};
+      return $http.post(page.URLS.share, data).then(function(response) {
+        return response.data;
+      });
+    }
+
+    /**
      * Exported function to call the server for information about the current analysis.
      * @param fn Callback function with how to handle the results.
      */
@@ -51,7 +61,19 @@
       });
     };
 
+    svc.updateProjectShare = function (project, shared) {
+      _updateProjectShare(project, shared);
+    }
+
     return svc;
+  }
+
+  function ProjectShareController(AnalysisService) {
+    var vm = this;
+
+    vm.updateShared = function (project, share) {
+      AnalysisService.updateProjectShare(project, share);
+    }
   }
 
   /**
@@ -118,5 +140,6 @@
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
     .controller('PreviewController', [PreviewController])
+    .controller('ProjectShareController', ['AnalysisService', ProjectShareController])
   ;
 })(window.angular, window.PAGE);
