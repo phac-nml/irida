@@ -5,7 +5,7 @@
    * Angular service for handling server interactions with samples.
    */
   var SampleService = (function() {
-    var post, get;
+    var post, get, _$q;
     var location;
     var scope;
 
@@ -34,11 +34,12 @@
       return filters;
     }
 
-    function SampleService($http, $window, $rootScope) {
+    function SampleService($http, $window, $rootScope, $q) {
       post = $http.post;
       get = $http.get;
       location = $window.location;
       scope = $rootScope;
+      _$q = $q;
 
       /**
        * Clear specific filters applied to the samples table.
@@ -229,16 +230,38 @@
      * @returns {*}
      */
     SampleService.prototype.getAllIds = function() {
-      return get(page.urls.samples.sampleIds + "?" + $.param(_getFilterState()))
-        .success(function(result) {
-          return result;
+      var promises = [];
+      var filter = ng.copy(_getFilterState(), {});
+      // Need to break this down into small calls for large files.
+      var sampleNames = filter.sampleNames;
+      var sendCount = 100;
+      while (sampleNames.length) {
+        filter.sampleNames = sampleNames.splice(0, sendCount);
+        var data = $.param(filter);
+        promises.push(get(page.urls.samples.sampleIds + '?' + data));
+      }
+
+      // Extract the results from all the promises
+      var results = {};
+      return _$q.all(promises).then(function(values) {
+        values.forEach(function(i) {
+          var data = i.data;
+          var projectIds = Object.keys(data);
+          projectIds.forEach(function(id) {
+            if (typeof results[id] === 'undefined') {
+              results[id] = [];
+            }
+            results[id] = results[id].concat(data[id]);
+          });
         });
+        return results;
+      });
     };
 
     return SampleService;
   }());
 
   ng.module("irida.projects.samples.service", ["irida.cart"])
-    .service('SampleService', ["$http", "$window", "$rootScope", SampleService])
+    .service('SampleService', ["$http", "$window", "$rootScope", "$q", SampleService])
   ;
 }(window.angular, window.jQuery, window.PAGE));
