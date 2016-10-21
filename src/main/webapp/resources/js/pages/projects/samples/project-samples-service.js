@@ -230,8 +230,8 @@
      */
     SampleService.prototype.getAllIds = function() {
       return post(page.urls.samples.sampleIds, _getFilterState())
-        .success(function(result) {
-          return result;
+        .then(function(result) {
+          return result.data;
         });
     };
 
