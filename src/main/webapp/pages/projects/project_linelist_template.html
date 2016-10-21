@@ -19,9 +19,12 @@
         }
 
         .fields {
-            height: 600px;
+            border: 1px solid #DDDDDD;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            max-height: 600px;
             overflow-y: auto;
             overflow-x: hidden;
+            margin-bottom: 2rem;
         }
 
         @keyframes green-to-white {
@@ -33,12 +36,11 @@
             }
         }
 
-        .row.green-glow {
-            border-radius: 7px;
-            padding: 1rem 0 !important;
+        .green-glow {
+            padding: 0 0 0 1rem !important;
         }
 
-        .row.green-glow .form-group {
+        .green-glow .form-group {
             margin-bottom: 0 !important;
         }
 
@@ -70,7 +72,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <button class="btn btn-primary" ng-click="$ctrl.saveTemplate()">Save</button>
+                <button ng-disabled="$ctrl.template.name.length &lt; 3" class="btn btn-primary" ng-click="$ctrl.saveTemplate()">Save</button>
             </div>
         </div>
         <div class="row">
@@ -88,7 +90,7 @@
         </div>
         <label>Template Fields</label>
         <div class="fields">
-            <div class="green-glow" ng-repeat="item in $ctrl.list">
+            <div class="green-glow" ng-repeat="item in $ctrl.template.list">
                 <div class="row templates">
                     <div class="col-md-12">
                         <span class="label label-primary"
@@ -106,10 +108,13 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-default" ng-click="$ctrl.addField($index)">Add</button>
-                        <button ng-hide="$ctrl.list.length === 1" class="btn btn-default"
-                                ng-click="$ctrl.removeField($index)">
-                            Remove
+                        <button class="btn btn-default"
+                                ng-click="$ctrl.addField($index)"
+                                ng-disabled="item.label.length &lt; 3">Add
+                        </button>
+                        <button class="btn btn-default"
+                                ng-hide="$ctrl.template.list.length === 1"
+                                ng-click="$ctrl.removeField($index)">Remove
                         </button>
                     </div>
                 </div>

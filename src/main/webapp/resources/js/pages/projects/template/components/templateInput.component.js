@@ -1,10 +1,13 @@
-const defaults = {type: 'text', template: null};
+const defaults = {type: 'text', label: '', template: null};
 const selectedTemplates = new Map();
 
 const metadataInput = {
   templateUrl: `templateInput.tmpl.html`,
   controller(TemplateService) {
-    this.list = [Object.assign({}, defaults)];
+    this.template = {
+      list: [Object.assign({}, defaults)],
+      name: ''
+    };
 
     const updateFields = template => {
       /**
@@ -12,28 +15,28 @@ const metadataInput = {
        * @param {object} field from list or undefined
        */
       const checkField = field => {
-        const listItem = this.list.find(x => x.label === field.label);
+        const listItem = this.template.list.find(x => x.label === field.label);
         if (typeof listItem === 'undefined') {
           field.templates = {};
           field.templates[template] = true;
-          this.list.push(field);
+          this.template.list.push(field);
         } else {
           listItem.templates[template] = true;
         }
       };
 
       // Check to make sure there is not an empty field
-      if (!this.list[this.list.length - 1].label) {
-        this.list.pop();
+      if (!this.template.list[this.template.list.length - 1].label) {
+        this.template.list.pop();
       }
 
       selectedTemplates.get(template).forEach(field => checkField(field));
     };
 
     this.addField = index => {
-      const item = this.list[index];
+      const item = this.template.list[index];
       if (item.label) {
-        this.list.splice(index + 1, 0, Object.assign({}, defaults));
+        this.template.list.splice(index + 1, 0, Object.assign({}, defaults));
       }
     };
 
@@ -63,16 +66,17 @@ const metadataInput = {
         selectedTemplates.delete(differentTemplate);
 
         const removeFromList = field => {
-          const index = this.list.findIndex(item => item.label === field.label);
-          const item = this.list[index];
+          const index = this.template.list
+            .findIndex(item => item.label === field.label);
+          const item = this.template.list[index];
           if (item && Object.keys(item.templates).length > 1) {
             delete item.templates[differentTemplate];
           } else if (item) {
-            this.list.splice(index, 1);
+            this.template.list.splice(index, 1);
           }
 
-          if (this.list.length === 0) {
-            this.list = [Object.assign({}, defaults)];
+          if (this.template.list.length === 0) {
+            this.template.list = [Object.assign({}, defaults)];
           }
         };
 
@@ -81,10 +85,13 @@ const metadataInput = {
     };
 
     this.removeField = index => {
-      this.list.splice(index, 1);
+      this.template.list.splice(index, 1);
     };
 
     this.saveTemplate = () => {
+      // remove any empty fields
+      const fields = this.template.list
+        .filter(field => field.label.length !== 0);
     };
   }
 };
