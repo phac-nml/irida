@@ -5,22 +5,52 @@
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
     <style>
-        .metadata-list {
-            list-style-type: none;
-            margin: 2rem 0;
-            padding: 0 0 0.5em 0 !important;
-            border: 1px solid #EFEFEF !important;
-            border-radius: 6px;
-            width: 100%;
+        .templates span.label {
+            margin: 0 .5em -.5em 0 !important;
+            text-transform: uppercase;
         }
 
-        .metadata-term {
-            display: inline-block;
-            margin: 0.5em 0.5em 0 0.5em;
-            padding: .5em 1em;
-            background: darkorange;
-            border-radius: 4px;
+        .entry {
+            padding: .5em 0 !important;
         }
+
+        .entry .form-group {
+            margin-bottom: 0 !important;
+        }
+
+        .fields {
+            height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        @keyframes green-to-white {
+            from {
+                background-color: rgb(111, 239, 176);
+            }
+            to {
+                background-color: #ffffff;
+            }
+        }
+
+        .row.green-glow {
+            border-radius: 7px;
+            padding: 1rem 0 !important;
+        }
+
+        .row.green-glow .form-group {
+            margin-bottom: 0 !important;
+        }
+
+        .green-glow.ng-enter {
+            -webkit-animation: 2s green-to-white;
+            animation: 2s green-to-white;
+        }
+
+        .green-glow.ng-leave {
+            animation: fadeOutLeft 0.5s;
+        }
+
     </style>
 </head>
 <body>
@@ -29,43 +59,62 @@
     <template-input/>
     <script type="text/ng-template" id="templateInput.tmpl.html">
         <div class="row">
+            <div class="col-md-12">
+                <label for="template-name">Template Name</label>
+            </div>
+        </div>
+        <div class="row">
             <div class="form-group col-md-8">
                 <div class="form-group">
-                    <label for="template-name">Template Name</label>
                     <input id="template-name" class="form-control" type="text" ng-model="$ctrl.template.name"/>
                 </div>
-                <div class="form-group">
-                    <label for="existing-templates">Add Existing Template</label>
-                    <select id="existing-templates"
-                            class="form-control spaced-bottom"
-                            multiple="multiple"
-                            select2-basic=""
-                            ng-change="$ctrl.getUpdatedTemplates()"
-                            ng-model="$ctrl.existing">
-                        <option th:each="template : ${templates}" th:text="${template}"></option>
-                    </select>
-                </div>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary" ng-click="$ctrl.saveTemplate()">Save</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label for="existing-templates">Add Existing Template</label>
+                <select id="existing-templates"
+                        class="form-control spaced-bottom"
+                        multiple="multiple"
+                        select2-basic=""
+                        ng-change="$ctrl.getUpdatedTemplates()"
+                        ng-model="$ctrl.existing">
+                    <option th:each="template : ${templates}" th:text="${template}"></option>
+                </select>
             </div>
         </div>
         <label>Template Fields</label>
-        <div class="row" ng-repeat="item in $ctrl.list">
-                <div class="form-group col-md-4">
-                    <input type="text" class="form-control" ng-model="item.label" placeholder="Field Name"/>
+        <div class="fields">
+            <div class="green-glow" ng-repeat="item in $ctrl.list">
+                <div class="row templates">
+                    <div class="col-md-12">
+                        <span class="label label-primary"
+                              ng-repeat="(template, value) in item.templates">{{ template }}</span>
+                    </div>
                 </div>
-                <div class="form-group col-md-4">
-                    <select class="form-control" ng-model="item.type">
-                        <option value="text">Text</option>
-                    </select>
+                <div class="row entry">
+                    <div class="form-group col-md-6">
+                        <input ng-disabled="item.templates" type="text" class="form-control" ng-model="item.label"
+                               placeholder="Field Name"/>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <select ng-disabled="item.templates" class="form-control" ng-model="item.type">
+                            <option value="text">Text</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-default" ng-click="$ctrl.addField($index)">Add</button>
+                        <button ng-hide="$ctrl.list.length === 1" class="btn btn-default"
+                                ng-click="$ctrl.removeField($index)">
+                            Remove
+                        </button>
+                    </div>
                 </div>
-            <div class="col-md-4">
-                <button ng-show="item.label.length &gt; 2" class="btn btn-default" ng-click="$ctrl.addField($index)">Add</button>
-                <button ng-hide="$ctrl.list.length === 1" class="btn btn-default" ng-click="$ctrl.removeField($index)">
-                    Remove
-                </button>
             </div>
         </div>
-
-        <button class="btn btn-primary" ng-click="$ctrl.saveTemplate()">Save</button>
     </script>
 </main>
 </body>

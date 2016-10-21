@@ -50,7 +50,8 @@ public class ProjectLineListController {
 			.of(new LineListField("identifier", "text"), new LineListField("label", "text"),
 					new LineListField("NLEP #", "text"), new LineListField("Province", "text"),
 					new LineListField("SourceType", "text"), new LineListField("Genus", "text"),
-					new LineListField("Serotype", "text"));
+					new LineListField("Serotype", "text"),
+					new LineListField("uniqueField", "text"));
 
 	private static final Map<String, List> TEMPLATES = ImmutableMap
 			.of("default", DEFAULT_TEMPLATE, "interesting", INTERESTING_TEMPLATE);
@@ -87,6 +88,27 @@ public class ProjectLineListController {
 		model.addAttribute("activeNav", "linelist");
 		model.addAttribute("templates", TEMPLATES.keySet());
 		return "projects/project_linelist";
+	}
+
+	/**
+	 * Get the page to create new linelist templates
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param model
+	 * 		{@link Model}
+	 * @param principal
+	 * 		{@link Principal}
+	 *
+	 * @return {@link String} path to the page.
+	 */
+	@RequestMapping("/linelist-templates")
+	public String getLinelistTemplatePage(@PathVariable Long projectId, Model model, Principal principal) {
+		// Set up the template information
+		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute("templates", TEMPLATES.keySet());
+		return "projects/project_linelist_template";
 	}
 
 	/**
@@ -159,5 +181,22 @@ public class ProjectLineListController {
 			metadata.add(md);
 		}
 		return ImmutableMap.of("metadata", metadata);
+	}
+
+	/**
+	 * Get a list of all fields that exist on the templates requested
+	 *
+	 * @param template
+	 * 		{@link String} name of the template whose field are needed.
+	 *
+	 * @return {@link Map} containing a list of all the unique fields.
+	 */
+	@RequestMapping("/linelist-templates/current")
+	@ResponseBody
+	public Map<String, Object> getExistingTemplateFields(@RequestParam String template) {
+		if (TEMPLATES.containsKey(template)) {
+			return ImmutableMap.of("fields", TEMPLATES.get(template));
+		}
+		return ImmutableMap.of("fields", ImmutableList.of());
 	}
 }
