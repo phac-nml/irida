@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,7 +28,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
  * {@link Project}
  */
 @Entity
-@Table(name = "project_analysis_submission")
+@Table(name = "project_analysis_submission", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
+		"analysis_submission_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectAnalysisSubmissionJoin implements Join<Project, AnalysisSubmission> {
