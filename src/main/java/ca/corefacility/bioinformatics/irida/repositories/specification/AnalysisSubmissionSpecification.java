@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -17,8 +18,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 
 /**
  * Specification for searching {@link AnalysisSubmission} properties
@@ -70,7 +73,7 @@ public class AnalysisSubmissionSpecification {
 	 * @return Specificaton for this search
 	 */
 	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, AnalysisState state, User user,
-			Set<UUID> workflowIds) {
+			Set<UUID> workflowIds, Project project) {
 		return new Specification<AnalysisSubmission>() {
 			@Override
 			public Predicate toPredicate(Root<AnalysisSubmission> analysisSubmissionRoot,
@@ -91,6 +94,19 @@ public class AnalysisSubmissionSpecification {
 				}
 				if(user != null){
 					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("submitter"), user));
+				}
+				
+				/*
+				 * If we're searching for a specific project's analyses
+				 */
+				if (project != null) {
+					Subquery<Long> projectSelect = criteriaQuery.subquery(Long.class);
+					Root<ProjectAnalysisSubmissionJoin> projectRoot = projectSelect
+							.from(ProjectAnalysisSubmissionJoin.class);
+					projectSelect.select(projectRoot.get("analysisSubmission").get("id"))
+							.where(criteriaBuilder.equal(projectRoot.get("project"), project));
+
+					predicateList.add(criteriaBuilder.in(analysisSubmissionRoot.get("id")).value(projectSelect));
 				}
 
 				if (predicateList.size() > 0) {

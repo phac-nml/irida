@@ -134,6 +134,24 @@ public class AnalysisController {
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		return PAGE_ANALYSIS_LIST;
 	}
+	
+	/**
+	 * Get the page for analyses shared with a given {@link Project}
+	 * 
+	 * @param projectId
+	 *            the ID of the {@link Project}
+	 * @param model
+	 *            model for view variables
+	 * @return name of the analysis view page
+	 */
+	@RequestMapping("/project/{projectId}")
+	public String getProjectAnalysisList(@PathVariable Long projectId, Model model) {
+		model.addAttribute("userList", false);
+		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
+		model.addAttribute("states", AnalysisState.values());
+		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
+		return PAGE_ANALYSIS_LIST;
+	}
 
 	/**
 	 * View details about an individual analysis submission
@@ -331,7 +349,7 @@ public class AnalysisController {
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 		String searchString = criterias.getSearch();
 
-		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null);
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null, null);
 
 		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
 				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
@@ -381,7 +399,38 @@ public class AnalysisController {
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 		String searchString = criterias.getSearch();
 
-		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, principalUser);
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, principalUser, null);
+
+		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
+				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
+				(String) sortProps.get(DatatablesUtils.SORT_STRING));
+
+		List<AnalysisTableResponse> responses = new ArrayList<>();
+		for (AnalysisSubmission sub : submissions) {
+			AnalysisTableResponse analysisTableResponse = new AnalysisTableResponse(sub, locale);
+			responses.add(analysisTableResponse);
+		}
+
+		DataSet<AnalysisTableResponse> dataSet = new DataSet<>(responses, submissions.getTotalElements(),
+				submissions.getTotalElements());
+
+		return DatatablesResponse.build(dataSet, criterias);
+	}
+	
+	@RequestMapping("/ajax/project/{projectId}/list")
+	@ResponseBody
+	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForProject(
+			@DatatablesParams DatatablesCriterias criterias, @PathVariable Long projectId, Principal principal, Locale locale)
+			throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
+			ExecutionManagerException {
+
+		Project project = projectService.read(projectId);
+		
+		int currentPage = DatatablesUtils.getCurrentPage(criterias);
+		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
+		String searchString = criterias.getSearch();
+
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null, project);
 
 		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
 				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
@@ -412,7 +461,7 @@ public class AnalysisController {
 	 * @throws IridaWorkflowNotFoundException
 	 *             If the requested workflow dows not exist
 	 */
-	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias, User user)
+	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias, User user, Project project)
 			throws IridaWorkflowNotFoundException {
 		//properties to search
 		String name = null;
@@ -439,7 +488,7 @@ public class AnalysisController {
 
 		}
 
-		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, user, workflowIds);
+		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, user, workflowIds, project);
 	}
 
 	// ************************************************************************************************
