@@ -53,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 /**
@@ -76,6 +77,7 @@ public class ProjectsControllerTest {
 	private ProjectControllerUtils projectUtils;
 	private RemoteAPIService remoteApiService;
 	private TaxonomyService taxonomyService;
+	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 
 	@Before
@@ -88,7 +90,7 @@ public class ProjectsControllerTest {
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
 		controller = new ProjectsController(projectService, sampleService, userService, projectRemoteService,
-				projectUtils, taxonomyService, remoteApiService, messageSource);
+				projectUtils, taxonomyService, remoteApiService, workflowsService, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
