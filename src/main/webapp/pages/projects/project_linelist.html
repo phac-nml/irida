@@ -16,11 +16,18 @@
         <div class="col-md-12 spaced-bottom">
             <div class="form-group">
                 <label for="template-select" th:text="#{linelist.template-select.label}">Select Metadata Template</label>
-                <select class="form-control" id="template-select">
+                <div class="row">
+                    <div class="col-md-9 col-sm-7">
+                        <select class="form-control" id="template-select">
                     <option th:each="template : ${templates}" th:value="${template}"
                             th:text="${#strings.capitalizeWords(template)}"
                             th:selected="${template == currentTemplate}"></option>
-                </select>
+                    </select>
+                    </div>
+                    <div class="col-md-3 col-sm-5">
+                        <a th:href="@{/projects/4/linelist/linelist-templates}" class="btn btn-default btn-block">Create New Template</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
