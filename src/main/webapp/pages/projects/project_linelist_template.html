@@ -14,15 +14,13 @@
             padding: .5em 0 !important;
         }
 
-        .entry .form-group {
-            margin-bottom: 0 !important;
-        }
-
         .fields {
             max-height: 600px;
             overflow-y: auto;
             overflow-x: hidden;
             margin-bottom: 2rem;
+            border: 1px solid #DDDDDD;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         }
 
         @keyframes green-to-white {
@@ -35,8 +33,6 @@
         }
 
         .green-glow {
-            border: 1px solid #DDDDDD;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
             padding: 0 0 0 1rem !important;
             margin-bottom: .5em;
         }
@@ -121,8 +117,6 @@
                         <span class="label label-primary"
                               ng-repeat="(template, value) in item.templates">{{ template }}</span>
                     </div>
-                </div>
-                <div class="row entry">
                     <div class="form-group col-md-5">
                         <input ng-disabled="item.templates" type="text" class="form-control" ng-model="item.label"
                                placeholder="Field Name"/>
