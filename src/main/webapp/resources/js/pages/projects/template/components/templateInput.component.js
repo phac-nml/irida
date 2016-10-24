@@ -2,6 +2,9 @@ const defaults = {type: 'text', label: '', template: null};
 const selectedTemplates = new Map();
 
 const metadataInput = {
+  bindings: {
+    redirecturl: '@'
+  },
   templateUrl: `templateInput.tmpl.html`,
   controller(TemplateService) {
     this.template = {
@@ -96,10 +99,7 @@ const metadataInput = {
           return {label: field.label, type: field.type};
         });
       TemplateService
-        .saveTemplate({fields, name: this.template.name})
-        .then(() => {
-          console.log('hello');
-        });
+        .saveTemplate({fields, name: this.template.name}, this.redirecturl);
     };
   }
 };

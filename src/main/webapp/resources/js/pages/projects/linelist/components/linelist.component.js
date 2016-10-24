@@ -34,6 +34,9 @@ const createTable = (template, data) => {
 };
 
 const linelist = {
+  bindings: {
+    template: '@'
+  },
   template: getDefaultTable('linelist'),
   controller($q, $scope, templateService, linelistService) {
     const generate = (templateName = 'default') => {
@@ -50,7 +53,7 @@ const linelist = {
         });
     };
 
-    generate();
+    generate(this.template);
 
     $scope.$on('LINELIST_TEMPLATE_CHANGE', (event, args) => {
       generate(args.template);

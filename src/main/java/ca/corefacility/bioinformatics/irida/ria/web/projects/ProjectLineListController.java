@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -65,11 +64,14 @@ public class ProjectLineListController {
 	 * @return {@link String} path to the current page.
 	 */
 	@RequestMapping("")
-	public String getLineListPage(@PathVariable Long projectId, Model model, Principal principal) {
+	public String getLineListPage(@PathVariable Long projectId,
+			@RequestParam(required = false, defaultValue = "default") String template, Model model,
+			Principal principal) {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("activeNav", "linelist");
+		model.addAttribute("currentTemplate", template);
 		model.addAttribute("templates", templates.getTemplateNames());
 		return "projects/project_linelist";
 	}
