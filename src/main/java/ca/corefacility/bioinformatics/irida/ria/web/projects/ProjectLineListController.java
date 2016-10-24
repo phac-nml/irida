@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,10 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -24,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListField;
+import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -53,8 +58,7 @@ public class ProjectLineListController {
 					new LineListField("Serotype", "text"),
 					new LineListField("uniqueField", "text"));
 
-	private static final Map<String, List> TEMPLATES = ImmutableMap
-			.of("default", DEFAULT_TEMPLATE, "interesting", INTERESTING_TEMPLATE);
+	private Map<String, List> TEMPLATES;
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
@@ -66,6 +70,10 @@ public class ProjectLineListController {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.projectControllerUtils = utils;
+
+		TEMPLATES = new HashMap<>();
+		TEMPLATES.put("default", DEFAULT_TEMPLATE);
+		TEMPLATES.put("interesting", INTERESTING_TEMPLATE);
 	}
 
 	/**
@@ -198,5 +206,20 @@ public class ProjectLineListController {
 			return ImmutableMap.of("fields", TEMPLATES.get(template));
 		}
 		return ImmutableMap.of("fields", ImmutableList.of());
+	}
+
+	@RequestMapping(value = "/linelist-templates/save-template", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> saveLinelistTemplate(
+			@RequestBody String template) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			LineListTemplate lineListTemplate = mapper.readValue(template, LineListTemplate.class);
+			// Set up the template information
+			TEMPLATES.put(lineListTemplate.getName(), lineListTemplate.getFields());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return ImmutableMap.of("success", true);
 	}
 }

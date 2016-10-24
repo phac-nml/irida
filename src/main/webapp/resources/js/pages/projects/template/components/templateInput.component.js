@@ -91,7 +91,15 @@ const metadataInput = {
     this.saveTemplate = () => {
       // remove any empty fields
       const fields = this.template.list
-        .filter(field => field.label.length !== 0);
+        .filter(field => field.label.length !== 0)
+        .map(field => {
+          return {label: field.label, type: field.type};
+        });
+      TemplateService
+        .saveTemplate({fields, name: this.template.name})
+        .then(() => {
+          console.log('hello');
+        });
     };
   }
 };
