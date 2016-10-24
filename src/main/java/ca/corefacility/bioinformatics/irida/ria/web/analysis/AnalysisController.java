@@ -28,6 +28,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -224,6 +226,7 @@ public class AnalysisController {
 		return viewName;
 	}
 	
+	@SuppressWarnings("unused")
 	private class SharedProjectResponse{
 		private Project project;
 		private boolean shared;
@@ -240,6 +243,38 @@ public class AnalysisController {
 		public boolean isShared() {
 			return shared;
 		}
+	}
+	
+	/**
+	 * Update the share status of a given {@link AnalysisSubmission} for a given
+	 * {@link Project}
+	 * 
+	 * @param submissionId
+	 *            the {@link AnalysisSubmission} id to share/unshare
+	 * @param projectId
+	 *            the {@link Project} id to share with
+	 * @param shareStatus
+	 *            whether or not to share the {@link AnalysisSubmission}
+	 * @return Success message if successful
+	 */
+	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.POST)
+	public Map<String, String> updateProjectShare(@PathVariable Long submissionId,
+			@RequestParam("project") Long projectId,
+			@RequestParam("shared") boolean shareStatus, Locale locale) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Project project = projectService.read(projectId);
+
+		String message = "";
+		if (shareStatus) {
+			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
+			
+			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() }, locale);
+		} else {
+			analysisSubmissionService.removeAnalysisProjectShare(submission, project);
+			message = messageSource.getMessage("analysis.details.share.remove", new Object[] { project.getLabel() }, locale);
+		}
+		
+		return ImmutableMap.of("result", "success", "message", message);
 	}
 
 	

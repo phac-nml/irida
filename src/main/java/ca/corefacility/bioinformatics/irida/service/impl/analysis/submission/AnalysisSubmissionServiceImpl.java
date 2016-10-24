@@ -638,4 +638,25 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			throw new NoPercentageCompleteException("No valid percent complete for state " + analysisState);
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission') AND hasPermission(#project, 'canReadProject')")
+	@Override
+	public ProjectAnalysisSubmissionJoin shareAnalysisSubmissionWithProject(AnalysisSubmission submission,
+			Project project) {
+		return pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission') AND hasPermission(#project, 'canReadProject')")
+	@Override
+	public void removeAnalysisProjectShare(AnalysisSubmission submission, Project project) {
+		ProjectAnalysisSubmissionJoin projectSubmissionShare = pasRepository.getProjectSubmissionShare(submission,
+				project);
+		pasRepository.delete(projectSubmissionShare);
+	}
 }

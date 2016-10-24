@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 
 /**
  * A service for AnalysisSubmissions.
@@ -150,4 +151,28 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
 			NoPercentageCompleteException, ExecutionManagerException;
+	
+	/**
+	 * Share an {@link AnalysisSubmission} with a given {@link Project}
+	 * 
+	 * @param submission
+	 *            {@link AnalysisSubmission} to share
+	 * @param project
+	 *            {@link Project} to share with
+	 * @return a {@link ProjectAnalysisSubmissionJoin} describing the
+	 *         relationship
+	 */
+	public ProjectAnalysisSubmissionJoin shareAnalysisSubmissionWithProject(AnalysisSubmission submission,
+			Project project);
+
+	/**
+	 * Cancel the share of an {@link AnalysisSubmission} with a given
+	 * {@link Project}
+	 * 
+	 * @param submission
+	 *            the {@link AnalysisSubmission} to stop sharing
+	 * @param project
+	 *            the {@link Project} to stop sharing with
+	 */
+	public void removeAnalysisProjectShare(AnalysisSubmission submission, Project project);
 }

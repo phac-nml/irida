@@ -25,4 +25,18 @@ public interface ProjectAnalysisSubmissionJoinRepository
 	 */
 	@Query("FROM ProjectAnalysisSubmissionJoin j WHERE j.analysisSubmission=?1")
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForSubmission(AnalysisSubmission submission);
+
+	/**
+	 * Read a {@link ProjectAnalysisSubmissionJoin} object for a given
+	 * {@link AnalysisSubmission} and {@link Project}
+	 * 
+	 * @param submission
+	 *            the {@link AnalysisSubmission}
+	 * @param project
+	 *            the {@link Project}
+	 * @return a {@link ProjectAnalysisSubmissionJoin} describing the
+	 *         relationship
+	 */
+	@Query("FROM ProjectAnalysisSubmissionJoin j WHERE j.analysisSubmission=?1 AND j.project=?2")
+	public ProjectAnalysisSubmissionJoin getProjectSubmissionShare(AnalysisSubmission submission, Project project);
 }

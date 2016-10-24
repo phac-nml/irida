@@ -1,4 +1,4 @@
-(function (angular, page) {
+(function (angular, page, notifications) {
   /**
    * Controller to download the analysis.
    * @constructor
@@ -41,16 +41,7 @@
       });
     }
 
-    /**
-     * Call the server to update the shared status of the current analysis.
-     */
-    function _updateProjectShare(project, shared) {
-      var data = {project: project, shared: shared};
-      return $http.post(page.URLS.share, data).then(function(response) {
-        return response.data;
-      });
-    }
-
+    
     /**
      * Exported function to call the server for information about the current analysis.
      * @param fn Callback function with how to handle the results.
@@ -61,18 +52,26 @@
       });
     };
 
-    svc.updateProjectShare = function (project, shared) {
-      _updateProjectShare(project, shared);
+    /**
+     * Call the server to update the shared status of the current analysis.
+     */
+    svc.updateProjectShare = function(project, shared) {
+      var data = {project: project, shared: shared};
+      return $http.post(page.URLS.share, data).then(function(response) {
+        return response.data;
+      });
     }
 
     return svc;
   }
 
-  function ProjectShareController(AnalysisService) {
+  function ProjectShareController(AnalysisService, notifications) {
     var vm = this;
 
-    vm.updateShared = function (project, share) {
-      AnalysisService.updateProjectShare(project, share);
+    vm.updateShared = function(project, share) {
+      AnalysisService.updateProjectShare(project, share).then(function(response) {
+        notifications.show({msg: response.message});
+      });
     }
   }
 
@@ -140,6 +139,6 @@
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
     .controller('PreviewController', [PreviewController])
-    .controller('ProjectShareController', ['AnalysisService', ProjectShareController])
+    .controller('ProjectShareController', ['AnalysisService', 'notifications', ProjectShareController])
   ;
-})(window.angular, window.PAGE);
+})(window.angular, window.PAGE, window.notifications);
