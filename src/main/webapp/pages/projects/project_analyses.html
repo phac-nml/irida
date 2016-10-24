@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
+<head>
+	<title th:text="${project.label} + ' - ' + #{project.nav.metadata}"></title>
+</head>
+<body>
+
+<main layout:fragment="main">
+	<th:block th:replace="analysis/analysis-table :: analysis-table"/>	
+</main>
+</body>
+</html>
