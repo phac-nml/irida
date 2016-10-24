@@ -520,6 +520,8 @@ public class ProjectsController {
 	 * 
 	 * @param projectId
 	 *            the ID of the {@link Project}
+	 * @param principal
+	 *            the logged in user
 	 * @param model
 	 *            model for view variables
 	 * @return name of the analysis view page
@@ -527,7 +529,7 @@ public class ProjectsController {
 	@RequestMapping("/projects/{projectId}/analyses")
 	public String getProjectAnalysisList(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
-		model.addAttribute("project",project);
+		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
 		model.addAttribute("states", AnalysisState.values());
