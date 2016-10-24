@@ -24,6 +24,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAna
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -86,16 +89,18 @@ public class AnalysisController {
 	private MessageSource messageSource;
 	private UserService userService;
 	private ProjectService projectService;
+	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, ProjectService projectService,
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.projectService = projectService;
+		this.updateAnalysisPermission = updateAnalysisPermission;
 	}
 
 	// ************************************************************************************************
@@ -598,6 +603,7 @@ public class AnalysisController {
 		private String duration;
 		private String percentComplete;
 		private Date createdDate;
+		private boolean updatePermission;
 
 		public AnalysisTableResponse(AnalysisSubmission submission, Locale locale)
 				throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
@@ -631,6 +637,9 @@ public class AnalysisController {
 						.getId());
 				this.percentComplete = Float.toString(percentComplete);
 			}
+			
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			updatePermission = updateAnalysisPermission.isAllowed(authentication, submission);
 		}
 
 		public AnalysisSubmission getSubmission() {
@@ -667,6 +676,10 @@ public class AnalysisController {
 		
 		public Date getCreatedDate() {
 			return createdDate;
+		}
+		
+		public boolean getUpdatePermission() {
+			return updatePermission;
 		}
 	}
 }

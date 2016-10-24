@@ -642,7 +642,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission') AND hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasPermission(#submission, 'canUpdateAnalysisSubmission') AND hasPermission(#project, 'canReadProject')")
 	@Override
 	public ProjectAnalysisSubmissionJoin shareAnalysisSubmissionWithProject(AnalysisSubmission submission,
 			Project project) {
@@ -652,7 +652,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission') AND hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasPermission(#submission, 'canUpdateAnalysisSubmission') AND hasPermission(#project, 'canReadProject')")
 	@Override
 	public void removeAnalysisProjectShare(AnalysisSubmission submission, Project project) {
 		ProjectAnalysisSubmissionJoin projectSubmissionShare = pasRepository.getProjectSubmissionShare(submission,
