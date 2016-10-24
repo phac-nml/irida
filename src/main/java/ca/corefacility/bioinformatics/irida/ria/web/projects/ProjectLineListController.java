@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListField;
 import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListTemplates;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -37,32 +38,10 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 public class ProjectLineListController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectLineListController.class);
 
-	private static final List<LineListField> DEFAULT_TEMPLATE = ImmutableList
-			.of(new LineListField("identifier", "text"), new LineListField("label", "text"),
-					new LineListField("PFGE-XbaI-pattern", "text"), new LineListField("PFGE-BlnI-pattern", "text"),
-					new LineListField("NLEP #", "text"), new LineListField("SubmittedNumber", "text"),
-					new LineListField("Province", "text"), new LineListField("SourceSite", "text"),
-					new LineListField("SourceType", "text"), new LineListField("PatientAge", "text"),
-					new LineListField("PatientSex", "text"), new LineListField("Genus", "text"),
-					new LineListField("Serotype", "text"), new LineListField("ReceivedDate", "text"),
-					new LineListField("UploadDate", "text"), new LineListField("IsolatDate", "text"),
-					new LineListField("SourceCity", "text"), new LineListField("UploadModifiedDate", "text"),
-					new LineListField("Comments", "text"), new LineListField("Outbreak", "text"),
-					new LineListField("Phagetype", "text"), new LineListField("Traveled_To", "text"),
-					new LineListField("Exposure", "text"));
-
-	private static final List<LineListField> INTERESTING_TEMPLATE = ImmutableList
-			.of(new LineListField("identifier", "text"), new LineListField("label", "text"),
-					new LineListField("NLEP #", "text"), new LineListField("Province", "text"),
-					new LineListField("SourceType", "text"), new LineListField("Genus", "text"),
-					new LineListField("Serotype", "text"),
-					new LineListField("uniqueField", "text"));
-
-	private Map<String, List> TEMPLATES;
-
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private LineListTemplates templates;
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
@@ -70,10 +49,7 @@ public class ProjectLineListController {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.projectControllerUtils = utils;
-
-		TEMPLATES = new HashMap<>();
-		TEMPLATES.put("default", DEFAULT_TEMPLATE);
-		TEMPLATES.put("interesting", INTERESTING_TEMPLATE);
+		this.templates = new LineListTemplates();
 	}
 
 	/**
@@ -94,7 +70,7 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("activeNav", "linelist");
-		model.addAttribute("templates", TEMPLATES.keySet());
+		model.addAttribute("templates", templates.getTemplateNames());
 		return "projects/project_linelist";
 	}
 
@@ -115,7 +91,7 @@ public class ProjectLineListController {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("templates", TEMPLATES.keySet());
+		model.addAttribute("templates", templates.getTemplateNames());
 		return "projects/project_linelist_template";
 	}
 
@@ -131,13 +107,9 @@ public class ProjectLineListController {
 	 */
 	@RequestMapping("/mt")
 	@ResponseBody
-	public Map<String, Object> getLinelistTemplate(@PathVariable Long projectId,
+	public Map<String, Object> getLinelistTemplate(
 			@RequestParam(required = false, defaultValue = "default") String template) {
-		if (TEMPLATES.containsKey(template)) {
-			return ImmutableMap.of("template", TEMPLATES.get(template));
-		} else {
-			return ImmutableMap.of("template", ImmutableList.of());
-		}
+		return ImmutableMap.of("template", templates.getTemplate(template));
 	}
 
 	/**
@@ -157,10 +129,10 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
 		List<LineListField> currentTemplate;
-		if (TEMPLATES.containsKey(template)) {
-			currentTemplate = TEMPLATES.get(template);
+		if (templates.doesTemplateExists(template)) {
+			currentTemplate = templates.getTemplate(template);
 		} else {
-			currentTemplate = TEMPLATES.get("default");
+			currentTemplate = templates.getTemplate("default");
 		}
 
 		List<Map<String, Object>> metadata = new ArrayList<>();
@@ -202,10 +174,7 @@ public class ProjectLineListController {
 	@RequestMapping("/linelist-templates/current")
 	@ResponseBody
 	public Map<String, Object> getExistingTemplateFields(@RequestParam String template) {
-		if (TEMPLATES.containsKey(template)) {
-			return ImmutableMap.of("fields", TEMPLATES.get(template));
-		}
-		return ImmutableMap.of("fields", ImmutableList.of());
+		return ImmutableMap.of("fields", templates.getTemplate(template));
 	}
 
 	@RequestMapping(value = "/linelist-templates/save-template", method = RequestMethod.POST)
@@ -216,7 +185,7 @@ public class ProjectLineListController {
 		try {
 			LineListTemplate lineListTemplate = mapper.readValue(template, LineListTemplate.class);
 			// Set up the template information
-			TEMPLATES.put(lineListTemplate.getName(), lineListTemplate.getFields());
+			templates.addTemplate(lineListTemplate.getName(), lineListTemplate.getFields());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
