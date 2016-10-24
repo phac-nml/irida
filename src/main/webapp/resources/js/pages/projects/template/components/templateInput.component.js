@@ -39,8 +39,10 @@ const metadataInput = {
 
     this.addField = index => {
       const item = this.template.list[index];
+      const INDEX_WITH_OFFSET = index + 3;
       if (item.label) {
-        this.template.list.splice(index + 1, 0, Object.assign({}, empty));
+        this.template.list
+          .splice(INDEX_WITH_OFFSET, 0, Object.assign({}, empty));
       }
     };
 

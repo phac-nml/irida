@@ -4,53 +4,6 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.create-template.title}">Title</title>
-    <style>
-        .templates span.label {
-            margin: .5em .5em -.5em 0 !important;
-            text-transform: uppercase;
-        }
-
-        .entry {
-            padding: .5em 0 !important;
-        }
-
-        .fields {
-            max-height: 600px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            margin-bottom: 2rem;
-            border: 1px solid #DDDDDD;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        }
-
-        @keyframes green-to-white {
-            from {
-                background-color: rgb(111, 239, 176);
-            }
-            to {
-                background-color: #ffffff;
-            }
-        }
-
-        .green-glow {
-            padding: 0 0 0 1rem !important;
-            margin-bottom: .5em;
-        }
-
-        .green-glow .form-group {
-            margin-bottom: 0 !important;
-        }
-
-        .green-glow.ng-enter {
-            -webkit-animation: 2s green-to-white;
-            animation: 2s green-to-white;
-        }
-
-        .green-glow.ng-leave {
-            animation: fadeOutLeft 0.5s;
-        }
-
-    </style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
