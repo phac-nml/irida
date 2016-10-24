@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,17 +181,27 @@ public class ProjectLineListController {
 		return ImmutableMap.of("fields", templates.getTemplate(template));
 	}
 
+	/**
+	 * Save a new line list template.
+	 *
+	 * @param template
+	 * 		{@link LineListTemplate}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 *
+	 * @return The result of saving.
+	 */
 	@RequestMapping(value = "/linelist-templates/save-template", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> saveLinelistTemplate(
-			@RequestBody String template) {
+	public Map<String, Object> saveLinelistTemplate(@RequestBody String template, HttpServletResponse response) {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			LineListTemplate lineListTemplate = mapper.readValue(template, LineListTemplate.class);
 			// Set up the template information
 			templates.addTemplate(lineListTemplate.getName(), lineListTemplate.getFields());
 		} catch (IOException e) {
-			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return ImmutableMap.of("error", "Cannot find the line list template.");
 		}
 		return ImmutableMap.of("success", true);
 	}

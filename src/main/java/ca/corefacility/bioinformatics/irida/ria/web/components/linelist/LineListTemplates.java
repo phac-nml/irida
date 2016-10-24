@@ -7,6 +7,9 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Storage class for get line list templates.
+ */
 public class LineListTemplates {
 
 	private static final List<LineListField> DEFAULT_TEMPLATE = ImmutableList

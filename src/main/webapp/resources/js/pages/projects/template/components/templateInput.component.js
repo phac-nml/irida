@@ -1,4 +1,5 @@
-const defaults = {type: 'text', label: '', template: null};
+const empty = {type: 'text', label: '', template: null};
+const list = [{type: 'text', label: 'identifier'}, {type: 'text', label: 'label'}, Object.assign({}, empty)];
 const selectedTemplates = new Map();
 
 const metadataInput = {
@@ -8,7 +9,7 @@ const metadataInput = {
   templateUrl: `templateInput.tmpl.html`,
   controller(TemplateService) {
     this.template = {
-      list: [Object.assign({}, defaults)],
+      list,
       name: ''
     };
 
@@ -39,7 +40,7 @@ const metadataInput = {
     this.addField = index => {
       const item = this.template.list[index];
       if (item.label) {
-        this.template.list.splice(index + 1, 0, Object.assign({}, defaults));
+        this.template.list.splice(index + 1, 0, Object.assign({}, empty));
       }
     };
 
@@ -58,7 +59,8 @@ const metadataInput = {
         TemplateService
           .getFieldsForTemplates(differentTemplate)
           .then(data => {
-            const fields = data.fields;
+            // First two fields will alway be identifier and label
+            const fields = data.fields.slice(2);
             selectedTemplates.set(differentTemplate, fields);
             updateFields(differentTemplate);
           });
@@ -76,10 +78,6 @@ const metadataInput = {
             delete item.templates[differentTemplate];
           } else if (item) {
             this.template.list.splice(index, 1);
-          }
-
-          if (this.template.list.length === 0) {
-            this.template.list = [Object.assign({}, defaults)];
           }
         };
 

@@ -3,7 +3,7 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorator="projects/_base">
 <head>
-    <title th:text="#{linelist.page-title}">Title</title>
+    <title th:text="#{linelist.create-template.title}">Title</title>
     <style>
         .templates span.label {
             margin: .5em .5em -.5em 0 !important;
@@ -58,12 +58,12 @@
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
-    <h2>Modify or Create a New Line List Template</h2>
+    <h2 th:text="#{linelist.create-template.title}">Create a New Line List Template</h2>
     <template-input data:redirecturl="@{/projects/{id}/linelist(id=${project.getId()})}"/>
     <script type="text/ng-template" id="templateInput.tmpl.html">
         <div class="row">
             <div class="col-md-12">
-                <label for="template-name">Template Name</label>
+                <label for="template-name" th:text="#{linelist.create-template.name}">Template Name</label>
             </div>
         </div>
         <div class="row">
@@ -73,12 +73,12 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <button ng-disabled="$ctrl.template.name.length &lt; 3" class="btn btn-primary" ng-click="$ctrl.saveTemplate()">Save</button>
+                <button ng-disabled="$ctrl.template.name.length &lt; 3" class="btn btn-primary" ng-click="$ctrl.saveTemplate()" th:text="#{linelist.create-template.save-template}">Save</button>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-8">
-                <label for="existing-templates">Add Existing Template</label>
+                <label for="existing-templates" th:text="#{linelist.create-template.add-existing}">Add Existing Template</label>
                 <select id="existing-templates"
                         class="form-control spaced-bottom"
                         multiple="multiple"
@@ -89,9 +89,33 @@
                 </select>
             </div>
         </div>
-        <label>Template Fields</label>
+        <label th:text="#{linelist.create-template.template-fields}">Template Fields</label>
         <div class="fields">
-            <div class="green-glow" ng-repeat="item in $ctrl.template.list">
+            <div class="green-glow">
+                <div class="row entry">
+                    <div class="form-group col-md-5">
+                        <input disabled="disabled" type="text" class="form-control" value="identifier"/>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <select disabled="disabled" class="form-control">
+                            <option value="text">Text</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="green-glow">
+                <div class="row entry">
+                    <div class="form-group col-md-5">
+                        <input disabled="disabled" type="text" class="form-control" value="label"/>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <select disabled="disabled" class="form-control">
+                            <option value="text">Text</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="green-glow" ng-repeat="item in $ctrl.template.list | limitTo:$ctrl.template.list.length:2">
                 <div class="row templates">
                     <div class="col-md-12">
                         <span class="label label-primary"
@@ -99,23 +123,25 @@
                     </div>
                 </div>
                 <div class="row entry">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-5">
                         <input ng-disabled="item.templates" type="text" class="form-control" ng-model="item.label"
                                placeholder="Field Name"/>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <select ng-disabled="item.templates" class="form-control" ng-model="item.type">
                             <option value="text">Text</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <button class="btn btn-default"
                                 ng-click="$ctrl.addField($index)"
-                                ng-disabled="item.label.length &lt; 3">Add
+                                ng-disabled="item.label.length &lt; 3"
+                                th:text="#{linelist.create-template.new-field}">Add
                         </button>
                         <button class="btn btn-default"
-                                ng-hide="$ctrl.template.list.length === 1"
-                                ng-click="$ctrl.removeField($index)">Remove
+                                ng-hide="$ctrl.template.list.length === 3"
+                                ng-click="$ctrl.removeField($index)"
+                                th:text="#{linelist.create-template.remove-field}">Remove
                         </button>
                     </div>
                 </div>
