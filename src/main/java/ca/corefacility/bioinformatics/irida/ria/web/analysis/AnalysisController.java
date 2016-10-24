@@ -146,7 +146,9 @@ public class AnalysisController {
 	 */
 	@RequestMapping("/project/{projectId}")
 	public String getProjectAnalysisList(@PathVariable Long projectId, Model model) {
+		Project project = projectService.read(projectId);
 		model.addAttribute("userList", false);
+		model.addAttribute("project",project);
 		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
 		model.addAttribute("states", AnalysisState.values());
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());

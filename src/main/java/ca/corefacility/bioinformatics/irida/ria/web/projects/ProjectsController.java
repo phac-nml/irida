@@ -62,6 +62,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -78,6 +79,7 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 /**
@@ -91,6 +93,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 	private static final String ACTIVE_NAV_SETTINGS = "settings";
+	private static final String ACTIVE_NAV_ANALYSES = "analyses";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -105,6 +108,7 @@ public class ProjectsController {
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
 	public static final String PROJECT_SETTINGS_PAGE = PROJECTS_DIR + "project_settings";
+	public static final String PROJECT_ANALYSES_PAGE = PROJECTS_DIR + "project_analyses";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -116,6 +120,7 @@ public class ProjectsController {
 	private final MessageSource messageSource;
 	private final ProjectRemoteService projectRemoteService;
 	private RemoteAPIService remoteApiService;
+	private IridaWorkflowsService workflowsService;
 	
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
@@ -139,8 +144,10 @@ public class ProjectsController {
 
 
 	@Autowired
-	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService, ProjectRemoteService projectRemoteService,
-			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService, RemoteAPIService remoteApiService, MessageSource messageSource) {
+	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
+			ProjectRemoteService projectRemoteService, ProjectControllerUtils projectControllerUtils,
+			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, IridaWorkflowsService workflowsService,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -150,6 +157,7 @@ public class ProjectsController {
 		this.dateFormatter = new DateFormatter();
 		this.messageSource = messageSource;
 		this.remoteApiService = remoteApiService;
+		this.workflowsService = workflowsService;
 		this.fileSizeConverter = new FileSizeConverter();
 	}
 
@@ -505,6 +513,27 @@ public class ProjectsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
+	}
+	
+	/**
+	 * Get the page for analyses shared with a given {@link Project}
+	 * 
+	 * @param projectId
+	 *            the ID of the {@link Project}
+	 * @param model
+	 *            model for view variables
+	 * @return name of the analysis view page
+	 */
+	@RequestMapping("/projects/{projectId}/analyses")
+	public String getProjectAnalysisList(@PathVariable Long projectId, Principal principal, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project",project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
+		model.addAttribute("states", AnalysisState.values());
+		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
+		return PROJECT_ANALYSES_PAGE;
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.GET)
