@@ -222,6 +222,10 @@ public class AnalysisController {
 
 		model.addAttribute("projects", projectResponses);
 		
+		// Check if user can update analysis
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
+		
 		
 		// Get the number of files currently being mirrored
 		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();

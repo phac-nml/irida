@@ -44,12 +44,14 @@
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
 				</th:block>
-				<sub-nav-item state="share" data:text="#{analysis.tab.share-results}"></sub-nav-item>
+				<th:block th:if="${updatePermission}">
+					<sub-nav-item state="share" data:text="#{analysis.tab.share-results}"></sub-nav-item>
+				</th:block>
 			</sub-nav>
 
 			<div ui-view=""></div>
 
-			<script type="text/ng-template" id="share.html">
+			<script type="text/ng-template" id="share.html" th:if="${updatePermission}">
 				<h2 th:text="#{analysis.details.share.title}">_Share Results With Projects_</h2>
 				<div class="row" ng-controller="ProjectShareController as shareController">
 					<div class="col-md-6" th:each="presp : ${projects}" th:with="project=${presp.project}">
