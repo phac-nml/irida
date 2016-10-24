@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 /**
@@ -27,6 +30,8 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 
 	private UserRepository userRepository;
 	private final ReadSequencingObjectPermission seqObjectPermission;
+	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
+	private final ReadProjectPermission readProjectPermission;
 
 	/**
 	 * Constructs a new {@link ReadAnalysisSubmissionPermission} with the given
@@ -42,10 +47,13 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 	 */
 	@Autowired
 	public ReadAnalysisSubmissionPermission(AnalysisSubmissionRepository analysisSubmissionRepository,
-			UserRepository userRepository, ReadSequencingObjectPermission seqObjectPermission) {
+			UserRepository userRepository, ReadSequencingObjectPermission seqObjectPermission,
+			ProjectAnalysisSubmissionJoinRepository pasRepository, ReadProjectPermission readProjectPermission) {
 		super(AnalysisSubmission.class, Long.class, analysisSubmissionRepository);
 		this.userRepository = userRepository;
 		this.seqObjectPermission = seqObjectPermission;
+		this.pasRepository = pasRepository;
+		this.readProjectPermission = readProjectPermission;
 	}
 
 	/**
@@ -68,6 +76,21 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 		if (analysisSubmission.getSubmitter().equals(u)) {
 			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission ["
 					+ analysisSubmission + "]");
+			return true;
+		}
+		
+		/*
+		 * If the user isn't set it might be shared to a project they have
+		 * access to.  Check the shared projects.
+		 */
+		
+		List<ProjectAnalysisSubmissionJoin> projectsForSubmission = pasRepository.getProjectsForSubmission(analysisSubmission);
+		boolean canReadProject = projectsForSubmission.stream()
+				.anyMatch(p -> readProjectPermission.customPermissionAllowed(authentication, p.getSubject()));
+		
+		if (canReadProject) {
+			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission [" + analysisSubmission
+					+ "]");
 			return true;
 		}
 
