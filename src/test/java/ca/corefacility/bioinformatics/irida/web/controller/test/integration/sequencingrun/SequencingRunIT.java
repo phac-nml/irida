@@ -138,8 +138,7 @@ public class SequencingRunIT {
 		asUser().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.COMPLETE.toString())).when()
 				.get(location);
 
-		// ensure other users can't read or write
-		asOtherUser().expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when().get(location);
+		// ensure other users can't write
 		asOtherUser().given().body(updateProperties).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
 				.patch(location);
 	}
