@@ -255,25 +255,6 @@ public class AnalysisController {
 		return viewName;
 	}
 	
-	@SuppressWarnings("unused")
-	private class SharedProjectResponse{
-		private Project project;
-		private boolean shared;
-		
-		public SharedProjectResponse(Project project, boolean shared){
-			this.project = project;
-			this.shared = shared;
-		}
-		
-		public Project getProject() {
-			return project;
-		}
-		
-		public boolean isShared() {
-			return shared;
-		}
-	}
-	
 	/**
 	 * Update the share status of a given {@link AnalysisSubmission} for a given
 	 * {@link Project}
@@ -684,6 +665,29 @@ public class AnalysisController {
 		
 		public boolean getUpdatePermission() {
 			return updatePermission;
+		}
+	}
+	
+	/**
+	 * Response object storing a project and whether or not it's shared with a
+	 * given {@link AnalysisSubmission}
+	 */
+	@SuppressWarnings("unused")
+	private class SharedProjectResponse {
+		private Project project;
+		private boolean shared;
+
+		public SharedProjectResponse(Project project, boolean shared) {
+			this.project = project;
+			this.shared = shared;
+		}
+
+		public Project getProject() {
+			return project;
+		}
+
+		public boolean isShared() {
+			return shared;
 		}
 	}
 }
