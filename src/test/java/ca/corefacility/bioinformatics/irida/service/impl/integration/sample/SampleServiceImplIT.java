@@ -345,7 +345,7 @@ public class SampleServiceImplIT {
 		
 		assertEquals("should be 2 samples", 2, samples.size());
 		
-		Set<Long> ids = Sets.newHashSet(1L, 2L);
+		Set<Long> ids = Sets.newHashSet(8L, 9L);
 		samples.forEach(s -> ids.remove(s.getId()));
 		
 		assertTrue("all sample ids should be found", ids.isEmpty());
