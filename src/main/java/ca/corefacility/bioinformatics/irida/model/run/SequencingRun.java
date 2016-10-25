@@ -30,6 +30,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
@@ -71,6 +73,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	@Column(name = "layout_type")
 	private LayoutType layoutType;
 	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "user_id")
 	private User user;
