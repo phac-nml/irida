@@ -42,12 +42,12 @@ public class AnalysisSubmissionSpecification {
 					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("analysisState"), state));
 				}
 				if (minDate != null) {
-					predicateList.add(criteriaBuilder.greaterThanOrEqualTo(analysisSubmissionRoot.get("createdDate"),
-							minDate));
+					predicateList.add(
+							criteriaBuilder.greaterThanOrEqualTo(analysisSubmissionRoot.get("createdDate"), minDate));
 				}
 				if (maxDate != null) {
-					predicateList.add(criteriaBuilder.lessThanOrEqualTo(analysisSubmissionRoot.get("createdDate"),
-							maxDate));
+					predicateList
+							.add(criteriaBuilder.lessThanOrEqualTo(analysisSubmissionRoot.get("createdDate"), maxDate));
 				}
 				if (predicateList.size() > 0) {
 					return criteriaBuilder.and(Iterables.toArray(predicateList, Predicate.class));
@@ -70,10 +70,14 @@ public class AnalysisSubmissionSpecification {
 	 *            {@link AnalysisState}
 	 * @param workflowIds
 	 *            Set of UUIDs to search
+	 * @param user
+	 *            The {@link User} owning the analysis
+	 * @param project
+	 *            A project the analysis is shared with
 	 * @return Specificaton for this search
 	 */
-	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, AnalysisState state, User user,
-			Set<UUID> workflowIds, Project project) {
+	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, AnalysisState state,
+			User user, Set<UUID> workflowIds, Project project) {
 		return new Specification<AnalysisSubmission>() {
 			@Override
 			public Predicate toPredicate(Root<AnalysisSubmission> analysisSubmissionRoot,
@@ -92,10 +96,10 @@ public class AnalysisSubmissionSpecification {
 				if (workflowIds != null && !workflowIds.isEmpty()) {
 					predicateList.add(criteriaBuilder.isTrue(analysisSubmissionRoot.get("workflowId").in(workflowIds)));
 				}
-				if(user != null){
+				if (user != null) {
 					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("submitter"), user));
 				}
-				
+
 				/*
 				 * If we're searching for a specific project's analyses
 				 */
