@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.specification;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -28,35 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAna
  *
  */
 public class AnalysisSubmissionSpecification {
-	public static Specification<AnalysisSubmission> searchAnalysis(String name, AnalysisState state, Date minDate,
-			Date maxDate) {
-		return new Specification<AnalysisSubmission>() {
-			@Override
-			public Predicate toPredicate(Root<AnalysisSubmission> analysisSubmissionRoot,
-					CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-				List<Predicate> predicateList = new ArrayList<>();
-				if (!Strings.isNullOrEmpty(name)) {
-					predicateList.add(criteriaBuilder.like(analysisSubmissionRoot.get("name"), "%" + name + "%"));
-				}
-				if (state != null) {
-					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("analysisState"), state));
-				}
-				if (minDate != null) {
-					predicateList.add(
-							criteriaBuilder.greaterThanOrEqualTo(analysisSubmissionRoot.get("createdDate"), minDate));
-				}
-				if (maxDate != null) {
-					predicateList
-							.add(criteriaBuilder.lessThanOrEqualTo(analysisSubmissionRoot.get("createdDate"), maxDate));
-				}
-				if (predicateList.size() > 0) {
-					return criteriaBuilder.and(Iterables.toArray(predicateList, Predicate.class));
-				} else {
-					return null;
-				}
-			}
-		};
-	}
 
 	/**
 	 * Search for analyses with a given name, {@link AnalysisState}, or Workflow

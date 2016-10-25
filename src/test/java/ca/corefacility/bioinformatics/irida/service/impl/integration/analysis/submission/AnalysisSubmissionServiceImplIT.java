@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
@@ -33,6 +32,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -48,12 +53,6 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisS
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-
 /**
  * Tests for an analysis service.
  * 
@@ -67,18 +66,18 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionServiceIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionServiceImplIT {
-	
+
 	private static float DELTA = 0.000001f;
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private SequencingObjectRepository sequencingObjectRepository;
-	
+
 	@Autowired
 	private WorkflowNamedParametersRepository parametersRepository;
 
@@ -107,33 +106,21 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void searchAnalyses() {
 
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.searchAnalysis(null, null,
-				null, null);
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.filterAnalyses(null, null,
+				null, null, null, null);
 		Page<AnalysisSubmission> paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC,
 				"createdDate");
 		assertEquals(10, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";
-		specification = AnalysisSubmissionSpecification.searchAnalysis(name, null, null, null);
+		specification = AnalysisSubmissionSpecification.filterAnalyses(null, name, null, null, null, null);
 		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
 		assertEquals(8, paged.getContent().size());
 
-		// Add a minDate filter
-		Date minDate = new Date(1378479662000L);
-		specification = AnalysisSubmissionSpecification.searchAnalysis(name, null, minDate, null);
-		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
-		assertEquals(7, paged.getContent().size());
-
-		// Add a maxDate filter
-		Date maxDate = new Date(1389024062000L);
-		specification = AnalysisSubmissionSpecification.searchAnalysis(name, null, minDate, maxDate);
-		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
-		assertEquals(5, paged.getContent().size());
-
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;
-		specification = AnalysisSubmissionSpecification.searchAnalysis(name, state, minDate, maxDate);
+		specification = AnalysisSubmissionSpecification.filterAnalyses(null, name, state, null, null, null);
 		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
 		assertEquals(2, paged.getContent().size());
 	}
@@ -351,7 +338,7 @@ public class AnalysisSubmissionServiceImplIT {
 		analysisSubmissionService.delete(1L);
 		assertFalse("submission should have been deleted", analysisSubmissionService.exists(1L));
 	}
-	
+
 	/**
 	 * Tests deleting as a regular user.
 	 */
@@ -420,8 +407,8 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSearchAdminUser() {
-		assertNotNull("search should succeed", analysisSubmissionService.search(
-				new AnalysisSubmissionTestSpecification(), 1, 1, Direction.ASC, "createdDate"));
+		assertNotNull("search should succeed", analysisSubmissionService
+				.search(new AnalysisSubmissionTestSpecification(), 1, 1, Direction.ASC, "createdDate"));
 	}
 
 	/**
@@ -457,9 +444,10 @@ public class AnalysisSubmissionServiceImplIT {
 		assertNotNull("should get submissions for the user", submissions);
 		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
-	
+
 	/**
-	 * Tests getting a set of submissions for the current user as a regular user.
+	 * Tests getting a set of submissions for the current user as a regular
+	 * user.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
@@ -470,7 +458,8 @@ public class AnalysisSubmissionServiceImplIT {
 	}
 
 	/**
-	 * Tests getting a set of submissions for the current user as a 2nd regular user.
+	 * Tests getting a set of submissions for the current user as a 2nd regular
+	 * user.
 	 */
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
@@ -479,9 +468,10 @@ public class AnalysisSubmissionServiceImplIT {
 		assertNotNull("should get submissions for the user", submissions);
 		assertEquals("submissions should have correct number", 1, submissions.size());
 	}
-	
+
 	/**
-	 * Tests getting a set of submissions for the current user with an admin role
+	 * Tests getting a set of submissions for the current user with an admin
+	 * role
 	 */
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "ADMIN")
@@ -490,16 +480,17 @@ public class AnalysisSubmissionServiceImplIT {
 		assertNotNull("should get submissions for the user", submissions);
 		assertEquals("submissions should have correct number", 1, submissions.size());
 	}
-	
+
 	/**
-	 * Tests failing to get a set of submissions for the current user when there is no current user.
+	 * Tests failing to get a set of submissions for the current user when there
+	 * is no current user.
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "aaron", roles = "")
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUserFail() {
 		analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 	}
-	
+
 	@Test(expected = UnsupportedOperationException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithUnsavedNamedParameters() {
@@ -525,23 +516,27 @@ public class AnalysisSubmissionServiceImplIT {
 		assertEquals("Submission parameters should be the same as the named parameters", params.getInputParameters(),
 				submission.getInputParameters());
 	}
-	
+
 	/**
 	 * Tests getting the percentage complete for a submission as a regular user
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws ExecutionManagerException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
-	public void testGetPercentageCompleteGrantedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
+	public void testGetPercentageCompleteGrantedRegularUser()
+			throws EntityNotFoundException, ExecutionManagerException {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
 		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
 	}
 
 	/**
-	 * Tests being denied to get the percentage complete a submission as a regular user
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
+	 * Tests being denied to get the percentage complete a submission as a
+	 * regular user
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
@@ -551,8 +546,9 @@ public class AnalysisSubmissionServiceImplIT {
 
 	/**
 	 * Tests getting the percentage complete for a submission as an admin user.
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws ExecutionManagerException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -560,11 +556,13 @@ public class AnalysisSubmissionServiceImplIT {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
 		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
 	}
-	
+
 	/**
-	 * Tests getting the percentage complete for a submission as a regular user with an alternative state.
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
+	 * Tests getting the percentage complete for a submission as a regular user
+	 * with an alternative state.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws ExecutionManagerException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
@@ -572,11 +570,13 @@ public class AnalysisSubmissionServiceImplIT {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(3L);
 		assertEquals("submission was not properly returned", 15.0f, percentageComplete, DELTA);
 	}
-	
+
 	/**
-	 * Tests getting the percentage complete for a submission as a regular user and failing due to an error.
-	 * @throws EntityNotFoundException 
-	 * @throws ExecutionManagerException 
+	 * Tests getting the percentage complete for a submission as a regular user
+	 * and failing due to an error.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected = NoPercentageCompleteException.class)
 	@WithMockUser(username = "aaron", roles = "USER")
