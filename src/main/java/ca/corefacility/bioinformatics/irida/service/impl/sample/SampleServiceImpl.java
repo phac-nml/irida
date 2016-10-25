@@ -3,12 +3,14 @@ package ca.corefacility.bioinformatics.irida.service.impl.sample;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +38,11 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -372,6 +378,22 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return psjRepository
 				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, minDate, maxDate),
 						new PageRequest(currentPage, pageSize, direction, sortProperty));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission)")
+	@PostFilter("hasPermission(filterObject, 'canReadSample')")
+	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission) {
+		Set<SequencingObject> sequences = new HashSet<>();
+		sequences.addAll(submission.getPairedInputFiles());
+		sequences.addAll(submission.getInputFilesSingleEnd());
+
+		Set<Sample> samples = sequences.stream().map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject())
+				.collect(Collectors.toSet());
+		return samples;
 	}
 
 	/**
