@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -33,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
@@ -46,16 +50,19 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	private SequencingObjectRepository objectRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private AnalysisSubmissionRepository submissionRepository;
+	private UserRepository userRepository;
 
 	@Autowired
 	public SequencingRunServiceImpl(SequencingRunRepository repository, SequenceFileRepository sequenceFileRepository,
 			SequencingObjectRepository objectRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			SampleRepository sampleRepository, AnalysisSubmissionRepository submissionRepository, Validator validator) {
+			SampleRepository sampleRepository, AnalysisSubmissionRepository submissionRepository,
+			UserRepository userRepository, Validator validator) {
 		super(repository, validator, SequencingRun.class);
 		this.sampleRepository = sampleRepository;
 		this.objectRepository = objectRepository;
 		this.submissionRepository = submissionRepository;
 		this.ssoRepository = ssoRepository;
+		this.userRepository = userRepository;
 	}
 
 	/**
@@ -94,6 +101,10 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN', 'ROLE_USER')")
 	public SequencingRun create(SequencingRun o) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepository.loadUserByUsername(authentication.getName());
+		o.setUser(user);
+		
 		return super.create(o);
 	}
 
