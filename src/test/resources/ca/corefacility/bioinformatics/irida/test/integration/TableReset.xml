@@ -41,6 +41,7 @@
 
 	<analysis_submission />
 	<analysis_submission_parameters />
+	<project_analysis_submission/>
 
 	<password_reset />
 	
@@ -130,4 +131,5 @@
 	<announcement_AUD />
 	<announcement_user_AUD />
 	<remote_status_AUD />
+	<project_analysis_submission_AUD/>
 </dataset>

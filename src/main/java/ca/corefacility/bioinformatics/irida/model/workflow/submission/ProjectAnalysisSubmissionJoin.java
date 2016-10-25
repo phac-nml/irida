@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -39,6 +40,7 @@ public class ProjectAnalysisSubmissionJoin implements Join<Project, AnalysisSubm
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="created_date")
 	private Date createdDate;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
