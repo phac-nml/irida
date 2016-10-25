@@ -161,16 +161,26 @@ public class SequencingRunServiceImplIT {
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testCreateMiseqRunAsUserFail() {
 		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
-		miseqRunService.create(mr);
+		SequencingRun create = miseqRunService.create(mr);
+		assertEquals("user", create.getUser().getUsername());
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testUpdateMiseqRunAsUserFail() {
+		// run 2 is not owned by "user"
+		SequencingRun mr = miseqRunService.read(2L);
+		miseqRunService.update(mr.getId(), ImmutableMap.of("description", "a different description"));
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password = "password1", roles = "USER")
+	public void testUpdateMiseqRunAsUserSuccess() {
+		// run 1 is owned by "user" so should be able to update
 		SequencingRun mr = miseqRunService.read(1L);
 		miseqRunService.update(mr.getId(), ImmutableMap.of("description", "a different description"));
 	}
