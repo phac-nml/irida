@@ -384,7 +384,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission)")
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
 	@PostFilter("hasPermission(filterObject, 'canReadSample')")
 	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission) {
 		Set<SequencingObject> sequences = new HashSet<>();
