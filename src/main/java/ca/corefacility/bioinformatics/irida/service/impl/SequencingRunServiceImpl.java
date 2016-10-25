@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +63,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER') or hasPermission(#id, 'canUpdateSequencingRun')")
 	public SequencingRun read(Long id) {
 		return super.read(id);
 	}
@@ -71,7 +72,8 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER', 'ROLE_USER')")
+	@PostFilter("hasPermission(filterObject, 'canUpdateSequencingRun')")
 	public Iterable<SequencingRun> findAll() {
 		return super.findAll();
 	}
@@ -81,7 +83,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN') or hasPermission(#run, 'canUpdateSequencingRun')")
 	public void addSequencingObjectToSequencingRun(SequencingRun run, SequencingObject seqobject) {
 		// attach a copy of the file to the current transaction.
 		seqobject = objectRepository.findOne(seqobject.getId());
@@ -90,7 +92,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	}
 
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN', 'ROLE_USER')")
 	public SequencingRun create(SequencingRun o) {
 		return super.create(o);
 	}
@@ -168,7 +170,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN') or hasPermission(#id, 'canUpdateSequencingRun')")
 	public SequencingRun update(Long id, Map<String, Object> updatedFields)
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
