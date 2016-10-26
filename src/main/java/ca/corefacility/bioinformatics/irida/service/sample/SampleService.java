@@ -262,3 +262,4 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission);
 }
+
