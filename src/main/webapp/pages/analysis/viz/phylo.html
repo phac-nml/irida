@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="template/page">
+<head>
+    <title>Title</title>
+    <style>
+        canvas {
+            border: 1px solid rgb(176, 190, 197);
+            border-radius: .5rem;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="page">
+    <phylocanvas-component
+            data:newick="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
+    </phylocanvas-component>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script type="text/ng-template" id="phylocanvas.tmpl.html">
+        <div id="phylocanvas"></div>
+    </script>
+    <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
+            th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
+</th:block>
+</body>
+</html>

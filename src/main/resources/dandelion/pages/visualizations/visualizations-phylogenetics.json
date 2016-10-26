@@ -1,0 +1,10 @@
+{
+  "assets": [
+    {
+      "type": "js",
+      "locations": {
+        "webapp": "/resources/js/build/visualizations-phylogenetics.bundle.js"
+      }
+    }
+  ]
+}

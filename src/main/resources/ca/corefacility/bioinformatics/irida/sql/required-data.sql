@@ -202,20 +202,20 @@ INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `d
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:37', 'E. coli', '2015-07-28 08:24:09', '15-3614', 'The 28th sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:38', 'E. coli', '2015-07-29 08:24:09', '15-4068', 'The 29th sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:39', 'E. coli', '2015-07-30 08:24:09', '15-4163', 'The 30th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:40', 'E. coli', '2015-08-01 08:24:09', '15-4634', 'The 31st sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:41', 'E. coli', '2015-08-02 08:24:09', '15-4735', 'The 32nd sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:42', 'E. coli', '2015-08-03 08:24:09', '15-4744', 'The 33rd sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:43', 'E. coli', '2015-08-04 08:24:09', '15-4824', 'The 34th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:44', 'E. coli', '2015-08-05 08:24:09', '15-4911', 'The 35th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:45', 'E. coli', '2015-08-06 08:24:09', '15-5313', 'The 36th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:46', 'E. coli', '2015-08-07 08:24:09', '15-5322', 'The 37th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:47', 'E. coli', '2015-08-08 08:24:09', '15-5878', 'The 38th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:48', 'E. coli', '2015-08-09 08:24:09', '15-5895', 'The 39th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:49', 'E. coli', '2015-08-10 08:24:09', '15-5905', 'The 40th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:50', 'E. coli', '2015-08-11 08:24:09', '15-5918', 'The 41st sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:51', 'E. coli', '2015-08-12 08:24:09', '15-6244', 'The 42nd sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:52', 'E. coli', '2015-08-13 08:24:09', '15-6331', 'The 43rd sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:53', 'E. coli', '2015-08-14 08:24:09', '15-6439', 'The 44th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:40', 'E. coli', '2015-08-01 08:24:09', 'test-0001', 'The 31st sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:41', 'E. coli', '2015-08-02 08:24:09', 'test-0002', 'The 32nd sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:42', 'E. coli', '2015-08-03 08:24:09', 'test-0003', 'The 33rd sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:43', 'E. coli', '2015-08-04 08:24:09', 'test-0004', 'The 34th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:44', 'E. coli', '2015-08-05 08:24:09', 'test-0005', 'The 35th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:45', 'E. coli', '2015-08-06 08:24:09', 'test-0006', 'The 36th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:46', 'E. coli', '2015-08-07 08:24:09', 'test-0007', 'The 37th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:47', 'E. coli', '2015-08-08 08:24:09', 'test-0008', 'The 38th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:48', 'E. coli', '2015-08-09 08:24:09', 'test-0009', 'The 39th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:49', 'E. coli', '2015-08-10 08:24:09', 'test-0010', 'The 40th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:50', 'E. coli', '2015-08-11 08:24:09', 'test-0011', 'The 41st sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:51', 'E. coli', '2015-08-12 08:24:09', 'test-0012', 'The 42nd sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:52', 'E. coli', '2015-08-13 08:24:09', 'test-0013', 'The 43rd sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:53', 'E. coli', '2015-08-14 08:24:09', 'test-0014', 'The 44th sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:54', 'E. coli', '2015-08-15 08:24:09', '10-5737', 'The 45th sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:55', 'E. coli', '2015-08-16 08:24:09', '10-6966', 'The 46th sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:56', 'E. coli', '2015-08-17 08:24:09', '10-7700', 'The 47th sample');
@@ -310,13 +310,13 @@ insert into sequence_file (id, created_date, file_revision_number, modified_date
 insert into sequence_file (id, created_date, file_revision_number, modified_date, file_path) values (5, '2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/5/2/03-3333_S1_L001_R1_001.fastq');
 insert into sequence_file (id, created_date, file_revision_number, modified_date, file_path) values (6, '2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/6/2/03-3333_S1_L001_R2_001.fastq');
 
-INSERT INTO `sequence_file` (id, created_date, file_revision_number, modified_date, file_path) VALUES (7,'2014-08-06 10:01:02',2,'2014-08-06 10:01:02','/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq'),(8,'2014-08-06 10:01:03',2,'2014-08-06 10:01:03','/tmp/sequence-files/8/2/02-2222_S1_L001_R2_001.fastq'),(9,'2014-08-06 10:01:03',2,'2014-08-06 10:01:03','/tmp/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq'),(10,'2014-08-06 10:01:03',2,'2014-08-06 10:01:03','/tmp/sequence-files/10/2/01-1111_S1_L001_R2_001.fastq'),(11,'2014-08-06 10:01:04',2,'2014-08-06 10:01:04','/tmp/sequence-files/11/2/03-3333_S1_L001_R1_001.fastq'),(12,'2014-08-06 10:01:04',2,'2014-08-06 10:01:04','/tmp/sequence-files/12/2/03-3333_S1_L001_R2_001.fastq');
+INSERT INTO `sequence_file` (id, created_date, file_revision_number, modified_date, file_path) VALUES (7, '2014-08-06 10:01:02', 2, '2014-08-06 10:01:02', '/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq'), (8, '2014-08-06 10:01:03', 2, '2014-08-06 10:01:03', '/tmp/sequence-files/8/2/02-2222_S1_L001_R2_001.fastq'), (9, '2014-08-06 10:01:03', 2, '2014-08-06 10:01:03', '/tmp/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq'), (10, '2014-08-06 10:01:03', 2, '2014-08-06 10:01:03', '/tmp/sequence-files/10/2/01-1111_S1_L001_R2_001.fastq'), (11, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/11/2/03-3333_S1_L001_R1_001.fastq'), (12, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/03-3333_S1_L001_R2_001.fastq'), (13, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0001_S1_L001_R1_001.fastq'), (14, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0001_S1_L001_R2_001.fastq'), (15, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0003_S1_L001_R1_001.fastq'), (16, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0003_S1_L001_R2_001.fastq'), (17, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0002_S1_L001_R1_001.fastq'), (18, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0002_S1_L001_R2_001.fastq'), (19, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0008_S1_L001_R1_001.fastq'), (20, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0008_S1_L001_R2_001.fastq'), (21, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0012_S1_L001_R1_001.fastq'), (22, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0012_S1_L001_R2_001.fastq'), (23, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0013_S1_L001_R1_001.fastq'), (24, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0013_S1_L001_R2_001.fastq'), (25, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0005_S1_L001_R1_001.fastq'), (26, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0005_S1_L001_R2_001.fastq'), (27, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0010_S1_L001_R1_001.fastq'), (28, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0010_S1_L001_R2_001.fastq'), (29, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0011_S1_L001_R1_001.fastq'), (30, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0011_S1_L001_R2_001.fastq'), (31, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0006_S1_L001_R1_001.fastq'), (32, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0006_S1_L001_R2_001.fastq'), (33, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0007_S1_L001_R1_001.fastq'), (34, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0007_S1_L001_R2_001.fastq'), (35, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0014_S1_L001_R1_001.fastq'), (36, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0014_S1_L001_R2_001.fastq'), (37, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0004_S1_L001_R1_001.fastq'), (38, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0004_S1_L001_R2_001.fastq'), (39, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0009_S1_L001_R1_001.fastq'), (40, '2014-08-06 10:01:04', 2, '2014-08-06 10:01:04', '/tmp/sequence-files/12/2/test-0009_S1_L001_R2_001.fastq');
 
 -- sequencing object
-insert into sequencing_object (id, created_date, sequencing_run_id) values (1, '2014-07-30 08:24:34', 1), (2, '2014-07-30 08:24:34', 1), (3, '2014-07-30 08:24:34', 1),(4, '2014-07-30 08:24:34', 1),(5, '2014-07-30 08:24:34', 1),(6, '2014-07-30 08:24:34', 1),(7, '2014-07-30 08:24:34', 1),(8, '2014-07-30 08:24:34', 1),(9, '2014-07-30 08:24:34', 1),(10, '2014-07-30 08:24:34', 1);
+insert into sequencing_object (id, created_date, sequencing_run_id) values (1, '2014-07-30 08:24:34', 1), (2, '2014-07-30 08:24:34', 1), (3, '2014-07-30 08:24:34', 1),(4, '2014-07-30 08:24:34', 1),(5, '2014-07-30 08:24:34', 1),(6, '2014-07-30 08:24:34', 1),(7, '2014-07-30 08:24:34', 1),(8, '2014-07-30 08:24:34', 1),(9, '2014-07-30 08:24:34', 1),(10, '2014-07-30 08:24:34', 1),(11, '2014-07-30 08:24:34', 1),(12, '2014-07-30 08:24:34', 1),(13, '2014-07-30 08:24:34', 1),(14, '2014-07-30 08:24:34', 1),(15, '2014-07-30 08:24:34', 1),(16, '2014-07-30 08:24:34', 1),(17, '2014-07-30 08:24:34', 1),(18, '2014-07-30 08:24:34', 1),(19, '2014-07-30 08:24:34', 1),(20, '2014-07-30 08:24:34', 1),(21, '2014-07-30 08:24:34', 1),(22, '2014-07-30 08:24:34', 1),(23, '2014-07-30 08:24:34', 1),(24, '2014-07-30 08:24:34', 1);
 
 -- sequence_file_pair
-INSERT INTO `sequence_file_pair` (id) VALUES (1), (2);
+INSERT INTO `sequence_file_pair` (id) VALUES (1), (2), (11), (12), (13), (14), (15), (16), (17), (18), (19), (20), (21), (22), (23), (24);
 
 -- sequence_file_pair_files
 INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (1, 1);
@@ -324,12 +324,41 @@ INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (1, 2);
 INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (2, 3);
 INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (2, 4);
 
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (11, 13);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (11, 14);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (12, 15);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (12, 16);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (13, 17);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (13, 18);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (14, 19);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (14, 20);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (15, 21);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (15, 22);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (16, 23);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (16, 24);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (17, 25);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (17, 26);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (18, 27);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (18, 28);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (19, 29);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (19, 30);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (20, 31);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (20, 32);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (21, 33);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (21, 34);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (22, 35);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (22, 36);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (23, 37);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (23, 38);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (24, 39);
+INSERT INTO `sequence_file_pair_files` (pair_id, files_id) VALUES (24, 40);
+
 -- sequence_file_single_end
 insert into sequence_file_single_end (id, file_id) values (3, 5), (4,6), (5,7), (6,8), (7,9), (8,10), (9,11), (10,12);
 
 
 -- sequencefile sample
-INSERT INTO `sample_sequencingobject` (created_date, sample_id, sequencingobject_id) VALUES ('2014-07-30 08:24:34',52,1), ('2014-07-30 08:24:35',52,2),('2014-07-30 08:24:35',53,3),('2014-07-30 08:24:35',53,4),('2014-08-06 10:01:03',52,5),('2014-08-06 10:01:03',52,6),('2014-08-06 10:01:03',51,7),('2014-08-06 10:01:04',51,8),('2014-08-06 10:01:04',53,9),('2014-08-06 10:01:04',53,10);
+INSERT INTO `sample_sequencingobject` (created_date, sample_id, sequencingobject_id) VALUES ('2014-07-30 08:24:34', 52, 1), ('2014-07-30 08:24:35', 52, 2), ('2014-07-30 08:24:35', 53, 3), ('2014-07-30 08:24:35', 53, 4), ('2014-08-06 10:01:03', 52, 5), ('2014-08-06 10:01:03', 52, 6), ('2014-08-06 10:01:03', 51, 7), ('2014-08-06 10:01:04', 51, 8), ('2014-08-06 10:01:04', 53, 9), ('2014-08-06 10:01:04', 53, 10), ('2014-08-06 10:01:04', 31, 11), ('2014-08-06 10:01:04', 32, 13), ('2014-08-06 10:01:04', 33, 12), ('2014-08-06 10:01:04', 34, 23), ('2014-08-06 10:01:04', 35, 17), ('2014-08-06 10:01:04', 36, 20), ('2014-08-06 10:01:04', 37, 21), ('2014-08-06 10:01:04', 38, 14), ('2014-08-06 10:01:04', 39, 24), ('2014-08-06 10:01:04', 40, 18), ('2014-08-06 10:01:04', 41, 19), ('2014-08-06 10:01:04', 42, 15), ('2014-08-06 10:01:04', 43, 16), ('2014-08-06 10:01:04', 44, 22);
 
 -- analysis
 INSERT INTO `analysis` (id, createdDate, description, executionManagerAnalysisId) VALUES (1,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(2,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(3,'2014-07-30 08:24:34','Analysis produced by FastQC','internal-fastqc'),(4,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(5,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(6,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(7,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(8,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc'),(9,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc'),(10,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(11,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(12,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc');
@@ -467,7 +496,7 @@ INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_
 INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (6, 8);
 
 -- analysis_output_file
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.tre', 1);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.newick', 1);
 INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 2);
 INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpTable.tsv', 3);
 
@@ -605,7 +634,20 @@ INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parame
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-6', 'minimum-read-coverage');
 
 -- analysis_submission_sequence_file_pair
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13 ,1);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 11);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 12);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 13);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 14);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 15);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 16);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 17);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 18);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 19);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 20);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 21);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 22);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 23);
+INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 24);
 
 INSERT INTO `remote_related_project`(id, created_date, remote_project_uri, project_id, remote_api_id) VALUES ('1','2015-03-27 11:13:39','http://localhost:8080/api/projects/5','4','1'); 
 

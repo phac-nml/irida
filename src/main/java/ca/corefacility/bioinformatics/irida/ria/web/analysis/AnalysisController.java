@@ -3,14 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +22,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -50,14 +51,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for Analysis.
@@ -197,6 +190,12 @@ public class AnalysisController {
 		} 
 
 		return viewName;
+	}
+
+	@RequestMapping("/{submissionId}/advanced-phylo")
+	public String getAdvancedPhylogeneticVisualizationPage(@PathVariable Long submissionId, Model model){
+		model.addAttribute("submissionId", submissionId);
+		return BASE + "viz/phylo";
 	}
 
 	
@@ -434,6 +433,16 @@ public class AnalysisController {
 			}
 		}
 		return result;
+	}
+
+	@RequestMapping("/ajax/{submissionId}/newick")
+	@ResponseBody
+	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		List<String> lines = Files.readAllLines(file.getFile());
+		return ImmutableMap.of("newick", lines.get(0));
 	}
 
 	/**
