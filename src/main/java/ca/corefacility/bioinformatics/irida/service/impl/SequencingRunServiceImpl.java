@@ -70,7 +70,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER') or hasPermission(#id, 'canUpdateSequencingRun')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequencingRun read(Long id) {
 		return super.read(id);
 	}
