@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -44,14 +43,16 @@ public class AnalysisControllerTest {
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
 	private UserService userServiceMock;
+	private SampleService sampleService;
 
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
+		sampleService = mock(SampleService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
-		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock, userServiceMock, 
-				messageSourceMock);
+		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
+				userServiceMock, sampleService, messageSourceMock);
 	}
 
 	@Test

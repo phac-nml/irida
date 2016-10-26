@@ -37,6 +37,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -49,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisS
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -73,14 +76,17 @@ public class AnalysisController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private UserService userService;
+	private SampleService sampleService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService,
+			SampleService sampleService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
+		this.sampleService = sampleService;
 	}
 
 	// ************************************************************************************************
@@ -443,6 +449,23 @@ public class AnalysisController {
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
 		List<String> lines = Files.readAllLines(file.getFile());
 		return ImmutableMap.of("newick", lines.get(0));
+	}
+
+	@RequestMapping("/ajax/{submissionId}/metadata")
+	@ResponseBody
+	public Map<String, Object> getMetadataForAnalysisSamples(@PathVariable Long submissionId) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		Map<String, Map> metadata = new HashMap<>();
+		for (Sample sample : samples) {
+			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+			if (sampleMetadata != null) {
+				metadata.put(sample.getLabel(), sampleMetadata.getMetadata());
+			} else {
+				metadata.put(sample.getLabel(), ImmutableMap.of());
+			}
+		}
+		return ImmutableMap.of("metadata", metadata);
 	}
 
 	/**
