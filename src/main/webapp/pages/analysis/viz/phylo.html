@@ -13,12 +13,20 @@
 </head>
 <body>
 <div layout:fragment="page">
+    <toolbar-component></toolbar-component>
     <phylocanvas-component
             data:newick="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
     </phylocanvas-component>
 </div>
 
 <th:block layout:fragment="scripts">
+    <script type="text/ng-template" id="toolbar.tmpl.html">
+        <div class="row spaced-bottom">
+            <div class="col-md-12 text-right">
+                <button class="btn btn-default">Export SVG</button>
+            </div>
+        </div>
+    </script>
     <script type="text/ng-template" id="phylocanvas.tmpl.html">
         <div id="phylocanvas"></div>
     </script>

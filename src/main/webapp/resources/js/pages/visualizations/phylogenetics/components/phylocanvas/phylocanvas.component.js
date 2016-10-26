@@ -1,8 +1,10 @@
 import Phylocanvas from 'phylocanvas';
+import metadataPlugin from 'phylocanvas-plugin-metadata';
 import exportSvgPlugin from 'phylocanvas-plugin-export-svg';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 
+Phylocanvas.plugin(metadataPlugin);
 Phylocanvas.plugin(exportSvgPlugin);
 
 const setCanvasHeight = $window => {
@@ -18,8 +20,41 @@ const setCanvasHeight = $window => {
 function controller($window, PhylocanvasService) {
   setCanvasHeight($window);
 
-  const tree = Phylocanvas.createTree(PHYLOCANVAS_DIV);
+  const tree = Phylocanvas.createTree(PHYLOCANVAS_DIV, {
+    metadata: {
+      active: true,
+      showHeaders: true,
+      showLabels: true,
+      blockLength: 32,
+      blockSize: null,
+      padding: 8,
+      columns: [],
+      propertyName: 'data',
+      underlineHeaders: true,
+      headerAngle: 90,
+      fillStyle: 'black',
+      strokeStyle: 'black',
+      lineWidth: 1,
+      font: null
+    }
+  });
   tree.setTreeType('rectangular');
+  tree.alignLabels = true;
+
+  tree.on('beforeFirstDraw', function() {
+    tree.leaves.forEach(leaf => {
+      leaf.data = {
+        column1: {
+          colour: '#3C7383',
+          label: leaf.label
+        },
+        column2: '#9BB7BF',
+        column3: '#3C7383',
+        column4: '#9BB7BF'
+      };
+    });
+  });
+
   let newick;
   PhylocanvasService.getNewickData(this.newick)
     .then(data => {
