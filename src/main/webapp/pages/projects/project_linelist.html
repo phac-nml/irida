@@ -33,7 +33,10 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <linelist data:template="${currentTemplate}"></linelist>
+            <linelist-component
+                    data:url="@{/projects/{id}/linelist(id=${project.getId()})}"
+                    data:template="${currentTemplate}">
+            </linelist-component>
         </div>
     </div>
 </main>
