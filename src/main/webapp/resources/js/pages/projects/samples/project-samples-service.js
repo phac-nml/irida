@@ -229,7 +229,7 @@
      * @returns {*}
      */
     SampleService.prototype.getAllIds = function() {
-      return get(page.urls.samples.sampleIds + "?" + $.param(_getFilterState()))
+      return post(page.urls.samples.sampleIds, _getFilterState())
         .success(function(result) {
           return result;
         });
