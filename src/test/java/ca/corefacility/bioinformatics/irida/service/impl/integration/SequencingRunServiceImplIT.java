@@ -163,7 +163,7 @@ public class SequencingRunServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
-	public void testCreateMiseqRunAsUserFail() {
+	public void testCreateMiseqRunAsUser() {
 		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		SequencingRun create = miseqRunService.create(mr);
 		assertEquals("user", create.getUser().getUsername());
