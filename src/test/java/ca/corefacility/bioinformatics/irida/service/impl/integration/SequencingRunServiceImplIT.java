@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -26,6 +27,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -41,11 +48,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
@@ -95,7 +97,15 @@ public class SequencingRunServiceImplIT {
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", password = "password1", roles = "USER")
+	public void testAddSequenceFileToMiseqRunAsUserFail() throws IOException, InterruptedException {
+		// user should not be able to add to the run because they don't own it
+		testAddSequenceFileToMiseqRun();
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testAddSequenceFileToMiseqRunAsUser() throws IOException, InterruptedException {
+		// user should be able to add to the run because they own it
 		testAddSequenceFileToMiseqRun();
 	}
 
@@ -199,6 +209,17 @@ public class SequencingRunServiceImplIT {
 	public void testCreateMiseqRunAsAdmin() {
 		MiseqRun r = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		miseqRunService.create(r);
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password = "password1", roles = "USER")
+	public void testFindAll(){
+		Iterable<SequencingRun> findAll = miseqRunService.findAll();
+		
+		List<SequencingRun> runs = Lists.newArrayList(findAll);
+		assertEquals("user should be able to see 1 run", 1, runs.size());
+		SequencingRun run = runs.iterator().next();
+		assertEquals("id should be 1", new Long(1), run.getId());
 	}
 
 	@Test
