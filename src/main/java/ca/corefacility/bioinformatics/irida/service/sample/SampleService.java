@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -249,4 +251,15 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            The {@link Sample} to delete metadata for
 	 */
 	public void deleteSampleMetadaForSample(Sample sample);
+
+	/**
+	 * Get a list of all {@link Sample}s associated with a given
+	 * {@link AnalysisSubmission}
+	 *
+	 * @param submission
+	 *            the {@link AnalysisSubmission}
+	 * @return a Collection of {@link Sample}
+	 */
+	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission);
+}
 }
