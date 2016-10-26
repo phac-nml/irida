@@ -49,9 +49,10 @@ function controller($window, $q, PhylocanvasService) {
       let prev;
       tree.leaves.forEach(leaf => {
         const md = metadata[leaf.label] || prev;
+        delete md.Comments;
         console.log(leaf.label, md);
         Object.keys(md).forEach(key => {
-          md[key] = {colour: '#3C7383', label: md[key]};
+          md[key] = {colour: 'rgba(55, 123, 181, 20)', label: md[key]};
         });
         leaf.data = md;
         prev = md;
