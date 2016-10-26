@@ -2,12 +2,12 @@ const empty = {type: 'text', label: '', template: null};
 const list = [{type: 'text', label: 'identifier'}, {type: 'text', label: 'label'}, Object.assign({}, empty)];
 const selectedTemplates = new Map();
 
-const metadataInput = {
+export const TemplateInputComponent = {
   bindings: {
     redirecturl: '@'
   },
   templateUrl: `templateInput.tmpl.html`,
-  controller(TemplateService) {
+  controller(TemplateInputService) {
     this.template = {
       list,
       name: ''
@@ -58,7 +58,7 @@ const metadataInput = {
           .filter(name => currentTemplates.indexOf(name) === -1)[0];
 
         // Get the new fields
-        TemplateService
+        TemplateInputService
           .getFieldsForTemplates(differentTemplate)
           .then(data => {
             // First two fields will alway be identifier and label
@@ -94,14 +94,16 @@ const metadataInput = {
     this.saveTemplate = () => {
       // remove any empty fields
       const fields = this.template.list
+      // Remove empty fields
         .filter(field => field.label.length !== 0)
+        // Take only the needed information
         .map(field => {
           return {label: field.label, type: field.type};
         });
-      TemplateService
+
+      // Call the service to save this template
+      TemplateInputService
         .saveTemplate({fields, name: this.template.name}, this.redirecturl);
     };
   }
 };
-
-export default metadataInput;
