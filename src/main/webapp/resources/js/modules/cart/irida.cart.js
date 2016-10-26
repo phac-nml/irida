@@ -245,7 +245,7 @@
       Object.keys(ids).map(function(id) {
         promises.push($http.post(PAGE.urls.samples.idList, {sampleIds: ids[id], projectId: id})
         .then(function(result) {
-          result.mapList.forEach(function(sample) {
+          result.data.samples.forEach(function(sample) {
             addSampleFile(sample.label, sample.href);
           });
         }));
