@@ -143,4 +143,14 @@
 	<sample_sequencingobject id="8"
 		created_date="2013-07-18 14:20:19.0" sample_id="9"
 		sequencingobject_id="3" />
+
+	<analysis_submission id="1" name="my analysis"
+		remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
+		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
+		analysis_cleaned_state="NOT_CLEANED" />
+		
+	<analysis_submission_sequence_file_pair
+	analysis_submission_id="1" sequence_file_pair_id="1" />
+	<analysis_submission_sequence_file_pair
+		analysis_submission_id="1" sequence_file_pair_id="2" />
 </dataset>
