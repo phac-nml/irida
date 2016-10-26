@@ -420,7 +420,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return {@link List} of {@link Sample} ids
 	 */
-	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
+	@RequestMapping(value = "/projects/{projectId}/ajax/sampleIds", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,

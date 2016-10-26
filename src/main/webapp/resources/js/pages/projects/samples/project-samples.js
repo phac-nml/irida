@@ -479,7 +479,7 @@
     function _selectAllSamples() {
       _sampleService.getAllIds()
         .then(function(result) {
-          $window.datatable.selectAll(result.data);
+          $window.datatable.selectAll(result);
         });
     }
 
