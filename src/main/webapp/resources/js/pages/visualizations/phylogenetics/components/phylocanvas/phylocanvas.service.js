@@ -8,8 +8,8 @@ export class PhylocanvasService {
       .then(response => response.data.newick);
   }
 
-  getMetadata(url) {
-    return this.$http.get(url)
+  getMetadata(url, template = 'default') {
+    return this.$http.get(`${url}?template=${template}`)
       .then(response => response.data.metadata);
   }
 }

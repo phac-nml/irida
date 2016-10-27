@@ -11,8 +11,9 @@ const setCanvasHeight = $window => {
   canvas.style.height = `${$window.innerHeight - 200}px`;
 };
 
-const colourMap = {};
+let colourMap;
 const generateColourMap = data => {
+  colourMap = {};
   const colours = {};
   const labels = Object.keys(data);
   for (const label of labels) {
@@ -30,9 +31,10 @@ const generateColourMap = data => {
 /**
  * Angular controller function for this scope.
  * @param {object} $window AngularJS window object
+ * @param {object} $scope AngularJS $scope object for current dom
  * @param {object} PhylocanvasService angular service for server exchanges
  */
-function controller($window, PhylocanvasService) {
+function controller($window, $scope, PhylocanvasService) {
   setCanvasHeight($window);
 
   const tree = Phylocanvas.createTree(PHYLOCANVAS_DIV, {
@@ -55,22 +57,27 @@ function controller($window, PhylocanvasService) {
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
 
-  const loadMetadata = metadata => {
-    tree.on('beforeFirstDraw', () => {
-      let prev;
-      tree.leaves.forEach(leaf => {
-        const md = metadata[leaf.label] || prev;
-        delete md.Comments;
-        Object.keys(md).forEach(key => {
-          md[key] = {colour: colourMap[key][md[key]], label: md[key]};
-        });
-        leaf.data = md;
-        prev = Object.assign({}, prev);
+  const updateMetadata = data => {
+    generateColourMap(data);
+    let prev = {};
+    tree.leaves.forEach(leaf => {
+      const md = data[leaf.label] || prev;
+      delete md.Comments;
+      Object.keys(md).forEach(key => {
+        md[key] = {colour: colourMap[key][md[key]], label: md[key]};
       });
+      leaf.data = md;
+      prev = Object.assign({}, prev);
     });
   };
 
-  PhylocanvasService.getMetadata(this.metadataurl)
+  const loadMetadata = metadata => {
+    tree.on('beforeFirstDraw', () => {
+      updateMetadata(metadata);
+    });
+  };
+
+  PhylocanvasService.getMetadata(this.metadataurl, this.template)
     .then(data => {
       generateColourMap(data);
       loadMetadata(data);
@@ -79,12 +86,21 @@ function controller($window, PhylocanvasService) {
           tree.load(data);
         });
     });
+
+  $scope.$on('TEMPLATE_CHANGE', (event, args) => {
+    PhylocanvasService.getMetadata(this.metadataurl, args.template)
+      .then(data => {
+        updateMetadata(data);
+        tree.draw();
+      });
+  });
 }
 
 export const PhylocanvasComponent = {
   bindings: {
     newickurl: '@',
-    metadataurl: '@'
+    metadataurl: '@',
+    template: '@'
   },
   templateUrl: 'phylocanvas.tmpl.html',
   controller
