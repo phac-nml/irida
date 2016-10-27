@@ -8,6 +8,7 @@ Changes
 * [UI]: Fixed bug preventing sample selection while filtered by file. (0.13.2)
 * [UI]: Fixed bug with selecting samples with associated projects. (0.13.3)
 * [UI]: Fixed bug when displaying samples names from associated projects when filtering by file. (0.13.3)
+* [UI]: Fixed a bug when selecting samples after filter by file with a large number of sample names. (0.13.4)
 * [UI]: Added filtering project samples by organism.
 
 0.12.0 to 0.13.0
