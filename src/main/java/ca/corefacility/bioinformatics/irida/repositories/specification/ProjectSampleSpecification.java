@@ -29,6 +29,8 @@ public class ProjectSampleSpecification {
 	 * 		{@link List} of {@link String} of Sample names to search
 	 * @param searchTerm
 	 * 		{@link String} search term to search for.
+	 * @param organism
+	 * 		{@link String} organism to search for.
 	 * @param minDate
 	 * 		{@link Date} minimum date the sample was modified.
 	 * @param maxDate
