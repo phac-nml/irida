@@ -1,6 +1,7 @@
 import Phylocanvas from 'phylocanvas';
 import metadataPlugin from 'phylocanvas-plugin-metadata';
 import exportSvgPlugin from 'phylocanvas-plugin-export-svg';
+import {Colours} from './../../../../../utilities/colour.utilities';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 
@@ -12,29 +13,43 @@ const setCanvasHeight = $window => {
   canvas.style.height = `${$window.innerHeight - 200}px`;
 };
 
+const colourMap = {};
+const generateColourMap = data => {
+  const colours = {};
+  const labels = Object.keys(data);
+  for (const label of labels) {
+    const terms = Object.keys(data[label]);
+    for (const term of terms) {
+      colours[term] = colours[term] ? colours[term] : new Colours();
+      colourMap[term] = colourMap[term] ? colourMap[term] : {};
+      if (!colourMap[term][data[label][term]]) {
+        colourMap[term][data[label][term]] = colours[term].getNext();
+      }
+    }
+  }
+};
+
 /**
  * Angular controller function for this scope.
  * @param {object} $window AngularJS window object
- * @param {object} $q AngularJS promise object
  * @param {object} PhylocanvasService angular service for server exchanges
  */
-function controller($window, $q, PhylocanvasService) {
+function controller($window, PhylocanvasService) {
   setCanvasHeight($window);
 
   console.log(this);
 
   const tree = Phylocanvas.createTree(PHYLOCANVAS_DIV, {
     metadata: {
-      active: true,
       showHeaders: true,
       showLabels: true,
       blockLength: 32,
-      blockSize: null,
-      padding: 8,
+      blockSize: 32,
+      padding: 18,
       columns: [],
       propertyName: 'data',
       underlineHeaders: true,
-      headerAngle: 90,
+      headerAngle: 0,
       fillStyle: 'black',
       strokeStyle: 'black',
       lineWidth: 1,
@@ -50,18 +65,19 @@ function controller($window, $q, PhylocanvasService) {
       tree.leaves.forEach(leaf => {
         const md = metadata[leaf.label] || prev;
         delete md.Comments;
-        console.log(leaf.label, md);
         Object.keys(md).forEach(key => {
-          md[key] = {colour: 'rgba(55, 123, 181, 20)', label: md[key]};
+          console.log(key, md[key], colourMap[key][md[key]]);
+          md[key] = {colour: colourMap[key][md[key]], label: md[key]};
         });
         leaf.data = md;
-        prev = md;
+        prev = Object.assign({}, prev);
       });
     });
   };
 
   PhylocanvasService.getMetadata(this.metadataurl)
     .then(data => {
+      generateColourMap(data);
       loadMetadata(data);
       PhylocanvasService.getNewickData(this.newickurl)
         .then(data => {
