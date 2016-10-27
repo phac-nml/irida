@@ -1,6 +1,6 @@
 const $ = require('jquery');
 
-export default class TemplateService {
+export class TemplateInputService {
   constructor($http, $window) {
     this.$http = $http;
     this.url = $window.location.href;

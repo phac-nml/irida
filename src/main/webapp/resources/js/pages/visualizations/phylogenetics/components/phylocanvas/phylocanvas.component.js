@@ -1,6 +1,6 @@
-import Phylocanvas from "phylocanvas";
-import metadataPlugin from "phylocanvas-plugin-metadata";
-import exportSvgPlugin from "phylocanvas-plugin-export-svg";
+import Phylocanvas from 'phylocanvas';
+import metadataPlugin from 'phylocanvas-plugin-metadata';
+import exportSvgPlugin from 'phylocanvas-plugin-export-svg';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 
