@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -391,8 +392,9 @@ public class SamplesController extends BaseController {
 	 *
 	 * @return {@link List} 
 	 */
-	@RequestMapping("/samples/idList")
-	public List<Map<String, String>> getSampleListByIdList(@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long projectId) {
+	@RequestMapping(value ="/samples/idList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getSampleListByIdList(@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long projectId) {
 		List<Sample> list = (List<Sample>) sampleService.readMultiple(sampleIds);
 		List<Map<String, String>> result = new ArrayList<>();
 		for (Sample sample : list) {
@@ -406,7 +408,7 @@ public class SamplesController extends BaseController {
 			));
 		}
 
-		return result;
+		return ImmutableMap.of("samples", result);
 	}
 
 	/**
