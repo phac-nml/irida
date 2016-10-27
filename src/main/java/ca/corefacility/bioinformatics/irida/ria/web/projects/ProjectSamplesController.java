@@ -288,11 +288,21 @@ public class ProjectSamplesController {
 	public String getProjectSamplesFilterModal(
 			@RequestParam(value = "projectIds[]", required = false, defaultValue = "") List<Long> projectIds,
 			Model model) {
-		Set<String> organisms = new HashSet<>();
+		Set<String> organismSet = new HashSet<>();
 		for (Long id : projectIds) {
 			Project project = projectService.read(id);
-			organisms.addAll(sampleService.getSampleOrganismsForProject(project));
+			organismSet.addAll(sampleService.getSampleOrganismsForProject(project));
 		}
+		List<String> organisms = new ArrayList<>(organismSet);
+		organisms.sort((o1, o2) -> {
+			if (Strings.isNullOrEmpty(o1)) {
+				o1 = "";
+			}
+			if (Strings.isNullOrEmpty(o2)) {
+				o2 = "";
+			}
+			return o1.compareToIgnoreCase(o2);
+		});
 		model.addAttribute("organisms", organisms);
 		return PROJECT_TEMPLATE_DIR + "sample-filter.modal";
 	}
