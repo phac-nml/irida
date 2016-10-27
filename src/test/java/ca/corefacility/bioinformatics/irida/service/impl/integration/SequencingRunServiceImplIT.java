@@ -97,15 +97,7 @@ public class SequencingRunServiceImplIT {
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", password = "password1", roles = "USER")
-	public void testAddSequenceFileToMiseqRunAsUserFail() throws IOException, InterruptedException {
-		// user should not be able to add to the run because they don't own it
-		testAddSequenceFileToMiseqRun();
-	}
-	
-	@Test
-	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testAddSequenceFileToMiseqRunAsUser() throws IOException, InterruptedException {
-		// user should be able to add to the run because they own it
 		testAddSequenceFileToMiseqRun();
 	}
 

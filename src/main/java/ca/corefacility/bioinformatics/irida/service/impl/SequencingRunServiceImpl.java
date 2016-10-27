@@ -90,7 +90,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN') or hasPermission(#run, 'canUpdateSequencingRun')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN')")
 	public void addSequencingObjectToSequencingRun(SequencingRun run, SequencingObject seqobject) {
 		// attach a copy of the file to the current transaction.
 		seqobject = objectRepository.findOne(seqobject.getId());
