@@ -6,8 +6,13 @@
  * Deep Purple (300)
  * Blue (200)
  * Teal (200)
+ * Purple (A100)
+ * Lime (400)
+ * Orange (200)
+ * Pink (200)
+ * Teal (A700)
  */
-const COLOUR_LIST = ['#0277BD', '#AD1457', '#00838F', '#9575CD', '#90CAF9', '#4DB6AC'];
+const COLOUR_LIST = ['#0277BD', '#AD1457', '#00838F', '#9575CD', '#90CAF9', '#4DB6AC', '#EA80FC', '#D4E157', '#FFCC80', '#F48FB1', '#00BFA5'];
 
 export class Colours {
   constructor() {

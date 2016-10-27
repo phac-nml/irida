@@ -1,12 +1,10 @@
 import Phylocanvas from 'phylocanvas';
 import metadataPlugin from 'phylocanvas-plugin-metadata';
-import exportSvgPlugin from 'phylocanvas-plugin-export-svg';
 import {Colours} from './../../../../../utilities/colour.utilities';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 
 Phylocanvas.plugin(metadataPlugin);
-Phylocanvas.plugin(exportSvgPlugin);
 
 const setCanvasHeight = $window => {
   const canvas = document.querySelector(`#${PHYLOCANVAS_DIV}`);
@@ -37,8 +35,6 @@ const generateColourMap = data => {
 function controller($window, PhylocanvasService) {
   setCanvasHeight($window);
 
-  console.log(this);
-
   const tree = Phylocanvas.createTree(PHYLOCANVAS_DIV, {
     metadata: {
       showHeaders: true,
@@ -66,7 +62,6 @@ function controller($window, PhylocanvasService) {
         const md = metadata[leaf.label] || prev;
         delete md.Comments;
         Object.keys(md).forEach(key => {
-          console.log(key, md[key], colourMap[key][md[key]]);
           md[key] = {colour: colourMap[key][md[key]], label: md[key]};
         });
         leaf.data = md;
@@ -82,7 +77,6 @@ function controller($window, PhylocanvasService) {
       PhylocanvasService.getNewickData(this.newickurl)
         .then(data => {
           tree.load(data);
-          console.log('tree loaded');
         });
     });
 }
