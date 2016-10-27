@@ -147,6 +147,8 @@ public class ProjectSamplesController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
+		// Set up the template information
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
 		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME)
