@@ -641,17 +641,24 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public List<Project> getRemoteProjects(){
 		return projectRepository.getRemoteProjects();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	public Set<Project> getProjectsForSequencingObjects(Collection<? extends SequencingObject> sequences) {
-
-		Set<SampleSequencingObjectJoin> samples = sequences.stream()
-				.map(s -> ssoRepository.getSampleForSequencingObject(s)).collect(Collectors.toSet());
-
 		Set<Project> projects = new HashSet<>();
-		for (SampleSequencingObjectJoin s : samples) {
-			psjRepository.getProjectForSample(s.getSubject()).forEach(p -> projects.add(p.getSubject()));
+
+		if (sequences != null && !sequences.isEmpty()) {
+			// get the samples for a seq object
+			Set<SampleSequencingObjectJoin> samples = sequences.stream()
+					.map(s -> ssoRepository.getSampleForSequencingObject(s)).collect(Collectors.toSet());
+
+			// get the projects for the samples
+			for (SampleSequencingObjectJoin s : samples) {
+				psjRepository.getProjectForSample(s.getSubject()).forEach(p -> projects.add(p.getSubject()));
+			}
 		}
 
 		return projects;
