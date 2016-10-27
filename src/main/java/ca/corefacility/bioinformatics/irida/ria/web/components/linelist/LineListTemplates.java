@@ -5,11 +5,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+
 import com.google.common.collect.ImmutableList;
 
 /**
  * Storage class for get line list templates.
  */
+@Component
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class LineListTemplates {
 
 	private static final List<LineListField> DEFAULT_TEMPLATE = ImmutableList

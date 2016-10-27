@@ -46,11 +46,11 @@ public class ProjectLineListController {
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
-			ProjectControllerUtils utils) {
+			ProjectControllerUtils utils, LineListTemplates lineListTemplates) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.projectControllerUtils = utils;
-		this.templates = new LineListTemplates();
+		this.templates = lineListTemplates;
 	}
 
 	/**
