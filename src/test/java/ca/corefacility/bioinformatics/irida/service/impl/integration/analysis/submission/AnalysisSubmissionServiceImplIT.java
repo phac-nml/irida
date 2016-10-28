@@ -583,6 +583,17 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetPercentageCompleteFailError() throws EntityNotFoundException, ExecutionManagerException {
 		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(7L);
 	}
+	
+	/**
+	 * Tests whether a user can read an analysis when they are not the submitter
+	 * but they are on a project where the analysis is shared
+	 */
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testReadSharedAnalysis() {
+		AnalysisSubmission read = analysisSubmissionService.read(3L);
+		assertEquals("id should be 3", new Long(3), read.getId());
+	}
 
 	/**
 	 * Test specification.
