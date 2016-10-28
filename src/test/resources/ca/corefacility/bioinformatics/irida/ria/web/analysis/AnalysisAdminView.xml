@@ -48,7 +48,7 @@
 		sequencing_run_id="1" />
 	<sequence_file_pair id="1" />
 	
-	<sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" />
+	<sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
 
     <sequence_file_pair_files pair_id="1" files_id="1" />
     <sequence_file_pair_files pair_id="1" files_id="2" />
