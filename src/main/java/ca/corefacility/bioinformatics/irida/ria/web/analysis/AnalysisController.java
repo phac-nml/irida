@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.dandelion.datatables.core.ajax.ColumnDef;
@@ -50,6 +51,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListField;
+import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListTemplates;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -77,16 +80,18 @@ public class AnalysisController {
 	private MessageSource messageSource;
 	private UserService userService;
 	private SampleService sampleService;
+	private LineListTemplates lineListTemplates;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService,
-			SampleService sampleService, MessageSource messageSource) {
+			SampleService sampleService, LineListTemplates lineListTemplates, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.sampleService = sampleService;
+		this.lineListTemplates = lineListTemplates;
 	}
 
 	// ************************************************************************************************
@@ -199,8 +204,12 @@ public class AnalysisController {
 	}
 
 	@RequestMapping("/{submissionId}/advanced-phylo")
-	public String getAdvancedPhylogeneticVisualizationPage(@PathVariable Long submissionId, Model model){
+	public String getAdvancedPhylogeneticVisualizationPage(
+			@PathVariable Long submissionId, Model model,
+			@RequestParam(required = false, defaultValue = "default") String template){
 		model.addAttribute("submissionId", submissionId);
+		model.addAttribute("templates", lineListTemplates.getTemplateNames());
+		model.addAttribute("currentTemplate", template);
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
 
@@ -453,14 +462,25 @@ public class AnalysisController {
 
 	@RequestMapping("/ajax/{submissionId}/metadata")
 	@ResponseBody
-	public Map<String, Object> getMetadataForAnalysisSamples(@PathVariable Long submissionId) {
+	public Map<String, Object> getMetadataForAnalysisSamples(
+			@PathVariable Long submissionId,
+			@RequestParam String template) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		List<LineListField> fields = lineListTemplates.getTemplate(template);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+
 		Map<String, Map> metadata = new HashMap<>();
 		for (Sample sample : samples) {
+			Map<String, Object> dataMap = new HashMap<>();
 			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
 			if (sampleMetadata != null) {
-				metadata.put(sample.getLabel(), sampleMetadata.getMetadata());
+				Map<String, Object> sampleData = sampleMetadata.getMetadata();
+				for (LineListField field : fields) {
+					if (sampleData.containsKey(field.getLabel())) {
+						dataMap.put(field.getLabel(), sampleData.get(field.getLabel()));
+					}
+				}
+				metadata.put(sample.getLabel(), dataMap);
 			} else {
 				metadata.put(sample.getLabel(), ImmutableMap.of());
 			}
