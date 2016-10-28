@@ -1,3 +1,4 @@
+
 export class PhylocanvasService {
   constructor($http) {
     this.$http = $http;
@@ -6,10 +7,5 @@ export class PhylocanvasService {
   getNewickData(url) {
     return this.$http.get(url)
       .then(response => response.data.newick);
-  }
-
-  getMetadata(url) {
-    return this.$http.get(url)
-      .then(response => response.data.metadata);
   }
 }

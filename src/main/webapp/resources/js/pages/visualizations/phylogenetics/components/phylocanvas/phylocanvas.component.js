@@ -1,90 +1,105 @@
-import Phylocanvas from 'phylocanvas';
-import metadataPlugin from 'phylocanvas-plugin-metadata';
-import {Colours} from './../../../../../utilities/colour.utilities';
+import Phylocanvas from "phylocanvas";
+import metadataPlugin from "phylocanvas-plugin-metadata";
+import {METADATA} from "./../../constants";
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 
 Phylocanvas.plugin(metadataPlugin);
+
+const metadataFormat = {
+  showHeaders: true,
+  showLabels: true,
+  blockLength: 32,
+  blockSize: 32,
+  padding: 18,
+  columns: [],
+  propertyName: 'data',
+  underlineHeaders: true,
+  headerAngle: 0,
+  fillStyle: 'black',
+  strokeStyle: 'black',
+  lineWidth: 1,
+  font: null
+};
 
 const setCanvasHeight = $window => {
   const canvas = document.querySelector(`#${PHYLOCANVAS_DIV}`);
   canvas.style.height = `${$window.innerHeight - 200}px`;
 };
 
-const colourMap = {};
-const generateColourMap = data => {
-  const colours = {};
-  const labels = Object.keys(data);
-  for (const label of labels) {
-    const terms = Object.keys(data[label]);
-    for (const term of terms) {
-      colours[term] = colours[term] ? colours[term] : new Colours();
-      colourMap[term] = colourMap[term] ? colourMap[term] : {};
-      if (!colourMap[term][data[label][term]]) {
-        colourMap[term][data[label][term]] = colours[term].getNext();
-      }
-    }
-  }
-};
-
 /**
  * Angular controller function for this scope.
  * @param {object} $window AngularJS window object
- * @param {object} PhylocanvasService angular service for server exchanges
+ * @param {object} $scope AngularJS $scope object for current dom
+ * @param {object} PhylocanvasService angular service for server exchanges for newick data
+ * @param {object} MetadataService angular service for server exchanges for metadata data
  */
-function controller($window, PhylocanvasService) {
+function controller($window, $scope, PhylocanvasService, MetadataService) {
+  // Make the canvas fill the viewable window.
   setCanvasHeight($window);
 
-  const tree = Phylocanvas.createTree(PHYLOCANVAS_DIV, {
-    metadata: {
-      showHeaders: true,
-      showLabels: true,
-      blockLength: 32,
-      blockSize: 32,
-      padding: 18,
-      columns: [],
-      propertyName: 'data',
-      underlineHeaders: true,
-      headerAngle: 0,
-      fillStyle: 'black',
-      strokeStyle: 'black',
-      lineWidth: 1,
-      font: null
-    }
-  });
-  tree.setTreeType('rectangular');
-  tree.alignLabels = true;
-
-  const loadMetadata = metadata => {
-    tree.on('beforeFirstDraw', () => {
-      let prev;
-      tree.leaves.forEach(leaf => {
-        const md = metadata[leaf.label] || prev;
-        delete md.Comments;
-        Object.keys(md).forEach(key => {
-          md[key] = {colour: colourMap[key][md[key]], label: md[key]};
-        });
-        leaf.data = md;
-        prev = Object.assign({}, prev);
-      });
+  // Initialize phylocanvas.
+  const tree = Phylocanvas
+    .createTree(PHYLOCANVAS_DIV, {
+      metadata: metadataFormat
     });
+
+  /**
+   * Update the tree leaves with new metadata
+   */
+  const updateMetadata = () => {
+    console.log(this.metadata);
+    let prev;
+    tree.leaves.forEach(leaf => {
+      const data = this.metadata[leaf.label];
+      if (data) {
+        leaf.data = data;
+      } else {
+        leaf.data = prev;
+      }
+      console.log(leaf.data);
+      prev = Object.assign({}, data);
+    });
+    if (tree.drawn) {
+      tree.draw();
+    }
   };
 
-  PhylocanvasService.getMetadata(this.metadataurl)
+  // Set tree defaults
+  tree.setTreeType('rectangular');
+  tree.alignLabels = true;
+  tree.on('beforeFirstDraw', () => updateMetadata());
+
+  /**
+   * Listen for changes to the metadata structure and update
+   * the phylocanvas accordingly.
+   */
+  $scope.$on(METADATA.UPDATED, (event, args) => {
+    this.metadata = args.metadata;
+    if (tree.drawn) {
+      updateMetadata();
+    } else {
+      // Load the tree only when the initial metadata is available.
+      tree.load(this.newick);
+    }
+  });
+
+  /**
+   * Kick everything off by getting the newick file and the
+   * initial metadata.
+   */
+  PhylocanvasService.getNewickData(this.newickurl)
     .then(data => {
-      generateColourMap(data);
-      loadMetadata(data);
-      PhylocanvasService.getNewickData(this.newickurl)
-        .then(data => {
-          tree.load(data);
-        });
+      this.newick = data;
+      MetadataService.getMetadata(this.metadataurl, this.template);
     });
 }
 
 export const PhylocanvasComponent = {
   bindings: {
     newickurl: '@',
-    metadataurl: '@'
+    metadataurl: '@',
+    template: '@'
   },
   templateUrl: 'phylocanvas.tmpl.html',
   controller

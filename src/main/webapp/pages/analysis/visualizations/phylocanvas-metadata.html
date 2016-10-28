@@ -13,23 +13,40 @@
 </head>
 <body>
 <div layout:fragment="page">
+    <template-selector-component
+            data:template="${currentTemplate}"
+            data:url="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
+    </template-selector-component>
     <phylocanvas-component
+            data:template="${currentTemplate}"
             data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}"
             data:metadataurl="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
     </phylocanvas-component>
+    <metadata-component></metadata-component>
 </div>
 
 <th:block layout:fragment="scripts">
-    <script type="text/ng-template" id="toolbar.tmpl.html">
+    <script type="text/ng-template" id="templateSelector.tmpl.html">
         <div class="row spaced-bottom">
-            <div class="col-md-12 text-right">
-                <button class="btn btn-default" ng-click="$ctrl.exportSVG()">Export SVG</button>
+            <div class="col-md-12">
+                <select class="form-control" id="template-select"
+                        ng-model="$ctrl.template"
+                        ng-change="$ctrl.templateChanged()">
+                    <option th:each="template : ${templates}" th:value="${template}"
+                            th:text="${#strings.capitalizeWords(template)}"
+                            th:selected="${template == currentTemplate}"></option>
+                </select>
             </div>
         </div>
     </script>
     <script type="text/ng-template" id="phylocanvas.tmpl.html">
-        <toolbar-component></toolbar-component>
-        <div id="phylocanvas"></div>
+        <div class="spaced-bottom" id="phylocanvas"></div>
+    </script>
+    <script type="text/ng-template" id="metadata.tmpl.html">
+        <div class="alert alert-info">
+            <strong>Metadata Selection</strong>
+            <p>Sub select which metadata to display on this image.</p>
+        </div>
     </script>
     <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
             th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
