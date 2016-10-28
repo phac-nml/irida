@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -17,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.Analy
 public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 	AnalysesUserPage page;
 
+	@Before
 	public void setUp() {
 		LoginPage.loginAsManager(driver());
 	}
