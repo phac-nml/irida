@@ -657,7 +657,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 			// get the projects for the samples
 			for (SampleSequencingObjectJoin s : samples) {
-				psjRepository.getProjectForSample(s.getSubject()).forEach(p -> projects.add(p.getSubject()));
+				psjRepository.getProjectForSample(s.getSubject()).forEach(p -> {
+					// p may be null if sample was removed from all projects
+					if (p != null) {
+						projects.add(p.getSubject());
+					}
+				});
 			}
 		}
 
