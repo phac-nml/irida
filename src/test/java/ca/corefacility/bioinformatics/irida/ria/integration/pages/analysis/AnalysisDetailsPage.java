@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -24,6 +26,12 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	@FindBy(id = "inputs")
 	private WebElement tabInputFiles;
+	
+	@FindBy(id = "share")
+	private WebElement tabShare;
+	
+	@FindBy(className = "share-project")
+	private List<WebElement> shareCheckboxes;
 
 	@FindBy(className = "file-info")
 	private List<WebElement> fileInfo;
@@ -57,6 +65,24 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 */
 	public void displayProvenanceView() {
 		tabProvenance.click();
+	}
+	
+	public void displayShareTab(){
+		tabShare.click();
+	}
+	
+	public List<Long> getSharedProjectIds(){
+		return shareCheckboxes.stream().filter(s -> s.isSelected()).map(s -> Long.valueOf(s.getAttribute("id")))
+				.collect(Collectors.toList());
+	}
+	
+	public void clickShareBox(Long id){
+		Optional<WebElement> checkbox = shareCheckboxes.stream().filter(s -> s.getAttribute("id").equals(id.toString())).findFirst();
+		
+		if(!checkbox.isPresent()){
+			throw new IllegalArgumentException("share box with id " + id + " doesn't exist");
+		}
+		checkbox.get().click();
 	}
 
 	/**

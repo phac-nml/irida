@@ -87,4 +87,32 @@
     <client_details_resource_ids
         client_details_id="1" resource_id="NmlIrida" />
     <client_details_scope client_details_id="1" scope="read" />
+    
+    <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
+    <sequence_file_pair id="1" />
+    
+    <sample id="1" createdDate="2013-07-18 14:20:19.0" sampleName="sample"/>
+    <project_sample id="1" sample_id="1" project_id="1" createdDate="2013-07-18 14:20:19.0" />
+    <project_sample id="2" sample_id="1" project_id="2" createdDate="2013-07-18 14:20:19.0" />
+
+	<analysis_submission id="1" name="my analysis"
+		remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
+		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="4"
+		analysis_cleaned_state="NOT_CLEANED" />
+	<analysis_submission id="2" analysis_state="PREPARING"
+		created_date="2013-09-06 10:01:02" name="My Pretend Submission"
+		analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44"
+		submitter="4" analysis_cleaned_state="NOT_CLEANED" />
+	<analysis_submission id="3" analysis_state="SUBMITTING"
+		created_date="2013-10-06 10:01:02" name="My Submitted Submission"
+		analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44"
+		submitter="4" analysis_cleaned_state="NOT_CLEANED" />
+	
+	<analysis_submission_sequence_file_pair analysis_submission_id="1" sequence_file_pair_id="1" />
+	<analysis_submission_sequence_file_pair analysis_submission_id="2" sequence_file_pair_id="1" />
+	<analysis_submission_sequence_file_pair analysis_submission_id="3" sequence_file_pair_id="1" />
+		
+	<project_analysis_submission id="1" project_id="1" analysis_submission_id="1"/>
+	<project_analysis_submission id="2" project_id="1" analysis_submission_id="2"/>
+	<project_analysis_submission id="3" project_id="2" analysis_submission_id="3"/> 
 </dataset>

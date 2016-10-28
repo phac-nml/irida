@@ -57,7 +57,7 @@
 					<div class="col-md-6" th:each="presp : ${projects}" th:with="project=${presp.project}">
 						<div class="checkbox">
 							<label>
-								<input type="checkbox" class="share-project" 
+								<input type="checkbox" class="share-project" th:id="${project.id}"
 								data:ng-init="${'projects['+project.id+'] = ' + presp.shared}" data:ng-model="${'projects['+project.id+']'}" 
 								data:ng-change="${'shareController.updateShared(' + project.id + ', projects[' + project.id + '])'}"/>
 								<span th:text="${project.name}"></span>
