@@ -69,8 +69,6 @@
     <related_project id="2" subject_id="1" relatedProject_id="3" createdDate="2013-07-18 14:20:19.0" />
     <related_project id="3" subject_id="1" relatedProject_id="5" createdDate="2013-07-18 14:20:19.0" />
 
-    <project_sample />
-
     <reference_file id="1" createdDate="2014-08-06 10:01:02" filePath="/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq" />
     <project_referencefile id="1" createdDate="2014-08-06 10:01:02" project_id="1" reference_file_id="1"/>
     
@@ -91,22 +89,28 @@
     <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
     <sequence_file_pair id="1" />
     
+    <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+		modified_date="2013-07-18 14:20:19.0"
+		file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R1_001.fastq"
+		file_revision_number="1" />
+	<sequence_file id="2" created_date="2014-07-30 08:24:34"
+		file_revision_number="1" modified_date="2014-08-06 10:01:03"
+		file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq" />
+    <sequence_file_pair_files pair_id="1" files_id="1" />
+    <sequence_file_pair_files pair_id="1" files_id="2" />
+    
     <sample id="1" createdDate="2013-07-18 14:20:19.0" sampleName="sample"/>
     <project_sample id="1" sample_id="1" project_id="1" createdDate="2013-07-18 14:20:19.0" />
     <project_sample id="2" sample_id="1" project_id="2" createdDate="2013-07-18 14:20:19.0" />
+    
+    <sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
 
-	<analysis_submission id="1" name="my analysis"
-		remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
-		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="4"
-		analysis_cleaned_state="NOT_CLEANED" />
-	<analysis_submission id="2" analysis_state="PREPARING"
-		created_date="2013-09-06 10:01:02" name="My Pretend Submission"
-		analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44"
-		submitter="4" analysis_cleaned_state="NOT_CLEANED" />
-	<analysis_submission id="3" analysis_state="SUBMITTING"
-		created_date="2013-10-06 10:01:02" name="My Submitted Submission"
-		analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44"
-		submitter="4" analysis_cleaned_state="NOT_CLEANED" />
+	<analysis_submission id="1" name="another analysis" remote_analysis_id="1" 
+                         analysis_state="ERROR" created_date="2013-07-18 14:20:19" workflow_id="84360882-2959-4479-a20a-539feacb6922" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
+    <analysis_submission id="2" analysis_state="ERROR" created_date="2013-09-06 10:01:02" name="My Pretend Submission"  
+                         workflow_id="84360882-2959-4479-a20a-539feacb6922" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
+    <analysis_submission id="3" analysis_state="ERROR" created_date="2013-10-06 10:01:02"
+                         name="My Submitted Submission" workflow_id="84360882-2959-4479-a20a-539feacb6922" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
 	
 	<analysis_submission_sequence_file_pair analysis_submission_id="1" sequence_file_pair_id="1" />
 	<analysis_submission_sequence_file_pair analysis_submission_id="2" sequence_file_pair_id="1" />

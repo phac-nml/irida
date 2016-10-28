@@ -20,11 +20,26 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Before
 	public void setUp() {
-		LoginPage.loginAsManager(driver());
+		
 	}
 
 	@Test
 	public void testGetProjectAnalyses() {
+		LoginPage.loginAsManager(driver());
+		Long projectId = 1L;
+		page = AnalysesUserPage.initializeProjectPage(projectId, driver());
+
+		assertEquals("should be 2 analyses", 2, page.getNumberOfAnalyses());
+		
+		// checking to ensure the user can see the analysis page
+		AnalysisDetailsPage analysisPage = AnalysisDetailsPage.initPage(driver(), 1L);
+		
+		assertEquals("should be 2 files", 2, analysisPage.getNumberOfPairedEndInputFiles());
+	}
+	
+	@Test
+	public void testGetProjectAnalysesOwner(){
+		LoginPage.loginAsAdmin(driver());
 		Long projectId = 1L;
 		page = AnalysesUserPage.initializeProjectPage(projectId, driver());
 
@@ -32,13 +47,14 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		
 		AnalysisDetailsPage analysisPage = AnalysisDetailsPage.initPage(driver(), 1L);
 		
-		analysisPage.displayInputFilesTab();
+		assertEquals("should be 2 files", 2, analysisPage.getNumberOfPairedEndInputFiles());
+		
+		analysisPage.displayShareTab();
 		
 		List<Long> sharedProjectIds = analysisPage.getSharedProjectIds();
 		assertEquals("should be 1 shared project", 1, sharedProjectIds.size());
 		Long sharedId = sharedProjectIds.iterator().next();
 		
 		assertEquals("should be shared with project 1", new Long(1), sharedId);
-		
 	}
 }
