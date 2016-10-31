@@ -119,8 +119,10 @@
     }
 
     function openFilterModal() {
+      var ids = page.ajaxParam.associated || [];
+      ids.unshift(page.project.id);
       return $uibModal.open({
-        templateUrl: "filter.modal.html",
+        templateUrl: page.urls.modals.filter + "?" + $.param({projectIds: ids}),
         controllerAs: "filterCtrl",
         openedClass : 'filter-modal',
         controller: "FilterModalController"
@@ -278,9 +280,12 @@
     this.setState = function(s) {
       ng.copy(s, currState);
       $rootScope.$broadcast("FILTER_TABLE", {filter: {
+        organism: s.organism,
         name: s.name,
-        minDate: !!s.date.startDate  ? s.date.startDate.valueOf() : "",
-        endDate: !!s.date.endDate  ? s.date.endDate.valueOf() : ""
+        date: {
+          min: !!s.date.startDate  ? s.date.startDate.valueOf() : "",
+          end: !!s.date.endDate  ? s.date.endDate.valueOf() : ""
+        }
       }});
     };
 
@@ -288,13 +293,12 @@
       ng.copy(defaultState, currState);
     });
 
-    $rootScope.$on('CLEAR_FILTER_PROPERTY', function (event, args) {
-      if(currState[args.property] !== undefined && currState[args.property].length > 0) {
-        delete currState[args.property];
-      } else if(currState.date[args.property]){
-        currState.date[args.property] = null;
+    $rootScope.$on('FILTER_CLEARED', function (event, args) {
+      if(args.type === 'endDate' || args.type === 'endDate') {
+        delete currState.date[args.type];
+      } else if(currState.hasOwnProperty(args.type)) {
+        delete currState[args.type];
       }
-      $rootScope.$broadcast("FILTER_TABLE", {filter: currState});
     });
   }
 
@@ -336,9 +340,19 @@
     };
   }
 
+  function selectInput () {
+    return {
+      restrict: 'A',
+      link: function(scope, elm, attrs) {
+        $(elm).select2();
+      }
+    };
+  }
+
   ng.module("irida.projects.samples.modals", ["irida.projects.samples.service", "irida.directives.select2", "ngMessages", "ui.bootstrap", "daterangepicker"])
     .factory("modalService", ["$uibModal", modalService])
     .service("FilterStateService", ["$rootScope", FilterStateService])
+    .directive("selectInput", selectInput)
     .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
     .controller("FilterModalController", ["$uibModalInstance", "FilterStateService", FilterModalController])

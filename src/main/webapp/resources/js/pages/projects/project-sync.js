@@ -28,7 +28,7 @@ $(document).ready(function(){
 });
 
 function getApiProjects(apiId){
-    var url = /*[[@{/projects/ajax/api/}]]*/ "/projects/ajax/api/";
+    var url = PAGE.urls.apiProjectList;
     url = url + apiId;
     
     $(".project-option").remove();
