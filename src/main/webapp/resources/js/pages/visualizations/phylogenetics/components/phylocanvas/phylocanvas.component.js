@@ -1,10 +1,12 @@
-import Phylocanvas from "phylocanvas";
-import metadataPlugin from "phylocanvas-plugin-metadata";
-import {METADATA} from "./../../constants";
+import Phylocanvas from 'phylocanvas';
+import metadataPlugin from 'phylocanvas-plugin-metadata';
+import exportSvgPlugin from 'phylocanvas-plugin-export-svg';
+import {METADATA} from './../../constants';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 
 Phylocanvas.plugin(metadataPlugin);
+Phylocanvas.plugin(exportSvgPlugin);
 
 const metadataFormat = {
   showHeaders: true,
@@ -69,6 +71,10 @@ function controller($window, $scope, PhylocanvasService, MetadataService) {
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
   tree.on('beforeFirstDraw', () => updateMetadata());
+
+  this.export = () => {
+    console.info(tree.exportSVG.getSerialisedSVG());
+  };
 
   /**
    * Listen for changes to the metadata structure and update
