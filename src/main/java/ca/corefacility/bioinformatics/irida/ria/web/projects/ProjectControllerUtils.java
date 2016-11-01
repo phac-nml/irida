@@ -52,6 +52,7 @@ public class ProjectControllerUtils {
 	 */
 	public void getProjectTemplateDetails(Model model, Principal principal, Project project) {
 		User loggedInUser = userService.getUserByUsername(principal.getName());
+		model.addAttribute("project", project);
 
 		// Determine if the user is an owner or admin.
 		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
