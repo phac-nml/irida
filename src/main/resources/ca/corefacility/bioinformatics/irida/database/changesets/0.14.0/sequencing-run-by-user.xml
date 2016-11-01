@@ -15,8 +15,12 @@
 		</addColumn>
 
 		<addColumn tableName="sequencing_run_AUD">
-			<column name="user_id" type="bigint(20)"/>
+			<column name="user_id" type="bigint(20)" />
 		</addColumn>
+
+		<sql>UPDATE sequencing_run r INNER JOIN sequencing_run_AUD a ON
+			r.id=a.id INNER JOIN Revisions e ON e.id=a.REV SET
+			r.user_id=e.user_id WHERE a.REVTYPE=0</sql>
 
 	</changeSet>
 </databaseChangeLog>
