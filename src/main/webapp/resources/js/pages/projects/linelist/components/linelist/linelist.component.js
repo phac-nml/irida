@@ -64,7 +64,7 @@ export const LinelistComponent = {
     generate(this.template);
 
     /**
-     * Listen for a change in the tempalte to reload the table.
+     * Listen for a change in the template to reload the table.
      */
     $scope.$on('LINELIST_TEMPLATE_CHANGE', (event, args) => {
       generate(args.template);
