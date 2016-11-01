@@ -11,7 +11,7 @@
             project: {
                 id: /*[[${project.getId()}]]*/ '4'
             },
-            ajaxParam: {},
+            ajaxParam: {date:{}},
             urls: {
                 associated: {
                     local: /*[[@{/projects/{id}/ajax/associated(id=${project.getId()})}]]*/ ''
@@ -21,7 +21,8 @@
                     merge: /*[[@{/projects/templates/merge-modal}]]*/ '/projects/templates/merge-modal',
                     copy: /*[[@{/projects/templates/copy-modal(projectId=${project.getId()})}]]*/ '/projects/templates/copy-modal',
                     move: /*[[@{/projects/templates/move-modal(projectId=${project.getId()})}]]*/ '/projects/templates/move-modal',
-                    galaxy: /*[[@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}]]*/ '/cart/template/galaxy/project/1'
+                    galaxy: /*[[@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}]]*/ '/cart/template/galaxy/project/1',
+                    filter: /*[[@{/projects/template/samples-filter-modal}]]*/ ''
                 },
                 projects: {
                   available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
@@ -291,26 +292,6 @@
         <div th:replace="projects/partials/samples.tmpl :: filterButtons"></div>
     </script>
 
-    <script id="filter.modal.html" type="text/ng-template">
-        <div class="modal-header">
-            <h3 class="modal-title" th:text="#{project.sample.filter-title}">[Filter Samples]</h3>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="name" th:text="#{project.sample.filter-name}">Name</label>
-                <input type="text" class="form-control" id="name" ng-model="filterCtrl.filter.name"/>
-            </div>
-            <div class="form-group">
-                <label for="daterange" th:text="#{project.sample.filter-date}">Date</label>
-                <input id="daterange" type="text" date-range-picker="" class="form-control date-picker" options="filterCtrl.options" ng-model="filterCtrl.filter.date"/>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-default" ng-click="filterCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
-            <button id="doFilterBtn" class="btn btn-primary" ng-click="filterCtrl.doFilter()" th:text="#{table.filter.openBtn}">Filter</button>
-        </div>
-    </script>
-
     <script id="associated-projects.modal.html" type="text/ng-template" th:inline="javascript">
         <div class="modal-header">
             <h3 class="modal-title" th:text="#{project.samples.associated.modal.title}">Projects to include in
@@ -392,10 +373,14 @@
 
     <script type="text/ng-template" id="filtered-tags.html">
         <div class="text-right">
-            <span class="label label-default" ng-show="tags.tag.file" th:text="#{project.sample.filter-by-file}" ng-click="tags.close('file')"></span>
-            <span class="label label-default" ng-show="tags.tag.name" ng-click="tags.close('name')"><th:block th:text="#{project.samples.filter.by-name}"/> : {{tags.tag.name}}</span>
-            <span class="label label-default" ng-show="tags.tag.minDate" ng-click="tags.close('minDate')"><th:block th:text="#{project.samples.filter.by-minDate}"/> : {{tags.tag.minDate | date: 'mediumDate'}}</span>
-            <span class="label label-default" ng-show="tags.tag.endDate" ng-click="tags.close('endDate')"><th:block th:text="#{project.samples.filter.by-endDate}"/> : {{tags.tag.endDate | date: 'mediumDate'}}</span>
+            <span class="label label-default" ng-show="tags.file" th:text="#{project.sample.filter-by-file}" ng-click="tags.closeFile()"></span>
+            <span class="label label-default" ng-show="tags.date.min" ng-click="tags.close('min')"><th:block th:text="#{project.samples.filter.by-minDate}"/> : {{tags.date.min | date: 'mediumDate'}}</span>
+            <span class="label label-default" ng-show="tags.date.end" ng-click="tags.close('end')"><th:block th:text="#{project.samples.filter.by-endDate}"/> : {{tags.date.end | date: 'mediumDate'}}</span>
+            <span ng-repeat="(tag, value) in tags.tag"
+                  class="label label-default"
+                  ng-click="tags.close(tag)">
+                {{ tag }} : {{ value }}
+            </span>
         </div>
     </script>
 
