@@ -4,6 +4,13 @@
       layout:decorator="template/page">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
+    <script th:inline="javascript">
+        var PAGE = {
+            urls: {
+                'apiProjectList': /*[[@{/projects/ajax/api/}]]*/ "/projects/ajax/api/"
+            }
+        };
+    </script>
 </head>
 <body>
 <div layout:fragment="page">
