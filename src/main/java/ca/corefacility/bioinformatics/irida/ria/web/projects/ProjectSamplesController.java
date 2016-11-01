@@ -147,6 +147,8 @@ public class ProjectSamplesController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
+		// Set up the template information
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
 		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME)
@@ -284,6 +286,41 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Get the modal window for filtering project samples
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param associated
+	 * 		{@link List} of {@link Long} identifiers for visible associated {@link Project}
+	 * @param model
+	 * 		Spring {@link Model}
+	 *
+	 * @return {@link String} path to the modal template
+	 */
+	@RequestMapping("/projects/template/samples-filter-modal")
+	public String getProjectSamplesFilterModal(
+			@RequestParam(value = "projectIds[]", required = false, defaultValue = "") List<Long> projectIds,
+			Model model) {
+		Set<String> organismSet = new HashSet<>();
+		for (Long id : projectIds) {
+			Project project = projectService.read(id);
+			organismSet.addAll(sampleService.getSampleOrganismsForProject(project));
+		}
+		List<String> organisms = new ArrayList<>(organismSet);
+		organisms.sort((o1, o2) -> {
+			if (Strings.isNullOrEmpty(o1)) {
+				o1 = "";
+			}
+			if (Strings.isNullOrEmpty(o2)) {
+				o2 = "";
+			}
+			return o1.compareToIgnoreCase(o2);
+		});
+		model.addAttribute("organisms", organisms);
+		return PROJECT_TEMPLATE_DIR + "sample-filter.modal";
+	}
+
+	/**
 	 * Create a modal dialog to move samples to another project.
 	 *
 	 * @param ids
@@ -397,6 +434,7 @@ public class ProjectSamplesController {
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") Long minDate,
 			@RequestParam(required = false, defaultValue = "") Long endDate) {
 		List<Project> projects = new ArrayList<>();
@@ -410,8 +448,8 @@ public class ProjectSamplesController {
 		// Convert the criterias into a more usable format.
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
 
-		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, utils.getSearch(),
-				name, utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(),
+		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(), organism,
+				utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(),
 				utils.getSortDirection(), utils.getSortProperty());
 
 		// Create a more usable Map of the sample data.
@@ -431,13 +469,14 @@ public class ProjectSamplesController {
 	 *
 	 * @return {@link List} of {@link Sample} ids
 	 */
-	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
+	@RequestMapping(value = "/projects/{projectId}/ajax/sampleIds", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
 			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
 			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String search,
+			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String minDate,
 			@RequestParam(required = false, defaultValue = "") String endDate) {
 		// Add the current project to the associatedProjectIds list.
@@ -458,7 +497,7 @@ public class ProjectSamplesController {
 
 		final Page<ProjectSampleJoin> page = sampleService
 				.getFilteredSamplesForProjects(projects, sampleNames, name,
-						search, firstDate, lastDate, 0, Integer.MAX_VALUE,
+						search, organism, firstDate, lastDate, 0, Integer.MAX_VALUE,
 						Direction.ASC, "id");
 
 		// Converting everything to a string for consumption by the UI.
@@ -1161,6 +1200,7 @@ public class ProjectSamplesController {
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") Long minDate,
 			@RequestParam(required = false, defaultValue = "") Long endDate,
 			HttpServletRequest request,
@@ -1179,7 +1219,7 @@ public class ProjectSamplesController {
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
 
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(),
-				utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE,
+				organism, utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE,
 				utils.getSortDirection(), utils.getSortProperty());
 
 		if (page != null) {

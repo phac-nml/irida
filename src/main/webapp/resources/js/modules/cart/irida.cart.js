@@ -243,9 +243,9 @@
       // Need to get an actual list of samples from the server from their ids.
       var promises = [];
       Object.keys(ids).map(function(id) {
-        promises.push($http.get(PAGE.urls.samples.idList + "?" + $.param({sampleIds: ids[id], projectId: id}))
+        promises.push($http.post(PAGE.urls.samples.idList, {sampleIds: ids[id], projectId: id})
         .then(function(result) {
-          result.data.mapList.forEach(function(sample) {
+          result.data.samples.forEach(function(sample) {
             addSampleFile(sample.label, sample.href);
           });
         }));

@@ -2,10 +2,14 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.sample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
@@ -32,6 +36,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -40,6 +46,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 /**
  * Integration tests for the sample service.
@@ -61,6 +68,8 @@ public class SampleServiceImplIT {
 	private ProjectService projectService;
 	@Autowired
 	private SequencingObjectService objectService;
+	@Autowired
+	private AnalysisSubmissionService analysisSubmissionService;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -326,6 +335,20 @@ public class SampleServiceImplIT {
 		Project p = projectService.read(1L);
 		List<String> organisms = sampleService.getSampleOrganismsForProject(p);
 		assertEquals("should be 2 organisms", 2, organisms.size());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testGetSamplesForAnalysisSubmission() {
+		AnalysisSubmission submission = analysisSubmissionService.read(1L);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		
+		assertEquals("should be 2 samples", 2, samples.size());
+		
+		Set<Long> ids = Sets.newHashSet(8L, 9L);
+		samples.forEach(s -> ids.remove(s.getId()));
+		
+		assertTrue("all sample ids should be found", ids.isEmpty());
 	}
 
 	private void assertSampleNotFound(Long id) {

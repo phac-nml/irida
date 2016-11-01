@@ -319,7 +319,7 @@ public class ProjectSamplesControllerTest {
 		));
 
 		when(sampleService
-				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
+				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
 						any(Integer.class), any(Integer.class), any(
 								Sort.Direction.class), any(String.class)))
 				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
@@ -331,7 +331,7 @@ public class ProjectSamplesControllerTest {
 		when(criterias.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
 
 		DatatablesResponse<ProjectSampleModel> response = controller
-				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of(), null, null, null);
+				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
 		List<ProjectSampleModel> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
 		ProjectSampleModel sampleData = data.get(0);
