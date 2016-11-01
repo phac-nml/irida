@@ -410,7 +410,11 @@
            * Request to display tags for all currently applied filters.
            */
           $scope.$on("FILTER_TABLE", function (event, args) {
-            ng.extend(vm.tag, args.filter);
+            // Need to remove empty fields
+            var tags = _.pickBy(args.filter);
+            vm.date = tags.date;
+            delete tags.date;
+            vm.tag = tags;
           });
 
           /**
@@ -425,7 +429,7 @@
            */
           $scope.$on('FILE_FILTER', function () {
             $scope.$apply(function () {
-              vm.tag.file = true;
+              vm.file = true;
             });
           });
 
@@ -434,8 +438,17 @@
            * @param type The filter to remove
            */
           vm.close = function (type) {
-            delete vm.tag[type];
+            if (vm.tag.hasOwnProperty(type)) {
+              delete vm.tag[type];
+            } else if(vm.date.hasOwnProperty(type)) {
+              delete vm.date[type]
+            }
             $scope.$broadcast('FILTER_CLEARED', {type: type});
+          };
+
+          vm.closeFile = function() {
+            delete vm.file;
+            $scope.$broadcast('FILTER_CLEARED', {type: "file"});
           };
         }]
       };

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -205,6 +206,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * 	    {@link String} exact name of a specific {@link Sample}
 	 * @param searchTerm
 	 * 		{@link String} search term to search for.
+	 * @param organism
+	 * 		{@link String} organism ter to search for.
 	 * @param minDate
 	 * 		{@link Date} minimum date the sample was modified.
 	 * @param maxDate
@@ -214,15 +217,16 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param pageSize
 	 * 		{@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
 	 * @param direction
-	 * 		{@link Direction} the direction of the sort for the {@link Page}.
+	 * 		{@link Sort.Direction} the direction of the sort for the {@link Page}.
 	 * @param sortProperty
 	 * 		{@link String} the attribute of the {@link ProjectSampleJoin} to sort by.
 	 *
 	 * @return
 	 */
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
-			String sampleName, String searchTerm, Date minDate, Date maxDate, int currentPage, int pageSize,
-			Direction direction, String sortProperty);
+			String sampleName, String searchTerm, String organism,
+			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
+
 	/**
 	 * Get the {@link SampleMetadata} object for a given {@link Sample}
 	 *
@@ -232,7 +236,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public SampleMetadata getMetadataForSample(Sample s);
 
-       /**
+	/**
 	 * Save a {@link SampleMetadata} object for a given {@link Sample}. If an
 	 * existing {@link SampleMetadata} object exists, this will overwrite it.
 	 *
@@ -262,4 +266,3 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission);
 }
-
