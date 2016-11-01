@@ -114,7 +114,7 @@ public class AbstractIridaUIITChromeDriver {
     	 */
     	@Override
     	protected void failed(final Throwable t, final Description description) {
-    		logger.debug("Handling exception of type [" + t.getClass() + "], taking screenshot.");
+			logger.debug("Handling exception of type [" + t.getClass() + "], taking screenshot: " + t.getMessage());
     		final TakesScreenshot takesScreenshot = (TakesScreenshot) driver();
     		
     		final Path screenshot = Paths.get(takesScreenshot.getScreenshotAs(OutputType.FILE).toURI());
