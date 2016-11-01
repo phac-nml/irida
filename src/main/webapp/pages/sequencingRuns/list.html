@@ -7,7 +7,8 @@
 		
 		var PAGE = {
 			urls: {
-				link: /*[[@{/sequencingRuns/}]]*/ '/sequencingRuns/'
+				link: /*[[@{/sequencingRuns/}]]*/ '/sequencingRuns/',
+                users: /*[[@{/users/}]]*/ '/users/'
 			}
 		};
 	</script>
@@ -23,6 +24,7 @@
                     <th dt:property="id" th:text="#{iridaThing.id}" dt:renderFunction="sequencing-runs-list#runsTable.runLinkRow" dt:sortInitDirection="desc"></th>
                     <th dt:property="sequencerType" dt:sortable="false" th:text="#{sequencingruns.type}"></th>
                     <th dt:property="uploadStatus" th:text="#{sequencingruns.uploadStatus}"></th>
+                    <th dt:property="user" th:text="#{sequencingruns.details.uploader}" dt:renderFunction="sequencing-runs-list#runsTable.runUserRow"></th>
                     <th dt:property="createdDate" th:text="#{iridaThing.timestamp}" dt:renderFunction="datatables-utils#datatable.formatDate" ></th>
                 </tr>
                 </thead>
