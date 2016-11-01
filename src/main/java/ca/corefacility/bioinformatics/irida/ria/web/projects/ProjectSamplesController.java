@@ -147,6 +147,8 @@ public class ProjectSamplesController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
+		// Set up the template information
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
 		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME)
@@ -431,7 +433,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return {@link List} of {@link Sample} ids
 	 */
-	@RequestMapping("/projects/{projectId}/ajax/sampleIds")
+	@RequestMapping(value = "/projects/{projectId}/ajax/sampleIds", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
