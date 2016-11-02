@@ -6,6 +6,9 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
+	@FindBy(id = "template-name")
+	private WebElement templateNameInput;
+
 	@FindBy(id = "save-template-btn")
 	private WebElement saveTemplateBtn;
 
@@ -23,5 +26,10 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 
 	public boolean isSaveBtnEnabled() {
 		return saveTemplateBtn.isEnabled();
+	}
+
+	public void setNewTemplateName(String name) {
+		templateNameInput.clear();
+		templateNameInput.sendKeys(name);
 	}
 }
