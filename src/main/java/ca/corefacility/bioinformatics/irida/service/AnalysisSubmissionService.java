@@ -94,7 +94,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-		 	String analysisDescription, List<Project> projectsToShare);
+			String analysisDescription, List<Project> projectsToShare);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
@@ -123,8 +123,8 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link String} the name for the analysis
 	 * @param analysisDescription
 	 *            {@link String} the description of the analysis being submitted
-	 *            * @param projectsToShare A list of {@link Project}s to share
-	 *            analysis results with
+	 * @param projectsToShare
+	 *            A list of {@link Project}s to share analysis results with
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
 	 *         the supplied files.
 	 */
@@ -132,7 +132,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-		    String analysisDescription, List<Project> projectsToShare);
+			String analysisDescription, List<Project> projectsToShare);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
