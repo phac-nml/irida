@@ -15,7 +15,8 @@
     "lodash": "^4.15.0",
     "ng-file-upload": "^12.2.12",
     "npm": "^3.10.6",
-    "select2": "^4.0.3"
+    "select2": "^4.0.3",
+    "select2-bootstrap-theme": "0.1.0-beta.9"
   },
   "devDependencies": {
     "babel-core": "^6.14.0",
