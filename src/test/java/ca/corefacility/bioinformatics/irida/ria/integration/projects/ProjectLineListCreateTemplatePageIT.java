@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertFalse;
 
@@ -14,8 +15,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectLineListCreateTemplatePage.xml")
 public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChromeDriver {
-	public static final String SHORT_TEMPLATE_NAME = "aa";
-	public static final String GOOD_TEMPLATE_NAME = "Unique Template Name";
+	private static final String SHORT_TEMPLATE_NAME = "aa";
+	private static final String GOOD_TEMPLATE_NAME = "Unique Template Name";
 	@Before
 	public void init() {
 		LoginPage.loginAsManager(driver());
@@ -32,5 +33,8 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		page.setNewTemplateName(GOOD_TEMPLATE_NAME);
 		assertTrue("Save button should be enabled when a name longer than 3 characters is present",
 				page.isSaveBtnEnabled());
+
+		page.addExistingTempalte("default");
+		assertEquals("Should be 23 items in the default template", 23, page.getNumberOfFields());
 	}
 }
