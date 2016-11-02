@@ -734,7 +734,7 @@ public class ProjectServiceImplIT {
 
 		assertEquals("should have found 1 project", 1, projects.size());
 		ProjectAnalysisSubmissionJoin project = projects.iterator().next();
-		assertEquals("should have found project 2", new Long(2L), project.getSubject().getId()());
+		assertEquals("should have found project 2", new Long(2L), project.getSubject().getId());
 	}
 
 	private Project p() {
