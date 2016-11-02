@@ -139,26 +139,6 @@ public class AnalysisController {
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		return PAGE_ANALYSIS_LIST;
 	}
-	
-	/**
-	 * Get the page for analyses shared with a given {@link Project}
-	 * 
-	 * @param projectId
-	 *            the ID of the {@link Project}
-	 * @param model
-	 *            model for view variables
-	 * @return name of the analysis view page
-	 */
-	@RequestMapping("/project/{projectId}")
-	public String getProjectAnalysisList(@PathVariable Long projectId, Model model) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("userList", false);
-		model.addAttribute("project",project);
-		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
-		return PAGE_ANALYSIS_LIST;
-	}
 
 	/**
 	 * View details about an individual analysis submission
