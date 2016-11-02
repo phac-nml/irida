@@ -16,7 +16,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,10 +30,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 @Entity
 @Table(name = "sequencing_run")
@@ -67,6 +72,11 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	@Enumerated(EnumType.STRING)
 	@Column(name = "layout_type")
 	private LayoutType layoutType;
+	
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	protected SequencingRun() {
 		createdDate = new Date();
@@ -139,7 +149,15 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	public LayoutType getLayoutType() {
 		return layoutType;
 	}
-
+	
+	public User getUser() {
+		return user;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
 	/**
 	 * Get the sequencer type
 	 * 

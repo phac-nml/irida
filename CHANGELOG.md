@@ -10,6 +10,7 @@ Changes
 * [UI]: Fixed bug when displaying samples names from associated projects when filtering by file. (0.13.3)
 * [UI]: Fixed a bug when selecting samples after filter by file with a large number of sample names. (0.13.4)
 * [UI]: Added filtering project samples by organism.
+* [API]: Added ability to upload sequencing runs as regular user as long as you have access to required projects.
 * [UI]: Share analyses with projects so anyone on the project can view analysis results.
 
 0.12.0 to 0.13.0

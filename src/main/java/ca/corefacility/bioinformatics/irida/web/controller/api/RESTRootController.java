@@ -65,9 +65,9 @@ public class RESTRootController {
 	public void initLinks() {
 		PUBLIC_CONTROLLERS.put("users", RESTUsersController.class);
 		PUBLIC_CONTROLLERS.put("projects", RESTProjectsController.class);
-		PUBLIC_CONTROLLERS
-				.put(RESTAnalysisSubmissionController.SUBMISSIONS_REL, RESTAnalysisSubmissionController.class);
-		RESTRICTED_CONTROLLERS.put("sequencingRuns", RESTSequencingRunController.class);
+		PUBLIC_CONTROLLERS.put(RESTAnalysisSubmissionController.SUBMISSIONS_REL,
+				RESTAnalysisSubmissionController.class);
+		PUBLIC_CONTROLLERS.put("sequencingRuns", RESTSequencingRunController.class);
 	}
 
 	/**
