@@ -2,14 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	@FindBy(id = "template-name")
@@ -42,10 +39,10 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 		templateNameInput.sendKeys(name);
 	}
 
-	public void addExistingTempalte(String templateName) {
-		existingTemplatesSelect.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("select2-selection__rendered")));
+	public void addExistingTemplate(String templateName) {
+//		existingTemplatesSelect.sendKeys(Keys.);
+//		WebDriverWait wait = new WebDriverWait(driver, 10);
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("select2-selection__rendered")));
 		existingTemplatesSelect.sendKeys(templateName, Keys.ENTER);
 		// Wait for page to update
 		waitForTime(500);

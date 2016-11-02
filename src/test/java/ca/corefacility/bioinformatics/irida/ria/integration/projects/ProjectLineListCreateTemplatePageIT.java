@@ -34,7 +34,7 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		assertTrue("Save button should be enabled when a name longer than 3 characters is present",
 				page.isSaveBtnEnabled());
 
-		page.addExistingTempalte("default");
+		page.addExistingTemplate("default");
 		assertEquals("Should be 23 items in the default template", 23, page.getNumberOfFields());
 	}
 }
