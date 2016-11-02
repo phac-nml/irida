@@ -368,11 +368,13 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveSampleFromProject() {
 		Sample s = sampleService.read(1L);
-		Project p = projectService.read(2L);
+		Project p2 = projectService.read(2L);
+		Project p3 = projectService.read(3L);
 
-		projectService.removeSampleFromProject(p, s);
+		projectService.removeSampleFromProject(p2, s);
+		projectService.removeSampleFromProject(p3, s);
 
-		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
+		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p2);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
 		assertFalse("sample should be deleted because it was detached", sampleService.exists(s.getId()));
 	}

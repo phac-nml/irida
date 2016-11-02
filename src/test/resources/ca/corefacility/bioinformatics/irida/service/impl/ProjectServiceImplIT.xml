@@ -59,8 +59,6 @@
 
 	<sample id="1"  sampleName="sample"
 		createdDate="2013-07-18 14:20:19.0" />
-	<sample id="2"  sampleName="sample2"
-		createdDate="2013-07-18 14:20:19.0" />
 	<reference_file id="1" filePath="/" createdDate="2013-07-18 14:20:19.0" />
 
 	<project_user id="1" project_id="2" user_id="3"
@@ -86,9 +84,7 @@
 
 	<project_sample id="1" project_id="2" sample_id="1"
 		createdDate="2013-07-18 14:20:19.0" />
-	<project_sample id="2" project_id="2" sample_id="2"
-		createdDate="2013-07-18 14:20:19.0" />
-	<project_sample id="3" project_id="3" sample_id="2"
+	<project_sample id="2" project_id="3" sample_id="1"
 		createdDate="2013-07-18 14:20:19.0" />
 
 	<related_project id="1" subject_id="6"
@@ -99,7 +95,7 @@
 	
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
     <sequence_file_pair id="1" />
-    <sample_sequencingobject id="1" sample_id="2" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
+    <sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
 
 	<analysis_submission id="1" name="another analysis"
 		remote_analysis_id="1" analysis_state="ERROR" created_date="2013-07-18 14:20:19"
