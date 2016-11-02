@@ -151,6 +151,11 @@ When you click the remove button, you will be asked to confirm the project membe
 
 To confirm, click the "Ok" button.
 
+Project Analysis Results
+------------------------
+
+To view the results of an analysis that has been shared with a project, click the `Analysis` tab at the top of the project page. 
+
 Associated Projects
 -------------------
 
