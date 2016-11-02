@@ -4,6 +4,10 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+0.13.0 to 0.14.0
+----------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+
 0.12.0 to 0.13.0
 ----------------
 * You may now configure the number of threads to be used for file processing on the web server.  These threads perform tasks such as unzipping files and running FastQC.  The following configuration keys can be set in `/etc/irida/irida.conf` (default values displayed):

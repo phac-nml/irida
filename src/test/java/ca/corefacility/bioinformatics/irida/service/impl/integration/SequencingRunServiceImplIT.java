@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -26,6 +27,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -41,11 +48,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
@@ -63,9 +65,9 @@ import com.google.common.collect.ImmutableMap;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceImplIT.xml")
 @DatabaseTearDown({ "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml" })
 public class SequencingRunServiceImplIT {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(SequencingRunServiceImplIT.class);
-	
+
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
@@ -77,7 +79,7 @@ public class SequencingRunServiceImplIT {
 
 	@Autowired
 	private SequencingObjectService objectService;
-	
+
 	@Autowired
 	private AnalysisService analysisService;
 
@@ -138,10 +140,10 @@ public class SequencingRunServiceImplIT {
 					analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, readFile.getId());
 				} catch (final EntityNotFoundException e) {
 					logger.info("Fastqc still isn't finished, sleeping a bit.");
-					Thread.sleep(1000);				
+					Thread.sleep(1000);
 				}
 			} while (analysis == null);
-			
+
 			assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
 		}
 	}
@@ -161,16 +163,26 @@ public class SequencingRunServiceImplIT {
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
-	public void testCreateMiseqRunAsUserFail() {
+	public void testCreateMiseqRunAsUser() {
 		MiseqRun mr = new MiseqRun(LayoutType.PAIRED_END, "workflow");
-		miseqRunService.create(mr);
+		SequencingRun create = miseqRunService.create(mr);
+		assertEquals("user", create.getUser().getUsername());
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testUpdateMiseqRunAsUserFail() {
+		// run 2 is not owned by "user"
+		SequencingRun mr = miseqRunService.read(2L);
+		miseqRunService.update(mr.getId(), ImmutableMap.of("description", "a different description"));
+	}
+
+	@Test
+	@WithMockUser(username = "user", password = "password1", roles = "USER")
+	public void testUpdateMiseqRunAsUserSuccess() {
+		// run 1 is owned by "user" so should be able to update
 		SequencingRun mr = miseqRunService.read(1L);
 		miseqRunService.update(mr.getId(), ImmutableMap.of("description", "a different description"));
 	}
@@ -189,6 +201,26 @@ public class SequencingRunServiceImplIT {
 	public void testCreateMiseqRunAsAdmin() {
 		MiseqRun r = new MiseqRun(LayoutType.PAIRED_END, "workflow");
 		miseqRunService.create(r);
+	}
+
+	@Test
+	@WithMockUser(username = "user", password = "password1", roles = "USER")
+	public void testFindAll() {
+		Iterable<SequencingRun> findAll = miseqRunService.findAll();
+
+		List<SequencingRun> runs = Lists.newArrayList(findAll);
+		assertEquals("user should be able to see 1 run", 1, runs.size());
+		SequencingRun run = runs.iterator().next();
+		assertEquals("id should be 1", new Long(1), run.getId());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
+	public void testFindAllAdmin() {
+		Iterable<SequencingRun> findAll = miseqRunService.findAll();
+
+		List<SequencingRun> runs = Lists.newArrayList(findAll);
+		assertEquals("user should be able to see all 5 runs", 5, runs.size());
 	}
 
 	@Test
@@ -220,14 +252,14 @@ public class SequencingRunServiceImplIT {
 	 * detached from a transaction.
 	 * 
 	 * @throws IOException
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testAddDetachedRunToSequenceFile() throws IOException, InterruptedException {
 		final String SEQUENCE = "ACGTACGTN";
-		final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n" + SEQUENCE + "\n+\n?????????")
-				.getBytes();
+		final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n" + SEQUENCE
+				+ "\n+\n?????????").getBytes();
 		Path p = Files.createTempFile(null, null);
 		Files.write(p, FASTQ_FILE_CONTENTS);
 
@@ -246,10 +278,10 @@ public class SequencingRunServiceImplIT {
 				analysis = analysisService.getFastQCAnalysisForSequenceFile(so, sf.getId());
 			} catch (final EntityNotFoundException e) {
 				logger.info("Fastqc still isn't finished, sleeping a bit.");
-				Thread.sleep(1000);				
+				Thread.sleep(1000);
 			}
 		} while (analysis == null);
-		
+
 		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
 	}
 }
