@@ -2,8 +2,6 @@
 <dataset>
 	<!-- Tables *must* be listed in the order that they can be deleted to satisfy 
 		referential integrity -->
-	<sequencing_run />
-	<miseq_run />
 	<sample />
 
 	<analysis />
@@ -15,6 +13,9 @@
 	<sequence_file_properties />
 	<system_role />
 	<user />
+	
+	<sequencing_run />
+	<miseq_run />
 	<remote_api />
 	<remote_status />
 	<project />

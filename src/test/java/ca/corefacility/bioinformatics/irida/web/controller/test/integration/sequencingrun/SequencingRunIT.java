@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.seq
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asSequencer;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asOtherUser;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -50,7 +51,7 @@ public class SequencingRunIT {
 				.body("resource.resources.workflow", hasItems("Test workflow 1", "Test workflow 2", "Test workflow 3"))
 				.and().when().get("/api/sequencingrun");
 	}
-	
+
 	@Test
 	public void testListRunsAsSequencer() {
 		asSequencer().expect().and().body("resource.resources.description", hasItems("run 1", "run 2", "run 3")).and()
@@ -72,9 +73,9 @@ public class SequencingRunIT {
 	}
 
 	@Test
-	public void testCreateRunAsUserFail() {
+	public void testCreateRunAsUserSuccess() {
 		Map<String, String> run = createRun();
-		asUser().given().body(run).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
+		asUser().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
 				.post("/api/sequencingrun/miseqrun");
 	}
 
@@ -114,6 +115,32 @@ public class SequencingRunIT {
 		asAdmin().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.COMPLETE.toString())).when()
 				.get(location);
 
+	}
+
+	@Test
+	public void testUpdateSequencingRunAsUser() {
+		Map<String, String> run = createRun();
+		// create the run and get the location
+		String location = asUser().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
+				.post("/api/sequencingrun/miseqrun").then().extract().header("Location");
+
+		// ensure the status is UPLOADING
+		asUser().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.UPLOADING.toString())).when()
+				.get(location);
+
+		Map<String, String> updateProperties = ImmutableMap.of("uploadStatus",
+				SequencingRunUploadStatus.COMPLETE.toString());
+
+		// patch an update to COMPLETE
+		asUser().given().body(updateProperties).expect().response().statusCode(HttpStatus.SC_OK).when().patch(location);
+
+		// ensure the status is COMPLETE
+		asUser().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.COMPLETE.toString())).when()
+				.get(location);
+
+		// ensure other users can't write
+		asOtherUser().given().body(updateProperties).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
+				.patch(location);
 	}
 
 	private Map<String, String> createRun() {
