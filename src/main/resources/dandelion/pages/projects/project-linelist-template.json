@@ -1,0 +1,10 @@
+{
+  "assets": [
+  {
+    "type": "js",
+    "locations": {
+      "webapp": "/resources/js/build/project-linelist-template.bundle.js"
+    }
+  }
+]
+}
