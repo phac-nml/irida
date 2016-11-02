@@ -674,6 +674,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
+	@PostFilter("hasPermission(filterObject.subject, 'canReadProject')")
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission) {
 		return pasRepository.getProjectsForSubmission(submission);
 	}
