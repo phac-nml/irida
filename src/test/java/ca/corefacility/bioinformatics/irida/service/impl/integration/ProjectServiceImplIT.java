@@ -702,7 +702,7 @@ public class ProjectServiceImplIT {
 	}
 	
 	@Test
-	@WithMockUser(username = "user1", password = "password1", roles = "USER")
+	@WithMockUser(username = "analysisuser", password = "password1", roles = "USER")
 	public void testGetProjectForSequencingObjectsAsUser(){
 		SequencingObject read = sequencingObjectService.read(1L);
 
@@ -726,7 +726,7 @@ public class ProjectServiceImplIT {
 	}
 	
 	@Test
-	@WithMockUser(username = "user1", password = "password1", roles = "USER")
+	@WithMockUser(username = "analysisuser", password = "password1", roles = "USER")
 	public void testGetProjectForAnalysisSubmissionAsUser() {
 		AnalysisSubmission analysis = analysisSubmissionService.read(1L);
 
