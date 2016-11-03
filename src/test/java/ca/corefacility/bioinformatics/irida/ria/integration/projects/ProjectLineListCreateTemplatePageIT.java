@@ -36,5 +36,12 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 
 		page.addExistingTemplate("default");
 		assertEquals("Should be 23 items in the default template", 23, page.getNumberOfFields());
+
+		page.removeField(4);
+		assertEquals("Should only be 22 items left on the page", 22, page.getNumberOfFields());
+
+		page.addNewField(4);
+		assertEquals("There should now be 23 fields after adding a new one.", 23, page.getNumberOfFields());
+
 	}
 }
