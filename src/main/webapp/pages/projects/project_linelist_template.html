@@ -72,7 +72,7 @@
                     </select>
                 </div>
             </div>
-            <div class="row templates" ng-repeat="item in $ctrl.template.list | limitTo:$ctrl.template.list.length:2">
+            <div class="row templates entry" ng-repeat="item in $ctrl.template.list | limitTo:$ctrl.template.list.length:2">
                 <div class="col-md-12">
                         <span class="label label-primary"
                               ng-repeat="(template, value) in item.templates">{{ template }}</span>
