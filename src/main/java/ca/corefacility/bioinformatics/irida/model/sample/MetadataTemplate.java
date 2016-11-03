@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,6 +39,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.DETACH)
 	private List<LineListField> fields;
 
+	@NotNull
 	private String name;
 
 	@Temporal(TemporalType.TIMESTAMP)
