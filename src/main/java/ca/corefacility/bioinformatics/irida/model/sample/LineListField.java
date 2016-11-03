@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.components.linelist;
+package ca.corefacility.bioinformatics.irida.model.sample;
 
 /**
  * Describes an individual field in a linelist.
