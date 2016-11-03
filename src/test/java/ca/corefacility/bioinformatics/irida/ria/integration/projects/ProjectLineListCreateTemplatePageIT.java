@@ -43,5 +43,7 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		page.addNewField(4, "New Field Value");
 		assertEquals("There should now be 23 fields after adding a new one.", 23, page.getNumberOfFields());
 
+		page.saveNewTemplate(GOOD_TEMPLATE_NAME);
+		assertEquals("Should be redirected to the line list page", "IRIDA Platform - Line List", driver().getTitle());
 	}
 }
