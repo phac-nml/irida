@@ -1,12 +1,10 @@
 import Phylocanvas from 'phylocanvas';
 import metadataPlugin from 'phylocanvas-plugin-metadata';
-import exportSvgPlugin from 'phylocanvas-plugin-export-svg';
 import {METADATA} from './../../constants';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 
 Phylocanvas.plugin(metadataPlugin);
-Phylocanvas.plugin(exportSvgPlugin);
 
 const metadataFormat = {
   showHeaders: true,
@@ -50,7 +48,6 @@ function controller($window, $scope, PhylocanvasService, MetadataService) {
    * Update the tree leaves with new metadata
    */
   const updateMetadata = () => {
-    console.log(this.metadata);
     let prev;
     tree.leaves.forEach(leaf => {
       const data = this.metadata[leaf.label];
@@ -59,7 +56,6 @@ function controller($window, $scope, PhylocanvasService, MetadataService) {
       } else {
         leaf.data = prev;
       }
-      console.log(leaf.data);
       prev = Object.assign({}, data);
     });
     if (tree.drawn) {
@@ -71,10 +67,6 @@ function controller($window, $scope, PhylocanvasService, MetadataService) {
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
   tree.on('beforeFirstDraw', () => updateMetadata());
-
-  this.export = () => {
-    console.info(tree.exportSVG.getSerialisedSVG());
-  };
 
   /**
    * Listen for changes to the metadata structure and update

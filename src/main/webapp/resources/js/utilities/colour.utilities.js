@@ -12,15 +12,17 @@
  * Pink (200)
  * Teal (A700)
  */
-const COLOUR_LIST = new Set(['#0277BD', '#AD1457', '#00838F', '#9575CD', '#90CAF9', '#4DB6AC', '#EA80FC', '#D4E157', '#FFCC80', '#F48FB1', '#00BFA5']);
+const COLOUR_LIST = ['#0277BD', '#AD1457', '#00838F', '#9575CD', '#90CAF9', '#4DB6AC', '#EA80FC', '#D4E157', '#FFCC80', '#F48FB1', '#00BFA5'];
 
 export class Colours {
   constructor() {
-    this.iterator = COLOUR_LIST.values();
+    this.colours = COLOUR_LIST;
+    this.current = 0;
   }
 
   getNext() {
-    const colour = this.iterator.next();
-    console.log(colour);
+    const colour = this.colours[this.current];
+    this.current = this.current === this.colours.length ? 0 : this.current + 1;
+    return colour;
   }
 }
