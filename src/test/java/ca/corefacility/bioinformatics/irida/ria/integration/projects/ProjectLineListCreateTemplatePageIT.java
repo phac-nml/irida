@@ -40,7 +40,7 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		page.removeField(4);
 		assertEquals("Should only be 22 items left on the page", 22, page.getNumberOfFields());
 
-		page.addNewField(4);
+		page.addNewField(4, "New Field Value");
 		assertEquals("There should now be 23 fields after adding a new one.", 23, page.getNumberOfFields());
 
 	}
