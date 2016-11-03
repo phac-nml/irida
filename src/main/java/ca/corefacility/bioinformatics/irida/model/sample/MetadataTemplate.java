@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -34,6 +35,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.DETACH)
 	private List<LineListField> fields;
 
 	private String name;

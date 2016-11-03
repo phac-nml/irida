@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -28,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
  */
 @Entity
 @Table(name = "project_metadata_template")
+@Audited
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectMetadataTemplateJoin implements Join<Project, MetadataTemplate> {
 

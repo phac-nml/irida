@@ -13,6 +13,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  */
 public interface ProjectMetadataTemplateJoinRepository extends IridaJpaRepository<ProjectMetadataTemplateJoin, Long> {
 
-	@Query("FROM ProjectMetadataTemplateJoin j WHRE j.project=?1")
+	@Query("FROM ProjectMetadataTemplateJoin j WHERE j.project=?1")
 	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project);
 }
