@@ -62,11 +62,11 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 		addFieldBtns.get(afterField).click();
 		// wait for field to be added
 		waitForTime(100);
-		fieldEntries.get(afterField + 1).findElement(By.cssSelector("input[type=text]")).sendKeys(fieldValue);
+		fieldEntries.get(afterField + 1).findElement(By.className("field-label")).sendKeys(fieldValue);
 	}
 
 	public void removeField(int field) {
-		removeFieldBtns.get(0).click();
+		removeFieldBtns.get(field).click();
 		waitForTime(100);
 	}
 
