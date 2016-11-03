@@ -3,12 +3,15 @@ package ca.corefacility.bioinformatics.irida.model.sample;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,6 +20,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 
 /**
  * Stores a collection of {@link LineListField}s that will often used together
@@ -41,6 +45,9 @@ public class MetadataTemplate implements MutableIridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "modified_date")
 	private Date modifiedDate;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "template")
+	private List<ProjectMetadataTemplateJoin> projects;
 
 	public MetadataTemplate() {
 	}
