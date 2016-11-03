@@ -30,6 +30,10 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		this.pmtRepository = pmtRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Transactional
 	public ProjectMetadataTemplateJoin createMetadataTemplateInProject(MetadataTemplate template, Project project) {
@@ -40,6 +44,10 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return join;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project) {
 		return pmtRepository.getMetadataTemplatesForProject(project);
