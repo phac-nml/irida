@@ -100,7 +100,7 @@ public class ProjectLineListController {
 	}
 
 	/**
-	 * Get the template the the line list table.  This becomes the table headers.
+	 * Get the page to create new linelist templates
 	 *
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}.

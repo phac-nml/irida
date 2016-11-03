@@ -88,7 +88,8 @@ export const TemplateInputComponent = {
     };
 
     this.removeField = index => {
-      this.template.list.splice(index, 1);
+      const newIndex = index + 2; // Offset for the two required fields.
+      this.template.list.splice(newIndex, 1);
     };
 
     this.saveTemplate = () => {
