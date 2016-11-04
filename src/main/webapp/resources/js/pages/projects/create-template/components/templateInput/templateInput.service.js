@@ -11,6 +11,8 @@ export class TemplateInputService {
       .then(response => response.data);
   }
   saveTemplate(template, redirectUrl) {
+    // Need to use jquery since I made a bad decision early on to wrap $http posts
+    // to be form data :(
     return $.ajax({
       contentType: 'application/json; charset=utf-8',
       type: 'POST',

@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -32,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.LineListField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
-import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -114,23 +110,21 @@ public class ProjectLineListController {
 	/**
 	 * Get the template the the line list table.  This becomes the table headers.
 	 *
-	 * @param template
-	 * 		{@link String} name of the template to get.
+	 * @param templateId
+	 * 		{@link Long} identifier of the template to get.
 	 *
 	 * @return {@link Map} containing the template.
 	 */
 	@RequestMapping("/mt")
 	@ResponseBody
-	public Map<String, Object> getLinelistTemplate(@PathVariable Long projectId,
-			@RequestParam(required = false, defaultValue = "default") String template) {
-		Project project = projectService.read(projectId);
-		List<ProjectMetadataTemplateJoin> projectMetadataTemplateJoins = metadataTemplateService
-				.getMetadataTemplatesForProject(project);
-		//		if (TEMPLATES.containsKey(template)) {
-		//			return ImmutableMap.of("template", TEMPLATES.get(template));
-		//		} else {
-		//			return ImmutableMap.of("template", ImmutableList.of());
-		//		}
+	public Map<String, Object> getLinelistTemplate(@RequestParam Long templateId) {
+		MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
+		List<LineListField> lineListFields = metadataTemplate.getFields();
+		List<String> headers = new ArrayList<>();
+		for (LineListField lineListField : lineListFields) {
+			headers.add(lineListField.getLabel());
+		}
+		return  ImmutableMap.of("template", headers);
 	}
 
 	/**
@@ -138,29 +132,25 @@ public class ProjectLineListController {
 	 *
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}.
-	 * @param template
-	 * 		{@link String} name of the template to metadata for.
+	 * @param templateId
+	 * 		{@link Long} name of the template to metadata for.
 	 *
 	 * @return {@link Map} of all the metadata.
 	 */
 	@RequestMapping("/metadata")
 	@ResponseBody
-	public Map<String, Object> getLinelistMetadata(@PathVariable Long projectId,
-			@RequestParam(required = false, defaultValue = "default") String template) {
+	public Map<String, Object> getLinelistMetadata(@PathVariable Long projectId, @RequestParam Long templateId) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
-		List<LineListField> currentTemplate;
-		if (TEMPLATES.containsKey(template)) {
-			currentTemplate = TEMPLATES.get(template);
-		} else {
-			currentTemplate = TEMPLATES.get("default");
-		}
+		MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
+		List<LineListField> lineListFields = metadataTemplate.getFields();
 
 		List<Map<String, Object>> metadata = new ArrayList<>();
 		for (Join<Project, Sample> join : projectSamples) {
 			Sample sample = join.getObject();
 			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
 
+			// Get the current samples metadata (if it exists).
 			Map<String, Object> data;
 			if (sampleMetadata != null) {
 				data = sampleMetadata.getMetadata();
@@ -171,8 +161,8 @@ public class ProjectLineListController {
 			md.put("identifier", sample.getId());
 			md.put("label", sample.getLabel());
 			// Every template is expected to start with the sample identifier and label
-			for (LineListField field : currentTemplate.subList(2, currentTemplate.size())) {
-				String header = field.getLabel();
+			for (LineListField lineListField : lineListFields.subList(2, lineListFields.size())) {
+				String header = lineListField.getLabel();
 				if (data.containsKey(header)) {
 					md.put(header, data.get(header));
 				} else {
@@ -187,15 +177,17 @@ public class ProjectLineListController {
 	/**
 	 * Get a list of all fields that exist on the templates requested
 	 *
-	 * @param template
-	 * 		{@link String} name of the template whose field are needed.
+	 * @param templateId
+	 * 		{@link Long} id of the template whose fields are needed.
 	 *
 	 * @return {@link Map} containing a list of all the unique fields.
 	 */
 	@RequestMapping("/linelist-templates/current")
 	@ResponseBody
-	public Map<String, Object> getExistingTemplateFields(@RequestParam String template) {
-		return ImmutableMap.of("fields", templates.getTemplate(template));
+	public Map<String, Object> getExistingTemplateFields(@RequestParam Long templateId) {
+		MetadataTemplate template = metadataTemplateService.read(templateId);
+
+		return ImmutableMap.of("fields", template.getFields());
 	}
 
 	/**
@@ -211,15 +203,16 @@ public class ProjectLineListController {
 	@RequestMapping(value = "/linelist-templates/save-template", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> saveLinelistTemplate(@RequestBody String template, HttpServletResponse response) {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			LineListTemplate lineListTemplate = mapper.readValue(template, LineListTemplate.class);
-			// Set up the template information
-			templates.addTemplate(lineListTemplate.getName(), lineListTemplate.getFields());
-		} catch (IOException e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return ImmutableMap.of("error", "Cannot find the line list template.");
-		}
+		//		ObjectMapper mapper = new ObjectMapper();
+		//		try {
+		//			MetadataTemplate metadataTemplate = new MetadataTemplate()
+		//			LineListTemplate lineListTemplate = mapper.readValue(template, LineListTemplate.class);
+		//			// Set up the template information
+		//			templates.addTemplate(lineListTemplate.getName(), lineListTemplate.getFields());
+		//		} catch (IOException e) {
+		//			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		//			return ImmutableMap.of("error", "Cannot find the line list template.");
+		//		}
 		return ImmutableMap.of("success", true);
 	}
 }
