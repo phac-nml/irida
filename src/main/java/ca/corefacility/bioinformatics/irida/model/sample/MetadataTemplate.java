@@ -36,7 +36,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.DETACH)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private List<MetadataField> fields;
 
 	@NotNull
@@ -49,7 +49,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "modified_date")
 	private Date modifiedDate;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "template")
 	private List<ProjectMetadataTemplateJoin> projects;
 
@@ -57,7 +57,8 @@ public class MetadataTemplate implements MutableIridaThing {
 	}
 
 	public MetadataTemplate(String name, List<MetadataField> fields) {
-
+		this.name = name;
+		this.fields = fields;
 	}
 
 	@Override
