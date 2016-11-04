@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -23,12 +25,15 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		implements MetadataTemplateService {
 
 	private ProjectMetadataTemplateJoinRepository pmtRepository;
+	private MetadataFieldRepository fieldRepository;
 
 	@Autowired
 	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository,
-			ProjectMetadataTemplateJoinRepository pmtRepository, Validator validator) {
+			ProjectMetadataTemplateJoinRepository pmtRepository, MetadataFieldRepository fieldRepository,
+			Validator validator) {
 		super(repository, validator, MetadataTemplate.class);
 		this.pmtRepository = pmtRepository;
+		this.fieldRepository = fieldRepository;
 	}
 
 	@PreAuthorize("permitAll()")
@@ -58,6 +63,22 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project) {
 		return pmtRepository.getMetadataTemplatesForProject(project);
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
+	public MetadataField readMetadataField(Long id) {
+		return fieldRepository.findOne(id);
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
+	public MetadataField saveMetadataField(MetadataField field) {
+		if (field.getId() != null) {
+			throw new IllegalArgumentException("Cannot save a MetadataField that has an ID");
+		}
+
+		return fieldRepository.save(field);
 	}
 
 }
