@@ -56,6 +56,15 @@ public class ProjectLineListController {
 		this.projectControllerUtils = utils;
 	}
 
+	private List<String> getTemplateNames(Project project) {
+		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
+		List<String> templates = new ArrayList<>();
+		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
+			templates.add(projectMetadataTemplateJoin.getLabel());
+		}
+		return templates;
+	}
+
 	/**
 	 * Get the page to display the project samples linelist.
 	 *
@@ -77,13 +86,7 @@ public class ProjectLineListController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("activeNav", "linelist");
 		model.addAttribute("currentTemplate", template);
-
-		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
-		List<String> templates = new ArrayList<>();
-		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
-			templates.add(projectMetadataTemplateJoin.getLabel());
-		}
-		model.addAttribute("templates", templates);
+		model.addAttribute("templates", getTemplateNames(project));
 		return "projects/project_linelist";
 	}
 
@@ -104,13 +107,7 @@ public class ProjectLineListController {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-
-		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
-		List<String> templates = new ArrayList<>();
-		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
-			templates.add(projectMetadataTemplateJoin.getLabel());
-		}
-		model.addAttribute("templates", templates);
+		model.addAttribute("templates", getTemplateNames(project));
 		return "projects/project_linelist_template";
 	}
 
