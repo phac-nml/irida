@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -28,6 +29,12 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			ProjectMetadataTemplateJoinRepository pmtRepository, Validator validator) {
 		super(repository, validator, MetadataTemplate.class);
 		this.pmtRepository = pmtRepository;
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
+	public MetadataTemplate read(Long id) throws EntityNotFoundException {
+		return super.read(id);
 	}
 
 	/**
