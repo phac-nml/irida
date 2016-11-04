@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="metadata-templates" author="tom">
+
+		<createTable tableName="metadata_template">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
+		</createTable>
+
+		<createTable tableName="metadata_template_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_METADATA_TEMPLATE_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="name" type="varchar(255)" />
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
+		</createTable>
+
+		<createTable tableName="line_list_field">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="label" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="type" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="line_list_field_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_LINE_LIST_FIELD_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="label" type="varchar(255)" />
+			<column name="type" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="project_metadata_template">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="project_id" type="bigint(20)">
+				<constraints nullable="false" referencedColumnNames="id"
+					referencedTableName="project" foreignKeyName="FK_PROJECT_METADATA_TEMPLATE_PROJECT" />
+			</column>
+			<column name="template_id" type="bigint(20)">
+				<constraints nullable="false" referencedColumnNames="id"
+					referencedTableName="metadata_template" foreignKeyName="FK_PROJECT_METADATA_TEMPLATE_TEMPLATE" />
+			</column>
+		</createTable>
+
+		<createTable tableName="project_metadata_template_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_PROJECT_METADATA_TEMPLATE_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="created_date" type="datetime" />
+			<column name="project_id" type="bigint(20)" />
+			<column name="template_id" type="bigint(20)" />
+		</createTable>
+
+	</changeSet>
+</databaseChangeLog>

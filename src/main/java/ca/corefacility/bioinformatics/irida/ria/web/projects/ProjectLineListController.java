@@ -22,16 +22,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.LineListField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
-import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListField;
 import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListTemplates;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 @Controller
@@ -41,16 +44,16 @@ public class ProjectLineListController {
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
-	private LineListTemplates templates;
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
-			ProjectControllerUtils utils, LineListTemplates lineListTemplates) {
+			MetadataTemplateService metadataTemplateService, ProjectControllerUtils utils) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = utils;
-		this.templates = lineListTemplates;
 	}
 
 	/**
@@ -74,7 +77,13 @@ public class ProjectLineListController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("activeNav", "linelist");
 		model.addAttribute("currentTemplate", template);
-		model.addAttribute("templates", templates.getTemplateNames());
+
+		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
+		List<String> templates = new ArrayList<>();
+		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
+			templates.add(projectMetadataTemplateJoin.getLabel());
+		}
+		model.addAttribute("templates", templates);
 		return "projects/project_linelist";
 	}
 
@@ -95,7 +104,13 @@ public class ProjectLineListController {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("templates", templates.getTemplateNames());
+
+		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
+		List<String> templates = new ArrayList<>();
+		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
+			templates.add(projectMetadataTemplateJoin.getLabel());
+		}
+		model.addAttribute("templates", templates);
 		return "projects/project_linelist_template";
 	}
 
@@ -109,9 +124,16 @@ public class ProjectLineListController {
 	 */
 	@RequestMapping("/mt")
 	@ResponseBody
-	public Map<String, Object> getLinelistTemplate(
+	public Map<String, Object> getLinelistTemplate(@PathVariable Long projectId,
 			@RequestParam(required = false, defaultValue = "default") String template) {
-		return ImmutableMap.of("template", templates.getTemplate(template));
+		Project project = projectService.read(projectId);
+		List<ProjectMetadataTemplateJoin> projectMetadataTemplateJoins = metadataTemplateService
+				.getMetadataTemplatesForProject(project);
+		//		if (TEMPLATES.containsKey(template)) {
+		//			return ImmutableMap.of("template", TEMPLATES.get(template));
+		//		} else {
+		//			return ImmutableMap.of("template", ImmutableList.of());
+		//		}
 	}
 
 	/**
@@ -131,10 +153,10 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
 		List<LineListField> currentTemplate;
-		if (templates.doesTemplateExists(template)) {
-			currentTemplate = templates.getTemplate(template);
+		if (TEMPLATES.containsKey(template)) {
+			currentTemplate = TEMPLATES.get(template);
 		} else {
-			currentTemplate = templates.getTemplate("default");
+			currentTemplate = TEMPLATES.get("default");
 		}
 
 		List<Map<String, Object>> metadata = new ArrayList<>();
@@ -146,7 +168,7 @@ public class ProjectLineListController {
 			if (sampleMetadata != null) {
 				data = sampleMetadata.getMetadata();
 			} else {
-				data = new HashMap();
+				data = ImmutableMap.of();
 			}
 			Map<String, Object> md = new HashMap<>();
 			md.put("identifier", sample.getId());
