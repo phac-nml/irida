@@ -6,6 +6,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * A repository for storing and reading {@link MetadataField}s
  */
-public interface LineListFieldRepository extends IridaJpaRepository<MetadataField, Long> {
+public interface MetadataFieldRepository extends IridaJpaRepository<MetadataField, Long> {
 
 }
