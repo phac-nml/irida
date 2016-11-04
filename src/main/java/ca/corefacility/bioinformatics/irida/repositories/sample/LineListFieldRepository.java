@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
-import ca.corefacility.bioinformatics.irida.model.sample.LineListField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
 /**
- * A repository for storing and reading {@link LineListField}s
+ * A repository for storing and reading {@link MetadataField}s
  */
-public interface LineListFieldRepository extends IridaJpaRepository<LineListField, Long> {
+public interface LineListFieldRepository extends IridaJpaRepository<MetadataField, Long> {
 
 }

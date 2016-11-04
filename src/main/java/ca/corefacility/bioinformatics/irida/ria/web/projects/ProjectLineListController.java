@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.LineListField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -32,25 +32,25 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 public class ProjectLineListController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectLineListController.class);
 
-	private static final List<LineListField> DEFAULT_TEMPLATE = ImmutableList
-			.of(new LineListField("identifier", "text"), new LineListField("label", "text"),
-					new LineListField("PFGE-XbaI-pattern", "text"), new LineListField("PFGE-BlnI-pattern", "text"),
-					new LineListField("NLEP #", "text"), new LineListField("SubmittedNumber", "text"),
-					new LineListField("Province", "text"), new LineListField("SourceSite", "text"),
-					new LineListField("SourceType", "text"), new LineListField("PatientAge", "text"),
-					new LineListField("PatientSex", "text"), new LineListField("Genus", "text"),
-					new LineListField("Serotype", "text"), new LineListField("ReceivedDate", "text"),
-					new LineListField("UploadDate", "text"), new LineListField("IsolatDate", "text"),
-					new LineListField("SourceCity", "text"), new LineListField("UploadModifiedDate", "text"),
-					new LineListField("Comments", "text"), new LineListField("Outbreak", "text"),
-					new LineListField("Phagetype", "text"), new LineListField("Traveled_To", "text"),
-					new LineListField("Exposure", "text"));
+	private static final List<MetadataField> DEFAULT_TEMPLATE = ImmutableList
+			.of(new MetadataField("identifier", "text"), new MetadataField("label", "text"),
+					new MetadataField("PFGE-XbaI-pattern", "text"), new MetadataField("PFGE-BlnI-pattern", "text"),
+					new MetadataField("NLEP #", "text"), new MetadataField("SubmittedNumber", "text"),
+					new MetadataField("Province", "text"), new MetadataField("SourceSite", "text"),
+					new MetadataField("SourceType", "text"), new MetadataField("PatientAge", "text"),
+					new MetadataField("PatientSex", "text"), new MetadataField("Genus", "text"),
+					new MetadataField("Serotype", "text"), new MetadataField("ReceivedDate", "text"),
+					new MetadataField("UploadDate", "text"), new MetadataField("IsolatDate", "text"),
+					new MetadataField("SourceCity", "text"), new MetadataField("UploadModifiedDate", "text"),
+					new MetadataField("Comments", "text"), new MetadataField("Outbreak", "text"),
+					new MetadataField("Phagetype", "text"), new MetadataField("Traveled_To", "text"),
+					new MetadataField("Exposure", "text"));
 
-	private static final List<LineListField> INTERESTING_TEMPLATE = ImmutableList
-			.of(new LineListField("identifier", "text"), new LineListField("label", "text"),
-					new LineListField("NLEP #", "text"), new LineListField("Province", "text"),
-					new LineListField("SourceType", "text"), new LineListField("Genus", "text"),
-					new LineListField("Serotype", "text"));
+	private static final List<MetadataField> INTERESTING_TEMPLATE = ImmutableList
+			.of(new MetadataField("identifier", "text"), new MetadataField("label", "text"),
+					new MetadataField("NLEP #", "text"), new MetadataField("Province", "text"),
+					new MetadataField("SourceType", "text"), new MetadataField("Genus", "text"),
+					new MetadataField("Serotype", "text"));
 
 	private static final Map<String, List> TEMPLATES = ImmutableMap
 			.of("default", DEFAULT_TEMPLATE, "interesting", INTERESTING_TEMPLATE);
@@ -126,7 +126,7 @@ public class ProjectLineListController {
 			@RequestParam(required = false, defaultValue = "default") String template) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
-		List<LineListField> currentTemplate;
+		List<MetadataField> currentTemplate;
 		if (TEMPLATES.containsKey(template)) {
 			currentTemplate = TEMPLATES.get(template);
 		} else {
@@ -148,7 +148,7 @@ public class ProjectLineListController {
 			md.put("identifier", sample.getId());
 			md.put("label", sample.getLabel());
 			// Every template is expected to start with the sample identifier and label
-			for (LineListField field : currentTemplate.subList(2, currentTemplate.size())) {
+			for (MetadataField field : currentTemplate.subList(2, currentTemplate.size())) {
 				String header = field.getLabel();
 				if (data.containsKey(header)) {
 					md.put(header, data.get(header));
