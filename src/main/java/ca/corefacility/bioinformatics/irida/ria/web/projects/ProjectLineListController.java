@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -210,12 +211,19 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (Map<String, String> field : fields) {
-			metadataFields.add(new MetadataField(field.get("label"), field.get("type")));
+			MetadataField metadataField;
+			if (field.containsKey("identifier")) {
+				metadataField = metadataTemplateService.readMetadataField(Long.parseLong(field.get("identifier")));
+			} else {
+				metadataField = new MetadataField(field.get("label"), field.get("type"));
+				metadataTemplateService.saveMetadataField(metadataField);
+			}
+			metadataFields.add(metadataField);
 		}
 		MetadataTemplate metadataTemplate = new MetadataTemplate(templateName, metadataFields);
 		ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
 				.createMetadataTemplateInProject(metadataTemplate, project);
 
-		return ImmutableMap.of("redirectUrl", "/projects/" + projectId + "linelist?template=" + projectMetadataTemplateJoin.getObject().getId());
+		return ImmutableMap.of("redirectUrl", "/projects/" + projectId + "/linelist?template=" + projectMetadataTemplateJoin.getObject().getId());
 	}
 }

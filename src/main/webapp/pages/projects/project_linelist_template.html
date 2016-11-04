@@ -46,33 +46,7 @@
         </div>
         <label th:text="#{linelist.create-template.template-fields}">Template Fields</label>
         <div class="fields">
-            <div class="row entry">
-                <div class="col-md-12">
-                        <span class="label label-warning" th:text="#{linelist.create-template.required-field}">Required</span>
-                </div>
-                <div class="form-group col-md-5">
-                    <input disabled="disabled" type="text" class="form-control" value="identifier"/>
-                </div>
-                <div class="form-group col-md-3">
-                    <select disabled="disabled" class="form-control">
-                        <option value="text">Text</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row entry">
-                <div class="col-md-12">
-                    <span class="label label-warning" th:text="#{linelist.create-template.required-field}">Required</span>
-                </div>
-                <div class="form-group col-md-5">
-                    <input disabled="disabled" type="text" class="form-control" value="label"/>
-                </div>
-                <div class="form-group col-md-3">
-                    <select disabled="disabled" class="form-control">
-                        <option value="text">Text</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row templates entry" ng-repeat="item in $ctrl.template.list | limitTo:$ctrl.template.list.length:2">
+            <div class="row templates entry" ng-repeat="item in $ctrl.template.list">
                 <div class="col-md-12">
                         <span class="label label-primary"
                               ng-repeat="(template, value) in item.templates">{{ template }}</span>

@@ -1,4 +1,5 @@
 const $ = require('jquery');
+const angular = require('angular');
 
 export class TemplateInputService {
   constructor($http, $window) {
@@ -17,7 +18,7 @@ export class TemplateInputService {
       type: 'POST',
       contentType: 'application/json; charset=utf-8',
       url: `${this.url}/save-template/${template.name}`,
-      data: JSON.stringify(template.fields)
+      data: angular.toJson(template.fields)
     }).done(response => {
       console.log(response);
       // this.$window.location.href = `${redirectUrl}?template=${template.name}`;

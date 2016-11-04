@@ -1,6 +1,5 @@
-const angular = require('angular');
-const empty = {type: 'text', label: '', template: null, identifier: null};
-const list = [{type: 'text', label: 'identifier'}, {type: 'text', label: 'label'}, Object.assign({}, empty)];
+const empty = {type: 'text', label: ''};
+const list = [Object.assign({}, empty)];
 const selectedTemplates = new Map();
 
 export const TemplateInputComponent = {
@@ -97,9 +96,7 @@ export const TemplateInputComponent = {
       // remove any empty fields
       const fields = this.template.list
       // Remove empty fields
-        .filter(field => field.label.length !== 0)
-        // Take only the needed information
-        .map(field => angular.toJson(field));
+        .filter(field => field.label.length !== 0);
 
       // Call the service to save this template
       TemplateInputService
