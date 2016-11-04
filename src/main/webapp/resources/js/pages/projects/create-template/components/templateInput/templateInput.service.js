@@ -20,8 +20,8 @@ export class TemplateInputService {
       url: `${this.url}/save-template/${template.name}`,
       data: angular.toJson(template.fields)
     }).done(response => {
-      console.log(response);
-      // this.$window.location.href = `${redirectUrl}?template=${template.name}`;
+      this.$window.location.href =
+        `${redirectUrl}?template=${response.templateId}`;
     }).fail(() => {
       console.log('Boo');
     });

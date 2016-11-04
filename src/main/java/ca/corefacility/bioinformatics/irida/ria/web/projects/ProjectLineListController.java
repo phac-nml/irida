@@ -224,6 +224,6 @@ public class ProjectLineListController {
 		ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
 				.createMetadataTemplateInProject(metadataTemplate, project);
 
-		return ImmutableMap.of("redirectUrl", "/projects/" + projectId + "/linelist?template=" + projectMetadataTemplateJoin.getObject().getId());
+		return ImmutableMap.of("templateId", projectMetadataTemplateJoin.getObject().getId());
 	}
 }
