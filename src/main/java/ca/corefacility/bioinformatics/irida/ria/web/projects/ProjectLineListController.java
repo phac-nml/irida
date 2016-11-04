@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,7 @@ import com.google.common.collect.ImmutableMap;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.LineListField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
@@ -119,10 +120,10 @@ public class ProjectLineListController {
 	@ResponseBody
 	public Map<String, Object> getLinelistTemplate(@RequestParam Long templateId) {
 		MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
-		List<LineListField> lineListFields = metadataTemplate.getFields();
+		List<MetadataField> metadataTemplateFields = metadataTemplate.getFields();
 		List<String> headers = new ArrayList<>();
-		for (LineListField lineListField : lineListFields) {
-			headers.add(lineListField.getLabel());
+		for (MetadataField metadataField : metadataTemplateFields) {
+			headers.add(metadataField.getLabel());
 		}
 		return  ImmutableMap.of("template", headers);
 	}
@@ -143,7 +144,7 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
 		MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
-		List<LineListField> lineListFields = metadataTemplate.getFields();
+		List<MetadataField> lineListFields = metadataTemplate.getFields();
 
 		List<Map<String, Object>> metadata = new ArrayList<>();
 		for (Join<Project, Sample> join : projectSamples) {
@@ -161,8 +162,8 @@ public class ProjectLineListController {
 			md.put("identifier", sample.getId());
 			md.put("label", sample.getLabel());
 			// Every template is expected to start with the sample identifier and label
-			for (LineListField lineListField : lineListFields.subList(2, lineListFields.size())) {
-				String header = lineListField.getLabel();
+			for (MetadataField field : lineListFields.subList(2, lineListFields.size())) {
+				String header = field.getLabel();
 				if (data.containsKey(header)) {
 					md.put(header, data.get(header));
 				} else {
@@ -200,19 +201,21 @@ public class ProjectLineListController {
 	 *
 	 * @return The result of saving.
 	 */
-	@RequestMapping(value = "/linelist-templates/save-template", method = RequestMethod.POST)
+	@RequestMapping(value = "/linelist-templates/save-template/{templateName}",
+					consumes = MediaType.APPLICATION_JSON_VALUE,
+					method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> saveLinelistTemplate(@RequestBody String template, HttpServletResponse response) {
-		//		ObjectMapper mapper = new ObjectMapper();
-		//		try {
-		//			MetadataTemplate metadataTemplate = new MetadataTemplate()
-		//			LineListTemplate lineListTemplate = mapper.readValue(template, LineListTemplate.class);
-		//			// Set up the template information
-		//			templates.addTemplate(lineListTemplate.getName(), lineListTemplate.getFields());
-		//		} catch (IOException e) {
-		//			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		//			return ImmutableMap.of("error", "Cannot find the line list template.");
-		//		}
-		return ImmutableMap.of("success", true);
+	public Map<String, Object> saveLinelistTemplate(@PathVariable Long projectId, @PathVariable String templateName,
+			@RequestBody List<Map<String, String>> fields, HttpServletResponse response) {
+		Project project = projectService.read(projectId);
+		List<MetadataField> metadataFields = new ArrayList<>();
+		for (Map<String, String> field : fields) {
+			metadataFields.add(new MetadataField(field.get("label"), field.get("type")));
+		}
+		MetadataTemplate metadataTemplate = new MetadataTemplate(templateName, metadataFields);
+		ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
+				.createMetadataTemplateInProject(metadataTemplate, project);
+
+		return ImmutableMap.of("redirectUrl", "/projects/" + projectId + "linelist?template=" + projectMetadataTemplateJoin.getObject().getId());
 	}
 }

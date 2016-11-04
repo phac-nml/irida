@@ -32,7 +32,7 @@
 			<column name="modified_date" type="datetime" />
 		</createTable>
 
-		<createTable tableName="line_list_field">
+		<createTable tableName="metadata_field">
 			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -43,7 +43,7 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		<createTable tableName="line_list_field_AUD">
+		<createTable tableName="metadata_field_AUD">
 			<column name="id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -54,6 +54,31 @@
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="label" type="varchar(255)" />
 			<column name="type" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="metadata_template_metadata_field">
+			<column name="metadata_template_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="metadata_template"
+					referencedColumnNames="id" foreignKeyName="FK_METADATA_TEMPLATE_FIELD_TEMPLATE" />
+			</column>
+			<column name="fields_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="metadata_field"
+					referencedColumnNames="id" foreignKeyName="FK_METADATA_TEMPLATE_FIELD_FIELD" />
+			</column>
+		</createTable>
+
+		<createTable tableName="metadata_template_metadata_field_AUD">
+			<column name="metadata_template_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="fields_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_METADATA_TEMPLATE_FIELD_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
 		</createTable>
 
 		<createTable tableName="project_metadata_template">

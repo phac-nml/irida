@@ -14,13 +14,13 @@ export class TemplateInputService {
     // Need to use jquery since I made a bad decision early on to wrap $http posts
     // to be form data :(
     return $.ajax({
-      contentType: 'application/json; charset=utf-8',
       type: 'POST',
-      url: `${this.url}/save-template`,
-      data: JSON.stringify(template),
-      dataType: 'json'
-    }).done(() => {
-      this.$window.location.href = `${redirectUrl}?template=${template.name}`;
+      contentType: 'application/json; charset=utf-8',
+      url: `${this.url}/save-template/${template.name}`,
+      data: JSON.stringify(template.fields)
+    }).done(response => {
+      console.log(response);
+      // this.$window.location.href = `${redirectUrl}?template=${template.name}`;
     }).fail(() => {
       console.log('Boo');
     });

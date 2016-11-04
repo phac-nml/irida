@@ -12,13 +12,13 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * Describes an individual field in a linelist.
+ * Describes an individual field in a {@link MetadataTemplate}.
  */
 @Entity
-@Table(name = "line_list_field")
+@Table(name = "metadata_field")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class LineListField {
+public class MetadataField {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,7 +30,7 @@ public class LineListField {
 	@NotNull
 	private String type;
 
-	public LineListField(String label, String type) {
+	public MetadataField(String label, String type) {
 		this.label = label;
 		this.type = type;
 	}
