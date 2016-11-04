@@ -8,8 +8,8 @@ export class TemplateInputService {
     this.$window = $window;
   }
   getFieldsForTemplates(template = '') {
-    return this.$http.get(`${this.url}/current?template=${template}`)
-      .then(response => response.data);
+    return this.$http.get(`${this.url}/current?templateId=${template}`)
+      .then(response => response.data.fields);
   }
   saveTemplate(template, redirectUrl) {
     // Need to use jquery since I made a bad decision early on to wrap $http posts

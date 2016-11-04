@@ -1,6 +1,14 @@
 const empty = {type: 'text', label: ''};
 const list = [Object.assign({}, empty)];
 const selectedTemplates = new Map();
+const nameMap = new Map();
+
+const setSelectedTemplateName = id => {
+  if (!nameMap.has(id)) {
+    const selectInput = document.querySelector('#existing-templates');
+    nameMap.set(id, selectInput.options[selectInput.selectedIndex].innerText);
+  }
+};
 
 export const TemplateInputComponent = {
   bindings: {
@@ -8,6 +16,7 @@ export const TemplateInputComponent = {
   },
   templateUrl: `templateInput.tmpl.html`,
   controller(TemplateInputService) {
+    this.nameMap = nameMap;
     this.template = {
       list,
       name: ''
@@ -57,12 +66,13 @@ export const TemplateInputComponent = {
         const differentTemplate = wantedTemplates
           .filter(name => currentTemplates.indexOf(name) === -1)[0];
 
+        // Store the name of the template.
+        setSelectedTemplateName(differentTemplate);
+
         // Get the new fields
         TemplateInputService
           .getFieldsForTemplates(differentTemplate)
-          .then(data => {
-            // First two fields will alway be identifier and label
-            const fields = data.fields.slice(2);
+          .then(fields => {
             selectedTemplates.set(differentTemplate, fields);
             updateFields(differentTemplate);
           });

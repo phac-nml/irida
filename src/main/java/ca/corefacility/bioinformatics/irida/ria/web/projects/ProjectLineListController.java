@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -54,11 +51,11 @@ public class ProjectLineListController {
 		this.projectControllerUtils = utils;
 	}
 
-	private List<String> getTemplateNames(Project project) {
+	private List<MetadataTemplate> getTemplateNames(Project project) {
 		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
-		List<String> templates = new ArrayList<>();
+		List<MetadataTemplate> templates = new ArrayList<>();
 		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
-			templates.add(projectMetadataTemplateJoin.getLabel());
+			templates.add(projectMetadataTemplateJoin.getObject());
 		}
 		return templates;
 	}
@@ -188,17 +185,16 @@ public class ProjectLineListController {
 	@ResponseBody
 	public Map<String, Object> getExistingTemplateFields(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-
 		return ImmutableMap.of("fields", template.getFields());
 	}
 
 	/**
 	 * Save a new line list template.
 	 *
-	 * @param template
-	 * 		{@link LineListTemplate}
-	 * @param response
-	 * 		{@link HttpServletResponse}
+	 * @param projectId
+	 * 		{@link Long} id for the current project
+	 * @param templateName
+	 * 		{@link String} name for the new template
 	 *
 	 * @return The result of saving.
 	 */
@@ -207,7 +203,7 @@ public class ProjectLineListController {
 					method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> saveLinelistTemplate(@PathVariable Long projectId, @PathVariable String templateName,
-			@RequestBody List<Map<String, String>> fields, HttpServletResponse response) {
+			@RequestBody List<Map<String, String>> fields) {
 		Project project = projectService.read(projectId);
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (Map<String, String> field : fields) {
