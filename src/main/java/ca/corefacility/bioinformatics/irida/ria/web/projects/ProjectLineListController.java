@@ -4,11 +4,13 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -41,21 +44,32 @@ public class ProjectLineListController {
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private final MessageSource messageSource;
+
+	private final List<String> DEFAULT_TEMPLATE = ImmutableList.of("id", "label");
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, ProjectControllerUtils utils) {
+			MetadataTemplateService metadataTemplateService, MessageSource messageSource,
+			ProjectControllerUtils utils) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.messageSource = messageSource;
 		this.projectControllerUtils = utils;
 	}
 
-	private List<MetadataTemplate> getTemplateNames(Project project) {
+	private List<Map<String, String>> getTemplateNames(Locale locale, Project project) {
 		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
-		List<MetadataTemplate> templates = new ArrayList<>();
+		List<Map<String, String>> templates = new ArrayList<>();
 		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
-			templates.add(projectMetadataTemplateJoin.getObject());
+			MetadataTemplate template = projectMetadataTemplateJoin.getObject();
+			templates.add(ImmutableMap.of("label", template.getLabel(), "id", String.valueOf(template.getId())));
+		}
+		if (templates.size() == 0) {
+			templates.add(ImmutableMap
+					.of("label", messageSource.getMessage("linelist.no-templates-available", new Object[] {}, locale),
+							"id", ""));
 		}
 		return templates;
 	}
@@ -65,23 +79,28 @@ public class ProjectLineListController {
 	 *
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param templateId
+	 * 		{@link Long} id for the current template
 	 * @param model
 	 * 		{@link Model}
+	 * @param locale
+	 * 		{@link Locale}
 	 * @param principal
 	 * 		{@link Principal} currently logged in user.
 	 *
 	 * @return {@link String} path to the current page.
 	 */
 	@RequestMapping("")
-	public String getLineListPage(@PathVariable Long projectId,
-			@RequestParam(required = false, defaultValue = "default") String template, Model model,
-			Principal principal) {
+	public String getLineListPage(@PathVariable Long projectId, @RequestParam(required = false) Long templateId,
+			Model model, Locale locale, Principal principal) {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("activeNav", "linelist");
-		model.addAttribute("currentTemplate", template);
-		model.addAttribute("templates", getTemplateNames(project));
+		if (templateId != null) {
+			model.addAttribute("currentTemplate", templateId);
+		}
+		model.addAttribute("templates", getTemplateNames(locale, project));
 		return "projects/project_linelist";
 	}
 
@@ -92,17 +111,20 @@ public class ProjectLineListController {
 	 * 		{@link Long} identifier for the current {@link Project}
 	 * @param model
 	 * 		{@link Model}
+	 * @param locale
+	 *   	{@link Locale}
 	 * @param principal
 	 * 		{@link Principal}
 	 *
 	 * @return {@link String} path to the page.
 	 */
 	@RequestMapping("/linelist-templates")
-	public String getLinelistTemplatePage(@PathVariable Long projectId, Model model, Principal principal) {
+	public String getLinelistTemplatePage(@PathVariable Long projectId, Model model, Locale locale,
+			Principal principal) {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("templates", getTemplateNames(project));
+		model.addAttribute("templates", getTemplateNames(locale, project));
 		return "projects/project_linelist_template";
 	}
 
@@ -114,16 +136,21 @@ public class ProjectLineListController {
 	 *
 	 * @return {@link Map} containing the template.
 	 */
-	@RequestMapping("/mt")
+	@RequestMapping("/fields")
 	@ResponseBody
-	public Map<String, Object> getLinelistTemplate(@RequestParam Long templateId) {
-		MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
-		List<MetadataField> metadataTemplateFields = metadataTemplate.getFields();
-		List<String> headers = new ArrayList<>();
-		for (MetadataField metadataField : metadataTemplateFields) {
-			headers.add(metadataField.getLabel());
+	public Map<String, Object> getLinelistTemplate(@RequestParam(required = false) Long templateId) {
+		List<String> fields = new ArrayList<>();
+		if (templateId != null) {
+			MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
+			List<MetadataField> metadataTemplateFields = metadataTemplate.getFields();
+			for (MetadataField metadataField : metadataTemplateFields) {
+				fields.add(metadataField.getLabel());
+			}
+		} else {
+			logger.debug("Trying to load a metadata template that does not exist.");
+			fields = DEFAULT_TEMPLATE;
 		}
-		return  ImmutableMap.of("template", headers);
+		return ImmutableMap.of("fields", fields);
 	}
 
 	/**
@@ -138,11 +165,15 @@ public class ProjectLineListController {
 	 */
 	@RequestMapping("/metadata")
 	@ResponseBody
-	public Map<String, Object> getLinelistMetadata(@PathVariable Long projectId, @RequestParam Long templateId) {
+	public Map<String, Object> getLinelistMetadata(@PathVariable Long projectId,
+			@RequestParam(required = false) Long templateId) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
-		MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
-		List<MetadataField> lineListFields = metadataTemplate.getFields();
+		List<MetadataField> lineListFields = new ArrayList<>();
+		if (templateId != null) {
+			MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
+			lineListFields = metadataTemplate.getFields();
+		}
 
 		List<Map<String, Object>> metadata = new ArrayList<>();
 		for (Join<Project, Sample> join : projectSamples) {
@@ -157,10 +188,10 @@ public class ProjectLineListController {
 				data = ImmutableMap.of();
 			}
 			Map<String, Object> md = new HashMap<>();
-			md.put("identifier", sample.getId());
+			md.put("id", sample.getId());
 			md.put("label", sample.getLabel());
 			// Every template is expected to start with the sample identifier and label
-			for (MetadataField field : lineListFields.subList(2, lineListFields.size())) {
+			for (MetadataField field : lineListFields) {
 				String header = field.getLabel();
 				if (data.containsKey(header)) {
 					md.put(header, data.get(header));
@@ -171,21 +202,6 @@ public class ProjectLineListController {
 			metadata.add(md);
 		}
 		return ImmutableMap.of("metadata", metadata);
-	}
-
-	/**
-	 * Get a list of all fields that exist on the templates requested
-	 *
-	 * @param templateId
-	 * 		{@link Long} id of the template whose fields are needed.
-	 *
-	 * @return {@link Map} containing a list of all the unique fields.
-	 */
-	@RequestMapping("/linelist-templates/current")
-	@ResponseBody
-	public Map<String, Object> getExistingTemplateFields(@RequestParam Long templateId) {
-		MetadataTemplate template = metadataTemplateService.read(templateId);
-		return ImmutableMap.of("fields", template.getFields());
 	}
 
 	/**
@@ -207,11 +223,15 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (Map<String, String> field : fields) {
+			String label = field.get("label");
+			// Label and identifier are default that are always in the list.
 			MetadataField metadataField;
 			if (field.containsKey("identifier")) {
+				// Identifier would indicate an existing field.  Therefore we should use the existing field
+				// instead of creating a new one.
 				metadataField = metadataTemplateService.readMetadataField(Long.parseLong(field.get("identifier")));
 			} else {
-				metadataField = new MetadataField(field.get("label"), field.get("type"));
+				metadataField = new MetadataField(label, field.get("type"));
 				metadataTemplateService.saveMetadataField(metadataField);
 			}
 			metadataFields.add(metadataField);

@@ -14,8 +14,7 @@ const TABLE_ID = 'linelist';
 
 const createTable = (template, data) => {
   const $table = $(`#${TABLE_ID}`);
-  const headers = template.map(header => header.label);
-  const columns = formatBasicHeaders(headers);
+  const columns = formatBasicHeaders(template);
 
   if ($.fn.DataTable.isDataTable(`#${TABLE_ID}`)) {
     $table.DataTable().destroy();
@@ -47,7 +46,7 @@ export const LinelistComponent = {
      * Generate the line list table.
      * @param {string} templateName name of the table header template
      */
-    const generate = (templateName = 'default') => {
+    const generate = templateName => {
       const promises = [];
       promises.push(LinelistService.getTemplate(this.url, templateName));
       promises.push(LinelistService.getMetadata(this.url, templateName));
@@ -55,8 +54,8 @@ export const LinelistComponent = {
       $q
         .all(promises)
         .then(results => {
-          const template = results[0].data.template;
-          const data = results[1].data.metadata;
+          const template = results[0];
+          const data = results[1];
           createTable(template, data);
         });
     };

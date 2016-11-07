@@ -40,7 +40,7 @@
                         select2-basic=""
                         ng-change="$ctrl.getUpdatedTemplates()"
                         ng-model="$ctrl.existing">
-                    <option th:each="template : ${templates}" th:value="${template.getId()}" th:text="${template.getLabel()}"></option>
+                    <option th:each="template : ${templates}" th:value="${template.id}" th:text="${template.label}"></option>
                 </select>
             </div>
         </div>

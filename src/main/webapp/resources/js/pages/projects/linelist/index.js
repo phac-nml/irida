@@ -1,5 +1,5 @@
 const angular = require('angular');
-import {LineListModule} from './components/linelist/linelist.module';
+import {LineListModule} from "./components/linelist/linelist.module";
 
 const app = angular.module('irida');
 app.requires.push(LineListModule);
@@ -8,9 +8,11 @@ app.requires.push(LineListModule);
  * Listening for changes to the template selection select input.
  */
 const templateSelect = document.querySelector('#template-select');
-templateSelect.addEventListener('change', function(event) {
-  broadcast('LINELIST_TEMPLATE_CHANGE', {template: event.target.value});
-});
+if (templateSelect) {
+  templateSelect.addEventListener('change', function(event) {
+    broadcast('LINELIST_TEMPLATE_CHANGE', {template: event.target.value});
+  });
+}
 
 /**
  * Use AngularJS broadcast system to send a message to all listeners.

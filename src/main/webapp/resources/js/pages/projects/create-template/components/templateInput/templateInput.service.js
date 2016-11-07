@@ -8,7 +8,7 @@ export class TemplateInputService {
     this.$window = $window;
   }
   getFieldsForTemplates(template = '') {
-    return this.$http.get(`${this.url}/current?templateId=${template}`)
+    return this.$http.get(`${this.url}/fields?templateId=${template}`)
       .then(response => response.data.fields);
   }
   saveTemplate(template, redirectUrl) {
