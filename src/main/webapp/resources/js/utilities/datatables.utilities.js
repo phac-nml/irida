@@ -22,7 +22,6 @@ export const domButtonsScroller = `
  * @return {array} of datatable formatted headers.
  */
 export const formatBasicHeaders = headers => {
-  console.log('headers', headers);
   return headers.map(title => {
     return {title, data: title};
   });
