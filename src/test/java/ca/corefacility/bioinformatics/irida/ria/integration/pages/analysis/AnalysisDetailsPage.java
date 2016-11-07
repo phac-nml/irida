@@ -33,6 +33,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "file-info")
 	private List<WebElement> fileInfo;
 
+	@FindBy(className = "share-project")
+	List<WebElement> shareCheckboxes;
+
 	@FindBy(className = "paired_end")
 	private List<WebElement> pairedEndElements;
 
@@ -67,19 +70,19 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public void displayShareTab() {
 		tabShare.click();
+
+		waitForElementVisible(By.className("share-project"));
 	}
 
 	public List<Long> getSharedProjectIds() {
-		List<WebElement> shareCheckboxes = driver.findElements(By.className("share-project"));
-		return shareCheckboxes.stream().filter(s -> s.isSelected()).map(s -> Long.valueOf(s.getAttribute("id")))
+		return shareCheckboxes.stream().filter(s -> s.isSelected()).map(s -> Long.valueOf(s.getAttribute("value")))
 				.collect(Collectors.toList());
 	}
 
 	public void clickShareBox(Long id) {
-		List<WebElement> shareCheckboxes = driver.findElements(By.className("share-project"));
 
-		Optional<WebElement> checkbox = shareCheckboxes.stream().filter(s -> s.getAttribute("id").equals(id.toString()))
-				.findFirst();
+		Optional<WebElement> checkbox = shareCheckboxes.stream()
+				.filter(s -> s.getAttribute("value").equals(id.toString())).findFirst();
 
 		if (!checkbox.isPresent()) {
 			throw new IllegalArgumentException("share box with id " + id + " doesn't exist");

@@ -57,7 +57,7 @@
 					<div class="col-md-6" ng-repeat="resp in shareController.projects">
 						<div class="checkbox">
 							<label>
-								<input type="checkbox" class="share-project" ng-model="resp.shared" ng-change="shareController.updateShared(resp)"/>
+								<input type="checkbox" class="share-project" ng-model="resp.shared" ng-value="resp.project.identifier" ng-change="shareController.updateShared(resp)"/>
 								<span>{{resp.project.name}}</span>
 							</label>
 						</div>
