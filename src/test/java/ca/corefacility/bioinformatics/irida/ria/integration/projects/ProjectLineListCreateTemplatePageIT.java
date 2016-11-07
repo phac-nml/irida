@@ -34,14 +34,15 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		assertTrue("Save button should be enabled when a name longer than 3 characters is present",
 				page.isSaveBtnEnabled());
 
-		page.addExistingTemplate("default");
-		assertEquals("Should be 23 items in the default template", 23, page.getNumberOfFields());
+		page.setFieldLabel(0, "firstLabel");
+		page.addNewField(0);
+		page.setFieldLabel(0, "secondLabel");
 
-		page.removeField(4);
-		assertEquals("Should only be 22 items left on the page", 22, page.getNumberOfFields());
+		assertEquals("There should be two fields on the page", 2, page.getNumberOfFields());
 
-		page.addNewField(3);
-		assertEquals("There should now be 23 fields after adding a new one.", 23, page.getNumberOfFields());
+		page.removeField(1);
+
+		assertEquals("There should only be one field left after removal", 1, page.getNumberOfFields());
 
 		page.saveNewTemplate(GOOD_TEMPLATE_NAME);
 		assertEquals("Should be redirected to the line list page", "IRIDA Platform - Line List", driver().getTitle());
