@@ -1,5 +1,5 @@
 const angular = require('angular');
-import {LineListModule} from "./components/linelist/linelist.module";
+import {LineListModule} from './components/linelist/linelist.module';
 
 const app = angular.module('irida');
 app.requires.push(LineListModule);
