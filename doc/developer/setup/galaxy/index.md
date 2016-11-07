@@ -17,7 +17,7 @@ Galaxy and the SNVPhyl pipeline require several tools to be installed outside of
 * MUMmer (from: <http://mummer.sourceforge.net>)
 * SAMtools (0.1.x series, specifically **NOT** the 1.0 series, from: <http://samtools.sourceforge.net/>)
   * ncurses development sources (`libncurses5-dev` on Ubuntu or `ncurses-devel` on CentOS)
-* BioPerl (**Specifically version 1.6.901**, please use `cpanm` to install <http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz>)
+* BioPerl (**Specifically version 1.6.901**, please use `cpanm` to install <https://cpan.metacpan.org/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz>)
 * The Perl module `Parallel::ForkManager`
 * Development tools (`gcc`, etc.)
 * A database server (we prefer MySQL or MariaDB)
@@ -99,7 +99,7 @@ echo "PATH=\$PATH:/opt/samtools/samtools-0.1.19/" > /etc/profile.d/samtools.sh
 Once you've finished running the distro-specific install commands, you can use `cpanm` and `pip` to install any remaining dependencies.
 
 ```bash
-sudo cpanm Parallel::ForkManager http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
+sudo cpanm Parallel::ForkManager https://cpan.metacpan.org/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
 ```
 
 Verify your setup
