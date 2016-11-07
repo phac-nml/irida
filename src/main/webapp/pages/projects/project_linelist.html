@@ -10,7 +10,9 @@
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
     <div class="row spaced-bottom">
         <div class="col-md-12">
-            <a class="btn btn-default" th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}">Upload new metadata</a>
+            <a class="btn btn-default"
+               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}"
+               th:text="#{linelist.add-metadata.btn}">Upload new metadata</a>
         </div>
     </div>
     <div class="row">
