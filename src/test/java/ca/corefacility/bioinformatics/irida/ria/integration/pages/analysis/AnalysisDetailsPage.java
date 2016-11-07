@@ -80,7 +80,6 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	public void clickShareBox(Long id) {
-
 		Optional<WebElement> checkbox = shareCheckboxes.stream()
 				.filter(s -> s.getAttribute("value").equals(id.toString())).findFirst();
 
