@@ -64,6 +64,11 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 		waitForTime(500);
 	}
 
+	public void setFieldLabel(int item, String label) {
+		WebElement element = driver.findElements(By.className("entry")).get(item);
+		element.findElement(By.cssSelector("input[type=text]")).sendKeys(label);
+	}
+
 	public void removeField(int field) {
 		removeFieldBtns.get(field).click();
 		waitForTime(100);
