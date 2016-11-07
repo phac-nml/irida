@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -239,14 +240,20 @@ public class AnalysisController {
 		// get available projects
 		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
 
+		List<SharedProjectResponse> projectResponses = projectsShared.stream()
+				.map(p -> new SharedProjectResponse(p, true)).collect(Collectors.toList());
+
 		// Create response for shared projects
-		List<SharedProjectResponse> projectResponses = projectsInAnalysis.stream().map(p -> {
-			if (projectsShared.contains(p)) {
-				return new SharedProjectResponse(p, true);
-			} else {
-				return new SharedProjectResponse(p, false);
+		projectResponses.addAll(projectsInAnalysis.stream().filter(p -> !projectsShared.contains(p))
+				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
+		
+		projectResponses.sort(new Comparator<SharedProjectResponse>() {
+
+			@Override
+			public int compare(SharedProjectResponse p1, SharedProjectResponse p2) {
+				return p1.getProject().getName().compareTo(p2.getProject().getName());
 			}
-		}).collect(Collectors.toList());
+		});
 
 		return projectResponses;
 	}
