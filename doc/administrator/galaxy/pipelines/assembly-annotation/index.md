@@ -35,7 +35,7 @@ cpanm Time::Piece XML::Simple Data::Dumper
 In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install.
 
 ```bash
-cpanm http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
+cpanm https://cpan.metacpan.org/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
 ```
 
 ## Step 2: Install Galaxy Tools
