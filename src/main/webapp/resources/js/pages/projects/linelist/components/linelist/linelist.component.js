@@ -16,6 +16,8 @@ const createTable = (template, data) => {
   const $table = $(`#${TABLE_ID}`);
   const columns = formatBasicHeaders(template);
 
+  // If the table is already initialized it needs to be destroyed before
+  // it can be loaded again.
   if ($.fn.DataTable.isDataTable(`#${TABLE_ID}`)) {
     $table.DataTable().destroy();
     $table.empty();
@@ -37,8 +39,8 @@ const createTable = (template, data) => {
 
 export const LinelistComponent = {
   bindings: {
-    url: '@',
-    template: '@'
+    url: '@',     // url to get the metadata from
+    template: '@' // identifier for the current template.
   },
   template: getDefaultTable('linelist'),
   controller($q, $scope, LinelistService) {
@@ -60,6 +62,7 @@ export const LinelistComponent = {
         });
     };
 
+    // Initialize the table.
     generate(this.template);
 
     /**

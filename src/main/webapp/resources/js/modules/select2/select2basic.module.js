@@ -4,6 +4,13 @@ require('select2');
 require('style!select2/dist/css/select2.min.css');
 require('style!select2-bootstrap-theme/dist/select2-bootstrap.min.css');
 
+/*
+ * Turns a pre-populated select input into a select2.
+ * Usage:
+ *  <select select2-basic="">
+ *    <options>...</options>
+ *  </select>
+ */
 const Select2Basic = () => {
   return {
     restrict: 'A',

@@ -8,7 +8,10 @@
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
     <h2 th:text="#{linelist.create-template.title}">Create a New Line List Template</h2>
-    <template-input-component data:redirecturl="@{/projects/{id}/linelist(id=${project.getId()})}"/>
+    <template-input-component
+            data:templateurl="@{/projects/{id}/linelist/metadatafields(id=${project.getId()})}"
+            data:saveurl="@{/projects/{id}/linelist/linelist-templates/save-template(id=${project.getId()})}"
+            data:redirecturl="@{/projects/{id}/linelist(id=${project.getId()})}"/>
     <script type="text/ng-template" id="templateInput.tmpl.html">
         <div class="row">
             <div class="col-md-12">
@@ -67,7 +70,7 @@
                             th:text="#{linelist.create-template.new-field}">Add
                     </button>
                     <button class="btn btn-default remove-field-btn"
-                            ng-hide="$ctrl.template.list.length === 3"
+                            ng-hide="$ctrl.template.list.length === 1"
                             ng-click="$ctrl.removeField($index)"
                             th:text="#{linelist.create-template.remove-field}">Remove
                     </button>

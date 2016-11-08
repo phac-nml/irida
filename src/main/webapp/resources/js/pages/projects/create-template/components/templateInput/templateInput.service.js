@@ -4,26 +4,29 @@ const angular = require('angular');
 export class TemplateInputService {
   constructor($http, $window) {
     this.$http = $http;
-    this.url = $window.location.href;
     this.$window = $window;
   }
-  getFieldsForTemplates(template = '') {
-    return this.$http.get(`${this.url}/fields?templateId=${template}`)
-      .then(response => response.data.fields);
+
+  getFieldsForTemplates(url, template) {
+    if (template) {
+      url = `${url}?templateId=${template}`;
+    }
+    return this.$http.get(url)
+      .then(response => response.data);
   }
-  saveTemplate(template, redirectUrl) {
+  saveTemplate(url, template, redirectUrl) {
     // Need to use jquery since I made a bad decision early on to wrap $http posts
     // to be form data :(
     return $.ajax({
       type: 'POST',
       contentType: 'application/json; charset=utf-8',
-      url: `${this.url}/save-template/${template.name}`,
+      url: `${url}/${template.name}`,
       data: angular.toJson(template.fields)
     }).done(response => {
+      // After completion redirect to linelist page
+      // displaying the newly created template.
       this.$window.location.href =
-        `${redirectUrl}?template=${response.templateId}`;
-    }).fail(() => {
-      console.log('Boo');
+        `${redirectUrl}?templateId=${response.templateId}`;
     });
   }
 }
