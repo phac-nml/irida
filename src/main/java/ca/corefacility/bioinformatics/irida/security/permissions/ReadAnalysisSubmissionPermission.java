@@ -44,6 +44,12 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 	 * @param seqObjectPermission
 	 *            {@link ReadSequencingObjectPermission} to test if the
 	 *            {@link AnalysisSubmission} is part of an automated assembly
+	 * @param pasRepository
+	 *            A {@link ProjectAnalysisSubmissionJoinRepository} to check if
+	 *            a submission has been shared with a project
+	 * @param readProjectPermission
+	 *            {@link ReadProjectPermission} to check if a user can read a
+	 *            project where a submission has been shared
 	 */
 	@Autowired
 	public ReadAnalysisSubmissionPermission(AnalysisSubmissionRepository analysisSubmissionRepository,

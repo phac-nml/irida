@@ -387,6 +387,9 @@ public class PipelineController extends BaseController {
 	 *            a user provided name for the {@link IridaWorkflow}
 	 * @param analysisDescription
 	 *            Optional description of the analysis
+	 * @param sharedProjects
+	 *            A list of {@link Project} ids to share the analysis submission
+	 *            with
 	 *
 	 * @return a JSON response with the status and any messages.
 	 */
