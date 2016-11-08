@@ -15,13 +15,32 @@
 <div layout:fragment="page">
     <phylocanvas-component
             data:template="${currentTemplate}"
-            data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}"
-            data:metadataurl="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
+            data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
     </phylocanvas-component>
+
+    <metadata-component
+            data:metadataurl="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
+    </metadata-component>
 </div>
 <th:block layout:fragment="scripts">
     <script type="text/ng-template" id="phylocanvas.tmpl.html">
         <div class="spaced-bottom" id="phylocanvas"></div>
+    </script>
+    <script type="text/ng-template" id="metadata-component.tmpl.html">
+        <div class="well">
+            <div class="row">
+                <div class="chechbox col-md-4 col-sm-1" ng-repeat="term in $ctrl.terms">
+                    <label>
+                        <input type="checkbox"
+                               ng-value="term"
+                               ng-model="$ctrl.checkedTerms[$index]"
+                               ng-model-options="{ 'updateOn': 'default ', 'debounce': { 'default': 500 } }"
+                               ng-change="$ctrl.getUpdateMetadata()"/>
+                        <span ng-bind="term"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
     </script>
     <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
             th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>

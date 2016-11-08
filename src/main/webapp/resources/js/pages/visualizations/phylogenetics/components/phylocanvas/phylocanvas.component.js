@@ -32,9 +32,8 @@ const setCanvasHeight = $window => {
  * @param {object} $window AngularJS window object
  * @param {object} $scope AngularJS $scope object for current dom
  * @param {object} PhylocanvasService angular service for server exchanges for newick data
- * @param {object} MetadataService angular service for server exchanges for metadata data
  */
-function controller($window, $scope, PhylocanvasService, MetadataService) {
+function controller($window, $scope, PhylocanvasService) {
   // Make the canvas fill the viewable window.
   setCanvasHeight($window);
 
@@ -66,7 +65,7 @@ function controller($window, $scope, PhylocanvasService, MetadataService) {
   // Set tree defaults
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
-  tree.on('beforeFirstDraw', () => updateMetadata());
+  // tree.on('beforeFirstDraw', () => updateMetadata());
 
   /**
    * Listen for changes to the metadata structure and update
@@ -89,14 +88,13 @@ function controller($window, $scope, PhylocanvasService, MetadataService) {
   PhylocanvasService.getNewickData(this.newickurl)
     .then(data => {
       this.newick = data;
-      MetadataService.getMetadata(this.metadataurl, this.template);
+      tree.load(this.newick);
     });
 }
 
 export const PhylocanvasComponent = {
   bindings: {
     newickurl: '@',
-    metadataurl: '@',
     template: '@'
   },
   templateUrl: 'phylocanvas.tmpl.html',

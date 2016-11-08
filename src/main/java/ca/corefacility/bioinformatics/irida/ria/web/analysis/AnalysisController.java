@@ -51,8 +51,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListField;
-import ca.corefacility.bioinformatics.irida.ria.web.components.linelist.LineListTemplates;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -80,18 +78,16 @@ public class AnalysisController {
 	private MessageSource messageSource;
 	private UserService userService;
 	private SampleService sampleService;
-	private LineListTemplates lineListTemplates;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService,
-			SampleService sampleService, LineListTemplates lineListTemplates, MessageSource messageSource) {
+			SampleService sampleService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.sampleService = sampleService;
-		this.lineListTemplates = lineListTemplates;
 	}
 
 	// ************************************************************************************************
@@ -207,8 +203,8 @@ public class AnalysisController {
 	public String getAdvancedPhylogeneticVisualizationPage(
 			@PathVariable Long submissionId, Model model,
 			@RequestParam(required = false, defaultValue = "default") String template){
+
 		model.addAttribute("submissionId", submissionId);
-		model.addAttribute("templates", lineListTemplates.getTemplateNames());
 		model.addAttribute("currentTemplate", template);
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
@@ -460,32 +456,51 @@ public class AnalysisController {
 		return ImmutableMap.of("newick", lines.get(0));
 	}
 
+	/**
+	 * Get the metadata associated with a template for an analysis.
+	 *
+	 * @param submissionId
+	 * 		{@link Long} identifier for the {@link AnalysisSubmission}
+	 *
+	 * @return {@link Map}
+	 */
 	@RequestMapping("/ajax/{submissionId}/metadata")
 	@ResponseBody
 	public Map<String, Object> getMetadataForAnalysisSamples(
-			@PathVariable Long submissionId,
-			@RequestParam String template) {
+			@PathVariable Long submissionId) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		List<LineListField> fields = lineListTemplates.getTemplate(template);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
 
-		Map<String, Map> metadata = new HashMap<>();
+		// Let's get a list of all the metadata available that is unique.
+		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
-			Map<String, Object> dataMap = new HashMap<>();
 			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
 			if (sampleMetadata != null) {
-				Map<String, Object> sampleData = sampleMetadata.getMetadata();
-				for (LineListField field : fields) {
-					if (sampleData.containsKey(field.getLabel())) {
-						dataMap.put(field.getLabel(), sampleData.get(field.getLabel()));
-					}
-				}
-				metadata.put(sample.getLabel(), dataMap);
+				Map<String, Object> metadata = sampleMetadata.getMetadata();
+				terms.addAll(metadata.keySet());
 			} else {
-				metadata.put(sample.getLabel(), ImmutableMap.of());
+				// Might as well add a new empty one if it is not there.
+				SampleMetadata newSampleMetadata = new SampleMetadata();
+				sampleService.saveSampleMetadaForSample(sample, newSampleMetadata);
 			}
 		}
-		return ImmutableMap.of("metadata", metadata);
+
+		// Get the metadata for the samples;
+		Map<String, Object> metadata = new HashMap<>();
+		for (Sample sample : samples) {
+			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+			Map<String, Object> data = sampleMetadata.getMetadata();
+			Map<String, Object> valuesMap = new HashMap<>();
+			for (String term : terms) {
+				valuesMap.put(term, data.get(term));
+			}
+			metadata.put(sample.getLabel(), valuesMap);
+		}
+
+		return ImmutableMap.of(
+				"terms", terms,
+				"metadata", metadata
+		);
 	}
 
 	/**

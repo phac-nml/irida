@@ -1,5 +1,5 @@
-import {METADATA} from './../../constants';
-import {formatMetadata} from './metadataFormatter';
+import {MetadataManager} from './MetadataManager';
+const _metadataManager = Symbol('metadata');
 
 export class MetadataService {
   constructor($http, $rootScope) {
@@ -7,11 +7,18 @@ export class MetadataService {
     this.$rootScope = $rootScope;
   }
 
-  getMetadata(url, template = 'default') {
-    return this.$http.get(`${url}?template=${template}`)
+  getMetadata(url) {
+    return this.$http.get(url)
       .then(response => {
-        const metadata = formatMetadata(response.data.metadata);
-        this.$rootScope.$broadcast(METADATA.UPDATED, {metadata});
+        this[_metadataManager] = new MetadataManager(
+          response.data.terms,
+          response.data.metadata);
+        return response.data.terms;
       });
+  }
+
+  getMetadataForKeys(keys) {
+    // TODO: broadcast new metadata
+    const metadata = this[_metadataManager].getMetadataForKeys(keys);
   }
 }
