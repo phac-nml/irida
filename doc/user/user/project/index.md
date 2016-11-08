@@ -156,6 +156,12 @@ Project Analysis Results
 
 To view the results of an analysis that has been shared with a project, click the `Analysis` tab at the top of the project page. 
 
+![Project analysis tab.](images/analysis-tab.png)
+
+From this page you can view and monitor the progress of all analyses which have been shared with this project.  To view the results of an analysis click on the analysis name.  For more information on analysis results, see the [pipeline documentation page](/user/user/pipelines/#viewing-pipeline-results).
+
+![Project analysis tab.](images/project-analysis-results.png)
+
 Associated Projects
 -------------------
 
