@@ -46,17 +46,28 @@ function controller($window, $scope, PhylocanvasService) {
    * @param {object} metadata Map of leafs with their metadata
    */
   const updateMetadata = metadata => {
-    tree.leaves.forEach(leaf => {
-      leaf.data = metadata[leaf.label] || {};
-    });
-    tree.fitInPanel();
-    tree.draw();
+    console.log(metadata);
+    for (const leaf of tree.leaves) {
+      leaf.data = metadata[leaf.label];
+    }
+    if (tree.drawn) {
+      tree.fitInPanel();
+      tree.draw();
+    }
   };
 
   // Set tree defaults
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
-  tree.on('loaded', () => updateMetadata({}));
+  tree.on('beforeFirstDraw', () => {
+    // Adding empty metadata to start.
+    const empty = {};
+    tree.leaves
+      .forEach(leaf => {
+        empty[leaf.label] = {};
+      });
+    updateMetadata(empty);
+  });
 
   /**
    * Listen for changes to the metadata structure and update
