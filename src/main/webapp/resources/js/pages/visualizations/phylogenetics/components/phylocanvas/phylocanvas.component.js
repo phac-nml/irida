@@ -46,10 +46,10 @@ function controller($window, $scope, PhylocanvasService) {
   /**
    * Update the tree leaves with new metadata
    */
-  const updateMetadata = () => {
+  const updateMetadata = metadata => {
     let prev;
     tree.leaves.forEach(leaf => {
-      const data = this.metadata[leaf.label];
+      const data = metadata[leaf.label];
       if (data) {
         leaf.data = data;
       } else {
@@ -65,16 +65,14 @@ function controller($window, $scope, PhylocanvasService) {
   // Set tree defaults
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
-  // tree.on('beforeFirstDraw', () => updateMetadata());
 
   /**
    * Listen for changes to the metadata structure and update
    * the phylocanvas accordingly.
    */
   $scope.$on(METADATA.UPDATED, (event, args) => {
-    this.metadata = args.metadata;
     if (tree.drawn) {
-      updateMetadata();
+      updateMetadata(args.metadata);
     } else {
       // Load the tree only when the initial metadata is available.
       tree.load(this.newick);
