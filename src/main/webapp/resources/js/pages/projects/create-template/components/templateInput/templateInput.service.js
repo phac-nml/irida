@@ -23,6 +23,8 @@ export class TemplateInputService {
       url: `${url}/${template.name}`,
       data: angular.toJson(template.fields)
     }).done(response => {
+      // After completion redirect to linelist page
+      // displaying the newly created template.
       this.$window.location.href =
         `${redirectUrl}?templateId=${response.templateId}`;
     });
