@@ -175,10 +175,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "reference_file_id")
 	private ReferenceFile referenceFile;
-	
-	@OneToMany(cascade=CascadeType.REMOVE, mappedBy="analysisSubmission")
-	List<ProjectAnalysisSubmissionJoin> projects;
-	
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
+	private List<ProjectAnalysisSubmissionJoin> projects;
+
 	@NotAudited
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "named_parameters_id")

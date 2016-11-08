@@ -498,7 +498,10 @@ public class PipelineController extends BaseController {
 				}
 			}
 			
-			List<Project> projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects));
+			List<Project> projectsToShare = new ArrayList<>();
+			if (sharedProjects != null && !sharedProjects.isEmpty()) {
+				projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects));
+			}
 
 			if (description.getInputs().requiresSingleSample()) {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,

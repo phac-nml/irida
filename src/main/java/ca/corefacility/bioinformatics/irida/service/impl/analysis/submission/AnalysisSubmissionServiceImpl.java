@@ -351,7 +351,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return getAnalysisSubmissionsForUser(user);
 	}
 	
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -360,8 +359,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
-			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
-			IridaWorkflowNamedParameters namedParameters, String name, String analysisDescription, List<Project> projectsToShare) {
+			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
+			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
+			String analysisDescription, List<Project> projectsToShare) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -517,15 +517,17 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		
 		return createdSubmissions;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs, Map<String, String> params,
-			IridaWorkflowNamedParameters namedParameters, String name, String newAnalysisDescription, List<Project> projectsToShare) {
+			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
+			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
+			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
+			String newAnalysisDescription, List<Project> projectsToShare) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();

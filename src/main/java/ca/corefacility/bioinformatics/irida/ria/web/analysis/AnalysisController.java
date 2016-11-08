@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -184,24 +185,6 @@ public class AnalysisController {
 		Set<SequenceFilePairSnapshot> remoteFilesPaired = submission.getRemoteFilesPaired();
 		model.addAttribute("remote_paired", remoteFilesPaired);
 		
-		// get projects already shared with submission
-		Set<Project> projectsShared = projectService
-				.getProjectsForAnalysisSubmission(submission).stream().map(ProjectAnalysisSubmissionJoin::getSubject).collect(Collectors.toSet());
-		
-		// get available projects
-		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
-
-		// Create resposne for shared projects
-		List<SharedProjectResponse> projectResponses = projectsInAnalysis.stream().map(p -> {
-			if (projectsShared.contains(p)) {
-				return new SharedProjectResponse(p, true);
-			} else {
-				return new SharedProjectResponse(p, false);
-			}
-		}).collect(Collectors.toList());
-
-		model.addAttribute("projects", projectResponses);
-		
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
@@ -233,6 +216,46 @@ public class AnalysisController {
 		} 
 
 		return viewName;
+	}
+	
+	/**
+	 * Get the status of projects that can be shared with the given analysis
+	 * 
+	 * @param submissionId
+	 *            the {@link AnalysisSubmission} id
+	 * @return a list of {@link SharedProjectResponse}
+	 */
+	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.GET)
+	@ResponseBody
+	public List<SharedProjectResponse> getSharedProjectsForAnalysis(@PathVariable Long submissionId) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		// Input files
+		// - Paired
+		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+
+		// get projects already shared with submission
+		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission).stream()
+				.map(ProjectAnalysisSubmissionJoin::getSubject).collect(Collectors.toSet());
+
+		// get available projects
+		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
+
+		List<SharedProjectResponse> projectResponses = projectsShared.stream()
+				.map(p -> new SharedProjectResponse(p, true)).collect(Collectors.toList());
+
+		// Create response for shared projects
+		projectResponses.addAll(projectsInAnalysis.stream().filter(p -> !projectsShared.contains(p))
+				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
+		
+		projectResponses.sort(new Comparator<SharedProjectResponse>() {
+
+			@Override
+			public int compare(SharedProjectResponse p1, SharedProjectResponse p2) {
+				return p1.getProject().getName().compareTo(p2.getProject().getName());
+			}
+		});
+
+		return projectResponses;
 	}
 	
 	/**

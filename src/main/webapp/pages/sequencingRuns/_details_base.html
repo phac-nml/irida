@@ -42,6 +42,12 @@
                         <div class="sidebar__icon"><span class="fa fa-upload fa-fw sidebar__icon"></span></div> <span th:text="#{sequencingruns.uploadStatus}">_Status_</span>
                         <div id="sb-id" class="sidebar__value sequencer-type" th:text="#{'sequencingruns.status.' + ${run.uploadStatus}}"></div>
                     </div>
+                    <div class="sidebar__item" th:if="${run.user}">
+                        <div class="sidebar__icon"><span class="fa fa-user fa-fw sidebar__icon"></span></div> <span th:text="#{sequencingruns.details.uploader}">_Uploader_</span>
+                        <div id="sb-id" class="sidebar__value">
+                            <a href="#" th:href="@{/users/{id}(id=${run.user.id})}" th:text="${run.user.label}">_User</a>
+                        </div>
+                    </div>
                     <div class="sidebar__item">
                         <div class="sidebar__icon"><span class="fa fa-fw fa-calendar-o sidebar__icon"></span></div> <em
                             th:text="#{iridaThing.timestamp}">Created</em> <div id="sb-created"

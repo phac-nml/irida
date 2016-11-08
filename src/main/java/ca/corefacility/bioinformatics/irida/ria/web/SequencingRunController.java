@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -148,7 +149,7 @@ public class SequencingRunController {
 
 		List<SequencingRunDatablesResponse> collect = list.getContent().stream()
 				.map(s -> new SequencingRunDatablesResponse(s, messageSource
-						.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale)))
+						.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale), s.getUser()))
 				.collect(Collectors.toList());
 
 		DataSet<SequencingRunDatablesResponse> dataSet = new DataSet<>(collect, list.getTotalElements(),
@@ -179,12 +180,14 @@ public class SequencingRunController {
 		private final Date createdDate;
 		private final String sequencerType;
 		private final String uploadStatus;
+		private final User user;
 
-		public SequencingRunDatablesResponse(SequencingRun run, String statusMessage) {
+		public SequencingRunDatablesResponse(SequencingRun run, String statusMessage, User user) {
 			this.id = run.getId();
 			this.createdDate = run.getCreatedDate();
 			this.sequencerType = run.getSequencerType();
 			this.uploadStatus = statusMessage;
+			this.user = user;
 		}
 
 		public Date getCreatedDate() {
@@ -201,6 +204,10 @@ public class SequencingRunController {
 
 		public String getUploadStatus() {
 			return uploadStatus;
+		}
+		
+		public User getUser() {
+			return user;
 		}
 	}
 }
