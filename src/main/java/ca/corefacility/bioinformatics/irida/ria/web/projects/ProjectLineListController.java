@@ -153,6 +153,13 @@ public class ProjectLineListController {
 		return ImmutableMap.of("fields", fields);
 	}
 
+	@RequestMapping("/metadatafields")
+	@ResponseBody
+	public List<MetadataField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
+		MetadataTemplate template = metadataTemplateService.read(templateId);
+		return template.getFields();
+	}
+
 	/**
 	 * Get the metadata for the table that matches the current template.
 	 *
