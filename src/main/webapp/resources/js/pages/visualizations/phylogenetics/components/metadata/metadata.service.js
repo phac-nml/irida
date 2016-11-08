@@ -1,4 +1,5 @@
 import {MetadataManager} from './MetadataManager';
+import {METADATA} from './../../constants';
 const _metadataManager = Symbol('metadata');
 
 export class MetadataService {
@@ -18,7 +19,7 @@ export class MetadataService {
   }
 
   getMetadataForKeys(keys) {
-    // TODO: broadcast new metadata
     const metadata = this[_metadataManager].getMetadataForKeys(keys);
+    this.$rootScope.$broadcast(METADATA.UPDATED, {metadata});
   }
 }
