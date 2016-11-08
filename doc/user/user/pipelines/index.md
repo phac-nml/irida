@@ -221,9 +221,9 @@ Pipeline results can also be shared anytime after a pipeline has been launched. 
 
 ![Share analysis results with project.](images/analysis-share-results-with-project.png)
 
- From this page you will be shown all projects which the pipeline result has been shared with, and any projects which you can share the results with.  To share or unshare the results with a project, check or uncheck the box next to the project name.
+ From this page you will be shown all projects that the pipeline result has been shared with (indicated by a check mark) along with additional projects available for sharing results.  To share or unshare the results with a project, check or uncheck the box next to the project name.
 
- Note that for a project to be displayed in this list it must contian samples which were used in the analysis.
+ Note that for a project to be displayed in this list it must contain samples which were used in the analysis.
 
 
 <a href="../samples/">Previous: Managing Samples</a>
