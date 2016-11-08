@@ -11,20 +11,18 @@ const metadataFormat = {
   showLabels: true,
   blockLength: 32,
   blockSize: 32,
-  padding: 18,
-  columns: [],
+  padding: 25,
   propertyName: 'data',
   underlineHeaders: true,
   headerAngle: 0,
   fillStyle: 'black',
   strokeStyle: 'black',
-  lineWidth: 1,
-  font: null
+  lineWidth: 1
 };
 
 const setCanvasHeight = $window => {
   const canvas = document.querySelector(`#${PHYLOCANVAS_DIV}`);
-  canvas.style.height = `${$window.innerHeight - 200}px`;
+  canvas.style.height = `${$window.innerHeight - 250}px`;
 };
 
 /**
@@ -45,49 +43,33 @@ function controller($window, $scope, PhylocanvasService) {
 
   /**
    * Update the tree leaves with new metadata
+   * @param {object} metadata Map of leafs with their metadata
    */
   const updateMetadata = metadata => {
-    let prev;
     tree.leaves.forEach(leaf => {
-      const data = metadata[leaf.label];
-      if (data) {
-        leaf.data = data;
-      } else {
-        leaf.data = prev;
-      }
-      prev = Object.assign({}, data);
+      leaf.data = metadata[leaf.label] || {};
     });
-    if (tree.drawn) {
-      tree.draw();
-    }
+    tree.fitInPanel();
+    tree.draw();
   };
 
   // Set tree defaults
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
+  tree.on('loaded', () => updateMetadata({}));
 
   /**
    * Listen for changes to the metadata structure and update
    * the phylocanvas accordingly.
    */
-  $scope.$on(METADATA.UPDATED, (event, args) => {
-    if (tree.drawn) {
-      updateMetadata(args.metadata);
-    } else {
-      // Load the tree only when the initial metadata is available.
-      tree.load(this.newick);
-    }
-  });
+  $scope.$on(METADATA.UPDATED, (event, args) => updateMetadata(args.metadata));
 
   /**
    * Kick everything off by getting the newick file and the
    * initial metadata.
    */
   PhylocanvasService.getNewickData(this.newickurl)
-    .then(data => {
-      this.newick = data;
-      tree.load(this.newick);
-    });
+    .then(newick => tree.load(newick));
 }
 
 export const PhylocanvasComponent = {

@@ -1,20 +1,12 @@
-import {Colours} from './../../../../../utilities/colour.utilities';
+import {getRandomColour} from './../../../../../utilities/colour.utilities';
 
 const _terms = Symbol('terms');
 const _metadata = Symbol('metadata');
 const _ids = Symbol('keys');
 
-const _formatMetadata = (terms, metadata) => {
+const _formatMetadata = (ids, terms, metadata) => {
   const result = {};
   const colourMap = {};
-  const colourFns = {};
-
-  const ids = Object.keys(metadata);
-
-  // Generate a new colour function for each field.
-  terms.forEach(term => {
-    colourFns[term] = new Colours();
-  });
 
   ids.forEach(id => {
     const data = metadata[id];
@@ -23,19 +15,29 @@ const _formatMetadata = (terms, metadata) => {
       const label = data[term];
       colourMap[term] = colourMap[term] || {};
       colourMap[term][label] =
-        colourMap[term][label] || colourFns[term].getNext();
+        colourMap[term][label] || getRandomColour();
       result[id][term] = {label, colour: colourMap[term][label]};
     });
   });
+
   return result;
 };
 
 export class MetadataManager {
   constructor(terms, metadata) {
     this[_terms] = terms;
-    this[_metadata] = _formatMetadata(terms, metadata);
     this[_ids] = Object.keys(metadata);
+    this[_metadata] = _formatMetadata(this[_ids], terms, metadata);
+
+    // Create a blank reference
+    const reference = {};
+    terms.forEach(term => {
+      reference[term] = {label: '', colour: '#FFFFFF'};
+    });
+    this[_ids].push('reference');
+    this[_metadata].reference = reference;
   }
+
   getMetadataForKeys(keys) {
     const result = {};
     this[_ids].forEach(id => {
@@ -46,6 +48,7 @@ export class MetadataManager {
       });
       result[id] = wanted;
     });
+
     return result;
   }
 }
