@@ -43,15 +43,18 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.WorkflowNamedParametersRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 /**
  * Tests for an analysis service.
@@ -80,6 +83,9 @@ public class AnalysisSubmissionServiceImplIT {
 
 	@Autowired
 	private WorkflowNamedParametersRepository parametersRepository;
+	
+	@Autowired
+	private ProjectService projectService;
 
 	private UUID workflowId = UUID.randomUUID();
 
@@ -595,6 +601,43 @@ public class AnalysisSubmissionServiceImplIT {
 		assertEquals("id should be 3", new Long(3), read.getId());
 	}
 
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void shareAnalysisSubmissionWithProject() {
+		AnalysisSubmission read = analysisSubmissionService.read(3L);
+		Project project2 = projectService.read(2L);
+		ProjectAnalysisSubmissionJoin shareAnalysisSubmissionWithProject = analysisSubmissionService
+				.shareAnalysisSubmissionWithProject(read, project2);
+
+		assertNotNull(shareAnalysisSubmissionWithProject.getId());
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void shareAnalysisSubmissionWithProjectFail() {
+		AnalysisSubmission read = analysisSubmissionService.read(3L);
+		Project project2 = projectService.read(2L);
+		analysisSubmissionService.shareAnalysisSubmissionWithProject(read, project2);
+	}
+
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testRemoveAnalysisSubmissionFromProject() {
+		AnalysisSubmission read = analysisSubmissionService.read(3L);
+		Project project2 = projectService.read(1L);
+
+		analysisSubmissionService.removeAnalysisProjectShare(read, project2);
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testRemoveAnalysisSubmissionFromProjectFail() {
+		AnalysisSubmission read = analysisSubmissionService.read(3L);
+		Project project2 = projectService.read(1L);
+
+		analysisSubmissionService.removeAnalysisProjectShare(read, project2);
+	}
+	
 	/**
 	 * Test specification.
 	 * 
