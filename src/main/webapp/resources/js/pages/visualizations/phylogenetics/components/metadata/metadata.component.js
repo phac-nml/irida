@@ -36,7 +36,6 @@ function controller($rootScope, $scope, MetadataService) {
       });
     } else {
       const fields = new Set(args.fields);
-      console.log(fields);
       this.terms.forEach(term => {
         term.selected = fields.has(term.term);
       });

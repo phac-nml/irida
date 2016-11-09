@@ -52,7 +52,7 @@
                         class="form-control"
                         ng-model="$ctrl.selectedTemplate"
                         ng-change="$ctrl.templateChange()">
-                    <option value="">_NONE_</option>
+                    <option value="">_ALL_FIELDS_</option>
                     <option ng-repeat="template in $ctrl.templates"
                         value="{{ template.id }}">{{ template.label }}</option>
                 </select>

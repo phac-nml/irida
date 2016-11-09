@@ -50,6 +50,7 @@ function controller($window, $scope, PhylocanvasService) {
       leaf.data = metadata[leaf.label];
     }
     if (tree.drawn) {
+      tree.draw();
       tree.fitInPanel();
       tree.draw();
     }
