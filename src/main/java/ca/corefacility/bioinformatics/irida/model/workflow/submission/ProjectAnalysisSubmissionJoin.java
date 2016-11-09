@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,9 +39,10 @@ public class ProjectAnalysisSubmissionJoin implements Join<Project, AnalysisSubm
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="created_date")
+	@Column(name = "created_date")
 	private Date createdDate;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
